@@ -105,6 +105,6 @@ export interface ChartMetadataDependency {
   version: string;
 }
 
-export interface CatalogItem {
+export interface CatalogItems {
   [train: string]: CatalogTrain;
 }

@@ -5,7 +5,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
-import { Catalog, CatalogAppVersion, CatalogItem } from 'app/interfaces/catalog.interface';
+import { Catalog, CatalogAppVersion, CatalogItems } from 'app/interfaces/catalog.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -44,7 +44,7 @@ export class ManageCatalogSummaryDialog implements OnInit {
 
   ngOnInit(): void {
     this.loader.open();
-    this.ws.job('catalog.items', [this.catalog.label, { retrieve_versions: true }]).pipe(untilDestroyed(this)).subscribe((res: Job<CatalogItem>) => {
+    this.ws.job('catalog.items', [this.catalog.label, { retrieve_versions: true }]).pipe(untilDestroyed(this)).subscribe((res: Job<CatalogItems>) => {
       if (res.state === JobState.Success) {
         this.loader.close();
         const result = res.result;

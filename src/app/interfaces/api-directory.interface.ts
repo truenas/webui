@@ -20,7 +20,7 @@ import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces
 import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
 import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import { Bootenv, SetBootenvAttributeParams } from 'app/interfaces/bootenv.interface';
-import { Catalog, CatalogItem, CatalogQueryParams } from 'app/interfaces/catalog.interface';
+import { Catalog, CatalogItems, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import {
   CertificateAuthority,
   CertificateAuthorityCreate,
@@ -234,7 +234,7 @@ export type ApiDirectory = {
   'catalog.update': { params: any; response: any };
   'catalog.create': { params: any; response: any };
   'catalog.delete': { params: [/* name */ string]; response: boolean };
-  'catalog.items': { params: any; response: CatalogItem };
+  'catalog.items': { params: any; response: CatalogItems };
   'catalog.sync': { params: any; response: any };
   'catalog.sync_all': { params: void; response: any };
   'catalog.get_item_details': { params: any; response: any };
