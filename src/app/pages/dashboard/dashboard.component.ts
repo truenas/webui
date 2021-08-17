@@ -21,7 +21,7 @@ import {
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate, VirtualMemoryUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { VolumesData } from 'app/interfaces/volume-data.interface';
+import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormConfigurationComponent } from 'app/pages/common/entity/entity-form/entity-form-configuration.component';
@@ -496,7 +496,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     return conf;
   }
 
-  volumeDataFromConfig(item: DashConfigItem): any {
+  volumeDataFromConfig(item: DashConfigItem): VolumesData | VolumeData {
     let spl: string[];
     let key: string;
     let value: string;
@@ -511,7 +511,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return this.volumeData;
       default:
         const pool = this.pools.find((pool) => pool[key as keyof Pool] === value);
-        return this.volumeData && this.volumeData[pool.name] ? this.volumeData[pool.name] : '';
+        return this.volumeData && this.volumeData[pool.name] ? this.volumeData[pool.name] : null;
     }
   }
 
