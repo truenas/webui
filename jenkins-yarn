@@ -4,7 +4,7 @@ node('FreeNAS-webui-yarn') {
     }
     stage('yarn Install') {
       echo 'Yarn Install...'
-      sh 'yarn install --frozen-lockfile'
+      sh 'yarn install'
     }
     stage('Yarn Build') {
       echo 'yarn run build:prod:aot'
