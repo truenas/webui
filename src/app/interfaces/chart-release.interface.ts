@@ -112,10 +112,10 @@ export interface ChartSchemaNodeConf {
   min_length?: number;
   min?: number;
   max?: number;
-  cidr?: string;
+  cidr?: boolean;
   private?: boolean;
   hidden?: boolean;
-  show_if?: [/* field name */ string, /* operator name */ string, /* operator value */ string][];
+  show_if?: string[][];
   show_subquestions_if?: any;
   editable?: boolean;
   subquestions?: ChartSchemaNode[];
