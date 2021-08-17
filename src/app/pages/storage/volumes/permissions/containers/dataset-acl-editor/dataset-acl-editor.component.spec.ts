@@ -114,7 +114,7 @@ describe('DatasetAclEditorComponent', () => {
 
       expect(matDialog.open).toHaveBeenCalledWith(
         SelectPresetModalComponent,
-        { data: { allowCustom: false, isNfsAcl: true } },
+        { data: { allowCustom: false, datasetPath: '/mnt/pool/dataset', isNfsAcl: true } },
       );
     });
   });
