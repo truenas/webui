@@ -48,8 +48,9 @@ def you_should_be_on_the_dashboard_click_on_credentials_and_local_accounts(drive
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Local Users"]').click()
+    time.sleep(2)
+    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
+    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
 
 
 @then('the users page should open, click add and the add page will open.')
