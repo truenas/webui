@@ -4,20 +4,24 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { tween, styler } from 'popmotion';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { DashConfigItem } from 'app/core/components/widgets/widget-controller/widget-controller.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
+import { VolumeDataEvent } from 'app/interfaces/events/volume-data-event.interface';
 import {
   NetworkInterface,
   NetworkInterfaceState,
 } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate, VirtualMemoryUpdate } from 'app/interfaces/reporting.interface';
+import { Interval } from 'app/interfaces/timeout.interface';
+import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormConfigurationComponent } from 'app/pages/common/entity/entity-form/entity-form-configuration.component';
@@ -43,7 +47,7 @@ type DashboardNetworkInterface = NetworkInterface & {
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   formComponent: EntityFormConfigurationComponent;
-  formEvents$: Subject<CoreEvent>;
+  formEvents$: Subject<CoreEvent> = new Subject();
   actionsConfig: any;
 
   screenType = 'Desktop'; // Desktop || Mobile
@@ -65,8 +69,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   zPoolFlex = '100';
   noteFlex = '23';
 
-  statsDataEvent$: Subject<CoreEvent>;
-  private statsEvents: Subscription;
+  statsDataEvent$: Subject<CoreEvent> = new Subject<CoreEvent>();
+  interval: Interval;
 
   // For empty state
   get empty(): boolean {
@@ -97,8 +101,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   // For widgetpool
   system: any;
   system_product = 'Generic';
-  pools: Pool[]; // = [];
-  volumeData: any; //= {};
+  pools: Pool[];
+  volumeData: VolumesData;
 
   nics: DashboardNetworkInterface[];
 
@@ -106,16 +110,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   shake = false;
 
   showSpinner = true;
+  initialLoading = true;
 
-  constructor(protected core: CoreService, protected ws: WebSocketService,
-    public mediaObserver: MediaObserver, private el: ElementRef, public modalService: ModalService) {
+  constructor(
+    protected core: CoreService,
+    protected ws: WebSocketService,
+    public mediaObserver: MediaObserver,
+    private el: ElementRef,
+    public modalService: ModalService,
+  ) {
     core.register({ observerClass: this, eventName: 'SidenavStatus' }).pipe(untilDestroyed(this)).subscribe(() => {
       setTimeout(() => {
         this.checkScreenSize();
       }, 100);
     });
-
-    this.statsDataEvent$ = new Subject<CoreEvent>();
 
     this.checkScreenSize();
 
@@ -300,7 +308,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isDataReady();
     });
 
-    this.core.emit({ name: 'VolumeDataRequest' });
     this.core.emit({ name: 'NicInfoRequest' });
     this.getDisksData();
   }
@@ -313,7 +320,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.dashStateReady = true;
     });
 
-    this.statsEvents = this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
+    this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((update) => {
       if (update.cpu) {
         this.statsDataEvent$.next({ name: 'CpuStats', data: update.cpu });
       }
@@ -344,45 +351,56 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  setVolumeData(evt: CoreEvent): void {
-    const vd: any = {};
+  setVolumeData(data: Dataset[]): void {
+    const vd: VolumesData = {};
 
-    for (const i in evt.data) {
-      if (typeof evt.data[i] == undefined || !evt.data[i]) { continue; }
+    for (const i in data) {
+      if (typeof data[i] == undefined || !data[i]) { continue; }
 
       let avail = null;
-      const used_pct = evt.data[i].used.parsed / (evt.data[i].used.parsed + evt.data[i].available.parsed);
-      avail = evt.data[i].available.parsed;
+      const used_pct = data[i].used.parsed / (data[i].used.parsed + data[i].available.parsed);
+      avail = data[i].available.parsed;
 
       const zvol = {
         avail,
-        id: evt.data[i].id,
-        name: evt.data[i].name,
-        used: evt.data[i].used.parsed,
+        id: data[i].id,
+        name: data[i].name,
+        used: data[i].used.parsed,
         used_pct: (used_pct * 100).toFixed(0) + '%',
       };
 
       vd[zvol.id] = zvol;
     }
+
     this.volumeData = vd;
   }
 
   getDisksData(): void {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+
+    this.interval = setInterval(() => {
+      this.core.emit({ name: 'VolumeDataRequest' });
+    }, 15000);
+
     this.core.register({ observerClass: this, eventName: 'PoolData' }).pipe(untilDestroyed(this)).subscribe((evt: PoolDataEvent) => {
       this.pools = evt.data;
 
       if (this.pools.length > 0) {
-        this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]).pipe(untilDestroyed(this)).subscribe((datasets) => {
-          this.setVolumeData({
-            name: 'RootDatasets',
-            data: datasets,
+        this.core
+          .register({ observerClass: this, eventName: 'VolumeData' })
+          .pipe(untilDestroyed(this))
+          .subscribe((evt: VolumeDataEvent) => {
+            this.setVolumeData(evt.data);
+            if (this.initialLoading) {
+              this.isDataReady();
+            }
+            this.initialLoading = false;
           });
-          this.isDataReady();
-        });
+        this.core.emit({ name: 'VolumeDataRequest' });
       } else {
-        const clone = { ...evt };
-        clone.data = [];
-        this.setVolumeData(clone);
+        this.setVolumeData([]);
         this.isDataReady();
       }
     });
@@ -400,7 +418,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isDataReady(): void {
-    const isReady = !!(this.statsDataEvent$ && typeof this.pools !== undefined && this.volumeData && this.nics);
+    const isReady = Boolean(
+      this.statsDataEvent$ && Array.isArray(this.pools) && this.nics,
+    );
 
     if (isReady) {
       this.availableWidgets = this.generateDefaultConfig();
@@ -408,7 +428,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.dashState = this.availableWidgets;
       }
 
-      this.formEvents$ = new Subject();
       this.formEvents$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
         switch (evt.name) {
           case 'FormSubmit':
@@ -478,12 +497,22 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   volumeDataFromConfig(item: DashConfigItem): any {
-    const spl = item.identifier.split(',');
-    const key = spl[0] as keyof Pool;
-    const value = spl[1];
+    let spl: string[];
+    let key: string;
+    let value: string;
+    if (item.identifier) {
+      spl = item.identifier.split(',');
+      key = spl[0] as keyof Pool;
+      value = spl[1];
+    }
 
-    const pool = this.pools.filter((pool) => pool[key] == value);
-    return this.volumeData && this.volumeData[pool[0].name] ? this.volumeData[pool[0].name] : '';
+    switch (item.name.toLowerCase()) {
+      case 'storage':
+        return this.volumeData;
+      default:
+        const pool = this.pools.find((pool) => pool[key as keyof Pool] === value);
+        return this.volumeData && this.volumeData[pool.name] ? this.volumeData[pool.name] : '';
+    }
   }
 
   dataFromConfig(item: DashConfigItem): any {
@@ -517,6 +546,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           : console.warn('DashConfigItem has no identifier!');
         if (data) { data = data[0].state; }
         break;
+      case 'storage':
+        data = this.pools;
+        break;
     }
 
     return data || console.warn('Data for this widget is not available!');
@@ -546,30 +578,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         widgetTypes.push(item.name);
       }
     });
-
-    /* let fieldSets = widgetTypes.map((widgetType) => {
-      return {
-        name: widgetType,
-        width: '100%',
-        label: true,
-        config: this.dashState.filter((w) => w.name == widgetType).map((widget) => {
-          let ph;
-          if(widget.identifier){
-            let spl = widget.identifier.split(',');
-            ph = spl[1];
-          } else {
-            ph = widget.name;
-          }
-
-          return {
-            type: 'checkbox',
-            name: ph,
-            value: widget.rendered,
-            placeholder: ph,
-          }
-        })
-      }
-    }); */
 
     const fieldSets = [
       {

@@ -1,6 +1,6 @@
 export interface VolumeData {
   avail?: number;
-  id?: number;
+  id?: number | string;
   is_decrypted?: boolean;
   is_upgraded?: boolean;
   mountpoint?: string;
@@ -12,4 +12,8 @@ export interface VolumeData {
   vol_encryptkey?: string;
   vol_guid?: string;
   vol_name?: string;
+}
+
+export interface VolumesData {
+  [pool: string]: VolumeData;
 }

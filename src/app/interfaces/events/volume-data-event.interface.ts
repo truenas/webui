@@ -1,8 +1,8 @@
 import { ApiService } from 'app/core/services/api.service';
-import { VolumeData } from '../volume-data.interface';
+import { Dataset } from 'app/interfaces/dataset.interface';
 
 export interface VolumeDataEvent {
   name: 'VolumeData';
   sender: ApiService;
-  data: VolumeData[];
+  data: Dataset[];
 }
