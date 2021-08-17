@@ -15,6 +15,7 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
@@ -46,6 +47,8 @@ enum ShareType {
   WebDAV = 'webdav',
 }
 
+type ShareTableRow = Partial<SmbShare & WebDavShare & NfsShare>;
+
 @UntilDestroy()
 @Component({
   selector: 'app-shares-dashboard',
@@ -63,7 +66,10 @@ export class SharesDashboardComponent implements AfterViewInit {
   nfsHasItems = 0;
   smbHasItems = 0;
   iscsiHasItems = 0;
-  noOfPopulatedTables = 0;
+
+  get noOfPopulatedTables(): number {
+    return this.nfsHasItems + this.smbHasItems + this.iscsiHasItems + this.webdavHasItems;
+  }
 
   webdavExpandableState: ExpandableTableState;
   nfsExpandableState: ExpandableTableState;
@@ -180,7 +186,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           parent: this,
           columns: [
             { name: helptext_sharing_nfs.column_path, prop: 'paths' },
-            { name: helptext_sharing_nfs.column_comment, prop: 'comment' },
+            { name: helptext_sharing_nfs.column_comment, prop: 'comment', hiddenIfEmpty: true },
             {
               name: helptext_sharing_nfs.column_enabled,
               prop: 'enabled',
@@ -202,8 +208,6 @@ export class SharesDashboardComponent implements AfterViewInit {
             if (data.length > 0) {
               this.nfsHasItems = 1;
               this.nfsExpandableState = ExpandableTableState.Expanded;
-              this.updateNumberOfTables();
-              this.hideColumnIfEmpty('comment', ShareType.NFS, data);
             }
           },
           limitRows: 5,
@@ -246,7 +250,6 @@ export class SharesDashboardComponent implements AfterViewInit {
             if (data.length > 0) {
               this.iscsiHasItems = 1;
               this.iscsiExpandableState = ExpandableTableState.Expanded;
-              this.updateNumberOfTables();
             }
           },
           limitRows: 5,
@@ -270,7 +273,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           parent: this,
           columns: [
             { prop: 'name', name: helptext_sharing_webdav.column_name },
-            { prop: 'comment', name: helptext_sharing_webdav.column_comment },
+            { prop: 'comment', name: helptext_sharing_webdav.column_comment, hiddenIfEmpty: true },
             { prop: 'path', name: helptext_sharing_webdav.column_path },
             {
               prop: 'perm',
@@ -307,8 +310,6 @@ export class SharesDashboardComponent implements AfterViewInit {
             if (data.length > 0) {
               this.webdavHasItems = 1;
               this.webdavExpandableState = ExpandableTableState.Expanded;
-              this.updateNumberOfTables();
-              this.hideColumnIfEmpty('comment', ShareType.WebDAV, data);
             }
           },
           detailsHref: '/sharing/webdav',
@@ -332,7 +333,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           columns: [
             { name: helptext_sharing_smb.column_name, prop: 'name' },
             { name: helptext_sharing_smb.column_path, prop: 'path' },
-            { name: helptext_sharing_smb.column_comment, prop: 'comment' },
+            { name: helptext_sharing_smb.column_comment, prop: 'comment', hiddenIfEmpty: true },
             {
               name: helptext_sharing_smb.column_enabled,
               prop: 'enabled',
@@ -354,18 +355,12 @@ export class SharesDashboardComponent implements AfterViewInit {
             if (data.length > 0) {
               this.smbHasItems = 1;
               this.smbExpandableState = ExpandableTableState.Expanded;
-              this.updateNumberOfTables();
-              this.hideColumnIfEmpty('comment', ShareType.SMB, data);
             }
           },
           limitRows: 5,
         };
       }
     }
-  }
-
-  updateNumberOfTables(): void {
-    this.noOfPopulatedTables = this.nfsHasItems + this.smbHasItems + this.iscsiHasItems + this.webdavHasItems;
   }
 
   add(tableComponent: TableComponent, share: ShareType, id?: number): void {
@@ -444,7 +439,6 @@ export class SharesDashboardComponent implements AfterViewInit {
   }
 
   getContainerClass(): string {
-    this.noOfPopulatedTables = this.webdavHasItems + this.nfsHasItems + this.smbHasItems + this.iscsiHasItems;
     switch (this.noOfPopulatedTables) {
       case 0:
         return 'zero-table-container';
@@ -520,7 +514,7 @@ export class SharesDashboardComponent implements AfterViewInit {
     this.dialog.dialogForm(conf);
   }
 
-  onCheckboxToggle(card: ShareType, row: any, param: string): void {
+  onCheckboxToggle(card: ShareType, row: ShareTableRow, param: keyof ShareTableRow): void {
     let updateCall: keyof ApiDirectory;
     switch (card) {
       case ShareType.SMB:
@@ -538,10 +532,10 @@ export class SharesDashboardComponent implements AfterViewInit {
 
     this.ws.call(updateCall, [row.id, { [param]: row[param] }]).pipe(untilDestroyed(this)).subscribe(
       (updatedEntity) => {
-        row[param] = updatedEntity[param];
+        (row as any)[param] = updatedEntity[param];
       },
-      (err) => {
-        row[param] = !row[param];
+      (err: WebsocketError) => {
+        (row as any)[param] = !row[param];
         new EntityUtils().handleWSError(this, err, this.dialog);
       },
     );
@@ -619,26 +613,6 @@ export class SharesDashboardComponent implements AfterViewInit {
         return count > 0 ? 'fn-theme-red' : 'fn-theme-grey';
       default:
         return 'fn-theme-orange';
-    }
-  }
-
-  hideColumnIfEmpty(column: string, type: ShareType, data: SmbShare[] | WebDavShare[] | NfsShare[]): void {
-    switch (type) {
-      case ShareType.SMB:
-        this.smbTableConf.columns.find((item) => item.prop === column).hidden = !(data as SmbShare[]).some((item) =>
-          item[column as keyof SmbShare]?.toString()?.trim());
-        break;
-      case ShareType.WebDAV:
-        this.webdavTableConf.columns.find((item) => item.prop === column).hidden = !(data as WebDavShare[]).some(
-          (item) => item[column as keyof WebDavShare]?.toString()?.trim(),
-        );
-        break;
-      case ShareType.NFS:
-        this.nfsTableConf.columns.find((item) => item.prop === column).hidden = !(data as NfsShare[]).some((item) =>
-          item[column as keyof NfsShare]?.toString()?.trim());
-        break;
-      default:
-        break;
     }
   }
 }

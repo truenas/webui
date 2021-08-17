@@ -16,7 +16,7 @@ import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, AppTableConfig, TableComponent } from 'app/pages/common/entity/table/table.component';
 import {
   AppLoaderService,
   DialogService,
@@ -60,7 +60,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   private navigation: Navigation;
   helptext = helptext;
 
-  interfaceTableConf = {
+  interfaceTableConf: AppTableConfig = {
     title: T('Interfaces'),
     queryCall: 'interface.query',
     deleteCall: 'interface.delete',
@@ -72,14 +72,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     dataSourceHelper: this.interfaceDataSourceHelper,
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     parent: this,
-    tableComponent: undefined,
     add() {
       this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent);
     },
     edit(row: any) {
       this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent, row.id);
     },
-    delete(row: any, table: any) {
+    delete(row: any, table: TableComponent) {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? T('Reset configuration for ') : T('Delete ');
       if (this.parent.ha_enabled) {
         this.parent.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
@@ -99,13 +98,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       key_props: ['name'],
     },
     confirmDeleteDialog: {
-      buildTitle: (intf: any) => {
+      buildTitle: (intf: any): string => {
         if (intf.type === NetworkInterfaceType.Physical) {
           return T('Reset Configuration');
         }
         return T('Delete');
       },
-      buttonMsg: (intf: any) => {
+      buttonMsg: (intf: any): string => {
         if (intf.type === NetworkInterfaceType.Physical) {
           return T('Reset Configuration');
         }
@@ -113,19 +112,18 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       },
       message: helptext.delete_dialog_text,
     },
-  } as AppTableConfig;
+  };
 
-  staticRoutesTableConf = {
+  staticRoutesTableConf: AppTableConfig = {
     title: T('Static Routes'),
     queryCall: 'staticroute.query',
     deleteCall: 'staticroute.delete',
     name: 'staticRoutes',
     columns: [
-      { name: T('Destination'), prop: 'destination', always_display: true },
+      { name: T('Destination'), prop: 'destination' },
       { name: T('Gateway'), prop: 'gateway' },
     ],
     parent: this,
-    tableComponent: undefined,
     add() {
       this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent);
     },
@@ -136,7 +134,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       title: 'static route',
       key_props: ['destination', 'gateway'],
     },
-  } as AppTableConfig;
+  };
 
   globalSettingsWidget: CardWidgetConf = {
     title: T('Global Configuration'),
@@ -150,7 +148,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     },
   };
 
-  openvpnTableConf = {
+  openvpnTableConf: AppTableConfig = {
     title: T('OpenVPN'),
     queryCall: 'service.query',
     name: 'openVPN',
@@ -178,10 +176,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
           : this.parent.modalService.open('slide-in-form', this.parent.openvpnServerComponent);
       }
     },
-  } as AppTableConfig;
+  };
 
-  ipmiTableConf = {
-    title: 'IPMI',
+  ipmiTableConf: AppTableConfig = {
+    title: T('IPMI'),
     queryCall: 'ipmi.query',
     columns: [
       { name: T('Channel'), prop: 'channel_lable' },
@@ -194,7 +192,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     edit(row: any) {
       this.parent.modalService.open('slide-in-form', this.parent.impiFormComponent, row.id);
     },
-  } as AppTableConfig;
+  };
 
   networkSummary: NetworkSummary;
   impiEnabled: boolean;
