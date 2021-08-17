@@ -107,7 +107,7 @@ export class InteractionManagerService {
     });
   }
 
-  registerElement(config: any, layout?: LayoutObject): DisplayObject {
+  registerElement(config: DisplayObjectConfig, layout?: LayoutObject): DisplayObject {
     const selector = config.id;
     const observable = multicast();
     const el = document.querySelector(selector);

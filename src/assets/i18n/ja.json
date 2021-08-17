@@ -407,6 +407,7 @@
   "Changing settings below will result in Kubernetes cluster re-initialization deleting installed apps and their data.": "",
   "Changing to a nightly train is one-way. Changing back to a stable train is not supported! ": "",
   "Channel": "",
+  "Channel {n}": "",
   "Check All": "",
   "Check this box if importing a certificate for which a CSR exists on this system": "",
   "CheckIP Path": "",

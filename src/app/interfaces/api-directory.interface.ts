@@ -77,6 +77,7 @@ import {
   InitShutdownScript,
   UpdateInitShutdownScriptParams,
 } from 'app/interfaces/init-shutdown-script.interface';
+import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { IscsiGlobalConfig } from 'app/interfaces/iscsi-global-config.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
@@ -110,7 +111,7 @@ import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-qu
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { ReportingConfig } from 'app/interfaces/reporting.interface';
+import { ReportingConfig, ReportingData, ReportingQueryParams } from 'app/interfaces/reporting.interface';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { RsyncConfig, RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
@@ -119,7 +120,7 @@ import { Sensor } from 'app/interfaces/sensor.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import {
-  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest, SmartTestResults,
+  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest, SmartTestResults, ManualSmartTest,
 } from 'app/interfaces/smart-test.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
@@ -464,7 +465,7 @@ export type ApiDirectory = {
   'ipmi.is_loaded': { params: void; response: boolean };
   'ipmi.identify': { params: any; response: any };
   'ipmi.update': { params: any; response: any };
-  'ipmi.query': { params: any; response: any };
+  'ipmi.query': { params: QueryParams<Ipmi>; response: Ipmi[] };
 
   // Group
   'group.query': { params: QueryParams<Group>; response: Group[] };
@@ -625,7 +626,7 @@ export type ApiDirectory = {
   'rsyncmod.delete': { params: any; response: any };
 
   // Reporting
-  'reporting.get_data': { params: any; response: any };
+  'reporting.get_data': { params: ReportingQueryParams; response: ReportingData[] };
   'reporting.update': { params: any; response: any };
   'reporting.config': { params: void; response: ReportingConfig };
   'reporting.graphs': { params: any; response: any };
@@ -686,7 +687,7 @@ export type ApiDirectory = {
   'smart.test.disk_choices': { params: void; response: Choices };
   'smart.update': { params: [SmartConfigUpdate]; response: SmartConfig };
   'smart.config': { params: void; response: SmartConfig };
-  'smart.test.manual_test': { params: [SmartManualTestParams[]]; response: any };
+  'smart.test.manual_test': { params: [SmartManualTestParams[]]; response: ManualSmartTest[] };
   'smart.test.query': { params: QueryParams<SmartTest>; response: SmartTest[] };
   'smart.test.create': { params: any; response: any };
   'smart.test.results': { params: QueryParams<SmartTestResults>; response: SmartTestResults[] };

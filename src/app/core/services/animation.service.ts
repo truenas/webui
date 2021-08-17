@@ -197,7 +197,7 @@ export class AnimationService {
     }
 
     const startY = animationTarget.target.get('y');
-    value(startY, animationTarget.target.set('y'));
+    value(startY, animationTarget.target.set('y') as any);
 
     const gravity = (start: number): ColdSubscription => {
       const g = physics({

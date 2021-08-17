@@ -415,6 +415,7 @@
   "Changing settings below will result in Kubernetes cluster re-initialization deleting installed apps and their data.": "",
   "Changing to a nightly train is one-way. Changing back to a stable train is not supported! ": "",
   "Channel": "",
+  "Channel {n}": "",
   "Check All": "",
   "Check the box for full upgrade. Leave unchecked to download only.": "",
   "Check the update server daily for                                   any updates on the chosen train.                                   Automatically download an update if                                   one is available. Click                                   <i>APPLY PENDING UPDATE</i> to install                                   the downloaded update.": "",

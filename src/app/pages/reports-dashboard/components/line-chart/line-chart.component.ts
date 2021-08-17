@@ -3,15 +3,16 @@ import {
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
 import { utcToZonedTime } from 'date-fns-tz';
-import Dygraph from 'dygraphs';
+import Dygraph, { dygraphs } from 'dygraphs';
 // eslint-disable-next-line
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import { BehaviorSubject } from 'rxjs';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
+import { ReportingData } from 'app/interfaces/reporting.interface';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
-import { Report, ReportData } from '../report/report.component';
+import { Report } from '../report/report.component';
 
 interface Conversion {
   value: number;
@@ -29,7 +30,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   @ViewChild('wrapper', { static: true }) el: ElementRef;
   @Input() chartId: string;
   @Input() chartColors: string[];
-  @Input() data: ReportData;
+  @Input() data: ReportingData;
   @Input() report: Report;
   @Input() title: string;
   @Input() timezone: string;
@@ -46,7 +47,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
   library = 'dygraph'; // dygraph or chart.js
 
-  chart: any;
+  chart: Dygraph;
   conf: any;
   columns: any;
   linechartData: any;
@@ -89,12 +90,12 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     this.legendLabel$.next(legendLabels);
   }
 
-  render(option?: string): void {
-    this.renderGraph(option);
+  render(update?: boolean): void {
+    this.renderGraph(update);
   }
 
   // dygraph renderer
-  renderGraph(option: any): void {
+  renderGraph(update?: boolean): void {
     if (this.data.name == 'cpu') {
       this.data.legend = this.data.legend.reverse();
       for (let i = 0; i < this.data.data.length; i++) {
@@ -115,6 +116,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     const gridLineColor = 'rgba(' + fg2RGB[0] + ', ' + fg2RGB[1] + ', ' + fg2RGB[2] + ', 0.25)';
     const yLabelSuffix = this.labelY === 'Bits/s' ? this.labelY.toLowerCase() : this.labelY;
 
+    // TODO: Try: dygraphs.Options
     const options = {
       drawPoints: false, // Must be disabled for smoothPlotter
       pointSize: 1,
@@ -179,16 +181,16 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
         }
       },
       stackedGraph: this.stacked,
-    };
+    } as unknown as dygraphs.Options;
 
-    if (option == 'update') {
+    if (update) {
       this.chart.updateOptions(options);
     } else {
       this.chart = new Dygraph(this.el.nativeElement, data, options);
     }
   }
 
-  makeColumn(data: ReportData, legendKey: any): number[] {
+  makeColumn(data: ReportingData, legendKey: any): number[] {
     const result: any = [];
 
     for (let i = 0; i < data.data.length; i++) {
@@ -200,7 +202,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return result;
   }
 
-  protected makeTimeAxis(rd: ReportData): any[] {
+  protected makeTimeAxis(rd: ReportingData): any[] {
     const structure = this.library == 'chart.js' ? 'columns' : 'rows';
     if (structure == 'rows') {
       // Push dates to row based data...
@@ -379,7 +381,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     if (changes.data) {
       if (this.chart) {
         // this.chart.destroy();
-        this.render('update');
+        this.render(true);
       } else {
         this.render();// make an update method?
       }

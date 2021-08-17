@@ -13,7 +13,7 @@ import helptext from 'app/helptext/storage/disks/disks';
 import { Choices } from 'app/interfaces/choices.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { SmartManualTestParams } from 'app/interfaces/smart-test.interface';
+import { ManualSmartTest, SmartManualTestParams } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -359,7 +359,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     this.dialogService.dialogForm(conf);
   }
 
-  generateManualTestSummary(res: any): void {
+  generateManualTestSummary(res: ManualSmartTest[]): void {
     let success_note = '<h4>Expected Finished Time:</h4>';
     let hasSuccessNote = false;
     let fail_note = '<h4>Errors:</h4>';

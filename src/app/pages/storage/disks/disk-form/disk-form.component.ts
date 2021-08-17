@@ -189,7 +189,7 @@ export class DiskFormComponent implements FormConfiguration {
   ) {
   }
 
-  resourceTransformIncomingRestData(data: Disk): any {
+  resourceTransformIncomingRestData(data: Disk): Disk {
     const transformed: any = { ...data };
     delete transformed.passwd;
     return transformed;
