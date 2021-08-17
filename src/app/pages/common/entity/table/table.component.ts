@@ -183,7 +183,6 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.populateTable();
 
     this.afterGetDataHook$.pipe(untilDestroyed(this)).subscribe(() => {
-      console.info('afterGetDataHook');
       this.updateColumns();
     });
   }
