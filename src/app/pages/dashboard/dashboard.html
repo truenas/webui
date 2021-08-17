@@ -173,8 +173,8 @@
                   (back)="onMobileBack()"
                   fxFlex="{{widgetWidth}}px"
                   fxFlex.xs="100"
-                  [pools]="pools"
-                  [volumeData]="volumeData"
+                  [pools]="dataFromConfig(widget)"
+                  [volumeData]="volumeDataFromConfig(widget)"
                   [widgetSize]="medium"
                   configurable="false">
                 </widget-storage>
