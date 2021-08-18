@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -70,15 +71,8 @@ export class ApiService {
     VolumeDataRequest: {
       apiCall: {
         namespace: 'pool.dataset.query',
-        args: [] as any[],
+        args: [[], { extra: { retrieve_children: false } }] as QueryParams<Dataset, ExtraDatasetQueryOptions>,
         responseEvent: 'VolumeData',
-      },
-      preProcessor(def: ApiCall) {
-        const queryFilters = [
-          ['name', '~', '^[^\/]+$'], // Root datasets only
-        ];
-
-        return { args: [queryFilters], ...def };
       },
     },
     DisksRequest: {
