@@ -19,3 +19,9 @@ export interface SshConnectionSetup {
     token?: string;
   };
 }
+
+export interface RemoteSshScanParams {
+  connect_timeout?: number;
+  host: string;
+  port: number;
+}
