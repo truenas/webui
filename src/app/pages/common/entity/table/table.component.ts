@@ -12,6 +12,7 @@ export interface AppTableAction<Row = any> {
   name: string;
   icon: string;
   matTooltip?: string;
+  onChanging?: boolean;
   onClick: (row: Row) => void;
 }
 
