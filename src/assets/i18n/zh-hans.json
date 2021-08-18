@@ -1783,7 +1783,7 @@
   "Group to which this ACL entry applies.": "此ACL条目适用的组。",
   "Group:": "组：",
   "Guest Account": "来宾账户",
-  "Guest Operating System": "来宾操作系统",
+  "Guest Operating System": "客户机操作系统",
   "Guide": "指导",
   "HA Disabled": "HA已禁用",
   "HA Enabled": "HA已启用",
