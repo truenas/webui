@@ -1,3 +1,4 @@
+import { ChartSchemaGroup, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
 export interface Catalog {
@@ -28,6 +29,7 @@ export type CatalogQueryParams = QueryParams<Catalog, {
     item_details?: boolean;
     cache?: boolean;
     retrieve_versions?: boolean;
+    include_chart_schema?: boolean;
   };
 }>;
 
@@ -47,6 +49,12 @@ export interface CatalogApp {
   latest_app_version: string;
   latest_human_version: string;
   versions: { [version: string]: CatalogAppVersion };
+  catalog?: {
+    id?: string;
+    label?: string;
+    train: string;
+  };
+  schema?: any;
 }
 
 export interface CatalogAppVersion {
@@ -59,10 +67,22 @@ export interface CatalogAppVersion {
   human_version: string;
   location: string;
   required_features: string[];
-  schema: any;
+  schema: {
+    groups: ChartSchemaGroup[];
+    questions: ChartSchemaNode[];
+    portals: {
+      web_portal: {
+        host: string[];
+        ports: string[];
+        protocols: string[];
+      };
+    };
+  };
   supported: boolean;
   values: any;
   version: string;
+  train?: string;
+  app?: string;
 }
 
 export interface ChartMetadata {
@@ -83,4 +103,8 @@ export interface ChartMetadataDependency {
   name: string;
   repository: string;
   version: string;
+}
+
+export interface CatalogItems {
+  [train: string]: CatalogTrain;
 }

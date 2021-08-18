@@ -20,7 +20,7 @@ import { ApiKey, CreateApiKeyRequest, UpdateApiKeyRequest } from 'app/interfaces
 import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
 import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import { Bootenv, SetBootenvAttributeParams } from 'app/interfaces/bootenv.interface';
-import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
+import { Catalog, CatalogItems, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import {
   CertificateAuthority,
   CertificateAuthorityCreate,
@@ -35,7 +35,6 @@ import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface'
 import {
   ChartRelease,
   ChartReleaseCreate,
-  ChartReleaseCreateResponse,
   ChartReleaseQueryParams,
 } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -45,6 +44,7 @@ import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
 import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import {
@@ -235,7 +235,7 @@ export type ApiDirectory = {
   'catalog.update': { params: any; response: any };
   'catalog.create': { params: any; response: any };
   'catalog.delete': { params: [/* name */ string]; response: boolean };
-  'catalog.items': { params: any; response: any };
+  'catalog.items': { params: any; response: CatalogItems };
   'catalog.sync': { params: any; response: any };
   'catalog.sync_all': { params: void; response: any };
   'catalog.get_item_details': { params: any; response: any };
@@ -261,7 +261,7 @@ export type ApiDirectory = {
   // Chart
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
-  'chart.release.create': { params: ChartReleaseCreate; response: ChartReleaseCreateResponse };
+  'chart.release.create': { params: ChartReleaseCreate; response: ChartRelease };
   'chart.release.update': { params: any; response: any };
   'chart.release.upgrade': { params: any; response: any };
   'chart.release.delete': { params: any; response: any };
@@ -281,7 +281,7 @@ export type ApiDirectory = {
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
   'core.get_jobs': { params: QueryParams<Job>; response: Job[] };
   'core.job_abort': { params: [/* jobId */ number]; response: void };
-  'core.bulk': { params: any; response: any };
+  'core.bulk': { params: CoreBulkQuery; response: CoreBulkResponse[] };
   'core.resize_shell': { params: ResizeShellRequest; response: void };
 
   // Config
@@ -394,7 +394,7 @@ export type ApiDirectory = {
 
   // Kubernetes
   'kubernetes.config': { params: void; response: KubernetesConfig };
-  'kubernetes.update': { params: [KubernetesConfigUpdate]; response: any };
+  'kubernetes.update': { params: [KubernetesConfigUpdate]; response: KubernetesConfig };
   'kubernetes.bindip_choices': { params: void; response: Choices };
 
   // Multipath
