@@ -1,4 +1,5 @@
 import { Component, DoCheck, IterableDiffers } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -22,14 +23,14 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   entityForm: EntityFormComponent;
   pk: string;
   route_success: string[];
-  searchedEntries: any[] = [];
+  searchedEntries: string[] = [];
   entryField: FieldConfig;
   isNew = true;
   private dq: string;
   private oq: string;
   private selectedEntriesField: FieldConfig;
-  private selectedEntriesValue: any;
-  private entryErrs: any;
+  private selectedEntriesValue: FormControl;
+  private entryErrs: HTMLCollectionOf<Element>;
   private entryErrBool = false;
   save_button_enabled = false;
   private differ: any;
@@ -143,7 +144,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
     this.entityForm = entityEdit;
     this.route_success = ['storage', 'pools', 'user-quotas', this.pk];
     this.selectedEntriesField = _.find(this.fieldConfig, { name: 'system_entries' });
-    this.selectedEntriesValue = this.entityForm.formGroup.controls['system_entries'];
+    this.selectedEntriesValue = this.entityForm.formGroup.controls['system_entries'] as FormControl;
     this.entryField = _.find(this.fieldSets.find((set) => set.name === helptext.users.user_title).config,
       { name: 'searched_entries' });
 

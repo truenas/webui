@@ -37,11 +37,15 @@ export class FormColorpickerComponent implements Field, OnInit {
     this.config.value = this.group.value[this.config.name];
   }
 
-  cpListener(evt: string, data: any): void {
+  cpListener(evt: string, data: string): void {
     this.group.value[this.config.name] = data;
   }
 
-  inputListener(evt: string, data: any): void {
+  inputListener(evt: string, data: {
+    input: string;
+    value: string | number;
+    color: string;
+  }): void {
     this.group.value[this.config.name] = data;
   }
 

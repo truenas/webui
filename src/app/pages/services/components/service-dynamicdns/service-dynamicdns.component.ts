@@ -151,7 +151,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     });
     entityForm.submitFunction = this.submitFunction;
 
-    entityForm.formGroup.controls['provider'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['provider'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       if (res === 'custom') {
         this.hideField('custom_ddns_server', false, entityForm);
         this.hideField('custom_ddns_path', false, entityForm);

@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { ReportingGraphsEvent } from 'app/interfaces/events/reporting-graphs-event.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -118,19 +119,21 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     this.core.emit({ name: 'UserPreferencesRequest' });
 
-    this.core.register({ observerClass: this, eventName: 'ReportingGraphs' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ReportingGraphs' }).pipe(untilDestroyed(this)).subscribe((evt: ReportingGraphsEvent) => {
       if (evt.data) {
-        const allReports: any[] = evt.data.map((report: any) => {
+        const allReports: any[] = evt.data.map((report) => {
           const list = [];
-          if (report.identifiers) {
-            for (let i = 0; i < report.identifiers.length; i++) {
+          if ((report as any).identifiers) {
+            for (let i = 0; i < (report as any).identifiers.length; i++) {
               list.push(true);
             }
           } else {
             list.push(true);
           }
-          report.isRendered = list;
-          return report;
+          return {
+            ...report,
+            isRendered: list,
+          };
         });
 
         this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));

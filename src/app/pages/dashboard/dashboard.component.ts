@@ -95,7 +95,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   systemInformation: SystemInfoWithFeatures;
 
   // For widgetpool
-  system: any;
   system_product = 'Generic';
   pools: Pool[]; // = [];
   volumeData: any; //= {};

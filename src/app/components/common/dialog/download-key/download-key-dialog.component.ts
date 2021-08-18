@@ -19,8 +19,8 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 })
 export class DownloadKeyModalDialog {
   new = false;
-  volumeId: any;
-  volumeName: any;
+  volumeId: number;
+  volumeName: string;
   fileName: string;
   isDownloaded = false;
   help = helptext;
@@ -36,7 +36,7 @@ export class DownloadKeyModalDialog {
   ) { }
 
   downloadKey(): void {
-    const payload = [this.volumeId];
+    const payload: any[] = [this.volumeId];
     if (this.fileName !== undefined) {
       payload.push(this.fileName);
     }
