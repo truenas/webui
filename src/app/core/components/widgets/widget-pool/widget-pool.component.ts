@@ -222,7 +222,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     });
 
     this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      const currentPath = this.path[this.currentSlideIndex as number] as Slide;
+      const currentPath = this.path[this.currentSlideIndex as number];
       const currentName = currentPath && currentPath.dataSource
         ? this.currentMultipathDetails
           ? this.checkMultipathLabel(currentPath.dataSource.disk)

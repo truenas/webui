@@ -55,7 +55,7 @@ export class StorageService {
     document.body.appendChild(dlink);
     dlink.download = filename;
     dlink.href = window.URL.createObjectURL(blob);
-    dlink.onclick = function () {
+    dlink.onclick = () => {
       // revokeObjectURL needs a delay to work properly
       const that: any = this;
       setTimeout(() => {

@@ -149,7 +149,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
       { name: 'searched_entries' });
 
     this.ws.call('user.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      res.map((entry) => {
+      res.forEach((entry) => {
         this.selectedEntriesField.options.push({ label: entry.username, value: entry.uid });
       });
     });
