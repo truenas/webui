@@ -138,7 +138,7 @@
     "@biesbjerg/ngx-translate-extract": "2.3.4",
     "@types/chart.js": "2.9.4",
     "@types/chartist": "0.9.47",
-    "@types/d3": "5.16.0",
+    "@types/d3": "~5.16.0",
     "@types/hopscotch": "~0.2.30",
     "@types/lodash": "4.14.160",
     "@types/node": "~10.12.7",
