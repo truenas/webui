@@ -26,24 +26,24 @@ export interface VirtualMachine {
 }
 
 export type VmStopParams = [
-  /* id */ number,
-  /* params */ {
+  id: number,
+  params: {
     force: boolean;
     force_after_timeout: boolean;
   },
 ];
 
 export type VmDisplayWebUriParams = [
-  /* id */ number,
-  /* domain */ string,
-  /* options */ {
+  id: number,
+  domain: string,
+  options?: {
     devices_passwords: [
       {
         device_id: number;
         password: string;
       },
     ];
-  }?,
+  },
 ];
 
 export interface VmDisplayWebUri {
@@ -57,11 +57,11 @@ export interface VmDisplayResponse {
 }
 
 export type VmCloneParams = [
-  /* id */ number,
-  /* newName */ string?,
+  id: number,
+  newName?: string,
 ];
 
 export type VmDeleteParams = [
-  /* id */ number,
-  /* params */ { zvols: boolean; force: boolean },
+  id: number,
+  params: { zvols: boolean; force: boolean },
 ];

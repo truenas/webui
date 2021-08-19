@@ -110,20 +110,22 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       selectedAceIndex,
       acl: {
         ...state.acl,
-        acl: (state.acl.acl as unknown[]).filter((_, index) => index !== indexToRemove),
+        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).filter((_, index) => index !== indexToRemove),
       },
       acesWithError: newAcesWithError,
     } as DatasetAclEditorState;
   });
 
   readonly addAce = this.updater((state) => {
-    const newAce = state.acl.acltype === AclType.Nfs4 ? { ...newNfsAce } : { ...newPosixAce };
+    const newAce = state.acl.acltype === AclType.Nfs4
+      ? { ...newNfsAce } as NfsAclItem
+      : { ...newPosixAce } as PosixAclItem;
 
     return {
       ...state,
       acl: {
         ...state.acl,
-        acl: (state.acl.acl as unknown[]).concat(newAce),
+        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).concat(newAce),
       },
       selectedAceIndex: state.acl.acl.length,
     } as DatasetAclEditorState;
@@ -139,17 +141,16 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   readonly updateSelectedAce = this.updater((
     state: DatasetAclEditorState, updatedAce: NfsAclItem | PosixAclItem,
   ) => {
-    // TODO: Remove extra typing after upgrading Typescript
-    const updatedAces = (state.acl.acl as unknown[]).map((ace, index) => {
+    const updatedAces = (state.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace, index) => {
       if (index !== state.selectedAceIndex) {
         return ace;
       }
 
       return {
-        ...ace as NfsAclItem | PosixAclItem,
+        ...ace,
         ...updatedAce,
       };
-    }) as NfsAclItem[] | PosixAclItem[];
+    });
 
     return {
       ...state,
@@ -268,7 +269,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
           map((aclItems) => {
             const state = this.get();
             // TODO: Working around backend https://jira.ixsystems.com/browse/NAS-111464
-            const newAclItems = (aclItems as unknown[]).map((ace: NfsAclItem | PosixAclItem) => {
+            const newAclItems = (aclItems as (NfsAclItem | PosixAclItem)[]).map((ace) => {
               let who = '';
               if ([NfsAclTag.Owner, PosixAclTag.UserObject].includes(ace.tag)) {
                 who = state.stat.user;
@@ -326,7 +327,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     const groupWhoToIds = new Map<string, number>();
     const requests: Observable<unknown>[] = [];
 
-    (editorState.acl.acl as unknown[]).map((ace: NfsAclItem | PosixAclItem, index: number) => {
+    (editorState.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace, index) => {
       if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
         requests.push(
           this.userService.getUserByName(ace.who).pipe(
@@ -380,7 +381,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       withLatestFrom(this.state$),
       filter(([_, currentState]) => currentState.acesWithError.length === 0),
       map(([_, currentState]) => {
-        const convertedAces = (currentState.acl.acl as unknown[]).map((ace: NfsAclItem | PosixAclItem) => {
+        const convertedAces = (currentState.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace) => {
           const aceAttributes = omit(ace, ['who']);
           if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
             const id = userWhoToIds.has(ace.who) ? userWhoToIds.get(ace.who) : -1;

@@ -1,6 +1,6 @@
 export type PoolRemoveParams = [
-  /* id */ number,
-  {
+  id: number,
+  params: {
     label: string | number;
   },
 ];
