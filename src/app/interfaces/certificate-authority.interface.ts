@@ -74,8 +74,6 @@ export interface CertificateAuthorityUpdate {
   cert_extensions: CertificateExtensions;
 }
 
-export interface CertificateAuthorityCreate extends CertificateAuthorityUpdate {}
-
 export interface CertificateAuthority {
   CA_type_existing: boolean;
   CA_type_intermediate: boolean;

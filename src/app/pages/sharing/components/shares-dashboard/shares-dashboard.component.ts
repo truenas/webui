@@ -18,7 +18,10 @@ import {
   ExpandableTableState,
   InputExpandableTableConf,
 } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
-import { TableComponent, AppTableHeaderExtraAction } from 'app/pages/common/entity/table/table.component';
+import {
+  TableComponent,
+  AppTableHeaderAction,
+} from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -551,7 +554,7 @@ export class SharesDashboardComponent implements AfterViewInit {
     }
   }
 
-  getTableExtraActions(service: Service): AppTableHeaderExtraAction[] {
+  getTableExtraActions(service: Service): AppTableHeaderAction[] {
     return [
       {
         label: service.state === ServiceStatus.Running ? T('Turn Off Service') : T('Turn On Service'),

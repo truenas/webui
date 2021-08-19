@@ -241,11 +241,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
   private processThemeColors(theme: Theme): string[] {
     this.theme = theme;
-    const colors: string[] = [];
-    theme.accentColors.map((color) => {
-      colors.push((theme as any)[color]);
-    });
-    return colors;
+    return theme.accentColors.map((color) => (theme as any)[color]);
   }
 
   private createColorObject(): any {

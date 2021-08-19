@@ -145,7 +145,7 @@ export class EntityUtils {
     }
   }
 
-  isObject = function (a: unknown): a is Record<string, unknown> {
+  isObject = (a: unknown): a is Record<string, unknown> => {
     return (!!a) && (a.constructor === Object);
   };
 

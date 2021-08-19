@@ -493,7 +493,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.afterInit();
   }
 
-  async afterInit(): Promise<void> {
+  afterInit(): void {
     this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
         _.find(this.diskFieldConfig, { name: 'path' }).options.push(
@@ -507,7 +507,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       });
     });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing Display device, hide Display option.
-    await this.ws.call('vm.query', [[['id', '=', this.vmid]]]).pipe(untilDestroyed(this)).subscribe((vm) => {
+    this.ws.call('vm.query', [[['id', '=', this.vmid]]]).pipe(untilDestroyed(this)).subscribe((vm) => {
       const dtypeField = _.find(this.fieldConfig, { name: 'dtype' });
       const vmDisplayDevices = _.filter(vm[0].devices, { dtype: VmDeviceType.Display });
       if (vm[0].bootloader === VmBootloader.Grub || vm[0].bootloader === VmBootloader.UefiCsm || vmDisplayDevices) {

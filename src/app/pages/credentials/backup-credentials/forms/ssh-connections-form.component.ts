@@ -240,7 +240,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     });
   }
 
-  async preInit(): Promise<void> {
+  preInit(): void {
     if (this.rowNum) {
       this.queryCallOption = [['id', '=', this.rowNum]];
       _.find(this.fieldSets[0].config, { name: 'setup_method' }).isHidden = true;

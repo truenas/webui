@@ -19,8 +19,6 @@ export interface AppTableHeaderAction {
   onClick: () => void;
 }
 
-export interface AppTableHeaderExtraAction extends AppTableHeaderAction {}
-
 export interface AppTableConfig<P = any> {
   title?: string;
   titleHref?: string;
@@ -44,7 +42,7 @@ export interface AppTableConfig<P = any> {
   alwaysHideViewMore?: boolean;
   parent: P;
   tableActions?: AppTableHeaderAction[];
-  tableExtraActions?: AppTableHeaderExtraAction[];
+  tableExtraActions?: AppTableHeaderAction[];
 
   add?(): any; // add action function
   afterGetData?(data: any): void;

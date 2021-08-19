@@ -201,7 +201,7 @@ export class CertificatesDashComponent implements OnInit {
           },
           delete(row: CertificateAuthority, table: TableComponent) {
             if (row.signed_certificates > 0) {
-              (this.parent.dialogService as DialogService).confirm({
+              this.parent.dialogService.confirm({
                 title: helptext_system_ca.delete_error.title,
                 message: helptext_system_ca.delete_error.message,
                 hideCheckBox: true,

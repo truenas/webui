@@ -345,7 +345,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               this.conf.dataHandler(this);
             } else {
               for (const key in this.wsResponse) {
-                this.wsfg = this.formGroup.controls[key] as AbstractControl;
+                this.wsfg = this.formGroup.controls[key];
                 this.wsResponseIdx = this.wsResponse[key];
                 if (this.wsfg) {
                   const current_field = this.fieldConfig.find((control) => control.name === key);

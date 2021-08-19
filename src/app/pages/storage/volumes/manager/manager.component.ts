@@ -207,7 +207,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       afterInit(entityDialog: EntityDialogComponent) {
         const copy_desc = _.find(this.fieldConfig, { name: 'copy_desc' });
         const parent = entityDialog.parent;
-        const setParatext = function (vdevs: number): void {
+        const setParatext = (vdevs: number): void => {
           const used = parent.first_data_vdev_disknum * vdevs;
           const remaining = parent.duplicable_disks.length - used;
           const size = filesize(parent.first_data_vdev_disksize, { standard: 'iec' });

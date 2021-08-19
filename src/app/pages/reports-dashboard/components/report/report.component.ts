@@ -218,12 +218,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   private processThemeColors(theme: Theme): string[] {
-    // this.theme = theme;
-    const colors: string[] = [];
-    theme.accentColors.map((color) => {
-      colors.push((theme as any)[color]);
-    });
-    return colors;
+    return theme.accentColors.map((color) => (theme as any)[color]);
   }
 
   setChartInteractive(value: boolean): void {

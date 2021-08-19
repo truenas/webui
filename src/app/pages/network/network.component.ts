@@ -617,6 +617,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         item.service_label = item.service.charAt(8).toUpperCase() + item.service.slice(9);
         return item;
       }
+
+      return undefined;
     });
   }
 

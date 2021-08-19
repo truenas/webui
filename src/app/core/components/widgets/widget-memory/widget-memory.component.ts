@@ -161,7 +161,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   // chart.js renderer
   renderChart(): void {
     if (!this.ctx) {
-      const el = this.el.nativeElement.querySelector('#memory-usage-chart canvas') as HTMLCanvasElement;
+      const el: HTMLCanvasElement = this.el.nativeElement.querySelector('#memory-usage-chart canvas');
       if (!el) { return; }
 
       const ds = this.makeDatasets(this.memData.data);
@@ -234,11 +234,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   private processThemeColors(theme: Theme): string[] {
-    const colors: string[] = [];
-    theme.accentColors.map((color) => {
-      colors.push((theme as any)[color]);
-    });
-    return colors;
+    return theme.accentColors.map((color) => (theme as any)[color]);
   }
 
   rgbToString(rgb: string[], alpha?: number): string {

@@ -410,7 +410,7 @@ export class DeviceEditComponent implements OnInit {
     }
   }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     this.preInit();
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.deviceid = parseInt(params['pk'], 10);
@@ -451,7 +451,7 @@ export class DeviceEditComponent implements OnInit {
     this.displayFormGroup = this.entityFormService.createFormGroup(this.displayFieldConfig);
 
     this.activeFormGroup = this.cdromFormGroup;
-    await this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]])
+    this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]])
       .pipe(untilDestroyed(this))
       .subscribe((device) => {
         if (
