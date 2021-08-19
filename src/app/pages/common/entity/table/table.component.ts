@@ -219,7 +219,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   updateColumns(): void {
     this.displayedColumns = this._tableConf.columns
       .map((column) => {
-        if (this.dataSource && column?.hiddenIfEmpty) {
+        if (this.dataSource && column?.hiddenIfEmpty && !column?.hidden) {
           const hasSomeData = this.dataSource.some((row) => row[column.prop]?.toString().trim());
           column.hidden = !hasSomeData;
         }
