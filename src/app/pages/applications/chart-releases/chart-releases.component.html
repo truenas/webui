@@ -3,7 +3,7 @@
       <div class="content-wrapper" fxLayout="row">
         <div class="logo-container">
           <div class="logo">
-            <img [src]="item.icon" [src-fallback]="imagePlaceholder"/>
+            <img [src]="item.chart_metadata.icon" [src-fallback]="imagePlaceholder"/>
           </div>
           <div class="badge-area">
             <div class="partner-badge capitalized-text">
@@ -26,7 +26,7 @@
           </div>
 
           <div class="chart-button-row" fxLayout="row" fxLayoutAlign="end end" (click)="$event.stopPropagation()">
-            <button mat-button (click)="portal(item.portal)" *ngIf="item.status === ChartReleaseStatus.Active && item.portal"
+            <button mat-button (click)="portal(item)" *ngIf="item.status === ChartReleaseStatus.Active && item.portals && item.portals.web_portal && item.portals.web_portal[0]"
               ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-portal">
               {{ 'Portal' | translate }}
             </button>
@@ -44,12 +44,12 @@
       </div>
 
       <div class="ports" textLimiter threshold="28">
-        {{ item.used_ports | lowercase }}
+        {{ appService.getPorts(item) | lowercase }}
       </div>
 
       <div class="more-info">
           <span class="status" [ngClass]="item.status === ChartReleaseStatus.Active ? 'active' : 'other'">{{item.status}}
-            <ng-container *ngIf="item.desired > 1">{{ item.count }}</ng-container>
+            <ng-container *ngIf="item.pod_status.desired > 1">{{ item.pod_status.available }}/{{ item.pod_status.desired }}</ng-container>
 
           </span>
           <button name="chart-actions" mat-icon-button [matMenuTriggerFor]="actionsMenu"

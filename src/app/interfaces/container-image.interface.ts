@@ -19,4 +19,5 @@ export interface ContainerImage {
   size: number;
   system_image: boolean;
   update_available: boolean;
+  state?: string;
 }

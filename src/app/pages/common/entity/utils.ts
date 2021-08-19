@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -273,7 +274,7 @@ export class EntityUtils {
     return result;
   }
 
-  parseSchemaFieldConfig(schemaConfig: any): FieldConfig[] {
+  parseSchemaFieldConfig(schemaConfig: ChartSchemaNode): FieldConfig[] {
     let results: FieldConfig[] = [];
 
     if (schemaConfig.schema.hidden) {
@@ -301,7 +302,7 @@ export class EntityUtils {
 
     let relations: Relation[] = null;
     if (schemaConfig.schema.show_if) {
-      relations = (schemaConfig.schema.show_if as any[]).map((item) => ({
+      relations = schemaConfig.schema.show_if.map((item) => ({
         fieldName: item[0],
         operatorName: item[1],
         operatorValue: item[2],
@@ -315,7 +316,7 @@ export class EntityUtils {
     if (schemaConfig.schema.enum) {
       fieldConfig['type'] = 'select';
       fieldConfig['enableTextWrapForOptions'] = true;
-      fieldConfig['options'] = (schemaConfig.schema.enum as any[]).map((option) => ({
+      fieldConfig['options'] = schemaConfig.schema.enum.map((option) => ({
         value: option.value,
         label: option.description,
       }));
@@ -362,8 +363,8 @@ export class EntityUtils {
       fieldConfig['width'] = '100%';
       fieldConfig['listFields'] = [];
 
-      let listFields: any[] = [];
-      (schemaConfig.schema.items as any[]).forEach((item) => {
+      let listFields: FieldConfig[] = [];
+      schemaConfig.schema.items.forEach((item) => {
         const fields = this.parseSchemaFieldConfig(item);
         listFields = listFields.concat(fields);
       });
@@ -379,8 +380,8 @@ export class EntityUtils {
           fieldConfig['relation'] = this.createRelations(relations);
         }
 
-        let subFields: any[] = [];
-        (schemaConfig.schema.attrs as any[]).forEach((dictConfig) => {
+        let subFields: FieldConfig[] = [];
+        schemaConfig.schema.attrs.forEach((dictConfig) => {
           const fields = this.parseSchemaFieldConfig(dictConfig);
           subFields = subFields.concat(fields);
         });
@@ -397,7 +398,7 @@ export class EntityUtils {
         results.push(fieldConfig);
 
         if (schemaConfig.schema.subquestions) {
-          (schemaConfig.schema.subquestions as any[]).forEach((subquestion) => {
+          schemaConfig.schema.subquestions.forEach((subquestion) => {
             const subResults = this.parseSchemaFieldConfig(subquestion);
 
             if (schemaConfig.schema.show_subquestions_if !== undefined) {

@@ -1,5 +1,5 @@
 import {
-  Component, Input, OnChanges, SimpleChanges,
+  AfterViewInit, Component, Input, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -10,6 +10,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
+import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { T } from 'app/translate-marker';
 
 interface ItemInfo {
@@ -19,6 +20,8 @@ interface ItemInfo {
 }
 
 interface PoolInfo {
+  freeSpace: string;
+  totalDisks: string;
   status: ItemInfo;
   usedSpace: ItemInfo;
   disksWithError: ItemInfo;
@@ -34,9 +37,9 @@ interface PoolInfoMap {
   templateUrl: './widget-storage.component.html',
   styleUrls: ['./widget-storage.component.scss'],
 })
-export class WidgetStorageComponent extends WidgetComponent implements OnChanges {
+export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() pools: Pool[];
-  @Input() volumeData: any;
+  @Input() volumeData: VolumesData;
   title: string = T('Storage');
 
   poolInfoMap: PoolInfoMap = {};
@@ -60,6 +63,11 @@ export class WidgetStorageComponent extends WidgetComponent implements OnChanges
       this.updateGridInfo();
       this.updatePoolInfoMap();
     }
+  }
+
+  ngAfterViewInit(): void {
+    this.updateGridInfo();
+    this.updatePoolInfoMap();
   }
 
   updateGridInfo(): void {
@@ -101,7 +109,9 @@ export class WidgetStorageComponent extends WidgetComponent implements OnChanges
   updatePoolInfoMap(): void {
     this.pools.forEach((pool) => {
       this.poolInfoMap[pool.name] = {
+        totalDisks: this.totalDisks(pool),
         status: this.getStatusItemInfo(pool),
+        freeSpace: this.getFreeSpace(pool),
         usedSpace: this.getUsedSpaceItemInfo(pool),
         disksWithError: this.getDiskWithErrorsItemInfo(pool),
       };
@@ -145,23 +155,23 @@ export class WidgetStorageComponent extends WidgetComponent implements OnChanges
   }
 
   getUsedSpaceItemInfo(pool: Pool): ItemInfo {
-    const vol = this.volumeData[pool.name];
+    const volume = this.volumeData[pool.name];
     let level = 'safe';
     let icon = 'mdi-check-circle';
     let value;
 
-    if (!vol || !vol.used_pct) {
+    if (!volume || !volume.used_pct) {
       value = T('Unknown');
       level = 'warn';
       icon = 'mdi-alert-circle';
     } else {
       if (this.cols == 1) {
-        value = vol.used_pct;
+        value = volume.used_pct;
       } else {
-        value = this.getSizeString(vol.used) + ' of ' + this.getSizeString(vol.avail) + ' (' + vol.used_pct + ')';
+        value = this.getSizeString(volume.used) + ' of ' + this.getSizeString(volume.avail) + ' (' + volume.used_pct + ')';
       }
 
-      if (this.percentAsNumber(vol.used_pct) >= 80) {
+      if (this.percentAsNumber(volume.used_pct) >= 80) {
         level = 'warn';
         icon = 'mdi-alert-circle';
       } else {
@@ -240,33 +250,22 @@ export class WidgetStorageComponent extends WidgetComponent implements OnChanges
   }
 
   getFreeSpace(pool: Pool): string {
-    let displayValue = '';
-
-    const vol = this.volumeData[pool.name];
-    if (vol && vol.used_pct) {
-      let usedValue;
-      if (isNaN(vol.used)) {
-        usedValue = vol.used;
-      } else {
-        usedValue = filesize(vol.used, { exponent: 3 });
+    const volume = this.volumeData[pool.name];
+    if (volume && volume.used_pct) {
+      if (isNaN(volume.used) ? volume.used : filesize(volume.used, { exponent: 3 }) !== 'Locked') {
+        return this.getSizeString(volume.avail);
       }
-
-      if (usedValue !== 'Locked') {
-        displayValue = this.getSizeString(vol.avail);
-      }
-    } else if (!vol || typeof vol.avail == undefined) {
-      displayValue = T('Unknown');
+    } else if (!volume || typeof volume.avail == undefined) {
+      return T('Unknown');
     } else {
-      displayValue = T('Gathering data...');
+      return T('Gathering data...');
     }
-
-    return displayValue;
   }
 
-  getSizeString(volSize: number): string {
+  getSizeString(volumeSize: number): string {
     let unit;
     let size;
-    let displayValue = filesize(volSize, { standard: 'iec' });
+    let displayValue = filesize(volumeSize, { standard: 'iec' });
     if (displayValue.slice(-2) === ' B') {
       unit = displayValue.slice(-1);
       size = new Intl.NumberFormat().format(parseFloat(displayValue.slice(0, -2)));
@@ -278,7 +277,7 @@ export class WidgetStorageComponent extends WidgetComponent implements OnChanges
     if (size.charAt(size.length - 2) === '.' || size.charAt(size.length - 2) === ',') {
       size = size.concat('0');
     }
-    displayValue = size + ' ' + unit;
+    displayValue = `${size} ${unit}`;
 
     return displayValue;
   }

@@ -16,6 +16,7 @@ import { VDevType } from 'app/enums/v-dev-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
+import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { T } from 'app/translate-marker';
 
 interface Slide {
@@ -49,22 +50,6 @@ export interface Disk {
   displaysize?: string;
 }
 
-export interface VolumeData {
-  avail?: number;
-  id?: number;
-  is_decrypted?: boolean;
-  is_upgraded?: boolean;
-  mountpoint?: string;
-  name?: string;
-  status?: string;
-  used?: number;
-  used_pct?: string;
-  vol_encrypt?: number;
-  vol_encryptkey?: string;
-  vol_guid?: string;
-  vol_name?: string;
-}
-
 @UntilDestroy()
 @Component({
   selector: 'widget-pool',
@@ -73,7 +58,7 @@ export interface VolumeData {
 })
 export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
   @Input() poolState: Pool;
-  @Input() volumeData: any;// VolumeData;
+  @Input() volumeData: VolumeData;
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
   @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
 
