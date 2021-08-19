@@ -2207,10 +2207,10 @@
   resolved "https://registry.yarnpkg.com/@types/chart.js/-/chart.js-2.9.4.tgz#19d12fae10536e7a2a6ea768c7a3811c626ca455"
   integrity sha512-uKF7vOdTTAfrsKREKG4oojDqE/dQ5GkwdMRQGfk19aKmeC4wIF6eTWdN98PA8d+F4TPI8hy7oOTB6/JoWepEJw==
 
-"@types/chartist@0.9.47":
-  version "0.9.47"
-  resolved "https://registry.yarnpkg.com/@types/chartist/-/chartist-0.9.47.tgz#2c5e609b3900ebeb315be9dbb72847cf0f45371b"
-  integrity sha512-TXNsIb2xSmPIJm1B+8UQThWOIVBGWMHY3EM/EVQoQReaK03fzWsifqHVp+87KEwo3XPj2BdSXBnktmYkhL61oA==
+"@types/chartist@~0.9.47":
+  version "0.9.48"
+  resolved "https://registry.yarnpkg.com/@types/chartist/-/chartist-0.9.48.tgz#1894d38ff0c9cde20905950656e5216a658e57d4"
+  integrity sha512-whqb8v+GHdmqczmIZa+lypR/crR7lrW2paE1Y6u/u2mgKZhDB5AyV+F9SWEPVoEpCYCdvr8qmJACKSofeMShGg==
 
 "@types/d3-array@^1":
   version "1.2.9"
