@@ -133,7 +133,7 @@ export class ApiKeysComponent implements EntityTableConfig {
         },
       );
     } else {
-      that.ws.call(that.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
+      that.ws.call(that.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(that)).subscribe(
         (res) => {
           entityDialogForm.dialogRef.close(true);
           that.displayKey(res.key);

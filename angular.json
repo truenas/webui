@@ -58,7 +58,6 @@
             ],
             "scripts": [
               "node_modules/hopscotch/dist/js/hopscotch.min.js",
-              "node_modules/hammerjs/hammer.js",
               "node_modules/element-resize-detector/dist/element-resize-detector.min.js",
               "node_modules/pixi.js/dist/pixi.min.js",
               "node_modules/pixi-filters/dist/pixi-filters.js"
@@ -69,7 +68,7 @@
             "production": {
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
+              "sourceMap": true,
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,

@@ -1,6 +1,7 @@
 import {
   Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, TemplateRef, ChangeDetectorRef, OnChanges,
   SimpleChanges,
+  OnInit,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -56,7 +57,7 @@ export interface Disk {
   templateUrl: './widget-pool.component.html',
   styleUrls: ['./widget-pool.component.scss'],
 })
-export class WidgetPoolComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
+export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
@@ -68,7 +69,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   @ViewChild('disk_details', { static: false }) disk_details: TemplateRef<void>;
   @ViewChild('empty', { static: false }) empty: TemplateRef<void>;
   templates: { [template: string]: TemplateRef<void> };
-  tpl = this.overview;
+  tpl: TemplateRef<void>;
 
   // NAVIGATION
   currentSlide = '0';
@@ -162,7 +163,7 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
     return allDiskNames;
   }
 
-  title: string = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
+  title: string;
   voldataavail = false;
   displayValue: any;
   diskSize: string;
@@ -184,6 +185,11 @@ export class WidgetPoolComponent extends WidgetComponent implements AfterViewIni
   constructor(public router: Router, public translate: TranslateService, private cdr: ChangeDetectorRef) {
     super(translate);
     this.configurable = false;
+  }
+
+  ngOnInit(): void {
+    this.title = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
+    this.tpl = this.overview;
   }
 
   ngOnDestroy(): void {
