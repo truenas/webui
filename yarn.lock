@@ -2679,10 +2679,10 @@
   resolved "https://registry.yarnpkg.com/@types/parse-json/-/parse-json-4.0.0.tgz#2f8bb441434d163b35fb8ffdccd7138927ffb8c0"
   integrity sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==
 
-"@types/pixi.js@4.7.1":
-  version "4.7.1"
-  resolved "https://registry.yarnpkg.com/@types/pixi.js/-/pixi.js-4.7.1.tgz#5bd2ce6ce6bcdbe5e2523567cf94b1ffc3bc8181"
-  integrity sha512-u9yOee0kJLaEi+PK7Qf1T/q6qulM3WrAF/iqa0h3hyheyAue+wg/LQUeqzh/U79DbB/np7Uh0ToG+ELOnNH2YQ==
+"@types/pixi.js@~4.7.1":
+  version "4.7.5"
+  resolved "https://registry.yarnpkg.com/@types/pixi.js/-/pixi.js-4.7.5.tgz#098a063f6bd430af58a7a9edb45b33d0bf140909"
+  integrity sha512-oV1Orig+I8RHcurdae0g59t8jOtI5DNIiufA/biJJAO+jx30QCLtdS4RhPh40WlDt4g//9XE2E/1Yh7ThBbTmA==
 
 "@types/prettier@^2.1.5":
   version "2.3.2"
