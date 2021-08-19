@@ -388,7 +388,7 @@ export class SMBFormComponent {
           this.dialog.Info(
             helptext_sharing_smb.restarted_smb_dialog.title,
             helptext_sharing_smb.restarted_smb_dialog.message,
-            '250px',
+            '250px', 'info',
           ).subscribe(() => {
             this.checkACLactions(entityForm);
           });
@@ -478,7 +478,7 @@ export class SMBFormComponent {
                             entityForm.loader.close();
                           }),
                           switchMap(() => this.dialog.Info(T('SMB') + shared.dialog_started_title,
-                            T('The SMB') + shared.dialog_started_message, '250px')),
+                            T('The SMB') + shared.dialog_started_message, '250px', 'info')),
                           catchError((error) => {
                             entityForm.loader.close();
                             return this.dialog.errorReport(error.error, error.reason, error.trace.formatted);

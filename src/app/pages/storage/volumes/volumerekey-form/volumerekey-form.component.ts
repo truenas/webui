@@ -128,7 +128,7 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
                 break;
 
               default:
-                this.dialogService.Info(T('Success'), T('Successfully reset encryption for pool: ') + value.name);
+                this.dialogService.Info(T('Success'), T('Successfully reset encryption for pool: ') + value.name, '500px', 'info');
                 this.encryptionService.openEncryptDialog(this.pk, this.route_success, this.poolName);
             }
           },

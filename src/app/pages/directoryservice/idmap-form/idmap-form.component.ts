@@ -402,7 +402,7 @@ export class IdmapFormComponent {
           this.dialogRef.componentInstance.success.subscribe((res) => {
             this.dialog.closeAll();
             this.dialogService.Info(helptext.idmap.clear_cache_dialog.success_title,
-              helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true);
+              helptext.idmap.clear_cache_dialog.success_msg, '250px', 'info', true);
           });
           this.dialogRef.componentInstance.failure.subscribe((res) => {
             this.dialog.closeAll();

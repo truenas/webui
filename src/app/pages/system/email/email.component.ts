@@ -65,7 +65,7 @@ export class EmailComponent implements OnDestroy {
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.subscribe((s_res) => {
             this.dialogRef.close(false);
-            this.dialogservice.Info(T('Email'), T('Test email sent!'));
+            this.dialogservice.Info(T('Email'), T('Test email sent!'), '500px', 'info');
           });
           this.dialogRef.componentInstance.failure.subscribe((e_res) => {
             this.dialogRef.componentInstance.setDescription(e_res.error);

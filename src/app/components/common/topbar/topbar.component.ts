@@ -413,6 +413,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             this.dialogService.Info(
               network_interfaces_helptext.checkin_complete_title,
               network_interfaces_helptext.checkin_complete_message,
+              '500px', 'info',
             );
             this.waitingNetworkCheckin = false;
           }, (err) => {

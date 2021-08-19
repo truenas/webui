@@ -82,7 +82,7 @@ export class JailListComponent implements InputTableConf {
             }
           }
           if (message === '') {
-            this.dialogService.Info(T('Jails Started'), T('Jails started.'));
+            this.dialogService.Info(T('Jails Started'), T('Jails started.'), '500px', 'info');
           } else {
             message = '<ul>' + message + '</ul>';
             this.dialogService.errorReport(T('Jails failed to start'), message);
@@ -134,7 +134,7 @@ export class JailListComponent implements InputTableConf {
     ttpos: 'above',
     onClick: (selected) => {
       const selectedJails = this.getSelectedNames(selected);
-      this.dialogService.Info(T('Jail Update'), T('Updating selected plugins.'));
+      this.dialogService.Info(T('Jail Update'), T('Updating selected plugins.'), '500px', 'info');
       this.entityList.busy = this.ws.job('core.bulk', ['jail.update_to_latest_patch', selectedJails]).subscribe(
         (res) => {
           let message = '';

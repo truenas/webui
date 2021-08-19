@@ -67,7 +67,7 @@ export class LdapComponent {
       function: async () => {
         this.systemGeneralService.refreshDirServicesCache().subscribe((cache_status) => {
           this.dialogservice.Info(helptext.ldap_custactions_clearcache_dialog_title,
-            helptext.ldap_custactions_clearcache_dialog_message);
+            helptext.ldap_custactions_clearcache_dialog_message, '500px', 'info');
         });
       },
     },

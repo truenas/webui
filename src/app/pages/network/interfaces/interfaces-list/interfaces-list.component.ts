@@ -261,6 +261,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
           this.entityList.dialogService.Info(
             helptext.checkin_complete_title,
             helptext.checkin_complete_message,
+            '500px', 'info',
           );
           this.hasPendingChanges = false;
           this.checkinWaiting = false;

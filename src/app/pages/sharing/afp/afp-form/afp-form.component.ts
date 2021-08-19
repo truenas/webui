@@ -423,7 +423,7 @@ export class AFPFormComponent implements OnDestroy {
               this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                 entityForm.loader.close();
                 this.dialog.Info(T('AFP') + shared.dialog_started_title,
-                  T('The AFP') + shared.dialog_started_message, '250px').subscribe(() => {
+                  T('The AFP') + shared.dialog_started_message, '250px', 'info').subscribe(() => {
                   this.router.navigate(new Array('/').concat(
                     this.route_success,
                   ));

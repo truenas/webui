@@ -29,7 +29,7 @@ export class NISComponent {
       function: async () => {
         this.systemGeneralService.refreshDirServicesCache().subscribe((cache_status) => {
           this.dialogservice.Info(helptext.nis_custactions_clearcache_dialog_title,
-            helptext.nis_custactions_clearcache_dialog_message);
+            helptext.nis_custactions_clearcache_dialog_message, '500px', 'info');
         });
       },
     },
