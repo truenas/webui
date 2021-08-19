@@ -9478,6 +9478,13 @@ jest@^27.0.4:
     import-local "^3.0.2"
     jest-cli "^27.0.6"
 
+jira-prepare-commit-msg@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/jira-prepare-commit-msg/-/jira-prepare-commit-msg-1.6.1.tgz#9468b7afde302098fab9d932e603fee7112cc689"
+  integrity sha512-hulTFd4xlLCOd90Mc+Pqv47MuShxJ2qlgyKGZKDwT+AjQl7Nwc4Vs0yxz93Gf1nX1ORwm6/bpynqTXrMRWnmAg==
+  dependencies:
+    cosmiconfig "^7.0.0"
+
 jquery@3.6.0:
   version "3.6.0"
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.6.0.tgz#c72a09f15c1bdce142f49dbf1170bdf8adac2470"

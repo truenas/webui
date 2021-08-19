@@ -97,6 +97,7 @@
     "jest-canvas-mock": "^2.3.1",
     "jest-preset-angular": "^9.0.3",
     "jest-when": "^3.3.1",
+    "jira-prepare-commit-msg": "^1.6.1",
     "lodash": "4.17.21",
     "messageformat": "2.3.0",
     "messageformat-parser": "4.1.3",
