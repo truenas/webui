@@ -11,6 +11,8 @@ import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/char
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
+type Version = Omit<UpgradeSummary, 'upgrade_version' | 'image_update_available' | 'upgrade_human_version'> & { fetched?: boolean };
+
 @UntilDestroy()
 @Component({
   selector: 'chart-upgrade-dialog',
@@ -22,34 +24,32 @@ export class ChartUpgradeDialog {
   dialogConfig: ChartUpgradeDialogConfig;
   imagePlaceholder = appImagePlaceholder;
   helptext = helptext;
-  versionOptions: Record<string, any> = {};
+  versionOptions: Record<string, Version> = {};
   selectedVersionKey: string;
-  selectedVersion: any;
+  selectedVersion: Version;
 
   constructor(
     public dialogRef: MatDialogRef<ChartUpgradeDialog>,
     private appLoaderService: AppLoaderService,
     private appService: ApplicationsService,
     public dialogService: DialogService,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: ChartUpgradeDialogConfig,
   ) {
     this.dialogConfig = data;
 
-    this.versionOptions[this.dialogConfig.upgradeSummary.latest_version] = {
-      version: this.dialogConfig.upgradeSummary.latest_version,
-      humanVersion: this.dialogConfig.upgradeSummary.latest_human_version,
-      changelog: this.dialogConfig.upgradeSummary.changelog,
-      containerImagesToUpdate: this.dialogConfig.upgradeSummary.container_images_to_update,
-      itemUpdateAvailable: this.dialogConfig.upgradeSummary.item_update_available,
-      fetched: true,
-    };
+    this.versionOptions[this.dialogConfig.upgradeSummary.latest_version] = this.dialogConfig.upgradeSummary;
+    this.versionOptions[this.dialogConfig.upgradeSummary.latest_version].fetched = true;
 
     if (this.dialogConfig.upgradeSummary.available_versions_for_upgrade) {
       this.dialogConfig.upgradeSummary.available_versions_for_upgrade.forEach((availableVersion) => {
         if (!(availableVersion.version in this.versionOptions)) {
           this.versionOptions[availableVersion.version] = {
-            version: availableVersion.version,
-            humanVersion: availableVersion.human_version,
+            latest_version: availableVersion.version,
+            latest_human_version: availableVersion.human_version,
+            changelog: null,
+            container_images_to_update: null,
+            item_update_available: null,
+            available_versions_for_upgrade: null,
           };
         }
       });
@@ -60,8 +60,8 @@ export class ChartUpgradeDialog {
   }
 
   hasUpdateImages(): boolean {
-    return this.selectedVersion.containerImagesToUpdate
-      && Object.keys(this.selectedVersion.containerImagesToUpdate).length > 0;
+    return this.selectedVersion.container_images_to_update
+      && Object.keys(this.selectedVersion.container_images_to_update).length > 0;
   }
 
   onVersionOptionChanged(): void {
@@ -72,8 +72,8 @@ export class ChartUpgradeDialog {
         .pipe(untilDestroyed(this)).subscribe((res: UpgradeSummary) => {
           this.appLoaderService.close();
           this.selectedVersion.changelog = res.changelog;
-          this.selectedVersion.containerImagesToUpdate = res.container_images_to_update;
-          this.selectedVersion.itemUpdateAvailable = res.item_update_available;
+          this.selectedVersion.container_images_to_update = res.container_images_to_update;
+          this.selectedVersion.item_update_available = res.item_update_available;
           this.selectedVersion.fetched = true;
         },
         (err) => {

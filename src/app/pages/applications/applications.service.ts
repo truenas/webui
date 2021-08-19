@@ -40,10 +40,6 @@ export class ApplicationsService {
     return this.ws.call('kubernetes.bindip_choices');
   }
 
-  getCatItems(label: string): Observable<any> {
-    return this.ws.call('catalog.items', [label]);
-  }
-
   getChartReleases(name?: string): Observable<ChartRelease[]> {
     const secondOption = { extra: { history: true } };
 
@@ -55,10 +51,6 @@ export class ApplicationsService {
 
   getChartReleaseNames(): Observable<{ name: string }[]> {
     return this.ws.call('chart.release.query', [[], { select: ['name'] }]);
-  }
-
-  setReplicaCount(name: string, count: number): Observable<any> {
-    return this.ws.call('chart.release.scale', [name, { replica_count: count }]);
   }
 
   getPodConsoleChoices(name: string): Observable<Record<string, string[]>> {
@@ -97,5 +89,13 @@ export class ApplicationsService {
       payload.push({ item_version: version });
     }
     return this.ws.call('chart.release.upgrade_summary', payload);
+  }
+
+  getPorts(chart: ChartRelease): string {
+    const ports: string[] = [];
+    chart.used_ports.forEach((item) => {
+      ports.push(`${item.port}\\${item.protocol}`);
+    });
+    return ports.join(', ');
   }
 }

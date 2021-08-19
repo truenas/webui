@@ -171,7 +171,6 @@ export class DatasetAclEditorComponent implements OnInit {
     this.matDialog.open(SelectPresetModalComponent, {
       data: {
         allowCustom: false,
-        isNfsAcl: this.isNfsAcl,
         datasetPath: this.fullDatasetPath,
       } as SelectPresetModalConfig,
     });
@@ -198,7 +197,6 @@ export class DatasetAclEditorComponent implements OnInit {
     this.matDialog.open(SelectPresetModalComponent, {
       data: {
         allowCustom: true,
-        isNfsAcl: this.isNfsAcl,
         datasetPath: this.fullDatasetPath,
       } as SelectPresetModalConfig,
     });

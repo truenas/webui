@@ -4,9 +4,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { RsyncModuleMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/services/components/service-rsync';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -23,7 +25,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
   route_success: string[] = ['services', 'rsync', 'rsync-module'];
   isEntity = true;
   formGroup: FormGroup;
-  pk: any;
+  pk: number;
   title = helptext.moduleFormTitle;
   addCall: 'rsyncmod.create' = 'rsyncmod.create';
   isNew: boolean;
@@ -164,7 +166,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     });
 
     if (this.isNew) {
-      entityForm.formGroup.controls['mode'].setValue('RO');
+      entityForm.formGroup.controls['mode'].setValue(RsyncModuleMode.ReadOnly);
     }
 
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
@@ -177,7 +179,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
         ]).pipe(untilDestroyed(this)).subscribe((res) => {
           for (const i in res[0]) {
             if (i !== 'id') {
-              entityForm.formGroup.controls[i].setValue(res[0][i]);
+              entityForm.formGroup.controls[i].setValue(res[0][i as keyof RsyncModule]);
             }
           }
         });
@@ -209,7 +211,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     });
   }
 
-  submitFunction(entityForm: any): Observable<any> {
-    return this.ws.call('rsyncmod.update', [this.pk, entityForm]);
+  submitFunction(formData: RsyncModuleCreate): Observable<RsyncModule> {
+    return this.ws.call('rsyncmod.update', [this.pk, formData]);
   }
 }

@@ -11,14 +11,20 @@ import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptext_sharing_webdav, helptext_sharing_smb, helptext_sharing_nfs } from 'app/helptext/sharing';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
+import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { SmbShare } from 'app/interfaces/smb-share.interface';
+import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
   ExpandableTableState,
   InputExpandableTableConf,
 } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
-import { TableComponent, AppTableHeaderExtraAction } from 'app/pages/common/entity/table/table.component';
+import {
+  TableComponent,
+  AppTableHeaderAction,
+} from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -176,29 +182,31 @@ export class SharesDashboardComponent implements AfterViewInit {
           emptyEntityLarge: false,
           parent: this,
           columns: [
-            { name: helptext_sharing_nfs.column_path, prop: 'paths', always_display: true },
+            { name: helptext_sharing_nfs.column_path, prop: 'paths' },
             { name: helptext_sharing_nfs.column_comment, prop: 'comment' },
             {
               name: helptext_sharing_nfs.column_enabled,
               prop: 'enabled',
+              width: '60px',
               checkbox: true,
-              onChange: (row: any) => this.onCheckboxStateToggle(ShareType.NFS, row),
+              onChange: (row: NfsShare) => this.onCheckboxToggle(ShareType.NFS, row, 'enabled'),
             },
           ],
           detailsHref: '/sharing/nfs',
           add() {
             this.parent.add(this.tableComponent, ShareType.NFS);
           },
-          edit(row: any) {
+          edit(row: NfsShare) {
             this.parent.edit(this.tableComponent, ShareType.NFS, row.id);
           },
-          afterGetData: (data: any) => {
+          afterGetData: (data: NfsShare[]) => {
             this.nfsHasItems = 0;
             this.nfsExpandableState = ExpandableTableState.Collapsed;
             if (data.length > 0) {
               this.nfsHasItems = 1;
               this.nfsExpandableState = ExpandableTableState.Expanded;
               this.updateNumberOfTables();
+              this.hideColumnIfEmpty('comment', ShareType.NFS, data);
             }
           },
           limitRows: 5,
@@ -223,7 +231,6 @@ export class SharesDashboardComponent implements AfterViewInit {
             {
               name: T('Target Name'),
               prop: 'name',
-              always_display: true,
             },
             {
               name: T('Target Alias'),
@@ -265,32 +272,46 @@ export class SharesDashboardComponent implements AfterViewInit {
           hideEntityEmpty: true,
           parent: this,
           columns: [
-            { prop: 'name', name: helptext_sharing_webdav.column_name, always_display: true },
+            { prop: 'name', name: helptext_sharing_webdav.column_name },
             { prop: 'comment', name: helptext_sharing_webdav.column_comment },
             { prop: 'path', name: helptext_sharing_webdav.column_path },
-            { prop: 'ro', name: helptext_sharing_webdav.column_ro, hidden: true },
-            { prop: 'perm', name: helptext_sharing_webdav.column_perm, hidden: true },
+            {
+              prop: 'perm',
+              name: helptext_sharing_webdav.column_perm,
+              checkbox: true,
+              width: '70px',
+              tooltip: helptext_sharing_webdav.column_perm_tooltip,
+            },
+            {
+              prop: 'ro',
+              name: helptext_sharing_webdav.column_ro,
+              width: '60px',
+              checkbox: true,
+              onChange: (row: WebDavShare) => this.onCheckboxToggle(ShareType.WebDAV, row, 'ro'),
+            },
             {
               prop: 'enabled',
               name: helptext_sharing_webdav.column_enabled,
+              width: '60px',
               checkbox: true,
-              onChange: (row: any) => this.onCheckboxStateToggle(ShareType.WebDAV, row),
+              onChange: (row: WebDavShare) => this.onCheckboxToggle(ShareType.WebDAV, row, 'enabled'),
             },
           ],
           add() {
             this.parent.add(this.tableComponent, ShareType.WebDAV);
           },
           limitRowsByMaxHeight: true,
-          edit(row: any) {
+          edit(row: WebDavShare) {
             this.parent.edit(this.tableComponent, ShareType.WebDAV, row.id);
           },
-          afterGetData: (data: any) => {
+          afterGetData: (data: WebDavShare[]) => {
             this.webdavHasItems = 0;
             this.webdavExpandableState = ExpandableTableState.Collapsed;
             if (data.length > 0) {
               this.webdavHasItems = 1;
               this.webdavExpandableState = ExpandableTableState.Expanded;
               this.updateNumberOfTables();
+              this.hideColumnIfEmpty('comment', ShareType.WebDAV, data);
             }
           },
           detailsHref: '/sharing/webdav',
@@ -312,30 +333,32 @@ export class SharesDashboardComponent implements AfterViewInit {
           emptyEntityLarge: false,
           parent: this,
           columns: [
-            { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
+            { name: helptext_sharing_smb.column_name, prop: 'name' },
             { name: helptext_sharing_smb.column_path, prop: 'path' },
             { name: helptext_sharing_smb.column_comment, prop: 'comment' },
             {
               name: helptext_sharing_smb.column_enabled,
               prop: 'enabled',
+              width: '60px',
               checkbox: true,
-              onChange: (row: any) => this.onCheckboxStateToggle(ShareType.SMB, row),
+              onChange: (row: SmbShare) => this.onCheckboxToggle(ShareType.SMB, row, 'enabled'),
             },
           ],
           limitRowsByMaxHeight: true,
           add() {
             this.parent.add(this.tableComponent, ShareType.SMB);
           },
-          edit(row: any) {
+          edit(row: SmbShare) {
             this.parent.edit(this.tableComponent, ShareType.SMB, row.id);
           },
-          afterGetData: (data: any) => {
+          afterGetData: (data: SmbShare[]) => {
             this.smbHasItems = 0;
             this.smbExpandableState = ExpandableTableState.Collapsed;
             if (data.length > 0) {
               this.smbHasItems = 1;
               this.smbExpandableState = ExpandableTableState.Expanded;
               this.updateNumberOfTables();
+              this.hideColumnIfEmpty('comment', ShareType.SMB, data);
             }
           },
           limitRows: 5,
@@ -500,7 +523,7 @@ export class SharesDashboardComponent implements AfterViewInit {
     this.dialog.dialogForm(conf);
   }
 
-  onCheckboxStateToggle(card: ShareType, row: any): void {
+  onCheckboxToggle(card: ShareType, row: any, param: string): void {
     let updateCall: keyof ApiDirectory;
     switch (card) {
       case ShareType.SMB:
@@ -516,16 +539,12 @@ export class SharesDashboardComponent implements AfterViewInit {
         return;
     }
 
-    this.ws.call(updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
+    this.ws.call(updateCall, [row.id, { [param]: row[param] }]).pipe(untilDestroyed(this)).subscribe(
       (updatedEntity) => {
-        row.enabled = updatedEntity.enabled;
-
-        if (!updatedEntity) {
-          row.enabled = !row.enabled;
-        }
+        row[param] = updatedEntity[param];
       },
       (err) => {
-        row.enabled = !row.enabled;
+        row[param] = !row[param];
         new EntityUtils().handleWSError(this, err, this.dialog);
       },
     );
@@ -551,7 +570,7 @@ export class SharesDashboardComponent implements AfterViewInit {
     }
   }
 
-  getTableExtraActions(service: Service): AppTableHeaderExtraAction[] {
+  getTableExtraActions(service: Service): AppTableHeaderAction[] {
     return [
       {
         label: service.state === ServiceStatus.Running ? T('Turn Off Service') : T('Turn On Service'),
@@ -603,6 +622,26 @@ export class SharesDashboardComponent implements AfterViewInit {
         return count > 0 ? 'fn-theme-red' : 'fn-theme-grey';
       default:
         return 'fn-theme-orange';
+    }
+  }
+
+  hideColumnIfEmpty(column: string, type: ShareType, data: SmbShare[] | WebDavShare[] | NfsShare[]): void {
+    switch (type) {
+      case ShareType.SMB:
+        this.smbTableConf.columns.find((item) => item.prop === column).hidden = !(data as SmbShare[]).some((item) =>
+          item[column as keyof SmbShare]?.toString()?.trim());
+        break;
+      case ShareType.WebDAV:
+        this.webdavTableConf.columns.find((item) => item.prop === column).hidden = !(data as WebDavShare[]).some(
+          (item) => item[column as keyof WebDavShare]?.toString()?.trim(),
+        );
+        break;
+      case ShareType.NFS:
+        this.nfsTableConf.columns.find((item) => item.prop === column).hidden = !(data as NfsShare[]).some((item) =>
+          item[column as keyof NfsShare]?.toString()?.trim());
+        break;
+      default:
+        break;
     }
   }
 }

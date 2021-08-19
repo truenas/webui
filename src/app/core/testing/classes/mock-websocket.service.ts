@@ -15,7 +15,7 @@ import { WebSocketService } from 'app/services';
  * ```
  * // In test case:
  * const websocketService = spectator.inject(MockWebsocketService);
- * websocketService.mockCallOnce('filesystem.stat', of({ gid: 5 } as FileSystemStat);
+ * websocketService.mockCallOnce('filesystem.stat', { gid: 5 } as FileSystemStat);
  * ```
  */
 @Injectable()
@@ -31,14 +31,15 @@ export class MockWebsocketService extends WebSocketService {
     this.job = jest.fn();
     this.subscribe = jest.fn(() => of());
     when(this.call).mockImplementation((method: ApiMethod, args: unknown[]) => {
-      fail(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
+      throw Error(`Unmocked websocket call ${method} with ${JSON.stringify(args)}`);
     });
     when(this.job).mockImplementation((method: ApiMethod, args: unknown[]) => {
-      fail(`Unmocked websocket job call ${method} with ${JSON.stringify(args)}`);
+      throw Error(`Unmocked websocket job call ${method} with ${JSON.stringify(args)}`);
     });
   }
 
   mockCall<K extends ApiMethod>(method: K, response: ApiDirectory[K]['response']): void {
+    when(this.call).calledWith(method).mockReturnValue(of(response));
     when(this.call).calledWith(method, expect.anything()).mockReturnValue(of(response));
   }
 

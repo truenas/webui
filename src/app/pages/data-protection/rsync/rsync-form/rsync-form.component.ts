@@ -251,7 +251,7 @@ export class RsyncFormComponent implements FormConfiguration {
     protected modalService: ModalService,
   ) {}
 
-  async afterInit(entityForm: EntityFormComponent): Promise<void> {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.rsync_task_add : helptext.rsync_task_edit;

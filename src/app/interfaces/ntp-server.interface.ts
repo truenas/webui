@@ -7,3 +7,13 @@ export interface NtpServer {
   minpoll: number;
   prefer: boolean;
 }
+
+export interface CreateNtpServer {
+  address: string;
+  burst?: boolean;
+  force?: boolean;
+  iburst?: boolean;
+  maxpoll: number;
+  minpoll: number;
+  prefer?: boolean;
+}

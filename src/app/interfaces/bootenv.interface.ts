@@ -18,3 +18,13 @@ export type SetBootenvAttributeParams = [
   /* name */ string,
   /* attributes */ Partial<Bootenv>,
 ];
+
+export interface CloneBootenvParams {
+  name: string;
+  source?: string;
+}
+
+export type UpdateBootenvParams = [
+  /* name */ string,
+  /* updates */ { name: string },
+];

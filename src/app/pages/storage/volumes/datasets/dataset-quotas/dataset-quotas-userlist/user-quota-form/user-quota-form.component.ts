@@ -109,7 +109,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
     this.pk = paramMap.pk;
   }
 
-  async validateEntry(value: any): Promise<void> {
+  async validateEntry(value: string): Promise<void> {
     const validEntry = await this.userService.getUserObject(value);
     const chips = document.getElementsByTagName('mat-chip');
     if (!validEntry) {
@@ -149,7 +149,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
       { name: 'searched_entries' });
 
     this.ws.call('user.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      res.map((entry) => {
+      res.forEach((entry) => {
         this.selectedEntriesField.options.push({ label: entry.username, value: entry.uid });
       });
     });
@@ -168,7 +168,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
       this.allowSubmit();
     });
 
-    this.entityForm.formGroup.controls['searched_entries'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityForm.formGroup.controls['searched_entries'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string[]) => {
       if (value) {
         this.validateEntry(value[value.length - 1]);
       }
