@@ -88,7 +88,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       if (this.parent.ha_enabled) {
         this.parent.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
-        table.tableService.delete(table, row, deleteAction);
+        this.parent.tableService.delete(table, row, deleteAction);
       }
     },
     afterGetData() {
@@ -186,7 +186,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   ipmiTableConf: AppTableConfig<NetworkComponent> = {
     title: T('IPMI'),
     queryCall: 'ipmi.query',
-    columns: [{ name: T('Channel'), prop: 'channel_lable' }],
+    columns: [{ name: T('Channel'), prop: 'channelLabel' }],
     hideHeader: true,
     parent: this,
     dataSourceHelper: (ipmi) => this.ipmiDataSourceHelper(ipmi),
