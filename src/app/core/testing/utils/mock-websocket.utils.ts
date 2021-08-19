@@ -35,14 +35,14 @@ import { WebSocketService } from 'app/services';
  * ]
  */
 export function mockWebsocket(
-  mockResponses: (MockWebsocketCallResponse | MockWebsocketJobResponse)[],
+  mockResponses?: (MockWebsocketCallResponse | MockWebsocketJobResponse)[],
 ): (FactoryProvider | ExistingProvider)[] {
   return [
     {
       provide: WebSocketService,
       useFactory: (router: Router) => {
         const mockWebsocketService = new MockWebsocketService(router);
-        mockResponses.forEach((mockResponse) => {
+        (mockResponses || []).forEach((mockResponse) => {
           if (mockResponse.type === MockWebsocketResponseType.Call) {
             mockWebsocketService.mockCall(mockResponse.method, mockResponse.response);
           } else if (mockResponse.type === MockWebsocketResponseType.Job) {
