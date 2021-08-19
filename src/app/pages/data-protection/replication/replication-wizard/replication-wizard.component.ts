@@ -848,7 +848,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       ssh_credentials_target_field.options.push({ label: T('Create New'), value: 'NEW' });
     });
 
-    this.entityWizard.formArray.get([0]).get('exist_replication').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('exist_replication').valueChanges.pipe(untilDestroyed(this)).subscribe((value: ReplicationTask) => {
       if (value !== null) {
         this.loadOrClearReplicationTask(value);
       }
@@ -916,14 +916,14 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         });
     }
 
-    this.entityWizard.formArray.get([0]).get('recursive').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('recursive').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       const explorerComponent = _.find(this.source_fieldSet.config, { name: 'source_datasets' }).customTemplateStringOptions;
       if (explorerComponent) {
         explorerComponent.useTriState = value;
       }
     });
 
-    this.entityWizard.formArray.get([0]).get('custom_snapshots').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('custom_snapshots').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       this.toggleNamingSchemaOrRegex();
       if (!value) {
         this.getSnapshots();
@@ -940,8 +940,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     this.selectedReplicationTask = task;
   }
 
-  setSchemaOrRegexForObject(data: any, schemaOrRegex: SnapshotNamingOption,
-    schema: string = null, regex: string = null): any {
+  setSchemaOrRegexForObject(
+    data: any,
+    schemaOrRegex: SnapshotNamingOption,
+    schema: string = null,
+    regex: string = null,
+  ): any {
     if (schemaOrRegex === SnapshotNamingOption.NamingSchema) {
       data.naming_schema = schema ? [schema] : [this.defaultNamingSchema];
       delete data.name_regex;
@@ -954,7 +958,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   step1Init(): void {
-    this.entityWizard.formArray.get([1]).get('retention_policy').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([1]).get('retention_policy').valueChanges.pipe(untilDestroyed(this)).subscribe((value: RetentionPolicy) => {
       const disable = value === RetentionPolicy.Source;
       if (disable) {
         this.entityWizard.formArray.get([1]).get('lifetime_value').disable();
@@ -1147,7 +1151,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     if (item === 'periodic_snapshot_tasks') {
       this.existSnapshotTasks = [];
-      const snapshotPromises: any[] = [];
+      const snapshotPromises: Promise<any>[] = [];
       for (const dataset of data['source_datasets']) {
         payload = {
           dataset,
@@ -1413,7 +1417,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     this.dialogService.dialogForm(conf, true);
   }
 
-  getRemoteHostKey(value: any): Promise<any> {
+  getRemoteHostKey(value: any): Promise<string> {
     const payload = {
       host: value['host'],
       port: value['port'],

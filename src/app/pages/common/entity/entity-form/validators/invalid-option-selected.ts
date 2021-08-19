@@ -8,6 +8,8 @@ export function selectedOptionValidator(validOptions: Promise<Option[]>): AsyncV
       if (_.find(options, { value: v }) === undefined) {
         return v;
       }
+
+      return undefined;
     });
     return selectedInvalidOptions.length > 0
       ? { invalidOptionSelected: true, invalidOptins: selectedInvalidOptions }

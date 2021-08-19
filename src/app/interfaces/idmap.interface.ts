@@ -1,7 +1,7 @@
 import { IdmapName } from 'app/enums/idmap-name.enum';
 
 export interface Idmap {
-  certificate: unknown;
+  certificate: { cert_name: string };
   dns_domain_name: unknown;
   id: number;
   idmap_backend: string;

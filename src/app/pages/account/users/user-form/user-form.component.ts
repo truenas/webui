@@ -399,7 +399,7 @@ export class UserFormComponent implements FormConfiguration {
 
     /* list users */
     const filter: QueryFilter<User> = ['id', '=', parseInt(this.pk, 10)];
-    this.ws.call('user.query', [[filter]]).pipe(untilDestroyed(this)).subscribe(async (res) => {
+    this.ws.call('user.query', [[filter]]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.length !== 0 && res[0].home !== '/nonexistent') {
         this.storageService.filesystemStat(res[0].home).pipe(untilDestroyed(this)).subscribe((stat) => {
           entityForm.formGroup.controls['home_mode'].setValue(stat.mode.toString(8).substring(2, 5));

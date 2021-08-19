@@ -7,6 +7,7 @@ import {
   transform,
 } from 'popmotion';
 import { ColdSubscription } from 'popmotion/src/action/types';
+import { ValueMap } from 'popmotion/src/reactions/value';
 import { Subject } from 'rxjs';
 import { Styler } from 'stylefire/lib/styler/types';
 import { CoreService } from '../services/core-service/core.service';
@@ -43,7 +44,7 @@ export class DisplayObject {
   private _interactive: boolean;
   private _moveable: boolean;
   private _resizeable: boolean;
-  target: any;
+  target: Styler;
   rawTarget: HTMLElement;
   private pointerTracker: ColdSubscription;
   private focus: ColdSubscription;
@@ -90,8 +91,8 @@ export class DisplayObject {
     this.pointerTracker;
     this.focus;
     this.anchorXY = value({ x: 0, y: 0 }, this.target.set);
-    this.anchorW = value({ width: this.target.offsetWidth }, this.target.set);
-    this.anchorH = value({ height: this.target.offsetHeight }, this.target.set);
+    this.anchorW = value({ width: (this.target as any).offsetWidth }, this.target.set);
+    this.anchorH = value({ height: (this.target as any).offsetHeight }, this.target.set);
     this.anchored = false;
     this.boundary; // Collision detection
     this.reservedTop = 0; // 38;// 36 + 2 to avoid panel shadow
@@ -363,7 +364,7 @@ export class DisplayObject {
 
   elevate(set: boolean): void {
     // let zIndex: number = this.hasFocus ? 50 : 1;
-    const elevatedProps: any = {
+    const elevatedProps: ValueMap = {
       'z-index': 50,
     };
 
@@ -372,7 +373,7 @@ export class DisplayObject {
       elevatedProps.scaleY = 1.05;
     }
 
-    const resetProps: any = {
+    const resetProps: ValueMap = {
       'z-index': this.hasFocus ? 50 : 1,
     };
 

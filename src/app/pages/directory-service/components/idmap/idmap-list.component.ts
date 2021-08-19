@@ -13,6 +13,7 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
+import { IdmapRow } from 'app/pages/directory-service/components/idmap/idmap-row.interface';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import {
   IdmapService, SystemGeneralService, ValidationService, WebSocketService,
@@ -68,13 +69,14 @@ export class IdmapListComponent implements EntityTableConfig {
     protected dialogService: DialogService,
   ) { }
 
-  resourceTransformIncomingRestData(data: any[]): any[] {
-    data.forEach((item) => {
+  resourceTransformIncomingRestData(data: Idmap[]): IdmapRow[] {
+    const transformed = { ...data } as IdmapRow[];
+    transformed.forEach((item) => {
       if (item.certificate) {
         item.cert_name = item.certificate.cert_name;
       }
       if (item.name === IdmapName.DsTypeActiveDirectory && item.idmap_backend === 'AUTORID') {
-        const obj = data.find((o) => o.name === IdmapName.DsTypeDefaultDomain);
+        const obj = transformed.find((o) => o.name === IdmapName.DsTypeDefaultDomain);
         obj.disableEdit = true;
       }
       item.label = item.name;
@@ -83,7 +85,7 @@ export class IdmapListComponent implements EntityTableConfig {
         item.label = helptext.idmap.name.options[index].label;
       }
     });
-    return data;
+    return transformed;
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -130,7 +132,7 @@ export class IdmapListComponent implements EntityTableConfig {
     }] as EntityTableAction[];
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: IdmapRow): EntityTableAction<IdmapRow>[] {
     const actions = [];
     actions.push({
       id: 'edit',
@@ -138,7 +140,7 @@ export class IdmapListComponent implements EntityTableConfig {
       icon: 'edit',
       label: T('Edit'),
       disabled: row.disableEdit,
-      onClick: (row: any) => {
+      onClick: (row: IdmapRow) => {
         this.doAdd(row.id);
       },
     });
@@ -148,7 +150,7 @@ export class IdmapListComponent implements EntityTableConfig {
         label: T('Delete'),
         name: 'delete',
         icon: 'delete',
-        onClick: (row: any) => {
+        onClick: (row: IdmapRow) => {
           this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe(
             () => {},
             (err: WebsocketError) => {

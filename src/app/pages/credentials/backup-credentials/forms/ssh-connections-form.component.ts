@@ -240,7 +240,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     });
   }
 
-  async preInit(): Promise<void> {
+  preInit(): void {
     if (this.rowNum) {
       this.queryCallOption = [['id', '=', this.rowNum]];
       _.find(this.fieldSets[0].config, { name: 'setup_method' }).isHidden = true;
@@ -283,7 +283,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
 
     const nameCtrl = this.entityForm.formGroup.controls['name'];
     let preValue = this.entityForm.formGroup.controls['private_key'].value;
-    this.entityForm.formGroup.controls['private_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.entityForm.formGroup.controls['private_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | 'NEW') => {
       if (res === 'NEW') {
         nameCtrl.setValidators([Validators.required, forbiddenValues(this.namesInUse)]);
         nameCtrl.updateValueAndValidity();

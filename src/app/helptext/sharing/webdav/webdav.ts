@@ -33,7 +33,7 @@ export const helptext_sharing_webdav = {
   column_ro: T('Read Only'),
   column_perm: T('Ownership'),
 
-  column_perm_tooltip: T('Change User and Group Ownership'),
+  column_perm_tooltip: T('User and Group Ownership'),
 
   warning_dialog_title: T('WARNING'),
   warning_dialog_message: T('Ownership of all files in the share will \

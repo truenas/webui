@@ -328,7 +328,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-checkbox-disabled .mat-checkbox-frame,
   .mat-checkbox-disabled .mat-checkbox-inner-container {
-    opacity: 0.75;
+    opacity: 0.4;
   }
 
   .menu-toggle {

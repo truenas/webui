@@ -11,6 +11,8 @@ export interface PoolScrub {
   threshold: number;
 }
 
+export type CreatePoolScrub = Omit<PoolScrub, 'id' | 'pool_name'>;
+
 export type PoolScrubParams = [
   /* pool id */ number,
   PoolScrubAction,

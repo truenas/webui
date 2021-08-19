@@ -24,12 +24,15 @@
       </mat-toolbar-row>
 
       <mat-card-content>
-        <mat-list>
-          <mat-list-item *ngFor="let item of card.items" class="card-list-item">
-            <span class="label">{{ item.label | translate }}:</span>
-            <span class="value">{{ item.value | translate }}</span>
-          </mat-list-item>
-        </mat-list>
+        <entity-empty [conf]="card.emptyConf" *ngIf="card.emptyConf; else data"></entity-empty>
+        <ng-template #data>
+          <mat-list>
+            <mat-list-item *ngFor="let item of card.items" class="card-list-item">
+              <span class="label">{{ item.label | translate }}:</span>
+              <span class="value">{{ item.value | translate }}</span>
+            </mat-list-item>
+          </mat-list>
+        </ng-template>
       </mat-card-content>
     </mat-card>
 

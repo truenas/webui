@@ -73,7 +73,11 @@ export class ES102 extends Chassis {
 
         const getCurrentColumn = (): number => {
           const test = cols.map((c, ci) => {
-            if (index >= c.start && index <= (c.start + c.count - 1)) return ci;
+            if (index >= c.start && index <= (c.start + c.count - 1)) {
+              return ci;
+            }
+
+            return undefined;
           });
           return test.filter((v) => v !== undefined)[0];
         };

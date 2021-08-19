@@ -1,4 +1,5 @@
 import { Validators } from '@angular/forms';
+import { RsyncModuleMode } from 'app/enums/rsync-mode.enum';
 import { T } from 'app/translate-marker';
 
 export default {
@@ -36,9 +37,9 @@ field to deactivate the module without completely removing it.'),
 
   rsyncmod_mode_placeholder: T('Access Mode'),
   rsyncmod_mode_options: [
-    { label: T('Read Only'), value: 'RO' },
-    { label: T('Write Only'), value: 'WO' },
-    { label: T('Read and Write'), value: 'RW' },
+    { label: T('Read Only'), value: RsyncModuleMode.ReadOnly },
+    { label: T('Write Only'), value: RsyncModuleMode.WriteOnly },
+    { label: T('Read and Write'), value: RsyncModuleMode.ReadAndWrite },
   ],
   rsyncmod_mode_tooltip: T('Choose permissions for this rsync module.'),
 

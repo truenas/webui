@@ -1,5 +1,6 @@
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
@@ -168,3 +169,8 @@ export interface ZfsProperties {
   written: ZfsProperty<string>;
   xattr: ZfsProperty<string>;
 }
+
+export type DiskWipeParams = [
+  /* disk */ string,
+  /* method */ DiskWipeMethod,
+];

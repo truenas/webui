@@ -60,3 +60,8 @@ export type VmCloneParams = [
   /* id */ number,
   /* newName */ string?,
 ];
+
+export type VmDeleteParams = [
+  /* id */ number,
+  /* params */ { zvols: boolean; force: boolean },
+];

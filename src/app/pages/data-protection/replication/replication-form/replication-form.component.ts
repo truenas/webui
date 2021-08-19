@@ -1169,7 +1169,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       );
   }
 
-  async afterInit(entityForm: EntityFormComponent): Promise<void> {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;

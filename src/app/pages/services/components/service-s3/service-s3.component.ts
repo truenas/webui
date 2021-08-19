@@ -125,7 +125,7 @@ export class ServiceS3Component implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     this.storage_path = entityForm.formGroup.controls['storage_path'];
-    this.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       if (res && res != this.initial_path && !this.warned) {
         this.dialog
           .confirm({
