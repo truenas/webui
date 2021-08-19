@@ -8,6 +8,7 @@ import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -18,21 +19,12 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import {
-  EntityTableComponent,
-
-} from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { StorageService, DialogService, WebSocketService } from 'app/services';
+import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { T } from 'app/translate-marker';
-
-export enum DiskWipeMethod {
-  Quick = 'QUICK',
-  Full = 'FULL',
-  FullRandom = 'FULL_RANDOM',
-}
 
 @UntilDestroy()
 @Component({

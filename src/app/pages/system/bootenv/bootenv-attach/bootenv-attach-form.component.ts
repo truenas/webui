@@ -73,12 +73,10 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(entityForm: any): void {
-    const payload: any = {};
-    payload['expand'] = entityForm.expand;
+  customSubmit(entityForm: { dev: string; expand: boolean }): void {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Attach Device' }, disableClose: true });
     this.dialogRef.componentInstance.setDescription('Attaching Device...');
-    this.dialogRef.componentInstance.setCall('boot.attach', [entityForm.dev, payload]);
+    this.dialogRef.componentInstance.setCall('boot.attach', [entityForm.dev, { expand: entityForm.expand }]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close(true);
