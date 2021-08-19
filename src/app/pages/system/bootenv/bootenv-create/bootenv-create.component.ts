@@ -49,9 +49,7 @@ export class BootEnvironmentCreateComponent implements FormConfiguration {
     entityForm.submitFunction = this.submitFunction;
   }
 
-  submitFunction(entityForm: any): Observable<any> {
-    const payload: any = {};
-    payload['name'] = entityForm.name;
-    return this.ws.call('bootenv.create', [payload]);
+  submitFunction(entityForm: { name: string }): Observable<string> {
+    return this.ws.call('bootenv.create', [entityForm]);
   }
 }

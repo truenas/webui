@@ -10,7 +10,7 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
 import { SelectPresetModalConfig } from 'app/pages/storage/volumes/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
-import { WebSocketService } from 'app/services';
+import { AppLoaderService, WebSocketService } from 'app/services';
 
 const usePresetFieldName = 'usePreset';
 const presetFieldName = 'preset';
@@ -62,13 +62,10 @@ export class SelectPresetModalComponent implements OnInit {
     required: true,
   };
 
-  // TODO: To be handled by middleware https://jira.ixsystems.com/browse/NAS-111447
-  readonly posixDefaults = [DefaultAclType.PosixOpen, DefaultAclType.PosixRestricted];
-  readonly nfsDefaults = [DefaultAclType.Nfs4Open, DefaultAclType.Nfs4Restricted, DefaultAclType.Nfs4Home];
-
   constructor(
     private dialogRef: MatDialogRef<SelectPresetModalComponent>,
     private ws: WebSocketService,
+    private loader: AppLoaderService,
     private aclEditorStore: DatasetAclEditorStore,
     private fieldRelationService: FieldRelationService,
     @Inject(MAT_DIALOG_DATA) public data: SelectPresetModalConfig,
@@ -89,15 +86,13 @@ export class SelectPresetModalComponent implements OnInit {
   }
 
   private loadOptions(): void {
-    this.ws.call('filesystem.default_acl_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      this.presetFieldConfig.options = choices
-        .filter((choice) => {
-          return this.data.isNfsAcl
-            ? this.nfsDefaults.includes(choice)
-            : this.posixDefaults.includes(choice);
-        })
-        .map((choice) => ({ label: choice, value: choice }));
-    });
+    this.loader.open();
+    this.ws.call('filesystem.default_acl_choices', [this.data.datasetPath])
+      .pipe(untilDestroyed(this))
+      .subscribe((choices) => {
+        this.presetFieldConfig.options = choices.map((choice) => ({ label: choice, value: choice }));
+        this.loader.close();
+      });
   }
 
   onContinuePressed(): void {

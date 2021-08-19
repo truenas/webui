@@ -158,7 +158,7 @@ export class IPMIFromComponent implements FormConfiguration {
     }];
 
   queryKey = 'id';
-  channelValue: any;
+  channelValue: number;
   isEntity = true;
 
   constructor(
@@ -219,26 +219,26 @@ export class IPMIFromComponent implements FormConfiguration {
     this.channelValue = entityEdit.pk;
     this.entityEdit = entityEdit;
 
-    entityEdit.formGroup.controls['password'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: any) => {
+    entityEdit.formGroup.controls['password'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'password' }));
     });
 
-    entityEdit.formGroup.controls['ipaddress'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: any) => {
+    entityEdit.formGroup.controls['ipaddress'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'ipaddress' }));
       const ipValue = entityEdit.formGroup.controls['ipaddress'].value;
       const btn = <HTMLInputElement>document.getElementById('cust_button_Manage');
       status === 'INVALID' || ipValue === '0.0.0.0' ? btn.disabled = true : btn.disabled = false;
     });
 
-    entityEdit.formGroup.controls['ipaddress'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    entityEdit.formGroup.controls['ipaddress'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       this.managementIP = value;
     });
 
-    entityEdit.formGroup.controls['netmask'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: any) => {
+    entityEdit.formGroup.controls['netmask'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'netmask' }));
     });
 
-    entityEdit.formGroup.controls['gateway'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: any) => {
+    entityEdit.formGroup.controls['gateway'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'gateway' }));
     });
 
@@ -249,7 +249,7 @@ export class IPMIFromComponent implements FormConfiguration {
     }
   }
 
-  setErrorStatus(status: any, field: FieldConfig): void {
+  setErrorStatus(status: string, field: FieldConfig): void {
     status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
   }
 
@@ -269,7 +269,7 @@ export class IPMIFromComponent implements FormConfiguration {
     });
   }
 
-  loadData(filter: any[] = []): void {
+  loadData(filter: any = []): void {
     let query$ = this.ws.call(this.queryCall, filter);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       query$ = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);

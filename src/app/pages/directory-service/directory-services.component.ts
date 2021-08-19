@@ -89,7 +89,7 @@ export class DirectoryServicesComponent implements OnInit {
           label: T('Delete'),
           name: 'delete',
           icon: 'delete',
-          onClick: (row: any) => {
+          onClick: (row: Idmap) => {
             this.dialog.confirm({
               title: this.translate.instant('Delete'),
               message: this.translate.instant('Are you sure you want to delete this idmap?'),

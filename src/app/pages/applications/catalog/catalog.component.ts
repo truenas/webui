@@ -13,7 +13,11 @@ import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
+import { ApplicationUserEventName } from 'app/interfaces/application.interface';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { Job } from 'app/interfaces/job.interface';
+import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -43,10 +47,10 @@ interface CatalogSyncJob {
 export class CatalogComponent implements OnInit {
   @Output() updateTab = new EventEmitter();
 
-  catalogApps: any[] = [];
+  catalogApps: CatalogApp[] = [];
   catalogNames: string[] = [];
   filteredCatalogNames: string[] = [];
-  filteredCatalogApps: any[] = [];
+  filteredCatalogApps: CatalogApp[] = [];
   filterString = '';
   catalogSyncJobs: CatalogSyncJob[] = [];
   private poolList: Option[] = [];
@@ -156,7 +160,7 @@ export class CatalogComponent implements OnInit {
             for (const i in catalog.trains[train]) {
               const item = catalog.trains[train][i];
 
-              const catalogItem = { ...item } as any;
+              const catalogItem = { ...item } as CatalogApp;
               catalogItem.catalog = {
                 id: catalog.id,
                 label: catalog.label,
@@ -223,14 +227,18 @@ export class CatalogComponent implements OnInit {
     } else if (evt.data.event_control == 'refresh_all') {
       this.syncAll();
     } else if (evt.data.event_control == 'catalogs') {
-      this.filteredCatalogNames = evt.data.catalogs.map((catalog: any) => catalog.value);
+      this.filteredCatalogNames = evt.data.catalogs.map((catalog: Option) => catalog.value);
 
       this.filterApps();
     }
   }
 
   refreshToolbarMenus(): void {
-    this.updateTab.emit({ name: 'catalogToolbarChanged', value: Boolean(this.selectedPool), catalogNames: this.catalogNames });
+    this.updateTab.emit({
+      name: ApplicationUserEventName.CatalogToolbarChanged,
+      value: Boolean(this.selectedPool),
+      catalogNames: this.catalogNames,
+    });
   }
 
   refreshForms(): void {
@@ -336,7 +344,7 @@ export class CatalogComponent implements OnInit {
     });
     dialogRef.componentInstance.setCall('kubernetes.update', [{ pool }]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe((res: Job<KubernetesConfig>) => {
       self.selectedPool = pool;
       self.refreshToolbarMenus();
       self.dialogService.closeAllDialogs();
@@ -356,7 +364,7 @@ export class CatalogComponent implements OnInit {
       this.appLoaderService.close();
 
       if (catalogApp) {
-        const catalogAppInfo = { ...catalogApp } as any;
+        const catalogAppInfo = { ...catalogApp } as CatalogApp;
         catalogAppInfo.catalog = {
           id: catalog,
           train,
@@ -395,7 +403,7 @@ export class CatalogComponent implements OnInit {
     this.appService.getCatalogItem(name, catalog, train).pipe(untilDestroyed(this)).subscribe((catalogApp) => {
       this.appLoaderService.close();
       if (catalogApp) {
-        const catalogAppInfo = { ...catalogApp } as any;
+        const catalogAppInfo = { ...catalogApp } as CatalogApp;
         catalogAppInfo.catalog = {
           label: catalog,
           train,

@@ -121,7 +121,7 @@ export class LayoutObject {
     this.orderedCollection = Object.keys(this.collection);
     // const collection = Object.entries(this.collection);
     // collection.map((value:DisplayObject) => {
-    this.orderedCollection.map((item) => {
+    this.orderedCollection.forEach((item) => {
       this.configureCollectionItem(this.collection[item]);
     });
     this.createLayoutFromArrangement('Grid');

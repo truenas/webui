@@ -89,12 +89,12 @@ export class EntityTableService implements OnDestroy {
     this.tableUtils.postMessage({ name: 'ProcessCommands', data: pipeLine, sender: 'chartID' });
   }
 
-  truncateData(data: any): any {
+  truncateData(data: number[][]): any {
     let finished = false;
     let index = data.length - 1;
     do {
       // True only when all the values are null
-      const isEmpty = !data[index].reduce((acc: any, v: any) => {
+      const isEmpty = !data[index].reduce((acc, v) => {
         // Treat zero as a value
         const value = v !== null ? 1 : v;
         return acc + value;

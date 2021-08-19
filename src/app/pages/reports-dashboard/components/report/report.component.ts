@@ -16,6 +16,7 @@ import { add, sub } from 'date-fns';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { ReportingData } from 'app/interfaces/reporting.interface';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { WebSocketService, SystemGeneralService } from 'app/services/';
@@ -51,18 +52,6 @@ export interface Report {
   stacked_show_total: boolean;
 }
 
-export interface ReportData {
-  identifier?: string;
-  // units?: string;
-  start: number;
-  end: number;
-  aggregations: any;
-  legend: string[];
-  name: string;
-  step: number;
-  data: number[][];
-}
-
 @UntilDestroy()
 @Component({
   selector: 'report',
@@ -79,7 +68,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   @Input() retroLogo?: string;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
 
-  data: ReportData;
+  data: ReportingData;
   ready = false;
   product_type = window.localStorage['product_type'] as ProductType;
   private delay = 1000; // delayed report render time
@@ -229,12 +218,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   private processThemeColors(theme: Theme): string[] {
-    // this.theme = theme;
-    const colors: string[] = [];
-    theme.accentColors.map((color) => {
-      colors.push((theme as any)[color]);
-    });
-    return colors;
+    return theme.accentColors.map((color) => (theme as any)[color]);
   }
 
   setChartInteractive(value: boolean): void {

@@ -94,8 +94,8 @@ export class WebdavFormComponent implements FormConfiguration {
   ) {}
 
   afterInit(entityForm: EntityFormComponent): void {
-    entityForm.formGroup.controls['perm'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-      value ? this.confirmSubmit = true : this.confirmSubmit = false;
+    entityForm.formGroup.controls['perm'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
+      this.confirmSubmit = value;
     });
     this.title = entityForm.isNew ? T('Add WebDAV') : T('Edit WebDAV');
   }

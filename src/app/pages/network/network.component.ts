@@ -12,11 +12,15 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
+import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, AppTableConfig, TableComponent } from 'app/pages/common/entity/table/table.component';
+import { TableService } from 'app/pages/common/entity/table/table.service';
+import { IpmiRow } from 'app/pages/network/network-dashboard.interface';
 import {
   AppLoaderService,
   DialogService,
@@ -79,12 +83,12 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     edit(row: any) {
       this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent, row.id);
     },
-    delete(row: any, table: any) {
+    delete(row: any, table: TableComponent) {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? T('Reset configuration for ') : T('Delete ');
       if (this.parent.ha_enabled) {
         this.parent.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
-        table.tableService.delete(table, row, deleteAction);
+        this.parent.tableService.delete(table, row, deleteAction);
       }
     },
     afterGetData() {
@@ -113,7 +117,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       },
       message: helptext.delete_dialog_text,
     },
-  } as AppTableConfig;
+  } as AppTableConfig<NetworkComponent>;
 
   staticRoutesTableConf = {
     title: T('Static Routes'),
@@ -129,14 +133,14 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     add() {
       this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent);
     },
-    edit(row: any) {
+    edit(row: StaticRoute) {
       this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent, row.id);
     },
     deleteMsg: {
       title: 'static route',
       key_props: ['destination', 'gateway'],
     },
-  } as AppTableConfig;
+  } as AppTableConfig<NetworkComponent>;
 
   globalSettingsWidget: CardWidgetConf = {
     title: T('Global Configuration'),
@@ -178,23 +182,23 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
           : this.parent.modalService.open('slide-in-form', this.parent.openvpnServerComponent);
       }
     },
-  } as AppTableConfig;
+  } as AppTableConfig<NetworkComponent>;
 
   ipmiTableConf = {
     title: 'IPMI',
     queryCall: 'ipmi.query',
     columns: [
-      { name: T('Channel'), prop: 'channel_lable' },
+      { name: T('Channel'), prop: 'channelLabel' },
     ],
     hideHeader: true,
     parent: this,
-    dataSourceHelper: this.ipmiDataSourceHelper,
+    dataSourceHelper: (ipmi) => this.ipmiDataSourceHelper(ipmi),
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
-    edit(row: any) {
+    edit(row: IpmiRow) {
       this.parent.modalService.open('slide-in-form', this.parent.impiFormComponent, row.id);
     },
-  } as AppTableConfig;
+  } as AppTableConfig<NetworkComponent>;
 
   networkSummary: NetworkSummary;
   impiEnabled: boolean;
@@ -218,6 +222,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private modalService: ModalService,
     private servicesService: ServicesService,
     private translate: TranslateService,
+    private tableService: TableService,
   ) {
     super();
     this.getGlobalSettings();
@@ -575,18 +580,17 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     return res;
   }
 
-  ipmiDataSourceHelper(res: any[]): any[] {
-    for (const item of res) {
-      item.channel_lable = 'Channel' + item.channel;
-    }
-    return res;
+  ipmiDataSourceHelper(ipmi: Ipmi[]): IpmiRow[] {
+    return ipmi.map((item) => ({
+      ...item,
+      channelLabel: this.translate.instant('Channel {n}', { n: item.channel }),
+    }));
   }
 
   getIpmiActions(): AppTableAction[] {
     return [{
       icon: 'highlight',
       name: 'identify',
-      label: T('Identify Light'),
       onClick: () => {
         this.dialog.select(
           'IPMI Identify', this.impiFormComponent.options, 'IPMI flash duration', 'ipmi.identify', 'seconds',
@@ -596,12 +600,11 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     }, {
       icon: 'launch',
       name: 'manage',
-      label: T('Manage'),
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: IpmiRow) => {
         window.open(`http://${rowinner.ipaddress}`);
         event.stopPropagation();
       },
-    }] as any[];
+    }];
   }
 
   showConfigForm(): void {
@@ -614,6 +617,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         item.service_label = item.service.charAt(8).toUpperCase() + item.service.slice(9);
         return item;
       }
+
+      return undefined;
     });
   }
 
@@ -621,8 +626,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     return [{
       icon: 'stop',
       name: 'stop',
-      label: T('Stop'),
-      onChanging: false,
       onClick: (rowinner: any) => {
         rowinner['onChanging'] = true;
         this.ws.call('service.stop', [rowinner.service]).pipe(untilDestroyed(this)).subscribe(
@@ -646,7 +649,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     }, {
       icon: 'play_arrow',
       name: 'start',
-      label: T('Start'),
       onClick: (rowinner: any) => {
         rowinner['onChanging'] = true;
         this.ws.call('service.start', [rowinner.service]).pipe(untilDestroyed(this)).subscribe(
@@ -667,7 +669,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         );
         event.stopPropagation();
       },
-    }] as any[];
+    }];
   }
 
   isOpenVpnActionVisible(name: string, row: any): boolean {
@@ -677,7 +679,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     return true;
   }
 
-  isIpmiActionVisible(name: string, row: any): boolean {
+  isIpmiActionVisible(name: string, row: IpmiRow): boolean {
     if (name === 'manage' && row.ipaddress === '0.0.0.0') {
       return false;
     }

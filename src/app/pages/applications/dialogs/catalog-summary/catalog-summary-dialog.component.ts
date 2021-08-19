@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import helptext from 'app/helptext/apps/apps';
-import { CatalogAppVersion } from 'app/interfaces/catalog.interface';
+import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { LocaleService } from 'app/services/locale.service';
 
 @Component({
@@ -15,7 +15,7 @@ import { LocaleService } from 'app/services/locale.service';
 })
 
 export class CatalogSummaryDialog implements OnInit {
-  catalogApp: any;
+  catalogApp: CatalogApp;
   statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
   helptext = helptext;
   selectedStatus: string = this.statusOptions[0];
@@ -23,7 +23,7 @@ export class CatalogSummaryDialog implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<CatalogSummaryDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: CatalogApp,
     protected localeService: LocaleService,
   ) {
     this.catalogApp = data;

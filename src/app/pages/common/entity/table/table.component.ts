@@ -19,8 +19,6 @@ export interface AppTableHeaderAction {
   onClick: () => void;
 }
 
-export interface AppTableHeaderExtraAction extends AppTableHeaderAction {}
-
 export interface AppTableColumn {
   name?: string;
   name1?: string;
@@ -64,13 +62,13 @@ export interface AppTableConfig<P = any> {
   alwaysHideViewMore?: boolean;
   parent: P;
   tableActions?: AppTableHeaderAction[];
-  tableExtraActions?: AppTableHeaderExtraAction[];
+  tableExtraActions?: AppTableHeaderAction[];
 
   add?(): any; // add action function
   afterGetData?(data: any): void;
   afterDelete?(tableComponent: any): void;
   edit?(any: any): any; // edit row
-  delete?(item: any, table: any): any; // customize delete row method
+  delete?(item: any, table: TableComponent): any; // customize delete row method
   dataSourceHelper?(any: any): any; // customise handle/modify dataSource
   getInOutInfo?(any: any): any; // get in out info if has state column
   getActions?: () => AppTableAction[]; // actions for each row
@@ -98,7 +96,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   displayedDataSource: any[];
   displayedColumns: string[];
   hideHeader = false;
-  actions: any[];
+  actions: AppTableAction[];
   emptyConf: EmptyConfig;
   showViewMore = false;
   showCollapse = false;

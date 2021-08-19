@@ -11,6 +11,7 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { ReportingParams } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { TableService } from 'app/pages/common/entity/table/table.service';
@@ -295,13 +296,13 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
       const params = {
         identifier: nic.name,
         name: 'interface',
-      };
-      this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(untilDestroyed(this)).subscribe((res) => {
-        res = res[0];
+      } as ReportingParams;
+      this.ws.call('reporting.get_data', [[params], timeFrame]).pipe(untilDestroyed(this)).subscribe((response) => {
+        const data = response[0];
 
         const labels: number[] = [];
-        for (let i = 0; i <= res.data.length; i++) {
-          const label = (res.start + i * res.step) * 1000;
+        for (let i = 0; i <= data.data.length; i++) {
+          const label = (data.start + i * data.step) * 1000;
           labels.push(label);
         }
 
@@ -309,14 +310,14 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
           datasets: [
             {
               label: nic.name + '(in)',
-              data: res.data.map((item: number[], index: number) => ({ t: labels[index], y: item[0] })),
+              data: data.data.map((item: number[], index: number) => ({ t: labels[index], y: item[0] })),
               borderColor: this.themeService.currentTheme().blue,
               backgroundColor: this.themeService.currentTheme().blue,
               pointRadius: 0.2,
             },
             {
               label: nic.name + '(out)',
-              data: res.data.map((item: number[], index: number) => ({ t: labels[index], y: -item[1] })),
+              data: data.data.map((item: number[], index: number) => ({ t: labels[index], y: -item[1] })),
               borderColor: this.themeService.currentTheme().orange,
               backgroundColor: this.themeService.currentTheme().orange,
               pointRadius: 0.1,

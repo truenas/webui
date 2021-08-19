@@ -1348,13 +1348,13 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       entityForm.formGroup.controls['preview-GOOGLE_CLOUD_STORAGE'].setValue(value);
     });
     // Allow blank values for pass and key_file fields (but at least one should be non-blank)
-    entityForm.formGroup.controls['pass-SFTP'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['pass-SFTP'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       if (res !== undefined) {
         const required = res === '';
         this.setFieldRequired('private_key-SFTP', required, entityForm);
       }
     });
-    entityForm.formGroup.controls['private_key-SFTP'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['private_key-SFTP'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | string) => {
       if (res !== undefined) {
         const required = res === '';
         this.setFieldRequired('pass-SFTP', required, entityForm);

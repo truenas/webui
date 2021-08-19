@@ -17,7 +17,7 @@ export interface Pool {
   path: string;
   scan: PoolScan;
   status: PoolStatus;
-  status_detail: any;
+  status_detail: string;
   topology: PoolTopology;
 }
 
@@ -44,4 +44,20 @@ export interface PoolScan {
   start_time: ApiTimestamp;
   state: PoolScanState;
   total_secs_left: number;
+}
+
+export interface CreatePool {
+  encryption: boolean;
+  encryption_options?: {
+    generate_key: boolean;
+    algorithm: string;
+    passphrase?: string;
+    key?: string;
+  };
+  name: string;
+  topology: {
+    [key in PoolTopologyCategory]: { type: string; disks: string[] }[];
+  };
+  checksum?: string;
+  deduplication?: string;
 }

@@ -171,14 +171,14 @@ export class DatasetAclEditorComponent implements OnInit {
     this.matDialog.open(SelectPresetModalComponent, {
       data: {
         allowCustom: false,
-        isNfsAcl: this.isNfsAcl,
+        datasetPath: this.fullDatasetPath,
       } as SelectPresetModalConfig,
     });
   }
 
   private onFirstLoad(): void {
     if (this.isHomeShare) {
-      this.store.usePreset(DefaultAclType.Home);
+      this.store.usePreset(this.isNfsAcl ? DefaultAclType.Nfs4Home : DefaultAclType.PosixHome);
     } else {
       this.showPresetModalIfNeeded();
     }
@@ -197,7 +197,7 @@ export class DatasetAclEditorComponent implements OnInit {
     this.matDialog.open(SelectPresetModalComponent, {
       data: {
         allowCustom: true,
-        isNfsAcl: this.isNfsAcl,
+        datasetPath: this.fullDatasetPath,
       } as SelectPresetModalConfig,
     });
   }

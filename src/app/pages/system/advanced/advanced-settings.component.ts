@@ -397,11 +397,21 @@ export class AdvancedSettingsComponent implements OnInit {
         const isolatedGpus = gpus.filter((gpu: Device) => advancedConfig.isolated_gpu_pci_ids.findIndex(
           (pciId: string) => pciId === gpu.addr.pci_slot,
         ) > -1).map((gpu: Device) => gpu.description).join(', ');
-        this.dataCards.push({
+        const gpuCard = {
           title: T('Isolated GPU Device(s)'),
           id: CardId.Gpus,
           items: [{ label: T('Isolated GPU Device(s)'), value: isolatedGpus }],
-        });
+        } as DataCard;
+
+        if (isolatedGpus.length == 0) {
+          gpuCard.emptyConf = {
+            type: EmptyType.NoPageData,
+            title: T('No Isolated GPU Device(s) configured'),
+            large: false,
+            message: T('To configure Isolated GPU Device(s), click the "Configure" button.'),
+          };
+        }
+        this.dataCards.push(gpuCard);
       });
     });
   }
