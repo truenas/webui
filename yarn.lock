@@ -2507,10 +2507,10 @@
   resolved "https://registry.yarnpkg.com/@types/graphlib/-/graphlib-2.1.8.tgz#9edd607e4b863a33b8b78cb08385c0be6896008a"
   integrity sha512-8nbbyD3zABRA9ePoBgAl2ym8cIwKQXTfv1gaIRTdY99yEOCaHfmjBeRp+BIemS8NtOqoWK7mfzWxjNrxLK3T5w==
 
-"@types/hopscotch@0.2.30":
-  version "0.2.30"
-  resolved "https://registry.yarnpkg.com/@types/hopscotch/-/hopscotch-0.2.30.tgz#5c97eaa7537a77b0e8c07234697a7e33d790eb6e"
-  integrity sha512-EtwVrBAPe1PtS1lZH/v0PQ03Kmy5HBNKaedZhRbl9YnZAoA3nh87lsyl5E1BpNQx4GvVybTwR+7JofsAVJwJdQ==
+"@types/hopscotch@~0.2.30":
+  version "0.2.32"
+  resolved "https://registry.yarnpkg.com/@types/hopscotch/-/hopscotch-0.2.32.tgz#f907ff54aa07bf767a94b9e49df654ccaf24194e"
+  integrity sha512-o0a4Ry1U57asRa7jNE8fWKdxqLhYBxsQkzfpbcf9snPNPfnzznB0mUQHtXMU1tzFzpqRktboFy1MP4o5QLsllg==
 
 "@types/http-cache-semantics@*":
   version "4.0.1"
