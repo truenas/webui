@@ -13,8 +13,11 @@ mat-card-content.table-container {
   max-width: 100%;
 }
 
-.mat-cell:not(:first-child):not(:last-child) {
-  padding: 0 2px;
+.mat-header-cell,
+.mat-cell {
+  &:not(:first-child):not(:last-child) {
+    padding: 0 8px;
+  }
 }
 
 .mat-cell:first-child {
@@ -26,9 +29,12 @@ mat-card-content.table-container {
 }
 
 div.table-container {
-  height: calc(100% - 41px);
   max-width: 100%;
   padding: 0;
+
+  &.empty {
+    height: calc(100% - 41px);
+  }
 }
 
 .text-overflow-ellipsis {

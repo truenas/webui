@@ -56,7 +56,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     {
       id: helptext.activedirectory_custactions_clearcache_id,
       name: helptext.activedirectory_custactions_clearcache_name,
-      function: async () => {
+      function: () => {
         this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe(() => {
           this.dialogservice.info(helptext.activedirectory_custactions_clearcache_dialog_title,
             helptext.activedirectory_custactions_clearcache_dialog_message);

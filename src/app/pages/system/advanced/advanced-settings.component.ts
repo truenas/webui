@@ -134,12 +134,12 @@ export class AdvancedSettingsComponent implements OnInit {
     parent: this,
     dataSourceHelper: this.cronDataSourceHelper,
     columns: [
-      { name: T('Users'), prop: 'user', always_display: true },
+      { name: T('Users'), prop: 'user' },
       { name: T('Command'), prop: 'command' },
       { name: T('Description'), prop: 'description' },
       { name: T('Schedule'), prop: 'cron_schedule' },
       { name: T('Enabled'), prop: 'enabled' },
-      { name: T('Next Run'), prop: 'next_run', hidden: true },
+      { name: T('Next Run'), prop: 'next_run' },
     ],
     add() {
       this.parent.onSettingsPressed(CardId.Cron);
@@ -162,12 +162,12 @@ export class AdvancedSettingsComponent implements OnInit {
     emptyEntityLarge: false,
     columns: [
       { name: T('Type'), prop: 'type' },
-      { name: T('Command'), prop: 'command', hidden: true },
-      { name: T('Script'), prop: 'script', hidden: true },
+      { name: T('Command'), prop: 'command' },
+      { name: T('Script'), prop: 'script' },
       { name: T('Description'), prop: 'comment' },
       { name: T('When'), prop: 'when' },
       { name: T('Enabled'), prop: 'enabled' },
-      { name: T('Timeout'), prop: 'timeout', hidden: true },
+      { name: T('Timeout'), prop: 'timeout' },
     ],
     add() {
       this.parent.onSettingsPressed(CardId.InitShutdown);

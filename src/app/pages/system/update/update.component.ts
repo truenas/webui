@@ -604,7 +604,7 @@ export class UpdateComponent implements OnInit {
               entityDialog.parent.continueUpdate();
             }, () => {
               entityDialog.dialogRef.close();
-              (entityDialog.parent.dialogService as DialogService).confirm({
+              entityDialog.parent.dialogService.confirm({
                 title: helptext.save_config_err.title,
                 message: helptext.save_config_err.message,
                 buttonMsg: helptext.save_config_err.button_text,
