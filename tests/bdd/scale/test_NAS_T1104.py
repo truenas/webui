@@ -154,7 +154,7 @@ def check_the_enable_box_and_click_save(driver):
 def the_active_directory_setup_should_successfully_save_without_an_error(driver):
     """the Active Directory setup should successfully save without an error.."""
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
-    time.sleep(10)
+    time.sleep(30)
 
 
 @then(parsers.parse('run "{cmd1}" and verify that "{ad_object1}" is in output.'))
