@@ -1,6 +1,7 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
+yarn commitlint --edit $1
 yarn lint-staged
 yarn extract
 yarn validate-translations

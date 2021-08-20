@@ -1,0 +1,7 @@
+{
+  "messagePattern": "$J: $M",
+  "jiraTicketPattern": "([A-Z]+-\\d+)",
+  "commentChar": "#",
+  "isConventionalCommit": false,
+  "allowEmptyCommitMessage": false
+}
