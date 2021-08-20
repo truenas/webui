@@ -508,6 +508,7 @@
   "Tests are only performed when <i>Never</i> is selected.": "",
   "The chosen preset ACL will <strong>REPLACE</strong> the ACL currently displayed in the form  and delete any unsaved changes.": "",
   "The list is empty.": "",
+  "The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?": "",
   "The system could not retrieve any SMB Shares from the database. Please click the button below to add an SMB Share.": "",
   "The {service} service failed to start.": "",
   "The {service} service failed to stop.": "",

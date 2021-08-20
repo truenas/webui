@@ -14,7 +14,7 @@ export interface ConfirmOptions {
 }
 
 export interface ConfirmOptionsWithSecondaryCheckbox extends ConfirmOptions {
-  secondaryCheckBox: true;
+  secondaryCheckBox: boolean;
   secondaryCheckBoxMsg?: string;
   method?: ApiMethod;
   data?: any;
