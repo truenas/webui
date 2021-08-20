@@ -153,11 +153,14 @@
 
               <!-- Button -->
               <button mat-stroked-button *ngIf="currentColumns[i].button"
-                [ngClass]="getButtonClass(element[column].state)"
+                [ngClass]="getButtonClass(element[column])"
                 (click)="$event.stopPropagation(); this.conf.onButtonClick(element)"
                 id="interactive-button_{{column}}_{{element.name}}"
                 ix-auto ix-auto-type="slider" ix-auto-identifier="{{column}}__{{element.name}}">
-                {{element[column].state}}
+                {{element[column].state}} 
+                <div class="label-warning-icon" *ngIf="element[column].warnings.length > 0">
+                  <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                </div>
               </button>
             </ng-template>
           </td>
