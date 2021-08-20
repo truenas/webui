@@ -1,6 +1,6 @@
-<div class="dashboard" fxLayout="column" fxLayoutGap="8px" [class]="hasConsoleFooter ? 'has-footer': ''">
-    <div class="content" fxLayout="row" fxLayout.xs="column" fxLayout.sm="column" fxLayoutGap="8px">
-        <div class="right-column" fxFlex="65" fxFlex.xs="100" fxFlex.sm="100">
+<div class="dashboard" fxLayout="column" fxLayoutGap="8px" [class.has-footer]="hasConsoleFooter">
+    <div class="content"  fxLayout="column" fxLayout.lg="row" fxLayoutGap="8px">
+        <div class="right-column" fxFlex="100" fxFlex.lg="65">
             <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
                 <mat-card *ngIf="hasPendingChanges">
                     <mat-card-content>
@@ -40,7 +40,7 @@
                 <card-widget [conf]="globalSettingsWidget" fxFlex></card-widget>
             </div>
         </div>
-        <div class="left-column" fxFlex="35" fxFlex.xs="100" fxFlex.sm="100">
+        <div class="left-column" fxFlex="100" fxFlex.lg="35">
             <div fxLayout="column" fxFlexFill fxLayoutGap="8px">
                 <app-table [conf]="staticRoutesTableConf" fxFlex></app-table>
                 <app-table [conf]="openvpnTableConf" fxFlex></app-table>
