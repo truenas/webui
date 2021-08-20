@@ -164,7 +164,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
             title: 'Disk Temperatur ' + disk.name,
             empty: {
               title: 'Disk Temperatures Not Available',
-              message: 'This disk cannot collect temperature data the way it is currently configured. Please either enable ‘Force HDD Standby’ or set ‘HDD Standby’ to ‘Never’ in order to enable temperature collection',
+              message: 'This disk cannot collect temperature data the way it is currently configured. Please either enable ‘Force HDD Standby’ or set ‘HDD Standby’ to ‘Never’ in order to enable temperature data collection',
               button: {
                 text: 'Edit Disk',
                 click: () => {
