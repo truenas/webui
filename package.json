@@ -8,6 +8,7 @@
     "ng": "ng",
     "rimraf": "rimraf",
     "changelog": "standard-changelog",
+    "commitlint": "commitlint",
     "start": "ng serve --proxy-config proxy.config.json --source-map",
     "start:dev": "ng serve --proxy-config proxy.config.json --source-map",
     "start:prod": "ng serve --prod",

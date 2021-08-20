@@ -1,4 +1,8 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-./node_modules/.bin/commitlint --edit $1
+yarn commitlint --edit $1
+yarn lint-staged
+yarn extract
+yarn validate-translations
+git add src/assets/i18n
