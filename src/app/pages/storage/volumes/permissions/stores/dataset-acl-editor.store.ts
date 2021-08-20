@@ -327,7 +327,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
     const groupWhoToIds = new Map<string, number>();
     const requests: Observable<unknown>[] = [];
 
-    (editorState.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace, index) => {
+    (editorState.acl.acl as (NfsAclItem | PosixAclItem)[]).forEach((ace, index) => {
       if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
         requests.push(
           this.userService.getUserByName(ace.who).pipe(

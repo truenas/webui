@@ -26,12 +26,14 @@ export const helptext_sharing_webdav = {
   tooltip_enabled: T('Enable this WebDAV share. Unset to disable this WebDAV \
  share without deleting it.'),
 
-  column_name: T('Share Name'),
+  column_name: T('Name'),
   column_comment: T('Description'),
   column_path: T('Path'),
   column_enabled: T('Enabled'),
   column_ro: T('Read Only'),
-  column_perm: T('Change User and Group Ownership'),
+  column_perm: T('Ownership'),
+
+  column_perm_tooltip: T('User and Group Ownership'),
 
   warning_dialog_title: T('WARNING'),
   warning_dialog_message: T('Ownership of all files in the share will \

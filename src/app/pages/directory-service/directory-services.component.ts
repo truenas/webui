@@ -68,10 +68,8 @@ export class DirectoryServicesComponent implements OnInit {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      {
-        name: T('Name'), prop: 'name', always_display: true, minWidth: 250,
-      },
-      { name: T('Backend'), prop: 'idmap_backend', maxWidth: 100 },
+      { name: T('Name'), prop: 'name' },
+      { name: T('Backend'), prop: 'idmap_backend' },
       { name: T('DNS Domain Name'), prop: 'dns_domain_name' },
       { name: T('Range Low'), prop: 'range_low' },
       { name: T('Range High'), prop: 'range_high' },
@@ -132,7 +130,7 @@ export class DirectoryServicesComponent implements OnInit {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      { name: T('Realm'), prop: 'realm', always_display: true },
+      { name: T('Realm'), prop: 'realm' },
       { name: T('KDC'), prop: 'kdc' },
       { name: T('Admin Server'), prop: 'admin_server' },
       { name: T('Password Server'), prop: 'kpasswd_server' },
@@ -157,7 +155,7 @@ export class DirectoryServicesComponent implements OnInit {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      { name: 'Name', prop: 'name', always_display: true },
+      { name: 'Name', prop: 'name' },
     ],
     add() {
       this.parent.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab);

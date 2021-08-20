@@ -359,7 +359,8 @@ export class SMBFormComponent implements FormConfiguration {
   preInit(entityForm: EntityFormComponent): void {
     this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((pk: number) => {
       if (pk) {
-        this.pk = entityForm.pk = pk;
+        this.pk = pk;
+        entityForm.pk = pk;
       }
     });
   }

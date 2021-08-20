@@ -28,7 +28,6 @@ import {
 import { Catalog, CatalogItems, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import {
   CertificateAuthority,
-  CertificateAuthorityCreate,
   CertificateAuthorityUpdate,
 } from 'app/interfaces/certificate-authority.interface';
 import {
@@ -265,7 +264,7 @@ export type ApiDirectory = {
   'certificate.get_domain_names': { params: any; response: any };
 
   // Certificate Authority
-  'certificateauthority.create': { params: [CertificateAuthorityCreate]; response: any };
+  'certificateauthority.create': { params: [CertificateAuthorityUpdate]; response: any };
   'certificateauthority.query': { params: QueryParams<CertificateAuthority>; response: CertificateAuthority[] };
   'certificateauthority.update': { params: [number, CertificateAuthorityUpdate]; response: any };
   'certificateauthority.profiles': { params: void; response: CertificateProfiles };

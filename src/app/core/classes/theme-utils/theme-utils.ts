@@ -149,9 +149,9 @@ export class ThemeUtils {
   rgbToHSL(param: any, inputString = true, outputString = true): any {
     const value = inputString ? this.forceRGB(param) : param;
 
-    const r = value[0] /= 255;
-    const g = value[1] /= 255;
-    const b = value[2] /= 255;
+    const r = value[0] / 255;
+    const g = value[1] / 255;
+    const b = value[2] / 255;
 
     const cmin = Math.min(r, g, b);
     const cmax = Math.max(r, g, b);
