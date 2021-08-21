@@ -355,6 +355,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
           name: 'encryption_password',
           placeholder: helptext.encryption_password_placeholder,
           tooltip: helptext.encryption_password_tooltip,
+          inputType: 'password',
+          togglePw: true,
           isHidden: true,
           relation: [
             {
@@ -371,6 +373,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
           name: 'encryption_salt',
           placeholder: helptext.encryption_salt_placeholder,
           tooltip: helptext.encryption_salt_tooltip,
+          inputType: 'password',
+          togglePw: true,
           isHidden: true,
           relation: [
             {
