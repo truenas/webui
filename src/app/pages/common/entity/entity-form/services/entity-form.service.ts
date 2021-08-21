@@ -6,8 +6,8 @@ import {
   FormControl,
   FormGroup,
 } from '@angular/forms';
-import { DatasetType } from 'app/enums/dataset-type.enum';
 import * as _ from 'lodash';
+import { DatasetType } from 'app/enums/dataset-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';

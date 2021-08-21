@@ -120,7 +120,7 @@ import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-qu
 import { CreatePool, Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
-  ReplicationTask
+  ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
 import { ReportingConfig, ReportingData, ReportingQueryParams } from 'app/interfaces/reporting.interface';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
@@ -147,7 +147,7 @@ import {
   FetchSupportParams,
   CreateNewTicket,
   NewTicketResponse,
-  SupportConfig, SupportConfigUpdate
+  SupportConfig, SupportConfigUpdate,
 } from 'app/interfaces/support.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
@@ -777,7 +777,7 @@ export type ApiDirectory = {
   'truenas.is_production': { params: void; response: boolean };
   'truenas.set_production': {
     params: [production: boolean, attach_debug: boolean];
-    response: { ticket: number; url: string },
+    response: { ticket: number; url: string };
   };
 
   // Vm

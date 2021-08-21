@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
 import { Observable } from 'rxjs';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { OpenvpnClientConfig } from 'app/interfaces/openvpn-client-config.interface';
+import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
 import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
