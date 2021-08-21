@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
 import { Observable } from 'rxjs';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
@@ -39,10 +40,10 @@ export class ServicesService {
     return this.ws.call('openvpn.server.cipher_choices');
   }
 
-  generateOpenServerClientConfig(id: number, address: string): Observable<any> {
+  generateOpenServerClientConfig(id: number, address: string): Observable<string> {
     return this.ws.call('openvpn.server.client_configuration_generation', [id, address]);
   }
-  renewStaticKey(): Observable<any> {
+  renewStaticKey(): Observable<OpenvpnServerConfig> {
     return this.ws.call('openvpn.server.renew_static_key');
   }
   updateOpenVPN(call: ApiMethod, body: any): Observable<any> {

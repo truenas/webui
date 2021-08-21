@@ -1,3 +1,4 @@
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { Subject } from 'rxjs';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -62,7 +63,7 @@ export interface FormConfiguration {
   preHandler?: (data: any[], formArray: any) => any[];
   responseOnSubmit?: (value: any) => void;
   clean?: (data: any) => any;
-  errorReport?: (res: any) => void;
+  errorReport?: (res: WebsocketError) => void;
   resourceTransformIncomingRestData?: (data: any) => any;
   preInit?: (entityForm: EntityFormComponent) => void;
   afterInit?: (entityForm: EntityFormComponent) => void;

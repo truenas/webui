@@ -12,6 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { Subscription } from 'rxjs';
 import { ApiService } from 'app/core/services/api.service';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -66,14 +67,14 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   };
   setPasswordFormGroup: FormGroup;
   has_root_password = true;
-  failover_status = '';
+  failover_status: FailoverStatus;
   failover_statuses = {
-    SINGLE: '',
-    MASTER: T(`Active ${globalHelptext.Ctrlr}.`),
-    BACKUP: T(`Standby ${globalHelptext.Ctrlr}.`),
-    ELECTING: T(`Electing ${globalHelptext.Ctrlr}.`),
-    IMPORTING: T('Importing pools.'),
-    ERROR: T('Failover is in an error state.'),
+    [FailoverStatus.Single]: '',
+    [FailoverStatus.Master]: T(`Active ${globalHelptext.Ctrlr}.`),
+    [FailoverStatus.Backup]: T(`Standby ${globalHelptext.Ctrlr}.`),
+    [FailoverStatus.Electing]: T(`Electing ${globalHelptext.Ctrlr}.`),
+    [FailoverStatus.Importing]: T('Importing pools.'),
+    [FailoverStatus.Error]: T('Failover is in an error state.'),
   };
   failover_ips: string[] = [];
   ha_disabled_reasons: FailoverDisabledReason[] = [];
@@ -85,6 +86,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   protected tc_url: string;
 
   readonly ProductType = ProductType;
+  readonly FailoverStatus = FailoverStatus;
 
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
@@ -236,8 +238,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   canLogin(): boolean {
     if (this.logo_ready && this.connected
-       && (this.failover_status === 'SINGLE'
-        || this.failover_status === 'MASTER'
+       && (this.failover_status === FailoverStatus.Single
+        || this.failover_status === FailoverStatus.Master
         || this.product_type === ProductType.Core)) {
       if (!this.didSetFocus && this.usernameInput) {
         setTimeout(() => {
@@ -259,7 +261,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe((res) => {
         this.failover_status = res;
         this.ha_info_ready = true;
-        if (res !== 'SINGLE') {
+        if (res !== FailoverStatus.Single) {
           this.ws.call('failover.get_ips').pipe(untilDestroyed(this)).subscribe((ips) => {
             this.failover_ips = ips;
           }, (err) => {

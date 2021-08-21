@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -416,7 +417,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     this.modalService.refreshTable();
   }
 
-  errorReport(err: any): void {
+  errorReport(err: WebsocketError): void {
     this.loader.close();
     this.modalService.refreshTable();
     if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {

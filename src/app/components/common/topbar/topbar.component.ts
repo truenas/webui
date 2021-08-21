@@ -580,9 +580,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
         this.dialogRef.componentInstance.disableProgressValue(true);
         this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((success: any) => {
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           this.dialogRef.close(false);
-          console.info('success', success);
           this.upgradeWaitingToFinish = false;
         });
         this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure: any) => {

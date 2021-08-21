@@ -6,6 +6,7 @@ import {
   FormControl,
   FormGroup,
 } from '@angular/forms';
+import { DatasetType } from 'app/enums/dataset-type.enum';
 import * as _ from 'lodash';
 import { FileType } from 'app/enums/file-type.enum';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
@@ -161,7 +162,7 @@ export class EntityFormService {
     }); */
   }
 
-  getPoolDatasets(param: any[] = []): Promise<any[]> {
+  getPoolDatasets(param: [DatasetType[]?] = []): Promise<any[]> {
     const nodes: any[] = [];
     return this.ws.call('pool.filesystem_choices', param).toPromise().then((res) => {
       for (let i = 0; i < res.length; i++) {

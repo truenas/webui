@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SortDirection } from '@angular/material/sort';
+import { Option } from 'app/interfaces/option.interface';
 import { format } from 'date-fns-tz';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -245,10 +246,10 @@ export class StorageService {
     );
   }
 
-  getDatasetNameOptions(): Observable<{ label: string; value: string }[]> {
+  getDatasetNameOptions(): Observable<Option[]> {
     return this.ws
       .call('pool.filesystem_choices')
-      .pipe(map((response) => response.map((value: any) => ({ label: value, value }))));
+      .pipe(map((response) => response.map((value) => ({ label: value, value }))));
   }
 
   /**

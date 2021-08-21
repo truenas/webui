@@ -90,9 +90,9 @@ export class R50 extends Chassis {
         nextPositionY += altOffset;
 
         if (odd) {
-          displayObject.children.forEach((child: any) => {
+          displayObject.children.forEach((child) => {
             child.rotation = this.front.degreesToRadians(180);
-            child.anchor.set(1, 1);
+            (child as any).anchor.set(1, 1);
           });
         } else {
           nextPositionY += 12;

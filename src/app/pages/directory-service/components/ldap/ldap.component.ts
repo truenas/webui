@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/ldap';
@@ -321,7 +322,7 @@ export class LdapComponent implements FormConfiguration {
     this.modalService.refreshTable();
   }
 
-  errorReport(res: any): void {
+  errorReport(res: WebsocketError): void {
     let errorText = res.reason ? res.reason.replace('[EFAULT]', '') : null;
     if (res.reason && res.reason.includes('Invalid credentials')) {
       errorText = T('Invalid credentials. Please try again.');

@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { SupportConfig, SupportConfigUpdate } from 'app/interfaces/support.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -229,10 +230,10 @@ export class ProactiveComponent implements FormConfiguration {
   getContacts(): void {
     this.controls = this.entityEdit.formGroup.controls;
     this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && res !== {}) {
+      if (res && (res as any) !== {}) {
         for (const i in res) {
           if (i !== 'id') {
-            this.controls[i].setValue(res[i]);
+            this.controls[i].setValue(res[i as keyof SupportConfig]);
           }
         }
       }
@@ -250,7 +251,7 @@ export class ProactiveComponent implements FormConfiguration {
     }
   }
 
-  customSubmit(data: any): void {
+  customSubmit(data: SupportConfigUpdate): void {
     this.loader.open();
     this.ws.call('support.update', [data]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
