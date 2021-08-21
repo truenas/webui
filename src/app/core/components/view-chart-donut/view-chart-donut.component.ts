@@ -43,7 +43,7 @@ import { ViewChartComponent } from 'app/core/components/view-chart/view-chart.co
 })
 export class ViewChartDonutComponent extends ViewChartComponent implements OnInit {
   title = '';
-  chartType = 'donut';
+  _chartType = 'donut';
   legendPosition = 'right'; // Valid positions are top or right
 
   ngOnInit(): void {

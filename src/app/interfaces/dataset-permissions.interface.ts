@@ -1,6 +1,6 @@
 export type DatasetPermissionsUpdate = [
-  /* path */ string,
-  /* update */ {
+  path: string,
+  update: {
     user: string;
     group: string;
     mode: string;

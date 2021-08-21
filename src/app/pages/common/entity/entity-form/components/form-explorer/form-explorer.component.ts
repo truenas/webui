@@ -59,7 +59,7 @@ export class FormExplorerComponent implements Field, OnInit {
 
   customTemplateStringOptions = {
     useCheckbox: false,
-    displayField: this.displayFieldName,
+    displayField: '',
     isExpandedField: 'expanded',
     idField: 'uuid',
     getChildren: this.getChildren.bind(this),
@@ -106,6 +106,8 @@ export class FormExplorerComponent implements Field, OnInit {
         expanded: !this.rootSelectable,
       }];
     }
+
+    this.customTemplateStringOptions.displayField = this.displayFieldName;
   }
 
   getChildren(node: any): Promise<any> {

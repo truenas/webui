@@ -34,9 +34,9 @@ export interface PosixAcl extends BaseAcl {
 }
 
 export type AclQueryParams = [
-  /* path */ string,
-  /* simplified */ boolean?,
-  /* resolve_ids */ boolean?,
+  path: string,
+  simplified?: boolean,
+  resolveIds?: boolean,
 ];
 
 export interface PosixAclItem {
