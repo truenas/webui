@@ -594,11 +594,11 @@ export class UpdateComponent implements OnInit {
     }
 
     entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
-      .pipe(untilDestroyed(this)).subscribe(
+      .pipe(untilDestroyed(entityDialog.parent)).subscribe(
         (succ: any) => {
           const url = succ[1];
           entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
-            .pipe(untilDestroyed(this)).subscribe((file: Blob) => {
+            .pipe(untilDestroyed(entityDialog.parent)).subscribe((file: Blob) => {
               entityDialog.dialogRef.close();
               entityDialog.parent.storage.downloadBlob(file, fileName);
               entityDialog.parent.continueUpdate();
@@ -610,7 +610,7 @@ export class UpdateComponent implements OnInit {
                 buttonMsg: helptext.save_config_err.button_text,
               }).pipe(
                 filter(Boolean),
-                untilDestroyed(this),
+                untilDestroyed(entityDialog.parent),
               ).subscribe(() => {
                 entityDialog.parent.continueUpdate();
               });
@@ -618,11 +618,13 @@ export class UpdateComponent implements OnInit {
           entityDialog.dialogRef.close();
         },
         () => {
-          entityDialog.parent.dialogService.confirm(helptext.save_config_err.title, helptext.save_config_err.message,
-            false, helptext.save_config_err.button_text).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-            if (res) {
-              entityDialog.parent.continueUpdate();
-            }
+          entityDialog.parent.dialogService.confirm({
+            title: helptext.save_config_err.title,
+            message: helptext.save_config_err.message,
+            hideCheckBox: false,
+            buttonMsg: helptext.save_config_err.button_text,
+          }).pipe(filter(Boolean), untilDestroyed(entityDialog.parent)).subscribe(() => {
+            entityDialog.parent.continueUpdate();
           });
         },
       );
