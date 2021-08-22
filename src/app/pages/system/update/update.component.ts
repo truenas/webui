@@ -11,6 +11,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
+import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -53,7 +54,7 @@ export class UpdateComponent implements OnInit {
   trainDescriptionOnPageLoad: string;
   fullTrainList: { [name: string]: SystemUpdateTrain };
   isUpdateRunning = false;
-  updateMethod: 'update.update' = 'update.update';
+  updateMethod: keyof ApiDirectory = 'update.update';
   is_ha = false;
   product_type: ProductType;
   ds: any;
