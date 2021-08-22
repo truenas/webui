@@ -105,6 +105,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           placeholder: helptext.client_secret.placeholder,
           tooltip: helptext.client_secret.tooltip,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
         }],
     },
     { name: 'divider', divider: true },
@@ -194,6 +196,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.key_b2.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -212,6 +216,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_box.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -230,6 +236,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_dropbox.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -354,6 +362,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_google_drive.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -389,6 +399,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_google_photos.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -425,6 +437,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_hubic.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -497,6 +511,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.key_azureblob.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -515,6 +531,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_onedrive.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -618,6 +636,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           placeholder: helptext.key_openstack_swift.placeholder,
           tooltip: helptext.key_openstack_swift.tooltip,
           required: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -686,6 +706,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_pcloud.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -909,6 +931,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_yandex.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -1038,6 +1062,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           name: 'auth_token-OPENSTACK_SWIFT',
           placeholder: helptext.auth_token_openstack_swift.placeholder,
           tooltip: helptext.auth_token_openstack_swift.tooltip,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
