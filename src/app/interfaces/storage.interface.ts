@@ -171,6 +171,6 @@ export interface ZfsProperties {
 }
 
 export type DiskWipeParams = [
-  /* disk */ string,
-  /* method */ DiskWipeMethod,
+  disk: string,
+  method: DiskWipeMethod,
 ];

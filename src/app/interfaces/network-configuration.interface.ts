@@ -42,6 +42,6 @@ export interface NetworkConfigurationActivity {
 }
 
 export type NetworkActivityChoice = [
-  /* value */ string,
-  /* label */ string,
+  value: string,
+  label: string,
 ];

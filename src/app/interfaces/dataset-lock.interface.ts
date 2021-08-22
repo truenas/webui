@@ -11,8 +11,8 @@ export interface DatasetUnlockResult {
 }
 
 export type DatasetUnlockParams = [
-  /* path */ string,
-  /* params */ {
+  path: string,
+  params: {
     datasets: { name: string; key?: string; passphrase: string }[];
     key_file: boolean;
     recursive: boolean;

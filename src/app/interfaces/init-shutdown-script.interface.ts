@@ -24,6 +24,6 @@ export interface CreateInitShutdownScript {
 }
 
 export type UpdateInitShutdownScriptParams = [
-  /* id */ number,
-  CreateInitShutdownScript,
+  id: number,
+  params: CreateInitShutdownScript,
 ];

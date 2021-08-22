@@ -11,6 +11,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
+import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -53,7 +54,7 @@ export class UpdateComponent implements OnInit {
   trainDescriptionOnPageLoad: string;
   fullTrainList: { [name: string]: SystemUpdateTrain };
   isUpdateRunning = false;
-  updateMethod = 'update.update';
+  updateMethod: keyof ApiDirectory = 'update.update';
   is_ha = false;
   product_type: ProductType;
   ds: any;
@@ -101,12 +102,21 @@ export class UpdateComponent implements OnInit {
   readonly ProductType = ProductType;
   readonly SystemUpdateStatus = SystemUpdateStatus;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
-    protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService,
-    protected storage: StorageService, protected http: HttpClient, public core: CoreService) {
-    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected dialog: MatDialog,
+    public sysGenService: SystemGeneralService,
+    protected loader: AppLoaderService,
+    protected dialogService: DialogService,
+    public translate: TranslateService,
+    protected storage: StorageService,
+    protected http: HttpClient,
+    public core: CoreService,
+  ) {
+    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
+      this.isUpdateRunning = isUpdating === 'true';
     });
   }
 
@@ -220,7 +230,12 @@ export class UpdateComponent implements OnInit {
   }
 
   applyFailoverUpgrade(): void {
-    this.dialogService.confirm(T('Finish Upgrade?'), T(''), true, T('Continue')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+    this.dialogService.confirm({
+      title: this.translate.instant(T('Finish Upgrade?')),
+      message: '',
+      hideCheckBox: true,
+      buttonMsg: T('Continue'),
+    }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') }, disableClose: false });
         this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
@@ -250,7 +265,10 @@ export class UpdateComponent implements OnInit {
       warning = T('Changing to a nightly train is one-way. Changing back to a stable train is not supported! ');
     }
 
-    this.dialogService.confirm(T('Switch Train'), warning + T('Switch update trains?')).pipe(untilDestroyed(this)).subscribe((train_res: boolean) => {
+    this.dialogService.confirm({
+      title: this.translate.instant(T('Switch Train')),
+      message: this.translate.instant(warning + T('Switch update trains?')),
+    }).pipe(untilDestroyed(this)).subscribe((train_res: boolean) => {
       if (train_res) {
         this.train = event;
         this.setTrainDescription();
@@ -516,11 +534,16 @@ export class UpdateComponent implements OnInit {
       confirmMsg = helptext.ha_confirm_msg;
     }
 
-    this.ds = this.dialogService.confirm(
-      T('Download Update'), downloadMsg, true, T('Download'), true,
-      confirmMsg,
-      this.updateMethod, [{ reboot: false }],
-    );
+    this.ds = this.dialogService.confirm({
+      title: this.translate.instant(T('Download Update')),
+      message: this.translate.instant(downloadMsg),
+      hideCheckBox: true,
+      buttonMsg: this.translate.instant(T('Download')),
+      secondaryCheckBox: true,
+      secondaryCheckBoxMsg: this.translate.instant(confirmMsg),
+      method: this.updateMethod,
+      data: [{ reboot: false }],
+    });
 
     this.ds.componentInstance.isSubmitEnabled = true;
     this.ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status: any) => {
@@ -564,10 +587,13 @@ export class UpdateComponent implements OnInit {
           this.isUpdateRunning = false;
           this.sysGenService.updateDone(); // Send 'finished' signal to topbar
           this.router.navigate(['/']);
-          this.dialogService.confirm(helptext.ha_update.complete_title,
-            helptext.ha_update.complete_msg, true,
-            helptext.ha_update.complete_action, false, '', '', '', '', true).pipe(untilDestroyed(this)).subscribe(() => {
-          });
+          this.dialogService.confirm({
+            title: helptext.ha_update.complete_title,
+            message: helptext.ha_update.complete_msg,
+            hideCheckBox: true,
+            buttonMsg: helptext.ha_update.complete_action,
+            hideCancel: true,
+          }).pipe(untilDestroyed(this)).subscribe();
         });
         this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
           new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -594,23 +620,23 @@ export class UpdateComponent implements OnInit {
     }
 
     entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
-      .pipe(untilDestroyed(this)).subscribe(
+      .pipe(untilDestroyed(entityDialog.parent)).subscribe(
         (succ: any) => {
           const url = succ[1];
           entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
-            .pipe(untilDestroyed(this)).subscribe((file: Blob) => {
+            .pipe(untilDestroyed(entityDialog.parent)).subscribe((file: Blob) => {
               entityDialog.dialogRef.close();
               entityDialog.parent.storage.downloadBlob(file, fileName);
               entityDialog.parent.continueUpdate();
             }, () => {
               entityDialog.dialogRef.close();
               entityDialog.parent.dialogService.confirm({
-                title: helptext.save_config_err.title,
-                message: helptext.save_config_err.message,
-                buttonMsg: helptext.save_config_err.button_text,
+                title: entityDialog.parent.translate.instant(helptext.save_config_err.title),
+                message: entityDialog.parent.translate.instant(helptext.save_config_err.message),
+                buttonMsg: entityDialog.parent.translate.instant(helptext.save_config_err.button_text),
               }).pipe(
                 filter(Boolean),
-                untilDestroyed(this),
+                untilDestroyed(entityDialog.parent),
               ).subscribe(() => {
                 entityDialog.parent.continueUpdate();
               });
@@ -618,11 +644,13 @@ export class UpdateComponent implements OnInit {
           entityDialog.dialogRef.close();
         },
         () => {
-          entityDialog.parent.dialogService.confirm(helptext.save_config_err.title, helptext.save_config_err.message,
-            false, helptext.save_config_err.button_text).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-            if (res) {
-              entityDialog.parent.continueUpdate();
-            }
+          entityDialog.parent.dialogService.confirm({
+            title: entityDialog.parent.translate.instant(helptext.save_config_err.title),
+            message: entityDialog.parent.translate.instant(helptext.save_config_err.message),
+            hideCheckBox: false,
+            buttonMsg: entityDialog.parent.translate.instant(helptext.save_config_err.button_text),
+          }).pipe(filter(Boolean), untilDestroyed(entityDialog.parent)).subscribe(() => {
+            entityDialog.parent.continueUpdate();
           });
         },
       );
@@ -636,14 +664,13 @@ export class UpdateComponent implements OnInit {
         break;
       case 'applyPending':
         const message = this.isHA
-          ? 'The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?'
-          : 'The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?';
-        this.dialogService.confirm(
-          T('Apply Pending Updates'), T(message),
-        ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.update();
-          }
+          ? this.translate.instant('The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?')
+          : this.translate.instant('The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?');
+        this.dialogService.confirm({
+          title: this.translate.instant(T('Apply Pending Updates')),
+          message: this.translate.instant(T(message)),
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          this.update();
         });
         break;
       case 'standard':
