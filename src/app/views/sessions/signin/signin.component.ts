@@ -40,7 +40,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatButton, { static: false }) submitButton: MatButton;
   @ViewChild('username', { read: ElementRef }) usernameInput: ElementRef<HTMLElement>;
 
-  private failed = false;
+  failed = false;
   product_type: ProductType;
   logo_ready = false;
   product = productText.product;
@@ -78,7 +78,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   failover_ips: string[] = [];
   ha_disabled_reasons: FailoverDisabledReason[] = [];
   show_reasons = false;
-  reason_text = {};
+  reason_text = helptext.ha_disabled_reasons;
   ha_status_text = T('Checking HA status');
   ha_status = false;
   tc_ip: string;
@@ -106,7 +106,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tc_url = res.truecommand_url;
       }
     });
-    this.reason_text = helptext.ha_disabled_reasons;
   }
 
   checkSystemType(): void {
