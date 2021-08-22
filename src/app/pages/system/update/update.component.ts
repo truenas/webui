@@ -11,7 +11,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
-import { ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -54,7 +53,7 @@ export class UpdateComponent implements OnInit {
   trainDescriptionOnPageLoad: string;
   fullTrainList: { [name: string]: SystemUpdateTrain };
   isUpdateRunning = false;
-  updateMethod = 'update.update';
+  updateMethod: 'update.update' = 'update.update';
   is_ha = false;
   product_type: ProductType;
   ds: any;
@@ -543,7 +542,7 @@ export class UpdateComponent implements OnInit {
       secondaryCheckBoxMsg: this.translate.instant(confirmMsg),
       method: this.updateMethod,
       data: [{ reboot: false }],
-    } as ConfirmOptionsWithSecondaryCheckbox);
+    });
 
     this.ds.componentInstance.isSubmitEnabled = true;
     this.ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status: any) => {
