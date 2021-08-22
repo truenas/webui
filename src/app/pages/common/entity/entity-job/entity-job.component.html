@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{title | translate}}</h1>
 <mat-dialog-content class="entity-job-dialog"
 	ix-auto ix-auto-type="dialog" ix-auto-identifier="title">
-	<div *ngIf="job && job.state === EntityJobState.Running">
+	<div *ngIf="job && job.state === JobState.Running">
 	    <mat-progress-bar class="example-margin"
 			color="primary"
 			mode="indeterminate"
@@ -31,8 +31,29 @@
 	</div>
 </mat-dialog-content>
 <div mat-dialog-actions>
-	<button mat-button *ngIf="showAbortButton && (job && job.state === EntityJobState.Running)" ix-auto ix-auto-type="button"
-		ix-auto-identifier="ABORT" (click)="abortJob()">{{"Abort" | translate}}</button>
-	<button mat-button mat-dialog-close="close" *ngIf="showCloseButton || (job && (job.state === EntityJobState.Failed || job.state === EntityJobState.Aborted))" ix-auto
-		ix-auto-type="button" ix-auto-identifier="CLOSE">{{"Close" | translate}}</button>
+	<button
+    mat-button
+    *ngIf="showAbortButton && job?.state === JobState.Running"
+    ix-auto
+    ix-auto-type="button"
+		ix-auto-identifier="ABORT"
+    (click)="abortJob()"
+  >{{"Abort" | translate}}</button>
+	<button
+    mat-button
+    mat-dialog-close="close"
+    *ngIf="showCloseButton || job?.state?.includes([JobState.Failed, JobState.Aborted])"
+    ix-auto
+		ix-auto-type="button"
+    ix-auto-identifier="CLOSE"
+  >{{"Close" | translate}}</button>
+  <button
+    mat-icon-button
+    class="collapseButton"
+    *ngIf="showCollapseButton && job?.state === JobState.Running"
+    ix-auto
+		ix-auto-type="button"
+    ix-auto-identifier="COLLAPSE"
+    (click)="collapseDialog()"
+  ><mat-icon>expand_less</mat-icon></button>
 </div>

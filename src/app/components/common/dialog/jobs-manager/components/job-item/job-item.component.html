@@ -8,9 +8,11 @@
     <mat-progress-bar
       *ngIf="job.state === JobState.Running"
       [value]="job.progress.percent"
-      mode="buffer"
+      mode="indeterminate"
       class="job-progress"
     ></mat-progress-bar>
+
+    <div class="job-progress-description" *ngIf="job.state === JobState.Running && job?.progress">{{ job.progress.description }}</div>
 
     <div class="job-time">
       <ng-container *ngIf="job.state === JobState.Running; then started; else stopped"></ng-container>

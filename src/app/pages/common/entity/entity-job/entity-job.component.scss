@@ -1,3 +1,14 @@
+:host {
+  display: block;
+  position: relative;
+}
+
 mat-dialog-content.entity-job-dialog.mat-dialog-content {
   overflow: auto !important;
+}
+
+.collapseButton {
+  position: absolute;
+  right: 0;
+  top: 0;
 }
