@@ -115,8 +115,8 @@ export class UpdateComponent implements OnInit {
     protected http: HttpClient,
     public core: CoreService,
   ) {
-    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      res === 'true' ? (this.isUpdateRunning = true) : (this.isUpdateRunning = false);
+    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
+      this.isUpdateRunning = isUpdating === 'true';
     });
   }
 
