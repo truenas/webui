@@ -970,6 +970,12 @@ export class DataProtectionDashboardComponent implements OnInit {
     if (row.job) {
       if (row.job.state === JobState.Running) {
         this.runningStateButton(row.job.id);
+      } else if (row.state.warnings) {
+        let list = '';
+        row.state.warnings.forEach(( warning: string) => {
+          list += warning + '\n';
+        });
+        this.dialog.errorReport(T('Warning'), `<pre>${list}</pre>`);
       } else {
         this.job.showLogs(row.job);
       }
