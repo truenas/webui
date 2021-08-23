@@ -352,12 +352,11 @@ export class EntityUtils {
         fieldConfig['type'] = 'input';
       }
     } else if (schemaConfig.schema.type == 'hostpath') {
-      let conf: FormExplorerConfig = Object.assign({}, fieldConfig);
+      const conf: FormExplorerConfig = { ...fieldConfig };
       conf['type'] = 'explorer';
       conf['initial'] = '/mnt';
       conf['explorerType'] = 'file';
       fieldConfig = conf;
-      
     } else if (schemaConfig.schema.type == 'path') {
       fieldConfig['type'] = 'input';
     } else if (schemaConfig.schema.type == 'list') {

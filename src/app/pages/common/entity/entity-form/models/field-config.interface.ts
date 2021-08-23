@@ -109,7 +109,7 @@ export interface FormUploadConfig<P = any> extends BaseFieldConfig<P> {
 export interface FormExplorerConfig<P = any> extends BaseFieldConfig<P> {
   explorerParam?: any;
   explorerType?: string;
-  //fileLocation?: string;
+  // fileLocation?: string;
 }
 
 export type FieldConfig<P = any> = BaseFieldConfig<P> | FormUploadConfig<P> | FormExplorerConfig<P>;
