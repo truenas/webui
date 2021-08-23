@@ -1,12 +1,10 @@
-import {
-  ApplicationRef, Component, Injector, Type,
-} from '@angular/core';
+import { Component, Type } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TooltipPosition } from '@angular/material/tooltip';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { PreferencesService } from 'app/core/services/preferences.service';
+import { filter } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -60,7 +58,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   protected queryCallOptionShow = [[['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']], { select: ['name', 'properties'], order_by: ['name'] }];
   protected queryCallOptionHide = [[['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']], { select: ['name'], order_by: ['name'] }];
   hasDetails: boolean;
-  columnFilter = window.localStorage.getItem('snapshotXtraCols') === 'true';
+  columnFilter = false;
   rowDetailComponent: Type<SnapshotDetailsComponent>;
   snapshotXtraCols = false;
 
@@ -154,13 +152,20 @@ export class SnapshotListComponent implements EntityTableConfig {
     warning: helptext.rollback_warning,
   };
 
-  constructor(protected _router: Router, protected _route: ActivatedRoute,
-    protected ws: WebSocketService, protected localeService: LocaleService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
-    protected storageService: StorageService, protected dialogService: DialogService,
-    protected prefService: PreferencesService, protected dialog: MatDialog,
-    protected translate: TranslateService) {
-    if (window.localStorage.getItem('snapshotXtraCols') === 'true') {
+  constructor(
+    private router: Router,
+    protected ws: WebSocketService,
+    protected localeService: LocaleService,
+    protected storageService: StorageService,
+    protected dialogService: DialogService,
+    protected dialog: MatDialog,
+    protected translate: TranslateService,
+  ) {
+    this.setExtraColumns(window.localStorage.getItem('snapshotXtraCols') === 'true');
+  }
+
+  setExtraColumns(showExtra: boolean): void {
+    if (showExtra) {
       this.queryCallOption = this.queryCallOptionShow;
       this.rowDetailComponent = null;
       this.columnFilter = true;
@@ -212,8 +217,9 @@ export class SnapshotListComponent implements EntityTableConfig {
         icon: 'filter_none',
         name: this.config.name,
         label: helptext.label_clone,
-        onClick: (snapshot: SnapshotListRow) =>
-          this._router.navigate(new Array('/').concat(['storage', 'snapshots', 'clone', snapshot.name])),
+        onClick: (snapshot: SnapshotListRow) => {
+          this.router.navigate(['/', 'storage', 'snapshots', 'clone', snapshot.name]);
+        },
       },
       {
         id: 'rollback',
@@ -256,9 +262,13 @@ export class SnapshotListComponent implements EntityTableConfig {
   }
 
   doDelete(item: SnapshotListRow): void {
-    const deleteMsg = T('Delete snapshot ') + item.name + '?';
-    this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
+    this.entityList.dialogService.confirm({
+      title: T('Delete'),
+      message: this.translate.instant('Delete snapshot {name}?', { name: item.name }),
+      buttonMsg: T('Delete'),
+    })
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
         this.entityList.loader.open();
         this.entityList.loaderOpen = true;
         this.ws.call(this.wsDelete, [item.name]).pipe(untilDestroyed(this)).subscribe(
@@ -271,8 +281,7 @@ export class SnapshotListComponent implements EntityTableConfig {
             this.entityList.loader.close();
           },
         );
-      }
-    });
+      });
   }
 
   restructureData(selected: SnapshotListRow[]): DialogData {
@@ -327,11 +336,13 @@ export class SnapshotListComponent implements EntityTableConfig {
 
   doMultiDelete(selected: SnapshotListRow[]): void {
     const multiDeleteMsg = this.getMultiDeleteMessage(selected);
-    this.dialogService.confirm('Delete', multiDeleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.startMultiDeleteProgress(selected);
-      }
-    });
+    this.dialogService.confirm({
+      title: 'Delete',
+      message: multiDeleteMsg,
+      buttonMsg: T('Delete'),
+    })
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => this.startMultiDeleteProgress(selected));
   }
 
   startMultiDeleteProgress(selected: SnapshotListRow[]): void {
@@ -428,8 +439,9 @@ export class SnapshotListComponent implements EntityTableConfig {
   }
 
   toggleExtraCols(): void {
-    let title; let message; let
-      button;
+    let title: string;
+    let message: string;
+    let button: string;
     if (this.snapshotXtraCols) {
       title = helptext.extra_cols.title_hide;
       message = helptext.extra_cols.message_hide;
@@ -439,13 +451,20 @@ export class SnapshotListComponent implements EntityTableConfig {
       message = helptext.extra_cols.message_show;
       button = helptext.extra_cols.button_show;
     }
-    this.dialogService.confirm(title, message, true, button).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
+    this.dialogService.confirm({
+      title,
+      message,
+      hideCheckBox: true,
+      buttonMsg: button,
+    })
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.entityList.loaderOpen = true;
         this.entityList.loader.open();
         this.snapshotXtraCols = !this.snapshotXtraCols;
         window.localStorage.setItem('snapshotXtraCols', this.snapshotXtraCols.toString());
-        document.location.reload(true);
-      }
-    });
+        this.setExtraColumns(this.snapshotXtraCols);
+        this.entityList.getData();
+      });
   }
 }
