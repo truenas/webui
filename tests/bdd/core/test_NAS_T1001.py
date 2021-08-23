@@ -51,8 +51,9 @@ def you_see_the_dashboard(driver):
 @then('click Storage on the side menu and click Disks')
 def click_storage_on_the_side_menu_and_click_disks(driver):
     """click Storage on the side menu and click Disks."""
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Disks"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Disks"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Disks"]').click()
 
 
