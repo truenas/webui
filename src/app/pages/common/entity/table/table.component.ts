@@ -121,7 +121,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   loaderOpen = false;
   afterGetDataHook$ = new Subject();
 
-  protected idProp = 'id';
+  idProp = 'id';
 
   private TABLE_HEADER_HEIGHT = 48;
   private TABLE_ROW_HEIGHT = 48;

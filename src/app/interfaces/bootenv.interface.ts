@@ -15,8 +15,8 @@ export interface Bootenv {
 }
 
 export type SetBootenvAttributeParams = [
-  /* name */ string,
-  /* attributes */ Partial<Bootenv>,
+  name: string,
+  attributes: Partial<Bootenv>,
 ];
 
 export interface CloneBootenvParams {
@@ -25,6 +25,6 @@ export interface CloneBootenvParams {
 }
 
 export type UpdateBootenvParams = [
-  /* name */ string,
-  /* updates */ { name: string },
+  name: string,
+  updates:{ name: string },
 ];

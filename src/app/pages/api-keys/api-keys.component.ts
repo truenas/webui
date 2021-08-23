@@ -25,7 +25,7 @@ export class ApiKeysComponent implements EntityTableConfig {
   title = helptext.title;
   queryCall: 'api_key.query' = 'api_key.query';
   wsDelete: 'api_key.delete' = 'api_key.delete';
-  protected route_add_tooltip = helptext.route_add_tooltip;
+  route_add_tooltip = helptext.route_add_tooltip;
   addCall: 'api_key.create' = 'api_key.create';
   editCall: 'api_key.update' = 'api_key.update';
 
@@ -133,7 +133,7 @@ export class ApiKeysComponent implements EntityTableConfig {
         },
       );
     } else {
-      that.ws.call(that.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
+      that.ws.call(that.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(that)).subscribe(
         (res) => {
           entityDialogForm.dialogRef.close(true);
           that.displayKey(res.key);

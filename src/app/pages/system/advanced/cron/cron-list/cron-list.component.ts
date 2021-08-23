@@ -30,7 +30,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   wsDelete: 'cronjob.delete' = 'cronjob.delete';
   queryCall: 'cronjob.query' = 'cronjob.query';
   route_add: string[] = ['tasks', 'cron', 'add'];
-  protected route_add_tooltip = 'Add Cron Job';
+  route_add_tooltip = 'Add Cron Job';
   route_edit: string[] = ['tasks', 'cron', 'edit'];
   entityList: EntityTableComponent;
 

@@ -10,9 +10,9 @@ export interface ListSelection {
 
   totalItems: any[];
 
-  mouseDown(item: any): void;
+  mouseDown(item: any, event?: MouseEvent): void;
 
-  mouseUp(item: any): void;
+  mouseUp(item: any, event?: MouseEvent): void;
 
   selectAll(): void;
 

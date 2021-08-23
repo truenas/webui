@@ -14,8 +14,8 @@ export interface Group {
 }
 
 export type DeleteGroupParams = [
-  /* id */ number,
-  /* params */ { delete_users: boolean },
+  id: number,
+  params: { delete_users: boolean },
 ];
 
 export interface CreateGroup {

@@ -53,8 +53,8 @@ export class CatalogComponent implements OnInit {
   filteredCatalogApps: CatalogApp[] = [];
   filterString = '';
   catalogSyncJobs: CatalogSyncJob[] = [];
+  selectedPool = '';
   private poolList: Option[] = [];
-  private selectedPool = '';
   private kubernetesForm: KubernetesSettingsComponent;
   private chartWizardComponent: ChartWizardComponent;
 
@@ -106,31 +106,9 @@ export class CatalogComponent implements OnInit {
       this.refreshForms();
     });
 
-    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
-      const syncJobs = state.jobs.filter((job) => job.method == 'catalog.create' && job.state === JobState.Running);
-      syncJobs.forEach((syncJob) => {
-        const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == syncJob.id);
-        if (!catalogSyncJob) {
-          this.catalogSyncJobs.push({
-            id: syncJob.id,
-            name: (syncJob.arguments[0] as any).label,
-            progress: syncJob.progress.percent,
-          });
-        }
-      });
-    });
-
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      if (event.fields.method == 'catalog.create') {
-        let catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == event.fields.id);
-        if (!catalogSyncJob) {
-          catalogSyncJob = {
-            id: event.fields.id,
-            name: event.fields.arguments[0] as string,
-            progress: event.fields.progress.percent,
-          };
-          this.catalogSyncJobs.push(catalogSyncJob);
-        }
+      const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == event.fields.id);
+      if (catalogSyncJob) {
         catalogSyncJob.progress = event.fields.progress.percent;
         if (event.fields.state == JobState.Success) {
           this.catalogSyncJobs = this.catalogSyncJobs.filter((job) => job.id !== catalogSyncJob.id);
@@ -147,11 +125,22 @@ export class CatalogComponent implements OnInit {
     this.catalogApps = [];
     this.isLoading = true;
     this.showLoadStatus(EmptyType.Loading);
+    this.catalogSyncJobs = [];
 
     this.appService.getAllCatalogItems().pipe(untilDestroyed(this)).subscribe((catalogs) => {
       this.noAvailableCatalog = true;
       for (let i = 0; i < catalogs.length; i++) {
         const catalog = catalogs[i];
+        if (!catalog.cached) {
+          if (catalog.caching_job) {
+            this.catalogSyncJobs.push({
+              id: catalog.caching_job.id,
+              name: catalog.label,
+              progress: catalog.caching_job.progress.percent,
+            });
+          }
+          continue;
+        }
 
         if (!catalog.error) {
           this.noAvailableCatalog = false;

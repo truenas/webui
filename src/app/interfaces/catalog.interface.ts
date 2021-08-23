@@ -1,3 +1,4 @@
+import { JobState } from 'app/enums/job-state.enum';
 import { ChartSchemaGroup, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
@@ -22,6 +23,17 @@ export interface Catalog {
     [trainName: string]: CatalogTrain;
   };
   error: boolean;
+  cached: boolean;
+  caching_job: {
+    id: number;
+    abortable: boolean;
+    method: string;
+    progress: {
+      percent: number;
+      description: string;
+    };
+    state: JobState;
+  };
 }
 
 export type CatalogQueryParams = QueryParams<Catalog, {

@@ -1,6 +1,6 @@
 export type PoolExportParams = [
-  /* id */ string,
-  {
+  id: string,
+  params: {
     cascade: boolean;
     destroy: boolean;
     restart_services: boolean;

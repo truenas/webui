@@ -30,7 +30,12 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   @ViewChild('wrapper', { static: true }) el: ElementRef;
   @Input() chartId: string;
   @Input() chartColors: string[];
-  @Input() data: ReportingData;
+  @Input() set data(value: ReportingData) {
+    this._data = value;
+  }
+  get data(): ReportingData {
+    return this._data;
+  }
   @Input() report: Report;
   @Input() title: string;
   @Input() timezone: string;
