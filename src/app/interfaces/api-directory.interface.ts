@@ -185,6 +185,7 @@ export type ApiDirectory = {
   'acme.dns.authenticator.query': { params: void; response: DnsAuthenticator[] };
   'acme.dns.authenticator.create': { params: CreateDnsAuthenticator; response: DnsAuthenticator };
   'acme.dns.authenticator.update': { params: [number, UpdateDnsAuthenticator]; response: DnsAuthenticator };
+  'acme.dns.authenticator.delete': { params: any; response: any };
   'acme.dns.authenticator.authenticator_schemas': { params: void; response: AuthenticatorSchema[] };
 
   // Alert
@@ -256,6 +257,7 @@ export type ApiDirectory = {
   'certificate.create': { params: any; response: any };
   'certificate.query': { params: QueryParams<Certificate>; response: Certificate[] };
   'certificate.update': { params: any; response: any };
+  'certificate.delete': { params: any; response: any };
   'certificate.ec_curve_choices': { params: void; response: Choices };
   'certificate.country_choices': { params: void; response: Choices };
   'certificate.extended_key_usage_choices': { params: void; response: ExtendedKeyUsageChoices };
@@ -267,6 +269,7 @@ export type ApiDirectory = {
   'certificateauthority.create': { params: [CertificateAuthorityUpdate]; response: any };
   'certificateauthority.query': { params: QueryParams<CertificateAuthority>; response: CertificateAuthority[] };
   'certificateauthority.update': { params: [number, CertificateAuthorityUpdate]; response: any };
+  'certificateauthority.delete': { params: any; response: any };
   'certificateauthority.profiles': { params: void; response: CertificateProfiles };
   'certificateauthority.ca_sign_csr': { params: any; response: any };
 
@@ -305,6 +308,7 @@ export type ApiDirectory = {
   'cloudsync.credentials.query': { params: QueryParams<CloudsyncCredential>; response: CloudsyncCredential[] };
   'cloudsync.credentials.create': { params: any; response: any };
   'cloudsync.credentials.update': { params: any; response: any };
+  'cloudsync.credentials.delete': { params: any; response: any };
   'cloudsync.credentials.verify': { params: any; response: any };
   'cloudsync.onedrive_list_drives': { params: any; response: any };
   'cloudsync.list_buckets': { params: any; response: any };
@@ -437,6 +441,7 @@ export type ApiDirectory = {
   'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
   'interface.create': { params: any; response: any };
   'interface.update': { params: any; response: any };
+  'interface.delete': { params: any; response: any };
   'interface.has_pending_changes': { params: void; response: boolean };
   'interface.checkin_waiting': { params: void; response: any };
   'interface.checkin': { params: any; response: any };
