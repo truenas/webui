@@ -226,7 +226,7 @@ def click_on_the_dataset_name_3_dots_button_select_edit_permissions(driver, data
     time.sleep(1)
     driver.find_element_by_xpath('//div[normalize-space(text())="system"]//mat-icon').click()
     time.sleep(1)
-    assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]')
+    assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
