@@ -41,9 +41,9 @@ export class DatasetUnlockComponent implements FormConfiguration {
   isEntity = true;
   isNew = true;
   pk: string;
+  dialogOpen = false;
   protected path: string;
   protected entityForm: EntityFormComponent;
-  protected dialogOpen = false;
 
   protected datasets: FormArray;
   protected datasets_fc: FieldConfig;
