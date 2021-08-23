@@ -220,7 +220,7 @@ export class ReplicationListComponent implements EntityTableConfig {
       } else if (row.state.state === JobState.Hold) {
         this.dialog.info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
       } else if (row.state.warnings && row.state.warnings.length > 0) {
-        let list: string = '';
+        let list = '';
         row.state.warnings.forEach((warning: string) => {
           list += warning + '\n';
         });
