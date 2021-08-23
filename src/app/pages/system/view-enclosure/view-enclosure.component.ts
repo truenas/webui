@@ -89,7 +89,7 @@ export class ViewEnclosureComponent implements OnDestroy {
     this.currentView = this.views[index];
   }
 
-  constructor(private core: CoreService, protected router: Router) {
+  constructor(private core: CoreService, public router: Router) {
     this.events = new Subject<CoreEvent>();
     this.events.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {

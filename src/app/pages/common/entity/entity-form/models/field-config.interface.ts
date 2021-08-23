@@ -100,7 +100,7 @@ export interface FieldConfig<P = any> {
   width?: string;
   zeroStateMessage?: string;
 
-  customEventMethod?(data: any): void;
+  customEventMethod?(data?: any): void;
   onChange?(data: any): void;
   onChangeOption?(data: any): void;
 }

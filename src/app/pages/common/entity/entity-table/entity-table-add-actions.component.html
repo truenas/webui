@@ -115,7 +115,7 @@
           ix-auto-identifier="{{entity.conf.title}}_ADD">{{"Add" | translate}}
         </button>
         <button
-          id="add_action_button_{{action?.label}}"
+          id="add_action_button_{{actions[0]?.label}}"
           mat-button color="primary"
           *ngIf="!(this.entity.conf.route_add || this.entity.conf.doAdd) && this.totalActions== 1"
           (click)="this.actions[0].onClick()"

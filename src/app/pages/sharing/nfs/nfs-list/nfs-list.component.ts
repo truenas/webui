@@ -20,7 +20,7 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
   queryCall: 'sharing.nfs.query' = 'sharing.nfs.query';
   wsDelete: 'sharing.nfs.delete' = 'sharing.nfs.delete';
   route_add: string[] = ['sharing', 'nfs', 'add'];
-  protected route_add_tooltip = 'Add Unix (NFS) Share';
+  route_add_tooltip = 'Add Unix (NFS) Share';
   route_edit: string[] = ['sharing', 'nfs', 'edit'];
   protected route_delete: string[] = ['sharing', 'nfs', 'delete'];
   entityList: EntityTableComponent;

@@ -26,7 +26,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   queryCall: 'iscsi.target.query' = 'iscsi.target.query';
   wsDelete: 'iscsi.target.delete' = 'iscsi.target.delete';
   route_add: string[] = ['sharing', 'iscsi', 'target', 'add'];
-  protected route_add_tooltip = 'Add Target';
+  route_add_tooltip = 'Add Target';
   route_edit: string[] = ['sharing', 'iscsi', 'target', 'edit'];
 
   columns = [
