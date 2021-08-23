@@ -1,9 +1,10 @@
 import {
   Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { Subject } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import { WebSocketService } from 'app/services';
+import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { TableService } from './table.service';
 
@@ -11,6 +12,7 @@ export interface AppTableAction<Row = any> {
   name: string;
   icon: string;
   matTooltip?: string;
+  onChanging?: boolean;
   onClick: (row: Row) => void;
 }
 
@@ -35,17 +37,28 @@ export interface AppTableColumn {
   iconTooltip?: string;
   enableMatTooltip?: boolean;
   hidden?: boolean;
+  hiddenIfEmpty?: boolean;
   listview?: boolean;
   getIcon?(element: any, prop: string): void;
+}
+
+export interface AppTableConfirmDeleteDialog {
+  buildTitle?(args: any): string;
+  buttonMsg?(args: any): string;
+  title?: string;
+  message?: string;
+  button?: string;
+  isMessageComplete?: boolean;
+  hideCheckbox?: boolean;
 }
 
 export interface AppTableConfig<P = any> {
   title?: string;
   titleHref?: string;
   columns: AppTableColumn[];
-  queryCall: string;
+  queryCall: keyof ApiDirectory;
   queryCallOption?: any;
-  deleteCall?: string;
+  deleteCall?: keyof ApiDirectory;
   deleteCallIsJob?: boolean;
   complex?: boolean;
   hideHeader?: boolean; // hide table header row
@@ -63,10 +76,11 @@ export interface AppTableConfig<P = any> {
   parent: P;
   tableActions?: AppTableHeaderAction[];
   tableExtraActions?: AppTableHeaderAction[];
+  confirmDeleteDialog?: AppTableConfirmDeleteDialog;
 
   add?(): any; // add action function
   afterGetData?(data: any): void;
-  afterDelete?(tableComponent: any): void;
+  afterDelete?(): void;
   edit?(any: any): any; // edit row
   delete?(item: any, table: TableComponent): any; // customize delete row method
   dataSourceHelper?(any: any): any; // customise handle/modify dataSource
@@ -80,6 +94,7 @@ export interface AppTableConfig<P = any> {
   afterGetDataExpandable?(data: any): void; // field introduced by ExpandableTable, "fake" field
 }
 
+@UntilDestroy()
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
@@ -100,17 +115,19 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   emptyConf: EmptyConfig;
   showViewMore = false;
   showCollapse = false;
+  limitRows: number;
+  entityEmptyLarge = false;
+  enableViewMore = false;
+  loaderOpen = false;
+  afterGetDataHook$ = new Subject();
 
-  protected idProp = 'id';
+  idProp = 'id';
 
   private TABLE_HEADER_HEIGHT = 48;
   private TABLE_ROW_HEIGHT = 48;
   private TABLE_MIN_ROWS = 5;
 
   private tableHeight: number;
-  private limitRows: number;
-  private entityEmptyLarge = false;
-  private enableViewMore = false;
 
   get tableConf(): AppTableConfig {
     return this._tableConf;
@@ -125,7 +142,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
-  constructor(private ws: WebSocketService, private tableService: TableService, private matDialog: MatDialog) {}
+  constructor(public tableService: TableService) {}
 
   calculateLimitRows(): void {
     if (this.table) {
@@ -163,6 +180,10 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   ngOnInit(): void {
     this.populateTable();
+
+    this.afterGetDataHook$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.updateColumns();
+    });
   }
 
   populateTable(): void {
@@ -181,12 +202,8 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     if (this._tableConf.hideHeader) {
       this.hideHeader = this._tableConf.hideHeader;
     }
-    this.displayedColumns = this._tableConf.columns.filter((col) => !col.hidden).map((col) => col.name);
 
-    if (this._tableConf.getActions || this._tableConf.deleteCall) {
-      this.displayedColumns.push('action'); // add action column to table
-      this.actions = this._tableConf.getActions ? this._tableConf.getActions() : []; // get all row actions
-    }
+    this.updateColumns();
     this.getData();
 
     this.idProp = this._tableConf.deleteMsg === undefined ? 'id' : this._tableConf.deleteMsg.id_prop || 'id';
@@ -195,6 +212,24 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   getData(): void {
     this.tableService.getData(this);
+  }
+
+  updateColumns(): void {
+    this.displayedColumns = this._tableConf.columns
+      .map((column) => {
+        if (this.dataSource && column?.hiddenIfEmpty && !column?.hidden) {
+          const hasSomeData = this.dataSource.some((row) => row[column.prop]?.toString().trim());
+          column.hidden = !hasSomeData;
+        }
+        return column;
+      })
+      .filter((column) => !column.hidden)
+      .map((column) => column.name);
+
+    if (this._tableConf.getActions || this._tableConf.deleteCall) {
+      this.displayedColumns.push('action'); // add action column to table
+      this.actions = this._tableConf.getActions ? this._tableConf.getActions() : []; // get all row actions
+    }
   }
 
   editRow(row: any): void {
@@ -263,19 +298,28 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     const state: JobState = row.state;
 
     switch (state) {
-      case JobState.Pending: return 'fn-theme-orange';
-      case JobState.Running: return 'fn-theme-orange';
-      case JobState.Aborted: return 'fn-theme-orange';
-      case JobState.Finished: return 'fn-theme-green';
-      case JobState.Success: return 'fn-theme-green';
-      case JobState.Error: return 'fn-theme-red';
-      case JobState.Failed: return 'fn-theme-red';
-      case JobState.Hold: return 'fn-theme-yellow';
-      default: return 'fn-theme-primary';
+      case JobState.Pending:
+        return 'fn-theme-orange';
+      case JobState.Running:
+        return 'fn-theme-orange';
+      case JobState.Aborted:
+        return 'fn-theme-orange';
+      case JobState.Finished:
+        return 'fn-theme-green';
+      case JobState.Success:
+        return 'fn-theme-green';
+      case JobState.Error:
+        return 'fn-theme-red';
+      case JobState.Failed:
+        return 'fn-theme-red';
+      case JobState.Hold:
+        return 'fn-theme-yellow';
+      default:
+        return 'fn-theme-primary';
     }
   }
 
-  determineColumnType(column: any): string {
+  determineColumnType(column: AppTableColumn): string {
     if (column.listview) {
       return 'listview';
     }
@@ -291,7 +335,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       return 'state-icon';
     }
 
-    if (column.prop === 'state' && column['button'] === true) {
+    if (column.prop === 'state' && column.button === true) {
       return 'state-button';
     }
 

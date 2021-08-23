@@ -30,11 +30,9 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
   isEmpty = true;
   isExpanded = false;
   readonly ServiceStatus = ServiceStatus;
-
-  readonly ExpandatbleTableState = ExpandableTableState;
+  readonly ExpandableTableState = ExpandableTableState;
 
   @Input('conf') tableConf: InputExpandableTableConf;
-
   @Input('expandableTableState') expandableTableState: ExpandableTableState;
   @Input('disabled') disabled: boolean;
 

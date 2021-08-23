@@ -16,5 +16,5 @@ export interface CardWidgetConf {
   styleUrls: ['./card-widget.component.scss'],
 })
 export class CardWidgetComponent {
-  @Input('conf') widgetConf: CardWidgetComponent;
+  @Input('conf') widgetConf: CardWidgetConf;
 }
