@@ -293,7 +293,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   getButtonClass(row: any): string {
     // Bring warnings to user's attention even if state is finished or successful.
-    if(row.warnings.length > 0) return 'fn-theme-orange';
+    if (row.warnings && row.warnings.length > 0) return 'fn-theme-orange';
 
     const state: JobState = row.state;
 
