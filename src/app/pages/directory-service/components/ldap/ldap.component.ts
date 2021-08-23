@@ -7,6 +7,7 @@ import helptext from 'app/helptext/directory-service/ldap';
 import global_helptext from 'app/helptext/global-helptext';
 import { FormConfiguration, FormCustomAction } from 'app/interfaces/entity-form.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
   FieldConfig,
@@ -321,7 +322,7 @@ export class LdapComponent implements FormConfiguration {
     this.modalService.refreshTable();
   }
 
-  errorReport(res: any): void {
+  errorReport(res: WebsocketError): void {
     let errorText = res.reason ? res.reason.replace('[EFAULT]', '') : null;
     if (res.reason && res.reason.includes('Invalid credentials')) {
       errorText = T('Invalid credentials. Please try again.');

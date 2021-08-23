@@ -1,3 +1,5 @@
+import { TransferMode } from 'app/enums/transfer-mode.enum';
+
 export interface CloudsyncProvider {
   bucket_title: string;
   buckets: boolean;
@@ -7,3 +9,12 @@ export interface CloudsyncProvider {
   task_schema: any[];
   title: string;
 }
+
+export type CloudsyncRestoreParams = [
+  id: number,
+  params: {
+    description: string;
+    transfer_mode: TransferMode;
+    path: string;
+  },
+];

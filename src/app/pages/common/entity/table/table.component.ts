@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked,
+  Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked, ElementRef,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
@@ -78,17 +78,17 @@ export interface AppTableConfig<P = any> {
   tableExtraActions?: AppTableHeaderAction[];
   confirmDeleteDialog?: AppTableConfirmDeleteDialog;
 
-  add?(): any; // add action function
+  add?(): void; // add action function
   afterGetData?(data: any): void;
   afterDelete?(): void;
-  edit?(any: any): any; // edit row
-  delete?(item: any, table: TableComponent): any; // customize delete row method
+  edit?(any: any): void; // edit row
+  delete?(item: any, table: TableComponent): void; // customize delete row method
   dataSourceHelper?(any: any): any; // customise handle/modify dataSource
   getInOutInfo?(any: any): any; // get in out info if has state column
   getActions?: () => AppTableAction[]; // actions for each row
   isActionVisible?(actionId: string, entity: any): boolean; // determine if action is visible
   getDeleteCallParams?(row: any, id: any): any; // get delete Params
-  onButtonClick?(row: any): any;
+  onButtonClick?(row: any): void;
 
   expandable?: boolean; // field introduced by ExpandableTable, "fake" field
   afterGetDataExpandable?(data: any): void; // field introduced by ExpandableTable, "fake" field
@@ -102,7 +102,7 @@ export interface AppTableConfig<P = any> {
   providers: [TableService],
 })
 export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
-  @ViewChild('table') table: any;
+  @ViewChild('table') table: ElementRef<HTMLElement>;
 
   _tableConf: AppTableConfig;
   title = '';

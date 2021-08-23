@@ -98,3 +98,9 @@ export interface CarpConfig {
   advbase: number;
   state: string; // Enum? "MASTER"
 }
+
+export interface ServiceRestartedOnNetworkSync {
+  type: string;
+  service: string;
+  ips: string[];
+}

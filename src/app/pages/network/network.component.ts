@@ -349,9 +349,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.ws
       .call('interface.checkin_waiting')
       .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        if (res != null) {
-          const seconds = res.toFixed(0);
+      .subscribe((seconds) => {
+        if (seconds != null) {
           if (seconds > 0 && this.checkin_remaining == null) {
             this.checkin_remaining = seconds;
             this.checkin_interval = setInterval(() => {
@@ -380,17 +379,17 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.ws
       .call('interface.services_restarted_on_sync')
       .pipe(untilDestroyed(this))
-      .subscribe((res: any[]) => {
+      .subscribe((res) => {
         if (res.length > 0) {
           const ips: string[] = [];
           res.forEach((item) => {
-            if (item['system-service']) {
-              this.affectedServices.push(item['system-service']);
+            if ((item as any)['system-service']) {
+              this.affectedServices.push((item as any)['system-service']);
             }
             if (item['service']) {
               this.affectedServices.push(item['service']);
             }
-            item.ips.forEach((ip: any) => {
+            item.ips.forEach((ip) => {
               ips.push(ip);
             });
           });

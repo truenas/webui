@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -111,7 +112,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
           (res) => {
-            const payload = [rowinner.id];
+            const payload: [id: number, force?: boolean] = [rowinner.id];
             let warningMsg = '';
             for (let i = 0; i < res.length; i++) {
               if (res[i].target.split(':')[1] == rowinner.name) {
@@ -128,7 +129,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
                 this.entityList.loaderOpen = true;
                 this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe(
                   () => { this.entityList.getData(); },
-                  (resinner: any) => {
+                  (resinner: WebsocketError) => {
                     new EntityUtils().handleWSError(this, resinner, this.entityList.dialogService);
                     this.entityList.loader.close();
                   },

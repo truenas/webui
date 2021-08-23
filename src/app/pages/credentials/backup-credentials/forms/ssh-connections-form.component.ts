@@ -11,6 +11,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -416,7 +417,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     this.modalService.refreshTable();
   }
 
-  errorReport(err: any): void {
+  errorReport(err: WebsocketError): void {
     this.loader.close();
     this.modalService.refreshTable();
     if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
