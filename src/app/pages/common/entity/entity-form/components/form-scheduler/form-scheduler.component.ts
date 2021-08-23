@@ -380,7 +380,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
   }
 
-  private setCalendar(direction: 'next' | 'previous'): void {
+  setCalendar(direction: 'next' | 'previous'): void {
     let newDate;
     if (direction == 'next') {
       newDate = dateFns.addMonths(this.minDate, 1);

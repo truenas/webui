@@ -25,7 +25,7 @@ interface Slide {
   index?: string;
   dataSource?: any;
   template: TemplateRef<any>;
-  topology?: string;
+  topology?: PoolTopologyCategory;
 }
 
 interface PoolDiagnosis {
@@ -74,12 +74,12 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   // NAVIGATION
   currentSlide = '0';
 
-  get currentSlideTopology(): string {
+  get currentSlideTopology(): PoolTopologyCategory {
     return this.path[parseInt(this.currentSlide)].topology;
   }
 
-  get currentSlideIndex(): number | string {
-    return this.path.length > 0 ? parseInt(this.currentSlide) : this.title;
+  get currentSlideIndex(): number {
+    return this.path.length > 0 ? parseInt(this.currentSlide) : Number(this.title);
   }
 
   get currentSlideName(): string {
@@ -228,7 +228,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     });
 
     this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      const currentPath = this.path[this.currentSlideIndex as number];
+      const currentPath = this.path[this.currentSlideIndex];
       const currentName = currentPath && currentPath.dataSource
         ? this.currentMultipathDetails
           ? this.checkMultipathLabel(currentPath.dataSource.disk)

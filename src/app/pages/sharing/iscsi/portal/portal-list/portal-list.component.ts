@@ -17,7 +17,7 @@ export class PortalListComponent implements EntityTableConfig {
   queryCall: 'iscsi.portal.query' = 'iscsi.portal.query';
   wsDelete: 'iscsi.portal.delete' = 'iscsi.portal.delete';
   route_add: string[] = ['sharing', 'iscsi', 'portals', 'add'];
-  protected route_add_tooltip = 'Add Portal';
+  route_add_tooltip = 'Add Portal';
   route_edit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
 
   columns = [

@@ -83,7 +83,7 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
     },
   };
 
-  protected chartConfig: any;// ChartConfiguration;
+  chartConfig: any;// ChartConfiguration;
 
   constructor() {
     super();

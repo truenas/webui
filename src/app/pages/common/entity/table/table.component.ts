@@ -101,7 +101,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
   showViewMore = false;
   showCollapse = false;
 
-  protected idProp = 'id';
+  idProp = 'id';
 
   private TABLE_HEADER_HEIGHT = 48;
   private TABLE_ROW_HEIGHT = 48;

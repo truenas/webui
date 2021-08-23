@@ -53,8 +53,8 @@ export class CatalogComponent implements OnInit {
   filteredCatalogApps: CatalogApp[] = [];
   filterString = '';
   catalogSyncJobs: CatalogSyncJob[] = [];
+  selectedPool = '';
   private poolList: Option[] = [];
-  private selectedPool = '';
   private kubernetesForm: KubernetesSettingsComponent;
   private chartWizardComponent: ChartWizardComponent;
 

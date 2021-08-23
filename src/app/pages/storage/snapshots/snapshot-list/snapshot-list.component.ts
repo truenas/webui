@@ -41,7 +41,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   title = 'Snapshots';
   queryCall: 'zfs.snapshot.query' = 'zfs.snapshot.query';
   route_add: string[] = ['storage', 'snapshots', 'add'];
-  protected route_add_tooltip = 'Add Snapshot';
+  route_add_tooltip = 'Add Snapshot';
   wsDelete: 'zfs.snapshot.delete' = 'zfs.snapshot.delete';
   protected loaderOpen = false;
   protected entityList: EntityTableComponent;
