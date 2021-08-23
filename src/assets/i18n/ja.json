@@ -670,7 +670,7 @@
   "Delete Zvol": "",
   "Delete iSCSI extent ": "",
   "Delete selections": "",
-  "Delete snapshot ": "",
+  "Delete snapshot {name}?": "",
   "Delete the passphrase from  the encryption key. Invalidates an existing pool recovery key file. A  dialog prompts to back up the encryption key.": "",
   "Delete the selected item?": "",
   "Delete the zvol {zvolName} and all snapshots of it?": "",
