@@ -15,8 +15,7 @@ export interface InputUnitConfig {
   allowUnits?: string[];
 }
 
-export interface FieldConfig<P = any> {
-  acceptedFiles?: string;
+export interface BaseFieldConfig<P = any> {
   addBtnMessage?: string;
   addInitialList?: boolean;
   alert?: { message: string; forValues: any[] };
@@ -35,11 +34,9 @@ export interface FieldConfig<P = any> {
   enableTextWrapForOptions?: boolean;
   errors?: string;
   expandedHeight?: boolean;
-  explorerParam?: any;
-  explorerType?: string;
-  fileLocation?: string;
   fileType?: string;
   filereader?: boolean;
+  fileLocation?: string;
   formarray?: any;
   hasErrors?: boolean;
   hideButton?: boolean;
@@ -104,3 +101,15 @@ export interface FieldConfig<P = any> {
   onChange?(data: any): void;
   onChangeOption?(data: any): void;
 }
+
+export interface FormUploadConfig<P = any> extends BaseFieldConfig<P> {
+  acceptedFiles?: string;
+}
+
+export interface FormExplorerConfig<P = any> extends BaseFieldConfig<P> {
+  explorerParam?: any;
+  explorerType?: string;
+  //fileLocation?: string;
+}
+
+export type FieldConfig<P = any> = BaseFieldConfig<P> | FormUploadConfig<P> | FormExplorerConfig<P>;

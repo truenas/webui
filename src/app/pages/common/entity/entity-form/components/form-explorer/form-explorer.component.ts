@@ -4,7 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   TREE_ACTIONS, KEYS, IActionMapping,
 } from 'angular-tree-component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormExplorerConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { T } from 'app/translate-marker';
@@ -18,13 +18,13 @@ import { T } from 'app/translate-marker';
   ],
 })
 export class FormExplorerComponent implements Field, OnInit {
-  config: FieldConfig;
+  config: FormExplorerConfig;
   group: FormGroup;
   fieldShow: string;
   nodes: any[];
 
   private treeVisible = true;
-  private displayFieldName: string;
+  private displayFieldName: string | null = null;
   private rootSelectable: boolean;
 
   private actionMapping: IActionMapping = {

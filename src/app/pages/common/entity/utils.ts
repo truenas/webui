@@ -3,7 +3,7 @@ import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormExplorerConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { DialogService } from 'app/services';
 import { Relation, RelationGroup } from './entity-form/models/field-relation.interface';
@@ -283,9 +283,9 @@ export class EntityUtils {
 
     const name = schemaConfig.variable;
 
-    const fieldConfig: FieldConfig = {
+    let fieldConfig: FieldConfig<any> = {
       name,
-    } as FieldConfig;
+    } as FieldConfig<any>;
 
     if (schemaConfig.schema.required !== undefined) {
       fieldConfig.required = schemaConfig.schema.required;
@@ -352,9 +352,12 @@ export class EntityUtils {
         fieldConfig['type'] = 'input';
       }
     } else if (schemaConfig.schema.type == 'hostpath') {
-      fieldConfig['type'] = 'explorer';
-      fieldConfig['explorerType'] = 'file';
-      fieldConfig['initial'] = '/mnt';
+      let conf: FormExplorerConfig = Object.assign({}, fieldConfig);
+      conf['type'] = 'explorer';
+      conf['initial'] = '/mnt';
+      conf['explorerType'] = 'file';
+      fieldConfig = conf;
+      
     } else if (schemaConfig.schema.type == 'path') {
       fieldConfig['type'] = 'input';
     } else if (schemaConfig.schema.type == 'list') {
