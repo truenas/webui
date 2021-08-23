@@ -218,12 +218,13 @@ def click_summit_the_dataset_name_data_should_be_created(driver, dataset_name):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    driver.find_element_by_xpath('//div[normalize-space(text())="system"]//mat-icon').click()
 
 
 @then(parsers.parse('click on the "{dataset_name}" 3 dots button, select Edit Permissions.'))
 def click_on_the_dataset_name_3_dots_button_select_edit_permissions(driver, dataset_name):
     """click on the "{dataset_name}" 3 dots button, select Edit Permissions.."""
+    time.sleep(1)
+    driver.find_element_by_xpath('//div[normalize-space(text())="system"]//mat-icon').click()
     time.sleep(1)
     assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]')
     driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()
