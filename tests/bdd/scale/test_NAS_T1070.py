@@ -125,4 +125,4 @@ def open_a_shell_and_run_su_user_to_become_that_user(driver, nas_ip):
 @then('the user should be able to use Sudo')
 def the_user_should_be_able_to_use_sudo(driver):
     """the user should be able to use Sudo."""
-    assert "ix-applications" in sudo_results, str(sudo_results)
+    assert "collectd-boot" in sudo_results, str(sudo_results)

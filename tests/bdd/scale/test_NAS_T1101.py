@@ -70,27 +70,33 @@ def the_disk_manager_appears_expand_sdc_and_click_wipe(driver):
     """the disk manager appears, expand sdc and click wipe."""
     time.sleep(1)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Disks")]')
-    time.sleep(2)
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__sdc"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__sdc"]/td').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__WIPE_sdc_sdc"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__WIPE_sdc_sdc"]').click()
+    disk_list = []
+    disk_elements = driver.find_elements_by_xpath('//div[contains(text(),"sd")]')
+    for disk_element in disk_elements:
+        disk = disk_element.text
+        if is_element_present(driver, f'//tr[contains(.,"{disk}")]//div[text()="N/A"]'):
+            disk_list.append(disk)
+    for disk in disk_list:
+        assert wait_on_element(driver, 7, f'//tr[@ix-auto="expander__{disk}"]/td[2]', 'clickable')
+        driver.find_element_by_xpath(f'//tr[@ix-auto="expander__{disk}"]/td[2]').click()
+        assert wait_on_element(driver, 7, f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]', 'clickable')
+        driver.find_element_by_xpath(f'//button[@ix-auto="button__WIPE_{disk}_{disk}"]').click()
+        assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
+        assert wait_on_element(driver, 7, '//button[@ix-auto="button__WIPE"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__WIPE"]').click()
+        assert wait_on_element(driver, 7, f'//h1[contains(.,"Wipe Disk {disk}")]')
+        assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+        assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+        assert wait_on_element(driver, 15, '//span[contains(.,"Disk Wiped successfully")]')
+        assert wait_on_element(driver, 5, '//button[contains(.,"CLOSE")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"CLOSE")]').click()
 
 
 @then('click wipe and conform, wait for popup, then click close')
 def click_wipe_and_conform_wait_for_popup_then_click_close(driver):
     """click wipe and conform, wait for popup, then click close."""
-    time.sleep(1)
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__WIPE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__WIPE"]').click()
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()    
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    time.sleep(10)
-    assert wait_on_element(driver, 10, '//button[contains(.,"CLOSE")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"CLOSE")]').click()
     time.sleep(1)
     assert wait_on_element(driver, 7, '//div[contains(.,"Disks")]')
     ## return to dashboard
