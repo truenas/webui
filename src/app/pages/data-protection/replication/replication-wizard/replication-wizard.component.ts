@@ -244,6 +244,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.name_regex_tooltip,
               parent: this,
               isHidden: true,
+              blurEvent: (parent: this) => {
+                parent.getSnapshots();
+              },
             },
           ],
         },
@@ -1487,17 +1490,19 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     const nameRegexFormControl = this.entityWizard.formArray.get([0]).get('name_regex');
 
-    const namingOption = schemaOrRegexFormControl.value === SnapshotNamingOption.NamingSchema
-      ? namingSchema : [nameRegexFormControl.value];
-
-    const payload = [
-      this.entityWizard.formArray.get([0]).get('source_datasets').value || [],
-      namingOption,
+    const payload: any[] = [{
+      datasets: this.entityWizard.formArray.get([0]).get('source_datasets').value || [],
       transport,
-      transport === TransportMode.Local ? null : this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value,
-    ];
+      ssh_credentials: transport === TransportMode.Local ? null : this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value,
+    }];
 
-    if (payload[0].length > 0) {
+    if (schemaOrRegexFormControl.value === SnapshotNamingOption.NamingSchema) {
+      payload[0].naming_schema = namingSchema;
+    } else {
+      payload[0].name_regex = nameRegexFormControl.value;
+    }
+
+    if (payload[0].datasets.length > 0) {
       this.ws.call('replication.count_eligible_manual_snapshots', payload).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.eligibleSnapshots = res.eligible;
