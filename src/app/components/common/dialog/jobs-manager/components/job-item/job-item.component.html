@@ -8,7 +8,6 @@
     <mat-progress-bar
       *ngIf="job.state === JobState.Running"
       [value]="job.progress.percent"
-      [bufferValue]="job.progress.percent"
       mode="indeterminate"
       class="job-progress"
     ></mat-progress-bar>
