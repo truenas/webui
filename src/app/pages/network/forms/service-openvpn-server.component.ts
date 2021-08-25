@@ -7,7 +7,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
@@ -227,7 +227,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
     });
 
     this.services.getOpenVPNServerAuthAlgorithmChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      const config = this.fieldConfig.find((c) => c.name === 'authentication_algorithm');
+      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'authentication_algorithm');
       for (const item in res) {
         config.options.push(
           { label: `${item} (${res[item]})`, value: item },
@@ -235,7 +235,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
       }
     });
     this.services.getOpenServerCipherChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      const config = this.fieldConfig.find((c) => c.name === 'cipher');
+      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'cipher');
       for (const item in res) {
         config.options.push(
           { label: `${item} ${res[item]}`, value: item },
@@ -243,14 +243,14 @@ export class OpenvpnServerComponent implements FormConfiguration {
       }
     });
     this.services.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
-      const config = this.fieldConfig.find((c) => c.name === 'server_certificate');
+      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'server_certificate');
       certificates.forEach((certificate) => {
         config.options.push({ label: certificate.name, value: certificate.id });
       });
       this.certOptions = config.options;
     });
     this.services.getCAs().pipe(untilDestroyed(this)).subscribe((authorities) => {
-      const config = this.fieldConfig.find((c) => c.name === 'root_ca');
+      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'root_ca');
       authorities.forEach((item) => {
         config.options.push({ label: item.name, value: item.id });
       });

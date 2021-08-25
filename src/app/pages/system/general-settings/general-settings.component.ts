@@ -15,7 +15,7 @@ import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-j
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
@@ -328,7 +328,8 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   uploadConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
-    const parent = entityDialog.conf.fieldConfig[0].parent;
+    const config: FormUploadConfig = entityDialog.conf.fieldConfig[0];
+    const parent = config.parent;
     const formData: FormData = new FormData();
 
     const dialogRef = parent.mdDialog.open(EntityJobComponent,
@@ -344,7 +345,7 @@ export class GeneralSettingsComponent implements OnInit {
       dialogRef.close();
       parent.router.navigate(['/others/reboot']);
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }

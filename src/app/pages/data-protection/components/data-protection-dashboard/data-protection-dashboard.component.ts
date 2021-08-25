@@ -50,6 +50,7 @@ import { JobService } from 'app/services/job.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
+import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 export interface TaskCard {
   name: string;
@@ -823,7 +824,7 @@ export class DataProtectionDashboardComponent implements OnInit, OnDestroy {
             saveButtonText: 'Restore',
             afterInit(entityDialog: EntityDialogComponent) {
               entityDialog.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode: any) => {
-                const paragraph = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
+                const paragraph: FormParagraphConfig = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                 switch (mode) {
                   case TransferMode.Sync:
                     paragraph.paraText = helptext_cloudsync.transfer_mode_warning_sync;

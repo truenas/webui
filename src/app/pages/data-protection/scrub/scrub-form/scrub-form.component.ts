@@ -5,7 +5,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -83,7 +83,7 @@ export class ScrubFormComponent implements FormConfiguration {
     },
   ]);
 
-  protected volume_field: FieldConfig;
+  protected volume_field: FormSelectConfig;
   protected month_field: FieldConfig;
   protected day_field: FieldConfig;
   protected minute_field: FieldConfig;

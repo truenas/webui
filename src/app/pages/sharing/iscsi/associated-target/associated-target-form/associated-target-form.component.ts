@@ -7,7 +7,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { IscsiService, WebSocketService } from 'app/services';
@@ -69,8 +69,8 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
 
-  protected target_control: FieldConfig;
-  protected extent_control: FieldConfig;
+  protected target_control: FormSelectConfig;
+  protected extent_control: FormSelectConfig;
   pk: string;
   protected entityForm: EntityFormComponent;
 

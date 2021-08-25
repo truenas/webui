@@ -17,7 +17,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import {
-  FieldConfig,
+  FieldConfig, FormCheckboxConfig, FormListConfig, FormParagraphConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -46,8 +46,8 @@ export class DatasetUnlockComponent implements FormConfiguration {
   protected dialogOpen = false;
 
   protected datasets: FormArray;
-  protected datasets_fc: FieldConfig;
-  protected key_file_fc: FieldConfig;
+  protected datasets_fc: FormListConfig;
+  protected key_file_fc: FormCheckboxConfig;
   protected key_file_fg: FormControl;
   protected unlock_children_fg: FormControl;
   protected master_checkbox_fc: FieldConfig;
@@ -246,7 +246,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
           }
           const controls = listFields[i];
           const passphrase_fc = _.find(controls, { name: 'passphrase' });
-          const name_text_fc = _.find(controls, { name: 'name_text' });
+          const name_text_fc: FormParagraphConfig = _.find(controls, { name: 'name_text' });
           const result = res.result[i];
 
           (this.datasets.controls[i] as FormGroup).controls['name'].setValue(result['name']);

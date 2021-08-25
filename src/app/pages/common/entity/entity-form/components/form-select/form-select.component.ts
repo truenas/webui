@@ -9,7 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
@@ -22,7 +22,7 @@ import { T } from 'app/translate-marker';
   templateUrl: './form-select.component.html',
 })
 export class FormSelectComponent implements Field, AfterViewInit, AfterViewChecked {
-  config: FieldConfig;
+  config: FormSelectConfig;
   group: FormGroup;
   fieldShow: string;
   control: AbstractControl;

@@ -27,7 +27,7 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormExplorerConfig, FormParagraphConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
@@ -768,7 +768,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     replication: 'replication.delete',
   };
 
-  protected snapshotsCountField: FieldConfig;
+  protected snapshotsCountField: FormParagraphConfig;
   private existSnapshotTasks: number[] = [];
   private eligibleSnapshots = 0;
   protected preload_fieldSet: FieldSet;
@@ -811,7 +811,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' });
+    const exist_replicationField: FormSelectConfig = _.find(this.preload_fieldSet.config, { name: 'exist_replication' });
     this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
       (res: ReplicationTask[]) => {
         for (const task of res) {
@@ -830,15 +830,15 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       },
     );
 
-    const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' });
+    const privateKeyField: FormSelectConfig = _.find(this.dialogFieldConfig, { name: 'private_key' });
     this.keychainCredentialService.getSSHKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
       for (const i in keyPairs) {
         (privateKeyField.options as Option[]).push({ label: keyPairs[i].name, value: String(keyPairs[i].id) });
       }
     });
 
-    const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' });
-    const ssh_credentials_target_field = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' });
+    const ssh_credentials_source_field: FormSelectConfig = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' });
+    const ssh_credentials_target_field: FormSelectConfig = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' });
     this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
       for (const i in connections) {
         ssh_credentials_source_field.options.push({ label: connections[i].name, value: connections[i].id });
@@ -899,10 +899,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             this.setDisable(datasetName, false, false, 0);
           } else {
             const fieldConfig = i === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
-            const explorerComponent = _.find(
+            const explorerConfig = _.find(
               fieldConfig,
               { name: datasetName },
-            ).customTemplateStringOptions.explorerComponent;
+            ) as FormExplorerConfig
+            const explorerComponent = explorerConfig.customTemplateStringOptions.explorerComponent;
             if (explorerComponent) {
               explorerComponent.nodes = [{
                 mountpoint: explorerComponent.config.initial,
@@ -917,7 +918,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
 
     this.entityWizard.formArray.get([0]).get('recursive').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
-      const explorerComponent = _.find(this.source_fieldSet.config, { name: 'source_datasets' }).customTemplateStringOptions;
+      const explorerConfig = _.find(this.source_fieldSet.config, { name: 'source_datasets' }) as FormExplorerConfig;
+      const explorerComponent = explorerConfig.customTemplateStringOptions;
       if (explorerComponent) {
         explorerComponent.useTriState = value;
       }
@@ -1389,12 +1391,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                 value[item] = res.id;
                 createdItems[item] = res.id;
                 if (item === 'private_key') {
-                  const privateKeyField = _.find(self.dialogFieldConfig, { name: 'private_key' });
+                  const privateKeyField: FormSelectConfig = _.find(self.dialogFieldConfig, { name: 'private_key' });
                   privateKeyField.options.push({ label: res.name + ' (New Created)', value: res.id });
                 }
                 if (item === 'ssh_credentials') {
-                  const ssh_credentials_source_field = _.find(self.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' });
-                  const ssh_credentials_target_field = _.find(self.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' });
+                  const ssh_credentials_source_field: FormSelectConfig = _.find(self.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' });
+                  const ssh_credentials_target_field: FormSelectConfig = _.find(self.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' });
                   ssh_credentials_source_field.options.push({ label: res.name + ' (New Created)', value: res.id });
                   ssh_credentials_target_field.options.push({ label: res.name + ' (New Created)', value: res.id });
                   self.entityWizard.formArray.get([0]).get([activedField]).setValue(res.id);

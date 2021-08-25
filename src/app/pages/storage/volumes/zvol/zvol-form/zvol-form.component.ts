@@ -13,7 +13,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormCheckboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -462,7 +462,7 @@ export class ZvolFormComponent implements FormConfiguration {
           this.entityForm.setDisabled('encryption', true, true);
           this.entityForm.setDisabled('inherit_encryption', true, true);
         } else {
-          const encryption_algorithm_fc = _.find(this.fieldConfig, { name: 'algorithm' });
+          const encryption_algorithm_fc: FormSelectConfig = _.find(this.fieldConfig, { name: 'algorithm' });
           const encryption_algorithm_fg = this.entityForm.formGroup.controls['algorithm'];
           let parent_algorithm;
           if (this.encrypted_parent && pk_dataset[0].encryption_algorithm) {
@@ -595,7 +595,7 @@ export class ZvolFormComponent implements FormConfiguration {
 
       this.translate.get('Inherit').pipe(untilDestroyed(this)).subscribe((inheritTr) => {
         const readonly_inherit = [{ label: `${inheritTr} (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT' }];
-        const readonly = _.find(this.fieldConfig, { name: 'readonly' });
+        const readonly: FormSelectConfig = _.find(this.fieldConfig, { name: 'readonly' });
         readonly.options = readonly_inherit.concat(readonly.options);
         let readonly_value;
         if (this.isNew) {
@@ -608,11 +608,11 @@ export class ZvolFormComponent implements FormConfiguration {
         }
         entityForm.formGroup.controls['readonly'].setValue(readonly_value);
 
-        const sync = _.find(this.fieldConfig, { name: 'sync' });
-        const sparse = _.find(this.fieldConfig, { name: 'sparse' });
-        const compression = _.find(this.fieldConfig, { name: 'compression' });
-        const deduplication = _.find(this.fieldConfig, { name: 'deduplication' });
-        const volblocksize = _.find(this.fieldConfig, { name: 'volblocksize' });
+        const sync: FormSelectConfig = _.find(this.fieldConfig, { name: 'sync' });
+        const sparse: FormCheckboxConfig = _.find(this.fieldConfig, { name: 'sparse' });
+        const compression: FormSelectConfig = _.find(this.fieldConfig, { name: 'compression' });
+        const deduplication: FormSelectConfig = _.find(this.fieldConfig, { name: 'deduplication' });
+        const volblocksize: FormSelectConfig = _.find(this.fieldConfig, { name: 'volblocksize' });
 
         if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {
           const sync_inherit = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];

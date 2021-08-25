@@ -14,7 +14,7 @@ import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { NetworkService, DialogService, WebSocketService } from 'app/services';
@@ -307,17 +307,17 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private lag_fieldset: FieldSet;
   private bridge_fieldset: FieldSet;
   private failover_fieldset: FieldSet;
-  private vlan_pint: FieldConfig;
-  private lag_ports: FieldConfig;
-  private lag_protocol: FieldConfig;
-  private bridge_members: FieldConfig;
+  private vlan_pint: FormSelectConfig;
+  private lag_ports: FormSelectConfig;
+  private lag_protocol: FormSelectConfig;
+  private bridge_members: FormSelectConfig;
   private type: FieldConfig;
   private type_fg: FormControl;
   private entityForm: EntityFormComponent;
   //
-  protected ipListControl: FieldConfig;
-  protected failover_group: FieldConfig;
-  protected failover_vhid: FieldConfig;
+  protected ipListControl: FormListConfig;
+  protected failover_group: FormSelectConfig;
+  protected failover_vhid: FormSelectConfig;
 
   save_button_enabled: boolean;
 
@@ -380,7 +380,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.failover_fieldset = _.find(this.fieldSets, { class: 'failover_settings' });
     this.vlan_pint = _.find(this.vlan_fieldset.config, { name: 'vlan_parent_interface' });
     this.ws.call('interface.xmit_hash_policy_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      const xmitHashPolicyFieldConfig = _.find(this.fieldConfig, { name: 'xmit_hash_policy' });
+      const xmitHashPolicyFieldConfig: FormSelectConfig = _.find(this.fieldConfig, { name: 'xmit_hash_policy' });
       xmitHashPolicyFieldConfig.options = [];
       for (const key in choices) {
         xmitHashPolicyFieldConfig.options.push({ label: key, value: key });
@@ -389,7 +389,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     });
 
     this.ws.call('interface.lacpdu_rate_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      const lacpduRateFieldConfig = _.find(this.fieldConfig, { name: 'lacpdu_rate' });
+      const lacpduRateFieldConfig: FormSelectConfig = _.find(this.fieldConfig, { name: 'lacpdu_rate' });
       lacpduRateFieldConfig.options = [];
       for (const key in choices) {
         lacpduRateFieldConfig.options.push({ label: key, value: key });
@@ -432,8 +432,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         } else {
           return;
         }
-        _.find(this.ipListControl.templateListField, { name: 'address' }).placeholder += this.ipPlaceholder;
-        _.find(this.ipListControl.templateListField, { name: 'failover_address' }).placeholder += this.failoverPlaceholder;
+        _.find(this.ipListControl.templateListField, { name: 'address' }).placeholder += this.ipPlaceholder; 
+        _.find(this.ipListControl.templateListField, { name: 'failover_address' }).placeholder += this.failoverPlaceholder; 
       });
     }
 

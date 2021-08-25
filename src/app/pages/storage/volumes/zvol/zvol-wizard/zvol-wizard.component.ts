@@ -25,6 +25,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 interface ZvolFormData {
   name: string;
@@ -319,10 +320,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
     if (!this.parent) return;
 
     const sparse = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sparse');
-    const sync = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sync');
-    const compression = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'compression');
-    const deduplication = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'deduplication');
-    const volblocksize = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize');
+    const sync: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sync');
+    const compression: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'compression');
+    const deduplication: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'deduplication');
+    const volblocksize: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize');
 
     this.isNew = true;
 

@@ -13,7 +13,7 @@ import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -200,7 +200,7 @@ export class VmFormComponent implements FormConfiguration {
       ],
     },
   ];
-  private bootloader: FieldConfig;
+  private bootloader: FormSelectConfig;
 
   constructor(
     protected router: Router,
@@ -263,7 +263,7 @@ export class VmFormComponent implements FormConfiguration {
 
     if (this.productType.includes(ProductType.Scale)) {
       _.find(this.fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
-      const cpuModel = _.find(this.fieldConfig, { name: 'cpu_model' });
+      const cpuModel: FormSelectConfig = _.find(this.fieldConfig, { name: 'cpu_model' });
       cpuModel.isHidden = false;
 
       this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
@@ -289,7 +289,7 @@ export class VmFormComponent implements FormConfiguration {
           finalIsolatedPciIds.push(gpuValue);
         }
       }
-      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
+      const gpusConf: FormSelectConfig = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
       if (finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.gpus) {
@@ -352,7 +352,7 @@ export class VmFormComponent implements FormConfiguration {
       const vmPciSlots: string[] = vmRes.devices
         .filter((device: any) => device.dtype === VmDeviceType.Pci)
         .map((pciDevice: any) => pciDevice.attributes.pptdev);
-      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
+      const gpusConf: FormSelectConfig = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
       }

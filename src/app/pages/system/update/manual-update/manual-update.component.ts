@@ -15,7 +15,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -96,7 +96,8 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       observerClass: this,
       eventName: 'SysInfo',
     }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      _.find(this.fieldConfig, { name: 'version' }).paraText += evt.data.version;
+      const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'version' });
+      config.paraText += evt.data.version;
     });
 
     this.core.emit({ name: 'SysInfoRequest', sender: this });
@@ -125,7 +126,8 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
           return;
         }
 
-        _.find(this.fieldConfig, { name: 'filelocation' }).options.push({
+        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'filelocation' });
+        config.options.push({
           label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
         });
       });
@@ -147,9 +149,11 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
 
     entityForm.formGroup.controls['filelocation'].valueChanges.pipe(untilDestroyed(this)).subscribe((filelocation: string) => {
       if (filelocation === ':temp:') {
-        _.find(this.fieldConfig, { name: 'filename' }).fileLocation = null;
+        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'filename' });
+        config.fileLocation = null;
       } else {
-        _.find(this.fieldConfig, { name: 'filename' }).fileLocation = filelocation;
+        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'filename' });
+        config.fileLocation = filelocation;
       }
     });
     this.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {

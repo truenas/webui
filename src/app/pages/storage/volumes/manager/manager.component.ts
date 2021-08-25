@@ -26,6 +26,7 @@ import { StorageService } from 'app/services/storage.service';
 import { T } from 'app/translate-marker';
 import { DiskComponent } from './disk/disk.component';
 import { VdevComponent } from './vdev/vdev.component';
+import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 @UntilDestroy()
 @Component({
@@ -205,7 +206,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       },
       parent: this,
       afterInit(entityDialog: EntityDialogComponent) {
-        const copy_desc = _.find(this.fieldConfig, { name: 'copy_desc' });
+        const copy_desc: FormParagraphConfig = _.find(this.fieldConfig, { name: 'copy_desc' });
         const parent = entityDialog.parent;
         const setParatext = (vdevs: number): void => {
           const used = parent.first_data_vdev_disknum * vdevs;

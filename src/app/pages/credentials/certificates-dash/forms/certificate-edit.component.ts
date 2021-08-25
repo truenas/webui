@@ -10,7 +10,7 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormButtonConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -253,19 +253,24 @@ export class CertificateEditComponent implements FormConfiguration {
       'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'lifetime',
     ];
     fields.forEach((field) => {
-      const paragraph = _.find(this.fieldConfig, { name: field });
+      const paragraph: FormParagraphConfig = _.find(this.fieldConfig, { name: field });
       this.incomingData[field] || this.incomingData[field] === false
         ? paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---';
     });
-    _.find(this.fieldConfig, { name: 'san' }).paraText += this.incomingData.san.join(',');
-    _.find(this.fieldConfig, { name: 'signedby' }).paraText += this.incomingData.signedby?.name || '---';
-    const issuer = _.find(this.fieldConfig, { name: 'issuer' });
+    const sanConfig: FormParagraphConfig = _.find(this.fieldConfig, { name: 'san' });
+    sanConfig.paraText += this.incomingData.san.join(',');
+
+    const signedbyConfig: FormParagraphConfig = _.find(this.fieldConfig, { name: 'signedby' });
+    signedbyConfig.paraText += this.incomingData.signedby?.name || '---';
+    
+    const issuer: FormParagraphConfig = _.find(this.fieldConfig, { name: 'issuer' });
     if (_.isObject(this.incomingData.issuer)) {
       issuer.paraText += (this.incomingData.issuer as any).name;
     } else {
       this.incomingData.issuer ? issuer.paraText += this.incomingData.issuer : issuer.paraText += '---';
     }
-    _.find(this.fieldConfig, { name: 'certificate_view' }).customEventActionLabel = this.viewButtonText;
+    const certButton = _.find(this.fieldConfig, { name: 'certificate_view' }) as FormButtonConfig;
+    certButton.customEventActionLabel = this.viewButtonText;
   }
 
   exportCertificate(): void {

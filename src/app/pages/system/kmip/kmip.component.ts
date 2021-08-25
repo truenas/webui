@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_kmip } from 'app/helptext/system/kmip';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -160,9 +160,9 @@ export class KmipComponent {
   }
 
   preInit(): void {
-    const certificateFieldset = _.find(this.fieldSets, { class: 'certificate' });
-    const certificateField = _.find(certificateFieldset.config, { name: 'certificate' });
-    const certificateAuthorityField = _.find(certificateFieldset.config, { name: 'certificate_authority' });
+    const certificateFieldset: FieldSet = _.find(this.fieldSets, { class: 'certificate' });
+    const certificateField: FormSelectConfig = _.find(certificateFieldset.config, { name: 'certificate' });
+    const certificateAuthorityField: FormSelectConfig = _.find(certificateFieldset.config, { name: 'certificate_authority' });
 
     this.systemGeneralService.getCA().pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {

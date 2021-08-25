@@ -6,6 +6,7 @@ import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
 
@@ -66,7 +67,8 @@ export class CatalogEditFormComponent implements FormConfiguration {
       label: train,
       value: train,
     }));
-    this.fieldSets.config('preferred_trains').options = trainOptions;
+    const config: FormSelectConfig = this.fieldSets.config('preferred_trains');
+    config.options = trainOptions;
     return transformed;
   }
 }

@@ -18,7 +18,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormExplorerConfig, FormInputConfig, FormParagraphConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -406,11 +406,11 @@ export class CloudsyncFormComponent implements FormConfiguration {
   ]);
   fieldConfig: FieldConfig[] = [];
 
-  protected credentials: FieldConfig;
-  protected bucket_field: FieldConfig;
-  protected bucket_input_field: FieldConfig;
-  protected folder_field_destination: FieldConfig;
-  protected folder_field_source: FieldConfig;
+  protected credentials: FormSelectConfig;
+  protected bucket_field: FormSelectConfig;
+  protected bucket_input_field: FormInputConfig;
+  protected folder_field_destination: FormExplorerConfig;
+  protected folder_field_source: FormExplorerConfig;
   credentials_list: CloudsyncCredential[] = [];
 
   formGroup: FormGroup;
@@ -608,7 +608,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.title = entityForm.isNew ? helptext.cloudsync_task_add : helptext.cloudsync_task_edit;
     this.credentials = this.fieldSets.config('credentials');
     this.bucket_field = this.fieldSets.config('bucket');
-    this.bucket_input_field = this.fieldSets.config('bucket_input');
+    this.bucket_input_field = this.fieldSets.config('bucket_input') as FormInputConfig;
     this.setDisabled('bucket', true, true);
     this.setDisabled('bucket_input', true, true);
     this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
@@ -869,7 +869,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     // Update transfer_mode paragraphs when the mode is changed
     this.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode: TransferMode) => {
-      const paragraph = entityForm.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
+      const paragraph: FormParagraphConfig = entityForm.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
       switch (mode) {
         case TransferMode.Sync:
           paragraph.paraText = helptext.transfer_mode_warning_sync;

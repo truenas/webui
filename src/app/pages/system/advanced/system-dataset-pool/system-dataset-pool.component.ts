@@ -14,6 +14,7 @@ import {
   DialogService, WebSocketService, AppLoaderService, SystemGeneralService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 const poolFieldName = 'pool';
 
@@ -66,7 +67,7 @@ export class SystemDatasetPoolComponent implements FormConfiguration {
       .call('systemdataset.pool_choices')
       .pipe(untilDestroyed(this))
       .subscribe((poolChoices) => {
-        const poolField = this.fieldSets.config(poolFieldName);
+        const poolField: FormSelectConfig = this.fieldSets.config(poolFieldName);
         poolField.options = Object.entries(poolChoices)
           .map(([label, value]) => ({ label, value }));
       });
