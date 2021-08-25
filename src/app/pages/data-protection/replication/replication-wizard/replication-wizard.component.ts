@@ -1008,7 +1008,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             failedToLoadChildren: true,
           });
           const sourceDatasetsFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'source_datasets' });
-          sourceDatasetsFieldConfig.warnings = 'Failed to load sub-directories/datasets';
+          sourceDatasetsFieldConfig.warnings = T('Failed to load sub-directories/datasets');
         },
       );
     });
@@ -1052,7 +1052,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             failedToLoadChildren: true,
           });
           const targetDatasetFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'target_dataset' });
-          targetDatasetFieldConfig.warnings = 'Failed to load sub-directories/datasets';
+          targetDatasetFieldConfig.warnings = T('Failed to load sub-directories/datasets');
         },
       );
     });
