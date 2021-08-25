@@ -44,9 +44,7 @@ export class JobsManagerComponent implements OnInit {
     message: T('Click the button below to see all jobs.'),
     button: {
       label: T('History'),
-      action: () => {
-        this.router.navigate(['/jobs']);
-      },
+      action: this.goToJobs.bind(this),
     },
   };
 
@@ -73,5 +71,10 @@ export class JobsManagerComponent implements OnInit {
 
   onChildrenDialogOpened(): void {
     this.dialogRef.close();
+  }
+
+  goToJobs(): void {
+    this.dialogRef.close();
+    this.router.navigate(['/jobs']);
   }
 }
