@@ -14,6 +14,8 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import filesize from 'filesize';
+import { styler, tween } from 'popmotion';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
@@ -22,8 +24,6 @@ import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { T } from 'app/translate-marker';
-import filesize from 'filesize';
-import { styler, tween, } from 'popmotion';
 
 interface Slide {
   name: string;
