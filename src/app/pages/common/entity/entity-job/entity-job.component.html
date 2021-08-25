@@ -8,7 +8,7 @@
   <div *ngIf="job?.state === JobState.Running">
     <mat-progress-bar
       color="primary"
-      mode="indeterminate"
+      mode="determinate"
       [value]="progressTotalPercent"
     >
     </mat-progress-bar>
