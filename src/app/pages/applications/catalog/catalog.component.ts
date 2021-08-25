@@ -5,6 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
 import {
   appImagePlaceholder, chartsTrain, ixChartApp, officialCatalog,
@@ -485,26 +486,11 @@ export class CatalogComponent implements OnInit {
       data: {
         title: this.translate.instant(T('Updating')),
       },
-      disableClose: true,
+      disableClose: false,
       hasBackdrop: true,
     });
     dialogRef.componentInstance.setCall('catalog.sync_all');
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.collapsed
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        this.dialogService.closeAllDialogs();
-        this.jobsDialogRef = this.matDialog.open(JobsManagerComponent, {
-          disableClose: false,
-          width: '400px',
-          hasBackdrop: false,
-          panelClass: 'topbar-panel',
-          position: {
-            top: '48px',
-            right: '16px',
-          },
-        });
-      });
     dialogRef.componentInstance.success
       .pipe(untilDestroyed(this))
       .subscribe(() => {
@@ -513,6 +499,22 @@ export class CatalogComponent implements OnInit {
           this.jobsDialogRef.close();
         }
         this.loadCatalogs();
+      });
+
+    dialogRef.afterClosed()
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.dialogService.closeAllDialogs();
+        this.jobsDialogRef = this.matDialog.open(JobsManagerComponent, {
+          disableClose: false,
+          width: '400px',
+          hasBackdrop: true,
+          panelClass: 'topbar-panel',
+          position: {
+            top: '48px',
+            right: '16px',
+          },
+        });
       });
   }
 }

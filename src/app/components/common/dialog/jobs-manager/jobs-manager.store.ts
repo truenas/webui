@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, Observable } from 'rxjs';
-import { catchError, takeUntil, tap } from 'rxjs/operators';
+import {
+  catchError, map, takeUntil, tap,
+} from 'rxjs/operators';
 import { JobsManagerState } from 'app/components/common/dialog/jobs-manager/interfaces/jobs-manager-state.interface';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
@@ -22,7 +23,9 @@ export class JobsManagerStore extends ComponentStore<JobsManagerState> {
     super(initialState);
 
     this.initialLoadJobs().subscribe();
-    this.getJobUpdates().subscribe();
+    this.getJobUpdates().subscribe((job) => {
+      this.handleUpdate(job);
+    });
   }
 
   readonly numberOfRunningJobs$: Observable<number> = this.select(
@@ -60,16 +63,15 @@ export class JobsManagerStore extends ComponentStore<JobsManagerState> {
       );
   }
 
-  getJobUpdates(): Observable<ApiEvent<Job>> {
+  getJobUpdates(): Observable<Job> {
     return this.ws.subscribe('core.get_jobs').pipe(
-      tap((event) => {
-        this.handleUpdate(event.fields);
-      }),
+      map((event) => event.fields),
       untilDestroyed(this),
     );
   }
 
   handleUpdate(job: Job): void {
+    // TODO: Optimize this method
     this.patchState((state) => {
       let modifiedJobs = [...state.jobs];
       const jobExist = modifiedJobs.find((item) => item.id === job.id);

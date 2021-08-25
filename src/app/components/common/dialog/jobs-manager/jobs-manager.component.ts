@@ -4,14 +4,12 @@ import {
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { Job } from 'app/interfaces/job.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { T } from 'app/translate-marker';
 
 @UntilDestroy()
@@ -56,9 +54,7 @@ export class JobsManagerComponent implements OnInit {
     private router: Router,
     private store: JobsManagerStore,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog,
     private dialogRef: MatDialogRef<JobsManagerComponent>,
-    private translate: TranslateService,
   ) {
     this.isLoading = true;
   }
@@ -75,19 +71,7 @@ export class JobsManagerComponent implements OnInit {
     this.store.remove(job);
   }
 
-  openDialog(job: Job): void {
-    const title = this.translate.instant(T('Updating'));
-    const jobDialogRef = this.dialog.open(EntityJobComponent, {
-      data: { title },
-      disableClose: true,
-      hasBackdrop: true,
-      width: '400px',
-    });
-
-    jobDialogRef.componentInstance.jobId = job.id;
-    jobDialogRef.componentInstance.autoCloseOnSuccess = true;
-    jobDialogRef.componentInstance.wsshow();
-
+  onChildrenDialogOpened(): void {
     this.dialogRef.close();
   }
 }

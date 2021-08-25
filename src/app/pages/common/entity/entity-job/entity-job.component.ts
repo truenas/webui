@@ -27,7 +27,6 @@ export class EntityJobComponent implements OnInit {
   title = '';
   showCloseButton = true;
   showAbortButton = false; // enable to abort job
-  showCollapseButton = true;
   jobId: number;
   progressNumberType: any;
   hideProgressValue = false;
@@ -45,7 +44,6 @@ export class EntityJobComponent implements OnInit {
   @Output() aborted = new EventEmitter<Job>();
   @Output() failure = new EventEmitter<Job>();
   @Output() prefailure = new EventEmitter();
-  @Output() collapsed = new EventEmitter<boolean>();
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent, MatDialogConfig>,
     private ws: WebSocketService,
@@ -253,10 +251,5 @@ export class EntityJobComponent implements OnInit {
   scrollBottom(): void {
     const cardContainer = document.getElementsByClassName('entity-job-dialog')[0];
     cardContainer.scrollTop = cardContainer.scrollHeight;
-  }
-
-  collapseDialog(): void {
-    this.dialogRef.close();
-    this.collapsed.emit();
   }
 }
