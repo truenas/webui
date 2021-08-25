@@ -411,8 +411,9 @@ export class CatalogComponent implements OnInit {
       data: {
         title: helptext.installing,
       },
-      disableClose: true,
+      disableClose: false,
     });
+    dialogRef.componentInstance.openJobsManagerOnClose = true;
     dialogRef.componentInstance.setCall('catalog.sync_all');
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

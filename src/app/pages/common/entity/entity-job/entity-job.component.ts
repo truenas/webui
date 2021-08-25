@@ -36,7 +36,7 @@ export class EntityJobComponent implements OnInit {
   altMessage: string;
   showRealtimeLogs = false;
   autoCloseOnSuccess = false;
-  openJobsManagerOnClose = true;
+  openJobsManagerOnClose = false;
   readonly JobState = JobState;
 
   private realtimeLogsSubscribed = false;
