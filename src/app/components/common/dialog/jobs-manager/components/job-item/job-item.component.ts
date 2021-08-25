@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, Input, Output, EventEmitter,
+  Component, Input, Output, EventEmitter,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
@@ -16,7 +16,6 @@ import { T } from 'app/translate-marker';
   selector: 'app-job-item',
   templateUrl: './job-item.component.html',
   styleUrls: ['./job-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JobItemComponent {
   @Input() job: Job;
