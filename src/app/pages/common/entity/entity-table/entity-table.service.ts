@@ -21,7 +21,7 @@ export class EntityTableService implements OnDestroy {
   private tableUtils: Worker;
 
   constructor(private ws: WebSocketService, private core: CoreService) {
-    this.tableUtils = new Worker('./table-utils.worker', { type: 'module' });
+    this.tableUtils = new Worker(new URL('./table-utils.worker', import.meta.url), { type: 'module' });
 
     core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
       ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((raw_res) => {
