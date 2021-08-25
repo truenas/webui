@@ -3,7 +3,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, Observable } from 'rxjs';
 import {
-  catchError, map, takeUntil, tap,
+  catchError, map, take, takeUntil,
 } from 'rxjs/operators';
 import { JobsManagerState } from 'app/components/common/dialog/jobs-manager/interfaces/jobs-manager-state.interface';
 import { JobState } from 'app/enums/job-state.enum';
@@ -30,7 +30,13 @@ export class JobsListStore extends ComponentStore<JobsManagerState> {
         jobs,
         isLoading: false,
       });
-      this.getUpdates().subscribe();
+    },
+    () => {},
+    () => {
+      // subscribe to updates on complete
+      this.getUpdates().subscribe((job) => {
+        this.handleUpdate(job);
+      });
     });
   }
 
@@ -50,6 +56,7 @@ export class JobsListStore extends ComponentStore<JobsManagerState> {
 
         return EMPTY;
       }),
+      take(1),
       untilDestroyed(this),
     );
   }
@@ -57,14 +64,6 @@ export class JobsListStore extends ComponentStore<JobsManagerState> {
   getUpdates(): Observable<Job> {
     return this.ws.subscribe('core.get_jobs').pipe(
       map((event) => event.fields),
-      tap((job) => {
-        const jobIndex = this.jobs.findIndex((item) => item.id === job.id);
-        if (jobIndex === -1) {
-          this.jobs.push(job);
-        } else {
-          this.jobs[jobIndex] = job;
-        }
-      }),
       untilDestroyed(this),
     );
   }
@@ -90,12 +89,19 @@ export class JobsListStore extends ComponentStore<JobsManagerState> {
       .call('core.job_abort', [job.id])
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
-        this.patchState((state) => {
-          return {
-            ...state,
-            jobs: state.jobs.filter((item) => item.id !== job.id),
-          };
-        });
+        this.jobs = this.jobs.filter((item) => item.id !== job.id);
+        this.patchState({ jobs: this.jobs });
       });
+  }
+
+  handleUpdate(job: Job): void {
+    const jobIndex = this.jobs.findIndex((item) => item.id === job.id);
+    if (jobIndex === -1) {
+      this.jobs.push(job);
+    } else {
+      this.jobs[jobIndex] = job;
+    }
+
+    this.patchState({ jobs: this.jobs });
   }
 }
