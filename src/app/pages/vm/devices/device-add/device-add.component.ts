@@ -30,7 +30,7 @@ import { T } from 'app/translate-marker';
 })
 export class DeviceAddComponent implements OnInit, OnDestroy {
   protected addCall: 'vm.device.create' = 'vm.device.create';
-  protected route_success: string[];
+  route_success: string[];
   vmid: number;
   vmname: string;
   fieldSets: any;

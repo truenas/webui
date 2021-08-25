@@ -897,7 +897,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
             function doExpand(entityDialog?: EntityDialogComponent): void {
               parent.loader.open();
-              const payload = [row1.id];
+              const payload: [any] = [row1.id];
               if (entityDialog) {
                 payload.push({ geli: { passphrase: entityDialog.formValue['passphrase'] } });
               }

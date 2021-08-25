@@ -17,7 +17,7 @@ export class ToolbarMultimenuComponent extends IxAbstractObject implements OnIni
   @Input() controller: Subject<any>;
   allSelected = false;
   values: any[] = [];
-  private selectStates: boolean [] = [];
+  selectStates: boolean [] = [];
   constructor(public translate: TranslateService) {
     super();
   }

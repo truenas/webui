@@ -31,7 +31,7 @@ import { UserFormComponent } from '../user-form/user-form.component';
 export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit {
   title = 'Users';
   route_add: string[] = ['account', 'users', 'add'];
-  protected route_add_tooltip = 'Add User';
+  route_add_tooltip = 'Add User';
   route_edit: string[] = ['account', 'users', 'edit'];
 
   protected entityList: EntityTableComponent;

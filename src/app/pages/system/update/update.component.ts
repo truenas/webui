@@ -241,8 +241,7 @@ export class UpdateComponent implements OnInit {
         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
         this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
         this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((success: any) => {
-          console.info('success', success);
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           this.failover_upgrade_pending = false;
           this.dialogRef.close(false);
         });

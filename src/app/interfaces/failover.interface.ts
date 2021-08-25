@@ -1,5 +1,8 @@
-export interface FailoverUpdate {
+export interface FailoverConfig {
   disabled: boolean;
-  timeout: number;
+  id: number;
   master: boolean;
+  timeout: number;
 }
+
+export type FailoverUpdate = Omit<FailoverConfig, 'id'>;
