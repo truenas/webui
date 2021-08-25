@@ -1120,7 +1120,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   }
 
   runningStateButton(jobid: number): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Task is running') }, disableClose: false });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Task is running') } });
     dialogRef.componentInstance.jobId = jobid;
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

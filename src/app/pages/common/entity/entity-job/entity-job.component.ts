@@ -94,7 +94,6 @@ export class EntityJobComponent implements OnInit {
         .pipe(untilDestroyed(this))
         .subscribe(() => {
           this.matDialog.open(JobsManagerComponent, {
-            disableClose: false,
             width: '400px',
             hasBackdrop: true,
             panelClass: 'topbar-panel',

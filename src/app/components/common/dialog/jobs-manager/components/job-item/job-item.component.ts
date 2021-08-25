@@ -53,7 +53,6 @@ export class JobItemComponent {
     }
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title },
-      disableClose: false,
       hasBackdrop: true,
       width: '400px',
     });

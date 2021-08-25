@@ -165,7 +165,6 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((ures) => {
       this.dialogRef = this.dialog.open(EntityJobComponent, {
         data: { title: helptext.manual_update_action },
-        disableClose: true,
       });
       if (this.isHA) {
         this.dialogRef.componentInstance.disableProgressValue(true);
@@ -236,7 +235,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   }
 
   showRunningUpdate(jobId: number): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant(T('Update')) } });
     if (this.isHA) {
       this.dialogRef.componentInstance.disableProgressValue(true);
     }

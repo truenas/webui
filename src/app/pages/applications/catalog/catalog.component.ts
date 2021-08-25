@@ -327,7 +327,7 @@ export class CatalogComponent implements OnInit {
     const pool = entityDialog.formGroup.controls['pools'].value;
     const dialogRef = self.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (helptext.choosePool.jobTitle),
+        title: helptext.choosePool.jobTitle,
       },
       disableClose: true,
     });
@@ -400,7 +400,6 @@ export class CatalogComponent implements OnInit {
         this.mdDialog.open(CatalogSummaryDialog, {
           width: '470px',
           data: catalogAppInfo,
-          disableClose: false,
         });
       }
     });
@@ -411,7 +410,6 @@ export class CatalogComponent implements OnInit {
       data: {
         title: helptext.installing,
       },
-      disableClose: false,
     });
     dialogRef.componentInstance.openJobsManagerOnClose = true;
     dialogRef.componentInstance.setCall('catalog.sync_all');

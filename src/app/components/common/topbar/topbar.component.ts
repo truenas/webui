@@ -8,6 +8,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject, Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
 import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
@@ -476,7 +477,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     } else {
       this.isTaskMangerOpened = true;
       this.taskDialogRef = this.dialog.open(JobsManagerComponent, {
-        disableClose: false,
         width: '400px',
         hasBackdrop: true,
         panelClass: 'topbar-panel',
@@ -500,7 +500,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     } else {
       this.isDirServicesMonitorOpened = true;
       this.dirServicesMonitor = this.dialog.open(DirectoryServicesMonitorComponent, {
-        disableClose: false,
         width: '400px',
         hasBackdrop: true,
         position: {
@@ -570,25 +569,23 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   upgradePendingDialog(): void {
-    this.dialogService.confirm(
-      T('Pending Upgrade'),
-      T('There is an upgrade waiting to finish.'),
-      true, T('Continue'),
-    ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') }, disableClose: false });
-        this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
-        this.dialogRef.componentInstance.disableProgressValue(true);
-        this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((success: any) => {
-          this.dialogRef.close(false);
-          console.info('success', success);
-          this.upgradeWaitingToFinish = false;
-        });
-        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure: any) => {
-          this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
-        });
-      }
+    this.dialogService.confirm({
+      title: T('Pending Upgrade'),
+      message: T('There is an upgrade waiting to finish.'),
+      hideCheckBox: true,
+      buttonMsg: T('Continue'),
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') } });
+      this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
+      this.dialogRef.componentInstance.disableProgressValue(true);
+      this.dialogRef.componentInstance.submit();
+      this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+        this.dialogRef.close(false);
+        this.upgradeWaitingToFinish = false;
+      });
+      this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((failure: any) => {
+        this.dialogService.errorReport(failure.error, failure.reason, failure.trace.formatted);
+      });
     });
   }
 
@@ -765,7 +762,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     } else {
       this.isTcStatusOpened = true;
       this.tcStatusDialogRef = this.dialog.open(TruecommandComponent, {
-        disableClose: false,
         width: '400px',
         hasBackdrop: true,
         position: {

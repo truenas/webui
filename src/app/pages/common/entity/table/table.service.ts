@@ -156,7 +156,7 @@ export class TableService {
         },
       );
     } else {
-      this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Deleting...') }, disableClose: false });
+      this.dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Deleting...') } });
       this.dialogRef.componentInstance.setCall(table.tableConf.deleteCall, params);
       this.dialogRef.componentInstance.submit();
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

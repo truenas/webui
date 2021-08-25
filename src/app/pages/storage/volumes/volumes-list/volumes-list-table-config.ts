@@ -825,7 +825,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 ).subscribe(() => {
                   this.dialogRef = this.mdDialog.open(EntityJobComponent, {
                     data: { title: T('Scrub Pool') },
-                    disableClose: false,
                   });
                   this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, 'START']);
                   this.dialogRef.componentInstance.submit();

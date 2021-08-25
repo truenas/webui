@@ -140,7 +140,6 @@ export class ChartFormComponent implements FormConfiguration {
       data: {
         title: helptext.installing,
       },
-      disableClose: true,
     });
     this.dialogRef.componentInstance.setCall(this.editCall, payload);
     this.dialogRef.componentInstance.submit();
