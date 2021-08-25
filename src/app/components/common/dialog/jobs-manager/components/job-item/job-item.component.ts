@@ -51,16 +51,17 @@ export class JobItemComponent {
     if (job.state === JobState.Running) {
       title = this.translate.instant(T('Updating'));
     }
-    const jobDialogRef = this.matDialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title },
       disableClose: false,
       hasBackdrop: true,
       width: '400px',
     });
 
-    jobDialogRef.componentInstance.jobId = job.id;
-    jobDialogRef.componentInstance.autoCloseOnSuccess = true;
-    jobDialogRef.componentInstance.wsshow();
+    dialogRef.componentInstance.jobId = job.id;
+    dialogRef.componentInstance.autoCloseOnSuccess = true;
+    dialogRef.componentInstance.openJobsManagerOnClose = false;
+    dialogRef.componentInstance.wsshow();
 
     this.opened.emit();
   }

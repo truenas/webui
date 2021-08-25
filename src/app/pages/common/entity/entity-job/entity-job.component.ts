@@ -2,10 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import {
   OnInit, Component, EventEmitter, Output, Inject,
 } from '@angular/core';
-import { MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { filter, map } from 'rxjs/operators';
+import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
@@ -33,6 +36,7 @@ export class EntityJobComponent implements OnInit {
   altMessage: string;
   showRealtimeLogs = false;
   autoCloseOnSuccess = false;
+  openJobsManagerOnClose = true;
   readonly JobState = JobState;
 
   private realtimeLogsSubscribed = false;
@@ -49,6 +53,7 @@ export class EntityJobComponent implements OnInit {
     private ws: WebSocketService,
     @Inject(MAT_DIALOG_DATA) public data: any,
     protected http: HttpClient,
+    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -83,6 +88,23 @@ export class EntityJobComponent implements OnInit {
 
       this.description = '<b>Error:</b> ' + job.error;
     });
+
+    if (this.openJobsManagerOnClose) {
+      this.dialogRef.beforeClosed()
+        .pipe(untilDestroyed(this))
+        .subscribe(() => {
+          this.matDialog.open(JobsManagerComponent, {
+            disableClose: false,
+            width: '400px',
+            hasBackdrop: true,
+            panelClass: 'topbar-panel',
+            position: {
+              top: '48px',
+              right: '16px',
+            },
+          });
+        });
+    }
   }
 
   setCall(method: ApiMethod, args?: any[]): void {
