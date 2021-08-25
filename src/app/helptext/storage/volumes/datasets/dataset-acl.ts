@@ -13,7 +13,7 @@ import { T } from 'app/translate-marker';
 
 export default {
   dataset_acl_title_file: T('File Information'),
-  dataset_acl_title_list: T('Access Control List'),
+  dataset_acl_title_entry: T('Access Control Entry'),
   dataset_acl_title_advanced: T('Advanced'),
 
   dataset_acl_path_placeholder: T('Path'),

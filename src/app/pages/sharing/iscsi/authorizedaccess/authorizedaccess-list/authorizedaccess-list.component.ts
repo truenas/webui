@@ -15,7 +15,7 @@ export class AuthorizedAccessListComponent implements EntityTableConfig {
   wsDelete: 'iscsi.auth.delete' = 'iscsi.auth.delete';
   route_add: string[] = ['sharing', 'iscsi', 'auth', 'add'];
   route_edit: string[] = ['sharing', 'iscsi', 'auth', 'edit'];
-  protected route_add_tooltip = 'Add Authorized Access';
+  route_add_tooltip = 'Add Authorized Access';
 
   columns = [
     {

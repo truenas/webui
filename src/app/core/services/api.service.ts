@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
@@ -70,15 +71,8 @@ export class ApiService {
     VolumeDataRequest: {
       apiCall: {
         namespace: 'pool.dataset.query',
-        args: [] as any[],
+        args: [[], { extra: { retrieve_children: false } }] as QueryParams<Dataset, ExtraDatasetQueryOptions>,
         responseEvent: 'VolumeData',
-      },
-      preProcessor(def: ApiCall) {
-        const queryFilters = [
-          ['name', '~', '^[^\/]+$'], // Root datasets only
-        ];
-
-        return { args: [queryFilters], ...def };
       },
     },
     DisksRequest: {
@@ -225,7 +219,7 @@ export class ApiService {
     }
   }
 
-  async callWebsocket(evt: CoreEvent, def: ApiDefinition): Promise<void> {
+  callWebsocket(evt: CoreEvent, def: ApiDefinition): void {
     const cloneDef = { ...def };
     const asyncCalls = [
       'vm.start',
@@ -241,7 +235,7 @@ export class ApiService {
 
       // PreProcessor: ApiDefinition manipulates call to be sent out.
       if (def.preProcessor && asyncCalls.includes(def.apiCall.namespace)) {
-        cloneDef.apiCall = await def.preProcessor(def.apiCall);
+        cloneDef.apiCall = def.preProcessor(def.apiCall);
         if (!cloneDef.apiCall) {
           this.core.emit({ name: 'VmStopped', data: { id: evt.data[0] } });
           return;

@@ -65,15 +65,14 @@ def click_on_the_tank_three_dots_button_select_add_zvol_and_the_add_zvol_page_sh
     assert wait_on_element(driver, 5, '//h3[text()="Add Zvol"]')
 
 
-@then(parsers.parse('input {name} for Zvol Name and "{zvol_size}" for Zvol Size, click the SUBMIT button,'))
-def input_nopeer1_for_zvol_name_and_1_gib_for_zvol_size_click_the_submit_button(driver, name, zvol_size):
+@then(parsers.parse('input {name} for Zvol Name and "{zvol_1G_size}" for Zvol Size, click the SUBMIT button,'))
+def input_nopeer1_for_zvol_name_and_1_gib_for_zvol_size_click_the_submit_button(driver, name, zvol_1G_size):
     """input {name} for Zvol Name and "{zvol_size}" for Zvol Size, click the SUBMIT button,."""
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Zvol name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Zvol name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Zvol name"]').send_keys(name)
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Size for this zvol"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Size for this zvol"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Size for this zvol"]').send_keys(zvol_size)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Size for this zvol"]').send_keys(zvol_1G_size)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 

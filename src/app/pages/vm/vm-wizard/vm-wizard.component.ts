@@ -558,7 +558,7 @@ export class VMWizardComponent implements WizardConfiguration {
     }
 
     this.ws
-      .call('pool.filesystem_choices', [['FILESYSTEM']])
+      .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
       .pipe(map(new EntityUtils().array1DToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe((options) => {
         this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore').options = options;

@@ -76,7 +76,7 @@ export class BootStatusListComponent implements OnInit {
     });
   }
 
-  detach(disk: any): void {
+  detach(disk: string): void {
     disk = disk.substring(5, disk.length);
     this.loader.open();
     this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe(

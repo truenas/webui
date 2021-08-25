@@ -322,7 +322,7 @@ export class IdmapFormComponent implements FormConfiguration {
       });
     });
 
-    entityEdit.formGroup.controls['idmap_backend'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    entityEdit.formGroup.controls['idmap_backend'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       this.optionsFields.forEach((option) => {
         this.hideField(option, true, entityEdit);
       });

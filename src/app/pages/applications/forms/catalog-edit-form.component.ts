@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/apps/apps';
-import { Catalog } from 'app/interfaces/catalog.interface';
+import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -17,7 +17,7 @@ import { ModalService } from 'app/services/modal.service';
 export class CatalogEditFormComponent implements FormConfiguration {
   queryCall: 'catalog.query' = 'catalog.query';
   editCall: 'catalog.update' = 'catalog.update';
-  customFilter: any[];
+  customFilter: CatalogQueryParams;
   isEntity = true;
   isEditJob = false;
   entityForm: EntityFormComponent;
@@ -58,7 +58,7 @@ export class CatalogEditFormComponent implements FormConfiguration {
     this.modalService.refreshTable();
   }
 
-  resourceTransformIncomingRestData(data: Catalog): any {
+  resourceTransformIncomingRestData(data: Catalog): Catalog {
     const transformed = { ...data };
     const trains = Object.keys(data.trains);
 

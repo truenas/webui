@@ -14,7 +14,7 @@ export interface DatasetQuota {
 }
 
 export type DatasetQuotaQueryParams = [
-  /* mounpoint */ string,
-  /* quotaType */ DatasetQuotaType,
-  /* params */ QueryParams<DatasetQuota>,
+  mountpoint: string,
+  quotaType: DatasetQuotaType,
+  params: QueryParams<DatasetQuota>,
 ];

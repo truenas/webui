@@ -8,7 +8,7 @@
 	*ngIf="!config['isHidden']"
         fxLayout="row wrap"
 	fxLayoutAlign="start center"
-        ix-auto ix-auto-type="array" 
+        ix-auto ix-auto-type="array"
         ix-auto-identifier="{{config.placeholder}}">
 
         <div class="label-container" fxFlex="100" fxLayoutAlign="start center" style="max-height:27px;">
@@ -38,23 +38,23 @@
       	  </mat-form-field>
           <div fxFlex="80px" fxLayout="row" fxLayoutAlign="space-between center">
       	    <div fxFlex style="text-align: center; padding: 0 8px;">/</div>
-            <mat-form-field fxFlex="64px" *ngIf="!config.netmaskPreset" >
-      	      <mat-select 
+            <mat-form-field fxFlex="64px" *ngIf="!config.netmaskPreset">
+      	      <mat-select
                 disableOptionCentering
-      		[value]="netmask"
-      		[placeholder]="Netmask | translate"
-      		(selectionChange)="setNetmask($event)"
-      		ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"
-      		>
-      		<mat-option *ngFor="let option of netmaskOptions" [value]="option.value"
-      			ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
-      			{{option.label}}
-      		</mat-option>
+                [value]="netmask"
+                [placeholder]="'Netmask' | translate"
+                (selectionChange)="setNetmask($event)"
+                ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"
+              >
+                <mat-option *ngFor="let option of netmaskOptions" [value]="option.value"
+                  ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
+                  {{option.label}}
+                </mat-option>
       	      </mat-select>
       	    </mat-form-field>
 
             <mat-form-field fxFlex="72px" *ngIf="config.netmaskPreset" >
-      	      <mat-select 
+      	      <mat-select
                 disableOptionCentering
       		class="disabled-select"
       		[value]="config.netmaskPreset"

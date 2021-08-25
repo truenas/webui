@@ -19,7 +19,7 @@ export class FormatDateTimePipe implements PipeTransform {
     });
   }
 
-  transform(value: Date | number, args: string): string {
+  transform(value: Date | number, args?: string): string {
     return this.formatDateTime(value, args);
   }
 

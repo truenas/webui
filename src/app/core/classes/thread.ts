@@ -121,8 +121,7 @@ export class Thread extends IxAbstractObject {
     this._onmessage = fn;
   } */
 
-  sort = function (data: any[], compareFunction?: any): any[] { // Just like JS sort but now we can run in a worker
-    const result = compareFunction ? data.sort(compareFunction) : data.sort();
-    return result;
+  sort = (data: any[], compareFunction?: any): any[] => { // Just like JS sort but now we can run in a worker
+    return compareFunction ? data.sort(compareFunction) : data.sort();
   };
 }

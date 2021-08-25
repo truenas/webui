@@ -65,7 +65,7 @@ export class UserService {
     return this.ws.call(this.uncachedUserQuery, [username]);
   }
 
-  async getUserObject(userId: string | number): Promise<any> {
+  async getUserObject(userId: string | number): Promise<DsUncachedUser> {
     let user;
     await this.ws
       .call('user.get_user_obj', [typeof userId === 'string' ? { username: userId } : { uid: userId }])
@@ -74,7 +74,7 @@ export class UserService {
     return user;
   }
 
-  async getGroupObject(groupId: string | number): Promise<any> {
+  async getGroupObject(groupId: string | number): Promise<DsUncachedGroup> {
     let group;
     await this.ws
       .call('group.get_group_obj', [typeof groupId === 'string' ? { groupname: groupId } : { gid: groupId }])

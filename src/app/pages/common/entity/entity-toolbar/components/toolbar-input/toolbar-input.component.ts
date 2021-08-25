@@ -23,6 +23,7 @@ import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
       </mat-form-field>
     </div>
   `,
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 export class ToolbarInputComponent extends IxAbstractObject {

@@ -22,7 +22,7 @@ export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
 
   return [
     {
-      name: helptext.dataset_acl_title_list,
+      name: helptext.dataset_acl_title_entry,
       label: true,
       width: '50%',
       config: [

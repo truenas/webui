@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 
 @UntilDestroy()
@@ -15,7 +16,7 @@ export class DynamicListComponent implements OnInit {
   @Input() source: any;
 
   listControl: AbstractControl;
-  inputConfig: any;
+  inputConfig: FieldConfig;
   inputControl: AbstractControl;
   formGroup: FormGroup;
   constructor(private entityFormService: EntityFormService) { }

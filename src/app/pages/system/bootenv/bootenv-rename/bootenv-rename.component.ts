@@ -58,9 +58,7 @@ export class BootEnvironmentRenameComponent implements FormConfiguration {
     entityForm.submitFunction = this.submitFunction;
   }
 
-  submitFunction(entityForm: any): Observable<any> {
-    const payload: any = {};
-    payload['name'] = entityForm.name;
-    return this.ws.call('bootenv.update', [this.pk, payload]);
+  submitFunction(entityForm: { name: string }): Observable<string> {
+    return this.ws.call('bootenv.update', [this.pk, entityForm]);
   }
 }

@@ -14,7 +14,7 @@ export class DocsService {
 
       for (const url in urls) {
         const replace = new RegExp('--' + url + '--', 'g');
-        message = message.replace(replace, (urls as any)[url]);
+        message = message.replace(replace, urls[url as keyof typeof urls]);
       }
       const running_version = window.localStorage.getItem('running_version');
       if (running_version) {

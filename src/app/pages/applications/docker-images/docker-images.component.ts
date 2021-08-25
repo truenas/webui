@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { latestVersion } from 'app/constants/catalog.constants';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/apps/apps';
-import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -89,7 +89,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
     this.entityList = entityList;
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: ContainerImage): EntityTableAction[] {
     const actions = [];
     actions.push({
       id: row.id,
@@ -97,7 +97,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
       label: helptext.dockerImages.menu.update,
       name: 'update',
       disabled: !row.update_available,
-      onClick: (row: any) => {
+      onClick: (row: ContainerImage) => {
         this.onClickUpdateImage(row);
       },
     }, {
@@ -105,7 +105,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
       icon: 'delete',
       label: helptext.dockerImages.menu.delete,
       name: 'delete',
-      onClick: (row: any) => {
+      onClick: (row: ContainerImage) => {
         this.entityList.doDelete(row);
       },
     });
@@ -113,8 +113,8 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
     return actions as EntityTableAction[];
   }
 
-  resourceTransformIncomingRestData(d: any[]): any[] {
-    const data: any[] = [];
+  resourceTransformIncomingRestData(d: ContainerImage[]): ContainerImage[] {
+    const data: ContainerImage[] = [];
     d.forEach((row) => {
       if (!row.system_image) {
         row.state = row.update_available ? helptext.dockerImages.updateAvailable : '';
@@ -137,9 +137,9 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
     }
   }
 
-  onClickUpdateImage(row: any): void {
+  onClickUpdateImage(row: ContainerImage): void {
     if (row.repo_tags.length > 0) {
-      this.chooseTag.fieldConfig[0].options = row.repo_tags.map((item: any) => ({
+      this.chooseTag.fieldConfig[0].options = row.repo_tags.map((item) => ({
         label: item,
         value: item,
       }));

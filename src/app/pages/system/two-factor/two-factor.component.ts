@@ -269,7 +269,7 @@ export class TwoFactorComponent implements FormConfiguration {
     data.enabled = this.TwoFactorEnabled;
     data.services = { ssh: data.ssh };
     const extras = ['instructions', 'enabled_status', 'secret', 'uri', 'ssh'];
-    extras.map((extra) => {
+    extras.forEach((extra) => {
       delete data[extra];
     });
     this.loader.open();

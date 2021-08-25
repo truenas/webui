@@ -353,17 +353,19 @@ export class NFSFormComponent implements FormConfiguration {
       });
     }
 
-    entityForm.formGroup.controls['paths'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any[]) => {
-      const aliases = res.filter((p) => !!p.alias);
+    entityForm.formGroup.controls['paths'].valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((res: { alias: string; path: string }[]) => {
+        const aliases = res.filter((p) => !!p.alias);
 
-      if (aliases.length > 0 && aliases.length !== res.length) {
-        this.fieldSets.config('paths').hasErrors = true;
-        this.fieldSets.config('paths').errors = helptext_sharing_nfs.error_alias;
-      } else {
-        this.fieldSets.config('paths').hasErrors = false;
-        this.fieldSets.config('paths').errors = '';
-      }
-    });
+        if (aliases.length > 0 && aliases.length !== res.length) {
+          this.fieldSets.config('paths').hasErrors = true;
+          this.fieldSets.config('paths').errors = helptext_sharing_nfs.error_alias;
+        } else {
+          this.fieldSets.config('paths').hasErrors = false;
+          this.fieldSets.config('paths').errors = '';
+        }
+      });
   }
 
   isCustActionVisible(actionId: string): boolean {

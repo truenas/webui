@@ -123,7 +123,7 @@ export class SmartFormComponent implements FormConfiguration {
     return data;
   }
 
-  async afterInit(entityForm: EntityFormComponent): Promise<void> {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;

@@ -8,7 +8,6 @@ import {
   PosixAclItem,
 } from 'app/interfaces/acl.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -26,7 +25,6 @@ import { UserService } from 'app/services';
 })
 export class EditPosixAceComponent implements FormConfiguration, OnChanges {
   @Input() ace: PosixAclItem;
-  @Input() stat: FileSystemStat;
 
   formGroup: FormGroup;
   fieldSets: FieldSet[] = [];
@@ -130,12 +128,6 @@ export class EditPosixAceComponent implements FormConfiguration, OnChanges {
         break;
       case PosixAclTag.Group:
         ace.who = formValues.group;
-        break;
-      case PosixAclTag.UserObject:
-        ace.who = this.stat.user;
-        break;
-      case PosixAclTag.GroupObject:
-        ace.who = this.stat.group;
         break;
     }
 

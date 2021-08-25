@@ -8,7 +8,7 @@ import { ViewChartMetadata } from 'app/core/components/view-chart/view-chart.com
   // templateUrl: './viewchartpie.component.html',
 })
 export class ViewChartPieComponent extends ViewChartDonutComponent implements OnInit {
-  chartType = 'pie';
+  _chartType = 'pie';
 
   // eslint-disable-next-line @angular-eslint/no-empty-lifecycle-method
   ngOnInit(): void {

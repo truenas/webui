@@ -26,6 +26,7 @@ import { DialogService, ShellService, WebSocketService } from 'app/services';
   templateUrl: './pod-shell.component.html',
   styleUrls: ['./pod-shell.component.scss'],
   providers: [ShellService],
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 export class PodShellComponent implements OnInit, OnDestroy {
@@ -38,8 +39,9 @@ export class PodShellComponent implements OnInit, OnDestroy {
   rows: string;
   font_size = 14;
   font_name = 'Inconsolata';
-  xterm: any;
+  xterm: Terminal;
   private fitAddon: FitAddon;
+  private attachAddon: XtermAttachAddon;
   formEvent$: Subject<CoreEvent>;
 
   shellConnected = false;
@@ -83,10 +85,10 @@ export class PodShellComponent implements OnInit, OnDestroy {
           this.getAuthToken().pipe(untilDestroyed(this)).subscribe((token) => {
             this.initializeWebShell(token);
 
-            this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe((value: any) => {
+            this.ss.shellOutput.pipe(untilDestroyed(this)).subscribe((value) => {
               if (value !== undefined) {
-                if (_.trim(value) == 'logout') {
-                  this.xterm.destroy();
+                if (_.trim(value as any) == 'logout') {
+                  this.xterm.dispose();
                   this.router.navigate(new Array('/').concat(this.route_success));
                 }
               }
@@ -204,7 +206,6 @@ export class PodShellComponent implements OnInit, OnDestroy {
     font.load().then(() => {
       this.xterm.open(this.container.nativeElement);
       this.fitAddon.fit();
-      this.xterm._initialized = true;
     }, (e) => {
       console.error('Font is not available', e);
     });
@@ -214,8 +215,13 @@ export class PodShellComponent implements OnInit, OnDestroy {
     if (this.shellConnected) {
       this.xterm.clear();
     }
-    const attachAddon = new XtermAttachAddon(this.ss.socket);
-    this.xterm.loadAddon(attachAddon);
+
+    if (this.attachAddon) {
+      this.attachAddon.dispose();
+    }
+
+    this.attachAddon = new XtermAttachAddon(this.ss.socket);
+    this.xterm.loadAddon(this.attachAddon);
   }
 
   resizeTerm(): boolean {
@@ -311,10 +317,10 @@ export class PodShellComponent implements OnInit, OnDestroy {
   afterShellDialogInit(entityDialog: EntityDialogComponent): void {
     const self = entityDialog.parent;
 
-    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(parent)).subscribe((value: any) => {
-      const containers = self.podDetails[value];
+    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(parent)).subscribe((value) => {
+      const containers = self.podDetails[value] as string[];
       const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
-      containerFC.options = containers.map((item: any) => ({
+      containerFC.options = containers.map((item) => ({
         label: item,
         value: item,
       }));

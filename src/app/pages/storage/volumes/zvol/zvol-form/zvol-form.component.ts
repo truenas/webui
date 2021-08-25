@@ -575,7 +575,7 @@ export class ZvolFormComponent implements FormConfiguration {
         entityForm.setDisabled('name', true);
       }
 
-      this.entityForm.formGroup.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+      this.entityForm.formGroup.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
         const res_number = parseInt((this.reverseZvolBlockSizeMap as any)[res], 10);
         if (this.minimum_recommended_zvol_volblocksize) {
           const recommended_size_number = parseInt(

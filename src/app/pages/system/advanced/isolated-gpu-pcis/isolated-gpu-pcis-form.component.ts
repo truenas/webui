@@ -87,8 +87,12 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
             prevSelectedGpus.push(gpu);
           }
         }
-        const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
-        gpusConf.warnings = 'At least 1 GPU is required by the host for it’s functions.<p>Currently following GPU(s) have been isolated:<ol>' + listItems + '</ol></p><p>With your selection, no GPU is available for the host to consume.</p>';
+        if (prevSelectedGpus.length > 0) {
+          const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
+          gpusConf.warnings = 'At least 1 GPU is required by the host for it’s functions.<p>Currently following GPU(s) have been isolated:<ol>' + listItems + '</ol></p><p>With your selection, no GPU is available for the host to consume.</p>';
+        } else {
+          gpusConf.warnings = 'At least 1 GPU is required by the host for it’s functions. With your selection, no GPU is available for the host to consume.';
+        }
         gpusFormControl.setErrors({ maxPCIIds: true });
       } else {
         gpusConf.warnings = null;
