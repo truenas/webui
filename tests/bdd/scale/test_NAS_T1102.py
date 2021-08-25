@@ -74,8 +74,8 @@ def the_pool_manager_appears_enter_the_system_for_pool_name(driver):
 def click_sdc_checkbox_press_the_right_arrow_under_data_vdevs(driver):
     """click sdc checkbox, press the right arrow under Data VDevs."""
     time.sleep(2)
-    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-sdc"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-sdc"]').click()
+    assert wait_on_element(driver, 7, '//datatable-body[contains(.,"sd")]//mat-checkbox[1]', 'clickable')
+    driver.find_element_by_xpath('//datatable-body[contains(.,"sd")]//mat-checkbox[1]').click()
     time.sleep(2)
     assert wait_on_element(driver, 5, '//button[@id="vdev__add-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()

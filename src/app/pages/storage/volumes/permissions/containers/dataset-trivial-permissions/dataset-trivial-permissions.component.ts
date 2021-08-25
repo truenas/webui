@@ -214,7 +214,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
           title: T('Warning'),
           message: T('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'),
         }).pipe(
-          filter(Boolean),
+          filter((confirmed) => !confirmed),
           untilDestroyed(this),
         ).subscribe(() => {
           recursive.setValue(false);

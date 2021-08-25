@@ -135,7 +135,7 @@ export class InitiatorFormComponent implements OnInit {
     });
 
     if (this.pk) {
-      this.ws.call(this.queryCall, this.customFilter).pipe(untilDestroyed(this)).subscribe(
+      this.ws.call(this.queryCall, this.customFilter as any).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           for (const i in res[0]) {
             const ctrl = this.formGroup.controls[i];

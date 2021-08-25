@@ -153,7 +153,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
         this.services.renewStaticKey().pipe(untilDestroyed(this)).subscribe((res) => {
           let msg = '';
           for (const item in res) {
-            msg += `${item}: ${res[item]} \n`;
+            msg += `${item}: ${res[item as keyof OpenvpnServerConfig]} \n`;
           }
           this.loader.close();
           this.entityEdit.formGroup.controls['tls_crypt_auth'].setValue(res.tls_crypt_auth);

@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebSocketService } from './ws.service';
 
@@ -245,10 +246,10 @@ export class StorageService {
     );
   }
 
-  getDatasetNameOptions(): Observable<{ label: string; value: string }[]> {
+  getDatasetNameOptions(): Observable<Option[]> {
     return this.ws
       .call('pool.filesystem_choices')
-      .pipe(map((response) => response.map((value: any) => ({ label: value, value }))));
+      .pipe(map((response) => response.map((value) => ({ label: value, value }))));
   }
 
   /**

@@ -23,7 +23,9 @@ import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
-import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import {
+  ReplicationTask,
+} from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';

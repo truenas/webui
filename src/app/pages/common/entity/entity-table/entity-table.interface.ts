@@ -6,6 +6,7 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 
 export interface EntityTableConfig<Row = any> {
   columns: EntityTableColumn[];
+  title?: string;
 
   prerequisite?: () => Promise<boolean>;
   globalConfig?: EntityTableGlobalConfig;
@@ -24,7 +25,7 @@ export interface EntityTableConfig<Row = any> {
   multiActions?: EntityTableMultiAction<Row>[];
   multiActionsIconsOnly?: boolean;
   noActions?: boolean;
-  config?: EntityTableConfigConfig;
+  config: EntityTableConfigConfig;
   confirmDeleteDialog?: EntityTableConfirmDialog<Row>;
   hasDetails?: boolean;
   rowDetailComponent?: Type<unknown>;
@@ -45,6 +46,8 @@ export interface EntityTableConfig<Row = any> {
   rowIdentifier?: string;
   disableActionsConfig?: boolean;
   inlineActions?: boolean;
+  addBtnDisabled?: boolean;
+  route_add_tooltip?: string;
 
   wsDeleteParams?: (row: Row, id: string) => any;
   addRows?: (entity: EntityTableComponent) => void;

@@ -30,6 +30,15 @@ export class WebdavListComponent implements EntityTableConfig {
     { prop: 'perm', name: helptext_sharing_webdav.column_perm, hidden: true },
   ];
 
+  config = {
+    paging: true,
+    sorting: { columns: this.columns },
+    deleteMsg: {
+      title: 'Webdav',
+      key_props: ['name'],
+    },
+  };
+
   constructor(
     private modalService: ModalService,
     private router: Router,

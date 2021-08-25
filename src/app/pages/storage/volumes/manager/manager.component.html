@@ -26,9 +26,9 @@
                 id="pool-manager__encryption-checkbox"
                 [(ngModel)]="isEncrypted"
                 class="form-control"
-                placeholder="{{Encryption | translate}}"
-                (change)="isEncryptedChecked()" >
-                  {{"Encryption" | translate}}
+                (change)="isEncryptedChecked()"
+              >
+                {{"Encryption" | translate}}
               </mat-checkbox>
               <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
             </div>

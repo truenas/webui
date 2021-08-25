@@ -44,7 +44,7 @@ interface Device {
 })
 export class DeviceEditComponent implements OnInit {
   protected updateCall: 'vm.device.update' = 'vm.device.update';
-  protected route_success: string[];
+  route_success: string[];
   deviceid: number;
   vmname: string;
   fieldSets: any;

@@ -23,8 +23,8 @@ export class FormExplorerComponent implements Field, OnInit {
   fieldShow: string;
   nodes: any[];
 
-  private treeVisible = true;
-  private displayFieldName: string | null = null;
+  treeVisible = true;
+  private displayFieldName: string;
   private rootSelectable: boolean;
 
   private actionMapping: IActionMapping = {
@@ -133,7 +133,7 @@ export class FormExplorerComponent implements Field, OnInit {
     });
   }
 
-  private toggleTree(): void {
+  toggleTree(): void {
     this.treeVisible = !this.treeVisible;
   }
 

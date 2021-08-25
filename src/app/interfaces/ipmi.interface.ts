@@ -7,3 +7,8 @@ export interface Ipmi {
   netmask: string;
   vlan: unknown;
 }
+
+export interface IpmiIdentify {
+  seconds?: number;
+  force?: boolean;
+}

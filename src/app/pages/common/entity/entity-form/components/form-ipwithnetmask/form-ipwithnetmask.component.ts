@@ -30,7 +30,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit {
   private ipv4netmaskoptions = this.network.getV4Netmasks();
   private control: AbstractControl;
 
-  constructor(public translate: TranslateService, private network: NetworkService) {
+  constructor(public translate: TranslateService, public network: NetworkService) {
   }
 
   ngOnInit(): void {

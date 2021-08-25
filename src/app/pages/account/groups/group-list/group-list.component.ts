@@ -28,7 +28,7 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
   queryCall: 'group.query' = 'group.query';
   wsDelete: 'group.delete' = 'group.delete';
   route_add = ['account', 'groups', 'add'];
-  protected route_add_tooltip = T('Add Group');
+  route_add_tooltip = T('Add Group');
   route_edit: string[] = ['account', 'groups', 'edit'];
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;

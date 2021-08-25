@@ -135,13 +135,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   protected themeUtils: ThemeUtils;
   currentView: string; // pools || status || expanders || details
   exitingView: string; // pools || status || expanders || details
+  temperatures?: Temperature;
   private defaultView = 'pools';
   private labels: VDevLabelsSVG;
   private identifyBtnRef: any;
   protected maxCardWidth = 960;
   protected pixiWidth = 960;
   protected pixiHeight = 304;
-  protected temperatures?: Temperature;
 
   readonly EnclosureLocation = EnclosureLocation;
 

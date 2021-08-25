@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { helptext_system_failover } from 'app/helptext/system/failover';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FailoverUpdate } from 'app/interfaces/failover.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -143,7 +144,7 @@ export class FailoverComponent implements FormConfiguration {
       }
     });
     this.master_fg = this.entityForm.formGroup.controls['master'] as FormControl;
-    this.master_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.master_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (!res && !this.warned) {
         this.dialog.confirm({
           title: helptext_system_failover.master_dialog_title,
@@ -167,7 +168,7 @@ export class FailoverComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(body: any): Subscription {
+  customSubmit(body: FailoverUpdate): Subscription {
     this.load.open();
     return this.ws.call('failover.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.alreadyDisabled = body['disabled'];

@@ -183,7 +183,7 @@ export interface FormTextareaConfig<P = any> extends BaseFieldConfig<P> {
 
 export interface FormTextareaButtonConfig<P = any> extends BaseFieldConfig<P> {
   customEventActionLabel?: string;
-  customEventMethod?(data: any): void;
+  customEventMethod?(data?: any): void;
 }
 
 export interface FormUploadConfig<P = any> extends BaseFieldConfig<P> {

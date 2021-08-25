@@ -65,7 +65,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   @Input() report: Report;
   @Input() multipathTitle?: string;
   @Input() identifier?: string;
-  @Input() retroLogo?: string;
+  // TODO: Make boolean
+  @Input() retroLogo?: string | number;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
 
   data: ReportingData;
@@ -84,8 +85,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     return this.identifier ? trimmed.replace(/{identifier}/, this.identifier) : this.report.title;
   }
 
-  get aggregationKeys(): any {
-    return Object.keys(this.data.aggregations);
+  get aggregationKeys(): (keyof ReportingData['aggregations'])[] {
+    return Object.keys(this.data.aggregations) as (keyof ReportingData['aggregations'])[];
   }
 
   legendData: any = {};

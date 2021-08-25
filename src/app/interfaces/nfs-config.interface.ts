@@ -16,3 +16,8 @@ export interface NfsConfig {
   v4_krb_enabled: boolean;
   v4_v3owner: boolean;
 }
+
+export interface AddNfsPrincipal {
+  username: string;
+  password: string;
+}

@@ -20,15 +20,15 @@ export class FormPermissionsComponent implements Field, OnInit {
   group: FormGroup;
   fieldShow: string;
 
-  private ownerRead = false;
-  private ownerWrite = false;
-  private ownerExec = false;
-  private groupRead = false;
-  private groupWrite = false;
-  private groupExec = false;
-  private otherRead = false;
-  private otherWrite = false;
-  private otherExec = false;
+  ownerRead = false;
+  ownerWrite = false;
+  ownerExec = false;
+  groupRead = false;
+  groupWrite = false;
+  groupExec = false;
+  otherRead = false;
+  otherWrite = false;
+  otherExec = false;
 
   private owner = 0;
   private grp = 0;
