@@ -575,7 +575,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       hideCheckBox: true,
       buttonMsg: T('Continue'),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Update') } });
+      this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') } });
       this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
       this.dialogRef.componentInstance.disableProgressValue(true);
       this.dialogRef.componentInstance.submit();
