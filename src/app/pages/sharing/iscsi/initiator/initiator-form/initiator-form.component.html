@@ -8,7 +8,7 @@
             <div fxFlex="100%" fxFlex.gt-xs="calc(50% - 16px)" class="connected-initiators-container form-inline has-tooltip"
                 [ngClass]="connectedInitiatorsDisabled ? 'disabled' : ''">
                 <label>{{'Connected Initiators' | translate}}</label>
-                <popper-tooltip [message]="connectedInitiatorsTooltip"></popper-tooltip>
+                <tooltip [message]="connectedInitiatorsTooltip"></tooltip>
                 <mat-selection-list class="connected-initiators-list" #connectedInitiatorsList
                     [disabled]="connectedInitiatorsDisabled">
                     <mat-list-option *ngFor="let initiator of connectedInitiators" [value]="initiator">

@@ -19,7 +19,7 @@ import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { FormSelectionListComponent } from 'app/pages/common/entity/entity-form/components/form-selection-list/form-selection-list.component';
-import { PopperTooltipComponent } from 'app/pages/common/entity/entity-form/components/popper-tooltip/popper-tooltip.component';
+import { PopperTooltipComponent } from 'app/pages/common/entity/entity-form/components/tooltip/tooltip.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityTableActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-actions/entity-table-actions.component';
 import { WizardSummaryComponent } from 'app/pages/common/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
@@ -62,7 +62,7 @@ import { FormTextareaButtonComponent } from './entity-form/components/form-texta
 import { FormTextareaComponent } from './entity-form/components/form-textarea/form-textarea.component';
 import { FormToggleButtonComponent } from './entity-form/components/form-toggle-button/form-toggle-button.component';
 import { FormUploadComponent } from './entity-form/components/form-upload/form-upload.component';
-import { TooltipDocReplacePipe } from './entity-form/components/popper-tooltip/tooltip-docreplace';
+import { TooltipDocReplacePipe } from './entity-form/components/tooltip/tooltip-docreplace';
 import { EntityFormConfigurationComponent } from './entity-form/entity-form-configuration.component';
 import { EntityFormEmbeddedComponent } from './entity-form/entity-form-embedded.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';

@@ -90,7 +90,7 @@
           <div style="display:inline-block; margin-left:16px;">
             <span *ngIf="group === 'data' && vdev_type_disabled">{{getType() | translate}}</span>
             <span>{{"Estimated raw capacity:" | translate}} {{size}}</span>
-            <popper-tooltip [message]=vdev_type_tooltip></popper-tooltip>
+            <tooltip [message]=vdev_type_tooltip></tooltip>
           </div>
         </div>
         </div>

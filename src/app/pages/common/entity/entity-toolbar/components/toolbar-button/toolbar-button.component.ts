@@ -17,7 +17,7 @@ import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
         [disabled]="config.disabled">
         {{ config.label | translate }}
       </button>
-      <popper-tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></popper-tooltip>
+      <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
     </div>
   `,
 })

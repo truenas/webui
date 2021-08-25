@@ -13,7 +13,7 @@
                 <label class="label input-text">
                   {{ 'Name' | translate }}*
                 </label>
-                <popper-tooltip class="volumeTooltip" [message]=name_tooltip></popper-tooltip>
+                <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
               </div>
 
               <div class="full-width">
@@ -30,7 +30,7 @@
                 (change)="isEncryptedChecked()" >
                   {{"Encryption" | translate}}
               </mat-checkbox>
-              <popper-tooltip class="volumeTooltip" [message]=encryption_tooltip></popper-tooltip>
+              <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
             </div>
 
             <div *ngIf="isEncrypted" fxFlex="30%" class="inline form-element encryption-select" style="padding-top: 4px;">
@@ -62,7 +62,7 @@
           <div fxFlex="100%" class="button-bar">
             <div><button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button></div>
             <div><button id="pool-manager__suggest-layout-button" *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent mat-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button></div>
-            <div><popper-tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></popper-tooltip></div>
+            <div><tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip></div>
             <div class="button-spacer"></div>
             <div><button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle"
               [disabled]="disks.length === 0"

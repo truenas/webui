@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'popper-tooltip',
-  styleUrls: ['./popper-tooltip.component.scss'],
-  templateUrl: './popper-tooltip.component.html',
+  selector: 'tooltip',
+  styleUrls: ['./tooltip.component.scss'],
+  templateUrl: './tooltip.component.html',
 })
 export class PopperTooltipComponent {
   @Input('message') message: string;
