@@ -1150,20 +1150,21 @@ export class ReplicationFormComponent implements FormConfiguration {
       return;
     }
 
-    const payload: any[] = [{
-      datasets: this.entityForm.formGroup.controls['target_dataset_PUSH'].value || [],
+    const datasets = this.entityForm.formGroup.controls['target_dataset_PUSH'].value;
+    const payload: any = {
+      datasets: (Array.isArray(datasets) ? datasets : [datasets]) || [],
       transport: this.entityForm.formGroup.controls['transport'].value,
       ssh_credentials: this.entityForm.formGroup.controls['ssh_credentials'].value,
-    }];
+    };
 
     if (this.entityForm.formGroup.get('schema_or_regex').value === SnapshotNamingOption.NamingSchema) {
-      payload[0].naming_schema = namingSchema;
+      payload.naming_schema = namingSchema;
     } else {
-      payload[0].name_regex = nameRegex;
+      payload.name_regex = nameRegex;
     }
 
     this.ws
-      .call('replication.count_eligible_manual_snapshots', payload)
+      .call('replication.count_eligible_manual_snapshots', [payload])
       .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.form_message.type = res.eligible === 0 ? 'warning' : 'info';
