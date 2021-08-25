@@ -12,6 +12,9 @@ export interface ControlConfig {
   value?: any;
   options?: any[];
   placeholder?: string;
+  customTriggerValue?: string;
+  required?: boolean;
+  zeroStateMessage?: string;
 }
 
 export interface ToolbarConfig {

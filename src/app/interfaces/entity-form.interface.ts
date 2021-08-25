@@ -78,6 +78,7 @@ export interface FormConfiguration {
   closeModalForm?(): Promise<boolean>;
   afterModalFormClosed?(): void; // function will called once the modal form closed
   isCustActionVisible?: (action: string) => boolean;
+  isCustActionDisabled?: (action: string) => boolean;
 }
 
 export interface FormCustomAction {
