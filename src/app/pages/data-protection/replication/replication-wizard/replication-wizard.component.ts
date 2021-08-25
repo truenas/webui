@@ -27,7 +27,9 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig, FormExplorerConfig, FormParagraphConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormExplorerConfig, FormParagraphConfig, FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
@@ -902,7 +904,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             const explorerConfig = _.find(
               fieldConfig,
               { name: datasetName },
-            ) as FormExplorerConfig
+            ) as FormExplorerConfig;
             const explorerComponent = explorerConfig.customTemplateStringOptions.explorerComponent;
             if (explorerComponent) {
               explorerComponent.nodes = [{

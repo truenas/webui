@@ -10,7 +10,9 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig, FormListConfig, FormParagraphConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormListConfig, FormParagraphConfig, FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';

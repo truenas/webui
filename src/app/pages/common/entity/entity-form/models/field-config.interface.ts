@@ -172,7 +172,7 @@ export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
 
 export interface FormTaskConfig<P = any> extends BaseFieldConfig<P> {
   tabs?: any[];
-tabName?: string;
+  tabName?: string;
 }
 
 export interface FormTextareaConfig<P = any> extends BaseFieldConfig<P> {
@@ -199,25 +199,25 @@ export interface FormToggleButtonConfig<P = any> extends BaseFieldConfig<P> {
   options?: any[];
 }
 
-export type FieldConfig<P = any> = BaseFieldConfig<P> 
-  | FormArrayConfig<P>
-  | FormButtonConfig<P>
-  | FormCheckboxConfig<P>
-  | FormChipConfig<P>
-  | FormComboboxConfig<P>
-  | FormDictConfig<P>
-  | FormExplorerConfig<P>
-  | FormInputConfig<P>
-  | FormIpWithNetmaskConfig<P>
-  | FormListConfig<P>
-  | FormParagraphConfig<P>
-  | FormPermissionsConfig<P>
-  | FormRadioConfig<P>
-  | FormSchedulerConfig<P>
-  | FormSelectConfig<P>
-  | FormSelectionListConfig<P>
-  | FormSliderConfig<P>
-  | FormTaskConfig<P> 
-  | FormTextareaConfig<P> 
-  | FormToggleButtonConfig<P> 
-  | FormUploadConfig<P>;
+export type FieldConfig<P = any> = BaseFieldConfig<P>
+| FormArrayConfig<P>
+| FormButtonConfig<P>
+| FormCheckboxConfig<P>
+| FormChipConfig<P>
+| FormComboboxConfig<P>
+| FormDictConfig<P>
+| FormExplorerConfig<P>
+| FormInputConfig<P>
+| FormIpWithNetmaskConfig<P>
+| FormListConfig<P>
+| FormParagraphConfig<P>
+| FormPermissionsConfig<P>
+| FormRadioConfig<P>
+| FormSchedulerConfig<P>
+| FormSelectConfig<P>
+| FormSelectionListConfig<P>
+| FormSliderConfig<P>
+| FormTaskConfig<P>
+| FormTextareaConfig<P>
+| FormToggleButtonConfig<P>
+| FormUploadConfig<P>;

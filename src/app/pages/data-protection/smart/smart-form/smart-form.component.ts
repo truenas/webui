@@ -7,7 +7,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services';

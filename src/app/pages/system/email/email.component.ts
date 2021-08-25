@@ -13,7 +13,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig, FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {

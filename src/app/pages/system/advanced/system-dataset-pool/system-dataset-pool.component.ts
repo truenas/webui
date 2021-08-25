@@ -9,12 +9,12 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService, WebSocketService, AppLoaderService, SystemGeneralService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 const poolFieldName = 'pool';
 

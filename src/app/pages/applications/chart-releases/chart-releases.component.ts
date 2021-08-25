@@ -22,6 +22,7 @@ import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/char
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -30,7 +31,6 @@ import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
 import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
 import { ChartFormComponent } from '../forms/chart-form.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 @UntilDestroy()
 @Component({

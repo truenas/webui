@@ -262,7 +262,7 @@ export class CertificateEditComponent implements FormConfiguration {
 
     const signedbyConfig: FormParagraphConfig = _.find(this.fieldConfig, { name: 'signedby' });
     signedbyConfig.paraText += this.incomingData.signedby?.name || '---';
-    
+
     const issuer: FormParagraphConfig = _.find(this.fieldConfig, { name: 'issuer' });
     if (_.isObject(this.incomingData.issuer)) {
       issuer.paraText += (this.incomingData.issuer as any).name;

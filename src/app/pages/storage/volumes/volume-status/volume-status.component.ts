@@ -225,7 +225,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       }
       const diskConfig: FormSelectConfig = _.find(this.replaceDiskFormFields, { name: 'disk' });
       diskConfig.options = availableDisks;
-      
+
       const newDiskConfig: FormSelectConfig = _.find(this.extendVdevFormFields, { name: 'new_disk' });
       newDiskConfig.options = availableDisksForExtend;
     });

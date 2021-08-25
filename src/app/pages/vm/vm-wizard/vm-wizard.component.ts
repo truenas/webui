@@ -23,7 +23,9 @@ import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Statfs } from 'app/interfaces/filesystem-stat.interface';
-import { FieldConfig, FormParagraphConfig, FormSelectConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormParagraphConfig, FormSelectConfig, FormUploadConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
@@ -567,7 +569,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
     this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
-        const config: FormSelectConfig = _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' })
+        const config: FormSelectConfig = _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' });
         config.options.push(
           {
             label: zvol.id, value: zvol.id,
@@ -798,7 +800,7 @@ export class VMWizardComponent implements WizardConfiguration {
     });
     this.getFormControlFromFieldName('upload_iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
-        const config: FormUploadConfig = _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' })
+        const config: FormUploadConfig = _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' });
         config.fileLocation = res;
       }
     });

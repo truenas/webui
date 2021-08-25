@@ -17,6 +17,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ManagerDisk } from 'app/pages/storage/volumes/manager/manager-disk.interface';
@@ -26,7 +27,6 @@ import { StorageService } from 'app/services/storage.service';
 import { T } from 'app/translate-marker';
 import { DiskComponent } from './disk/disk.component';
 import { VdevComponent } from './vdev/vdev.component';
-import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 @UntilDestroy()
 @Component({

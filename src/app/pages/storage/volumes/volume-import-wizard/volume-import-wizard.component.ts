@@ -10,7 +10,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { FieldConfig, FormInputConfig, FormSelectConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormInputConfig, FormSelectConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';

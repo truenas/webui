@@ -3,7 +3,7 @@ import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { 
+import {
   FieldConfig,
   FormCheckboxConfig,
   FormDictConfig,
@@ -11,7 +11,7 @@ import {
   FormInputConfig,
   FormIpWithNetmaskConfig,
   FormListConfig,
-  FormSelectConfig
+  FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { DialogService } from 'app/services';

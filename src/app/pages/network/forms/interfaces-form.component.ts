@@ -432,8 +432,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         } else {
           return;
         }
-        _.find(this.ipListControl.templateListField, { name: 'address' }).placeholder += this.ipPlaceholder; 
-        _.find(this.ipListControl.templateListField, { name: 'failover_address' }).placeholder += this.failoverPlaceholder; 
+        _.find(this.ipListControl.templateListField, { name: 'address' }).placeholder += this.ipPlaceholder;
+        _.find(this.ipListControl.templateListField, { name: 'failover_address' }).placeholder += this.failoverPlaceholder;
       });
     }
 

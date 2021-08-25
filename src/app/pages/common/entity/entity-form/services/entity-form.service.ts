@@ -10,7 +10,9 @@ import * as _ from 'lodash';
 import { FileType } from 'app/enums/file-type.enum';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';
-import { FieldConfig, UnitType, InputUnitConfig, FormArrayConfig, FormListConfig, FormDictConfig } from '../models/field-config.interface';
+import {
+  FieldConfig, UnitType, InputUnitConfig, FormArrayConfig, FormListConfig, FormDictConfig,
+} from '../models/field-config.interface';
 
 @Injectable()
 export class EntityFormService {

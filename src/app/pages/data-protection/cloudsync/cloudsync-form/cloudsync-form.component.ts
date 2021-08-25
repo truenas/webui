@@ -18,7 +18,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig, FormExplorerConfig, FormInputConfig, FormParagraphConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormExplorerConfig, FormInputConfig, FormParagraphConfig, FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';

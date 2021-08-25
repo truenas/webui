@@ -16,6 +16,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
@@ -25,7 +26,6 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 interface ZvolFormData {
   name: string;

@@ -7,7 +7,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/services/components/service-ssh';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { NetworkService, WebSocketService } from 'app/services';
 

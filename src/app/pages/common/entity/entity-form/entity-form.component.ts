@@ -28,7 +28,9 @@ import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { EntityUtils } from '../utils';
-import { FieldConfig, FormArrayConfig, FormDictConfig, FormListConfig, FormSelectConfig } from './models/field-config.interface';
+import {
+  FieldConfig, FormArrayConfig, FormDictConfig, FormListConfig, FormSelectConfig,
+} from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
@@ -320,7 +322,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                       this.data[key] = _.split(this.data[key], ',');
                     }
                   }
-                  if ( !(selectField.type === 'select' && selectField.options.length == 0) ) {
+                  if (!(selectField.type === 'select' && selectField.options.length == 0)) {
                     fg.setValue(this.data[key]);
                   }
                 }
@@ -356,7 +358,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                     this.setArrayValue(this.wsResponse[key], this.wsfg as FormArray, key);
                   } else if (current_field.type === 'list' || current_field.type === 'dict') {
                     this.setObjectListValue(this.wsResponse[key], this.wsfg, current_field);
-                  } else if ( !(selectField.type === 'select' && selectField.options.length == 0) ) {
+                  } else if (!(selectField.type === 'select' && selectField.options.length == 0)) {
                     this.wsfg.setValue(this.wsResponse[key]);
                   }
                 } else if (this.conf.dataAttributeHandler) {
@@ -677,7 +679,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         });
       } else if (fieldConfig.type == 'dict') {
         const dictConfig = fieldConfig as FormDictConfig;
-        if(dictConfig.subFields){
+        if (dictConfig.subFields) {
           dictConfig.subFields.forEach((subFieldConfig) => {
             const subValue = value[subFieldConfig.name];
             if (subFieldConfig.type == 'list' || subFieldConfig.type == 'dict') {

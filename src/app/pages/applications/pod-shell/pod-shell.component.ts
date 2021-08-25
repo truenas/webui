@@ -16,10 +16,10 @@ import { CoreEvent } from 'app/interfaces/events';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 @UntilDestroy()
 @Component({

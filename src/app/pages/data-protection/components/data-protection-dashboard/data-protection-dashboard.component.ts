@@ -25,6 +25,7 @@ import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
@@ -50,7 +51,6 @@ import { JobService } from 'app/services/job.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 
 export interface TaskCard {
   name: string;
