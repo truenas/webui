@@ -25,7 +25,7 @@ export interface EntityTableConfig<Row = any> {
   multiActions?: EntityTableMultiAction<Row>[];
   multiActionsIconsOnly?: boolean;
   noActions?: boolean;
-  config?: EntityTableConfigConfig;
+  config: EntityTableConfigConfig;
   confirmDeleteDialog?: EntityTableConfirmDialog<Row>;
   hasDetails?: boolean;
   rowDetailComponent?: Type<unknown>;
