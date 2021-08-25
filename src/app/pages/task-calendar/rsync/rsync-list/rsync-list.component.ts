@@ -69,7 +69,7 @@ export class RsyncListComponent {
           if (run) {
             row.state = 'RUNNING';
             this.ws.call('rsynctask.run', [row.id]).subscribe((res) => {
-              this.dialog.Info(T('Task Started'), 'Rsync task <i>' + row.remotehost + ' - ' + row.remotemodule + '</i> started.', '500px', 'info', true);
+              this.dialog.report(T('Task Started'), 'Rsync task <i>' + row.remotehost + ' - ' + row.remotemodule + '</i> started.', '500px', 'info', true);
               this.job.getJobStatus(res).subscribe((task) => {
                 row.state = task.state;
                 row.job = task;
@@ -135,7 +135,7 @@ export class RsyncListComponent {
         this.job.showLogs(row.job);
       }
     } else {
-      this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+      this.dialog.report(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
     }
   }
 }

@@ -112,7 +112,7 @@ export class CloudsyncListComponent implements InputTableConf {
             row.state = 'RUNNING';
             this.ws.call('cloudsync.sync', [row.id]).subscribe(
               (res) => {
-                this.dialog.Info(T('Task Started'), T('Cloud sync <i>') + row.description + T('</i> has started.'), '500px', 'info', true);
+                this.dialog.report(T('Task Started'), T('Cloud sync <i>') + row.description + T('</i> has started.'), '500px', 'info', true);
                 this.job.getJobStatus(res).subscribe((task) => {
                   row.state = task.state;
                   row.job = task;
@@ -135,7 +135,7 @@ export class CloudsyncListComponent implements InputTableConf {
           if (res) {
             this.ws.call('cloudsync.abort', [row.id]).subscribe(
               (wsRes) => {
-                this.dialog.Info(T('Task Stopped'), T('Cloud sync <i>') + row.description + T('</i> stopped.'), '500px', 'info', true);
+                this.dialog.report(T('Task Stopped'), T('Cloud sync <i>') + row.description + T('</i> stopped.'), '500px', 'info', true);
               },
               (wsErr) => {
                 new EntityUtils().handleWSError(this.entityList, wsErr);
@@ -155,7 +155,7 @@ export class CloudsyncListComponent implements InputTableConf {
           if (dialog_res) {
             this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).subscribe(
               (res) => {
-                this.dialog.Info(T('Task Started'), T('Cloud sync <i>') + row.description + T('</i> has started.'), '500px', 'info', true);
+                this.dialog.report(T('Task Started'), T('Cloud sync <i>') + row.description + T('</i> has started.'), '500px', 'info', true);
                 this.job.getJobStatus(res).subscribe((task) => {
                   row.state = task.state;
                   row.job = task;
@@ -287,7 +287,7 @@ export class CloudsyncListComponent implements InputTableConf {
         this.job.showLogs(row.job);
       }
     } else {
-      this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+      this.dialog.report(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
     }
   }
 }

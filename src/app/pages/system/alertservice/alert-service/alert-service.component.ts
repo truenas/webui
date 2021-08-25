@@ -643,9 +643,9 @@ export class AlertServiceComponent {
           (res) => {
             this.loader.close();
             if (res) {
-              this.dialogService.Info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
+              this.dialogService.report(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
             } else {
-              this.dialogService.Info(T('Failed'), T('Failed sending test alert!'));
+              this.dialogService.report(T('Failed'), T('Failed sending test alert!'));
             }
           },
           (err) => {

@@ -278,7 +278,7 @@ export class ProactiveComponent {
     this.loader.open();
     this.ws.call('support.update', [data]).subscribe(() => {
       this.loader.close();
-      this.dialogService.Info(helptext.proactive.dialog_title,
+      this.dialogService.report(helptext.proactive.dialog_title,
         helptext.proactive.dialog_mesage, '350px', 'info', true);
     },
     (err) => {

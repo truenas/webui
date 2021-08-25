@@ -57,7 +57,7 @@ export class UnlockDialogComponent {
 
   showError(dataset) {
     if (this.parent.dialogService && dataset.unlock_error) {
-      this.parent.dialogService.Info(helptext.unlock_dataset_dialog.error_dialog_title + dataset.name, dataset.unlock_error);
+      this.parent.dialogService.report(helptext.unlock_dataset_dialog.error_dialog_title + dataset.name, dataset.unlock_error);
     }
   }
 }

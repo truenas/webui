@@ -106,7 +106,7 @@ export class WebdavFormComponent {
             this.ws.call('service.update', [service['id'], { enable: true }]).subscribe((updateRes) => {
               this.ws.call('service.start', [service.service]).subscribe((startRes) => {
                 entityForm.loader.close();
-                this.dialog.Info(T('WebDAV') + shared.dialog_started_title,
+                this.dialog.report(T('WebDAV') + shared.dialog_started_title,
                   T('The WebDAV') + shared.dialog_started_message, '250px', 'info').subscribe(() => {
                   this.router.navigate(new Array('/').concat(
                     this.route_success,

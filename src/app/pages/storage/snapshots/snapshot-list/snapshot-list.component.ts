@@ -291,7 +291,7 @@ export class SnapshotListComponent {
 
       let infoMessage: string = T('Deleted') + ' ' + params[1].length + ' ';
       infoMessage += params[1].length > 1 ? T('snapshots') : T('snapshot');
-      this.dialogService.Info(infoMessage, '', '320px', 'info', true);
+      this.dialogService.report(infoMessage, '', '320px', 'info', true);
     });
 
     dialogRef.componentInstance.failure.subscribe((err) => {

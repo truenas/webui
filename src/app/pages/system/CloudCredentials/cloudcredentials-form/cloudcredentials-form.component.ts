@@ -1390,7 +1390,7 @@ export class CloudCredentialsFormComponent {
       (res) => {
         this.entityForm.loader.close();
         if (res.valid) {
-          this.dialog.Info(T('Valid'), T('The Credential is valid.'), '500px', 'info');
+          this.dialog.report(T('Valid'), T('The Credential is valid.'), '500px', 'info');
         } else {
           this.dialog.errorReport('Error', res.excerpt, res.error);
         }

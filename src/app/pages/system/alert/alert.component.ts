@@ -180,7 +180,7 @@ export class AlertConfigComponent implements OnInit {
 
     this.ws.call(this.editCall, [payload])
       .subscribe(
-        () => this.dialog.Info(T('Settings saved'), '', '300px', 'info', true),
+        () => this.dialog.report(T('Settings saved'), '', '300px', 'info', true),
         (error) => new EntityUtils().handleWSError(this, error, this.dialog),
       )
       .add(() => this.loader.close());

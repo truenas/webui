@@ -1217,7 +1217,7 @@ export class ReplicationWizardComponent {
     if (value['schedule_method'] === 'once' && createdItems['replication'] != undefined) {
       await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
         (res) => {
-          this.dialogService.Info(T('Task started'), T('Replication <i>') + value['name'] + T('</i> has started.'), '500px', 'info', true);
+          this.dialogService.report(T('Task started'), T('Replication <i>') + value['name'] + T('</i> has started.'), '500px', 'info', true);
         },
       );
     }
@@ -1228,7 +1228,7 @@ export class ReplicationWizardComponent {
         this.ws.call('zettarepl.datasets_have_encryption', [value.source_datasets, value.recursive, 'LOCAL']).subscribe((res) => {
           if (res && res.length) {
             const message = helptext.replication_encrypted_dialog.message1 + res.map((ds) => "'" + ds + "'").join(', ') + helptext.replication_encrypted_dialog.message2;
-            this.dialogService.Info(helptext.replication_encrypted_dialog.title, message).subscribe((res) => {
+            this.dialogService.report(helptext.replication_encrypted_dialog.title, message).subscribe((res) => {
               this.router.navigate(new Array('/').concat(this.route_success));
             });
           } else {
@@ -1239,7 +1239,7 @@ export class ReplicationWizardComponent {
         this.ws.call('zettarepl.datasets_have_encryption', [value.source_datasets, value.recursive, 'SSH', this.entityWizard.formArray.controls[0].controls['ssh_credentials_source'].value]).subscribe((res) => {
           if (res && res.length) {
             const message = helptext.replication_encrypted_dialog.message1 + res.map((ds) => "'" + ds + "'").join(', ') + helptext.replication_encrypted_dialog.message2;
-            this.dialogService.Info(helptext.replication_encrypted_dialog.title, message).subscribe((res) => {
+            this.dialogService.report(helptext.replication_encrypted_dialog.title, message).subscribe((res) => {
               this.router.navigate(new Array('/').concat(this.route_success));
             });
           } else {

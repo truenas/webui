@@ -410,7 +410,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           this.ws.call('interface.checkin').subscribe((success) => {
             this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
             this.loader.close();
-            this.dialogService.Info(
+            this.dialogService.report(
               network_interfaces_helptext.checkin_complete_title,
               network_interfaces_helptext.checkin_complete_message,
               '500px', 'info',
@@ -540,7 +540,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
     reasons = reasons + '</ul>';
 
-    this.dialogService.Info(ha_status, reasons, '500px', ha_icon, true);
+    this.dialogService.report(ha_status, reasons, '500px', ha_icon, true);
   }
 
   checkUpgradePending() {
@@ -727,7 +727,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
             entityDialog.dialogRef.close();
             // only show this for connecting TC
             if (!self.tcConnected) {
-              self.dialogService.Info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message);
+              self.dialogService.report(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message);
             }
           },
           (err) => {

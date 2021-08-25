@@ -108,7 +108,7 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
   customSubmit(value) {
     this.ws.call('auth.check_user', ['root', value.passphrase]).subscribe((res) => {
       if (!res) {
-        this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+        this.dialogService.report('Error', 'The administrator password is incorrect.', '340px');
       } else {
         this.ws.call('pool.rekey', [parseInt(this.pk), { admin_password: value.passphrase }])
           .subscribe(() => {
@@ -128,7 +128,7 @@ export class VolumeRekeyFormComponent implements Formconfiguration {
                 break;
 
               default:
-                this.dialogService.Info(T('Success'), T('Successfully reset encryption for pool: ') + value.name, '500px', 'info');
+                this.dialogService.report(T('Success'), T('Successfully reset encryption for pool: ') + value.name, '500px', 'info');
                 this.encryptionService.openEncryptDialog(this.pk, this.route_success, this.poolName);
             }
           },

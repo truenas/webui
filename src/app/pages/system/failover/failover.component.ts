@@ -57,7 +57,7 @@ export class FailoverComponent implements OnDestroy {
               ds.componentInstance.method, ds.componentInstance.data,
             ).subscribe((res) => {
               this.load.close();
-              this.dialog.Info(helptext_system_failover.confirm_dialogs.sync_title,
+              this.dialog.report(helptext_system_failover.confirm_dialogs.sync_title,
                 helptext_system_failover.confirm_dialogs.sync_to_message, '', 'info', true);
             }, (err) => {
               this.load.close();
@@ -78,7 +78,7 @@ export class FailoverComponent implements OnDestroy {
             this.load.open();
             this.ws.call('failover.sync_from_peer').subscribe((res) => {
               this.load.close();
-              this.dialog.Info(helptext_system_failover.confirm_dialogs.sync_title,
+              this.dialog.report(helptext_system_failover.confirm_dialogs.sync_title,
                 helptext_system_failover.confirm_dialogs.sync_from_message, '', 'info', true);
             }, (err) => {
               this.load.close();
@@ -165,7 +165,7 @@ export class FailoverComponent implements OnDestroy {
     return this.ws.call('failover.update', [body]).subscribe((res) => {
       this.alreadyDisabled = body['disabled'];
       this.load.close();
-      this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true).subscribe((saved) => {
+      this.dialog.report(T('Settings saved.'), '', '300px', 'info', true).subscribe((saved) => {
         if (body.disabled && !body.master) {
           this.ws.logout();
         }

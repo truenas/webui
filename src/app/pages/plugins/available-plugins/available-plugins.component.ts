@@ -37,7 +37,7 @@ export class AvailablePluginsComponent implements OnInit {
           this.availableRepo.push(res[repo]);
         }
         if (this.availableRepo.length === 0) {
-          this.dialogService.Info(T('No Repositories'), T('No repositories is found.'), '500px', 'info', true);
+          this.dialogService.report(T('No Repositories'), T('No repositories is found.'), '500px', 'info', true);
         } else {
           const officialRepo = this.availableRepo.filter((repo) => repo.name === 'iXsystems');
           this.selectedRepo = officialRepo.length > 0 ? officialRepo[0]['git_repository'] : this.availableRepo[0]['git_repository'];

@@ -346,10 +346,10 @@ export class BootEnvironmentListComponent {
               if (scrubIntervalValue > 0) {
                 localWS.call('boot.set_scrub_interval', [scrubIntervalValue]).subscribe((res) => {
                   localDialog.closeAllDialogs();
-                  localDialog.Info(T('Scrub Interval Set'), T(`Scrub interval set to ${scrubIntervalValue} days`), '300px', 'info', true);
+                  localDialog.report(T('Scrub Interval Set'), T(`Scrub interval set to ${scrubIntervalValue} days`), '300px', 'info', true);
                 });
               } else {
-                localDialog.Info(T('Enter valid value'), T(scrubIntervalValue + ' is not a valid number of days.'));
+                localDialog.report(T('Enter valid value'), T(scrubIntervalValue + ' is not a valid number of days.'));
               }
             },
           };
@@ -384,7 +384,7 @@ export class BootEnvironmentListComponent {
         this.loaderOpen = true;
         this.busy = this.ws.call('boot.scrub').subscribe((res) => {
           this.loader.close();
-          this.dialog.Info(T('Scrub Started'), T(''), '300px', 'info', true);
+          this.dialog.report(T('Scrub Started'), T(''), '300px', 'info', true);
         },
         (res) => {
           this.dialog.errorReport(res.error, res.reason, res);

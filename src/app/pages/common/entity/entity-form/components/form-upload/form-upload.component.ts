@@ -60,7 +60,7 @@ export class FormUploadComponent {
           if (event.statusText === 'OK') {
             this.newMessage(location + '/' + fileBrowser.files[0].name);
             this.loader.close();
-            this.dialog.Info(T('File upload complete'), '', '300px', 'info', true);
+            this.dialog.report(T('File upload complete'), '', '300px', 'info', true);
           }
         }
       }, (error) => {
@@ -68,7 +68,7 @@ export class FormUploadComponent {
         this.dialog.errorReport(T('Error'), error.statusText, error.message);
       });
     } else {
-      this.dialog.Info(T('Please make sure to select a file'), '', '300px', 'info', true);
+      this.dialog.report(T('Please make sure to select a file'), '', '300px', 'info', true);
     }
   }
   newMessage(message) {

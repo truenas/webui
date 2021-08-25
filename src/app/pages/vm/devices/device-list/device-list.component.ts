@@ -137,7 +137,7 @@ export class DeviceListComponent {
           for (const attribute in device.attributes) {
             details = `${attribute}: ${device.attributes[attribute]} \n` + details;
           }
-          this.dialogService.Info(detailMsg + `${row.dtype} ${row.id}`, details, '500px', 'info');
+          this.dialogService.report(detailMsg + `${row.dtype} ${row.id}`, details, '500px', 'info');
         });
       },
     });

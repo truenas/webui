@@ -45,7 +45,7 @@ export class JobService {
         this.dialog.errorReport(T('Error'), job.error, job.exception);
       }
     } else if (job.logs_excerpt === '') {
-      this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+      this.dialog.report(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
     } else {
       const target_job = job;
       this.dialog.confirm(dialog_title, `<pre>${job.logs_excerpt}</pre>`, true, T('Download Logs'),

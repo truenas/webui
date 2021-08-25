@@ -205,11 +205,11 @@ export class VolumeImportWizardComponent {
 
   decryptDisks(stepper) {
     if (this.devices_fg.status === 'INVALID') {
-      this.dialogService.Info(T('Disk Selection Required'), T('Select one or more disks to decrypt.'));
+      this.dialogService.report(T('Disk Selection Required'), T('Select one or more disks to decrypt.'));
       return;
     }
     if (!this.subs) {
-      this.dialogService.Info(T('Encryption Key Required'), T('Select a key before decrypting the disks.'));
+      this.dialogService.report(T('Encryption Key Required'), T('Select a key before decrypting the disks.'));
     }
     const formData: FormData = new FormData();
     const params = [this.devices_fg.value];

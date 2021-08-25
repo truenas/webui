@@ -84,7 +84,7 @@ export class ReplicationListComponent {
             row.state = 'RUNNING';
             this.ws.call('replication.run', [row.id]).subscribe(
               (ws_res) => {
-                this.dialog.Info(T('Task started'), T('Replication <i>') + row.name + T('</i> has started.'), '500px', 'info', true);
+                this.dialog.report(T('Task started'), T('Replication <i>') + row.name + T('</i> has started.'), '500px', 'info', true);
               },
               (err) => {
                 new EntityUtils().handleWSError(this.entityList, err);
@@ -165,12 +165,12 @@ export class ReplicationListComponent {
     if (row.state.state === 'RUNNING') {
       this.entityList.runningStateButton(row.job.id);
     } else if (row.state.state === 'HOLD') {
-      this.dialog.Info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
+      this.dialog.report(T('Task is on hold'), row.state.reason, '500px', 'info', true);
     } else {
       const error = row.state.state === 'ERROR' ? row.state.error : null;
       const log = (row.job && row.job.logs_excerpt) ? row.job.logs_excerpt : null;
       if (error === null && log === null) {
-        this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+        this.dialog.report(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
         return;
       }
 

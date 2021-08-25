@@ -152,7 +152,7 @@ export class PluginsComponent implements InputTableConf {
           customSubmit(entityDialog) {
             entityDialog.dialogRef.close(true);
             const selectedJails = self.getSelectedNamesWithChecks(selected, !!entityDialog.formValue.update_jail);
-            self.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.content, '500px', 'info');
+            self.dialogService.report(helptext.multi_update_dialog.title, helptext.multi_update_dialog.content, '500px', 'info');
             self.entityList.busy = self.ws.job('core.bulk', ['plugin.update_plugin', selectedJails]).subscribe(
               (res) => {
                 let message = '';
@@ -164,7 +164,7 @@ export class PluginsComponent implements InputTableConf {
                 self.updateRows(selected).then(() => {
                   if (message === '') {
                     self.entityList.table.rowDetail.collapseAllRows();
-                    self.dialogService.Info(helptext.multi_update_dialog.title, helptext.multi_update_dialog.succeed, '500px', 'info');
+                    self.dialogService.report(helptext.multi_update_dialog.title, helptext.multi_update_dialog.succeed, '500px', 'info');
                   } else {
                     message = '<ul>' + message + '</ul>';
                     self.dialogService.errorReport(T('Plugin Update Failed'), message);
@@ -289,7 +289,7 @@ export class PluginsComponent implements InputTableConf {
             entityDialog.dialogRef.close(true);
             self.entityList.loaderOpen = true;
             self.entityList.getData();
-            self.dialogService.Info(
+            self.dialogService.report(
               jailHelptext.activatePoolDialog.successInfoDialog.title,
               jailHelptext.activatePoolDialog.successInfoDialog.message + value['selectedPool'],
               '500px', 'info', true,
@@ -486,7 +486,7 @@ export class PluginsComponent implements InputTableConf {
             dialogRef.componentInstance.success.subscribe((res) => {
               dialogRef.close(true);
               this.updateRows([row]);
-              this.dialogService.Info(T('Plugin Updated'), T('Plugin ') + row.name + T(' updated.'), '500px', 'info');
+              this.dialogService.report(T('Plugin Updated'), T('Plugin ') + row.name + T(' updated.'), '500px', 'info');
             });
           },
         };
@@ -545,7 +545,7 @@ export class PluginsComponent implements InputTableConf {
           for (const msg of row.plugin_info.split('\n')) {
             install_notes += '<p>' + msg + '</p>';
           }
-          this.dialogService.Info(T('Post Install Notes'), install_notes, '500px', 'description', true);
+          this.dialogService.report(T('Post Install Notes'), install_notes, '500px', 'description', true);
         },
       });
     }

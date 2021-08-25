@@ -138,7 +138,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
       label: T('Edit'),
       onClick: (rowinner) => {
         if (this.ha_enabled) {
-          this.dialog.Info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
+          this.dialog.report(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
         } else {
           this.entityList.doEdit(rowinner.id);
         }
@@ -150,7 +150,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
       label: deleteLabel,
       onClick: (rowinner) => {
         if (this.ha_enabled) {
-          this.dialog.Info(helptext.ha_enabled_delete_title, helptext.ha_enabled_delete_msg);
+          this.dialog.report(helptext.ha_enabled_delete_title, helptext.ha_enabled_delete_msg);
         } else {
           this.entityList.doDelete(rowinner, deleteAction);
         }
@@ -235,7 +235,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
           this.entityList.loader.close();
           this.entityList.loaderOpen = false;
           // can't decide if this is worth keeping since the checkin happens intantaneously
-          // this.dialog.Info(helptext.commit_changes_title, helptext.changes_saved_successfully, '300px', "info", true);
+          // this.dialog.report(helptext.commit_changes_title, helptext.changes_saved_successfully, '300px', "info", true);
           this.checkWaitingCheckin();
         }, (err) => {
           this.entityList.loader.close();
@@ -258,7 +258,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
         this.ws.call('interface.checkin').subscribe((success) => {
           this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
           this.entityList.loader.close();
-          this.entityList.dialogService.Info(
+          this.entityList.dialogService.report(
             helptext.checkin_complete_title,
             helptext.checkin_complete_message,
             '500px', 'info',
@@ -289,7 +289,7 @@ export class InterfacesListComponent extends ViewControllerComponent implements 
           this.entityList.getData();
           this.hasPendingChanges = false;
           this.checkinWaiting = false;
-          this.dialog.Info(helptext.rollback_changes_title, helptext.changes_rolled_back, '500px', 'info', true);
+          this.dialog.report(helptext.rollback_changes_title, helptext.changes_rolled_back, '500px', 'info', true);
         }, (err) => {
           this.entityList.loader.close();
           this.entityList.loaderOpen = false;
