@@ -96,7 +96,7 @@ import { TableService } from './table/table.service';
     CommonModule, FormsModule, ReactiveFormsModule, DragDropModule, RouterModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     NgxUploaderModule, FlexLayoutModule, TranslateModule, CdkTreeModule,
-    OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule, NgxPopperjsModule,
+    OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule, NgxPopperjsModule.forRoot({ appendTo: 'body' }),
   ],
   declarations: [
     TaskScheduleListComponent,

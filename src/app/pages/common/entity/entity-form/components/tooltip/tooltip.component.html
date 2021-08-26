@@ -1,26 +1,33 @@
 <div #tooltip class="tooltip" >
   <popper-content class="fn-theme-tooltip" #popperTooltip>
-    <div #tooltiptext class ="tooltiptext">
-      <div id="tooltip-header">
-        <div class="tooltip-header-text">{{"Help" | translate}}{{ header ? ': ' + (header | translate) : ''}}</div>
+
+    <div class="tooltip-header">
+      <div class="title-wrapper">
+        <div><h5 class="tooltip-title">{{"Help" | translate}}{{ header ? ': ' : ''}}<i>{{ header ? (header | translate) : ''}}</i></h5></div>
       </div>
-      <div class="pin">
-        <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close"
+      <div>
+        <mat-icon
+          class="close-icon"
+          role="img"
+          fontSet="mdi-set"
+          fontIcon="mdi-close"
           ix-auto (click)="popperTooltip.hide()"
           ix-auto-type="tooltip-close"
-          ix-auto-identifier="{{header}}" style="cursor: pointer;"></mat-icon>
-      </div>
-
-      <div class="tooltip-message" [innerHTML]="message | translate | docreplace"
-          ix-auto
-          ix-auto-type="tooltip-message"
-          ix-auto-identifier="{{header}}">
+          ix-auto-identifier="{{header}}"
+      ></mat-icon>
       </div>
     </div>
+    <div
+      class="tooltip-message"
+      [innerHTML]="message | translate | docreplace"
+      ix-auto
+      ix-auto-type="tooltip-message"
+      ix-auto-identifier="{{header}}"
+    ></div>
 
   </popper-content>
 
-  <i class="material-icons tooltip-icon"
+  <img><i class="material-icons tooltip-icon"
     [popper]="popperTooltip"
     [popperShowOnStart]="false"
     popperTrigger="click"

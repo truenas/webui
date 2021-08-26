@@ -963,7 +963,18 @@ ul.nested-list li {
   padding: 0;
 }
 
-.tooltip .fn-theme-tooltip .ngxp__container {
+.ngxp__container {
   border-radius: 6px;
-  font-family: Roboto,'Helvetica Neue',sans-serif;
+
+  &[data-popper-placement=right] {
+    margin-left: 15px !important;
+  }
+
+  &[data-popper-placement=top] {
+    margin-left: 11px !important;
+  }
+
+  &[data-popper-placement=bottom] {
+    margin-left: 11px !important;
+  }
 }
