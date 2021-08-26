@@ -10,7 +10,6 @@ import { T } from 'app/translate-marker';
 export class LocaleService {
   t24 = T('(24 Hours)');
   timeZone: string;
-  isWaiting = false;
   dateFormat = 'YYYY-MM-DD';
   timeFormat = 'HH:mm:ss';
   dateTimeFormatChange$ = new Subject();
@@ -31,12 +30,8 @@ export class LocaleService {
 
   getPrefs() {
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' })
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' })
       .subscribe((evt: CoreEvent) => {
-        if (this.isWaiting) {
-          this.target.next({ name: 'SubmitComplete', sender: this });
-          this.isWaiting = false;
-        }
         this.dateFormat = evt.data.dateFormat;
         this.timeFormat = evt.data.timeFormat;
         this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
