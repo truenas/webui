@@ -7,12 +7,14 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
-import { Chart, ChartDataSets, InteractionMode } from 'chart.js';
+import {
+  Chart, ChartData, ChartDataSets, ChartOptions, ChartTooltipItem, InteractionMode,
+} from 'chart.js';
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewChartBarComponent } from 'app/core/components/view-chart-bar/view-chart-bar.component';
-import { ViewChartGaugeComponent } from 'app/core/components/view-chart-gauge/view-chart-gauge.component';
+import { GaugeConfig, ViewChartGaugeComponent } from 'app/core/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { CoreEvent } from 'app/interfaces/events';
 import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
@@ -40,7 +42,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this._cpuData = value;
   }
 
-  cpuAvg: any;
+  cpuAvg: GaugeConfig;
   title: string = T('CPU');
   subtitle: string = T('% of all cores');
   configurable = false;
@@ -215,14 +217,14 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   setCpuLoadData(data: any): void {
-    const config: any = {};
-    config.title = data[0];
-    config.units = '%';
-    config.diameter = 136;
-    config.fontSize = 28;
-    config.max = 100;
-    config.data = data;
-    config.subtitle = 'Avg Usage';
+    const config = {
+      data,
+      units: '%',
+      diameter: 136,
+      fontSize: 28,
+      max: 100,
+      subtitle: 'Avg Usage',
+    } as GaugeConfig;
     this.cpuAvg = config;
   }
 
@@ -238,7 +240,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   // chart.js renderer
   renderChart(): void {
     if (!this.ctx) {
-      const el = this.el.nativeElement.querySelector('#cpu-cores-chart canvas') as HTMLCanvasElement;
+      const el: HTMLCanvasElement = this.el.nativeElement.querySelector('#cpu-cores-chart canvas');
       if (!el) { return; }
 
       const ds = this.makeDatasets(this.cpuData.data);
@@ -249,7 +251,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         datasets: ds,
       };
 
-      const options = {
+      const options: ChartOptions = {
         events: ['mousemove', 'mouseout'],
         onHover: (e: MouseEvent) => {
           if (e.type == 'mouseout') {
@@ -262,7 +264,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
           mode: 'nearest' as InteractionMode,
           intersect: true,
           callbacks: {
-            label: (tt: any, data: any) => {
+            label: (tt: ChartTooltipItem, data: ChartData) => {
               if (this.screenType.toLowerCase() == 'mobile') {
                 this.legendData = null;
                 this.legendIndex = null;
@@ -296,7 +298,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
             maxBarThickness: 16,
             type: 'category',
             labels: this.labels,
-          }],
+          } as any],
           yAxes: [{
             ticks: {
               max: 100,
@@ -369,11 +371,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   private processThemeColors(theme: Theme): string[] {
-    const colors: string[] = [];
-    theme.accentColors.map((color) => {
-      colors.push((theme as any)[color]);
-    });
-    return colors;
+    return theme.accentColors.map((color) => (theme as any)[color]);
   }
 
   rgbToString(rgb: string[], alpha?: number): string {

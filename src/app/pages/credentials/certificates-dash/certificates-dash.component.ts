@@ -15,7 +15,8 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, AppTableConfig, TableComponent } from 'app/pages/common/entity/table/table.component';
+import { TableService } from 'app/pages/common/entity/table/table.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form.component';
 import {
@@ -36,7 +37,7 @@ import { CertificateEditComponent } from './forms/certificate-edit.component';
   providers: [EntityFormService],
 })
 export class CertificatesDashComponent implements OnInit {
-  cards: { name: string; tableConf: AppTableConfig }[];
+  cards: { name: string; tableConf: AppTableConfig<CertificatesDashComponent> }[];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   protected certificateAddComponent: CertificateAddComponent;
   protected certificateEditComponent: CertificateEditComponent;
@@ -58,6 +59,7 @@ export class CertificatesDashComponent implements OnInit {
     private entityFormService: EntityFormService,
     private storage: StorageService,
     private http: HttpClient,
+    private tableService: TableService,
   ) { }
 
   ngOnInit(): void {
@@ -114,7 +116,7 @@ export class CertificatesDashComponent implements OnInit {
             {
               name: T('Status'),
               prop1: 'revoked',
-              matTooltip: T('Revoked'),
+              iconTooltip: T('Revoked'),
               getIcon: (element: any, prop: string): string => {
                 if (element[prop]) {
                   return 'block';
@@ -181,7 +183,7 @@ export class CertificatesDashComponent implements OnInit {
             {
               name: T('Status'),
               prop1: 'revoked',
-              matTooltip: T('Revoked'),
+              iconTooltip: T('Revoked'),
               getIcon: (element: any, prop: string): string => {
                 if (element[prop]) {
                   return 'block';
@@ -197,9 +199,9 @@ export class CertificatesDashComponent implements OnInit {
           edit(row: CertificateAuthority) {
             this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityEditComponent, row.id);
           },
-          delete(row: CertificateAuthority, table: any) {
+          delete(row: CertificateAuthority, table: TableComponent) {
             if (row.signed_certificates > 0) {
-              (this.parent.dialogService as DialogService).confirm({
+              this.parent.dialogService.confirm({
                 title: helptext_system_ca.delete_error.title,
                 message: helptext_system_ca.delete_error.message,
                 hideCheckBox: true,
@@ -207,7 +209,7 @@ export class CertificatesDashComponent implements OnInit {
                 hideCancel: true,
               });
             } else {
-              table.tableService.delete(table, row);
+              this.parent.tableService.delete(table, row);
             }
           },
         },

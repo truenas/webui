@@ -18,7 +18,7 @@ export class ToolbarMultiSelectComponent extends IxAbstractObject implements OnI
   @Input() controller: Subject<any>;
   allSelected: boolean = null;
   values: any[] = [];
-  private selectStates: boolean [] = [];
+  selectStates: boolean [] = [];
 
   constructor(public translate: TranslateService) {
     super();

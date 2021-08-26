@@ -57,7 +57,6 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
         placeholder: helptext.snapshot_add_name_placeholder,
         tooltip: helptext.snapshot_add_name_tooltip,
         options: [],
-        validation: this.nameValidator,
         errors: T('Name or Naming Schema is required. Only one field can be used at a time.'),
         blurStatus: true,
         blurEvent: this.updateNameValidity.bind(this),

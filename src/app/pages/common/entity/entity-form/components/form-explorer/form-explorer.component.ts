@@ -23,7 +23,7 @@ export class FormExplorerComponent implements Field, OnInit {
   fieldShow: string;
   nodes: any[];
 
-  private treeVisible = true;
+  treeVisible = true;
   private displayFieldName: string;
   private rootSelectable: boolean;
 
@@ -59,7 +59,7 @@ export class FormExplorerComponent implements Field, OnInit {
 
   customTemplateStringOptions = {
     useCheckbox: false,
-    displayField: this.displayFieldName,
+    displayField: '',
     isExpandedField: 'expanded',
     idField: 'uuid',
     getChildren: this.getChildren.bind(this),
@@ -106,6 +106,8 @@ export class FormExplorerComponent implements Field, OnInit {
         expanded: !this.rootSelectable,
       }];
     }
+
+    this.customTemplateStringOptions.displayField = this.displayFieldName;
   }
 
   getChildren(node: any): Promise<any> {
@@ -131,7 +133,7 @@ export class FormExplorerComponent implements Field, OnInit {
     });
   }
 
-  private toggleTree(): void {
+  toggleTree(): void {
     this.treeVisible = !this.treeVisible;
   }
 

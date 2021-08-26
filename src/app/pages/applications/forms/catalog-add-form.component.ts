@@ -15,7 +15,6 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class CatalogAddFormComponent implements FormConfiguration {
   queryCall: 'catalog.query' = 'catalog.query';
-  customFilter: any[];
   addCall: 'catalog.create' = 'catalog.create';
   isCreateJob = true;
   isEntity = true;

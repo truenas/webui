@@ -66,7 +66,11 @@ export class R50 extends Chassis {
 
         const getCurrentColumn = (): number => {
           const test = cols.map((c, ci) => {
-            if (index >= c.start && index <= (c.start + c.count - 1)) return ci;
+            if (index >= c.start && index <= (c.start + c.count - 1)) {
+              return ci;
+            }
+
+            return undefined;
           });
           return test.filter((v) => v !== undefined)[0];
         };
@@ -86,9 +90,9 @@ export class R50 extends Chassis {
         nextPositionY += altOffset;
 
         if (odd) {
-          displayObject.children.forEach((child: any) => {
+          displayObject.children.forEach((child) => {
             child.rotation = this.front.degreesToRadians(180);
-            child.anchor.set(1, 1);
+            (child as any).anchor.set(1, 1);
           });
         } else {
           nextPositionY += 12;

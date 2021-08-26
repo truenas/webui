@@ -16,6 +16,7 @@ import { Subscription } from 'rxjs';
 import { ApiService } from 'app/core/services/api.service';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
@@ -40,7 +41,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatButton, { static: false }) submitButton: MatButton;
   @ViewChild('username', { read: ElementRef }) usernameInput: ElementRef<HTMLElement>;
 
-  private failed = false;
+  failed = false;
   product_type: ProductType;
   logo_ready = false;
   product = productText.product;
@@ -66,25 +67,26 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   };
   setPasswordFormGroup: FormGroup;
   has_root_password = true;
-  failover_status = '';
+  failover_status: FailoverStatus;
   failover_statuses = {
-    SINGLE: '',
-    MASTER: T(`Active ${globalHelptext.Ctrlr}.`),
-    BACKUP: T(`Standby ${globalHelptext.Ctrlr}.`),
-    ELECTING: T(`Electing ${globalHelptext.Ctrlr}.`),
-    IMPORTING: T('Importing pools.'),
-    ERROR: T('Failover is in an error state.'),
+    [FailoverStatus.Single]: '',
+    [FailoverStatus.Master]: T(`Active ${globalHelptext.Ctrlr}.`),
+    [FailoverStatus.Backup]: T(`Standby ${globalHelptext.Ctrlr}.`),
+    [FailoverStatus.Electing]: T(`Electing ${globalHelptext.Ctrlr}.`),
+    [FailoverStatus.Importing]: T('Importing pools.'),
+    [FailoverStatus.Error]: T('Failover is in an error state.'),
   };
   failover_ips: string[] = [];
   ha_disabled_reasons: FailoverDisabledReason[] = [];
   show_reasons = false;
-  reason_text = {};
+  reason_text = helptext.ha_disabled_reasons;
   ha_status_text = T('Checking HA status');
   ha_status = false;
   tc_ip: string;
   protected tc_url: string;
 
   readonly ProductType = ProductType;
+  readonly FailoverStatus = FailoverStatus;
 
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
@@ -106,7 +108,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tc_url = res.truecommand_url;
       }
     });
-    this.reason_text = helptext.ha_disabled_reasons;
   }
 
   checkSystemType(): void {
@@ -236,8 +237,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   canLogin(): boolean {
     if (this.logo_ready && this.connected
-       && (this.failover_status === 'SINGLE'
-        || this.failover_status === 'MASTER'
+       && (this.failover_status === FailoverStatus.Single
+        || this.failover_status === FailoverStatus.Master
         || this.product_type === ProductType.Core)) {
       if (!this.didSetFocus && this.usernameInput) {
         setTimeout(() => {
@@ -259,7 +260,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe((res) => {
         this.failover_status = res;
         this.ha_info_ready = true;
-        if (res !== 'SINGLE') {
+        if (res !== FailoverStatus.Single) {
           this.ws.call('failover.get_ips').pipe(untilDestroyed(this)).subscribe((ips) => {
             this.failover_ips = ips;
           }, (err) => {

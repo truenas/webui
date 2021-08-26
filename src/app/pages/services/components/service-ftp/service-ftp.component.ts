@@ -430,7 +430,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     this.entityForm = entityEdit;
     entityEdit.submitFunction = this.submitFunction;
     this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'] as FormControl;
-    this.rootlogin_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.rootlogin_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res && !this.warned && !this.rootlogin) {
         this.dialog.confirm({
           title: helptext.rootlogin_dialog_title,

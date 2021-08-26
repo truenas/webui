@@ -1,6 +1,6 @@
 export type PoolUnlockQuery = [
-  /* mountpoint */ string,
-  /* params */ {
+  mountpoint: string,
+  params: {
     datasets: { name: string; passphrase: string }[];
     key_file: boolean;
     recursive: boolean;

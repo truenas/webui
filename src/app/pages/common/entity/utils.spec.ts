@@ -33,6 +33,7 @@ const basicTypeData = [
         placeholder: 'Workload Type',
         name: 'variable',
         type: 'select',
+        enableTextWrapForOptions: true,
         options: [
           { value: 'Deployment', label: 'Deploy a Deployment workload' },
           { value: 'Job', label: 'Deploy job workload' },
@@ -360,6 +361,7 @@ const nestedData = [
                 tooltip: 'Specify type for IPAM',
                 placeholder: 'IPAM Type',
                 type: 'select',
+                enableTextWrapForOptions: true,
                 options: [
                   { value: 'dhcp', label: 'Use DHCP' },
                   { value: 'static', label: 'Use static IP' },
@@ -663,6 +665,7 @@ const propertyData = [
         placeholder: 'Workload Type',
         name: 'variable',
         type: 'select',
+        enableTextWrapForOptions: true,
         readonly: true,
         options: [
           { value: 'Deployment', label: 'Deploy a Deployment workload' },
@@ -722,6 +725,7 @@ const relationData = [
         tooltip: 'Specify type for IPAM',
         placeholder: 'IPAM Type',
         type: 'select',
+        enableTextWrapForOptions: true,
         options: [
           { value: 'dhcp', label: 'Use DHCP' },
           { value: 'static', label: 'Use static IP' },
@@ -783,6 +787,7 @@ const relationData = [
         tooltip: 'Upgrade Policy',
         placeholder: 'Update Strategy',
         type: 'select',
+        enableTextWrapForOptions: true,
         options: [
           {
             value: 'RollingUpdate',

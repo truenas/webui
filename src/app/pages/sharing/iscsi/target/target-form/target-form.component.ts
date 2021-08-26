@@ -226,7 +226,7 @@ export class TargetFormComponent implements FormConfiguration {
       );
     });
 
-    return await Promise.all([promise1, promise2, promise3]).then(
+    return Promise.all([promise1, promise2, promise3]).then(
       () => true,
     );
   }

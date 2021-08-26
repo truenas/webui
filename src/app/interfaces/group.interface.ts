@@ -12,3 +12,24 @@ export interface Group {
    */
   users: number[];
 }
+
+export type DeleteGroupParams = [
+  id: number,
+  params: { delete_users: boolean },
+];
+
+export interface CreateGroup {
+  allow_duplicate_gid: boolean;
+  gid: number;
+  name: string;
+  smb: boolean;
+  sudo: boolean;
+}
+
+export interface UpdateGroup {
+  allow_duplicate_gid?: boolean;
+  name?: string;
+  smb?: boolean;
+  sudo?: boolean;
+  users?: number[];
+}

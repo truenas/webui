@@ -27,7 +27,7 @@ export class SMBListComponent implements EntityTableConfig {
   updateCall: 'sharing.smb.update' = 'sharing.smb.update';
   wsDelete: 'sharing.smb.delete' = 'sharing.smb.delete';
   route_add: string[] = ['sharing', 'smb', 'add'];
-  protected route_add_tooltip = 'Add Windows (SMB) Share';
+  route_add_tooltip = 'Add Windows (SMB) Share';
   protected route_delete: string[] = ['sharing', 'smb', 'delete'];
   private entityList: EntityTableComponent;
   productType = window.localStorage.getItem('product_type') as ProductType;
@@ -119,9 +119,9 @@ export class SMBListComponent implements EntityTableConfig {
                 // A home share has a name (homes) set; row.name works for other shares
                 const searchName = row.home ? 'homes' : row.name;
                 this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
-                  (res: any) => {
+                  (res) => {
                     this.router.navigate(
-                      ['/'].concat(['sharing', 'smb', 'acl', res[0].id]),
+                      ['/'].concat(['sharing', 'smb', 'acl', String(res[0].id)]),
                     );
                   },
                 );

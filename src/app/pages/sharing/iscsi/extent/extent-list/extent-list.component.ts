@@ -22,7 +22,7 @@ export class ExtentListComponent implements EntityTableConfig {
   protected entityTable: EntityTableComponent;
   queryCall: 'iscsi.extent.query' = 'iscsi.extent.query';
   route_add: string[] = ['sharing', 'iscsi', 'extent', 'add'];
-  protected route_add_tooltip = 'Add Extent';
+  route_add_tooltip = 'Add Extent';
   route_edit: string[] = ['sharing', 'iscsi', 'extent', 'edit'];
   wsDelete: 'iscsi.extent.delete' = 'iscsi.extent.delete';
 

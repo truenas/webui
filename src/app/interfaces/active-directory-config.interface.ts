@@ -22,3 +22,8 @@ export interface ActiveDirectoryConfig {
   use_default_domain: boolean;
   verbose_logging: boolean;
 }
+
+export interface LeaveActiveDirectory {
+  username: string;
+  password: string;
+}

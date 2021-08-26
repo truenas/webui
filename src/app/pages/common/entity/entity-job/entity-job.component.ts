@@ -156,7 +156,9 @@ export class EntityJobComponent implements OnInit {
             this.aborted.emit(this.job);
           }
         },
-        () => {},
+        () => {
+          this.failure.emit(this.job);
+        },
         () => {
           if (this.job.state === JobState.Success) {
             this.success.emit(this.job);

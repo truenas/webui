@@ -10,9 +10,24 @@ export interface CreateNewTicket {
   username: string;
 }
 
+export interface SupportConfig {
+  id: number;
+  enabled: boolean;
+  name: string;
+  title: string;
+  email: string;
+  phone: string;
+  secondary_name: string;
+  secondary_title: string;
+  secondary_email: string;
+  secondary_phone: string;
+}
+
+export type SupportConfigUpdate = Omit<SupportConfig, 'id'>;
+
 export type FetchSupportParams = [
-  /* username */ string,
-  /* password */ string,
+  username: string,
+  password: string,
 ];
 
 export interface NewTicketResponse {

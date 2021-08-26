@@ -162,7 +162,7 @@ export class SystemGeneralService {
     );
   }
 
-  refreshDirServicesCache(): Observable<any> {
+  refreshDirServicesCache(): Observable<void> {
     return this.ws.call('directoryservices.cache_refresh');
   }
 

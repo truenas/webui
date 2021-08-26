@@ -1,20 +1,20 @@
 <div mat-dialog-content>
   <div class="logo-container" fxLayout="row" fxLayoutAlign="start center">
     <div class="logo">
-      <img [src]="dialogConfig.appInfo.icon" [src-fallback]="imagePlaceholder"/>
+      <img [src]="dialogConfig.appInfo.chart_metadata.icon" [src-fallback]="imagePlaceholder"/>
     </div>
     <div fxLayout="row" fxLayoutAlign="start center">
       <strong class="chart-name">{{ dialogConfig.appInfo.name }}</strong>
       <span class="version"> {{ dialogConfig.appInfo.human_version }}</span>
     </div>
   </div>
-  <div class="resource" fxLayout="row" fxLayoutAlign="start center" *ngIf="selectedVersion.itemUpdateAvailable; else noItemUpdate">
+  <div class="resource" fxLayout="row" fxLayoutAlign="start center" *ngIf="selectedVersion.item_update_available; else noItemUpdate">
     <span>{{ 'Version to be upgraded to' | translate }}:</span>
     <mat-form-field class="form-element ">
       <mat-select class="" [(ngModel)]="selectedVersionKey"  (ngModelChange)="onVersionOptionChanged()"
           ix-auto ix-auto-type="select" ix-auto-identifier="status-select">
           <mat-option *ngFor="let option of versionOptions | keyvalue: originalOrder" [value]="option.key">
-            {{ option.value.humanVersion }}
+            {{ option.value.latest_human_version }}
           </mat-option>
       </mat-select>
     </mat-form-field>
@@ -33,7 +33,7 @@
       </mat-expansion-panel-header>
       <div class="expansion-content">
         <div *ngIf="hasUpdateImages();else no_image">
-          <div *ngFor="let containerImage of selectedVersion.containerImagesToUpdate | keyvalue: originalOrder; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
+          <div *ngFor="let containerImage of selectedVersion.container_images_to_update | keyvalue: originalOrder; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
             <div fxLayout="row" fxLayoutAlign="start center">
               <span fxFlex="10" class="text-center">{{ i + 1 }}</span>
               <span>{{ containerImage.key }}</span>
@@ -48,7 +48,7 @@
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel *ngIf="selectedVersion.itemUpdateAvailable">
+    <mat-expansion-panel *ngIf="selectedVersion.item_update_available">
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{ 'Changelog' | translate }}

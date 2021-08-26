@@ -26,11 +26,11 @@ export class ErrorDialog {
   toggleOpen(): void {
     const dialogs = document.getElementsByClassName('mat-dialog-container');
     const dialog = dialogs[dialogs.length - 1];
-    const messageWrapper = (<HTMLElement>dialog.querySelector('#err-message-wrapper'));
-    const title = (<HTMLElement>dialog.querySelector('#err-title'));
-    const content = (<HTMLElement>dialog.querySelector('#err-md-content'));
-    const btPanel = (<HTMLElement>dialog.querySelector('#err-bt-panel'));
-    const txtarea = (<HTMLElement>dialog.querySelector('#err-bt-text'));
+    const messageWrapper: HTMLElement = dialog.querySelector('#err-message-wrapper');
+    const title: HTMLElement = dialog.querySelector('#err-title');
+    const content: HTMLElement = dialog.querySelector('#err-md-content');
+    const btPanel: HTMLElement = dialog.querySelector('#err-bt-panel');
+    const txtarea: HTMLElement = dialog.querySelector('#err-bt-text');
 
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {

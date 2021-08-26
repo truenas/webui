@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
+import { omit } from 'lodash';
 import * as _ from 'lodash';
 import {
   EMPTY, forkJoin, Observable, of,
@@ -15,7 +16,7 @@ import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
-  Acl, NfsAclItem, PosixAclItem, SetAcl, SetAclOptions,
+  Acl, NfsAclItem, PosixAclItem, SetAcl,
 } from 'app/interfaces/acl.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -109,20 +110,22 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       selectedAceIndex,
       acl: {
         ...state.acl,
-        acl: (state.acl.acl as unknown[]).filter((_, index) => index !== indexToRemove),
+        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).filter((_, index) => index !== indexToRemove),
       },
       acesWithError: newAcesWithError,
     } as DatasetAclEditorState;
   });
 
   readonly addAce = this.updater((state) => {
-    const newAce = state.acl.acltype === AclType.Nfs4 ? { ...newNfsAce } : { ...newPosixAce };
+    const newAce = state.acl.acltype === AclType.Nfs4
+      ? { ...newNfsAce } as NfsAclItem
+      : { ...newPosixAce } as PosixAclItem;
 
     return {
       ...state,
       acl: {
         ...state.acl,
-        acl: (state.acl.acl as unknown[]).concat(newAce),
+        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).concat(newAce),
       },
       selectedAceIndex: state.acl.acl.length,
     } as DatasetAclEditorState;
@@ -138,17 +141,16 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   readonly updateSelectedAce = this.updater((
     state: DatasetAclEditorState, updatedAce: NfsAclItem | PosixAclItem,
   ) => {
-    // TODO: Remove extra typing after upgrading Typescript
-    const updatedAces = (state.acl.acl as unknown[]).map((ace, index) => {
+    const updatedAces = (state.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace, index) => {
       if (index !== state.selectedAceIndex) {
         return ace;
       }
 
       return {
-        ...ace as NfsAclItem | PosixAclItem,
+        ...ace,
         ...updatedAce,
       };
-    }) as NfsAclItem[] | PosixAclItem[];
+    });
 
     return {
       ...state,
@@ -201,7 +203,6 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
                 stripacl: true,
               },
             }]);
-            dialogRef.componentInstance.submit();
             dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
               dialogRef.close();
               this.router.navigate(['/storage']);
@@ -210,6 +211,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
               dialogRef.close();
               new EntityUtils().errorReport(err, this.dialog);
             });
+            dialogRef.componentInstance.submit();
           },
         };
         this.dialog.dialogFormWide(conf);
@@ -242,7 +244,6 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
         dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
 
         dialogRef.componentInstance.setCall('filesystem.setacl', [setAcl]);
-        dialogRef.componentInstance.submit();
         dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
           dialogRef.close();
           this.router.navigate(['/storage']);
@@ -251,6 +252,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
           dialogRef.close();
           new EntityUtils().errorReport(err, this.dialog);
         });
+        dialogRef.componentInstance.submit();
       }),
     );
   });
@@ -267,7 +269,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
           map((aclItems) => {
             const state = this.get();
             // TODO: Working around backend https://jira.ixsystems.com/browse/NAS-111464
-            const newAclItems = (aclItems as unknown[]).map((ace: NfsAclItem | PosixAclItem) => {
+            const newAclItems = (aclItems as (NfsAclItem | PosixAclItem)[]).map((ace) => {
               let who = '';
               if ([NfsAclTag.Owner, PosixAclTag.UserObject].includes(ace.tag)) {
                 who = state.stat.user;
@@ -312,7 +314,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
    * TODO: Validation does not belong here and should be handled by form control.
    * TODO: Converting should not be necessary, id should be coming from form control.
    */
-  private prepareSetAcl(editorState: DatasetAclEditorState, options: SetAclOptions): Observable<SetAcl> {
+  private prepareSetAcl(editorState: DatasetAclEditorState, options: AclSaveFormParams): Observable<SetAcl> {
     const markAceAsHavingErrors = (aceIndex: number): void => {
       this.patchState((state) => ({
         ...state,
@@ -320,46 +322,94 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       }));
     };
 
-    const prepareAces = (editorState.acl.acl as unknown[]).map((ace: NfsAclItem | PosixAclItem, index: number) => {
-      const aceAttributes = _.omit(ace, ['who']);
+    // Load ids for all user and group who's
+    const userWhoToIds = new Map<string, number>();
+    const groupWhoToIds = new Map<string, number>();
+    const requests: Observable<unknown>[] = [];
+
+    (editorState.acl.acl as (NfsAclItem | PosixAclItem)[]).forEach((ace, index) => {
       if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
-        return this.userService.getUserByName(ace.who).pipe(
-          map((user) => ({ ...aceAttributes, id: user.pw_uid })),
-          catchError((error) => {
-            new EntityUtils().errorReport(error, this.dialog);
-            markAceAsHavingErrors(index);
-            return of(aceAttributes);
-          }),
+        requests.push(
+          this.userService.getUserByName(ace.who).pipe(
+            tap((user) => userWhoToIds.set(ace.who, user.pw_uid)),
+            catchError((error) => {
+              new EntityUtils().errorReport(error, this.dialog);
+              markAceAsHavingErrors(index);
+              return EMPTY;
+            }),
+          ),
         );
-      }
-      if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag)) {
-        return this.userService.getGroupByName(ace.who).pipe(
-          map((group) => ({ ...aceAttributes, id: group.gr_gid })),
-          catchError((error) => {
-            new EntityUtils().errorReport(error, this.dialog);
-            markAceAsHavingErrors(index);
-            return of(aceAttributes);
-          }),
-        );
+
+        return;
       }
 
-      return of({
-        ...aceAttributes,
-        id: -1, // -1 is effectively null for middleware
-      });
+      if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag)) {
+        requests.push(
+          this.userService.getGroupByName(ace.who).pipe(
+            tap((group) => groupWhoToIds.set(ace.who, group.gr_gid)),
+            catchError((error) => {
+              new EntityUtils().errorReport(error, this.dialog);
+              markAceAsHavingErrors(index);
+              return EMPTY;
+            }),
+          ),
+        );
+      }
     });
 
-    return forkJoin(prepareAces).pipe(
+    requests.push(
+      this.userService.getUserByName(options.owner).pipe(
+        tap((user) => userWhoToIds.set(options.owner, user.pw_uid)),
+        catchError((error) => {
+          new EntityUtils().errorReport(error, this.dialog);
+          return EMPTY;
+        }),
+      ),
+    );
+
+    requests.push(
+      this.userService.getGroupByName(options.ownerGroup).pipe(
+        tap((group) => groupWhoToIds.set(options.ownerGroup, group.gr_gid)),
+        catchError((error) => {
+          new EntityUtils().errorReport(error, this.dialog);
+          return EMPTY;
+        }),
+      ),
+    );
+
+    return forkJoin(requests).pipe(
       withLatestFrom(this.state$),
       filter(([_, currentState]) => currentState.acesWithError.length === 0),
-      map(([convertedAces]) => ({
-        options,
-        acltype: editorState.acl.acltype,
-        gid: null,
-        uid: null,
-        path: editorState.mountpoint,
-        dacl: convertedAces as NfsAclItem[] | PosixAclItem[],
-      } as SetAcl)),
+      map(([_, currentState]) => {
+        const convertedAces = (currentState.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace) => {
+          const aceAttributes = omit(ace, ['who']);
+          if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
+            const id = userWhoToIds.has(ace.who) ? userWhoToIds.get(ace.who) : -1;
+            return { ...aceAttributes, id };
+          }
+          if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag)) {
+            const id = groupWhoToIds.has(ace.who) ? groupWhoToIds.get(ace.who) : -1;
+            return { ...aceAttributes, id };
+          }
+
+          return {
+            ...aceAttributes,
+            id: -1, // -1 is effectively null for middleware
+          };
+        });
+
+        return {
+          options: {
+            recursive: options.recursive,
+            traverse: options.traverse,
+          },
+          uid: userWhoToIds.has(options.owner) ? userWhoToIds.get(options.owner) : null,
+          gid: groupWhoToIds.has(options.ownerGroup) ? groupWhoToIds.get(options.ownerGroup) : null,
+          acltype: editorState.acl.acltype,
+          path: editorState.mountpoint,
+          dacl: convertedAces as NfsAclItem[] | PosixAclItem[],
+        } as SetAcl;
+      }),
     );
   }
 }

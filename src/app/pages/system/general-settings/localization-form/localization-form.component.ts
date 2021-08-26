@@ -108,7 +108,7 @@ export class LocalizationFormComponent implements FormConfiguration {
     });
 
     this.sysGeneralService.timezoneChoices().pipe(untilDestroyed(this)).subscribe((tzChoices) => {
-      tzChoices = _.sortBy(tzChoices, [function (o) { return o.label.toLowerCase(); }]);
+      tzChoices = _.sortBy(tzChoices, [(o) => o.label.toLowerCase()]);
       this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
         .config.find((config) => config.name === 'timezone').options = tzChoices;

@@ -58,7 +58,7 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
     entityForm.submitFunction = this.submitFunction;
   }
 
-  submitFunction(entityForm: any): Observable<any> {
+  submitFunction(entityForm: { dev: string }): Observable<void> {
     const payload = this.pk.substring(5, this.pk.length);
     return this.ws.call('boot.replace', [payload, entityForm.dev]);
   }

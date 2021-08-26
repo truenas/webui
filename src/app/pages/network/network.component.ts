@@ -3,7 +3,8 @@ import { ActivatedRoute, Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
-import { Subject } from 'rxjs';
+import { Subject, combineLatest } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
@@ -12,11 +13,15 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
+import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, AppTableConfig, TableComponent } from 'app/pages/common/entity/table/table.component';
+import { TableService } from 'app/pages/common/entity/table/table.service';
+import { IpmiRow } from 'app/pages/network/network-dashboard.interface';
 import {
   AppLoaderService,
   DialogService,
@@ -60,7 +65,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   private navigation: Navigation;
   helptext = helptext;
 
-  interfaceTableConf = {
+  interfaceTableConf: AppTableConfig<NetworkComponent> = {
     title: T('Interfaces'),
     queryCall: 'interface.query',
     deleteCall: 'interface.delete',
@@ -72,19 +77,18 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     dataSourceHelper: this.interfaceDataSourceHelper,
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     parent: this,
-    tableComponent: undefined,
     add() {
       this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent);
     },
     edit(row: any) {
       this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent, row.id);
     },
-    delete(row: any, table: any) {
+    delete(row: any, table: TableComponent) {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? T('Reset configuration for ') : T('Delete ');
       if (this.parent.ha_enabled) {
         this.parent.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
-        table.tableService.delete(table, row, deleteAction);
+        this.parent.tableService.delete(table, row, deleteAction);
       }
     },
     afterGetData() {
@@ -99,13 +103,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       key_props: ['name'],
     },
     confirmDeleteDialog: {
-      buildTitle: (intf: any) => {
+      buildTitle: (intf: any): string => {
         if (intf.type === NetworkInterfaceType.Physical) {
           return T('Reset Configuration');
         }
         return T('Delete');
       },
-      buttonMsg: (intf: any) => {
+      buttonMsg: (intf: any): string => {
         if (intf.type === NetworkInterfaceType.Physical) {
           return T('Reset Configuration');
         }
@@ -113,30 +117,29 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       },
       message: helptext.delete_dialog_text,
     },
-  } as AppTableConfig;
+  };
 
-  staticRoutesTableConf = {
+  staticRoutesTableConf: AppTableConfig<NetworkComponent> = {
     title: T('Static Routes'),
     queryCall: 'staticroute.query',
     deleteCall: 'staticroute.delete',
     name: 'staticRoutes',
     columns: [
-      { name: T('Destination'), prop: 'destination', always_display: true },
+      { name: T('Destination'), prop: 'destination' },
       { name: T('Gateway'), prop: 'gateway' },
     ],
     parent: this,
-    tableComponent: undefined,
     add() {
       this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent);
     },
-    edit(row: any) {
+    edit(row: StaticRoute) {
       this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent, row.id);
     },
     deleteMsg: {
       title: 'static route',
       key_props: ['destination', 'gateway'],
     },
-  } as AppTableConfig;
+  };
 
   globalSettingsWidget: CardWidgetConf = {
     title: T('Global Configuration'),
@@ -150,7 +153,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     },
   };
 
-  openvpnTableConf = {
+  openvpnTableConf: AppTableConfig<NetworkComponent> = {
     title: T('OpenVPN'),
     queryCall: 'service.query',
     name: 'openVPN',
@@ -178,23 +181,21 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
           : this.parent.modalService.open('slide-in-form', this.parent.openvpnServerComponent);
       }
     },
-  } as AppTableConfig;
+  };
 
-  ipmiTableConf = {
-    title: 'IPMI',
+  ipmiTableConf: AppTableConfig<NetworkComponent> = {
+    title: T('IPMI'),
     queryCall: 'ipmi.query',
-    columns: [
-      { name: T('Channel'), prop: 'channel_lable' },
-    ],
+    columns: [{ name: T('Channel'), prop: 'channelLabel' }],
     hideHeader: true,
     parent: this,
-    dataSourceHelper: this.ipmiDataSourceHelper,
+    dataSourceHelper: (ipmi) => this.ipmiDataSourceHelper(ipmi),
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
-    edit(row: any) {
+    edit(row: IpmiRow) {
       this.parent.modalService.open('slide-in-form', this.parent.impiFormComponent, row.id);
     },
-  } as AppTableConfig;
+  };
 
   networkSummary: NetworkSummary;
   impiEnabled: boolean;
@@ -218,6 +219,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private modalService: ModalService,
     private servicesService: ServicesService,
     private translate: TranslateService,
+    private tableService: TableService,
   ) {
     super();
     this.getGlobalSettings();
@@ -225,60 +227,58 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   getGlobalSettings(): void {
-    this.ws.call(this.configCall).pipe(untilDestroyed(this)).subscribe(
-      (networkConfig) => {
-        this.ws.call(this.summayCall).pipe(untilDestroyed(this)).subscribe(
-          (summary) => {
-            this.networkSummary = summary;
-            this.globalSettingsWidget.data.nameserver = summary.nameservers.map((item) => {
-              switch (item) {
-                case networkConfig.nameserver1:
-                  return { label: 'Nameserver 1', value: item };
-                case networkConfig.nameserver2:
-                  return { label: 'Nameserver 2', value: item };
-                case networkConfig.nameserver3:
-                  return { label: 'Nameserver 3', value: item };
-                default:
-                  return { label: 'Nameserver (DHCP)', value: item };
-              }
-            });
-            this.globalSettingsWidget.data.ipv4 = summary.default_routes.filter((item) => ipRegex.v4().test(item));
-            this.globalSettingsWidget.data.ipv6 = summary.default_routes.filter((item) => ipRegex.v6().test(item));
+    combineLatest([this.ws.call(this.configCall), this.ws.call(this.summayCall)])
+      .pipe(untilDestroyed(this))
+      .subscribe(([networkConfig, summary]) => {
+        this.networkSummary = summary;
+        this.globalSettingsWidget.data.nameserver = summary.nameservers.map((item) => {
+          switch (item) {
+            case networkConfig.nameserver1:
+              return { label: 'Nameserver 1', value: item };
+            case networkConfig.nameserver2:
+              return { label: 'Nameserver 2', value: item };
+            case networkConfig.nameserver3:
+              return { label: 'Nameserver 3', value: item };
+            default:
+              return { label: 'Nameserver (DHCP)', value: item };
+          }
+        });
+        this.globalSettingsWidget.data.ipv4 = summary.default_routes.filter((item) => ipRegex.v4().test(item));
+        this.globalSettingsWidget.data.ipv6 = summary.default_routes.filter((item) => ipRegex.v6().test(item));
 
-            this.globalSettingsWidget.data.hostname = networkConfig.hostname;
-            this.globalSettingsWidget.data.domain = networkConfig.domain;
-            this.globalSettingsWidget.data.netwait = networkConfig.netwait_enabled ? T('ENABLED') : T('DISABLED');
-            const tempArr: string[] = [];
-            if (networkConfig.service_announcement.netbios) {
-              tempArr.push(T('NETBIOS-NS'));
-            }
-            if (networkConfig.service_announcement.mdns) {
-              tempArr.push(T('mDNS'));
-            }
-            if (networkConfig.service_announcement.wsd) {
-              tempArr.push(T('WS-DISCOVERY'));
-            }
-            this.globalSettingsWidget.data.service_announcement = tempArr.join(', ');
-            this.globalSettingsWidget.data.additional_domains = networkConfig.domains.length > 0
-              ? networkConfig.domains.join(', ') : '---';
-            this.globalSettingsWidget.data.httpproxy = networkConfig.httpproxy !== '' ? networkConfig.httpproxy : '---';
-            this.globalSettingsWidget.data.hostnameDB = networkConfig.hosts !== '' ? networkConfig.hosts : '---';
+        this.globalSettingsWidget.data.hostname = networkConfig.hostname;
+        this.globalSettingsWidget.data.domain = networkConfig.domain;
+        this.globalSettingsWidget.data.netwait = networkConfig.netwait_enabled ? T('ENABLED') : T('DISABLED');
+        const tempArr: string[] = [];
+        if (networkConfig.service_announcement.netbios) {
+          tempArr.push(T('NETBIOS-NS'));
+        }
+        if (networkConfig.service_announcement.mdns) {
+          tempArr.push(T('mDNS'));
+        }
+        if (networkConfig.service_announcement.wsd) {
+          tempArr.push(T('WS-DISCOVERY'));
+        }
+        this.globalSettingsWidget.data.service_announcement = tempArr.join(', ');
+        this.globalSettingsWidget.data.additional_domains = networkConfig.domains.length > 0 ? networkConfig.domains.join(', ') : '---';
+        this.globalSettingsWidget.data.httpproxy = networkConfig.httpproxy !== '' ? networkConfig.httpproxy : '---';
+        this.globalSettingsWidget.data.hostnameDB = networkConfig.hosts !== '' ? networkConfig.hosts : '---';
 
-            if (networkConfig.activity.type === NetworkActivityType.Deny) {
-              this.globalSettingsWidget.data.outbound = T('Allow All');
-            } else if (networkConfig.activity.activities.length === 0) {
-              this.globalSettingsWidget.data.outbound = T('Deny All');
-            } else {
-              this.globalSettingsWidget.data.outbound = T('Allow ') + networkConfig.activity.activities.join(', ');
-            }
-          },
-        );
-      },
-    );
+        if (networkConfig.activity.type === NetworkActivityType.Deny) {
+          this.globalSettingsWidget.data.outbound = T('Allow All');
+        } else if (networkConfig.activity.activities.length === 0) {
+          this.globalSettingsWidget.data.outbound = T('Deny All');
+        } else {
+          this.globalSettingsWidget.data.outbound = T('Allow ') + networkConfig.activity.activities.join(', ');
+        }
+      });
 
-    this.ws.call('ipmi.is_loaded').pipe(untilDestroyed(this)).subscribe((isIpmiLoaded) => {
-      this.impiEnabled = isIpmiLoaded;
-    });
+    this.ws
+      .call('ipmi.is_loaded')
+      .pipe(untilDestroyed(this))
+      .subscribe((isIpmiLoaded) => {
+        this.impiEnabled = isIpmiLoaded;
+      });
   }
 
   ngOnInit(): void {
@@ -287,32 +287,44 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.refreshNetworkForms();
     });
 
-    this.ws.call('system.advanced.config').pipe(untilDestroyed(this)).subscribe((advancedConfig) => {
-      this.hasConsoleFooter = advancedConfig.consolemsg;
-    });
+    this.ws
+      .call('system.advanced.config')
+      .pipe(untilDestroyed(this))
+      .subscribe((advancedConfig) => {
+        this.hasConsoleFooter = advancedConfig.consolemsg;
+      });
 
     this.checkInterfacePendingChanges();
-    this.core.register({ observerClass: this, eventName: 'NetworkInterfacesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt && evt.data.checkin) {
-        this.checkin_remaining = null;
-        this.checkinWaiting = false;
-        if (this.checkin_interval) {
-          clearInterval(this.checkin_interval);
-        }
-        this.hasPendingChanges = false;
-      }
-    });
-
-    if (window.localStorage.getItem('product_type') === ProductType.Enterprise) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-        if (is_ha) {
-          this.ws.call('failover.disabled_reasons').pipe(untilDestroyed(this)).subscribe((failover_disabled) => {
-            if (failover_disabled.length === 0) {
-              this.ha_enabled = true;
-            }
-          });
+    this.core
+      .register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
+      .pipe(untilDestroyed(this))
+      .subscribe((evt: CoreEvent) => {
+        if (evt && evt.data.checkin) {
+          this.checkin_remaining = null;
+          this.checkinWaiting = false;
+          if (this.checkin_interval) {
+            clearInterval(this.checkin_interval);
+          }
+          this.hasPendingChanges = false;
         }
       });
+
+    if (window.localStorage.getItem('product_type') === ProductType.Enterprise) {
+      this.ws
+        .call('failover.licensed')
+        .pipe(untilDestroyed(this))
+        .subscribe((is_ha) => {
+          if (is_ha) {
+            this.ws
+              .call('failover.disabled_reasons')
+              .pipe(untilDestroyed(this))
+              .subscribe((failover_disabled) => {
+                if (failover_disabled.length === 0) {
+                  this.ha_enabled = true;
+                }
+              });
+          }
+        });
     }
   }
 
@@ -325,150 +337,188 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   checkPendingChanges(): void {
-    this.ws.call('interface.has_pending_changes').pipe(untilDestroyed(this)).subscribe((hasPendingChanges) => {
-      this.hasPendingChanges = hasPendingChanges;
-    });
+    this.ws
+      .call('interface.has_pending_changes')
+      .pipe(untilDestroyed(this))
+      .subscribe((hasPendingChanges) => {
+        this.hasPendingChanges = hasPendingChanges;
+      });
   }
 
   checkWaitingCheckin(): void {
-    this.ws.call('interface.checkin_waiting').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res != null) {
-        const seconds = res.toFixed(0);
-        if (seconds > 0 && this.checkin_remaining == null) {
-          this.checkin_remaining = seconds;
-          this.checkin_interval = setInterval(() => {
-            if (this.checkin_remaining > 0) {
-              this.checkin_remaining -= 1;
-            } else {
-              this.checkin_remaining = null;
-              this.checkinWaiting = false;
-              clearInterval(this.checkin_interval);
-              window.location.reload(); // should just refresh after the timer goes off
-            }
-          }, 1000);
+    this.ws
+      .call('interface.checkin_waiting')
+      .pipe(untilDestroyed(this))
+      .subscribe((seconds) => {
+        if (seconds != null) {
+          if (seconds > 0 && this.checkin_remaining == null) {
+            this.checkin_remaining = seconds;
+            this.checkin_interval = setInterval(() => {
+              if (this.checkin_remaining > 0) {
+                this.checkin_remaining -= 1;
+              } else {
+                this.checkin_remaining = null;
+                this.checkinWaiting = false;
+                clearInterval(this.checkin_interval);
+                window.location.reload(); // should just refresh after the timer goes off
+              }
+            }, 1000);
+          }
+          this.checkinWaiting = true;
+        } else {
+          this.checkinWaiting = false;
+          this.checkin_remaining = null;
+          if (this.checkin_interval) {
+            clearInterval(this.checkin_interval);
+          }
         }
-        this.checkinWaiting = true;
-      } else {
-        this.checkinWaiting = false;
-        this.checkin_remaining = null;
-        if (this.checkin_interval) {
-          clearInterval(this.checkin_interval);
-        }
-      }
-    });
+      });
   }
 
   commitPendingChanges(): void {
-    this.ws.call('interface.services_restarted_on_sync').pipe(untilDestroyed(this)).subscribe((res: any[]) => {
-      if (res.length > 0) {
-        const ips: string[] = [];
-        res.forEach((item) => {
-          if (item['system-service']) {
-            this.affectedServices.push(item['system-service']);
-          }
-          if (item['service']) {
-            this.affectedServices.push(item['service']);
-          }
-          item.ips.forEach((ip: any) => {
-            ips.push(ip);
+    this.ws
+      .call('interface.services_restarted_on_sync')
+      .pipe(untilDestroyed(this))
+      .subscribe((res) => {
+        if (res.length > 0) {
+          const ips: string[] = [];
+          res.forEach((item) => {
+            if ((item as any)['system-service']) {
+              this.affectedServices.push((item as any)['system-service']);
+            }
+            if (item['service']) {
+              this.affectedServices.push(item['service']);
+            }
+            item.ips.forEach((ip) => {
+              ips.push(ip);
+            });
           });
-        });
 
-        ips.forEach((ip) => {
-          if (!this.uniqueIPs.includes(ip)) {
-            this.uniqueIPs.push(ip);
-          }
-        });
-      }
-      this.dialog.confirm(
-        helptext.commit_changes_title,
-        helptext.commit_changes_warning,
-        false, helptext.commit_button,
-      ).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
-        if (confirm) {
-          this.loader.open();
-          this.ws.call('interface.commit', [{ checkin_timeout: this.checkin_timeout }]).pipe(untilDestroyed(this)).subscribe(() => {
-            this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: false }, sender: this });
-            this.interfaceTableConf.tableComponent.getData();
-            this.loader.close();
-            this.checkWaitingCheckin();
-          }, (err) => {
-            this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.dialog);
+          ips.forEach((ip) => {
+            if (!this.uniqueIPs.includes(ip)) {
+              this.uniqueIPs.push(ip);
+            }
           });
         }
+        this.dialog
+          .confirm({
+            title: helptext.commit_changes_title,
+            message: helptext.commit_changes_warning,
+            hideCheckBox: false,
+            buttonMsg: helptext.commit_button,
+          })
+          .pipe(untilDestroyed(this))
+          .subscribe((confirm: boolean) => {
+            if (confirm) {
+              this.loader.open();
+              this.ws
+                .call('interface.commit', [{ checkin_timeout: this.checkin_timeout }])
+                .pipe(untilDestroyed(this))
+                .subscribe(
+                  () => {
+                    this.core.emit({
+                      name: 'NetworkInterfacesChanged',
+                      data: { commit: true, checkin: false },
+                      sender: this,
+                    });
+                    this.interfaceTableConf.tableComponent.getData();
+                    this.loader.close();
+                    this.checkWaitingCheckin();
+                  },
+                  (err) => {
+                    this.loader.close();
+                    new EntityUtils().handleWSError(this, err, this.dialog);
+                  },
+                );
+            }
+          });
       });
-    });
   }
 
   checkInNow(): void {
     if (this.affectedServices.length > 0) {
-      this.translate.get(helptext.services_restarted.message_a).pipe(untilDestroyed(this)).subscribe((msgA) => {
-        this.translate.get(helptext.services_restarted.message_b).pipe(untilDestroyed(this)).subscribe((msgB) => {
-          this.dialog.confirm(helptext.services_restarted.title, msgA + ' '
-          + this.uniqueIPs.join(', ') + ' ' + msgB + ' ' + this.affectedServices.join(', '),
-          true, helptext.services_restarted.button).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-            if (res) {
-              this.finishCheckin();
-            }
-          });
-        });
-      });
-    } else {
-      this.dialog.confirm(
-        helptext.checkin_title,
-        helptext.checkin_message,
-        true, helptext.checkin_button,
-      ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        if (res) {
+      this.dialog
+        .confirm({
+          title: helptext.services_restarted.title,
+          message: this.translate.instant(helptext.services_restarted.message, {
+            uniqueIPs: this.uniqueIPs.join(', '),
+            affectedServices: this.affectedServices.join(', '),
+          }),
+          hideCheckBox: true,
+          buttonMsg: helptext.services_restarted.button,
+        })
+        .pipe(filter(Boolean), untilDestroyed(this))
+        .subscribe(() => {
           this.finishCheckin();
-        }
-      });
+        });
+    } else {
+      this.dialog
+        .confirm({
+          title: helptext.checkin_title,
+          message: helptext.checkin_message,
+          hideCheckBox: true,
+          buttonMsg: helptext.checkin_button,
+        })
+        .pipe(filter(Boolean), untilDestroyed(this))
+        .subscribe(() => {
+          this.finishCheckin();
+        });
     }
   }
 
   finishCheckin(): void {
     this.loader.open();
-    this.ws.call('interface.checkin').pipe(untilDestroyed(this)).subscribe(() => {
-      this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
-      this.loader.close();
-      this.dialog.info(
-        helptext.checkin_complete_title,
-        helptext.checkin_complete_message,
-        '500px',
-        'info',
+    this.ws
+      .call('interface.checkin')
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        () => {
+          this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: true, checkin: true }, sender: this });
+          this.loader.close();
+          this.dialog.info(helptext.checkin_complete_title, helptext.checkin_complete_message, '500px', 'info');
+          this.hasPendingChanges = false;
+          this.checkinWaiting = false;
+          clearInterval(this.checkin_interval);
+          this.checkin_remaining = null;
+        },
+        (err) => {
+          this.loader.close();
+          new EntityUtils().handleWSError(this, err, this.dialog);
+        },
       );
-      this.hasPendingChanges = false;
-      this.checkinWaiting = false;
-      clearInterval(this.checkin_interval);
-      this.checkin_remaining = null;
-    }, (err) => {
-      this.loader.close();
-      new EntityUtils().handleWSError(this, err, this.dialog);
-    });
   }
 
   rollbackPendingChanges(): void {
-    this.dialog.confirm(
-      helptext.rollback_changes_title,
-      helptext.rollback_changes_warning,
-      false, helptext.rollback_button,
-    ).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
-      if (confirm) {
-        this.loader.open();
-        this.ws.call('interface.rollback').pipe(untilDestroyed(this)).subscribe(() => {
-          this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false }, sender: this });
-          this.interfaceTableConf.tableComponent.getData();
-          this.hasPendingChanges = false;
-          this.checkinWaiting = false;
-          this.loader.close();
-          this.dialog.info(helptext.rollback_changes_title, helptext.changes_rolled_back, '500px', 'info', true);
-        }, (err) => {
-          this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialog);
-        });
-      }
-    });
+    this.dialog
+      .confirm({
+        title: helptext.rollback_changes_title,
+        message: helptext.rollback_changes_warning,
+        hideCheckBox: false,
+        buttonMsg: helptext.rollback_button,
+      })
+      .pipe(untilDestroyed(this))
+      .subscribe((confirm: boolean) => {
+        if (confirm) {
+          this.loader.open();
+          this.ws
+            .call('interface.rollback')
+            .pipe(untilDestroyed(this))
+            .subscribe(
+              () => {
+                this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false }, sender: this });
+                this.interfaceTableConf.tableComponent.getData();
+                this.hasPendingChanges = false;
+                this.checkinWaiting = false;
+                this.loader.close();
+                this.dialog.info(helptext.rollback_changes_title, helptext.changes_rolled_back, '500px', 'info', true);
+              },
+              (err) => {
+                this.loader.close();
+                new EntityUtils().handleWSError(this, err, this.dialog);
+              },
+            );
+        }
+      });
   }
 
   afterDelete(): void {
@@ -477,7 +527,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   goToHA(): void {
-    this.router.navigate(new Array('/').concat('system', 'failover'));
+    this.router.navigate(['/', 'system', 'failover']);
   }
 
   refreshNetworkForms(): void {
@@ -514,17 +564,20 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   getInterfaceInOutInfo(tableSource: any[]): void {
-    this.ws.sub<ReportingRealtimeUpdate>('reporting.realtime').pipe(untilDestroyed(this)).subscribe((evt) => {
-      if (evt.interfaces) {
-        tableSource.map((row) => {
-          row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
-          row.received_bytes = evt.interfaces[row.id].received_bytes;
-          row.sent = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].sent_bytes);
-          row.sent_bytes = evt.interfaces[row.id].sent_bytes;
-          return row;
-        });
-      }
-    });
+    this.ws
+      .sub<ReportingRealtimeUpdate>('reporting.realtime')
+      .pipe(untilDestroyed(this))
+      .subscribe((evt) => {
+        if (evt.interfaces) {
+          tableSource.map((row) => {
+            row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
+            row.received_bytes = evt.interfaces[row.id].received_bytes;
+            row.sent = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].sent_bytes);
+            row.sent_bytes = evt.interfaces[row.id].sent_bytes;
+            return row;
+          });
+        }
+      });
   }
 
   interfaceDataSourceHelper(res: any[]): any[] {
@@ -575,33 +628,37 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     return res;
   }
 
-  ipmiDataSourceHelper(res: any[]): any[] {
-    for (const item of res) {
-      item.channel_lable = 'Channel' + item.channel;
-    }
-    return res;
+  ipmiDataSourceHelper(ipmi: Ipmi[]): IpmiRow[] {
+    return ipmi.map((item) => ({
+      ...item,
+      channelLabel: this.translate.instant('Channel {n}', { n: item.channel }),
+    }));
   }
 
   getIpmiActions(): AppTableAction[] {
     return [{
       icon: 'highlight',
       name: 'identify',
-      label: T('Identify Light'),
+      matTooltip: T('Identify Light'),
       onClick: () => {
         this.dialog.select(
-          'IPMI Identify', this.impiFormComponent.options, 'IPMI flash duration', 'ipmi.identify', 'seconds',
+          this.translate.instant(T('IPMI Identify')),
+          this.impiFormComponent.options,
+          this.translate.instant(T('IPMI flash duration')),
+          'ipmi.identify',
+          'seconds',
         );
         event.stopPropagation();
       },
     }, {
       icon: 'launch',
       name: 'manage',
-      label: T('Manage'),
-      onClick: (rowinner: any) => {
-        window.open(`http://${rowinner.ipaddress}`);
+      matTooltip: T('Manage'),
+      onClick: (row: IpmiRow) => {
+        window.open(`http://${row.ipaddress}`);
         event.stopPropagation();
       },
-    }] as any[];
+    }];
   }
 
   showConfigForm(): void {
@@ -614,6 +671,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         item.service_label = item.service.charAt(8).toUpperCase() + item.service.slice(9);
         return item;
       }
+
+      return undefined;
     });
   }
 
@@ -621,63 +680,95 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     return [{
       icon: 'stop',
       name: 'stop',
-      label: T('Stop'),
+      matTooltip: T('Stop'),
       onChanging: false,
-      onClick: (rowinner: any) => {
-        rowinner['onChanging'] = true;
-        this.ws.call('service.stop', [rowinner.service]).pipe(untilDestroyed(this)).subscribe(
-          (res) => {
-            if (res) {
-              this.dialog.info(T('Service failed to stop'), T('OpenVPN ') + rowinner.service_label + ' ' + T('service failed to stop.'));
-              rowinner.state = ServiceStatus.Running;
-              rowinner['onChanging'] = false;
-            } else {
-              rowinner.state = ServiceStatus.Stopped;
-              rowinner['onChanging'] = false;
-            }
-          },
-          (err) => {
-            rowinner['onChanging'] = false;
-            this.dialog.errorReport(T('Error stopping service OpenVPN ') + rowinner.service_label, err.message, err.stack);
-          },
-        );
+      onClick: (row: any) => {
+        row.onChanging = true;
+        this.ws
+          .call('service.stop', [row.service])
+          .pipe(untilDestroyed(this))
+          .subscribe(
+            (res) => {
+              if (res) {
+                this.dialog.info(
+                  this.translate.instant(T('Service failed to stop')),
+                  this.translate.instant('OpenVPN {serviceLabel} service failed to stop.', {
+                    serviceLabel: row.service_label,
+                  }),
+                );
+                row.state = ServiceStatus.Running;
+                row.onChanging = false;
+              } else {
+                row.state = ServiceStatus.Stopped;
+                row.onChanging = false;
+              }
+            },
+            (err) => {
+              row.onChanging = false;
+              this.dialog.errorReport(
+                this.translate.instant('Error stopping service OpenVPN {serviceLabel}', {
+                  serviceLabel: row.service_label,
+                }),
+                err.message,
+                err.stack,
+              );
+            },
+          );
         event.stopPropagation();
       },
-    }, {
+    },
+    {
       icon: 'play_arrow',
       name: 'start',
-      label: T('Start'),
-      onClick: (rowinner: any) => {
-        rowinner['onChanging'] = true;
-        this.ws.call('service.start', [rowinner.service]).pipe(untilDestroyed(this)).subscribe(
-          (res) => {
-            if (res) {
-              rowinner.state = ServiceStatus.Running;
-              rowinner['onChanging'] = false;
-            } else {
-              this.dialog.info(T('Service failed to start'), T('OpenVPN ') + rowinner.service_label + ' ' + T('service failed to start.'));
-              rowinner.state = ServiceStatus.Stopped;
-              rowinner['onChanging'] = false;
-            }
-          },
-          (err) => {
-            rowinner['onChanging'] = false;
-            this.dialog.errorReport(T('Error starting service OpenVPN ') + rowinner.service_label, err.message, err.stack);
-          },
-        );
+      matTooltip: T('Start'),
+      onClick: (row: any) => {
+        row.onChanging = true;
+        this.ws
+          .call('service.start', [row.service])
+          .pipe(untilDestroyed(this))
+          .subscribe(
+            (res) => {
+              if (res) {
+                row.state = ServiceStatus.Running;
+                row.onChanging = false;
+              } else {
+                this.dialog.info(
+                  this.translate.instant(T('Service failed to start')),
+                  this.translate.instant('OpenVPN {serviceLabel} service failed to start.', {
+                    serviceLabel: row.service_label,
+                  }),
+                );
+                row.state = ServiceStatus.Stopped;
+                row.onChanging = false;
+              }
+            },
+            (err) => {
+              row.onChanging = false;
+              this.dialog.errorReport(
+                this.translate.instant('Error starting service OpenVPN {serviceLabel}', {
+                  serviceLabel: row.service_label,
+                }),
+                err.message,
+                err.stack,
+              );
+            },
+          );
         event.stopPropagation();
       },
-    }] as any[];
+    }];
   }
 
   isOpenVpnActionVisible(name: string, row: any): boolean {
-    if ((name === 'start' && row.state === ServiceStatus.Running) || (name === 'stop' && row.state === ServiceStatus.Stopped)) {
+    if (
+      (name === 'start' && row.state === ServiceStatus.Running)
+      || (name === 'stop' && row.state === ServiceStatus.Stopped)
+    ) {
       return false;
     }
     return true;
   }
 
-  isIpmiActionVisible(name: string, row: any): boolean {
+  isIpmiActionVisible(name: string, row: IpmiRow): boolean {
     if (name === 'manage' && row.ipaddress === '0.0.0.0') {
       return false;
     }

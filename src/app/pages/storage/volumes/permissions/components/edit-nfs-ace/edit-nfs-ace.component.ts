@@ -19,7 +19,6 @@ import {
   NfsAclItem,
 } from 'app/interfaces/acl.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -43,7 +42,6 @@ import { UserService } from 'app/services';
 })
 export class EditNfsAceComponent implements FormConfiguration, OnChanges {
   @Input() ace: NfsAclItem;
-  @Input() stat: FileSystemStat;
 
   formGroup: FormGroup;
   fieldSets: FieldSet[] = [];
@@ -163,12 +161,6 @@ export class EditNfsAceComponent implements FormConfiguration, OnChanges {
         break;
       case NfsAclTag.UserGroup:
         ace.who = formValues.group;
-        break;
-      case NfsAclTag.Owner:
-        ace.who = this.stat.user;
-        break;
-      case NfsAclTag.Group:
-        ace.who = this.stat.group;
         break;
     }
 

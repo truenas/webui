@@ -237,7 +237,7 @@ export class VmFormComponent implements FormConfiguration {
       }
     });
 
-    entityForm.formGroup.controls['memory'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    entityForm.formGroup.controls['memory'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string | number) => {
       const mem = _.find(this.fieldConfig, { name: 'memory' });
       if (typeof (value) === 'number') {
         value = value.toString();
@@ -432,7 +432,7 @@ export class VmFormComponent implements FormConfiguration {
       }
     }
 
-    const observables: Observable<any>[] = [];
+    const observables: Observable<unknown>[] = [];
     if (updatedVmData.gpus) {
       const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
       for (const gpuValue of updatedVmData.gpus) {

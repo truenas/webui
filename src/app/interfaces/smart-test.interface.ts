@@ -1,5 +1,6 @@
 import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 
 export interface SmartTest {
@@ -46,4 +47,12 @@ export interface SmartTestResult {
   remaining: number;
   status: string; // Enum: SUCCESS,
   status_verbose: string;
+}
+
+export interface ManualSmartTest {
+  disk: string;
+  expected_result_time: ApiTimestamp;
+  identifier: string;
+  job: number;
+  error?: string;
 }

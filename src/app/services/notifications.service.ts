@@ -122,7 +122,7 @@ export class NotificationsService {
   private addNotification(alert: Alert): NotificationAlert {
     const id: string = alert.id;
     const dismissed: boolean = alert.dismissed;
-    const message: string = <string>alert.formatted;
+    const message: string = alert.formatted;
     const level: AlertLevel = alert.level;
     const date: Date = new Date(alert.datetime.$date);
     const dateStr = date.toUTCString();

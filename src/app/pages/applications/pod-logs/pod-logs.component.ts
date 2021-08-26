@@ -32,6 +32,7 @@ interface PodLogEvent {
   templateUrl: './pod-logs.component.html',
   styleUrls: ['./pod-logs.component.scss'],
   providers: [ShellService],
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 
@@ -253,17 +254,17 @@ export class PodLogsComponent implements OnInit, OnDestroy {
         [chart_release_name, { pod_name, container_name, tail_lines }],
         fileName,
       ],
-    ).pipe(untilDestroyed(this)).subscribe((res: any) => {
+    ).pipe(untilDestroyed(self)).subscribe((res) => {
       self.loader.close();
       const url = res[1];
       self.storageService.streamDownloadFile(self.http, url, fileName, mimetype)
-        .pipe(untilDestroyed(this))
+        .pipe(untilDestroyed(self))
         .subscribe((file: Blob) => {
-          if (res !== null && res !== '') {
+          if (res !== null) {
             self.storageService.downloadBlob(file, fileName);
           }
         });
-    }, (e: any) => {
+    }, (e) => {
       self.loader.close();
       new EntityUtils().handleWSError(self, e, self.dialogService);
     });

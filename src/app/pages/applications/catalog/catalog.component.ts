@@ -13,7 +13,11 @@ import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
+import { ApplicationUserEventName } from 'app/interfaces/application.interface';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { Job } from 'app/interfaces/job.interface';
+import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -43,14 +47,14 @@ interface CatalogSyncJob {
 export class CatalogComponent implements OnInit {
   @Output() updateTab = new EventEmitter();
 
-  catalogApps: any[] = [];
+  catalogApps: CatalogApp[] = [];
   catalogNames: string[] = [];
   filteredCatalogNames: string[] = [];
-  filteredCatalogApps: any[] = [];
+  filteredCatalogApps: CatalogApp[] = [];
   filterString = '';
   catalogSyncJobs: CatalogSyncJob[] = [];
+  selectedPool = '';
   private poolList: Option[] = [];
-  private selectedPool = '';
   private kubernetesForm: KubernetesSettingsComponent;
   private chartWizardComponent: ChartWizardComponent;
 
@@ -102,31 +106,9 @@ export class CatalogComponent implements OnInit {
       this.refreshForms();
     });
 
-    this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
-      const syncJobs = state.jobs.filter((job) => job.method == 'catalog.create' && job.state === JobState.Running);
-      syncJobs.forEach((syncJob) => {
-        const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == syncJob.id);
-        if (!catalogSyncJob) {
-          this.catalogSyncJobs.push({
-            id: syncJob.id,
-            name: (syncJob.arguments[0] as any).label,
-            progress: syncJob.progress.percent,
-          });
-        }
-      });
-    });
-
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      if (event.fields.method == 'catalog.create') {
-        let catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == event.fields.id);
-        if (!catalogSyncJob) {
-          catalogSyncJob = {
-            id: event.fields.id,
-            name: event.fields.arguments[0] as string,
-            progress: event.fields.progress.percent,
-          };
-          this.catalogSyncJobs.push(catalogSyncJob);
-        }
+      const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == event.fields.id);
+      if (catalogSyncJob) {
         catalogSyncJob.progress = event.fields.progress.percent;
         if (event.fields.state == JobState.Success) {
           this.catalogSyncJobs = this.catalogSyncJobs.filter((job) => job.id !== catalogSyncJob.id);
@@ -143,11 +125,22 @@ export class CatalogComponent implements OnInit {
     this.catalogApps = [];
     this.isLoading = true;
     this.showLoadStatus(EmptyType.Loading);
+    this.catalogSyncJobs = [];
 
     this.appService.getAllCatalogItems().pipe(untilDestroyed(this)).subscribe((catalogs) => {
       this.noAvailableCatalog = true;
       for (let i = 0; i < catalogs.length; i++) {
         const catalog = catalogs[i];
+        if (!catalog.cached) {
+          if (catalog.caching_job) {
+            this.catalogSyncJobs.push({
+              id: catalog.caching_job.id,
+              name: catalog.label,
+              progress: catalog.caching_job.progress.percent,
+            });
+          }
+          continue;
+        }
 
         if (!catalog.error) {
           this.noAvailableCatalog = false;
@@ -156,7 +149,7 @@ export class CatalogComponent implements OnInit {
             for (const i in catalog.trains[train]) {
               const item = catalog.trains[train][i];
 
-              const catalogItem = { ...item } as any;
+              const catalogItem = { ...item } as CatalogApp;
               catalogItem.catalog = {
                 id: catalog.id,
                 label: catalog.label,
@@ -223,14 +216,18 @@ export class CatalogComponent implements OnInit {
     } else if (evt.data.event_control == 'refresh_all') {
       this.syncAll();
     } else if (evt.data.event_control == 'catalogs') {
-      this.filteredCatalogNames = evt.data.catalogs.map((catalog: any) => catalog.value);
+      this.filteredCatalogNames = evt.data.catalogs.map((catalog: Option) => catalog.value);
 
       this.filterApps();
     }
   }
 
   refreshToolbarMenus(): void {
-    this.updateTab.emit({ name: 'catalogToolbarChanged', value: Boolean(this.selectedPool), catalogNames: this.catalogNames });
+    this.updateTab.emit({
+      name: ApplicationUserEventName.CatalogToolbarChanged,
+      value: Boolean(this.selectedPool),
+      catalogNames: this.catalogNames,
+    });
   }
 
   refreshForms(): void {
@@ -336,7 +333,7 @@ export class CatalogComponent implements OnInit {
     });
     dialogRef.componentInstance.setCall('kubernetes.update', [{ pool }]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe((res: Job<KubernetesConfig>) => {
       self.selectedPool = pool;
       self.refreshToolbarMenus();
       self.dialogService.closeAllDialogs();
@@ -356,7 +353,7 @@ export class CatalogComponent implements OnInit {
       this.appLoaderService.close();
 
       if (catalogApp) {
-        const catalogAppInfo = { ...catalogApp } as any;
+        const catalogAppInfo = { ...catalogApp } as CatalogApp;
         catalogAppInfo.catalog = {
           id: catalog,
           train,
@@ -395,7 +392,7 @@ export class CatalogComponent implements OnInit {
     this.appService.getCatalogItem(name, catalog, train).pipe(untilDestroyed(this)).subscribe((catalogApp) => {
       this.appLoaderService.close();
       if (catalogApp) {
-        const catalogAppInfo = { ...catalogApp } as any;
+        const catalogAppInfo = { ...catalogApp } as CatalogApp;
         catalogAppInfo.catalog = {
           label: catalog,
           train,

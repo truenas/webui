@@ -42,7 +42,7 @@ export class CustomThemeManagerFormComponent implements EmbeddedFormConfig, OnIn
   values: boolean[] = [];
   saveSubmitText = T('Delete Selected');
   isEntity = true;
-  private customThemeFields: any[] = [];
+  private customThemeFields: FieldConfig[] = [];
   fieldConfig: FieldConfig[] = [];
   fieldSetDisplay = 'no-margins';// default | carousel | stepper
   fieldSets: FieldSet[] = [
@@ -140,7 +140,7 @@ export class CustomThemeManagerFormComponent implements EmbeddedFormConfig, OnIn
 
     for (let i = 0; i < this.themeService.customThemes.length; i++) {
       const theme = this.themeService.customThemes[i];
-      const field = {
+      const field: FieldConfig = {
         type: 'checkbox',
         name: theme.name,
         width: '200px',
