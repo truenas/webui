@@ -257,6 +257,7 @@ def on_the_nas_tad_on_the_cloud_sync_task_click_run_now(driver):
     if not wait_on_element(driver, 1, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
         driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
