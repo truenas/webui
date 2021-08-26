@@ -5,6 +5,7 @@ export default {
   choosePool: {
     title: T('Choose a pool for Apps'),
     placeholder: T('Pools'),
+    migrateApplications: T('Migrate application to new pool'),
     action: T('Choose'),
     jobTitle: T('Configuring...'),
     success: T('Success'),

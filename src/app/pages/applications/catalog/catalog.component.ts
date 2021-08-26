@@ -70,13 +70,20 @@ export class CatalogComponent implements OnInit {
 
   choosePool: DialogFormConfiguration = {
     title: helptext.choosePool.title,
-    fieldConfig: [{
-      type: 'select',
-      name: 'pools',
-      placeholder: helptext.choosePool.placeholder,
-      required: true,
-      options: this.poolList,
-    }],
+    fieldConfig: [
+      {
+        type: 'select',
+        name: 'pools',
+        placeholder: helptext.choosePool.placeholder,
+        required: true,
+        options: this.poolList,
+      },
+      {
+        type: 'checkbox',
+        name: 'migrateApplications',
+        placeholder: helptext.choosePool.migrateApplications,
+      },
+    ],
     method_ws: 'kubernetes.update',
     saveButtonText: helptext.choosePool.action,
     customSubmit: this.doPoolSelect,
@@ -276,10 +283,14 @@ export class CatalogComponent implements OnInit {
         pools.forEach((pool) => {
           this.poolList.push({ label: pool.name, value: pool.name });
         });
+
+        const migrateField = this.choosePool.fieldConfig.find((config) => config.name === 'migrateApplications');
         if (this.selectedPool) {
           this.choosePool.fieldConfig[0].value = this.selectedPool;
+          migrateField.isHidden = false;
         } else {
           delete this.choosePool.fieldConfig[0].value;
+          migrateField.isHidden = true;
         }
 
         this.dialogService.dialogForm(this.choosePool, true);
@@ -325,13 +336,17 @@ export class CatalogComponent implements OnInit {
   doPoolSelect(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
+    const migrateApplications = entityDialog.formGroup.controls['migrateApplications'].value;
     const dialogRef = self.mdDialog.open(EntityJobComponent, {
       data: {
         title: (helptext.choosePool.jobTitle),
       },
       disableClose: true,
     });
-    dialogRef.componentInstance.setCall('kubernetes.update', [{ pool }]);
+    dialogRef.componentInstance.setCall('kubernetes.update', [{
+      pool,
+      migrate_applications: migrateApplications,
+    }]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe((res: Job<KubernetesConfig>) => {
       self.selectedPool = pool;
