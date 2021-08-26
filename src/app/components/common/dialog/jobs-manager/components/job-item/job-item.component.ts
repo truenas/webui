@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, Input, Output, EventEmitter,
+  Component, Input, Output, EventEmitter,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -14,7 +14,6 @@ import { T } from 'app/translate-marker';
   selector: 'app-job-item',
   templateUrl: './job-item.component.html',
   styleUrls: ['./job-item.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class JobItemComponent {
   @Input() job: Job;
