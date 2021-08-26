@@ -5,7 +5,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./tooltip.component.scss'],
   templateUrl: './tooltip.component.html',
 })
-export class PopperTooltipComponent {
+export class TooltipComponent {
   @Input('message') message: string;
   @Input('header') header?: string;
 }

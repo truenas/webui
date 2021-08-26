@@ -19,7 +19,7 @@ import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { FormSelectionListComponent } from 'app/pages/common/entity/entity-form/components/form-selection-list/form-selection-list.component';
-import { PopperTooltipComponent } from 'app/pages/common/entity/entity-form/components/tooltip/tooltip.component';
+import { TooltipComponent } from 'app/pages/common/entity/entity-form/components/tooltip/tooltip.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityTableActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-actions/entity-table-actions.component';
 import { WizardSummaryComponent } from 'app/pages/common/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
@@ -133,7 +133,7 @@ import { TableService } from './table/table.service';
     FormExplorerComponent,
     FormPermissionsComponent,
     FormIpWithNetmaskComponent,
-    PopperTooltipComponent,
+    TooltipComponent,
     TooltipDocReplacePipe,
     FormSliderComponent,
     FormToggleButtonComponent,
@@ -185,7 +185,7 @@ import { TableService } from './table/table.service';
     SmdFabSpeedDialTrigger,
     SmdFabSpeedDialActions,
     SmdFabSpeedDialComponent,
-    PopperTooltipComponent,
+    TooltipComponent,
     EntityWizardComponent,
     EntityTaskComponent,
     EntityDialogComponent,
