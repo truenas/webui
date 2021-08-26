@@ -564,16 +564,14 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
   dataHandler(entityForm: EntityFormComponent): void {
     const data = entityForm.wsResponse;
-    if (data.include && data.include.length) {
-      data.path_source = data.include.map((p: string) => data.path + '/' + p.split('/')[1]);
-    } else {
+    if(data.direction === Direction.Pull) {
       data.path_destination = data.path;
-    }
-    if (data.attributes.include && data.attributes.include.length) {
       data.attributes.folder_source = data.attributes.include.map((p: string) => data.attributes.folder + '/' + p.split('/')[1]);
     } else {
       data.attributes.folder_destination = data.attributes.folder;
+      data.path_source = data.include.map((p: string) => data.path + '/' + p.split('/')[1]);
     }
+    
     for (const i in data) {
       const fg = entityForm.formGroup.controls[i];
       if (fg) {
