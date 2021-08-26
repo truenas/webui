@@ -158,7 +158,11 @@ export class WidgetStorageComponent extends WidgetComponent implements OnChanges
       if (this.cols == 1) {
         value = vol.used_pct;
       } else {
-        value = this.getSizeString(vol.used) + ' of ' + this.getSizeString(vol.avail) + ' (' + vol.used_pct + ')';
+        value = this.translate.instant('{used} of {total} ({used_pct})', {
+          used: this.getSizeString(vol.used),
+          total: this.getSizeString(vol.used + vol.avail),
+          used_pct: vol.used_pct,
+        });
       }
 
       if (this.percentAsNumber(vol.used_pct) >= 80) {

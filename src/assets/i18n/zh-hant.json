@@ -2927,6 +2927,7 @@
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{n} failed": "",
   "{n} in progress": "",
+  "{used} of {total} ({used_pct})": "",
   " Builtin Users": " 內建使用者",
   " Check Notifications for more details.": " 檢視通知項目可查看詳細資訊。",
   " Download Updates": " 下載更新",

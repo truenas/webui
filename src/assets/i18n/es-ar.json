@@ -712,6 +712,7 @@
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{n} failed": "",
   "{n} in progress": "",
+  "{used} of {total} ({used_pct})": "",
   " Built-in Groups": "Grupos incorporados",
   " Builtin Users": " Usuarios incorporados",
   " Check Notifications for more details.": " Verifique las notificaciones para más detalles.",
