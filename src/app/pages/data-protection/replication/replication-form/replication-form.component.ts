@@ -670,7 +670,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           placeholder: helptext.also_include_naming_schema_placeholder,
           tooltip: helptext.also_include_naming_schema_tooltip,
           blurStatus: true,
-          blurEvent: this.blurEventNamingSchema,
+          blurEvent: this.blurEventCountSnapshots,
           parent: this,
         },
         {
@@ -679,6 +679,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           placeholder: helptext.name_regex_placeholder,
           tooltip: helptext.name_regex_tooltip,
           parent: this,
+          blurEvent: this.blurEventCountSnapshots,
           isHidden: true,
         },
         {
@@ -1144,17 +1145,26 @@ export class ReplicationFormComponent implements FormConfiguration {
 
   countEligibleManualSnapshots(): void {
     const namingSchema = this.entityForm.formGroup.controls['also_include_naming_schema'].value;
-    if (typeof namingSchema !== 'string' && namingSchema.length === 0) {
+    const nameRegex = this.entityForm.formGroup.controls['name_regex'].value;
+    if ((typeof namingSchema !== 'string' && namingSchema.length === 0) && (typeof nameRegex !== 'string' && nameRegex.length === 0)) {
       return;
     }
 
+    const datasets = this.entityForm.formGroup.controls['target_dataset_PUSH'].value;
+    const payload: any = {
+      datasets: (Array.isArray(datasets) ? datasets : [datasets]) || [],
+      transport: this.entityForm.formGroup.controls['transport'].value,
+      ssh_credentials: this.entityForm.formGroup.controls['ssh_credentials'].value,
+    };
+
+    if (this.entityForm.formGroup.get('schema_or_regex').value === SnapshotNamingOption.NamingSchema) {
+      payload.naming_schema = namingSchema;
+    } else {
+      payload.name_regex = nameRegex;
+    }
+
     this.ws
-      .call('replication.count_eligible_manual_snapshots', [
-        this.entityForm.formGroup.controls['target_dataset_PUSH'].value,
-        this.entityForm.formGroup.controls['also_include_naming_schema'].value,
-        this.entityForm.formGroup.controls['transport'].value,
-        this.entityForm.formGroup.controls['ssh_credentials'].value,
-      ])
+      .call('replication.count_eligible_manual_snapshots', [payload])
       .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.form_message.type = res.eligible === 0 ? 'warning' : 'info';
@@ -1189,7 +1199,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       if (
         entityForm.formGroup.controls['direction'].value === Direction.Push
         && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-        && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+        && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
       ) {
         this.countEligibleManualSnapshots();
       } else {
@@ -1203,7 +1213,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       if (
         res === Direction.Push
         && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-        && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+        && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
       ) {
         this.countEligibleManualSnapshots();
       } else {
@@ -1218,7 +1228,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       if (
         res !== TransportMode.Local
         && entityForm.formGroup.controls['direction'].value === Direction.Push
-        && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+        && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
       ) {
         this.countEligibleManualSnapshots();
       } else {
@@ -1552,12 +1562,12 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
   }
 
-  blurEventNamingSchema(parent: this): void {
+  blurEventCountSnapshots(parent: this): void {
     if (
       parent.entityForm
       && parent.entityForm.formGroup.controls['direction'].value === Direction.Push
       && parent.entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-      && parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+      && (parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || parent.entityForm.formGroup.controls['name_regex'].value !== undefined)
     ) {
       parent.countEligibleManualSnapshots();
     } else {

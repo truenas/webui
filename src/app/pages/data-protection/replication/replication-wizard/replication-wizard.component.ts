@@ -246,6 +246,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.name_regex_tooltip,
               parent: this,
               isHidden: true,
+              blurEvent: (parent: this) => {
+                parent.getSnapshots();
+              },
             },
           ],
         },
@@ -989,10 +992,29 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     return new Promise((resolve) => {
       this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
         (res) => {
+          const sourceDatasetsFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
+          const prevErrors = sourceDatasetsFormControl.errors;
+          delete prevErrors.failedToLoadChildren;
+          if (Object.keys(prevErrors).length) {
+            sourceDatasetsFormControl.setErrors({ ...prevErrors });
+          } else {
+            sourceDatasetsFormControl.setErrors(null);
+          }
+          const sourceDatasetsFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'source_datasets' });
+          sourceDatasetsFieldConfig.warnings = null;
+
           resolve(res);
         },
         () => {
           node.collapse();
+          const sourceDatasetsFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
+          const prevErrors = sourceDatasetsFormControl.errors;
+          sourceDatasetsFormControl.setErrors({
+            ...prevErrors,
+            failedToLoadChildren: true,
+          });
+          const sourceDatasetsFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'source_datasets' });
+          sourceDatasetsFieldConfig.warnings = T('Failed to load datasets');
         },
       );
     });
@@ -1014,10 +1036,29 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     return new Promise((resolve) => {
       this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
         (res) => {
+          const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('target_dataset');
+          const prevErrors = targetDatasetFormControl.errors;
+          delete prevErrors.failedToLoadChildren;
+          if (Object.keys(prevErrors).length) {
+            targetDatasetFormControl.setErrors({ ...prevErrors });
+          } else {
+            targetDatasetFormControl.setErrors(null);
+          }
+          const targetDatasetFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'target_dataset' });
+          targetDatasetFieldConfig.warnings = null;
+
           resolve(res);
         },
         () => {
           node.collapse();
+          const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('target_dataset');
+          const prevErrors = targetDatasetFormControl.errors;
+          targetDatasetFormControl.setErrors({
+            ...prevErrors,
+            failedToLoadChildren: true,
+          });
+          const targetDatasetFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'target_dataset' });
+          targetDatasetFieldConfig.warnings = T('Failed to load datasets');
         },
       );
     });
@@ -1455,20 +1496,19 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     const nameRegexFormControl = this.entityWizard.formArray.get([0]).get('name_regex');
 
-    const namingOption = schemaOrRegexFormControl.value === SnapshotNamingOption.NamingSchema
-      ? namingSchema : nameRegexFormControl.value;
-
-    const payload = [
-      this.entityWizard.formArray.get([0]).get('source_datasets').value || [],
-      namingOption,
-      (this.entityWizard.formArray.get([0]).get('naming_schema').enabled && this.entityWizard.formArray.get([0]).get('naming_schema').value)
-        ? this.entityWizard.formArray.get([0]).get('naming_schema').value.split(' ')
-        : [this.defaultNamingSchema],
+    const payload: any[] = [{
+      datasets: this.entityWizard.formArray.get([0]).get('source_datasets').value || [],
       transport,
-      transport === TransportMode.Local ? null : this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value,
-    ];
+      ssh_credentials: transport === TransportMode.Local ? null : this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value,
+    }];
 
-    if (payload[0].length > 0) {
+    if (schemaOrRegexFormControl.value === SnapshotNamingOption.NamingSchema) {
+      payload[0].naming_schema = namingSchema;
+    } else {
+      payload[0].name_regex = nameRegexFormControl.value;
+    }
+
+    if (payload[0].datasets.length > 0) {
       this.ws.call('replication.count_eligible_manual_snapshots', payload).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.eligibleSnapshots = res.eligible;
