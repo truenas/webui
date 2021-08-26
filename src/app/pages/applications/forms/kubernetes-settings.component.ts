@@ -227,7 +227,11 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   }
 
   private wereReInitFieldsChanged(config: KubernetesConfigUpdate): boolean {
-    const reInitFields: (keyof KubernetesConfigUpdate)[] = ['cluster_cidr', 'service_cidr', 'cluster_dns_ip'];
+    const reInitFields: ('cluster_cidr' | 'service_cidr' | 'cluster_dns_ip')[] = [
+      'cluster_cidr',
+      'service_cidr',
+      'cluster_dns_ip',
+    ];
 
     return reInitFields.some((field) => config[field] !== this.oldConfig[field]);
   }
