@@ -106,7 +106,7 @@ export class VMWizardComponent implements WizardConfiguration {
           value: VmTime.Local,
           options: [
             { label: helptext.time_local_text, value: VmTime.Local },
-            { label: 'UTC', value: VmTime.Utc },
+            { label: helptext.time_utc_text, value: VmTime.Utc },
           ],
         },
         {
