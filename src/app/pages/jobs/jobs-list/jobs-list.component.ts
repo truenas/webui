@@ -76,17 +76,11 @@ export class JobsListComponent implements OnInit {
     this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
       this.dataSource.data = state.jobs;
       this.isLoading = state.isLoading;
+      this.selectedIndex = state.selectedTab;
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
       this.cdr.markForCheck();
     });
-
-    this.store
-      .getUpdates()
-      .pipe(untilDestroyed(this))
-      .subscribe((job) => {
-        this.handleUpdate(job);
-      });
   }
 
   setupToolbar(): void {
@@ -118,51 +112,6 @@ export class JobsListComponent implements OnInit {
     this.toolbarConfig = toolbarConfig;
 
     this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
-  }
-
-  handleUpdate(job: Job): void {
-    if (this.selectedIndex === 2 && job.state === JobState.Failed) {
-      this.store.patchState((state) => {
-        return {
-          ...state,
-          jobs: [job, ...state.jobs],
-        };
-      });
-    }
-
-    if (this.selectedIndex === 1) {
-      this.store.patchState((state) => {
-        let modifiedJobs = [...state.jobs];
-        const jobIndex = modifiedJobs.findIndex((item) => item.id === job.id);
-        if (jobIndex === -1) {
-          modifiedJobs = [job, ...state.jobs];
-        } else {
-          modifiedJobs[jobIndex] = job;
-        }
-
-        return {
-          ...state,
-          jobs: modifiedJobs.filter((item) => item.state === JobState.Running),
-        };
-      });
-    }
-
-    if (this.selectedIndex === 0) {
-      this.store.patchState((state) => {
-        let modifiedJobs = [...state.jobs];
-        const jobIndex = state.jobs.findIndex((item) => item.id === job.id);
-        if (jobIndex === -1) {
-          modifiedJobs = [job, ...state.jobs];
-        } else {
-          modifiedJobs[jobIndex] = job;
-        }
-
-        return {
-          ...state,
-          jobs: modifiedJobs,
-        };
-      });
-    }
   }
 
   viewLogs(job: Job): void {
