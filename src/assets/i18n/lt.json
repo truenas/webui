@@ -3971,6 +3971,7 @@
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{n} failed": "",
   "{n} in progress": "",
+  "{used} of {total} ({used_pct})": "",
   " Check Notifications for more details.": " Controlla le notifiche per maggiori dettagli.",
   " Download Updates": " Scarica Aggiornamenti",
   " First vdev has ": " Il primo vdev ha ",

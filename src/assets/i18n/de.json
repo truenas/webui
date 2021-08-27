@@ -2204,6 +2204,7 @@
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{n} failed": "",
   "{n} in progress": "",
+  "{used} of {total} ({used_pct})": "",
   " Built-in Groups": " Eingebaute Gruppen",
   " Builtin Users": " Eingebaute Benutzer",
   " Check Notifications for more details.": " Überprüfen Sie Benachrichtigungen für mehr Details.",
