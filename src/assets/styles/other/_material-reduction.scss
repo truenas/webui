@@ -936,7 +936,8 @@ ul.nested-list li {
 .expanded-table .mat-expansion-panel-header {
   height: auto !important;
   margin: 5px 0;
-  padding: inherit 0;
+  padding-bottom: inherit;
+  padding-top: inherit;
 }
 
 .expanded-table .mat-expansion-panel-header span {
