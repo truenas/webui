@@ -14,6 +14,7 @@ import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -515,7 +516,7 @@ export class SMBFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     const generalFieldsets = _.find(this.fieldSets, { class: 'basic' });
-    const purposeField = _.find(generalFieldsets.config, { name: 'purpose' });
+    const purposeField: FormSelectConfig = _.find(generalFieldsets.config, { name: 'purpose' });
     this.ws.call('sharing.smb.presets').pipe(untilDestroyed(this)).subscribe(
       (presets) => {
         this.presets = presets;

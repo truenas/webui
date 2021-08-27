@@ -23,7 +23,9 @@ import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Statfs } from 'app/interfaces/filesystem-stat.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormParagraphConfig, FormSelectConfig, FormUploadConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
@@ -458,9 +460,9 @@ export class VMWizardComponent implements WizardConfiguration {
     },
   ];
 
-  private nicAttach: FieldConfig;
-  private nicType: FieldConfig;
-  private bootloader: FieldConfig;
+  private nicAttach: FormSelectConfig;
+  private nicType: FormSelectConfig;
+  private bootloader: FormSelectConfig;
 
   constructor(
     protected ws: WebSocketService,
@@ -481,12 +483,12 @@ export class VMWizardComponent implements WizardConfiguration {
     this.entityWizard = entityWizard;
     this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((max) => {
       this.maxVCPUs = max;
-      const vcpuLimitConf = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' });
+      const vcpuLimitConf: FormParagraphConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' });
       vcpuLimitConf.paraText = helptext.vcpus_warning + ` ${this.maxVCPUs} ` + helptext.vcpus_warning_b;
     });
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
-      const gpusConf = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
+      const gpusConf: FormSelectConfig = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
       }
@@ -511,17 +513,17 @@ export class VMWizardComponent implements WizardConfiguration {
 
   setValuesFromPref(stepNumber: number, fieldName: string, prefName: string, defaultIndex?: number): void {
     const field = this.getFormControlFromFieldName(fieldName);
-    const options = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName }).options;
+    const config: FormSelectConfig = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
     const storedValue = this.prefService.preferences.storedValues[prefName];
     if (storedValue) {
-      const valueToSet = options.find((o) => o.value === storedValue);
+      const valueToSet = config.options.find((o) => o.value === storedValue);
       if (valueToSet) {
         field.setValue(valueToSet.value);
       } else if (defaultIndex) {
-        field.setValue(options[defaultIndex].value);
+        field.setValue(config.options[defaultIndex].value);
       }
     } else {
-      field.setValue(options[defaultIndex].value);
+      field.setValue(config.options[defaultIndex].value);
     }
   }
 
@@ -532,7 +534,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
     this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
-        const bind = _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' });
+        const bind: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' });
         Object.keys(res).forEach((address) => {
           bind.options.push({ label: address, value: address });
         });
@@ -543,7 +545,7 @@ export class VMWizardComponent implements WizardConfiguration {
     if (this.productType === ProductType.Scale || this.productType === ProductType.ScaleEnterprise) {
       _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' })['isHidden'] = true;
       _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
-      const cpuModel = _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_model' });
+      const cpuModel: FormSelectConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_model' });
       cpuModel.isHidden = false;
 
       this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
@@ -561,12 +563,14 @@ export class VMWizardComponent implements WizardConfiguration {
       .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
       .pipe(map(new EntityUtils().array1DToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe((options) => {
-        this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore').options = options;
+        const config: FormSelectConfig = this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore');
+        config.options = options;
       });
 
     this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
-        _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }).options.push(
+        const config: FormSelectConfig = _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' });
+        config.options.push(
           {
             label: zvol.id, value: zvol.id,
           },
@@ -681,7 +685,7 @@ export class VMWizardComponent implements WizardConfiguration {
             finalIsolatedPciIds.push(gpuValue);
           }
         }
-        const gpusConf = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
+        const gpusConf: FormSelectConfig = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
         if (finalIsolatedPciIds.length >= gpusConf.options.length) {
           const prevSelectedGpus = [];
           for (const gpu of this.gpus) {
@@ -796,7 +800,8 @@ export class VMWizardComponent implements WizardConfiguration {
     });
     this.getFormControlFromFieldName('upload_iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
-        _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' }).fileLocation = res;
+        const config: FormUploadConfig = _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' });
+        config.fileLocation = res;
       }
     });
 

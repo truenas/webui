@@ -3896,6 +3896,7 @@
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{n} failed": "",
   "{n} in progress": "",
+  "{used} of {total} ({used_pct})": "",
   " Built-in Groups": " Grupy wbudowane",
   " Builtin Users": " Użytkownicy wbudowani",
   " Check Notifications for more details.": " Sprawdź powiadomienia aby uzyskac więcej informacji",

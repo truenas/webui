@@ -3414,6 +3414,7 @@
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{n} failed": "",
   "{n} in progress": "",
+  "{used} of {total} ({used_pct})": "",
   " Built-in Groups": " 組み込みグループ",
   " Builtin Users": " 組み込みユーザ",
   " Check Notifications for more details.": " 詳細については、通知を確認してください。",

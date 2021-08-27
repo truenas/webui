@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormListConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 
 @UntilDestroy()
@@ -125,7 +125,7 @@ export class SMBAclComponent implements FormConfiguration {
     },
   ];
 
-  protected shareACLField: FieldConfig;
+  protected shareACLField: FormListConfig;
   protected entityForm: EntityFormComponent;
 
   constructor(private aroute: ActivatedRoute) { }

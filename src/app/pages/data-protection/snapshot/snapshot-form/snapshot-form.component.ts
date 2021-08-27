@@ -7,7 +7,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { UnitType } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSelectConfig, UnitType } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, StorageService, TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -137,8 +137,8 @@ export class SnapshotFormComponent implements FormConfiguration {
     protected storageService: StorageService,
     protected dialog: DialogService,
     protected modalService: ModalService) {
-    const begin_field = this.fieldSets.config('begin');
-    const end_field = this.fieldSets.config('end');
+    const begin_field: FormSelectConfig = this.fieldSets.config('begin');
+    const end_field: FormSelectConfig = this.fieldSets.config('end');
     const time_options = this.taskService.getTimeOptions();
     for (let i = 0; i < time_options.length; i++) {
       begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
@@ -152,7 +152,7 @@ export class SnapshotFormComponent implements FormConfiguration {
     this.isNew = entityForm.isNew;
     this.title = this.isNew ? helptext.snapshot_task_add : helptext.snapshot_task_edit;
 
-    const datasetField = this.fieldSets.config('dataset');
+    const datasetField: FormSelectConfig = this.fieldSets.config('dataset');
 
     this.storageService.getDatasetNameOptions().pipe(untilDestroyed(this)).subscribe(
       (options) => {

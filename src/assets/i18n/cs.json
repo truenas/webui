@@ -3391,6 +3391,7 @@
   "{ n, plural, one {# snapshot} other {# snapshots} }": "",
   "{n} failed": "",
   "{n} in progress": "",
+  "{used} of {total} ({used_pct})": "",
   " Check Notifications for more details.": " Pro bližší informace se podívejte na notifikace.",
   " Download Updates": " Stáhnout aktualizace",
   " First vdev has ": " První vdev má ",

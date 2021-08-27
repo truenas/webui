@@ -14,6 +14,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
@@ -285,8 +286,8 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   afterLogsDialogInit(entityDialog: EntityDialogComponent): void {
     const self = entityDialog.parent as PodLogsComponent;
 
-    const podFC = _.find(entityDialog.fieldConfig, { name: 'pods' });
-    const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
+    const podFC: FormSelectConfig = _.find(entityDialog.fieldConfig, { name: 'pods' });
+    const containerFC: FormSelectConfig = _.find(entityDialog.fieldConfig, { name: 'containers' });
 
     // when app selection changed
     entityDialog.formGroup.controls['apps'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {

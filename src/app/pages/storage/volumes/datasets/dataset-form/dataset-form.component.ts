@@ -19,7 +19,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -1076,7 +1076,7 @@ export class DatasetFormComponent implements FormConfiguration {
       _.find(this.fieldSets, { class: 'refdataset' }).label = false;
     }
     this.ws.call('pool.dataset.compression_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      const compression = _.find(this.fieldConfig, { name: 'compression' });
+      const compression: FormSelectConfig = _.find(this.fieldConfig, { name: 'compression' });
       for (const key in choices) {
         compression.options.push({ label: key, value: choices[key] });
       }
@@ -1135,7 +1135,7 @@ export class DatasetFormComponent implements FormConfiguration {
               this.entityForm.setDisabled('encryption', true, true);
               this.entityForm.setDisabled('inherit_encryption', true, true);
             } else {
-              const encryption_algorithm_fc = _.find(this.fieldConfig, { name: 'algorithm' });
+              const encryption_algorithm_fc: FormSelectConfig = _.find(this.fieldConfig, { name: 'algorithm' });
               const encryption_algorithm_fg = this.entityForm.formGroup.controls['algorithm'];
               let parent_algorithm;
               if (this.encrypted_parent && pk_dataset[0].encryption_algorithm) {
@@ -1245,13 +1245,13 @@ export class DatasetFormComponent implements FormConfiguration {
                 this.entityForm.setDisabled('key', generate_key, generate_key);
               });
             }
-            const sync = _.find(this.fieldConfig, { name: 'sync' });
-            const compression = _.find(this.fieldConfig, { name: 'compression' });
-            const deduplication = _.find(this.fieldConfig, { name: 'deduplication' });
-            const exec = _.find(this.fieldConfig, { name: 'exec' });
-            const readonly = _.find(this.fieldConfig, { name: 'readonly' });
-            const atime = _.find(this.fieldConfig, { name: 'atime' });
-            const recordsize = _.find(this.fieldConfig, { name: 'recordsize' });
+            const sync: FormSelectConfig = _.find(this.fieldConfig, { name: 'sync' });
+            const compression: FormSelectConfig = _.find(this.fieldConfig, { name: 'compression' });
+            const deduplication: FormSelectConfig = _.find(this.fieldConfig, { name: 'deduplication' });
+            const exec: FormSelectConfig = _.find(this.fieldConfig, { name: 'exec' });
+            const readonly: FormSelectConfig = _.find(this.fieldConfig, { name: 'readonly' });
+            const atime: FormSelectConfig = _.find(this.fieldConfig, { name: 'atime' });
+            const recordsize: FormSelectConfig = _.find(this.fieldConfig, { name: 'recordsize' });
             const sync_inherit = [{ label: `Inherit (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
             const compression_inherit = [{ label: `Inherit (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
             const deduplication_inherit = [{ label: `Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
@@ -1293,15 +1293,16 @@ export class DatasetFormComponent implements FormConfiguration {
               this.parent_dataset = parent_dataset[0];
               const current_dataset = _.find(this.parent_dataset.children, { name: this.pk });
               if (current_dataset.hasOwnProperty('recordsize') && current_dataset['recordsize'].value) {
-                _.find(_.find(this.fieldConfig, { name: 'recordsize' }).options, { value: current_dataset['recordsize'].value })['hiddenFromDisplay'] = false;
+                const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'recordsize' });
+                _.find(config.options, { value: current_dataset['recordsize'].value })['hiddenFromDisplay'] = false;
               }
-              const edit_sync = _.find(this.fieldConfig, { name: 'sync' });
-              const edit_compression = _.find(this.fieldConfig, { name: 'compression' });
-              const edit_deduplication = _.find(this.fieldConfig, { name: 'deduplication' });
-              const edit_exec = _.find(this.fieldConfig, { name: 'exec' });
-              const edit_readonly = _.find(this.fieldConfig, { name: 'readonly' });
-              const edit_atime = _.find(this.fieldConfig, { name: 'atime' });
-              const edit_recordsize = _.find(this.fieldConfig, { name: 'recordsize' });
+              const edit_sync: FormSelectConfig = _.find(this.fieldConfig, { name: 'sync' });
+              const edit_compression: FormSelectConfig = _.find(this.fieldConfig, { name: 'compression' });
+              const edit_deduplication: FormSelectConfig = _.find(this.fieldConfig, { name: 'deduplication' });
+              const edit_exec: FormSelectConfig = _.find(this.fieldConfig, { name: 'exec' });
+              const edit_readonly: FormSelectConfig = _.find(this.fieldConfig, { name: 'readonly' });
+              const edit_atime: FormSelectConfig = _.find(this.fieldConfig, { name: 'atime' });
+              const edit_recordsize: FormSelectConfig = _.find(this.fieldConfig, { name: 'recordsize' });
 
               const edit_sync_collection = [{ label: `Inherit (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT' }];
               edit_sync.options = edit_sync_collection.concat(edit_sync.options);

@@ -4,7 +4,7 @@ import {
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from 'app/helptext/global-helptext';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormTextareaConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @Component({
@@ -15,7 +15,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
 export class FormTextareaComponent implements Field {
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef<HTMLInputElement>;
 
-  config: FieldConfig;
+  config: FormTextareaConfig;
   group: FormGroup;
   fieldShow: string;
   private hasPasteEvent = false;

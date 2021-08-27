@@ -6,7 +6,7 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormTaskConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 
@@ -17,7 +17,7 @@ import { EntityFormService } from 'app/pages/common/entity/entity-form/services/
   styleUrls: ['./form-task.component.scss'],
 })
 export class FormTaskComponent implements Field, AfterViewInit, OnInit {
-  config: FieldConfig;
+  config: FormTaskConfig;
   group: FormGroup;
   fieldShow: string;
 

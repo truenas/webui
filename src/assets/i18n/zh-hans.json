@@ -149,6 +149,7 @@
   "pbkdf2iters": "",
   "vdev is highly discouraged and will result in data loss if it fails": "",
   "zle (runs of zeros)": "",
+  "{used} of {total} ({used_pct})": "",
   " Built-in Groups": " 内置组",
   " Builtin Users": " 内置用户",
   " Check Notifications for more details.": " 检查通知以获取更多详细信息。",

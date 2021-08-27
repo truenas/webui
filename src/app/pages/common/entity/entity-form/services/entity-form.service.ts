@@ -11,7 +11,9 @@ import { DatasetType } from 'app/enums/dataset-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';
-import { FieldConfig, UnitType, InputUnitConfig } from '../models/field-config.interface';
+import {
+  FieldConfig, UnitType, InputUnitConfig, FormArrayConfig, FormListConfig, FormDictConfig,
+} from '../models/field-config.interface';
 
 @Injectable()
 export class EntityFormService {
@@ -55,20 +57,23 @@ export class EntityFormService {
 
   createFormControl(fieldConfig: FieldConfig): AbstractControl {
     let formControl: AbstractControl;
+    const arrayConfig: FormArrayConfig = fieldConfig as FormArrayConfig;
+    const listConfig: FormListConfig = fieldConfig as FormListConfig;
+    const dictConfig: FormDictConfig = fieldConfig as FormDictConfig;
 
     if (fieldConfig) {
-      if (fieldConfig.formarray) {
-        if (fieldConfig.initialCount == null) {
-          fieldConfig.initialCount = 1;
+      if (arrayConfig.formarray) {
+        if (arrayConfig.initialCount == null) {
+          arrayConfig.initialCount = 1;
         }
-        formControl = this.createFormArray(fieldConfig.formarray, fieldConfig.initialCount);
-      } else if (fieldConfig.listFields) {
+        formControl = this.createFormArray(arrayConfig.formarray, arrayConfig.initialCount);
+      } else if (listConfig.listFields) {
         formControl = this.formBuilder.array([]);
-        fieldConfig.listFields.forEach((listField) => {
+        listConfig.listFields.forEach((listField) => {
           (formControl as FormArray).push(this.createFormGroup(listField));
         });
-      } else if (fieldConfig.subFields) {
-        formControl = this.createFormGroup(fieldConfig.subFields);
+      } else if (dictConfig.subFields) {
+        formControl = this.createFormGroup(dictConfig.subFields);
       } else if (fieldConfig.type != 'label') {
         formControl = new FormControl(
           { value: fieldConfig.value, disabled: fieldConfig.disabled },
