@@ -89,7 +89,6 @@ export interface FieldConfig<P = any> {
   textAreaRows?: number;
   togglePw?: boolean;
   tooltip?: string;
-  tooltipPosition?: string;
   tristate?: boolean;
   type: FieldType;
   updateLocal?: boolean;
