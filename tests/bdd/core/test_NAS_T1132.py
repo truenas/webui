@@ -210,7 +210,7 @@ def select_push_as_the_direction_then_under_transfer_mode_select_copy(driver):
 @then(parsers.parse('select the {path} folder, and click save'))
 def select_the_path_folder_and_click_save(driver, path):
     """select the {path} folder, and click save."""
-    assert wait_on_element(driver, 5, '//input[@placeholder="Folder"]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Folder"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Folder"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Folder"]').send_keys(path)
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')

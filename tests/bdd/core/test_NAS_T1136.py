@@ -184,7 +184,7 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     """on the NAS cloud sync task tab, click Edit."""
     driver.switch_to.window(driver.window_handles[0])
     assert wait_on_element(driver, 5, '//div[contains(text(),"My Dropbox task")]')
-    if not wait_on_element(driver, 1, '//button[@ix-auto="button___edit"]', 'clickable'):
+    if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Dropbox task"]', 'clickable')
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Dropbox task"]').click()
     time.sleep(0.5)
@@ -210,7 +210,7 @@ def select_push_as_the_direction_then_under_transfer_mode_select_copy(driver):
 @then(parsers.parse('select the {path} folder, and click save'))
 def select_the_path_folder_and_click_save(driver, path):
     """select the {path} folder, and click save."""
-    assert wait_on_element(driver, 5, '//input[@placeholder="Folder"]')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Folder"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Folder"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Folder"]').send_keys(path)
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
