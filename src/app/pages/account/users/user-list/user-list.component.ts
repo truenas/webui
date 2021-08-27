@@ -94,11 +94,9 @@ export class UserListComponent {
 
   afterInit(entityList: any) {
     this.entityList = entityList;
-    setTimeout(() => {
-      if (this.prefService.preferences.showUserListMessage) {
-        this.showOneTimeBuiltinMsg();
-      }
-    }, 2000);
+    if (this.prefService.preferences.showUserListMessage) {
+      this.showOneTimeBuiltinMsg();
+    }
   }
   getActions(row) {
     const actions = [];
