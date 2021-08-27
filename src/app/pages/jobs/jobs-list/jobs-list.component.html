@@ -59,7 +59,7 @@
               <div fxFlex="100" fxLayout="column">
                 <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
                   <span>{{ element.description ? element.description : element.method }}</span>
-                  <span *ngIf="element.state === JobState.Running">{{ element.progress.percent || 0 | number: '1.2-2' }}%</span>
+                  <small *ngIf="element.state === JobState.Running">{{ element.progress.percent || 0 | number: '1.2-2' }}%</small>
                 </div>
 
                 <mat-progress-bar
