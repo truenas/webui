@@ -168,7 +168,11 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       if (this.cols == 1) {
         value = volume.used_pct;
       } else {
-        value = this.getSizeString(volume.used) + ' of ' + this.getSizeString(volume.avail) + ' (' + volume.used_pct + ')';
+        value = this.translate.instant('{used} of {total} ({used_pct})', {
+          used: this.getSizeString(volume.used),
+          total: this.getSizeString(volume.used + volume.avail),
+          used_pct: volume.used_pct,
+        });
       }
 
       if (this.percentAsNumber(volume.used_pct) >= 80) {

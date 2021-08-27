@@ -195,7 +195,7 @@ export class VmFormComponent implements FormConfiguration {
           name: 'gpus',
           multiple: true,
           options: [],
-          required: true,
+          required: false,
         },
       ],
     },

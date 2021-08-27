@@ -1483,6 +1483,7 @@ export class DatasetFormComponent implements FormConfiguration {
     return returnValue;
   }
 
+  // TODO: Similar to addSubmit.
   editSubmit(body: any): Observable<any> {
     const data: any = this.sendAsBasicOrAdvanced(body);
     if (data['special_small_block_size'] === 0) {
@@ -1490,16 +1491,16 @@ export class DatasetFormComponent implements FormConfiguration {
     }
 
     if (data.quota_warning_inherit) {
-      data.quota_warning = 'INHERIT';
+      delete (data.quota_warning);
     }
     if (data.quota_critical_inherit) {
-      data.quota_critical = 'INHERIT';
+      delete (data.quota_critical);
     }
     if (data.refquota_warning_inherit) {
-      data.refquota_warning = 'INHERIT';
+      delete (data.refquota_warning);
     }
     if (data.refquota_critical_inherit) {
-      data.refquota_critical = 'INHERIT';
+      delete (data.refquota_critical);
     }
     delete (data.quota_warning_inherit);
     delete (data.quota_critical_inherit);
