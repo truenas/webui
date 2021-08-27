@@ -42,20 +42,19 @@
 
           <ng-container *ngIf="report.empty">
             <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
-              <div class="chart-wrapper">
-                <div style="display: flex; align-items: center; justify-content: center; height: 100%; width: 100%; flex-direction: column;">
-
+              <div class="chart-wrapper-empty">
+                <div class="chart-wrapper-child">
                   <div>
                     <mat-icon style="font-size: 3rem;">bar_chart</mat-icon>
                   </div>
                   <h4 class="empty-title">{{ report.empty.title }}</h4>
-                  <p style="max-width: 50%; margin: 1rem 0;">{{report.empty.message}}</p>
-                  <button mat-raised-button color="primary">{{report.empty.button.text}}</button>
+                  <p class="empty-message">{{report.empty.message}}</p>
+                  <button mat-raised-button color="primary" (click)="report.empty.button.click()">{{report.empty.button.text}}</button>
                 </div>
               </div>
             </div>
-
           </ng-container>
+          
           <ng-container *ngIf="!report.empty">
             <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
               <div class="chart-wrapper" >

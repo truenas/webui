@@ -159,23 +159,25 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
             this.disksWithNoTempGraphs = {};
           }
           this.disksWithNoTempGraphs[disk.name] = {
-            identifiers: [disk.name],
+            identifiers: [disk.identifier],
             name: disk.name + '-temp',
             title: 'Disk Temperatur ' + disk.name,
             empty: {
-              title: 'Disk Temperatures Not Available',
-              message: 'This disk cannot collect temperature data the way it is currently configured. Please either enable ‘Force HDD Standby’ or set ‘HDD Standby’ to ‘Never’ in order to enable temperature data collection',
+              title: T('Disk Temperatures Not Available'),
+              message: T('This disk cannot collect temperature data the way it is currently configured. Please either enable ‘Force HDD Standby’ or set ‘HDD Standby’ to ‘Never’ in order to enable temperature data collection.'),
               button: {
-                text: 'Edit Disk',
+                text: T('Edit Disk'),
                 click: () => {
-                  console.log('clickeddd');
+                  this.router.navigate(new Array('/').concat([
+                    'storage', 'disks', 'edit', disk.identifier,
+                  ]));
                 },
               },
             },
           };
         }
 
-        console.log('disksWithNoTempGraphs', this.disksWithNoTempGraphs);
+        console.log('no temps', this.disksWithNoTempGraphs);
 
         this.parseDisks(res, multipathDisks);
         this.core.emit({ name: 'ReportingGraphsRequest', sender: this });
@@ -461,8 +463,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     } else {
       metricValue = metric;
     }
-    console.log('Device', device, 'metric', metric);
-    console.log('active reports', this.activeReports);
     // Convert strings to arrays
     if (typeof device == 'string') {
       device = [device];
@@ -488,7 +488,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     const visibleNoTempDisks = device.filter((dev) => Object.keys(this.disksWithNoTempGraphs).includes(dev));
 
-    console.log('visible no  temps disk', visibleNoTempDisks);
     if (metric.indexOf('disktemp') !== -1 && visibleNoTempDisks.length) {
       for (const disk of visibleNoTempDisks) {
         this.activeReports.push(this.disksWithNoTempGraphs[disk]);
@@ -497,7 +496,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     }
 
     this.visibleReports = visible;
-    console.log('visible reports', this.visibleReports);
   }
 
   parseDisks(res, multipathDisks) {
