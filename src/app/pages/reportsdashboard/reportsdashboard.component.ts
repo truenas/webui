@@ -177,8 +177,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
           };
         }
 
-        console.log('no temps', this.disksWithNoTempGraphs);
-
         this.parseDisks(res, multipathDisks);
         this.core.emit({ name: 'ReportingGraphsRequest', sender: this });
       });
