@@ -19,7 +19,7 @@ export class DatasetQuotasUserlistComponent implements OnDestroy {
   title = helptext.users.table_title;
   protected entityList: any;
   quotaValue: number;
-  protected fullFilter = [['OR', [['used_bytes', '>', 0], ['obj_used', '>', 0]]]];
+  protected fullFilter = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
   protected emptyFilter = [];
   protected useFullFilter = true;
 
