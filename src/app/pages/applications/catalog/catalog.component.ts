@@ -337,11 +337,11 @@ export class CatalogComponent implements OnInit {
     const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
     const migrateApplications = entityDialog.formGroup.controls['migrateApplications'].value;
+    self.dialogService.closeAllDialogs();
     const dialogRef = self.mdDialog.open(EntityJobComponent, {
       data: {
         title: (helptext.choosePool.jobTitle),
       },
-      disableClose: true,
     });
     dialogRef.componentInstance.setCall('kubernetes.update', [{
       pool,
@@ -356,9 +356,6 @@ export class CatalogComponent implements OnInit {
         self.dialogService.info(helptext.choosePool.success, msg + res.result.pool,
           '500px', 'info', true);
       });
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(self)).subscribe((err) => {
-      new EntityUtils().handleWSError(self, err, self.dialogService);
     });
   }
 
