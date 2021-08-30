@@ -27,7 +27,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
   title = helptext.users.table_title;
   protected entityList: EntityTableComponent;
   quotaValue: number;
-  protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['used_bytes', '>', 0], ['obj_used', '>', 0]]]];
+  protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
   protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected useFullFilter = true;
 
