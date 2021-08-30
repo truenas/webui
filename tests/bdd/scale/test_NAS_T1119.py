@@ -106,6 +106,7 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     time.sleep(1)
     assert wait_on_element(driver, 5, '//span[contains(text(),"Use ACL Preset")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Use ACL Preset")]').click()
+
     time.sleep(1)
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Default ACL Options"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Default ACL Options"]').click()
@@ -139,10 +140,3 @@ def click_the_save_button_which_should_be_returned_to_the_storage_page_on_the_ed
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     time.sleep(1)
-
-
-
-
-
-
-
