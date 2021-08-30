@@ -109,7 +109,7 @@ def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_
 @then('reopen the user edit page and verify sshkey was saved.')
 def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     """reopen the user edit page and verify sshkey was saved.."""
-    time.sleep(4)
+    time.sleep(8)
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tbody/tr[@id="ericbsd"]/td[5]/mat-icon[1]', 'clickable')
     driver.find_element_by_xpath('//tbody/tr[@id="ericbsd"]/td[5]/mat-icon[1]').click()
