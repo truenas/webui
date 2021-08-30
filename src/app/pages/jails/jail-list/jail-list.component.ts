@@ -82,7 +82,7 @@ export class JailListComponent implements InputTableConf {
             }
           }
           if (message === '') {
-            this.dialogService.Info(T('Jails Started'), T('Jails started.'));
+            this.dialogService.report(T('Jails Started'), T('Jails started.'), '500px', 'info');
           } else {
             message = '<ul>' + message + '</ul>';
             this.dialogService.errorReport(T('Jails failed to start'), message);
@@ -134,7 +134,7 @@ export class JailListComponent implements InputTableConf {
     ttpos: 'above',
     onClick: (selected) => {
       const selectedJails = this.getSelectedNames(selected);
-      this.dialogService.Info(T('Jail Update'), T('Updating selected plugins.'));
+      this.dialogService.report(T('Jail Update'), T('Updating selected plugins.'), '500px', 'info');
       this.entityList.busy = this.ws.job('core.bulk', ['jail.update_to_latest_patch', selectedJails]).subscribe(
         (res) => {
           let message = '';
@@ -146,7 +146,7 @@ export class JailListComponent implements InputTableConf {
             }
           }
           if (message === '') {
-            this.dialogService.Info('', T('Selected jails updated.'), '500px', 'info', true);
+            this.dialogService.report('', T('Selected jails updated.'), '500px', 'info', true);
           } else {
             message = '<ul>' + message + '</ul>';
             this.dialogService.errorReport(T('Jail Update Failed'), message);
@@ -273,7 +273,7 @@ export class JailListComponent implements InputTableConf {
             entityDialog.dialogRef.close(true);
             self.entityList.loaderOpen = true;
             self.entityList.getData();
-            self.dialogService.Info(
+            self.dialogService.report(
               helptext.activatePoolDialog.successInfoDialog.title,
               helptext.activatePoolDialog.successInfoDialog.message + value['selectedPool'],
               '500px', 'info', true,
@@ -385,7 +385,7 @@ export class JailListComponent implements InputTableConf {
             dialogRef.componentInstance.success.subscribe((res) => {
               dialogRef.close(true);
               this.updateRow(row);
-              this.dialogService.Info(T('Jail Updated'), T('Jail <i>') + row.host_hostuuid + T('</i> updated.'), '500px', 'info', true);
+              this.dialogService.report(T('Jail Updated'), T('Jail <i>') + row.host_hostuuid + T('</i> updated.'), '500px', 'info', true);
             });
           }
         });

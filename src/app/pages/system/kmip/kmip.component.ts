@@ -202,7 +202,7 @@ export class KmipComponent {
   syncKeys() {
     this.ws.call('kmip.sync_keys').subscribe(
       (res) => {
-        this.dialogService.Info(helptext_system_kmip.syncInfoDialog.title, helptext_system_kmip.syncInfoDialog.info, '500px', 'info', true);
+        this.dialogService.report(helptext_system_kmip.syncInfoDialog.title, helptext_system_kmip.syncInfoDialog.info, '500px', 'info', true);
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -213,7 +213,7 @@ export class KmipComponent {
   clearSyncKeys() {
     this.ws.call('kmip.clear_sync_pending_keys').subscribe(
       (res) => {
-        this.dialogService.Info(helptext_system_kmip.clearSyncKeyInfoDialog.title, helptext_system_kmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);
+        this.dialogService.report(helptext_system_kmip.clearSyncKeyInfoDialog.title, helptext_system_kmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialogService);

@@ -262,7 +262,7 @@ export class IPMIComponent {
     this.loader.open();
     return call.subscribe((res) => {
       this.loader.close();
-      this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true);
+      this.dialog.report(T('Settings saved.'), '', '300px', 'info', true);
     }, (res) => {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityEdit, res);

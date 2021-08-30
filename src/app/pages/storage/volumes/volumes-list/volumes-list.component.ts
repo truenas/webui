@@ -496,7 +496,7 @@ export class VolumesListTableConfig implements InputTableConf {
               entityDialog.dialogRef.close(true);
               self.parentVolumesListComponent.repaintMe();
               self.translate.get(' has been unlocked.').subscribe((unlockTr) => {
-                self.dialogService.Info(T('Unlock'), row1.name + unlockTr, '300px', 'info', true);
+                self.dialogService.report(T('Unlock'), row1.name + unlockTr, '300px', 'info', true);
                 done = true;
               });
             }
@@ -571,8 +571,8 @@ export class VolumesListTableConfig implements InputTableConf {
                     entityDialog.dialogRef.close();
                     self.translate.get(helptext.pool_options_dialog.dialog_saved_message1).subscribe((msg1) => {
                       self.translate.get(helptext.pool_options_dialog.dialog_saved_message2).subscribe((msg2) => {
-                        self.dialogService.Info(helptext.pool_options_dialog.dialog_saved_title,
-                          msg1 + row.name + msg2);
+                        self.dialogService.report(helptext.pool_options_dialog.dialog_saved_title,
+                          msg1 + row.name + msg2, '500px', 'info');
                         self.parentVolumesListComponent.repaintMe();
                       });
                     });
@@ -796,9 +796,9 @@ export class VolumesListTableConfig implements InputTableConf {
                       self.translate.get(helptext.exportSuccess).subscribe((msg) => {
                         self.translate.get(helptext.destroyed).subscribe((destroyed) => {
                           if (!value.destroy) {
-                            self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + "'");
+                            self.dialogService.report(helptext.exportDisconnect, msg + row1.name + "'", '500px', 'info');
                           } else {
-                            self.dialogService.Info(helptext.exportDisconnect, msg + row1.name + destroyed);
+                            self.dialogService.report(helptext.exportDisconnect, msg + row1.name + destroyed, '500px', 'info');
                           }
                           dialogRef.close(true);
                           self.parentVolumesListComponent.repaintMe();
@@ -901,7 +901,7 @@ export class VolumesListTableConfig implements InputTableConf {
                             (res) => {
                               this.loader.close();
                               self.translate.get('Stopping scrub on pool').subscribe((msg) => {
-                                this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, '300px', 'info', true);
+                                this.dialogService.report(T('Stop Scrub'), `${msg} <i>${row1.name}</i>`, '300px', 'info', true);
                               });
                             },
                             (err) => {
@@ -924,11 +924,11 @@ export class VolumesListTableConfig implements InputTableConf {
                             this.dialogRef.close(false);
                             if (jobres.progress.percent == 100 && jobres.progress.description === 'Scrub finished') {
                               self.translate.get('Scrub complete on pool').subscribe((msg) => {
-                                this.dialogService.Info(T('Scrub Complete'), `${msg} <i>${row1.name}</i>.`, '300px', 'info', true);
+                                this.dialogService.report(T('Scrub Complete'), `${msg} <i>${row1.name}</i>.`, '300px', 'info', true);
                               });
                             } else {
                               self.translate.get('Stopped the scrub on pool').subscribe((msg) => {
-                                this.dialogService.Info(T('Stop Scrub'), `${msg} <i>${row1.name}</i>.`, '300px', 'info', true);
+                                this.dialogService.report(T('Stop Scrub'), `${msg} <i>${row1.name}</i>.`, '300px', 'info', true);
                               });
                             }
                           },
@@ -1057,9 +1057,10 @@ export class VolumesListTableConfig implements InputTableConf {
                         (res) => {
                           this.translate.get(T('Successfully Upgraded ')).subscribe((success_upgrade) => {
                             this.dialogService
-                              .Info(
+                              .report(
                                 T('Upgraded'),
                                 success_upgrade + row1.name,
+                                '500px', 'info',
                               )
                               .subscribe((infoResult) => {
                                 this.parentVolumesListComponent.repaintMe();
@@ -1330,7 +1331,7 @@ export class VolumesListTableConfig implements InputTableConf {
           };
           this.dialogService.dialogForm(this.dialogConf).subscribe((res) => {
             if (res) {
-              this.dialogService.Info(T('Create Snapshot'), T('Snapshot successfully taken.'));
+              this.dialogService.report(T('Create Snapshot'), T('Snapshot successfully taken.'), '500px', 'info');
             }
           });
         },
@@ -1348,7 +1349,7 @@ export class VolumesListTableConfig implements InputTableConf {
             this.ws.call('pool.dataset.promote', [row1.id]).subscribe((wsResp) => {
               this.loader.close();
               // Showing info here because there is no feedback on list parent for this if promoted.
-              this.dialogService.Info(T('Promote Dataset'), T('Successfully Promoted ') + row1.id).subscribe((infoResult) => {
+              this.dialogService.report(T('Promote Dataset'), T('Successfully Promoted ') + row1.id, '500px', 'info').subscribe((infoResult) => {
                 this.parentVolumesListComponent.repaintMe();
               });
             }, (res) => {
@@ -1565,8 +1566,9 @@ export class VolumesListTableConfig implements InputTableConf {
                     entityDialog.loader.open();
                     entityDialog.ws.call(method, payload).subscribe((res) => {
                       entityDialog.loader.close();
-                      self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title,
-                        helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2);
+                      self.dialogService.report(helptext.encryption_options_dialog.dialog_saved_title,
+                        helptext.encryption_options_dialog.dialog_saved_message1 + row.id + helptext.encryption_options_dialog.dialog_saved_message2,
+                        '500px', 'info');
                       entityDialog.dialogRef.close();
                       self.parentVolumesListComponent.repaintMe();
                     }, (err) => {
@@ -1597,8 +1599,8 @@ export class VolumesListTableConfig implements InputTableConf {
                       entityDialog.dialogRef.close();
                       self.translate.get(helptext.encryption_options_dialog.dialog_saved_message1).subscribe((msg1) => {
                         self.translate.get(helptext.encryption_options_dialog.dialog_saved_message2).subscribe((msg2) => {
-                          self.dialogService.Info(helptext.encryption_options_dialog.dialog_saved_title,
-                            msg1 + row.id + msg2);
+                          self.dialogService.report(helptext.encryption_options_dialog.dialog_saved_title,
+                            msg1 + row.id + msg2, '500px', 'info');
                           self.parentVolumesListComponent.repaintMe();
                         });
                       });

@@ -54,8 +54,8 @@ export class ActiveDirectoryComponent {
       name: helptext.activedirectory_custactions_clearcache_name,
       function: async () => {
         this.systemGeneralService.refreshDirServicesCache().subscribe((cache_status) => {
-          this.dialogservice.Info(helptext.activedirectory_custactions_clearcache_dialog_title,
-            helptext.activedirectory_custactions_clearcache_dialog_message);
+          this.dialogservice.report(helptext.activedirectory_custactions_clearcache_dialog_title,
+            helptext.activedirectory_custactions_clearcache_dialog_message, '500px', 'info');
         });
       },
     },
@@ -101,7 +101,7 @@ export class ActiveDirectoryComponent {
                   that.entityEdit.formGroup.controls['enable'].setValue(false);
                   that.adStatus = false;
                   that.isCustActionVisible('leave_domain');
-                  that.dialogservice.Info(helptext.ad_leave_domain_dialog.success,
+                  that.dialogservice.report(helptext.ad_leave_domain_dialog.success,
                     helptext.ad_leave_domain_dialog.success_msg, '400px', 'info', true);
                 },
                 (err) => {

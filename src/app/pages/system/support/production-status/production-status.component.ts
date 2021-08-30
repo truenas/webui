@@ -77,7 +77,7 @@ export class ProductionStatusComponent {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe((res) => {
       this.dialogRef.close();
-      this.dialogService.Info(helptext.is_production_dialog.title,
+      this.dialogService.report(helptext.is_production_dialog.title,
         helptext.is_production_dialog.message, '300px', 'info', true);
     });
     this.dialogRef.componentInstance.failure.subscribe((err) => {

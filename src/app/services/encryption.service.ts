@@ -28,7 +28,7 @@ export class EncryptionService {
       admin_password: adminPassphrase,
     }]).subscribe(() => {
       this.loader.close();
-      this.dialogService.Info(T('Set Passphrase'), T(`Passphrase ${success_message} <i>${poolName}</i>`), '300px', 'info', true);
+      this.dialogService.report(T('Set Passphrase'), T(`Passphrase ${success_message} <i>${poolName}</i>`), '300px', 'info', true);
       this.openEncryptDialog(row, route_success, poolName, addRecoveryKey);
     },
     (err) => {
@@ -83,7 +83,7 @@ export class EncryptionService {
           this.loader.open();
           this.ws.call('pool.recoverykey_rm', [parseInt(row), { admin_password: adminPassphrase }]).subscribe(() => {
             this.loader.close();
-            this.dialogService.Info(helptext.delete_recovery_key_title, T(`Recovery key deleted from pool <i>${poolName}</i>`), '300px', 'info', true);
+            this.dialogService.report(helptext.delete_recovery_key_title, T(`Recovery key deleted from pool <i>${poolName}</i>`), '300px', 'info', true);
             this.router.navigate(new Array('/').concat(route_success));
           },
           (err) => {

@@ -94,7 +94,7 @@ export class StorageListComponent {
       ],
     ]).subscribe((res) => {
       if (res[0] && res[0].state == 'up') {
-        this.dialog.Info(T('Delete Mountpoint'), '<i>' + this.jailId + T('</i> cannot be running when deleting a mountpoint.'), '500px', 'info', true);
+        this.dialog.report(T('Delete Mountpoint'), '<i>' + this.jailId + T('</i> cannot be running when deleting a mountpoint.'), '500px', 'info', true);
       } else {
         let deleteMsg = 'Delete Mount Point <b>' + item['source'] + '</b>?';
         this.translate.get(deleteMsg).subscribe((res) => {
@@ -134,7 +134,7 @@ export class StorageListComponent {
       ],
     ]).subscribe((res) => {
       if (res[0] && res[0].state == 'up') {
-        this.dialog.Info(T('Add Mountpoint'), '<i>' + this.jailId + '</i> cannot be running when adding a mountpoint.', '500px', 'info', true);
+        this.dialog.report(T('Add Mountpoint'), '<i>' + this.jailId + '</i> cannot be running when adding a mountpoint.', '500px', 'info', true);
       } else {
         this.router.navigate(new Array('/').concat(this.route_add));
       }

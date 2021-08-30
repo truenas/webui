@@ -113,7 +113,7 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  Info(title: string, info: string, width = '500px', icon = 'report_problem', is_html = false): Observable<boolean> {
+  report(title: string, info: string, width = '500px', icon = 'report_problem', is_html = false): Observable<boolean> {
     const dialogRef = this.dialog.open(InfoDialog, { width });
 
     dialogRef.componentInstance.title = title;

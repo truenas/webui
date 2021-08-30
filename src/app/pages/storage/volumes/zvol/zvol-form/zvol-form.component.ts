@@ -890,7 +890,7 @@ export class ZvolFormComponent implements Formconfiguration {
         });
       } else {
         this.loader.close();
-        this.dialogService.Info(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg);
+        this.dialogService.report(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg);
       }
     });
   }

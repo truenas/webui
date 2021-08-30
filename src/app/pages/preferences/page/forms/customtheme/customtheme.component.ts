@@ -576,7 +576,7 @@ export class CustomThemeComponent implements OnInit, AfterViewInit, OnChanges, O
     }
 
     // Info(T("Deleted Recovery Key"), T("Successfully deleted recovery key for volume ") + row1.name)
-    this.dialog.Info(T('Form Invalid'), T(message)).subscribe((res) => {
+    this.dialog.report(T('Form Invalid'), T(message)).subscribe((res) => {
       // console.log(res);
     });
   }

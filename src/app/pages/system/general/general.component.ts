@@ -586,7 +586,7 @@ export class GeneralComponent implements OnDestroy {
         });
       } else {
         entityDialog.loader.close();
-        parent.dialog.Info(globalHelptext.rootpw.error_title, globalHelptext.rootpw.error_msg, '340px');
+        parent.dialog.report(globalHelptext.rootpw.error_title, globalHelptext.rootpw.error_msg, '340px');
       }
     },
     (err) => {

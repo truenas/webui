@@ -337,7 +337,7 @@ export class DiskListComponent {
         fail_note += `<b>${res[i].disk}</b><br>${res[i].error}<br>`;
       }
     }
-    this.dialogService.Info(
+    this.dialogService.report(
       T('Manual Test Summary'),
       (hasSuccessNote ? success_note + '<br>' : '') + (hasFailNote ? fail_note : ''),
       '600px',

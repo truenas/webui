@@ -165,14 +165,14 @@ export class Services implements OnInit {
     this.busy = this.ws.call(rpc, [service.title]).subscribe((res) => {
       if (res) {
         if (service.state === 'RUNNING' && rpc === 'service.stop') {
-          this.dialog.Info(T('Service failed to stop'),
+          this.dialog.report(T('Service failed to stop'),
             this.name_MAP[service.title] + ' ' + T('service failed to stop.'));
         }
         service.state = 'RUNNING';
         service['onChanging'] = false;
       } else {
         if (service.state === 'STOPPED' && rpc === 'service.start') {
-          this.dialog.Info(T('Service failed to start'),
+          this.dialog.report(T('Service failed to start'),
             this.name_MAP[service.title] + ' ' + T('service failed to start.'));
         }
         service.state = 'STOPPED';

@@ -76,7 +76,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
           if (res) {
             this.encryptionService.deleteRecoveryKey(this.pk, this.admin_pw, this.poolName, this.route_return);
           } else {
-            this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+            this.dialogService.report('Error', 'The administrator password is incorrect.', '340px');
           }
         });
       },
@@ -130,7 +130,7 @@ export class VolumeAddkeyFormComponent implements Formconfiguration {
       if (res) {
         this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_return);
       } else {
-        this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+        this.dialogService.report('Error', 'The administrator password is incorrect.', '340px');
       }
     });
   }

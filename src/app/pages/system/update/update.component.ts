@@ -483,7 +483,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
               }
             });
           } else if (res.status === 'UNAVAILABLE') {
-            this.dialogService.Info(T('Check Now'), T('No updates available.'));
+            this.dialogService.report(T('Check Now'), T('No updates available.'));
           }
         },
         (err) => {
@@ -525,7 +525,7 @@ export class UpdateComponent implements OnInit, OnDestroy {
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.subscribe((succ) => {
             this.dialogRef.close(false);
-            this.dialogService.Info(T('Updates successfully downloaded'), '', '450px', 'info', true);
+            this.dialogService.report(T('Updates successfully downloaded'), '', '450px', 'info', true);
             this.pendingupdates();
           });
           this.dialogRef.componentInstance.failure.subscribe((err) => {

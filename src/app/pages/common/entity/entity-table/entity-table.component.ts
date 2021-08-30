@@ -1017,7 +1017,7 @@ export class EntityTableComponent implements OnInit, AfterViewInit, OnDestroy {
                     }
                   }
                   if (message === '') {
-                    this.dialogService.Info(T('Items deleted'), '', '300px', 'info', true);
+                    this.dialogService.report(T('Items deleted'), '', '300px', 'info', true);
                   } else {
                     message = '<ul>' + message + '</ul>';
                     this.dialogService.errorReport(T('Items Delete Failed'), message);

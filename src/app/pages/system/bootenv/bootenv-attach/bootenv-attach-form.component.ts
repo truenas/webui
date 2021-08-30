@@ -75,7 +75,7 @@ export class BootEnvAttachFormComponent {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.subscribe(() => {
       this.dialogRef.close(true);
-      this.dialogService.Info(helptext_system_bootenv.attach_dialog.title,
+      this.dialogService.report(helptext_system_bootenv.attach_dialog.title,
         `<i>${entityForm.dev}</i> ${helptext_system_bootenv.attach_dialog.message}`, '300px', 'info', true)
         .subscribe(() => {
           this.router.navigate(
