@@ -43,7 +43,7 @@
   right: 3px;
   top: -2px;
 }
-  
+
 .margin-for-error {
   position: relative;
   top: -12px;
@@ -52,4 +52,10 @@
 .textarea-filereader {
   margin-bottom: 20px;
   margin-top: -5px;
+}
+
+.password-field {
+  font-family: text-security-disc;
+  /* Use -webkit-text-security if the browser supports it */
+  -webkit-text-security: disc;
 }
