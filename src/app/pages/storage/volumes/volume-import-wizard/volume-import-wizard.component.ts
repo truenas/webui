@@ -205,7 +205,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     }
   }
 
-  decryptDisks(stepper: any): void {
+  decryptDisks(stepper: MatStepper): void {
     if (this.devices_fg.status === 'INVALID') {
       this.dialogService.info(T('Disk Selection Required'), T('Select one or more disks to decrypt.'));
       return;

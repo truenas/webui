@@ -9,6 +9,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
+import { EntityJobConfig } from 'app/pages/common/entity/entity-job/entity-job-config.interface';
 import { WebSocketService } from 'app/services/';
 
 @UntilDestroy()
@@ -46,7 +47,7 @@ export class EntityJobComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef <EntityJobComponent>,
     private ws: WebSocketService,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: EntityJobConfig,
     protected http: HttpClient,
   ) {}
 
@@ -58,7 +59,7 @@ export class EntityJobComponent implements OnInit {
     if (this.dialogRef.disableClose) {
       this.showCloseButton = false;
     }
-    if (this.data.CloseOnClickOutside) {
+    if (this.data.closeOnClickOutside) {
       this.showCloseButton = true;
       this.dialogRef.disableClose = true;
     }

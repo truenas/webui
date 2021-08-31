@@ -167,13 +167,13 @@ import {
 import { Tunable, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
 import { UpsConfig } from 'app/interfaces/ups-config.interface';
-import { DeleteUserParams, User } from 'app/interfaces/user.interface';
+import { DeleteUserParams, User, UserUpdate } from 'app/interfaces/user.interface';
 import {
   VirtualMachine, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
   VmDisplayWebUriParams,
   VmStopParams,
 } from 'app/interfaces/virtual-machine.interface';
-import { VmDevice } from 'app/interfaces/vm-device.interface';
+import { VmDevice, VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
 import { CloneZfsSnapshot, ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
@@ -808,7 +808,7 @@ export type ApiDirectory = {
   'vm.update': { params: any; response: any };
   'vm.poweroff': { params: [id: number]; response: void };
   'vm.restart': { params: [id: number]; response: void };
-  'vm.get_display_devices': { params: [id: number]; response: any };
+  'vm.get_display_devices': { params: [id: number]; response: VmDisplayDevice[] };
   'vm.start': { params: [id: number]; response: void };
 
   // Vmware
@@ -820,7 +820,7 @@ export type ApiDirectory = {
   'vmware.match_datastores_with_datasets': { params: any; response: any };
 
   // User
-  'user.update': { params: any; response: any };
+  'user.update': { params: [id: number, update: UserUpdate]; response: number };
   'user.create': { params: any; response: any };
   'user.query': { params: QueryParams<User>; response: User[] };
   'user.set_root_password': { params: [password: string]; response: void };

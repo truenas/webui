@@ -754,7 +754,7 @@ export class VMWizardComponent implements WizardConfiguration {
       this.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
         this.getFormControlFromFieldName('iso_path').setValue(message);
       });
-      const grub = this.bootloader.options.find((option: any) => option.value === VmBootloader.Grub);
+      const grub = this.bootloader.options.find((option) => option.value === VmBootloader.Grub);
       const grubIndex = this.bootloader.options.indexOf(grub);
       if (res === 'Windows') {
         if (grub) {
