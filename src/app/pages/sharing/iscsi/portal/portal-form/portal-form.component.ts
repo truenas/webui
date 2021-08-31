@@ -172,7 +172,7 @@ export class PortalFormComponent implements FormConfiguration {
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       for (let i = 0; i < accessRecords.length; i++) {
         if (_.find(this.authgroup_field.options, { value: accessRecords[i].tag }) == undefined) {
-          this.authgroup_field.options.push({ label: accessRecords[i].tag, value: accessRecords[i].tag });
+          this.authgroup_field.options.push({ label: String(accessRecords[i].tag), value: accessRecords[i].tag });
         }
       }
     });

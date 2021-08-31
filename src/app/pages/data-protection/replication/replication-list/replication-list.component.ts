@@ -7,12 +7,12 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
-import { ReplicationTask } from 'app/interfaces/replication-task.interface';
+import { ReplicationTask, ReplicationTaskUi } from 'app/interfaces/replication-task.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
@@ -100,22 +100,24 @@ export class ReplicationListComponent implements EntityTableConfig {
     });
   }
 
-  resourceTransformIncomingRestData(tasks: any[]): ReplicationTask[] {
+  resourceTransformIncomingRestData(tasks: ReplicationTask[]): ReplicationTaskUi[] {
     return tasks.map((task) => {
-      task.ssh_connection = task.ssh_credentials ? task.ssh_credentials.name : '-';
-      task.task_last_snapshot = task.state.last_snapshot ? task.state.last_snapshot : T('No snapshots sent yet');
-      return task;
+      return {
+        ...task,
+        ssh_connection: task.ssh_credentials ? (task.ssh_credentials as any).name : '-',
+        task_last_snapshot: task.state.last_snapshot ? task.state.last_snapshot : T('No snapshots sent yet'),
+      };
     });
   }
 
-  getActions(parentrow: any): any[] {
+  getActions(parentrow: ReplicationTaskUi): EntityTableAction[] {
     return [
       {
         id: parentrow.name,
         icon: 'play_arrow',
         name: 'run',
         label: T('Run Now'),
-        onClick: (row: any) => {
+        onClick: (row: ReplicationTaskUi) => {
           this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
             if (res) {
               row.state = { state: JobState.Running };
@@ -142,11 +144,12 @@ export class ReplicationListComponent implements EntityTableConfig {
         },
       },
       {
-        actionName: parentrow.description,
+        actionName: (parentrow as any).description,
         id: 'restore',
+        name: 'restore',
         label: T('Restore'),
         icon: 'restore',
-        onClick: (row: any) => {
+        onClick: (row: ReplicationTaskUi) => {
           const parent = this;
           const conf: DialogFormConfiguration = {
             title: helptext.replication_restore_dialog.title,
@@ -193,7 +196,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         icon: 'edit',
         name: 'edit',
         label: T('Edit'),
-        onClick: (row: any) => {
+        onClick: (row: ReplicationTaskUi) => {
           this.doEdit(row.id);
         },
       },
@@ -202,18 +205,18 @@ export class ReplicationListComponent implements EntityTableConfig {
         icon: 'delete',
         name: 'delete',
         label: T('Delete'),
-        onClick: (row: any) => {
+        onClick: (row: ReplicationTaskUi) => {
           this.entityList.doDelete(row);
         },
       },
     ];
   }
 
-  onButtonClick(row: any): void {
+  onButtonClick(row: ReplicationTaskUi): void {
     this.stateButton(row);
   }
 
-  stateButton(row: any): void {
+  stateButton(row: ReplicationTaskUi): void {
     if (row.job) {
       if (row.state.state === JobState.Running) {
         this.entityList.runningStateButton(row.job.id);
@@ -233,7 +236,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     }
   }
 
-  onCheckboxChange(row: any): void {
+  onCheckboxChange(row: ReplicationTaskUi): void {
     this.ws.call('replication.update', [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         row.enabled = res.enabled;

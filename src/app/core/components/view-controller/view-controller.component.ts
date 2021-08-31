@@ -9,12 +9,6 @@ import { CoreServiceInjector } from 'app/core/services/core-service-injector';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 
-export interface ViewConfig {
-  componentName: any;
-  componentData: any;
-  controller?: Subject<any>;
-}
-
 @Component({
   selector: 'viewcontroller',
   template: `

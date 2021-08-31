@@ -1,6 +1,8 @@
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
+import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
+import { FormSelectOption } from 'app/pages/common/entity/entity-form/models/form-select-option.interface';
 import { RelationGroup } from './field-relation.interface';
 
 export enum UnitType {
@@ -156,7 +158,7 @@ export interface FormSelectConfig<P = any> extends BaseFieldConfig<P> {
   inlineLabel?: string;
   multiple?: boolean;
   onChangeOption?(data: any): void;
-  options?: any[];
+  options?: FormSelectOption[];
 }
 
 export interface FormSelectionListConfig<P = any> extends BaseFieldConfig<P> {
@@ -192,7 +194,7 @@ export interface FormUploadConfig<P = any> extends BaseFieldConfig<P> {
   hideButton?: boolean;
   message?: any;
   rootSelectable?: boolean;
-  updater?: any;
+  updater?: (uploadComponent: FormUploadComponent, parent: P) => void;
 }
 
 export interface FormToggleButtonConfig<P = any> extends BaseFieldConfig<P> {

@@ -327,13 +327,13 @@ export class GeneralSettingsComponent implements OnInit {
     }
   }
 
-  uploadConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
+  uploadConfigSubmit(entityDialog: EntityDialogComponent<GeneralSettingsComponent>): void {
     const config: FormUploadConfig = entityDialog.conf.fieldConfig[0];
-    const parent = config.parent;
+    const parent: GeneralSettingsComponent = config.parent;
     const formData: FormData = new FormData();
 
     const dialogRef = parent.mdDialog.open(EntityJobComponent,
-      { data: { title: helptext.config_upload.title, CloseOnClickOutside: false } });
+      { data: { title: helptext.config_upload.title, closeOnClickOutside: false } });
     dialogRef.componentInstance.setDescription(helptext.config_upload.message);
     formData.append('data', JSON.stringify({
       method: 'config.upload',
@@ -345,7 +345,7 @@ export class GeneralSettingsComponent implements OnInit {
       dialogRef.close();
       parent.router.navigate(['/others/reboot']);
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }

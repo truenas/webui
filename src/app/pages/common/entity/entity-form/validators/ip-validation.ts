@@ -167,7 +167,7 @@ export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all'): Validator
     if (thisControl.value.length > 1) {
       if (type === 'all') {
         if (!checkIp('ipv4') || !checkIp('ipv6')) {
-          return { ip: true, info: error as any };
+          return { ip: true, info: error };
         }
       } else if (!checkIp(type)) {
         return { ip: true, info: error };

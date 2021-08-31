@@ -217,7 +217,7 @@ export class TargetFormComponent implements FormConfiguration {
           const tags = _.uniq(accessRecords.map((item) => item.tag));
           authGroupField.options.push({ label: 'None', value: null });
           for (const tag of tags) {
-            authGroupField.options.push({ label: tag, value: tag });
+            authGroupField.options.push({ label: String(tag), value: tag });
           }
           resolve(true);
         },

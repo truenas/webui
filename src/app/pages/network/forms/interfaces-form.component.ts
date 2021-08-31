@@ -414,11 +414,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.failover_group = _.find(this.fieldConfig, { name: 'failover_group' });
     this.failover_vhid = _.find(this.fieldConfig, { name: 'failover_vhid' });
     for (let i = 1; i <= 32; i++) {
-      this.failover_group.options.push({ label: i, value: i });
+      this.failover_group.options.push({ label: String(i), value: i });
     }
 
     for (let i = 1; i <= 255; i++) {
-      this.failover_vhid.options.push({ label: i, value: i });
+      this.failover_vhid.options.push({ label: String(i), value: i });
     }
 
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
