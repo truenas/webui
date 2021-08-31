@@ -10,7 +10,7 @@ import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -301,9 +301,9 @@ export class UserFormComponent implements FormConfiguration {
   ];
 
   private shells: Option[];
-  private shell: FieldConfig;
-  private group: FieldConfig;
-  private groups: FieldConfig;
+  private shell: FormSelectConfig;
+  private group: FormSelectConfig;
+  private groups: FormSelectConfig;
   private password_disabled: AbstractControl;
 
   constructor(protected router: Router,

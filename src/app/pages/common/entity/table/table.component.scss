@@ -84,3 +84,12 @@ div.view-more-row:hover {
   font-size: 1.5rem;
   vertical-align: middle;
 }
+
+button div.label-warning-icon {
+  display: inline;
+}
+
+button div.label-warning-icon .mat-icon {
+  font-size: 14px;
+  margin: 0;
+}

@@ -13,7 +13,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -128,7 +128,7 @@ export class GuiFormComponent implements FormConfiguration {
     },
   ];
 
-  private ui_certificate: FieldConfig;
+  private ui_certificate: FormSelectConfig;
   private addresses: string[];
   private v6addresses: string[];
   private http_port: number;
@@ -219,7 +219,7 @@ export class GuiFormComponent implements FormConfiguration {
         entityEdit.formGroup.controls['ui_certificate'].setValue(this.configData.ui_certificate.id.toString());
       });
 
-    const httpsprotocolsField = this.fieldSets
+    const httpsprotocolsField: FormSelectConfig = this.fieldSets
       .find((set) => set.name === helptext.stg_fieldset_gui)
       .config.find((config) => config.name === 'ui_httpsprotocols');
 
@@ -236,18 +236,20 @@ export class GuiFormComponent implements FormConfiguration {
     this.sysGeneralService
       .ipChoicesv4()
       .pipe(untilDestroyed(this)).subscribe((ips) => {
-        this.fieldSets
+        const config: FormSelectConfig = this.fieldSets
           .find((set) => set.name === helptext.stg_fieldset_gui)
-          .config.find((config) => config.name === 'ui_address').options = ips;
+          .config.find((config) => config.name === 'ui_address');
+        config.options = ips;
         entityEdit.formGroup.controls['ui_address'].setValue(this.configData.ui_address);
       });
 
     this.sysGeneralService
       .ipChoicesv6()
       .pipe(untilDestroyed(this)).subscribe((v6Ips) => {
-        this.fieldSets
+        const config: FormSelectConfig = this.fieldSets
           .find((set) => set.name === helptext.stg_fieldset_gui)
-          .config.find((config) => config.name === 'ui_v6address').options = v6Ips;
+          .config.find((config) => config.name === 'ui_v6address');
+        config.options = v6Ips;
         entityEdit.formGroup.controls['ui_v6address'].setValue(this.configData.ui_v6address);
       });
 

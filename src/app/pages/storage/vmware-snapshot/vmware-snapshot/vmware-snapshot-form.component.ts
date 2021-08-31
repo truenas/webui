@@ -9,7 +9,7 @@ import helptext from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services';
@@ -32,7 +32,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
   formGroup: FormGroup;
 
   protected entityForm: EntityFormComponent;
-  private datastore: FieldConfig;
+  private datastore: FormSelectConfig;
   private datastoreList: any[];
   private dataListComplete: any[];
   private fileSystemList: any[];
@@ -244,7 +244,8 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
         parent.loader.open();
         parent.ws.call('vmware.match_datastores_with_datasets', [payload]).pipe(untilDestroyed(parent)).subscribe((res: any) => {
           res.filesystems.forEach((filesystem_item: any) => {
-            _.find(parent.fieldConfig, { name: 'filesystem' })['options'].push(
+            const config: FormSelectConfig = _.find(parent.fieldConfig, { name: 'filesystem' });
+            config.options.push(
               {
                 label: filesystem_item.name, value: filesystem_item.name,
               },

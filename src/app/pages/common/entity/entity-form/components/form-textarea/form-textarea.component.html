@@ -6,7 +6,7 @@
       {{config.placeholder | translate}}
       <span *ngIf="config.required">*</span>
     </label>
-    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>
+    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
   </div>
 
   <div class="full-width">
