@@ -73,7 +73,7 @@ def the_edit_acl_page_should_open(driver):
     assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
 
 
-@then('click on Add ACL Item, click on select User, User input should appear, enter "{input}" and select "{user}"')
+@then(parsers.parse('click on Add ACL Item, click on select User, User input should appear, enter "{input}" and select "{user}"'))
 def click_on_add_acl_item_click_on_select_user_user_input_should_appear_enter_eric_and_select_ericbsd(driver, input, user):
     """click on Add ACL Item, click on select User, User input should appear, enter "{input}" and select "{user}"."""
     time.sleep(1)
