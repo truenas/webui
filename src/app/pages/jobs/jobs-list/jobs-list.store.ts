@@ -5,20 +5,32 @@ import { EMPTY, Observable } from 'rxjs';
 import {
   catchError, map, take, takeUntil,
 } from 'rxjs/operators';
-import { JobsManagerState } from 'app/components/common/dialog/jobs-manager/interfaces/jobs-manager-state.interface';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
 
-const initialState: JobsManagerState = {
+export enum JobTab {
+  All,
+  Active,
+  Failed,
+}
+
+interface JobsListState {
+  currentTab: JobTab;
+  isLoading: boolean;
+  jobs: Job[];
+}
+
+const initialState: JobsListState = {
+  currentTab: JobTab.All,
   isLoading: false,
   jobs: [],
 };
 
 @UntilDestroy()
 @Injectable()
-export class JobsListStore extends ComponentStore<JobsManagerState> {
+export class JobsListStore extends ComponentStore<JobsListState> {
   private jobs: Job[] = [];
 
   constructor(private ws: WebSocketService, private dialog: DialogService) {
@@ -69,17 +81,19 @@ export class JobsListStore extends ComponentStore<JobsManagerState> {
   }
 
   selectAllJobs(): void {
-    this.patchState({ jobs: this.jobs });
+    this.patchState({ currentTab: JobTab.All, jobs: this.jobs });
   }
 
   selectRunningJobs(): void {
     this.patchState({
+      currentTab: JobTab.Active,
       jobs: this.jobs.filter((job) => job.state === JobState.Running),
     });
   }
 
   selectFailedJobs(): void {
     this.patchState({
+      currentTab: JobTab.Failed,
       jobs: this.jobs.filter((job) => job.state === JobState.Failed),
     });
   }
@@ -87,21 +101,45 @@ export class JobsListStore extends ComponentStore<JobsManagerState> {
   remove(job: Job): void {
     this.ws
       .call('core.job_abort', [job.id])
-      .pipe(takeUntil(this.destroy$))
+      .pipe(take(1), takeUntil(this.destroy$))
       .subscribe(() => {
         this.jobs = this.jobs.filter((item) => item.id !== job.id);
         this.patchState({ jobs: this.jobs });
       });
   }
 
-  handleUpdate(job: Job): void {
+  handleInternalUpdate(job: Job): void {
     const jobIndex = this.jobs.findIndex((item) => item.id === job.id);
+
     if (jobIndex === -1) {
-      this.jobs.push(job);
+      this.jobs = [job, ...this.jobs];
     } else {
       this.jobs[jobIndex] = job;
     }
+  }
 
-    this.patchState({ jobs: this.jobs });
+  handleUpdate(job: Job): void {
+    this.handleInternalUpdate(job);
+
+    this.patchState((state) => {
+      switch (state.currentTab) {
+        case JobTab.Failed:
+          return {
+            ...state,
+            jobs: this.jobs.filter((job) => job.state === JobState.Failed),
+          };
+        case JobTab.Active:
+          return {
+            ...state,
+            jobs: this.jobs.filter((job) => job.state === JobState.Running),
+          };
+        case JobTab.All:
+        default:
+          return {
+            ...state,
+            jobs: this.jobs,
+          };
+      }
+    });
   }
 }

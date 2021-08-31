@@ -28,7 +28,7 @@
   </div>
   <div *ngIf="!description">
     <span *ngIf="altMessage" [innerHTML]="altMessage"></span>
-    <span *ngIf="!altMessage">{{ 'Starting job...' | translate }}</span>
+    <span *ngIf="!altMessage">{{ 'Fetching data...' | translate }}</span>
   </div>
   <div *ngIf="showRealtimeLogs && realtimeLogs">
     <h5>{{ 'Logs' | translate }}</h5>
