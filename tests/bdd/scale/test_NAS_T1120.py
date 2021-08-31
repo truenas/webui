@@ -67,7 +67,7 @@ def click_storage_on_the_side_menu_and_click_on_the_tank_acl_dataset_3_dots_butt
 
 
 @then('the Edit ACL page should open')
-def the_edit_acl_page_should_open():
+def the_edit_acl_page_should_open(driver):
     """the Edit ACL page should open."""
     time.sleep(2)
     assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
