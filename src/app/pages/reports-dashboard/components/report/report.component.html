@@ -3,7 +3,7 @@
     <mat-card *ngIf="ready" class="front" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="space-between stretch">
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
         <mat-card-title fxFlex="65%">
-          <h3>
+          <h3 class="mat-card-title-text">
             {{reportTitle}}
             <span *ngIf="multipathTitle">
               {{multipathTitle}}
@@ -36,11 +36,9 @@
           </div>
         </div>
       </mat-toolbar-row>
-      <!-- <mat-divider></mat-divider>-->
 
         <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
 
-          <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
           <!-- Chart -->
           <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
             <div class="chart-wrapper" >
@@ -66,10 +64,10 @@
               <div >
                 <span *ngIf="data && legendData">
                   <h4>
-                    <strong>Start:</strong>
-                    <span style="font-weight:normal;">&nbsp;&nbsp;{{startTime}}</span>
+                    <strong>{{ 'Start' | translate }}:</strong>
+                    <span style="font-weight: normal;">&nbsp;&nbsp;{{startTime}}</span>
                     <br ngClass.gt-sm="hidden">
-                    <span style="margin-left:0px;" class="text-small"> ({{timezone}})</span>
+                    <span style="margin-left: 0;" class="text-small"> ({{timezone}})</span>
                   </h4>
                 </span>
               </div>
@@ -79,10 +77,10 @@
               <div >
                 <span *ngIf="data && legendData">
                   <h4>
-                    <strong>End:</strong>
-                    <span style="font-weight:normal;">&nbsp;&nbsp;{{endTime}}</span>
+                    <strong>{{ 'End' | translate }}:</strong>
+                    <span style="font-weight: normal;">&nbsp;&nbsp;{{ endTime }}</span>
                     <br ngClass.gt-sm="hidden">
-                    <span style="opacity:0;" class="text-small"> ({{timezone}})</span>
+                    <span style="opacity: 0;" class="text-small"> ({{ timezone }})</span>
                   </h4>
                 </span>
               </div>
@@ -97,10 +95,10 @@
             <div >
               <span *ngIf="data && legendData && legendData.xHTML">
                 <h4>
-                  <strong>Time:</strong>
-                  <span *ngIf="legendData && legendData.xHTML" style="font-weight:normal;">
+                  <strong>{{ 'Time' | translate }}:</strong>
+                  <span *ngIf="legendData && legendData.xHTML" style="font-weight: normal;">
                     &nbsp;&nbsp;
-                    {{legendData.xHTML}}
+                    {{ legendData.xHTML }}
                   </span>
                 </h4>
               </span>
@@ -111,10 +109,10 @@
             <table class="legend-table">
               <!-- Table Header-->
               <tr class="legend-group header">
-                <th class="legend-label"><strong>Key</strong></th>
+                <th class="legend-label"><strong>{{ 'Key' | translate }}</strong></th>
                 <ng-container *ngIf="data && data.aggregations">
                   <th class="legend-label" *ngFor="let key of aggregationKeys">
-                    <strong>{{key}}</strong>
+                    <strong>{{ key }}</strong>
                   </th>
                 </ng-container>
               </tr>
@@ -133,19 +131,19 @@
 
                     <span *ngIf="legendData && legendData.series">
                       <span  class="tooltip-value" >
-                         <span style="font-weight:normal;"> : {{legendData.series[i].yHTML}}</span>
+                         <span style="font-weight: normal;"> : {{legendData.series[i].yHTML}}</span>
                       </span>
                     </span>
                   </td>
 
                 <!-- Aggregations -->
                 <ng-container *ngIf="data && data.aggregations">
-                  <td style="opacity:0.75; border:red;"
+                  <td style="border: var(--red);opacity: 0.75;"
                     *ngFor="let key of aggregationKeys"
                     class="report-analytics" >
 
                     <span>
-                      {{data.aggregations[key][i] ? data.aggregations[key][i] : 'null'}}
+                      {{ data.aggregations[key][i] ? data.aggregations[key][i] : 'null' }}
                     </span>
 
                   </td>
@@ -157,7 +155,7 @@
             <ng-container *ngIf="report?.stacked_show_total && legendData?.stackedTotalHTML">
               <div class="legend-timestamp" fxFlex="32px">
                 <h4>
-                  <strong>Total:</strong> 
+                  <strong>{{ 'Total' | translate }}:</strong>
                   <span>
                     &nbsp;&nbsp;
                     {{legendData.stackedTotalHTML}}
