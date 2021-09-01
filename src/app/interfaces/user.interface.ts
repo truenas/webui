@@ -15,7 +15,7 @@ export interface User {
   locked: boolean;
   sudo: boolean;
   sudo_nopasswd: boolean;
-  sudo_commands: { [property: string]: any }[];
+  sudo_commands: string[];
   microsoft_account: boolean;
   attributes: { preferences: Preferences };
   email: string;
@@ -41,3 +41,25 @@ export type DeleteUserParams = [
   id: number,
   params: { delete_group: boolean },
 ];
+
+export interface UserUpdate {
+  uid?: number;
+  username?: string;
+  group?: string;
+  home?: string;
+  home_mode?: string;
+  shell?: string;
+  full_name?: string;
+  email?: string;
+  password?: string;
+  password_disabled?: boolean;
+  locked?: boolean;
+  microsoft_account?: boolean;
+  smb?: boolean;
+  sudo?: boolean;
+  sudo_nopasswd?: boolean;
+  sudo_commands?: string[];
+  sshpubkey?: string;
+  groups?: string;
+  attributes?: Record<string, unknown>;
+}

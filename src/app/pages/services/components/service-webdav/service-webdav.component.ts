@@ -127,12 +127,12 @@ export class ServiceWebdavComponent implements FormConfiguration {
     this.handleAuth(this.webdav_htauth.value);
     this.webdav_protocol.valueChanges
       .pipe(untilDestroyed(this))
-      .subscribe((value: any) => {
+      .subscribe((value: string) => {
         this.handleProtocol(value);
       });
     this.webdav_htauth.valueChanges
       .pipe(untilDestroyed(this))
-      .subscribe((value: any) => {
+      .subscribe((value: string) => {
         this.handleAuth(value);
       });
 
@@ -148,7 +148,7 @@ export class ServiceWebdavComponent implements FormConfiguration {
     });
   }
 
-  handleProtocol(value: any): void {
+  handleProtocol(value: string): void {
     if (value === 'HTTP') {
       this.webdav_tcpport['isHidden'] = false;
       this.webdav_tcpportssl['isHidden'] = true;
@@ -164,7 +164,7 @@ export class ServiceWebdavComponent implements FormConfiguration {
     }
   }
 
-  handleAuth(value: any): void {
+  handleAuth(value: string): void {
     if (value === 'NONE') {
       this.entityForm.setDisabled('password', true, true);
       this.entityForm.setDisabled('password2', true, true);

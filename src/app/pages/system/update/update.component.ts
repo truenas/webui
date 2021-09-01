@@ -621,7 +621,7 @@ export class UpdateComponent implements OnInit {
 
     entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
       .pipe(untilDestroyed(entityDialog.parent)).subscribe(
-        (succ: any) => {
+        (succ) => {
           const url = succ[1];
           entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
             .pipe(untilDestroyed(entityDialog.parent)).subscribe((file: Blob) => {

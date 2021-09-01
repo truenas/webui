@@ -4,6 +4,7 @@ import { Validators, FormArray, FormGroup } from '@angular/forms';
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
+import { TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';
@@ -979,7 +980,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     });
   }
 
-  getSourceChildren(node: any): Promise<any> {
+  getSourceChildren(node: TreeNode): Promise<any> {
     const fromLocal = this.entityWizard.formArray.get([0]).get('source_datasets_from').value === DatasetSource.Local;
     const sshCredentials = this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value;
 
@@ -1024,7 +1025,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     });
   }
 
-  getTargetChildren(node: any): Promise<any> {
+  getTargetChildren(node: TreeNode): Promise<any> {
     const fromLocal = this.entityWizard.formArray.get([0]).get('target_dataset_from').value === DatasetSource.Local;
     const sshCredentials = this.entityWizard.formArray.get([0]).get('ssh_credentials_target').value;
     if (fromLocal) {

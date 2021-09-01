@@ -17,25 +17,6 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
 
-interface DisplayDeviceAttributes {
-  bind: string;
-  password: string;
-  port: number;
-  password_configured: boolean;
-  resolution: string;
-  type: string;
-  wait: boolean;
-  web: boolean;
-}
-
-interface Device {
-  attributes: DisplayDeviceAttributes;
-  dtype: string;
-  id: number;
-  order: number;
-  vm: number;
-}
-
 @UntilDestroy()
 @Component({
   selector: 'app-device-edit',
@@ -497,7 +478,7 @@ export class DeviceEditComponent implements OnInit {
           case VmDeviceType.Display:
             this.activeFormGroup = this.displayFormGroup;
             this.isCustActionVisible = false;
-            this.ws.call('vm.get_display_devices', [this.vmId]).pipe(untilDestroyed(this)).subscribe((devices: Device[]) => {
+            this.ws.call('vm.get_display_devices', [this.vmId]).pipe(untilDestroyed(this)).subscribe((devices) => {
               if (devices.length > 1) {
                 _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
               }

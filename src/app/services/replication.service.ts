@@ -20,7 +20,7 @@ export class ReplicationService {
     return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
   }
 
-  getRemoteDataset(transport: any, sshCredentials: string, parentComponent: any): Promise<any> {
+  getRemoteDataset(transport: string, sshCredentials: string, parentComponent: any): Promise<any> {
     const queryParams = [transport];
     if (transport !== 'LOCAL') {
       queryParams.push(sshCredentials);

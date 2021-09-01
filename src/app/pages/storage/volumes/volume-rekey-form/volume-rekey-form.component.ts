@@ -84,7 +84,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
     return data;
   }
 
-  pk: any;
+  pk: string;
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
