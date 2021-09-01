@@ -107,10 +107,6 @@ export default {
 
   kubForm: {
     title: T('Kubernetes Settings'),
-    pool: {
-      placeholder: T('Pool'),
-      tooltip: T('Choose a pool for the Apps'),
-    },
     reInit: {
       title: T('Settings Requiring Re-Initialization'),
       formWarning: T('Changing settings below will result in Kubernetes cluster re-initialization deleting installed apps and their data.'),
