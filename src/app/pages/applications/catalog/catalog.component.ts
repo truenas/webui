@@ -408,7 +408,7 @@ export class CatalogComponent implements OnInit {
   syncAll(): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.installing,
+        title: helptext.refreshing,
       },
     });
     dialogRef.componentInstance.openJobsManagerOnClose = true;
