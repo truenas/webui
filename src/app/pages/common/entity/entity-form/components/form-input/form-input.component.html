@@ -14,7 +14,9 @@
 			<p>{{'Enter' | translate}} <strong>{{config.maskValue}}</strong> {{'below to confirm.' | translate}}</p>
 			<p [ngStyle]="{'position': 'relative', 'top':'15px', 'opacity': '.38'}">{{config.maskValue}}</p>
 		</div>
-		<input matInput [type]="config.inputType ? config.inputType : 'text'"
+		<input matInput
+      [type]="config.inputType && config.inputType != 'password' ? config.inputType : 'text'"
+      [class.password-field]="config.inputType == 'password'"
 			[placeholder]="config.placeholder | translate"
 			[attr.value]="config.value"
 			[formControlName]="config.name"
