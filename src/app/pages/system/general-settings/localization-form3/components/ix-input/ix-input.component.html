@@ -1,0 +1,7 @@
+<mat-form-field class="full-width" appearance="fill">
+  <mat-label>{{ label }}</mat-label>
+  <span *ngIf="prefixText" matPrefix>{{prefixText}} &nbsp;</span>
+  <input matInput [placeholder]="placeholder" [value]="value">
+  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+  <mat-icon *ngIf="suffixIcon" (click)="suffixIconClick()" matSuffix>{{suffixIcon}}</mat-icon>
+</mat-form-field>

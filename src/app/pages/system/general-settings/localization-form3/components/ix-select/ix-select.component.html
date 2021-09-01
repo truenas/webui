@@ -1,0 +1,7 @@
+<mat-form-field class="full-width" appearance="fill">
+  <mat-label>{{label}}</mat-label>
+  <mat-select [value]="value">
+    <mat-option *ngFor="let option of options" value="option.value">{{option.label}}</mat-option>
+  </mat-select>
+  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+</mat-form-field>
