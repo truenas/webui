@@ -136,7 +136,6 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   }
 
   customSubmit(data: any): void {
-    const apiCall = this.addCall;
     delete data.version;
 
     data = new EntityUtils().remapAppSubmitData(data);
@@ -155,7 +154,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
         title: helptext.installing,
       },
     });
-    this.dialogRef.componentInstance.setCall(apiCall, payload);
+    this.dialogRef.componentInstance.setCall(this.addCall, payload);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
