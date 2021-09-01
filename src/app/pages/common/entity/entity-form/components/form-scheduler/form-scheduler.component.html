@@ -78,7 +78,7 @@
             <div class="preview-label">
               <h4 class="preview-label"><span *ngIf="!config.noMinutes">
                   Minutes/</span>Hours/Days
-                  <tooltip [header]="config.noMinutes ? helptext.scheduler.general.headerWithoutMinutes : helptext.scheduler.general.header" [message]="helptext.scheduler.general.tooltip"></tooltip>
+                <tooltip [header]="config.noMinutes ? helptext.scheduler.general.headerWithoutMinutes : helptext.scheduler.general.header" [message]="helptext.scheduler.general.tooltip"></tooltip>
               </h4>
             </div>
             <div id="no-spaces">({{"Separate values with commas, and without spaces." | translate}})</div>
