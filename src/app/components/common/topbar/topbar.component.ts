@@ -477,7 +477,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     } else {
       this.isTaskMangerOpened = true;
       this.taskDialogRef = this.dialog.open(JobsManagerComponent, {
-        disableClose: false,
         width: '400px',
         hasBackdrop: true,
         panelClass: 'topbar-panel',
@@ -501,7 +500,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     } else {
       this.isDirServicesMonitorOpened = true;
       this.dirServicesMonitor = this.dialog.open(DirectoryServicesMonitorComponent, {
-        disableClose: false,
         width: '400px',
         hasBackdrop: true,
         position: {
@@ -577,7 +575,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       hideCheckBox: true,
       buttonMsg: T('Continue'),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') }, disableClose: false });
+      const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') } });
       dialogRef.componentInstance.setCall('failover.upgrade_finish');
       dialogRef.componentInstance.disableProgressValue(true);
       dialogRef.componentInstance.submit();
@@ -770,7 +768,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     } else {
       this.isTcStatusOpened = true;
       this.tcStatusDialogRef = this.dialog.open(TruecommandComponent, {
-        disableClose: false,
         width: '400px',
         hasBackdrop: true,
         position: {

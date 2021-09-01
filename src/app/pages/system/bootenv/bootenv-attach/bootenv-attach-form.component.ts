@@ -11,6 +11,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { WebSocketService, DialogService } from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -74,7 +75,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
   }
 
   customSubmit(entityForm: { dev: string; expand: boolean }): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Attach Device' }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Attach Device') }, disableClose: true });
     this.dialogRef.componentInstance.setDescription('Attaching Device...');
     this.dialogRef.componentInstance.setCall('boot.attach', [entityForm.dev, { expand: entityForm.expand }]);
     this.dialogRef.componentInstance.submit();

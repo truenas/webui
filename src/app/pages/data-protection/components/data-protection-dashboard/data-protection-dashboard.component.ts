@@ -955,7 +955,6 @@ export class DataProtectionDashboardComponent implements OnInit {
   runningStateButton(jobId: number): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: { title: this.translate.instant(helptext.task_is_running) },
-      disableClose: false,
     });
     dialogRef.componentInstance.jobId = jobId;
     dialogRef.componentInstance.wsshow();

@@ -152,10 +152,8 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (
-          helptext.installing),
+        title: helptext.installing,
       },
-      disableClose: true,
     });
     this.dialogRef.componentInstance.setCall(apiCall, payload);
     this.dialogRef.componentInstance.submit();

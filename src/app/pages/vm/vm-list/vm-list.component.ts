@@ -277,7 +277,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   doRowAction(row: VirtualMachineRow, method: ApiMethod, params: any[] = [row.id], updateTable = false): void {
     if (method === 'vm.stop') {
       this.dialogRef = this.dialog.open(EntityJobComponent,
-        { data: { title: T('Stopping ' + row.name) }, disableClose: false });
+        { data: { title: this.translate.instant('Stopping {rowName}', { rowName: row.name }) } });
       this.dialogRef.componentInstance.setCall(method, [params[0], params[1]]);
       this.dialogRef.componentInstance.submit();
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
