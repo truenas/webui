@@ -1,5 +1,12 @@
-<div id="{{config.name}}" class="dynamic-field form-textarea form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
-  ix-auto ix-auto-type="textarea" ix-auto-identifier="{{config.placeholder}}">
+<div
+  *ngIf="!config['isHidden']"
+  id="{{config.name}}"
+  class="dynamic-field form-textarea form-element"
+  [formGroup]="group"
+  [ngClass]="fieldShow"
+  [class.has-tooltip]="config.tooltip"
+  ix-auto ix-auto-type="textarea" ix-auto-identifier="{{config.placeholder}}"
+>
 
   <div class="label-container">
     <label class="label text-input">
@@ -10,12 +17,12 @@
   </div>
 
   <div class="full-width">
-    <textarea 
-      [formControlName]="config.name" 
-      [rows]="config.textAreaRows || 4" 
-      [ngClass]="config.class" 
-      [required]="config.required" 
-      [readonly]="config.readonly" 
+    <textarea
+      [formControlName]="config.name"
+      [rows]="config.textAreaRows || 4"
+      [ngClass]="config.class"
+      [required]="config.required"
+      [readonly]="config.readonly"
       (blur)='blurEvent()'
       (paste)="onPaste($event)"
       (input)="onInput()">
@@ -29,7 +36,7 @@
         </button>
       </div>
     </div>
-    
+
   </div>
   <div class="margin-for-error">
     <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>

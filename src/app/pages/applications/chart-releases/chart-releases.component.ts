@@ -297,7 +297,6 @@ export class ChartReleasesComponent implements OnInit {
           appInfo: catalogApp,
           upgradeSummary: res,
         } as ChartUpgradeDialogConfig,
-        disableClose: false,
       });
       dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((version) => {
         if (!version) {
@@ -339,7 +338,6 @@ export class ChartReleasesComponent implements OnInit {
       data: {
         title: helptext.charts.rollback_dialog.job,
       },
-      disableClose: true,
     });
     self.dialogRef.componentInstance.setCall('chart.release.rollback', [self.rollbackChartName, payload]);
     self.dialogRef.componentInstance.submit();
@@ -433,7 +431,6 @@ export class ChartReleasesComponent implements OnInit {
               data: {
                 title: helptext.charts.delete_dialog.job,
               },
-              disableClose: true,
             });
             this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
             this.dialogRef.componentInstance.submit();
@@ -461,7 +458,6 @@ export class ChartReleasesComponent implements OnInit {
           data: {
             title: helptext.charts.delete_dialog.job,
           },
-          disableClose: true,
         });
         this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', names.map((item) => [item])]);
         this.dialogRef.componentInstance.submit();
@@ -623,7 +619,6 @@ export class ChartReleasesComponent implements OnInit {
         width: '686px',
         maxWidth: '686px',
         data: catalogApp,
-        disableClose: false,
       });
     }
   }
