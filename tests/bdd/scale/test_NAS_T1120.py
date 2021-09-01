@@ -70,23 +70,12 @@ def click_storage_on_the_side_menu_and_click_on_the_tank_acl_dataset_3_dots_butt
 def the_edit_acl_page_should_open(driver):
     """the Edit ACL page should open."""
     time.sleep(2)
-    assert wait_on_element(driver, 5, '//mat-card-title[text()="Unix Permissions Editor"]')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Set ACL")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Set ACL")]').click()
-    time.sleep(1)
+    assert wait_on_element(driver, 5, '//mat-card-title[contains(text(),"ACL Editor")]')
 
 
 @then(parsers.parse('click on Add ACL Item, click on select User, User input should appear, enter "{input}" and select "{user}"'))
 def click_on_add_acl_item_click_on_select_user_user_input_should_appear_enter_eric_and_select_ericbsd(driver, input, user):
     """click on Add ACL Item, click on select User, User input should appear, enter "{input}" and select "{user}"."""
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Default ACL Options"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Default ACL Options"]').click()
-    time.sleep(1)
-    driver.find_element_by_xpath('//span[contains(text(),"NFS4_OPEN")]').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Continue")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Continue")]').click()
     time.sleep(2)
     assert wait_on_element(driver, 5, '//span[contains(text(),"Add Item")]')
     driver.find_element_by_xpath('//span[contains(text(),"Add Item")]').click()
