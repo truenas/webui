@@ -1,7 +1,6 @@
 <div
   *ngIf="visibleReports && activeReports"
   class="master-container"
-  [ngClass]="{'with-footer-console': isFooterConsoleOpen}"
   lazyViewer
   view=".report"
   fxLayout="row wrap"
@@ -23,7 +22,5 @@
       <div class="bottom-spacer"></div>
     </cdk-virtual-scroll-viewport>
     <!-- /Cards Container -->
-
-    <div [style.height.px]="30" *ngIf="isFooterConsoleOpen"></div>
 </div>
 
