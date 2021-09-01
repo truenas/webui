@@ -2,7 +2,7 @@
   <div class="card-container  front">
     <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content>
-        
+
         <mat-toolbar-row >
           <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>
           <div *ngIf="actionsConfig" class="controls">
@@ -22,7 +22,7 @@
                 <mat-list-item class="widget-launcher clickable" (click)="launchWidget(widget)" *ngIf="widget.rendered" >
                   <span class="label">{{widget.name}}
                     <span *ngIf="widget.identifier && nameFromIdentifier(widget.identifier).length > 0;">: </span>
-                  </span> 
+                  </span>
                   &nbsp;&nbsp;
                   <span *ngIf="widget.identifier && nameFromIdentifier(widget.identifier).length > 0;">{{nameFromIdentifier(widget.identifier) }}</span>
                   <mat-icon class="next-slide">chevron_right</mat-icon>
@@ -31,11 +31,6 @@
             </mat-list>
           </div>
         </div>
-  
-       
-
-      
-     
       </mat-card-content>
     </mat-card>
 
