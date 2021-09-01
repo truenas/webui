@@ -169,6 +169,7 @@ import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-facto
 import { UpsConfig } from 'app/interfaces/ups-config.interface';
 import { DeleteUserParams, User, UserUpdate } from 'app/interfaces/user.interface';
 import {
+  VirtualizationDetails,
   VirtualMachine, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
   VmDisplayWebUriParams,
   VmStopParams,
@@ -810,6 +811,7 @@ export type ApiDirectory = {
   'vm.restart': { params: [id: number]; response: void };
   'vm.get_display_devices': { params: [id: number]; response: VmDisplayDevice[] };
   'vm.start': { params: [id: number]; response: void };
+  'vm.virtualization_details': { params: void; response: VirtualizationDetails };
 
   // Vmware
   'vmware.dataset_has_vms': { params: DatasetHasVmsQueryParams; response: boolean };

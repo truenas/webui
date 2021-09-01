@@ -37,7 +37,7 @@ import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
 @Component({
   selector: 'vm-list',
   template: `
-    <div class="vm-summary">
+    <div class="vm-summary" *ngIf="hasVirtualizationSupport">
         <p *ngIf="availMem"><strong>{{memTitle | translate}}</strong> {{availMem}} - {{memWarning | translate}}</p>
     </div>
     <entity-table [title]='title' [conf]='this'></entity-table>`,
@@ -45,7 +45,7 @@ import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
   providers: [VmService, MessageService],
 })
 export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit {
-  title = 'Virtual Machines';
+  title = T('Virtual Machines');
   queryCall: 'vm.query' = 'vm.query';
   wsDelete: 'vm.delete' = 'vm.delete';
   route_add: string[] = ['vm', 'wizard'];
@@ -53,8 +53,10 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private productType = window.localStorage.getItem('product_type') as ProductType;
   addComponent: VMWizardComponent;
+  hasVirtualizationSupport = false;
+  disableActionsConfig = true;
 
-  entityList: EntityTableComponent;
+  entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
     { name: T('Name'), prop: 'name', always_display: true },
     {
@@ -137,8 +139,23 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   afterInit(entityList: EntityTableComponent): void {
     this.checkMemory();
     this.entityList = entityList;
+
+    this.vmService.getVirtualizationDetails().pipe(untilDestroyed(this)).subscribe((res) => {
+      this.hasVirtualizationSupport = res.supported;
+      this.disableActionsConfig = !this.hasVirtualizationSupport;
+      if (!this.hasVirtualizationSupport) {
+        this.entityList.emptyTableConf = {
+          large: true,
+          icon: 'laptop',
+          title: this.translate.instant('Virtualization is not supported'),
+          message: res.error.replace('INFO: ', ''),
+          button: null,
+        };
+      }
+    });
+
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
-      const changedRow = (this.entityList.rows as VirtualMachineRow[]).find((o) => o.id === event.id);
+      const changedRow = this.entityList.rows.find((o) => o.id === event.id);
       if (event.fields.status.state === ServiceStatus.Running) {
         changedRow.state = ServiceStatus.Running;
         changedRow.status.state = event.fields.status.state;
