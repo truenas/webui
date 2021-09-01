@@ -671,3 +671,8 @@ h3 {
   width: 100%;
   flex-direction: column;
 }
+
+.empty-icon {
+  font-size: 3rem;
+  padding-right: 21px;
+}

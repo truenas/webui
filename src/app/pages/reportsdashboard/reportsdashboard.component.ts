@@ -154,10 +154,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
       this.ws.call('disk.query').subscribe((res) => {
         const noTempDisks = res.filter((disk) => disk.hddstandby !== 'ALWAYS ON' && !disk.hddstandby_force);
+        if (!this.disksWithNoTempGraphs) {
+          this.disksWithNoTempGraphs = {};
+        }
         for (const disk of noTempDisks) {
-          if (!this.disksWithNoTempGraphs) {
-            this.disksWithNoTempGraphs = {};
-          }
           this.disksWithNoTempGraphs[disk.name] = {
             identifiers: [disk.identifier],
             name: disk.name + '-temp',
