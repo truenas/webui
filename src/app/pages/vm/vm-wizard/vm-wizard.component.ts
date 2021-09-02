@@ -850,30 +850,22 @@ export class VMWizardComponent implements WizardConfiguration {
     });
 
     setTimeout(() => {
-      let globalLabel: string;
-      let globalTooltip: string;
-      this.translate.get(helptext.memory_placeholder).pipe(untilDestroyed(this)).subscribe((mem) => {
-        this.translate.get(helptext.global_label).pipe(untilDestroyed(this)).subscribe((gLabel) => {
-          this.translate.get(helptext.global_tooltip).pipe(untilDestroyed(this)).subscribe((gTooltip) => {
-            this.translate.get(helptext.memory_tooltip).pipe(untilDestroyed(this)).subscribe((mem_tooltip) => {
-              this.translate.get(helptext.memory_unit).pipe(untilDestroyed(this)).subscribe((mem_unit) => {
-                globalLabel = gLabel;
-                globalTooltip = gTooltip;
-                _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' }).placeholder = `${mem} ${globalLabel}`;
-                _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' }).tooltip = `${mem_tooltip} ${globalTooltip} ${mem_unit}`;
-              });
-            });
-          });
-        });
-      });
-      this.translate.get(helptext.volsize_placeholder).pipe(untilDestroyed(this)).subscribe((placeholder) => {
-        this.translate.get(helptext.volsize_tooltip).pipe(untilDestroyed(this)).subscribe((tooltip) => {
-          this.translate.get(helptext.volsize_tooltip_B).pipe(untilDestroyed(this)).subscribe((tooltipB) => {
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).placeholder = `${placeholder} ${globalLabel}`;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).tooltip = `${tooltip} ${globalLabel} ${tooltipB}`;
-          });
-        });
-      });
+      const globalLabel = this.translate.instant(helptext.global_label);
+      const globalTooltip = this.translate.instant(helptext.global_tooltip);
+
+      const memoryPlaceholder = this.translate.instant(helptext.memory_placeholder);
+      const memoryTooltip = this.translate.instant(helptext.memory_tooltip);
+      const memoryUnit = this.translate.instant(helptext.memory_unit);
+      const memoryField = _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' });
+      memoryField.placeholder = `${memoryPlaceholder} ${globalLabel}`;
+      memoryField.tooltip = `${memoryTooltip} ${globalTooltip} ${memoryUnit}`;
+
+      const volsizePlaceholder = this.translate.instant(helptext.volsize_placeholder);
+      const volsizeTooltip = this.translate.instant(helptext.volsize_tooltip);
+      const volsizeTooltipB = this.translate.instant(helptext.volsize_tooltip_B);
+      const volsizeField = _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' });
+      volsizeField.placeholder = `${volsizePlaceholder} ${globalLabel}`;
+      volsizeField.tooltip = `${volsizeTooltip} ${globalLabel} ${volsizeTooltipB}`;
     }, 2000);
   }
 
