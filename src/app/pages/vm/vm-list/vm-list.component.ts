@@ -54,7 +54,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   private productType = window.localStorage.getItem('product_type') as ProductType;
   addComponent: VMWizardComponent;
   hasVirtualizationSupport = false;
-  disableActionsConfig = true;
+  disableActionsConfig = false;
 
   entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
@@ -140,15 +140,15 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     this.checkMemory();
     this.entityList = entityList;
 
-    this.vmService.getVirtualizationDetails().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.hasVirtualizationSupport = res.supported;
-      this.disableActionsConfig = !this.hasVirtualizationSupport;
+    this.vmService.getVirtualizationDetails().pipe(untilDestroyed(this)).subscribe((virtualization) => {
+      this.hasVirtualizationSupport = virtualization.supported;
+      this.disableActionsConfig = !virtualization.supported;
       if (!this.hasVirtualizationSupport) {
         this.entityList.emptyTableConf = {
           large: true,
           icon: 'laptop',
           title: this.translate.instant('Virtualization is not supported'),
-          message: res.error.replace('INFO: ', ''),
+          message: virtualization.error.replace('INFO: ', ''),
           button: null,
         };
       }
