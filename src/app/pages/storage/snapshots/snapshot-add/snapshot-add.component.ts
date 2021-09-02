@@ -13,7 +13,7 @@ import {
   DialogService, SystemGeneralService, WebSocketService,
 } from '../../../../services';
 import { EntityFormComponent } from '../../../common/entity/entity-form/entity-form.component';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 
@@ -95,7 +95,8 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
 
       rows.forEach((dataItem) => {
         if (typeof (dataItem.name) !== 'undefined' && dataItem.name.length > 0) {
-          this.fieldConfig[0].options.push({
+          const config: FormSelectConfig = this.fieldConfig[0];
+          config.options.push({
             label: dataItem.name,
             value: dataItem.name,
           });
@@ -110,7 +111,8 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
       .pipe(map(new EntityUtils().array1DToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe(
         (options) => {
-          this.fieldConfig.find((config) => config.name === 'naming_schema').options = [
+          const config: FormSelectConfig = this.fieldConfig.find((config) => config.name === 'naming_schema');
+          config.options = [
             { label: '---', value: undefined },
             ...options,
           ];

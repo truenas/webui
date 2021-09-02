@@ -6,7 +6,7 @@ import helptext from 'app/helptext/services/components/service-dynamic-dns';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, ValidationService } from 'app/services';
 
 @UntilDestroy()
@@ -121,7 +121,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ]);
 
-  protected provider: FieldConfig;
+  protected provider: FormSelectConfig;
 
   constructor(
     protected router: Router,

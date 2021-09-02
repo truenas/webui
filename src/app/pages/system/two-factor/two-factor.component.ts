@@ -6,7 +6,7 @@ import { helptext } from 'app/helptext/system/2fa';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
 
@@ -243,7 +243,7 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   updateEnabledStatus(): void {
-    const enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
+    const enabled: FormParagraphConfig = _.find(this.fieldConfig, { name: 'enabled_status' });
     this.TwoFactorEnabled
       ? enabled.paraText = helptext.two_factor.enabled_status_true
       : enabled.paraText = helptext.two_factor.enabled_status_false;

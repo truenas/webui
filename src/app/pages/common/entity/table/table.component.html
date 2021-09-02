@@ -20,7 +20,7 @@
         ix-auto ix-auto-type="button" ix-auto-identifier="{{_tableConf.name}}-add"
       >{{ 'Add' | translate }}</button>
     </div>
-</mat-toolbar-row>
+  </mat-toolbar-row>
 
 <mat-card-content class="table-container">
   <div class="table-container" #table [class.empty]="dataSource && !dataSource.length">
@@ -47,7 +47,12 @@
 
                 <mat-checkbox *ngSwitchCase="'checkbox'" ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{element[column.prop]}}-checkbox" color="primary" [(ngModel)]="element[column.prop]" (change)="column.onChange(element)" (click)="$event.stopPropagation();" [disabled]="!column.onChange"></mat-checkbox>
 
-                <button *ngSwitchCase="'state-button'" mat-stroked-button [ngClass]="getButtonClass(element[column.prop].state)" ix-auto ix-auto-type="button" ix-auto-identifier="{{element[column.prop]}}-task-state" (click)="$event.stopPropagation(); onButtonClick(element)">{{ element[column.prop].state }}</button>
+                <button *ngSwitchCase="'state-button'" mat-stroked-button [ngClass]="getButtonClass(element[column.prop])" ix-auto ix-auto-type="button" ix-auto-identifier="{{element[column.prop]}}-task-state" (click)="$event.stopPropagation(); onButtonClick(element)">
+                  {{ element[column.prop].state }}
+                  <div class="label-warning-icon" *ngIf="element[column.prop].warnings?.length > 0">
+                    <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+                  </div>
+                </button>
 
                 <ng-container *ngSwitchDefault>
                   <div class="text-overflow-ellipsis" [matTooltip]="column.enableMatTooltip ? element[column.prop] : null">{{element[column.prop]}}</div>

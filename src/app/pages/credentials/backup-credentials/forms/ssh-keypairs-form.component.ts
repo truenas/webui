@@ -153,7 +153,7 @@ export class SshKeypairsFormComponent implements FormConfiguration {
     });
   }
 
-  downloadKey(key_type: any): void {
+  downloadKey(key_type: 'private_key' | 'public_key'): void {
     const name = this.entityForm.formGroup.controls['name'].value;
     const key = this.entityForm.formGroup.controls[key_type].value;
     const filename = name + '_' + key_type + '_rsa';

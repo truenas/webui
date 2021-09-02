@@ -72,6 +72,7 @@ export interface CertificateAuthorityUpdate {
   digest_algorithm: CertificateDigestAlgorithm;
   san: string[];
   cert_extensions: CertificateExtensions;
+  revoked?: boolean;
 }
 
 export interface CertificateAuthority {

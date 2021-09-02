@@ -14,12 +14,13 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -32,9 +33,9 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   updateCall: 'activedirectory.update' = 'activedirectory.update';
   isEntity = false;
   isBasicMode = true;
-  protected kerberos_realm: FieldConfig;
-  protected kerberos_principal: FieldConfig;
-  protected nss_info: FieldConfig;
+  protected kerberos_realm: FormSelectConfig;
+  protected kerberos_principal: FormSelectConfig;
+  protected nss_info: FormSelectConfig;
   adStatus = false;
   entityEdit: EntityFormComponent;
   protected dialogRef: MatDialogRef<EntityJobComponent, void>;
@@ -413,7 +414,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     return this.ws.call('activedirectory.update', [body]);
   }
 
-  responseOnSubmit(value: any): void {
+  responseOnSubmit(value: ActiveDirectoryConfig & { job_id?: number }): void {
     this.entityEdit.formGroup.controls['kerberos_principal'].setValue(value.kerberos_principal);
     this.entityEdit.formGroup.controls['kerberos_realm'].setValue(value['kerberos_realm']);
 
@@ -448,7 +449,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   // Shows starting progress as a job dialog
   showStartingJob(jobId: number): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Start' }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Start') }, disableClose: true });
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

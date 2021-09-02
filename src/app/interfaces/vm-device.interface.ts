@@ -8,6 +8,7 @@ interface VmPciPassthroughAttributes {
 export interface VmDisplayAttributes {
   bind: string;
   password: string;
+  password_configured?: false;
   port: number;
   resolution: string;
   type: string;

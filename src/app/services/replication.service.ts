@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { reject } from 'q';
 import { Observable } from 'rxjs';
+import { TransportMode } from 'app/enums/transport-mode.enum';
 import { SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
@@ -20,9 +21,9 @@ export class ReplicationService {
     return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
   }
 
-  getRemoteDataset(transport: any, sshCredentials: string, parentComponent: any): Promise<any> {
-    const queryParams = [transport];
-    if (transport !== 'LOCAL') {
+  getRemoteDataset(transport: TransportMode, sshCredentials: number, parentComponent: any): Promise<any> {
+    const queryParams: [transport: TransportMode, credentials?: number] = [transport];
+    if (transport !== TransportMode.Local) {
       queryParams.push(sshCredentials);
     }
     return this.ws.call('replication.list_datasets', queryParams).toPromise().then(

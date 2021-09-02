@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
@@ -96,19 +97,19 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
     this.doAdd(id);
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: IscsiTarget): EntityTableAction<IscsiTarget>[] {
     return [{
       id: row.name,
       icon: 'edit',
       name: 'edit',
       label: T('Edit'),
-      onClick: (rowinner: any) => { this.entityList.doEdit(rowinner.id); },
+      onClick: (rowinner: IscsiTarget) => { this.entityList.doEdit(rowinner.id); },
     }, {
       id: row.name,
       icon: 'delete',
       name: 'delete',
       label: T('Delete'),
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: IscsiTarget) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
           (res) => {

@@ -9,6 +9,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing/iscsi/iscsi';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
@@ -542,17 +543,17 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const disk_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' });
+    const disk_field: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' });
     // get device options
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
       for (const i in res) {
         disk_field.options.push({ label: res[i], value: i });
       }
     });
-    const taregt_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' });
+    const target_field: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' });
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       for (const item of targets) {
-        taregt_field.options.push({ label: item.name, value: item.id });
+        target_field.options.push({ label: item.name, value: item.id });
       }
     });
 
@@ -594,11 +595,12 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   step1Init(): void {
-    const authGroupField = _.find(this.wizardConfig[1].fieldConfig, { name: 'discovery_authgroup' });
-    const listenIpField = _.find(this.wizardConfig[1].fieldConfig, { name: 'listen' }).templateListField[0];
+    const authGroupField: FormSelectConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'discovery_authgroup' }); // select
+    const listenIpFieldConfig: FormListConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'listen' });
+    const listenIpField: FormSelectConfig = listenIpFieldConfig.templateListField[0]; // list
 
     this.iscsiService.listPortals().pipe(untilDestroyed(this)).subscribe((portals) => {
-      const field = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' });
+      const field: FormSelectConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' });
       for (const portal of portals) {
         const ips = portal.listen.map((ip) => ip.ip + ':' + ip.port);
         field.options.push({ label: portal.tag + ' (' + ips + ')', value: portal.id });
@@ -608,7 +610,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       for (let i = 0; i < accessRecords.length; i++) {
         if (_.find(authGroupField.options, { value: accessRecords[i].tag }) == undefined) {
-          authGroupField.options.push({ label: accessRecords[i].tag, value: accessRecords[i].tag });
+          authGroupField.options.push({ label: String(accessRecords[i].tag), value: accessRecords[i].tag });
         }
       }
     });
@@ -618,9 +620,9 @@ export class IscsiWizardComponent implements WizardConfiguration {
         listenIpField.options.push({ label: ips[ip], value: ip });
       }
 
-      const listenListFields = _.find(this.wizardConfig[1].fieldConfig, { name: 'listen' }).listFields;
+      const listenListFields = listenIpFieldConfig.listFields;
       for (const listenField of listenListFields) {
-        const ipField = _.find(listenField, { name: 'ip' });
+        const ipField: FormSelectConfig = _.find(listenField, { name: 'ip' });
         ipField.options = listenIpField.options;
       }
     });
@@ -659,7 +661,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
               this.summaryObj[name] = value;
               // get label value
               if (name == 'disk' || name == 'usefor' || name == 'portal' || name == 'target') {
-                const field = _.find(this.wizardConfig[step].fieldConfig, { name });
+                const field: FormSelectConfig = _.find(this.wizardConfig[step].fieldConfig, { name });
                 if (field) {
                   this.summaryObj[name] = _.find(field.options, { value }).label;
                 }

@@ -50,3 +50,13 @@ export interface CloudSyncTaskUi extends CloudSyncTask {
   next_run: string;
   state: DataProtectionTaskState;
 }
+
+export interface CloudSyncListDirectoryParams {
+  credentials: number;
+  encryption?: boolean;
+  filename_encryption?: boolean;
+  encryption_password?: string;
+  encryption_salt?: string;
+  attributes?: unknown;
+  args?: string;
+}

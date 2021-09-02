@@ -5,6 +5,7 @@ export default {
   choosePool: {
     title: T('Choose a pool for Apps'),
     placeholder: T('Pools'),
+    migrateApplications: T('Migrate applications to the new pool'),
     action: T('Choose'),
     jobTitle: T('Configuring...'),
     success: T('Success'),
@@ -36,6 +37,7 @@ export default {
   },
 
   installing: T('Installing'),
+  updating: T('Updating'),
   refreshing: T('Refreshing'),
   starting: T('Starting'),
   stopping: T('Stopping'),
@@ -106,10 +108,6 @@ export default {
 
   kubForm: {
     title: T('Kubernetes Settings'),
-    pool: {
-      placeholder: T('Pool'),
-      tooltip: T('Choose a pool for the Apps'),
-    },
     reInit: {
       title: T('Settings Requiring Re-Initialization'),
       formWarning: T('Changing settings below will result in Kubernetes cluster re-initialization deleting installed apps and their data.'),

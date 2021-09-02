@@ -11,7 +11,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
-import { ApiDirectory } from 'app/interfaces/api-directory.interface';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -54,7 +54,7 @@ export class UpdateComponent implements OnInit {
   trainDescriptionOnPageLoad: string;
   fullTrainList: { [name: string]: SystemUpdateTrain };
   isUpdateRunning = false;
-  updateMethod: keyof ApiDirectory = 'update.update';
+  updateMethod: ApiMethod = 'update.update';
   is_ha = false;
   product_type: ProductType;
   ds: any;
@@ -73,6 +73,7 @@ export class UpdateComponent implements OnInit {
                                   <i>APPLY PENDING UPDATE</i> to install \
                                   the downloaded update.');
   train_version: string = null;
+  updateTitle = this.translate.instant(T('Update'));
 
   protected saveConfigFieldConf: FieldConfig[] = [
     {
@@ -237,7 +238,7 @@ export class UpdateComponent implements OnInit {
       buttonMsg: T('Continue'),
     }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
-        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') }, disableClose: false });
+        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
         this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
@@ -399,7 +400,7 @@ export class UpdateComponent implements OnInit {
 
   // Shows an update in progress as a job dialog on the update page
   showRunningUpdate(jobId: number): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
     if (this.is_ha) {
       this.dialogRef.componentInstance.disableProgressValue(true);
     }
@@ -548,7 +549,7 @@ export class UpdateComponent implements OnInit {
     this.ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status: any) => {
       if (status) {
         if (!this.ds.componentInstance.data[0].reboot) {
-          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') }, disableClose: false });
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
           this.dialogRef.componentInstance.setCall('update.download');
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
@@ -568,7 +569,7 @@ export class UpdateComponent implements OnInit {
 
   update(): void {
     this.sysGenService.updateRunningNoticeSent.emit();
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
     if (!this.is_ha) {
       this.dialogRef.componentInstance.setCall('update.update', [{ reboot: true }]);
       this.dialogRef.componentInstance.submit();
@@ -620,7 +621,7 @@ export class UpdateComponent implements OnInit {
 
     entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
       .pipe(untilDestroyed(entityDialog.parent)).subscribe(
-        (succ: any) => {
+        (succ) => {
           const url = succ[1];
           entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
             .pipe(untilDestroyed(entityDialog.parent)).subscribe((file: Blob) => {

@@ -11,6 +11,7 @@ import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.i
 import { Job } from 'app/interfaces/job.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import {
   EntityTableComponent,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -280,7 +281,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             saveButtonText: T('Restore'),
             afterInit(entityDialog: EntityDialogComponent) {
               entityDialog.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
-                const paragraph = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
+                const paragraph: FormParagraphConfig = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                 switch (mode) {
                   case TransferMode.Sync:
                     paragraph.paraText = helptext.transfer_mode_warning_sync;

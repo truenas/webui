@@ -7,10 +7,10 @@ import helptext from 'app/helptext/account/user-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { User } from 'app/interfaces/user.interface';
+import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -29,7 +29,7 @@ export class UserFormComponent implements FormConfiguration {
   queryCall: 'user.query' = 'user.query';
   addCall: 'user.create' = 'user.create';
   editCall: 'user.update' = 'user.update';
-  pk: string;
+  pk: number;
   queryKey = 'id';
   isEntity = true;
   isNew: boolean;
@@ -301,9 +301,9 @@ export class UserFormComponent implements FormConfiguration {
   ];
 
   private shells: Option[];
-  private shell: FieldConfig;
-  private group: FieldConfig;
-  private groups: FieldConfig;
+  private shell: FormSelectConfig;
+  private group: FormSelectConfig;
+  private groups: FormSelectConfig;
   private password_disabled: AbstractControl;
 
   constructor(protected router: Router,
@@ -398,7 +398,7 @@ export class UserFormComponent implements FormConfiguration {
     });
 
     /* list users */
-    const filter: QueryFilter<User> = ['id', '=', parseInt(this.pk, 10)];
+    const filter: QueryFilter<User> = ['id', '=', this.pk];
     this.ws.call('user.query', [[filter]]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.length !== 0 && res[0].home !== '/nonexistent') {
         this.storageService.filesystemStat(res[0].home).pipe(untilDestroyed(this)).subscribe((stat) => {
@@ -455,7 +455,7 @@ export class UserFormComponent implements FormConfiguration {
           entityForm.formGroup.controls['uid'].setValue(next_uid);
         });
       }
-      this.userService.shellChoices(parseInt(this.pk, 10)).then((choices) => {
+      this.userService.shellChoices(this.pk).then((choices) => {
         this.shells = choices;
         this.shell = this.fieldSets.config('shell');
         this.shell.options = this.shells;
@@ -507,7 +507,7 @@ export class UserFormComponent implements FormConfiguration {
     }
   }
 
-  submitFunction(entityForm: any): Observable<any> {
+  submitFunction(entityForm: UserUpdate & { password_conf: string }): Observable<number> {
     delete entityForm['password_conf'];
     return this.ws.call('user.update', [this.pk, entityForm]);
   }
