@@ -510,6 +510,7 @@
   "Started": "",
   "Starting": "",
   "Statefulsets": "",
+  "Stop {serviceName}?": "",
   "Stopped": "",
   "Stopped the scrub on pool <i>{poolName}</i>.": "",
   "Stopping": "",

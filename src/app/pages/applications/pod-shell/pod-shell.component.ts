@@ -20,6 +20,7 @@ import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/fie
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -78,7 +79,13 @@ export class PodShellComponent implements OnInit, OnDestroy {
 
         const podDetail = res[this.pod_name];
         if (!podDetail) {
-          this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
+          this.dialogService.confirm({
+            title: helptext.podConsole.nopod.title,
+            message: helptext.podConsole.nopod.message,
+            hideCheckBox: true,
+            buttonMsg: T('Close'),
+            hideCancel: true,
+          });
         } else {
           this.containerName = podDetail[0];
           this.updateChooseShellDialog();

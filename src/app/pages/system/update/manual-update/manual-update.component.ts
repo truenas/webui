@@ -194,10 +194,13 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
           this.isUpdateRunning = false;
           this.systemService.updateDone(); // Send 'finished' signal to topbar
           this.router.navigate(['/']);
-          this.dialogService.confirm(helptext.ha_update.complete_title,
-            helptext.ha_update.complete_msg, true,
-            helptext.ha_update.complete_action, false, '', '', '', '', true).pipe(untilDestroyed(this)).subscribe(() => {
-          });
+          this.dialogService.confirm({
+            title: helptext.ha_update.complete_title,
+            message: helptext.ha_update.complete_msg,
+            hideCheckBox: true,
+            buttonMsg: helptext.ha_update.complete_action,
+            hideCancel: true,
+          }).pipe(untilDestroyed(this)).subscribe(() => {});
         }
       });
       this.dialogRef.componentInstance.prefailure.pipe(untilDestroyed(this)).subscribe((prefailure: any) => {

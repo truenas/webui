@@ -5,6 +5,7 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -318,31 +319,43 @@ export class CertificateEditComponent implements FormConfiguration {
 
   viewCertificate(): void {
     if (this.incomingData.CSR) {
-      this.dialog.confirm(this.incomingData.name, this.incomingData.CSR, true,
-        helptext_system_certificates.viewDialog.download, false, '',
-        '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.CSR, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        if (res) {
-          this.exportCertificate();
-        }
+      this.dialog.confirm({
+        title: this.incomingData.name,
+        message: this.incomingData.CSR,
+        hideCheckBox: true,
+        buttonMsg: helptext_system_certificates.viewDialog.download,
+        cancelMsg: helptext_system_certificates.viewDialog.close,
+        textToCopy: this.incomingData.CSR,
+        keyTextArea: true,
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.exportCertificate();
       });
     } else {
-      this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true,
-        helptext_system_certificates.viewDialog.download, false, '',
-        '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        if (res) {
-          this.exportCertificate();
-        }
+      this.dialog.confirm({
+        title: this.incomingData.name,
+        message: this.incomingData.certificate,
+        hideCheckBox: true,
+        buttonMsg: helptext_system_certificates.viewDialog.download,
+        cancelMsg: helptext_system_certificates.viewDialog.close,
+        textToCopy: this.incomingData.certificate,
+        keyTextArea: true,
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.exportCertificate();
       });
     }
   }
 
   viewKey(): void {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true,
-      helptext_system_certificates.viewDialog.download, false, '',
-      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.privatekey, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.exportKey();
-      }
+    this.dialog.confirm({
+      title: this.incomingData.name,
+      message: this.incomingData.privatekey,
+      hideCheckBox: true,
+      buttonMsg: helptext_system_certificates.viewDialog.download,
+      cancelMsg: helptext_system_certificates.viewDialog.close,
+      textToCopy: this.incomingData.privatekey,
+      keyTextArea: true,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.exportKey();
     });
   }
 

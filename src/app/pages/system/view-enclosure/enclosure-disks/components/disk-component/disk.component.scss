@@ -1,0 +1,29 @@
+.disk-ui-wrapper {
+  background: #fff;
+  border: solid 1px var(--lines);
+  cursor: default;
+  width: 50px;
+}
+
+.disk-ui-name,
+.disk-ui-type {
+  background: var(--black);
+  color: var(--white);
+  font-size: 12px;
+  padding: 2px 0;
+  text-align: center;
+}
+
+.disk-ui-icon {
+  color: #666;
+  font-size: 59px;
+  line-height: 59px;
+  text-align: left;
+}
+
+.disk-ui-icon mat-icon {
+  font-size: 52px;
+  left: -2px;
+  position: relative;
+  top: -1px;
+}

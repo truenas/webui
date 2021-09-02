@@ -11,15 +11,7 @@ import { CoreEvent } from 'app/interfaces/events';
 
 @Component({
   selector: 'viewcontroller',
-  template: `
-    <div
-    [fxLayout]="layoutContainer.layout"
-    [fxLayoutAlign]="layoutContainer.align"
-    [fxLayoutGap]="layoutContainer.gap"
-    >
-      <display style="display:none;" #display></display>
-    </div>
-  `,
+  templateUrl: './view-controller.component.html',
   styles: [':host {display:block;}'],
 })
 export class ViewControllerComponent extends ViewController implements OnDestroy {

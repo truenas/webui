@@ -5,21 +5,8 @@ import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 
 @Component({
   selector: 'toolbar-button',
+  templateUrl: './toolbar-button.component.html',
   styleUrls: ['toolbar-button.component.scss'],
-  template: `
-    <div
-      class="toolbar-button" [class.has-tooltip]="config.tooltip">
-      <button
-        ix-auto ix-auto-type="button" [ix-auto-identifier]="id + '_entity_toolbar_' + config.label"
-        (click)="onClick(true)"
-        [color]="config.color ? config.color : 'default'"
-        mat-button
-        [disabled]="config.disabled">
-        {{ config.label | translate }}
-      </button>
-      <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
-    </div>
-  `,
 })
 export class ToolbarButtonComponent extends IxAbstractObject {
   @Input() config?: any;
