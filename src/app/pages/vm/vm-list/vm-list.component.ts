@@ -140,18 +140,21 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     this.checkMemory();
     this.entityList = entityList;
 
-    this.vmService.getVirtualizationDetails().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.hasVirtualizationSupport = res.supported;
-      this.disableActionsConfig = !this.hasVirtualizationSupport;
+    this.vmService.getVirtualizationDetails().pipe(untilDestroyed(this)).subscribe((virtualization) => {
+      this.hasVirtualizationSupport = virtualization.supported;
+      this.disableActionsConfig = !virtualization.supported;
       if (!this.hasVirtualizationSupport) {
         this.entityList.emptyTableConf = {
           large: true,
           icon: 'laptop',
           title: this.translate.instant('Virtualization is not supported'),
-          message: res.error.replace('INFO: ', ''),
+          message: virtualization.error.replace('INFO: ', ''),
           button: null,
         };
       }
+    }, () => {
+      /* fallback when endpoint is unavailable */
+      this.disableActionsConfig = false;
     });
 
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
