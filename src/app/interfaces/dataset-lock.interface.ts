@@ -1,5 +1,3 @@
-import { ServiceName } from 'app/enums/service-name.enum';
-
 export interface DatasetUnlockResult {
   failed: {
     [path: string]: {
@@ -16,7 +14,6 @@ export type DatasetUnlockParams = [
     datasets: { name: string; key?: string; passphrase: string }[];
     key_file: boolean;
     recursive: boolean;
-    services_restart: ServiceName[];
     toggle_attachments?: boolean;
   },
 ];
