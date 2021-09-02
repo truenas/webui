@@ -9,8 +9,8 @@
   </div>
 
   <div class="outlined input-container">
-    <mat-select [(value)]="value" [required]="required">
-      <mat-option *ngFor="let option of options" value="option.value">{{option.label}}</mat-option>
+    <mat-select [(ngModel)]="value" [required]="required" (ngModelChange)="onChange($event)">
+      <mat-option *ngFor="let option of options" [value]="option.value">{{option.label}}</mat-option>
     </mat-select>
   </div>
 

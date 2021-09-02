@@ -22,9 +22,10 @@ export class IxSelect implements ControlValueAccessor {
   @Input() hint: string;
   @Input() options: Option[];
   @Input() required: boolean;
+  @Input() tooltip: string;
 
-  onChange = (): void => {};
-  onTouched = (): void => {};
+  onChange: any = (): void => {};
+  onTouched: any = (): void => {};
 
   writeValue(val: string | number): void {
     this.value = val;

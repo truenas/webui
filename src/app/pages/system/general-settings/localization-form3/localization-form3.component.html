@@ -1,4 +1,19 @@
-<ix-form [formGroup]="form" (cancel)="cancelled()">
-  <ix-input label="Name" name="name" required="true" tooltip="This is a tip!" placeholder="'E.g., Rehan'" [ngModel]="name" [formControlName]="'name'"></ix-input>
-  <ix-select label="Sibling" name="sibling" [options]="siblingOptions" tooltip="This is another tip!" [formControlName]="'sibling'"></ix-select>
+<ix-form [formGroup]="form" (cancel)="cancelled()" [title]="formTitle" (formSubmit)="submit($event)">
+  <ix-input
+    label="Name"
+    name="name"
+    required="true"
+    tooltip="nameTooltip"
+    placeholder="namePlaceholder"
+    [ngModel]="name"
+    [formControlName]="nameFormControlName"
+  ></ix-input>
+  <ix-select
+    [label]="siblingLabel"
+    name="sibling"
+    required="true"
+    [options]="siblingOptions"
+    [tooltip]="siblingTooltip"
+    [ngModel]="sibling"
+    [formControlName]="siblingFormControlName"></ix-select>
 </ix-form>

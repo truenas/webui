@@ -12,11 +12,22 @@ import { Option } from 'app/interfaces/option.interface';
 export class LocalizationForm3 implements OnInit {
   form: FormGroup;
   name = 'Rehan2';
+  sibling = 'john';
+
+  formTitle = 'Personal Info';
+
+  nameTooltip = 'This is a tip!';
+  namePlaceholder = 'E.g., Rehan';
+  readonly nameFormControlName = 'name';
+
+  siblingLabel = 'Sibling';
+  siblingTooltip = 'This is another tip!';
   siblingOptions: Option[] = [
     { label: 'Rehan', value: 'rehan' },
     { label: 'John', value: 'john' },
     { label: 'Steve', value: 'steve' },
   ];
+  readonly siblingFormControlName = 'sibling';
 
   ngOnInit(): void {
     this.form = this.fb.group({
@@ -28,5 +39,10 @@ export class LocalizationForm3 implements OnInit {
   cancelled(): void {
     // console.log('cancelled')
   }
+
+  submit(): void { // (value: any) {
+    // console.log("form submitted", value);
+  }
+
   constructor(private fb: FormBuilder) {}
 }

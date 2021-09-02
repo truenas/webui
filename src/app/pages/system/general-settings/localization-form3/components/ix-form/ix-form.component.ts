@@ -12,15 +12,12 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 })
 export class IxForm {
   @Input() formGroup: FormGroup;
+  @Input() title: string;
   @Output() cancel = new EventEmitter<boolean>();
+  @Output() formSubmit = new EventEmitter<any>();
   loading = false;
 
-  formSubmit(): void {
-    // console.log('formGroup', this.formGroup.value);
-    // console.log('valid', this.formGroup.valid);
-    // console.log('errors', this.formGroup.errors);
-    // for (const control in this.formGroup.controls) {
-    //   console.log(control, this.formGroup.controls[control].value);
-    // }
+  submitted(): void {
+    this.formSubmit.emit(this.formGroup.value);
   }
 }

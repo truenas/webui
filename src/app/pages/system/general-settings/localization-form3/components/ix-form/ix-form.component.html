@@ -1,10 +1,11 @@
 <mat-card>
+  <mat-card-title>{{title}}</mat-card-title>
   <mat-card-content>
-    <form #f [formGroup]="formGroup" (submit)="formSubmit()">
+    <form [formGroup]="formGroup" (submit)="submitted()" >
       <ng-content></ng-content>
       <mat-divider class="divider" inset></mat-divider>
       <div class="form-actions">
-        <button mat-button type="submit" color="primary">Save</button>
+        <button mat-button type="submit" [disabled]="formGroup.invalid" color="primary">Save</button>
         <button mat-button type="button" (click)="cancel.emit(true)">Cancel</button>
       </div>
     </form>
