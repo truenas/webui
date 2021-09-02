@@ -438,7 +438,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 35, '//button[@id="My BOX Cloud task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 60, '//button[@id="My BOX Cloud task_Status-button" and contains(.,"SUCCESS")]')
     # give time to the system to be ready.
     time.sleep(5)
 
