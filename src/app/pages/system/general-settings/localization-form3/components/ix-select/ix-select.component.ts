@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Option } from 'app/interfaces/option.interface';
@@ -12,7 +12,7 @@ import { Option } from 'app/interfaces/option.interface';
     {
       provide: NG_VALUE_ACCESSOR,
       multi: true,
-      useExisting: IxSelect,
+      useExisting: forwardRef(() => IxSelect),
     },
   ],
 })

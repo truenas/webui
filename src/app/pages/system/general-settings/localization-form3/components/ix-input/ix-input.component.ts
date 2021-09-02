@@ -27,23 +27,17 @@ export class IxInput implements ControlValueAccessor {
   @Input() tooltip: string;
   @Input() required: boolean;
 
-  val: string | number = '';
+  value: string | number = '';
 
   onChange: any = (): void => {};
   onTouch: any = (): void => {};
-
-  set value(val: string | number) {
-    this.val = val;
-    this.onChange(val);
-    this.onTouch(val);
-  }
 
   suffixIconClicked(evt: MouseEvent): void {
     this.suffixIconClick.emit(evt);
   }
 
-  writeValue(val: string | number): void {
-    this.val = val;
+  writeValue(value: string | number): void {
+    this.value = value;
   }
 
   registerOnChange(onChange: any): void {

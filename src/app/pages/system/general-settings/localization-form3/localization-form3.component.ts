@@ -11,6 +11,7 @@ import { Option } from 'app/interfaces/option.interface';
 })
 export class LocalizationForm3 implements OnInit {
   form: FormGroup;
+  name = 'Rehan2';
   siblingOptions: Option[] = [
     { label: 'Rehan', value: 'rehan' },
     { label: 'John', value: 'john' },
