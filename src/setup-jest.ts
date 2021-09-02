@@ -1,6 +1,7 @@
 import 'jest-preset-angular/setup-jest';
 import { APP_BASE_HREF } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { jest } from '@jest/globals';
 import { defineGlobalsInjections } from '@ngneat/spectator';
 import {
   MissingTranslationHandler, TranslateCompiler, TranslateLoader, TranslateModule, TranslateFakeLoader,
