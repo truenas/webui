@@ -122,7 +122,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   expandedElement: any | null = null;
 
   dataSource: MatTableDataSource<any>;
-  rows: any[] = [];
+  rows: Row[] = [];
   currentRows: any[] = []; // Rows applying filter
   getFunction: Observable<any>;
   config: EntityTableConfigConfig = {
@@ -135,7 +135,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   cardHeaderReady = false;
   showActions = true;
   hasActions = true;
-  sortKey: string;
+  sortKey: keyof Row;
   filterValue = ''; // the filter string filled in search input.
   readonly EntityJobState = JobState;
   // Global Actions in Page Title
@@ -260,8 +260,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     }
 
     this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props)
-      ? this.conf.config.deleteMsg.key_props[0]
-      : this.conf.columns[0].prop;
+      ? this.conf.config.deleteMsg.key_props[0] as keyof Row
+      : this.conf.columns[0].prop as keyof Row;
     setTimeout(async () => {
       if (this.conf.prerequisite) {
         await this.conf.prerequisite().then(
@@ -737,7 +737,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
 
       const newRows = [];
       for (let i = 0; i < this.rows.length; i++) {
-        const index = _.findIndex(rows, { id: this.rows[i].id });
+        const index = _.findIndex(rows, { id: (this.rows[i] as any).id });
         if (index < 0) {
           continue;
         }

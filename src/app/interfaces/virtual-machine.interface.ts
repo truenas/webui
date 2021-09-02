@@ -1,3 +1,4 @@
+import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmCpuMode, VmTime } from 'app/enums/vm.enum';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 
@@ -16,7 +17,7 @@ export interface VirtualMachine {
   name: string;
   shutdown_timeout: number;
   status: {
-    state: string; // Enum? STOPPED
+    state: ServiceStatus;
     pid: number;
     domain_state: string; // Enum? SHUTOFF
   };
@@ -65,3 +66,8 @@ export type VmDeleteParams = [
   id: number,
   params: { zvols: boolean; force: boolean },
 ];
+
+export interface VirtualizationDetails {
+  supported: boolean;
+  error: string;
+}

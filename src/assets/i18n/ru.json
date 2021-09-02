@@ -1361,6 +1361,8 @@
   "View/Download Key": "",
   "Virtual IP Address (Failover Address)": "",
   "Virtual Machine (VM)": "",
+  "Virtual Machines": "",
+  "Virtualization is not supported": "",
   "Volumes": "",
   "WARNING: These unknown processes will be terminated while exporting the pool. ": "",
   "WARNING: These unknown processes will be terminated while locking the pool.": "",

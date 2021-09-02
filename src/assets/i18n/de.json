@@ -2123,6 +2123,8 @@
   "View/Download Certificate": "",
   "View/Download Key": "",
   "Virtual IP Address (Failover Address)": "",
+  "Virtual Machines": "",
+  "Virtualization is not supported": "",
   "Vlan Tag": "",
   "Volumes": "",
   "WARNING: These unknown processes will be terminated while locking the pool.": "",
