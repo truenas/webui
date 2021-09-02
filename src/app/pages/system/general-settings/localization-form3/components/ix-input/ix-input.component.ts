@@ -1,5 +1,6 @@
-import { EventEmitter } from 'events';
-import { Component, Input, Output } from '@angular/core';
+import {
+  Component, EventEmitter, Input, Output,
+} from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
@@ -22,14 +23,16 @@ export class IxInput implements ControlValueAccessor {
   @Input() value: string | number;
   @Input() prefixText: string;
   @Input() suffixIcon: string;
-  @Output() suffixIconClick = new EventEmitter();
+  @Output() suffixIconClick: EventEmitter<MouseEvent> = new EventEmitter();
   @Input() hint: string;
+  @Input() tooltip: string;
+  @Input() required: boolean;
 
   onChange = (): void => {};
   onTouched = (): void => {};
 
-  suffixIconClicked(): void {
-    this.suffixIconClick.emit('');
+  suffixIconClicked(evt: MouseEvent): void {
+    this.suffixIconClick.emit(evt);
   }
 
   writeValue(val: string | number): void {

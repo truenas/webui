@@ -10,6 +10,10 @@ import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import { IxForm } from 'app/pages/system/general-settings/localization-form3/components/ix-form/ix-form.component';
+import { IxInput } from 'app/pages/system/general-settings/localization-form3/components/ix-input/ix-input.component';
+import { IxSelect } from 'app/pages/system/general-settings/localization-form3/components/ix-select/ix-select.component';
+import { LocalizationForm3 } from 'app/pages/system/general-settings/localization-form3/localization-form3.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { EntityModule } from '../common/entity/entity.module';
@@ -60,6 +64,10 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
   ],
   declarations: [
     AdvancedSettingsComponent,
+    LocalizationForm3,
+    IxInput,
+    IxSelect,
+    IxForm,
     BootEnvironmentListComponent,
     BootEnvironmentCloneComponent,
     BootEnvironmentRenameComponent,

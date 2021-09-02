@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { Option } from 'app/interfaces/option.interface';
 
 @UntilDestroy()
 @Component({
@@ -19,6 +20,7 @@ export class IxSelect implements ControlValueAccessor {
   @Input() label: string;
   @Input() value: string | number;
   @Input() hint: string;
+  @Input() options: Option[];
 
   onChange = (): void => {};
   onTouched = (): void => {};
