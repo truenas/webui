@@ -40,7 +40,8 @@ export class LocalizationForm3 implements OnInit {
     // console.log('cancelled')
   }
 
-  submit(): void { // (value: any) {
+  submit(value: any): void { // (value: any) {
+    value;
     // console.log("form submitted", value);
   }
 
