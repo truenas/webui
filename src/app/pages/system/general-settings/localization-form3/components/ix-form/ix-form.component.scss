@@ -6,3 +6,15 @@
 .form-container > * {
   width: 100%;
 }
+
+.form-actions {
+  margin: 16px 8px;
+
+  button {
+    margin: 0 4px;
+  }
+}
+
+.divider {
+  margin: 16px 0 !important;
+}

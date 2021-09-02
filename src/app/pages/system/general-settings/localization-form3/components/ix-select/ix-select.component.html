@@ -1,7 +1,17 @@
-<mat-form-field class="full-width" appearance="outline">
-  <mat-label>{{label}}</mat-label>
-  <mat-select [value]="value">
-    <mat-option *ngFor="let option of options" value="option.value">{{option.label}}</mat-option>
-  </mat-select>
-  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
-</mat-form-field>
+<div class="full-width container has-tooltip">
+
+  <div *ngIf="label" class="label-container">
+    <label class="label">
+      {{label}}
+      <span *ngIf="required">*</span>
+    </label>
+    <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+  </div>
+
+  <div class="outlined input-container">
+    <mat-select [(value)]="value" [required]="required">
+      <mat-option *ngFor="let option of options" value="option.value">{{option.label}}</mat-option>
+    </mat-select>
+  </div>
+
+</div>

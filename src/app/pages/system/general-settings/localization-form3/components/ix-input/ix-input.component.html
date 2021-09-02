@@ -11,7 +11,7 @@
 
   <div class="outlined input-container">
     <span *ngIf="prefixText" matPrefix>{{prefixText}} &nbsp;</span>
-    <input matInput [value]="value">
+    <input matInput [required]="required">
     <mat-icon *ngIf="suffixIcon" (click)="suffixIconClick()" matSuffix>{{suffixIcon}}</mat-icon>
   </div>
   <mat-hint *ngIf="hint">{{hint}}</mat-hint>

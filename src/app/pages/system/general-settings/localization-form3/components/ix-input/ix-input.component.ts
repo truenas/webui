@@ -1,5 +1,5 @@
 import {
-  Component, EventEmitter, Input, Output,
+  Component, EventEmitter, forwardRef, Input, Output,
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -12,15 +12,14 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
+      useExisting: forwardRef(() => IxInput),
       multi: true,
-      useExisting: IxInput,
     },
   ],
 })
 export class IxInput implements ControlValueAccessor {
   @Input() label: string;
   @Input() placeholder: string;
-  @Input() value: string | number;
   @Input() prefixText: string;
   @Input() suffixIcon: string;
   @Output() suffixIconClick: EventEmitter<MouseEvent> = new EventEmitter();
@@ -28,15 +27,23 @@ export class IxInput implements ControlValueAccessor {
   @Input() tooltip: string;
   @Input() required: boolean;
 
-  onChange = (): void => {};
-  onTouched = (): void => {};
+  val: string | number = '';
+
+  onChange: any = (): void => {};
+  onTouch: any = (): void => {};
+
+  set value(val: string | number) {
+    this.val = val;
+    this.onChange(val);
+    this.onTouch(val);
+  }
 
   suffixIconClicked(evt: MouseEvent): void {
     this.suffixIconClick.emit(evt);
   }
 
   writeValue(val: string | number): void {
-    this.value = val;
+    this.val = val;
   }
 
   registerOnChange(onChange: any): void {
@@ -44,6 +51,6 @@ export class IxInput implements ControlValueAccessor {
   }
 
   registerOnTouched(onTouched: any): void {
-    this.onTouched = onTouched;
+    this.onTouch = onTouched;
   }
 }

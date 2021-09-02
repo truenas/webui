@@ -21,6 +21,7 @@ export class IxSelect implements ControlValueAccessor {
   @Input() value: string | number;
   @Input() hint: string;
   @Input() options: Option[];
+  @Input() required: boolean;
 
   onChange = (): void => {};
   onTouched = (): void => {};

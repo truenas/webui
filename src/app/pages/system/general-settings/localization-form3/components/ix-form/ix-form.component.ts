@@ -1,4 +1,6 @@
-import { Component, Input } from '@angular/core';
+import {
+  Component, EventEmitter, Input, Output,
+} from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
@@ -10,4 +12,15 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 })
 export class IxForm {
   @Input() formGroup: FormGroup;
+  @Output() cancel = new EventEmitter<boolean>();
+  loading = false;
+
+  formSubmit(): void {
+    // console.log('formGroup', this.formGroup.value);
+    // console.log('valid', this.formGroup.valid);
+    // console.log('errors', this.formGroup.errors);
+    // for (const control in this.formGroup.controls) {
+    //   console.log(control, this.formGroup.controls[control].value);
+    // }
+  }
 }

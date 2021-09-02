@@ -1,3 +1,35 @@
 .full-width {
+  color: var(--fg1);
   width: 100%;
+}
+
+.container {
+  padding: 8px;
+}
+
+.tooltip {
+  margin-left: 16px;
+}
+
+.input-container {
+  background: var(--bg1);
+
+  // &:not(:focus-within) {
+  border: solid 1px var(--lines);
+  // border: 2px solid var(--primary);
+  border-radius: 2px;
+  font-size: 12px;
+  padding: 7px;
+  // padding: 6px;
+  position: relative;
+  // }
+}
+
+.label-container {
+  margin-bottom: 5px;
+  margin-left: 1px;
+}
+
+.label {
+  font-size: x-small;
 }
