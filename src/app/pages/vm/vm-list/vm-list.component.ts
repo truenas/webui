@@ -54,7 +54,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   private productType = window.localStorage.getItem('product_type') as ProductType;
   addComponent: VMWizardComponent;
   hasVirtualizationSupport = false;
-  disableActionsConfig = false;
+  disableActionsConfig = true;
 
   entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
@@ -152,6 +152,9 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           button: null,
         };
       }
+    }, () => {
+      /* fallback when endpoint is unavailable */
+      this.disableActionsConfig = false;
     });
 
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
