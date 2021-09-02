@@ -46,6 +46,11 @@ export type VmDisplayWebUriParams = [
   },
 ];
 
+export interface VmPortWizardResult {
+  port: number;
+  web: number;
+}
+
 export interface VmDisplayWebUri {
   error: string;
   uri: string;

@@ -12,3 +12,19 @@ export interface MailConfig {
   smtp: boolean;
   user: string;
 }
+
+export type MailConfigUpdate = Omit<MailConfig, 'id'>;
+
+export interface SendMailParams {
+  subject: string;
+  text?: string;
+  html?: string;
+  to?: string[];
+  cc?: string[];
+  interval?: number;
+  channel?: string;
+  timeout?: number;
+  attachments?: boolean;
+  queue?: boolean;
+  extra_headers?: Record<string, unknown>;
+}

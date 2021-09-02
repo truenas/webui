@@ -269,7 +269,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     }
   }
 
-  customSubmit(data: DatasetPermissionsUpdate): void {
+  customSubmit(data: DatasetPermissionsUpdate[1]): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Saving Permissions') } });
     dialogRef.componentInstance.setDescription(T('Saving Permissions...'));
     dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);

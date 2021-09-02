@@ -21,3 +21,22 @@ export interface SystemGeneralConfig {
   usage_collection_is_set: boolean;
   wizardshown: boolean;
 }
+
+export interface SystemGeneralConfigUpdate {
+  birthday?: ApiTimestamp;
+  crash_reporting?: boolean;
+  kbdmap?: string;
+  language?: string;
+  timezone?: string;
+  ui_address?: string[];
+  ui_consolemsg?: boolean;
+  ui_httpsport?: number;
+  ui_httpsprotocols?: string[];
+  ui_httpsredirect?: boolean;
+  ui_port?: number;
+  ui_v6address?: string[];
+  usage_collection?: boolean;
+  sysloglevel?: string;
+  syslogserver?: string;
+  ui_certificate?: number;
+}
