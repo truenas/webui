@@ -36,7 +36,6 @@ import { WidgetSysInfoComponent } from 'app/core/components/widgets/widget-sys-i
 import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
-import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { StorageService } from 'app/services/storage.service';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.directive';
@@ -66,7 +65,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
   ],
   declarations: [
     ContextMenuComponent,
-    CopyPasteMessageComponent,
     PageComponent,
     ViewComponent,
     CardComponent,
@@ -108,7 +106,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     FlexLayoutModule,
     Display,
     ContextMenuComponent,
-    CopyPasteMessageComponent,
     PageComponent,
     ViewComponent,
     ViewChartComponent,
@@ -142,7 +139,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
   ],
   entryComponents: [
     ContextMenuComponent,
-    CopyPasteMessageComponent,
     ViewComponent,
     ViewChartComponent,
     ViewChartAreaComponent,
