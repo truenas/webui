@@ -8,6 +8,7 @@ import { ContainerImage, PullContainerImageParams } from 'app/interfaces/contain
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
@@ -139,7 +140,8 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
 
   onClickUpdateImage(row: ContainerImage): void {
     if (row.repo_tags.length > 0) {
-      this.chooseTag.fieldConfig[0].options = row.repo_tags.map((item) => ({
+      const config: FormSelectConfig = this.chooseTag.fieldConfig[0];
+      config.options = row.repo_tags.map((item) => ({
         label: item,
         value: item,
       }));
@@ -161,7 +163,6 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
       data: {
         title: helptext.dockerImages.pulling,
       },
-      disableClose: true,
     });
     self.dialogRef.componentInstance.setCall('container.image.pull', payload);
     self.dialogRef.componentInstance.submit();

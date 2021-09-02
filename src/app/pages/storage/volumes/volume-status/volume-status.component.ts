@@ -19,7 +19,7 @@ import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interf
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -223,8 +223,11 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           value: res[i].name,
         });
       }
-      _.find(this.replaceDiskFormFields, { name: 'disk' }).options = availableDisks;
-      _.find(this.extendVdevFormFields, { name: 'new_disk' }).options = availableDisksForExtend;
+      const diskConfig: FormSelectConfig = _.find(this.replaceDiskFormFields, { name: 'disk' });
+      diskConfig.options = availableDisks;
+
+      const newDiskConfig: FormSelectConfig = _.find(this.extendVdevFormFields, { name: 'new_disk' });
+      newDiskConfig.options = availableDisksForExtend;
     });
   }
 

@@ -16,7 +16,7 @@ import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { VmDisplayAttributes } from 'app/interfaces/vm-device.interface';
+import { VmDisplayAttributes, VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
@@ -277,7 +277,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   doRowAction(row: VirtualMachineRow, method: ApiMethod, params: any[] = [row.id], updateTable = false): void {
     if (method === 'vm.stop') {
       this.dialogRef = this.dialog.open(EntityJobComponent,
-        { data: { title: T('Stopping ' + row.name) }, disableClose: false });
+        { data: { title: this.translate.instant('Stopping {rowName}', { rowName: row.name }) } });
       this.dialogRef.componentInstance.setCall(method, [params[0], params[1]]);
       this.dialogRef.componentInstance.submit();
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
@@ -480,7 +480,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
       label: T('Display'),
       onClick: (display_vm: VirtualMachineRow) => {
         this.loader.open();
-        this.ws.call('vm.get_display_devices', [display_vm.id]).pipe(untilDestroyed(this)).subscribe((display_devices_res: any[]) => {
+        this.ws.call('vm.get_display_devices', [display_vm.id]).pipe(untilDestroyed(this)).subscribe((display_devices_res) => {
           if (display_devices_res.length === 1) {
             if (!display_devices_res[0].attributes.password_configured) {
               this.ws.call(
@@ -586,7 +586,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     }] as EntityTableAction[];
   }
 
-  showPasswordDialog(display_vm: VirtualMachineRow, display_device: any): void {
+  showPasswordDialog(display_vm: VirtualMachineRow, display_device: VmDisplayDevice): void {
     const pass_conf: DialogFormConfiguration = {
       title: T('Enter password'),
       message: T('Enter password to unlock this display device'),

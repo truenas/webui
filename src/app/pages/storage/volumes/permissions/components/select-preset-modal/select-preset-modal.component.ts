@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { DefaultAclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Option } from 'app/interfaces/option.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormRadioConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
 import { SelectPresetModalConfig } from 'app/pages/storage/volumes/permissions/interfaces/select-preset-modal-config.interface';
@@ -28,7 +28,7 @@ export class SelectPresetModalComponent implements OnInit {
 
   readonly helptext = helptext.type_dialog;
 
-  readonly usePresetFieldConfig: FieldConfig = {
+  readonly usePresetFieldConfig: FormRadioConfig = {
     type: 'radio',
     name: usePresetFieldName,
     options: [
@@ -45,7 +45,7 @@ export class SelectPresetModalComponent implements OnInit {
     value: true,
   };
 
-  readonly presetFieldConfig: FieldConfig = {
+  readonly presetFieldConfig: FormSelectConfig = {
     type: 'select',
     name: presetFieldName,
     placeholder: helptext.type_dialog.input.placeholder,

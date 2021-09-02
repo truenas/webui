@@ -174,7 +174,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     this.mdDialog.open(ManageCatalogSummaryDialog, {
       width: '534px',
       data: row,
-      disableClose: false,
     });
   }
 

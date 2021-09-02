@@ -37,6 +37,7 @@ export default {
   },
 
   installing: T('Installing'),
+  updating: T('Updating'),
   refreshing: T('Refreshing'),
   starting: T('Starting'),
   stopping: T('Stopping'),

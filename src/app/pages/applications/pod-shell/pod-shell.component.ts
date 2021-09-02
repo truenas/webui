@@ -16,6 +16,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
@@ -319,7 +320,7 @@ export class PodShellComponent implements OnInit, OnDestroy {
 
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(parent)).subscribe((value) => {
       const containers = self.podDetails[value] as string[];
-      const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
+      const containerFC: FormSelectConfig = _.find(entityDialog.fieldConfig, { name: 'containers' });
       containerFC.options = containers.map((item) => ({
         label: item,
         value: item,

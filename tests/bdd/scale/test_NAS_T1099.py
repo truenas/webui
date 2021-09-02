@@ -81,8 +81,8 @@ def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driv
     """the Users page should open, click the Greater-Than-Sign right of the users."""
     time.sleep(2)
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
+    assert wait_on_element(driver, 10, '//tbody/tr[@id="ericbsd"]/td[5]/mat-icon[1]', 'clickable')
+    driver.find_element_by_xpath('//tbody/tr[@id="ericbsd"]/td[5]/mat-icon[1]').click()
 
 
 @then('the User Field should expand down, click the Edit button')
@@ -109,10 +109,10 @@ def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_
 @then('reopen the user edit page and verify sshkey was saved.')
 def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     """reopen the user edit page and verify sshkey was saved.."""
-    time.sleep(4)
+    time.sleep(8)
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
+    assert wait_on_element(driver, 10, '//tbody/tr[@id="ericbsd"]/td[5]/mat-icon[1]', 'clickable')
+    driver.find_element_by_xpath('//tbody/tr[@id="ericbsd"]/td[5]/mat-icon[1]').click()
     time.sleep(2)
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()

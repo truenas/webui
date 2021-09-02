@@ -10,7 +10,7 @@ import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 import { WebSocketService, DialogService } from 'app/services';
@@ -232,9 +232,10 @@ export class ServiceNFSComponent implements FormConfiguration {
       ipChoices.forEach((ip) => {
         this.validBindIps.push(ip.value);
       });
-      this.fieldSets
+      const config: FormSelectConfig = this.fieldSets
         .find((set) => set.name === helptext.nfs_srv_fieldset_general)
-        .config.find((config) => config.name === 'bindip').options = ipChoices;
+        .config.find((config) => config.name === 'bindip');
+      config.options = ipChoices;
     });
 
     entityForm.formGroup.controls['v4_v3owner'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {

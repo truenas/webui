@@ -6,7 +6,7 @@ import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { UserService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -25,7 +25,7 @@ export class CronFormComponent {
   protected editCall = 'cronjob.update';
   protected addCall = 'cronjob.create';
   protected pk: number;
-  protected user_field: FieldConfig;
+  protected user_field: FormComboboxConfig;
   protected isOneColumnForm = true;
   protected isEntity = true;
 

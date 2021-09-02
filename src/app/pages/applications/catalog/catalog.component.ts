@@ -340,7 +340,7 @@ export class CatalogComponent implements OnInit {
     self.dialogService.closeAllDialogs();
     const dialogRef = self.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (helptext.choosePool.jobTitle),
+        title: helptext.choosePool.jobTitle,
       },
     });
     dialogRef.componentInstance.setCall('kubernetes.update', [{
@@ -412,7 +412,6 @@ export class CatalogComponent implements OnInit {
         this.mdDialog.open(CatalogSummaryDialog, {
           width: '470px',
           data: catalogAppInfo,
-          disableClose: false,
         });
       }
     });
@@ -421,10 +420,10 @@ export class CatalogComponent implements OnInit {
   syncAll(): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.installing,
+        title: helptext.refreshing,
       },
-      disableClose: true,
     });
+    dialogRef.componentInstance.openJobsManagerOnClose = true;
     dialogRef.componentInstance.setCall('catalog.sync_all');
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

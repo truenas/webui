@@ -1,3 +1,13 @@
+:host {
+  $pagetitle: 97px;
+  $outer-padding: 16px;
+
+  display: block;
+  height: calc(100% - #{$pagetitle});
+  margin-right: -#{$outer-padding};
+  position: relative;
+}
+
 .dashboard-wrap {
   align-content: stretch;
   align-items: stretch;
@@ -17,10 +27,6 @@ ul.ct-legend {
   top: -2em !important;
 }
 
-.give_me_space_bottom {
-  padding-bottom: 20px;
-}
-
 #reporting-spinner {
   left: 47%;
   position: relative;
@@ -28,13 +34,7 @@ ul.ct-legend {
 }
 
 .reports-dash-global-controls {
-  //padding:16px;
   color: var(--fg2);
-  //margin: 24px 24px 0px;
-}
-
-.reports-dash-global-controls > * {
-  //margin-bottom:32px;
 }
 
 .mat-card.ghost-card {
@@ -65,17 +65,14 @@ nav.reports-toolbar {
 }
 
 .master-container {
-  height: calc(100vh - 92px - 4px); /* 92 is for the topbar && 48 is for the entity-toolbar */
+  bottom: 0;
+  height: 100%;
   left: 0;
-  padding-bottom: 16px;
+  padding-bottom: 0;
   position: absolute;
-  top: 96;
+  right: 0;
+  top: 0;
   width: 100%;
-
-}
-
-.master-container.with-footer-console {
-  height: calc(100vh - 92px - 48px - 45px);
 }
 
 .reports-navigation-spacer {
@@ -104,8 +101,4 @@ nav.reports-toolbar {
 cdk-virtual-scroll-viewport {
   height: 100%;
   width: 100%;
-
-  .report-container {
-    /*height:400px !important;*/
-  }
 }

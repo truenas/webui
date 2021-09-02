@@ -10,7 +10,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import helptext from 'app/helptext/vm/devices/device-add-edit';
 import { CoreEvent } from 'app/interfaces/events';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
@@ -52,7 +52,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   protected addZvolComponent: ZvolWizardComponent;
 
-  fieldConfig: FieldConfig[] = [
+  fieldConfig: FormSelectConfig[] = [
     {
       type: 'select',
       name: 'dtype',
@@ -178,8 +178,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       inputType: 'number',
     },
   ];
-  protected nic_attach: FieldConfig;
-  protected nicType: FieldConfig;
+  protected nic_attach: FormSelectConfig;
+  protected nicType: FormSelectConfig;
 
   // rawfile
   rawfileFieldConfig: FieldConfig[] = [
@@ -258,7 +258,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       inputType: 'number',
     },
   ];
-  protected pptdev: FieldConfig;
+  protected pptdev: FormSelectConfig;
 
   // Display
   displayFieldConfig: FieldConfig[] = [
@@ -328,7 +328,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   readonly VmDeviceType = VmDeviceType;
 
-  protected ipAddress: FieldConfig;
+  protected ipAddress: FormSelectConfig;
 
   constructor(
     protected router: Router,
@@ -357,7 +357,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
 
     this.ws.call('vm.resolution_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      const resolution = _.find(this.displayFieldConfig, { name: 'resolution' });
+      const resolution: FormSelectConfig = _.find(this.displayFieldConfig, { name: 'resolution' });
       for (const key in res) {
         resolution.options.push({ label: key, value: res[key] });
       }
@@ -378,7 +378,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       const newZvol = {
         label: evt.data.id, value: '/dev/zvol/' + evt.data.id,
       };
-      const pathField = _.find(this.diskFieldConfig, { name: 'path' });
+      const pathField: FormSelectConfig = _.find(this.diskFieldConfig, { name: 'path' });
       pathField.options.splice(pathField.options.findIndex((o) => o.value === 'new'), 0, newZvol);
 
       this.diskFormGroup.controls['path'].setValue(newZvol.value);
@@ -496,15 +496,17 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   afterInit(): void {
     this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
-        _.find(this.diskFieldConfig, { name: 'path' }).options.push(
+        const config: FormSelectConfig = _.find(this.diskFieldConfig, { name: 'path' });
+        config.options.push(
           {
             label: zvol.id, value: '/dev/zvol/' + zvol.id,
           },
         );
       });
-      _.find(this.diskFieldConfig, { name: 'path' }).options.push({
+      const config: FormSelectConfig = _.find(this.diskFieldConfig, { name: 'path' });
+      config.options.push({
         label: 'Add New', value: 'new', sticky: 'bottom',
-      });
+      } as any);
     });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing Display device, hide Display option.
     this.ws.call('vm.query', [[['id', '=', this.vmid]]]).pipe(untilDestroyed(this)).subscribe((vm) => {
@@ -518,7 +520,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
             }
           }
         } else {
-          const typeField = _.find(this.displayFieldConfig, { name: 'type' });
+          const typeField: FormSelectConfig = _.find(this.displayFieldConfig, { name: 'type' });
           _.pull(typeField.options, _.find(typeField.options, { value: (vmDisplayDevices[0].attributes as any).type }));
           this.displayFormGroup.controls['type'].setValue(typeField.options[0].value);
         }
@@ -601,7 +603,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       searchedZvols.push({
         label: 'Add New', value: 'new', sticky: 'bottom',
       } as any);
-      _.find(parent.diskFieldConfig, { name: 'path' }).searchOptions = searchedZvols;
+      const config: FormComboboxConfig = _.find(parent.diskFieldConfig, { name: 'path' });
+      config.searchOptions = searchedZvols;
     });
   }
 

@@ -17,6 +17,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ManagerDisk } from 'app/pages/storage/volumes/manager/manager-disk.interface';
@@ -205,7 +206,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       },
       parent: this,
       afterInit(entityDialog: EntityDialogComponent) {
-        const copy_desc = _.find(this.fieldConfig, { name: 'copy_desc' });
+        const copy_desc: FormParagraphConfig = _.find(this.fieldConfig, { name: 'copy_desc' });
         const parent = entityDialog.parent;
         const setParatext = (vdevs: number): void => {
           const used = parent.first_data_vdev_disknum * vdevs;

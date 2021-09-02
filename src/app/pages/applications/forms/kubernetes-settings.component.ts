@@ -11,7 +11,7 @@ import helptext from 'app/helptext/apps/apps';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services';
@@ -116,7 +116,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   async prerequisite(): Promise<boolean> {
     const setNodeIpControl$ = this.appService.getBindIPChoices().pipe(
       tap((ips) => {
-        const nodeIpControl = _.find(this.fieldSets[0].config, { name: 'node_ip' });
+        const nodeIpControl: FormSelectConfig = _.find(this.fieldSets[0].config, { name: 'node_ip' });
         for (const ip in ips) {
           nodeIpControl.options.push({ label: ip, value: ip });
         }
@@ -125,7 +125,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
 
     const setV4InterfaceControl$ = this.appService.getInterfaces().pipe(
       tap((interfaces) => {
-        const v4InterfaceControl = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
+        const v4InterfaceControl: FormSelectConfig = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
         interfaces.forEach((i) => {
           v4InterfaceControl.options.push({ label: i.name, value: i.name });
         });

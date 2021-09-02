@@ -1,7 +1,15 @@
-<div id="config.name" fxLayout="column" class="dynamic-field mat-dict" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
+<div
+  *ngIf="!config['isHidden']"
+  id="config.name"
+  fxLayout="column"
+  class="dynamic-field mat-dict"
+  [formGroup]="group"
+  [ngClass]="fieldShow"
+  [class.has-tooltip]="config.tooltip"
+>
   <div *ngIf="config.placeholder" class="label-container">
     <label class="label input-text">{{config.label | translate}}</label>
-    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>
+    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
   </div>
   <ng-container *ngFor="let field of config.subFields;" >
     <div *ngIf="!field.isHidden" fxFlex="calc(100% - 100px)"

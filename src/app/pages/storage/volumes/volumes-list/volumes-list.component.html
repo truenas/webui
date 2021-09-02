@@ -15,8 +15,8 @@
           {{row.name}} <span *ngIf="row.name === systemdatasetPool" class="ml-1">
             {{ '(System Dataset Pool)' | translate}}</span>
           <span *ngIf="row.encrypt > 0"  title="Encryption On" id="volume_encrypt_on_{{row.name}}" class="panel_status_enc">
-              <mat-icon *ngIf="!row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock" ></mat-icon>
-              <mat-icon *ngIf="row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock-open-variant"></mat-icon>
+            <mat-icon *ngIf="!row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock" ></mat-icon>
+            <mat-icon *ngIf="row.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock-open-variant"></mat-icon>
           </span>
           <span *ngIf="row.encrypt > 0">
             {{'(Legacy Encryption)' | translate}}
@@ -46,11 +46,11 @@
           </span>
         </mat-panel-description>
 
-      <div fxLayoutAlign="end start" class="icon-row hidden">
-        <div class="global_volume_based_action_menu pool-icon" title="Pool Operations" >
-          <app-entity-table-actions icon_name="mdi-database-cog" [entity]="actionComponent" [row]="row" [action]="'settings'" [groups]="true"></app-entity-table-actions>
+        <div fxLayoutAlign="end start" class="icon-row hidden">
+          <div class="global_volume_based_action_menu pool-icon" title="Pool Operations" >
+            <app-entity-table-actions icon_name="mdi-database-cog" [entity]="actionComponent" [row]="row" [action]="'settings'" [groups]="true"></app-entity-table-actions>
+          </div>
         </div>
-      </div>
       </mat-expansion-panel-header>
 
       <div class="entity-tree-table-container">

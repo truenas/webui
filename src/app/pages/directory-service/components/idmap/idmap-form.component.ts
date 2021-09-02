@@ -9,7 +9,7 @@ import helptext from 'app/helptext/directory-service/idmap';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -315,7 +315,7 @@ export class IdmapFormComponent implements FormConfiguration {
     });
 
     this.idmapService.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
-      const config = this.fieldConfig.find((c) => c.name === 'certificate');
+      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'certificate');
       config.options.push({ label: '---', value: null });
       certificates.forEach((certificate) => {
         config.options.push({ label: certificate.name, value: certificate.id });
@@ -355,7 +355,7 @@ export class IdmapFormComponent implements FormConfiguration {
 
     this.idmapService.getBackendChoices().pipe(untilDestroyed(this)).subscribe((backendChoices) => {
       this.backendChoices = backendChoices;
-      const config = this.fieldConfig.find((c) => c.name === 'idmap_backend');
+      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'idmap_backend');
       for (const item in backendChoices) {
         config.options.push({ label: item, value: item });
       }

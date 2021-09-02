@@ -101,7 +101,7 @@ export default {
   add_principal_form: {
     username: T('Name'),
     password: T('Password'),
-    action: T('Submit'),
+    action: T('Save'),
     cancel: T('Cancel'),
     error_title: T('Error'),
     error: T('There was a problem submitting the SPN entry.'),

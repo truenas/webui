@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormButtonConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @Component({
@@ -25,7 +25,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   `,
 })
 export class FormButtonComponent implements Field {
-  config: FieldConfig;
+  config: FormButtonConfig;
   group: FormGroup;
   fieldShow: string;
   constructor(public translate: TranslateService) {}

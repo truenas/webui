@@ -8,7 +8,7 @@ import { fromEvent, Subject } from 'rxjs';
 import {
   map, takeUntil, debounceTime, distinctUntilChanged,
 } from 'rxjs/operators';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
@@ -18,7 +18,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   templateUrl: './form-combobox.component.html',
 })
 export class FormComboboxComponent implements Field {
-  config: FieldConfig;
+  config: FormComboboxConfig;
   group: FormGroup;
   fieldShow: string;
   searchText = '';

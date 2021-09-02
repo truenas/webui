@@ -825,7 +825,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 ).subscribe(() => {
                   this.dialogRef = this.mdDialog.open(EntityJobComponent, {
                     data: { title: T('Scrub Pool') },
-                    disableClose: false,
                   });
                   this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, 'START']);
                   this.dialogRef.componentInstance.submit();
@@ -1671,13 +1670,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     untilDestroyed(this, 'destroy'),
                   ).subscribe(() => {
                     this.loader.open();
-                    this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
+                    this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
                       this.loader.close();
                       const url = res[1];
                       this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
                         .pipe(untilDestroyed(this, 'destroy'))
                         .subscribe((file) => {
-                          if (res !== null && res !== '') {
+                          if (res !== null) {
                             this.storageService.downloadBlob(file, fileName);
                           }
                         });

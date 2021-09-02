@@ -1098,7 +1098,12 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
 
-  getButtonClass(state: JobState): string {
+  getButtonClass(row: any): string {
+    // Bring warnings to user's attention even if state is finished or successful.
+    if (row.warnings && row.warnings.length > 0) return 'fn-theme-orange';
+
+    const state: JobState = row.state;
+
     switch (state) {
       case JobState.Pending: return 'fn-theme-orange';
       case JobState.Running: return 'fn-theme-orange';
@@ -1120,7 +1125,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   }
 
   runningStateButton(jobid: number): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Task is running') }, disableClose: false });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Task is running') } });
     dialogRef.componentInstance.jobId = jobid;
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

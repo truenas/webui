@@ -2,10 +2,10 @@
 <mat-card class="form-card">
   <form (ngSubmit)="onSubmit($event)" [formGroup]="formGroup" #entityForm="ngForm">
     <ng-container *ngFor="let field of conf.fieldConfig; let i = index">
-    	<div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{i}}">
-            <div id="dynamicField_{{field.name}}" dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
-            </div>
+      <div [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{i}}">
+        <div id="dynamicField_{{field.name}}" dynamicField [config]="field" [group]="formGroup" [fieldShow]="isShow(field.name) ? 'show' :'hide'">
         </div>
+      </div>
     </ng-container>
     <mat-card-actions class="buttons">
       <button class="btn btn-block btn-warning" type="submit" mat-button color="primary" [disabled]="!entityForm.form.valid">{{ "Save" | translate }}</button>

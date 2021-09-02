@@ -334,3 +334,12 @@ div#cardHeaderContainer {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+button div.label-warning-icon {
+  display: inline;
+}
+
+button div.label-warning-icon .mat-icon {
+  font-size: 14px;
+  margin: 0;
+}
