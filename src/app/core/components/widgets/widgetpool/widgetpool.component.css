@@ -185,18 +185,29 @@ span.safe{
   color: var(--green);
 }
 
-.pool-status span.safe .mat-icon,
-.used-space span.safe .mat-icon,
-.disk-errors span.safe .mat-icon{
-  width:14px;
-  height:auto;
-  font-size: 18px;
+.pool-status span .mat-icon,
+.used-space span .mat-icon,
+.disk-errors span .mat-icon{
+  width: 14px;
+  height: auto;
+  font-size: 17px;
   position: relative;
   top: 2px;
+  margin-left: 4px;
+}
+
+/*.pool-status span.safe .mat-icon,*/
+.used-space span.safe .mat-icon,
+.disk-errors span.safe .mat-icon{
+  top: 4px;
 }
 
 .pool-status span.safe.lock-icon-wrapper{
   top:1px;
+}
+
+.pool-status.tr .td{
+  white-space: nowrap;
 }
 
 .controls{

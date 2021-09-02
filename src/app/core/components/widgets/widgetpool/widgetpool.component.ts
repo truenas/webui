@@ -458,6 +458,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   checkVolumeHealth() {
     switch (this.poolState.status) {
+      case 'ONLINE':
       case 'HEALTHY':
         break;
       case 'LOCKED':
@@ -509,7 +510,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
   }
 
-  nextPath(obj: any, index: number|string) {
+  nextPath(obj: any, index: number | string) {
     if (typeof index == 'string') { index = parseInt(index); }
     return obj[index];
   }
