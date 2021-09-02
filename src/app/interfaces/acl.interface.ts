@@ -116,10 +116,10 @@ export interface SetAclOptions {
 
 export interface SetAcl {
   path: string;
-  uid: number;
-  gid: number;
+  uid?: number;
+  gid?: number;
   dacl: NfsAclItem[] | PosixAclItem[];
   nfs41_flags?: Nfs41Flags;
-  acltype: AclType;
+  acltype?: AclType;
   options: SetAclOptions;
 }

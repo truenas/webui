@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { MatchDatastoresWithDatasetsParams } from 'app/interfaces/vmware.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -235,10 +236,11 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
   passwordBlur(parent: this): void {
     if (parent.entityForm) {
       this.datastore = _.find(parent.fieldConfig, { name: 'datastore' });
-      const payload: any = {};
-      payload['hostname'] = parent.entityForm.formGroup.value.hostname;
-      payload['username'] = parent.entityForm.formGroup.value.username;
-      payload['password'] = parent.entityForm.formGroup.value.password;
+      const payload: MatchDatastoresWithDatasetsParams = {
+        hostname: parent.entityForm.formGroup.value.hostname,
+        username: parent.entityForm.formGroup.value.username,
+        password: parent.entityForm.formGroup.value.password,
+      };
 
       if (payload['password'] !== '' && typeof (payload['password']) !== 'undefined') {
         parent.loader.open();

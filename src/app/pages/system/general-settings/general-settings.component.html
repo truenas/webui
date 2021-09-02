@@ -2,79 +2,80 @@
   gdGap="8px"
   gdRows="fit-content(30vh)"
   gdColumns="50% auto"
-  gdColumns.lt-lg="50% auto "  
+  gdColumns.lt-lg="50% auto "
   gdColumns.lt-md="auto"
   gdAreas="system-card data-card1 | system-card data-card1 | data-card2 ntp-card"
   gdAreas.lt-lg="system-card system-card | data-card1 data-card2 | ntp-card ntp-card"
-  gdAreas.lt-md="system-card | data-card1 | data-card2 | ntp-card">
+  gdAreas.lt-md="system-card | data-card1 | data-card2 | ntp-card"
+>
 
-    <mat-card class="system-card" gdArea="system-card">
-        <mat-toolbar-row class="title-bar">
-            <h3>{{ supportTitle | translate }}</h3>
-        </mat-toolbar-row>
-        
-        <app-support></app-support>
-    </mat-card>
+  <mat-card class="system-card" gdArea="system-card">
+    <mat-toolbar-row class="title-bar">
+      <h3>{{ supportTitle | translate }}</h3>
+    </mat-toolbar-row>
 
-    <mat-card class="data-card{{i+1}}" gdArea="data-card{{i+1}}" *ngFor="let card of dataCards; index as i; ">
-        <mat-toolbar-row>
-            <h3>{{ card.title | translate }}</h3>
-            <div class="actions action-icon">
-              <button mat-button color="default" (click)="doAdd(card.id)">{{ 'Settings' | translate }}</button>
-            </div>
-        </mat-toolbar-row>
-        
-        <mat-card-content>
-          <mat-list>
-            <mat-list-item *ngFor="let item of card.items" class="card-list-item">
-              <span class="label">{{ item.label | translate }}:</span>
-              <span class="value">{{ item.value | translate }}</span>
-            </mat-list-item>
-          </mat-list>
-        </mat-card-content>
-    </mat-card>
+    <app-support></app-support>
+  </mat-card>
 
-    <mat-card class="ntp-card" gdArea="ntp-card">
-        <mat-toolbar-row>
-            <h3 class="title">{{ ntpTitle }}</h3>
-            <div class="actions">
-              <button mat-button color="default" class="action-icon" (click)="doAdd('ntp')">{{ 'Add' | translate }}</button>
-            </div>
-        </mat-toolbar-row>
-        
-        <mat-card-content>
-          <table *ngIf="dataSource && displayedColumns" mat-table [dataSource]="dataSource" class="ntp-table">
-              <ng-container matColumnDef="address">
-                  <th mat-header-cell *matHeaderCellDef> {{ 'Address' | translate}} </th>
-                  <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.address}} </td>
-              </ng-container>
-              <ng-container matColumnDef="burst">
-                <th mat-header-cell *matHeaderCellDef> {{ 'Burst' | translate }} </th>
-                <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.burst}} </td>
-              </ng-container>
-              <ng-container matColumnDef="iburst">
-                <th mat-header-cell *matHeaderCellDef> {{ 'iBurst' | translate }} </th>
-                <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.iburst}} </td>
-              </ng-container>
-              <ng-container matColumnDef="prefer">
-                <th mat-header-cell *matHeaderCellDef> {{ 'Prefer' | translate}} </th>
-                <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.prefer}} </td>
-              </ng-container>
-              <ng-container matColumnDef="minpoll">
-                <th mat-header-cell *matHeaderCellDef> {{ 'Min. Poll' | translate}} </th>
-                <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.minpoll}} </td>
-              </ng-container>
-              <ng-container matColumnDef="maxpoll">
-                <th mat-header-cell *matHeaderCellDef> {{ 'Max. Poll' | translate }} </th>
-                <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.maxpoll}} </td>
-              </ng-container>
-              <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let server" (click)="doNTPDelete(server)"><mat-icon>delete</mat-icon></td>
-              </ng-container>
-              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
-            </table>
-          </mat-card-content>
-    </mat-card>
+  <mat-card class="data-card{{i+1}}" gdArea="data-card{{i+1}}" *ngFor="let card of dataCards; index as i; ">
+    <mat-toolbar-row>
+      <h3>{{ card.title | translate }}</h3>
+      <div class="actions action-icon">
+        <button mat-button color="default" (click)="doAdd(card.id)">{{ 'Settings' | translate }}</button>
+      </div>
+    </mat-toolbar-row>
+
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item *ngFor="let item of card.items" class="card-list-item">
+          <span class="label">{{ item.label | translate }}:</span>
+          <span class="value">{{ item.value | translate }}</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="ntp-card" gdArea="ntp-card">
+    <mat-toolbar-row>
+      <h3 class="title">{{ ntpTitle }}</h3>
+      <div class="actions">
+        <button mat-button color="default" class="action-icon" (click)="doAdd('ntp')">{{ 'Add' | translate }}</button>
+      </div>
+    </mat-toolbar-row>
+
+    <mat-card-content>
+      <table *ngIf="dataSource && displayedColumns" mat-table [dataSource]="dataSource" class="ntp-table">
+        <ng-container matColumnDef="address">
+          <th mat-header-cell *matHeaderCellDef> {{ 'Address' | translate}} </th>
+          <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.address}} </td>
+        </ng-container>
+        <ng-container matColumnDef="burst">
+          <th mat-header-cell *matHeaderCellDef> {{ 'Burst' | translate }} </th>
+          <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.burst}} </td>
+        </ng-container>
+        <ng-container matColumnDef="iburst">
+          <th mat-header-cell *matHeaderCellDef> {{ 'iBurst' | translate }} </th>
+          <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.iburst}} </td>
+        </ng-container>
+        <ng-container matColumnDef="prefer">
+          <th mat-header-cell *matHeaderCellDef> {{ 'Prefer' | translate}} </th>
+          <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.prefer}} </td>
+        </ng-container>
+        <ng-container matColumnDef="minpoll">
+          <th mat-header-cell *matHeaderCellDef> {{ 'Min. Poll' | translate}} </th>
+          <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.minpoll}} </td>
+        </ng-container>
+        <ng-container matColumnDef="maxpoll">
+          <th mat-header-cell *matHeaderCellDef> {{ 'Max. Poll' | translate }} </th>
+          <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.maxpoll}} </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let server" (click)="doNTPDelete(server)"><mat-icon>delete</mat-icon></td>
+        </ng-container>
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
 </div>

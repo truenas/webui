@@ -107,8 +107,7 @@ export class ReportsConfigComponent implements FormConfiguration {
   }
 
   customSubmit(body: any): void {
-    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints
-      || body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
+    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints) {
       this.dialog.confirm({
         title: helptext.dialog.title,
         message: helptext.dialog.message,

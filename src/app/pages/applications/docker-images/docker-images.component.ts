@@ -163,7 +163,6 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
       data: {
         title: helptext.dockerImages.pulling,
       },
-      disableClose: true,
     });
     self.dialogRef.componentInstance.setCall('container.image.pull', payload);
     self.dialogRef.componentInstance.submit();

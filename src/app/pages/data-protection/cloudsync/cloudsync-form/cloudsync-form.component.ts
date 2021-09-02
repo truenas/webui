@@ -468,7 +468,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  getBuckets(credential: any): Observable<any[]> {
+  getBuckets(credential: CloudsyncCredential): Observable<any[]> {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
   }
 
@@ -497,7 +497,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  getBucketFolders(credential: string, bucket: string, node: TreeNode): Promise<any> {
+  getBucketFolders(credential: number, bucket: string, node: TreeNode): Promise<any> {
     const formValue = this.entityForm.formGroup.value;
     const children: any[] = [];
     const data = {

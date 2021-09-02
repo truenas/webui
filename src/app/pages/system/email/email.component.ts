@@ -66,7 +66,7 @@ export class EmailComponent implements FormConfiguration {
           value.pass = value.pass || this.entityEdit.data.pass;
 
           mailObj['subject'] += ' hostname: ' + systemInfo.hostname;
-          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'EMAIL' }, disableClose: true });
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('EMAIL') }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

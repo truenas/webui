@@ -21,4 +21,5 @@ export interface KubernetesConfigUpdate {
   route_v4_gateway: string;
   route_v4_interface: string;
   service_cidr: string;
+  migrate_applications?: boolean;
 }
