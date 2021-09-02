@@ -7,9 +7,6 @@ export default {
   unlock_key_file_tooltip: T('Use an exported encryption key file to unlock datasets.'),
   unlock_children_placeholder: T('Unlock Children'),
   unlock_children_tooltip: T('Also unlock any encrypted dataset stored within this dataset.'),
-  restart_services_placeholder: T('Restart Services'),
-  restart_services_tooltip: T('Restarting system services after unlocking the dataset makes \
-     the information contained within the dataset available to the rest of the system.'),
   upload_key_file_placeholder: T('Upload Key file'),
   upload_key_file_tooltip: T('Browse to the exported key file that can be used to unlock this \
      dataset.'),
@@ -42,6 +39,4 @@ export default {
   unlock_successful_title: T('Unlock Successful'),
   unlock_successful_message: T('Datasets for '),
   unlock_successful_message2: T(' successfully unlocked'),
-  check_all: T('Check All'),
-  uncheck_all: T('Uncheck All'),
 };
