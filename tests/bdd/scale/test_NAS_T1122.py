@@ -58,7 +58,7 @@ def click_storage_on_the_side_menu_and_click_on_the_dataset_name_3_dots_button_s
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     time.sleep(1)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
-    driver.find_element_by_xpath('//tr[contains(.,my_acl_dataset)]//mat-icon[text()="more_vert"]').click()
+    driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
     time.sleep(2)
