@@ -1858,15 +1858,15 @@
   resolved "https://registry.yarnpkg.com/@mattlewis92/dom-autoscroller/-/dom-autoscroller-2.4.2.tgz#ccb753fbcf6b3672b0273e0c3bda7924fe238013"
   integrity sha512-YbrUWREPGEjE/FU6foXcAT1YbVwqD/jkYnY1dFb0o4AxtP3s4xKBthlELjndZih8uwsDWgQZx1eNskRNe2BgZQ==
 
-"@ngneat/spectator@~7.2.0":
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/@ngneat/spectator/-/spectator-7.2.0.tgz#2419f06f384041e263b0432577197c8f259b6264"
-  integrity sha512-FUdQqXCQEBwxAX33ZbU7h25cMKT24kesIX8ggiSHfGyyAJbYSJwZkzWLLpLgJqSQcPbe1dLCxCGA6tpIkGF9rg==
+"@ngneat/spectator@~8.0.4":
+  version "8.0.4"
+  resolved "https://registry.yarnpkg.com/@ngneat/spectator/-/spectator-8.0.4.tgz#4201a3b3b7077157cff649aa077f0ddc202bf79f"
+  integrity sha512-9h/ldUAV1soJewXciR5Xt/Z69igOaJcCPRMGQyal9n6D4encqSzqXRxXnQzO+pOB0hqbrPMOUSvADVM/Ry7bKg==
   dependencies:
     "@testing-library/dom" "7.26.5"
     jquery "3.6.0"
-    replace-in-file "^6.2.0"
-    tslib "^2.0.0"
+    replace-in-file "6.2.0"
+    tslib "^2.1.0"
 
 "@ngneat/until-destroy@~8.1.1":
   version "8.1.3"
@@ -12579,12 +12579,12 @@ primeicons@~2.0.0:
   resolved "https://registry.yarnpkg.com/primeicons/-/primeicons-2.0.0.tgz#ec3e5a8d4d04a09309225a5a57deb911e08dc0d3"
   integrity sha512-GJTCeMSQU8UU1GqbsaDrg/IH+b/vSinJQl52NVpdJ7sShYLZA8Eq6jLF48Ye3N/dQloGrE07i7XsZvxQ9pNbqg==
 
-primeng@~12.1.0:
-  version "12.1.0"
-  resolved "https://registry.yarnpkg.com/primeng/-/primeng-12.1.0.tgz#63bde5f62860692a2f46a1476d47510b2e7c3db9"
-  integrity sha512-JHhiVHg1ANU2auMn9NVnrpZA+tmpcpAQvxcZj6KSPtQNIeDgTZGzrVGzntEz+6T4Yn1Otxjf0aidAn+K3a8tyg==
+primeng@~11.4.5:
+  version "11.4.5"
+  resolved "https://registry.yarnpkg.com/primeng/-/primeng-11.4.5.tgz#128137d727d555f68c212a1dcb1f2af3b0f4afd4"
+  integrity sha512-7f5LDHrvFsJA4670Ftmib5ndDxTqcaQiM88XXJrjWYNGjXsXT3Yc5g9fgPvDrg2D38/jjpcSYeW9kalNcvlbrQ==
   dependencies:
-    tslib "^2.1.0"
+    tslib "^2.0.0"
 
 prismjs@^1.23.0:
   version "1.24.1"
@@ -13057,7 +13057,7 @@ repeat-string@^1.0.0, repeat-string@^1.6.1:
   resolved "https://registry.yarnpkg.com/repeat-string/-/repeat-string-1.6.1.tgz#8dcae470e1c88abc2d600fff4a776286da75e637"
   integrity sha1-jcrkcOHIirwtYA//Sndihtp15jc=
 
-replace-in-file@^6.2.0:
+replace-in-file@6.2.0:
   version "6.2.0"
   resolved "https://registry.yarnpkg.com/replace-in-file/-/replace-in-file-6.2.0.tgz#9c0e381b0e02f27f83d5ba500bb4046f63d18566"
   integrity sha512-Im2AF9G/qgkYneOc9QwWwUS/efyyonTUBvzXS2VXuxPawE5yQIjT/e6x4CTijO0Quq48lfAujuo+S89RR2TP2Q==

@@ -15,11 +15,11 @@ import { Subject } from 'rxjs';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewChartBarComponent } from 'app/core/components/view-chart-bar/view-chart-bar.component';
 import { GaugeConfig, ViewChartGaugeComponent } from 'app/core/components/view-chart-gauge/view-chart-gauge.component';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { CoreEvent } from 'app/interfaces/events';
 import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
+import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { Theme } from 'app/services/theme/theme.service';
 import { T } from 'app/translate-marker';
 

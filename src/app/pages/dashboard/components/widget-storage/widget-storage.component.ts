@@ -5,12 +5,12 @@ import { Router } from '@angular/router';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
+import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { T } from 'app/translate-marker';
 
 interface ItemInfo {

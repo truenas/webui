@@ -11,13 +11,13 @@ import {
   tween,
   styler,
 } from 'popmotion';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
+import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { T } from 'app/translate-marker';
 
 interface Slide {

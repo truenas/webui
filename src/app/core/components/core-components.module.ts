@@ -23,17 +23,6 @@ import { ViewChartComponent } from 'app/core/components/view-chart/view-chart.co
 import { ViewControlComponent } from 'app/core/components/view-control/view-control.component';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { ViewComponent } from 'app/core/components/view/view.component';
-import { WidgetChartComponent } from 'app/core/components/widgets/widget-chart/widget-chart.component';
-import { WidgetControllerComponent } from 'app/core/components/widgets/widget-controller/widget-controller.component';
-import { WidgetCpuComponent } from 'app/core/components/widgets/widget-cpu/widget-cpu.component';
-import { WidgetMemoryComponent } from 'app/core/components/widgets/widget-memory/widget-memory.component';
-import { WidgetNetworkComponent } from 'app/core/components/widgets/widget-network/widget-network.component';
-import { WidgetNicComponent } from 'app/core/components/widgets/widget-nic/widget-nic.component';
-import { WidgetPoolComponent } from 'app/core/components/widgets/widget-pool/widget-pool.component';
-import { WidgetStorageComponent } from 'app/core/components/widgets/widget-storage/widget-storage.component';
-import { SimpleFailoverBtnComponent, SimpleFailoverBtnDialog } from 'app/core/components/widgets/widget-sys-info/simple-failover-btn.component';
-import { WidgetSysInfoComponent } from 'app/core/components/widgets/widget-sys-info/widget-sys-info.component';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
@@ -81,24 +70,12 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ViewChartGaugeComponent,
     ViewChartBarComponent,
     ViewChartLineComponent,
-    WidgetComponent,
-    WidgetChartComponent,
-    WidgetSysInfoComponent,
-    WidgetNicComponent,
-    WidgetCpuComponent,
-    WidgetMemoryComponent,
-    WidgetPoolComponent,
     TextLimiterDirective,
     HtmlTooltipDirective,
     TextLimiterTooltipComponent,
-    WidgetControllerComponent,
-    SimpleFailoverBtnComponent,
-    SimpleFailoverBtnDialog,
     ConvertPipe,
     FormatDateTimePipe,
     CopyButtonComponent,
-    WidgetNetworkComponent,
-    WidgetStorageComponent,
   ],
   exports: [ // Modules and Components here
     CommonModule,
@@ -122,22 +99,10 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ViewButtonComponent,
     ViewControllerComponent,
     CardComponent,
-    WidgetComponent,
-    WidgetChartComponent,
-    WidgetSysInfoComponent,
-    WidgetNicComponent,
-    WidgetCpuComponent,
-    WidgetMemoryComponent,
     TextLimiterDirective,
     HtmlTooltipDirective,
     TextLimiterTooltipComponent,
-    WidgetPoolComponent,
-    WidgetControllerComponent,
-    SimpleFailoverBtnComponent,
-    SimpleFailoverBtnDialog,
     CopyButtonComponent,
-    WidgetNetworkComponent,
-    WidgetStorageComponent,
     FormatDateTimePipe,
   ],
   entryComponents: [
@@ -155,20 +120,8 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ViewButtonComponent,
     ViewControllerComponent,
     CardComponent,
-    WidgetComponent,
-    WidgetChartComponent,
-    WidgetSysInfoComponent,
-    WidgetNicComponent,
-    WidgetCpuComponent,
-    WidgetMemoryComponent,
-    WidgetPoolComponent,
     TextLimiterTooltipComponent,
-    WidgetControllerComponent,
-    SimpleFailoverBtnComponent,
-    SimpleFailoverBtnDialog,
     CopyButtonComponent,
-    WidgetNetworkComponent,
-    WidgetStorageComponent,
   ],
   providers: [
     StorageService,
