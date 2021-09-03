@@ -4,7 +4,7 @@ import {
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from 'app/helptext/global-helptext';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 
@@ -15,7 +15,7 @@ import { EntityFormService } from 'app/pages/common/entity/entity-form/services/
 })
 export class FormInputComponent implements Field {
   @ViewChild('fileInput', { static: true }) fileInput: HTMLInputElement;
-  config: FieldConfig;
+  config: FormInputConfig;
   group: FormGroup;
   fieldShow: string;
   fileString: string | ArrayBuffer;

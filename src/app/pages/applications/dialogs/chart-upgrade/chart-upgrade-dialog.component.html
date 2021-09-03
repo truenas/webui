@@ -13,9 +13,9 @@
     <mat-form-field class="form-element ">
       <mat-select class="" [(ngModel)]="selectedVersionKey"  (ngModelChange)="onVersionOptionChanged()"
           ix-auto ix-auto-type="select" ix-auto-identifier="status-select">
-          <mat-option *ngFor="let option of versionOptions | keyvalue: originalOrder" [value]="option.key">
-            {{ option.value.latest_human_version }}
-          </mat-option>
+        <mat-option *ngFor="let option of versionOptions | keyvalue: originalOrder" [value]="option.key">
+          {{ option.value.latest_human_version }}
+        </mat-option>
       </mat-select>
     </mat-form-field>
   </div>

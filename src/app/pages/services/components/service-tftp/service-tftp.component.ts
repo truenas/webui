@@ -6,7 +6,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { TftpConfig } from 'app/interfaces/tftp-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { UserService, WebSocketService } from 'app/services';
 
@@ -98,7 +98,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  protected tftp_username: FieldConfig;
+  protected tftp_username: FormComboboxConfig;
 
   constructor(
     protected router: Router,

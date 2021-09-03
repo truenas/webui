@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/resilver/resilver';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { TaskService } from 'app/services';
 
@@ -87,8 +87,8 @@ export class ResilverComponent implements FormConfiguration {
   fieldConfig: FieldConfig[];
 
   constructor(protected router: Router, protected taskService: TaskService) {
-    const begin_field = _.find(this.fieldSets[0].config, { name: 'begin' });
-    const end_field = _.find(this.fieldSets[0].config, { name: 'end' });
+    const begin_field: FormSelectConfig = _.find(this.fieldSets[0].config, { name: 'begin' });
+    const end_field: FormSelectConfig = _.find(this.fieldSets[0].config, { name: 'end' });
     const time_options = this.taskService.getTimeOptions();
     for (let i = 0; i < time_options.length; i++) {
       begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });

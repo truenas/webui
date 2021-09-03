@@ -9,7 +9,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { ipv4Validator, ipv6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
@@ -240,7 +240,7 @@ export class ConfigurationComponent implements FormConfiguration {
     protected ws: WebSocketService) { }
 
   preInit(): void {
-    const outbound_network_value_field = this.fieldSets.config('outbound_network_value');
+    const outbound_network_value_field: FormSelectConfig = this.fieldSets.config('outbound_network_value');
     this.ws.call('network.configuration.activity_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       for (const [value, label] of choices) {
         outbound_network_value_field.options.push({ label, value });

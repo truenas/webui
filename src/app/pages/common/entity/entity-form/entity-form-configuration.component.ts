@@ -23,7 +23,7 @@ export class EntityFormConfigurationComponent implements FormConfiguration {
   private entityEdit: EntityFormComponent;
 
   title = '';
-  afterModalFormClosed: any;
+  afterModalFormClosed: () => void;
   formType: string;
 
   _isOneColumnForm = false;

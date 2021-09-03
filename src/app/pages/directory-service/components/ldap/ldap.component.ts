@@ -10,7 +10,7 @@ import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
-  FieldConfig,
+  FieldConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
@@ -33,11 +33,11 @@ export class LdapComponent implements FormConfiguration {
   queryCall: 'ldap.config' = 'ldap.config';
   upodateCall = 'ldap.update';
   isBasicMode = true;
-  protected ldap_kerberos_realm: FieldConfig;
-  protected ldap_kerberos_principal: FieldConfig;
-  protected ldap_ssl: FieldConfig;
-  protected ldapCertificate: FieldConfig;
-  protected ldap_schema: FieldConfig;
+  protected ldap_kerberos_realm: FormSelectConfig;
+  protected ldap_kerberos_principal: FormSelectConfig;
+  protected ldap_ssl: FormSelectConfig;
+  protected ldapCertificate: FormSelectConfig;
+  protected ldap_schema: FormSelectConfig;
   protected ldap_hostname: string[];
   protected entityForm: EntityFormComponent;
   custActions: FormCustomAction[] = [

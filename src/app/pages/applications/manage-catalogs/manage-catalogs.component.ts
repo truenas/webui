@@ -174,7 +174,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     this.mdDialog.open(ManageCatalogSummaryDialog, {
       width: '534px',
       data: row,
-      disableClose: false,
     });
   }
 
@@ -205,15 +204,13 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   }
 
   syncRow(row: Catalog): void {
-    const payload = [row.label];
-
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: helptext.refreshing,
       },
       disableClose: true,
     });
-    this.dialogRef.componentInstance.setCall('catalog.sync', payload);
+    this.dialogRef.componentInstance.setCall('catalog.sync', [row.label]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();

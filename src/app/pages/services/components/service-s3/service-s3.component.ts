@@ -11,7 +11,7 @@ import helptext from 'app/helptext/services/components/service-s3';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
   DialogService, SystemGeneralService, WebSocketService,
@@ -29,7 +29,7 @@ export class ServiceS3Component implements FormConfiguration {
   queryCall: 's3.config' = 's3.config';
   updateCall = 's3.update';
   route_success: string[] = ['services'];
-  private certificate: FieldConfig;
+  private certificate: FormSelectConfig;
   private initial_path: string;
   private warned = false;
   private validBindIps: string[] = [];
@@ -163,7 +163,9 @@ export class ServiceS3Component implements FormConfiguration {
         choices.forEach((ip) => {
           this.validBindIps.push(ip.value);
         });
-        _.find(this.fieldConfig, { name: 'bindip' }).options = choices;
+
+        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'bindip' });
+        config.options = choices;
       });
     entityForm.submitFunction = this.submitFunction;
   }

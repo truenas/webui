@@ -11,7 +11,7 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
   IdmapService, ServicesService, UserService, WebSocketService,
@@ -35,10 +35,10 @@ export class ServiceSMBComponent implements FormConfiguration {
   protected targetDS = '5';
   isBasicMode = true;
 
-  private cifs_srv_bindip: FieldConfig;
-  private cifs_srv_guest: FieldConfig;
-  private cifs_srv_unixcharset: FieldConfig;
-  private cifs_srv_admin_group: FieldConfig;
+  private cifs_srv_bindip: FormSelectConfig;
+  private cifs_srv_guest: FormSelectConfig;
+  private cifs_srv_unixcharset: FormSelectConfig;
+  private cifs_srv_admin_group: FormComboboxConfig;
   entityEdit: EntityFormComponent;
   private validBindIps: Choices;
   title = helptext.formTitle;

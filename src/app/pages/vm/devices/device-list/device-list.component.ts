@@ -29,7 +29,7 @@ export class DeviceListComponent implements EntityTableConfig {
   route_add: string[];
   route_edit: string[];
   protected route_delete: string[];
-  protected pk: any;
+  protected pk: string;
   vm: string;
   private entityList: EntityTableComponent;
   wsDelete: 'datastore.delete' = 'datastore.delete';
@@ -67,11 +67,11 @@ export class DeviceListComponent implements EntityTableConfig {
     private translate: TranslateService,
   ) {}
 
-  isActionVisible(actionId: string, row: any): boolean {
-    return !(actionId === 'delete' && row.id === true);
+  isActionVisible(actionId: string, row: VmDevice): boolean {
+    return !(actionId === 'delete' && (row as any).id === true);
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: VmDevice): EntityTableAction<VmDevice>[] {
     const self = this;
     const actions = [];
     actions.push({
@@ -79,9 +79,9 @@ export class DeviceListComponent implements EntityTableConfig {
       name: 'edit',
       icon: 'edit',
       label: T('Edit'),
-      onClick: (edit_row: any) => {
+      onClick: (edit_row: VmDevice) => {
         this.router.navigate(new Array('').concat(
-          ['vm', this.pk, 'devices', this.vm, 'edit', edit_row.id, edit_row.dtype],
+          ['vm', this.pk, 'devices', this.vm, 'edit', String(edit_row.id), edit_row.dtype],
         ));
       },
     });
@@ -90,7 +90,7 @@ export class DeviceListComponent implements EntityTableConfig {
       name: 'delete',
       icon: 'delete',
       label: T('Delete'),
-      onClick: (delete_row: any) => {
+      onClick: (delete_row: VmDevice) => {
         this.deviceDelete(delete_row);
       },
     });
@@ -99,7 +99,7 @@ export class DeviceListComponent implements EntityTableConfig {
       name: 'reorder',
       icon: 'reorder',
       label: T('Change Device Order'),
-      onClick: (row1: any) => {
+      onClick: (row1: VmDevice) => {
         self.translate.get('Change order for ').pipe(untilDestroyed(this)).subscribe((orderMsg) => {
           const conf: DialogFormConfiguration = {
             title: T('Change Device Order'),
@@ -139,12 +139,12 @@ export class DeviceListComponent implements EntityTableConfig {
       name: 'details',
       icon: 'list',
       label: T('Details'),
-      onClick: (device: any) => {
+      onClick: (device: VmDevice) => {
         self.translate.get('Change order for ').pipe(untilDestroyed(this)).subscribe((detailMsg) => {
           let details = '';
-          for (const attribute in device.attributes) {
-            details = `${attribute}: ${device.attributes[attribute]} \n` + details;
-          }
+          Object.entries(device.attributes).forEach(([attribute, attributeValue]) => {
+            details = `${attribute}: ${attributeValue} \n` + details;
+          });
           this.dialogService.info(detailMsg + `${row.dtype} ${row.id}`, details, '500px', 'info');
         });
       },
@@ -152,7 +152,7 @@ export class DeviceListComponent implements EntityTableConfig {
     return actions as EntityTableAction[];
   }
 
-  deviceDelete(row: any): void {
+  deviceDelete(row: VmDevice): void {
     this.translate.get('Delete').pipe(untilDestroyed(this)).subscribe((msg) => {
       this.dialogService.confirm(T('Delete'), `${msg} <b>${row.dtype} ${row.id}</b>`,
         true, T('Delete Device')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {

@@ -24,6 +24,7 @@ import { SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
@@ -859,7 +860,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                 .get('transfer_mode')
                 .valueChanges.pipe(untilDestroyed(this))
                 .subscribe((mode: any) => {
-                  const paragraph = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
+                  const paragraph: FormParagraphConfig = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                   switch (mode) {
                     case TransferMode.Sync:
                       paragraph.paraText = helptext_cloudsync.transfer_mode_warning_sync;
@@ -954,7 +955,6 @@ export class DataProtectionDashboardComponent implements OnInit {
   runningStateButton(jobId: number): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: { title: this.translate.instant(helptext.task_is_running) },
-      disableClose: false,
     });
     dialogRef.componentInstance.jobId = jobId;
     dialogRef.componentInstance.wsshow();
@@ -970,6 +970,12 @@ export class DataProtectionDashboardComponent implements OnInit {
     if (row.job) {
       if (row.job.state === JobState.Running) {
         this.runningStateButton(row.job.id);
+      } else if (row.state.warnings && row.state.warnings.length > 0) {
+        let list = '';
+        row.state.warnings.forEach((warning: string) => {
+          list += warning + '\n';
+        });
+        this.dialog.errorReport(T('Warning'), `<pre>${list}</pre>`);
       } else {
         this.job.showLogs(row.job);
       }

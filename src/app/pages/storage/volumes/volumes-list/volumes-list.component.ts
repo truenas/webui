@@ -100,7 +100,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   expanded = false;
   paintMe = true;
-  systemdatasetPool: any;
+  systemdatasetPool: string;
   has_encrypted_root: { [pool: string]: boolean } = {};
   has_key_dataset: { [pool: string]: boolean } = {};
   entityEmptyConf: EmptyConfig = {
@@ -222,7 +222,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           /* Filter out system datasets */
           const pChild = datasets.find((set) => set.name === pool.name);
           if (pChild) {
-            pChild.children = pChild.children.filter((child: any) => child.name.indexOf(`${pool.name}/.system`) === -1 && child.name.indexOf(`${pool.name}/.glusterfs`) === -1);
+            pChild.children = pChild.children.filter((child: Dataset) => {
+              return child.name.indexOf(`${pool.name}/.system`) === -1 && child.name.indexOf(`${pool.name}/.glusterfs`) === -1;
+            });
           }
           pool.children = pChild ? [pChild] : [];
 

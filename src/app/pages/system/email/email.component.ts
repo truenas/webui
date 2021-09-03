@@ -13,7 +13,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -66,7 +66,7 @@ export class EmailComponent implements FormConfiguration {
           value.pass = value.pass || this.entityEdit.data.pass;
 
           mailObj['subject'] += ' hostname: ' + systemInfo.hostname;
-          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'EMAIL' }, disableClose: true });
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('EMAIL') }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
@@ -232,7 +232,7 @@ export class EmailComponent implements FormConfiguration {
 
   private sendMailMethod: FormControl;
   private smtp: FormControl;
-  private pass: FieldConfig;
+  private pass: FormInputConfig;
 
   constructor(
     protected router: Router,
@@ -258,7 +258,7 @@ export class EmailComponent implements FormConfiguration {
     this.ws.call('user.query', [[['username', '=', 'root']]]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.rootEmail = res[0].email;
     });
-    this.pass = this.fieldSets.config('pass');
+    this.pass = this.fieldSets.config('pass') as FormInputConfig;
     this.smtp = entityEdit.formGroup.controls['smtp'] as FormControl;
     this.sendMailMethod = entityEdit.formGroup.controls['send_mail_method'] as FormControl;
 

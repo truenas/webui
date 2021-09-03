@@ -11,6 +11,7 @@ import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptext_sharing_webdav, helptext_sharing_smb, helptext_sharing_nfs } from 'app/helptext/sharing';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
+import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
@@ -244,10 +245,10 @@ export class SharesDashboardComponent implements AfterViewInit {
           add() {
             this.parent.add(this.tableComponent, ShareType.ISCSI);
           },
-          edit(row: any) {
+          edit(row: IscsiTarget) {
             this.parent.edit(this.tableComponent, ShareType.ISCSI, row.id);
           },
-          afterGetData: (data: any) => {
+          afterGetData: (data: IscsiTarget[]) => {
             this.iscsiHasItems = 0;
             this.iscsiExpandableState = ExpandableTableState.Collapsed;
             if (data.length > 0) {

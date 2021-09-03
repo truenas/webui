@@ -21,7 +21,7 @@ export class EncryptionService {
     protected mdDialog: MatDialog, protected router: Router, protected http: HttpClient) {}
 
   setPassphrase(
-    row: any,
+    row: string,
     encryptKeyPassphrase: string,
     adminPassphrase: string,
     poolName: string,
@@ -45,9 +45,9 @@ export class EncryptionService {
     });
   }
 
-  openEncryptDialog(row: any, route_success: string[], poolName: string, addRecoveryKey?: boolean): void {
+  openEncryptDialog(row: string, route_success: string[], poolName: string, addRecoveryKey?: boolean): void {
     const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-    dialogRef.componentInstance.volumeId = row;
+    dialogRef.componentInstance.volumeId = parseInt(row);
     dialogRef.componentInstance.fileName = 'pool_' + poolName + '_encryption.key';
     dialogRef.afterClosed().subscribe(() => {
       if (addRecoveryKey) {
@@ -60,7 +60,7 @@ export class EncryptionService {
     });
   }
 
-  makeRecoveryKey(row: any, poolName: string, route_success: string[]): void {
+  makeRecoveryKey(row: string, poolName: string, route_success: string[]): void {
     this.loader.open();
     const fileName = 'pool_' + poolName + '_recovery.key';
     this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(row)], fileName]).subscribe((res) => {
@@ -88,7 +88,7 @@ export class EncryptionService {
     });
   }
 
-  deleteRecoveryKey(row: any, adminPassphrase: string, poolName: string, route_success: string[]): void {
+  deleteRecoveryKey(row: string, adminPassphrase: string, poolName: string, route_success: string[]): void {
     this.dialogService.confirm({
       title: helptext.delete_recovery_key_title,
       message: helptext.delete_recovery_key_message,
