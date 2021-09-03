@@ -57,8 +57,8 @@ def the_pools_page_appears_click_create_pool(driver):
     """the pools page appears click create pool."""
     time.sleep(1)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 10, '//a[@ix-auto="button___POOL_CREATE"]', 'clickable')
-    driver.find_element_by_xpath('//a[@ix-auto="button___POOL_CREATE"]').click()
+    assert wait_on_element(driver, 10, '//a[@ix-auto="button_Pools_POOL_CREATE"]', 'clickable')
+    driver.find_element_by_xpath('//a[@ix-auto="button_Pools_POOL_CREATE"]').click()
 
 
 @then('the Pool Manager appears, enter the tank for pool name')
