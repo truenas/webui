@@ -1,4 +1,3 @@
-import { jest } from '@jest/globals';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 

@@ -1,5 +1,4 @@
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { jest } from '@jest/globals';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -12,7 +11,6 @@ import { SelectPresetModalComponent } from 'app/pages/storage/volumes/permission
 import { SelectPresetModalConfig } from 'app/pages/storage/volumes/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
 import { WebSocketService, DialogService } from 'app/services';
-import { AppLoaderModule } from 'app/services/app-loader/app-loader.module';
 
 describe('SelectPresetModalComponent', () => {
   let spectator: Spectator<SelectPresetModalComponent>;
@@ -20,7 +18,6 @@ describe('SelectPresetModalComponent', () => {
     component: SelectPresetModalComponent,
     imports: [
       EntityModule,
-      AppLoaderModule,
     ],
     providers: [
       mockProvider(DatasetAclEditorStore, {

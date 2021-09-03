@@ -1,4 +1,3 @@
-import { jest } from '@jest/globals';
 import * as _ from 'lodash';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';

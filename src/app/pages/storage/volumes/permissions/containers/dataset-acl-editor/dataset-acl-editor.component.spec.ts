@@ -3,7 +3,6 @@ import {
 } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { jest } from '@jest/globals';
 import {
   createRoutingFactory, mockProvider, SpectatorRouting, byText,
 } from '@ngneat/spectator/jest';

@@ -1,14 +1,17 @@
 const { pathsToModuleNameMapper } = require('ts-jest/utils');
 const { compilerOptions } = require('./tsconfig');
-const { defaultsESM } = require('jest-preset-angular/presets');
 
 module.exports = {
-  preset: 'jest-preset-angular/presets/defaults-esm',
+  preset: 'jest-preset-angular',
+  roots: ['<rootDir>/src/'],
   testMatch: ['**/+(*.)+(spec).+(ts)'],
   setupFilesAfterEnv: ['<rootDir>/src/setup-jest.ts'],
   collectCoverage: true,
   coverageReporters: ['html'],
   coverageDirectory: 'coverage/my-app',
   moduleDirectories: ['node_modules', 'src'],
-  transformIgnorePatterns: ['node_modules/(?!tslib)'],
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
+    prefix: '<rootDir>/',
+    "^@/(.)$": "/src/$1"
+  })
 };
