@@ -112,17 +112,17 @@ def if_the_smb_serivce_is_not_started_start_the_service_and_click_on_smb_start_a
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(1)
     driver.find_element_by_xpath('//div[contains(text(),"SMB")]')
-    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__SMB_Running"]', 'class', 'mat-checked')
+    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@id="slide-toggle__state_SMB"]', 'class', 'mat-checked')
     if not value_exist:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="overlay__SMB_Running"]').click()
     time.sleep(2)
 
 
-@then(parsers.parse('Send a file to the share with nas_IP/"{mysmbshare}" and "{user}" and "{password}"'))
-def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd1234(driver, nas_ip, my_acl_dataset, user, password):
+@then(parsers.parse('Send a file to the share with {nas_IP}/"{mysmbshare}" and "{user}" and "{password}"'))
+def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd1234(driver, nas_ip, mysmbshare, user, password):
     """Send a file to the share with nas_IP/"{mysmbshare}" and "{user}" and "{password}"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{smbname} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{mysmbshare} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
     time.sleep(1)
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']
