@@ -650,3 +650,29 @@ h3 {
   opacity:0.1;
 }
 
+.chart-wrapper-empty {
+  min-height: 200px;
+}
+
+.empty-message {
+  max-width: 50%;
+  margin: 0.5rem 0;
+}
+
+.empty-title {
+  margin-bottom: 0;
+}
+
+.chart-wrapper-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+}
+
+.empty-icon {
+  font-size: 3rem;
+  padding-right: 21px;
+}

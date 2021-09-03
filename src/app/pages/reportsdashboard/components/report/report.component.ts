@@ -49,9 +49,19 @@ interface LineChartConfig {
 export interface Report {
   name: string;
   title: string;
-  vertical_label: string;
+  vertical_label?: string;
   identifiers?: string[];
   isRendered?: boolean[];
+  empty?: EmptyReportMessage;
+}
+
+export interface EmptyReportMessage {
+  title: string;
+  message: string;
+  button: {
+    text: string;
+    click: () => void;
+  };
 }
 
 export interface ReportData {
