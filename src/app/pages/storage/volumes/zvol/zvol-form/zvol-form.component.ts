@@ -610,7 +610,7 @@ export class ZvolFormComponent implements FormConfiguration {
         entityForm.formGroup.controls['readonly'].setValue(readonly_value);
 
         const sync: FormSelectConfig = _.find(this.fieldConfig, { name: 'sync' });
-        const sparse: FormCheckboxConfig = _.find(this.fieldConfig, { name: 'sparse' });
+        const sparse = _.find(this.fieldConfig, { name: 'sparse' }) as FormCheckboxConfig;
         const compression: FormSelectConfig = _.find(this.fieldConfig, { name: 'compression' });
         const deduplication: FormSelectConfig = _.find(this.fieldConfig, { name: 'deduplication' });
         const volblocksize: FormSelectConfig = _.find(this.fieldConfig, { name: 'volblocksize' });

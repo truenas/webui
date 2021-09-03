@@ -15,7 +15,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
       <button
         mat-button
         [class]="config.buttonClass ? config.buttonClass : 'form-button'"
-        [color]="config.buttonColor ? config.buttonColor : default" type="button"
+        [color]="config.buttonColor ? config.buttonColor : 'default'" type="button"
         (click)="config.customEventMethod($event)"
         [disabled]="config.disabled"
         ix-auto ix-auto-type="button" ix-auto-identifier="{{config.customEventActionLabel}}">

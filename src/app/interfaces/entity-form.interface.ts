@@ -29,6 +29,7 @@ export interface FormConfiguration {
   route_usebaseUrl?: boolean;
   route_cancel?: string[];
   route_success?: string[];
+  // TODO: Broken
   route_delete?: string[];
   custom_edit_query?: string;
   custom_add_query?: string;
@@ -78,6 +79,7 @@ export interface FormConfiguration {
   closeModalForm?(): Promise<boolean>;
   afterModalFormClosed?(): void; // function will called once the modal form closed
   isCustActionVisible?: (action: string) => boolean;
+  isCustActionDisabled?: (action: string) => boolean;
 }
 
 export interface FormCustomAction {

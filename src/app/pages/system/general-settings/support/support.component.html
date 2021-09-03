@@ -63,7 +63,7 @@
         </div>
 
         <!-- ACTION BUTTONS -->
-        <div fxLayout="row" fxLayoutGap="8px" class="actions button-group" [class]="isProductImageTall ? 'btn-fixed' : ''">
+        <div fxLayout="row" fxLayoutGap="8px" class="actions button-group" [class.btn-fixed]="!isProductImageRack">
           <button id="update-license-btn" (click)="updateLicense()" mat-button color="default">
             {{ licenseButtonText | translate }}
           </button>
