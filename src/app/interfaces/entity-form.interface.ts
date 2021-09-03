@@ -29,6 +29,7 @@ export interface FormConfiguration {
   route_usebaseUrl?: boolean;
   route_cancel?: string[];
   route_success?: string[];
+  // TODO: Broken
   route_delete?: string[];
   custom_edit_query?: string;
   custom_add_query?: string;

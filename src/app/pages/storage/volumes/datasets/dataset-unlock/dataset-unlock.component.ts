@@ -191,7 +191,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     this.entityForm = entityEdit;
     this.datasets = entityEdit.formGroup.controls['datasets'] as FormArray;
     this.datasets_fc = _.find(this.fieldConfig, { name: 'datasets' });
-    this.key_file_fc = _.find(this.fieldConfig, { name: 'key_file' });
+    this.key_file_fc = _.find(this.fieldConfig, { name: 'key_file' }) as FormCheckboxConfig;
     const listFields = this.datasets_fc.listFields;
     const dialogRef = this.dialog.open(EntityJobComponent, {
       data: { title: helptext.fetching_encryption_summary_title },
