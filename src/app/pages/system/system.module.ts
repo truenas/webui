@@ -14,6 +14,7 @@ import { IxForm } from 'app/pages/system/general-settings/localization-form3/com
 import { IxInput } from 'app/pages/system/general-settings/localization-form3/components/ix-input/ix-input.component';
 import { IxSelect } from 'app/pages/system/general-settings/localization-form3/components/ix-select/ix-select.component';
 import { LocalizationForm3 } from 'app/pages/system/general-settings/localization-form3/localization-form3.component';
+import { Localization3Service } from 'app/pages/system/general-settings/localization-form3/services/localization.service';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { EntityModule } from '../common/entity/entity.module';
@@ -109,6 +110,8 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     SystemDatasetPoolComponent,
   ],
   entryComponents: [QRDialog],
-  providers: [],
+  providers: [
+    Localization3Service,
+  ],
 })
 export class SystemModule {}

@@ -15,7 +15,7 @@ export class IxForm {
   @Input() title: string;
   @Output() cancel = new EventEmitter<boolean>();
   @Output() formSubmit = new EventEmitter<any>();
-  loading = false;
+  @Input() loading = false;
 
   submitted(): void {
     this.formSubmit.emit(this.formGroup.value);

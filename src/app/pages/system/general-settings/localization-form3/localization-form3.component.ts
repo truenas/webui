@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Option } from 'app/interfaces/option.interface';
+import { SiblingInfo } from 'app/pages/system/general-settings/localization-form3/interfaces/sibling-info.interface';
+import { Localization3Service } from 'app/pages/system/general-settings/localization-form3/services/localization.service';
 
 @UntilDestroy()
 @Component({
@@ -13,6 +15,8 @@ export class LocalizationForm3 implements OnInit {
   form: FormGroup;
   name = 'Rehan2';
   sibling = 'john';
+
+  loading = false;
 
   formTitle = 'Personal Info';
 
@@ -32,7 +36,20 @@ export class LocalizationForm3 implements OnInit {
   ngOnInit(): void {
     this.form = this.fb.group({
       name: ['', [Validators.required]],
-      sibling: ['steve', [Validators.required]],
+      sibling: ['', [Validators.required]],
+    });
+    this.loading = true;
+    this.localizationService.getSiblingInfo('Mike').pipe(untilDestroyed(this)).subscribe((res: SiblingInfo) => {
+      this.loading = false;
+      this.form.get(this.nameFormControlName).setValue(res.name);
+      this.form.get(this.siblingFormControlName).setValue(res.favorite);
+      this.siblingOptions = [];
+      this.siblingOptions = Object.keys(res.siblings).map((key) => {
+        return {
+          label: key,
+          value: res.siblings[key],
+        };
+      });
     });
   }
 
@@ -42,8 +59,12 @@ export class LocalizationForm3 implements OnInit {
 
   submit(value: any): void { // (value: any) {
     value;
-    // console.log("form submitted", value);
+    this.loading = true;
+    this.localizationService.saveSiblingInfo(value).pipe(untilDestroyed(this)).subscribe((res: any) => {
+      res;
+      this.loading = false;
+    });
   }
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private localizationService: Localization3Service) {}
 }
