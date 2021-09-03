@@ -222,13 +222,13 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    assert wait_on_element(driver, 60, '//p[contains(.,"Waiting for Active TrueNAS controller to come up")]', 'clickable')
+    # assert wait_on_element(driver, 60, '//p[contains(.,"Waiting for Active TrueNAS controller to come up")]', 'clickable')
     # element = driver.find_element_by_xpath('//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
     # while element.is_displayed() is False:
     #     element = driver.find_element_by_xpath('//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
-    time.sleep(20)
-    driver.refresh()
-    assert wait_on_element(driver, 60, '//input[@data-placeholder="Username"]')
+    # time.sleep(20)
+    # driver.refresh()
+    assert wait_on_element(driver, 180, '//input[@data-placeholder="Username"]')
 
 
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))
@@ -303,9 +303,9 @@ def click_on_the_my_acl_dataset_3_dots_button_select_view_permissions(driver, da
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
 
 
-@then('the Dataset Permissions widget should open')
-def the_dataset_permissions_widget_should_open(driver):
-    """The Dataset Permissions widget should open."""
+@then('the Dataset Permissions side box should open')
+def the_dataset_permissions_side_box_should_open(driver):
+    """the Dataset Permissions side box should open."""
     assert wait_on_element(driver, 5, '//div[text()="Dataset Permissions"]')
 
 
@@ -316,50 +316,70 @@ def click_on_the_pencil_beside_dataset_permissions(driver):
     driver.find_element_by_xpath('//mat-icon[text()="edit"]').click()
 
 
-@then('the Edit ACL page should open')
-def the_edit_acl_page_should_open(driver):
-    """the Edit ACL page should open."""
-    assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
+@then('at the bottom of the Edit Permissions page, click on Set ACL')
+def at_the_bottom_of_the_Edit_Permissions_page_click_on_Set_ACL(driver):
+    """at the bottom of the Edit Permissions page, click on Set ACL."""
+    assert wait_on_element(driver, 5, '//h1[text()="Edit Permissions"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SET ACL"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SET ACL"]').click()
+    time.sleep(1)
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 
-@then('click on Strip ACL then confirm Strip ACLs and click Strip ACL')
-def click_on_strip_acl_then_confirm_strip_acls_and_click_strip_acls(driver):
-    """click on Strip ACL then confirm Strip ACLs and click Strip ACLs."""
-
-
-@then('select OPEN for Default ACL Option')
-def select_open_for_default_acl_option(driver):
-    """select OPEN for Default ACL Option."""
-    assert wait_on_element(driver, 5, '//button[@id="cust_button_Select an ACL Preset"]', 'clickable')
-    driver.find_element_by_xpath('//button[@id="cust_button_Select an ACL Preset"]').click()
+@then('select NFS4_OPEN for Default ACL Option, then click continue')
+def select_NFS4_OPEN_for_Default_ACL_Option_then_click_continue(driver):
+    """select NFS4_OPEN for Default ACL Option, then click continues."""
+    assert wait_on_element(driver, 5, '//h1[text()="Select a preset ACL"]')
+    assert wait_on_element(driver, 5, '//mat-radio-button[@ix-auto="radio__usePreset_Select a preset ACL"]', 'clickable')
+    driver.find_element_by_xpath('//mat-radio-button[@ix-auto="radio__usePreset_Select a preset ACL"]').click()
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Default ACL Options"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Default ACL Options"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Default ACL Options_NFS4_OPEN"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Default ACL Options_NFS4_OPEN"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 5, '//button[contains(.,"Continue")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Continue")]').click()
+    time.sleep(1)
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
-@then(parsers.parse('select "{group_name}" for Group name, check the Apply Group'))
-def select_group_name_for_group_name_check_the_apply_group(driver, group_name):
-    """select "{group_name}" for Group name, check the Apply Group."""
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div').click()
-    assert wait_on_element(driver, 5, '//input[@data-placeholder="Group"]')
-    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys('AD01\\administrator')
+@then(parsers.parse('On the Edit ACL, select "{user_name}" for User name'))
+def on_the_edit_acl_select_the_user_name(driver, user_name):
+    """On the Edit ACL, select "{user_name}" for User name."""
+    assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Owner:") and contains(@class,"control")]//input', 'inputable')
+    driver.find_element_by_xpath('//div[contains(.,"Owner:") and contains(@class,"control")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Owner:") and contains(@class,"control")]//input').send_keys(user_name)
 
 
-@then('click the Save button, which should be returned to the storage page')
+@then(parsers.parse('select "{group_name}" for Group name'))
+def select_the_group_name(driver, group_name):
+    """select "{group_name}" for Group name."""
+    assert wait_on_element(driver, 5, '//div[contains(.,"Owner Group:") and contains(@class,"control")]//input', 'inputable')
+    driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and contains(@class,"control")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and contains(@class,"control")]//input').send_keys(group_name)
+
+
+@then('click the Save Access Control List button, permission should be Save')
 def click_the_save_button_which_should_be_returned_to_the_storage_page(driver):
-    """click the Save button, which should be returned to the storage page."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element(driver, 10, '//div[contains(text(),"my_acl_dataset")]')
+    """click the Save Access Control List button, permission should be Save."""
+    assert wait_on_element(driver, 5, '//button[contains(.,"Save Access Control List")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save Access Control List")]').click()
+    time.sleep(1)
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 
-@then(parsers.parse('on the Edit ACL page, verify that the group name is "{group_name}"'))
-def on_the_edit_acl_page_verify_that_the_group_name_is_group_name(driver, group_name):
-    """on the Edit ACL page, verify that the group name is "group_name"."""
-    assert wait_on_element(driver, 5, '//input[@data-placeholder="Group"]')
-    assert attribute_value_exist(driver, '//input[@data-placeholder="Group"]', 'value', group_name)
+@then(parsers.parse('click on the "{dataset_name}" 3 dots button, select View Permissions'))
+def click_on_the_my_ad_dataset_3_dots_button_select_view_permissions(driver, dataset_name):
+    """click on the "my_ad_dataset" 3 dots button, select View Permissions."""
+    assert wait_on_element(driver, 15, f'//div[contains(text(),"{dataset_name}")]')
+    assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]', 'clickable')
+    driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()
+    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
+    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
+
+
+@then(parsers.parse('on the permission box, verify that the user and group name is "{name}"'))
+def on_the_permission_box_verify_that_the_user_and_group_name_is_name(driver, name):
+    """on the permission box, verify that the user and group name is "{name}"."""
+    assert wait_on_element(driver, 5, f'//div[text()="{name}"]')
+    assert wait_on_element(driver, 5, f'//div[text()="{name}" and @class="item-value"]')
