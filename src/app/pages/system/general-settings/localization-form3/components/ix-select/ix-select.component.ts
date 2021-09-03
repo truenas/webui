@@ -1,5 +1,5 @@
 import { Component, forwardRef, Input } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Option } from 'app/interfaces/option.interface';
 
@@ -24,11 +24,17 @@ export class IxSelect implements ControlValueAccessor {
   @Input() required: boolean;
   @Input() tooltip: string;
 
+  formControl = new FormControl(this).value as FormControl;
+
+  touched = false;
+
   onChange: any = (): void => {};
   onTouched: any = (): void => {};
 
   writeValue(val: string | number): void {
     this.value = val;
+    this.onChange(val);
+    this.onTouched();
   }
 
   registerOnChange(onChange: any): void {
