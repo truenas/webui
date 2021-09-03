@@ -95,27 +95,27 @@
                     <div class="pool-status tr" >
                       <div class="td label"><strong>Pool Status:</strong></div>
                       <div class="td">
-                        <span class="capitalize">{{poolState.status == 'ONLINE' && !poolState.healthy ? 'Unhealthy' : poolState.status}}</span>
-                        <span *ngIf="poolState.status == 'LOCKED' || !poolState.is_decrypted" class="{{poolHealth.level}} lock-icon-wrapper icon">
+                        <span class="capitalize">{{poolState.status == PoolStatus.Online && !poolState.healthy ? 'Unhealthy' : poolState.status}}</span>
+                        <span *ngIf="poolState.status == PoolStatus.Locked || !poolState.is_decrypted" class="{{poolHealth.level}} lock-icon-wrapper icon">
                           &nbsp;<mat-icon>lock</mat-icon>
                         </span>
-                        <span *ngIf="poolState.status == 'HEALTHY'" class="{{poolHealth.level}} icon">
+                        <span *ngIf="poolState.status == PoolStatus.Healthy" class="{{poolHealth.level}} icon">
                           &nbsp;<mat-icon>check_circle</mat-icon>
                         </span>
                         <span *ngIf="poolHealth.level == 'error'" class="{{poolHealth.level}} icon">
                           &nbsp;<mat-icon class="poolHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
                         </span>
-                        <span *ngIf="poolState.status == 'ONLINE' && !poolState.healthy" class="error icon">
+                        <span *ngIf="poolState.status == PoolStatus.Online && !poolState.healthy" class="error icon">
                           &nbsp;<mat-icon class="poolHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
                         </span>
-                        <span *ngIf="poolHealth.level == 'warn' && poolState.status == 'UNKNOWN'" class="{{poolHealth.level}} icon">
+                        <span *ngIf="poolHealth.level == 'warn' && poolState.status == PoolStatus.Unknown" class="{{poolHealth.level}} icon">
 
                           &nbsp;<mat-icon role="img">help</mat-icon>
                         </span>
-                        <span *ngIf="poolHealth.level == 'warn' && poolState.status !== 'UNKNOWN'" class="{{poolHealth.level}} icon">
+                        <span *ngIf="poolHealth.level == 'warn' && poolState.status !== PoolStatus.Unknown" class="{{poolHealth.level}} icon">
                           &nbsp;<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
                         </span>
-                        <span *ngIf="poolState.status == 'ONLINE'" class="{{poolHealth.level}} icon">
+                        <span *ngIf="poolState.status == PoolStatus.Online" class="{{poolHealth.level}} icon">
                           &nbsp;<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                         </span>
                       </div>
@@ -156,7 +156,7 @@
                     </div>
                     <!-- END ROW -->
 
-                    <div class="disk-errors tr" *ngIf="poolState.status == 'ONLINE'">
+                    <div class="disk-errors tr" *ngIf="poolState.status == PoolStatus.Online">
                       <div class="td label">
                         <strong>Disks with Errors:</strong>
                       </div>
@@ -319,7 +319,7 @@
             <mat-list *ngIf="path[currentSlideIndex].dataSource.type == 'DISK'">
               <mat-list-item
                 role="listitem"
-                (click)="updateSlide('disk details', true, currentSlideIndex + 1, i, currentSlideTopology, path[currentSlideIndex].dataSource)"
+                (click)="updateSlide('disk details', true, currentSlideIndex + 1, undefined, currentSlideTopology, path[currentSlideIndex].dataSource)"
                 (click)="getDiskDetails('name', path[currentSlideIndex].dataSource.disk, checkMultipath(path[currentSlideIndex].dataSource.disk))"
                 [ngClass]="{'clickable': true}"
               >
@@ -384,7 +384,6 @@
               </mat-list>
             </ng-container>
           </ng-template>
-
 
           <ng-template #empty>
             <div class="empty"></div>

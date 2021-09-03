@@ -1,6 +1,5 @@
 <div *ngIf="config" class="reports-toolbar">
-  <div class="reports-dash-global-controls" fxLayout="row">
-
+  <div class="reports-dash-global-controls" fxLayout="row" fxLayoutAlign="center end">
     <ng-container *ngIf="config.activeTab == 'Disk'">
       <entity-toolbar fxFlex [conf]="config.toolbarConfig"></entity-toolbar>
     </ng-container>
@@ -11,21 +10,26 @@
         [matMenuTriggerFor]="categoryMenu"
         color="primary"
         class="menu-toggle"
-        style="color:var(--fg2);"
-        ix-auto ix-auto-type="button" ix-auto-identifier="tab-selector"
+        style="color: var(--fg2);"
+        ix-auto
+        ix-auto-type="button"
+        ix-auto-identifier="tab-selector"
       >
-        {{ config.activeTabVerified ? config.activeTab : ''}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+        {{ config.activeTabVerified ? config.activeTab : ('Loading...' | translate) }}
+        <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
       </button>
 
       <mat-menu #categoryMenu="matMenu" overlapTrigger="false">
         <div>
           <button
-            *ngFor="let tab of config.allTabs"
             mat-menu-item
-            (click)="config.navigateToTab(tab.value);"
-            ix-auto ix-auto-type="option" ix-auto-identifier="{{tab.label}}"
+            *ngFor="let tab of config.allTabs"
+            (click)="config.navigateToTab(tab.value)"
+            ix-auto
+            ix-auto-type="option"
+            ix-auto-identifier="{{ tab.label }}"
           >
-            {{tab.label | translate}}
+            {{ tab.label | translate }}
           </button>
         </div>
       </mat-menu>
@@ -36,17 +40,16 @@
         mat-icon-button
         ix-auto
         ix-auto-type="button"
-        (click)="config.showConfigForm()" style="margin-left: 8px;"
+        (click)="config.showConfigForm()"
+        style="margin-left: 8px;"
       >
         <mat-icon
           role="img"
-          matTooltip="{{'Reports Configuration' | translate}}"
+          [matTooltip]="'Reports Configuration' | translate"
           matTooltipPosition="below"
         >settings</mat-icon>
       </button>
     </div>
-
   </div>
   <!-- END TAB REPLACEMENT -->
-
 </div>

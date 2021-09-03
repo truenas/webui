@@ -414,7 +414,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     return this.ws.call('activedirectory.update', [body]);
   }
 
-  responseOnSubmit(value: any): void {
+  responseOnSubmit(value: ActiveDirectoryConfig & { job_id?: number }): void {
     this.entityEdit.formGroup.controls['kerberos_principal'].setValue(value.kerberos_principal);
     this.entityEdit.formGroup.controls['kerberos_realm'].setValue(value['kerberos_realm']);
 

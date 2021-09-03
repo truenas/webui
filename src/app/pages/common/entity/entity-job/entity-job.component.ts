@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import { filter, map } from 'rxjs/operators';
 import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { EntityJobConfig } from 'app/pages/common/entity/entity-job/entity-job-config.interface';
 import { WebSocketService } from 'app/services/';
@@ -107,7 +107,7 @@ export class EntityJobComponent implements OnInit {
     }
   }
 
-  setCall(method: ApiMethod, args?: any[]): void {
+  setCall<K extends ApiMethod>(method: K, args?: ApiDirectory[K]['params']): void {
     this.method = method;
     if (args) {
       this.args = args;

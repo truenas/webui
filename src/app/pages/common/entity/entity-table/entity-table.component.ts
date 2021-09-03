@@ -3,7 +3,7 @@ import {
 } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild,
+  AfterViewChecked, Component, Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -61,7 +61,7 @@ export interface Command {
     ]),
   ],
 })
-export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, OnDestroy {
+export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked, OnDestroy {
   @Input() title = '';
   @Input() conf: EntityTableConfig;
 
@@ -122,7 +122,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   expandedElement: any | null = null;
 
   dataSource: MatTableDataSource<any>;
-  rows: any[] = [];
+  rows: Row[] = [];
   currentRows: any[] = []; // Rows applying filter
   getFunction: Observable<any>;
   config: EntityTableConfigConfig = {
@@ -135,7 +135,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   cardHeaderReady = false;
   showActions = true;
   hasActions = true;
-  sortKey: string;
+  sortKey: keyof Row;
   filterValue = ''; // the filter string filled in search input.
   readonly EntityJobState = JobState;
   // Global Actions in Page Title
@@ -174,6 +174,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   };
 
   isAllSelected = false;
+  globalActionsInit = false;
 
   constructor(
     protected core: CoreService,
@@ -260,8 +261,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     }
 
     this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props)
-      ? this.conf.config.deleteMsg.key_props[0]
-      : this.conf.columns[0].prop;
+      ? this.conf.config.deleteMsg.key_props[0] as keyof Row
+      : this.conf.columns[0].prop as keyof Row;
     setTimeout(async () => {
       if (this.conf.prerequisite) {
         await this.conf.prerequisite().then(
@@ -366,11 +367,12 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     setTimeout(() => { this.setShowSpinner(); }, 500);
   }
 
-  ngAfterViewInit(): void {
+  ngAfterViewChecked(): void {
     // If actionsConfig was disabled, don't show the default toolbar. like the Table is in a Tab.
-    if (!this.conf.disableActionsConfig) {
+    if (!this.conf.disableActionsConfig && !this.globalActionsInit) {
       // Setup Actions in Page Title Component
       this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
+      this.globalActionsInit = true;
     }
   }
 
@@ -737,7 +739,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
 
       const newRows = [];
       for (let i = 0; i < this.rows.length; i++) {
-        const index = _.findIndex(rows, { id: this.rows[i].id });
+        const index = _.findIndex(rows, { id: (this.rows[i] as any).id });
         if (index < 0) {
           continue;
         }
