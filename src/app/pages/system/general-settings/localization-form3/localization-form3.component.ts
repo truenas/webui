@@ -16,6 +16,8 @@ export class LocalizationForm3 implements OnInit {
   name = 'Rehan2';
   sibling = 'john';
 
+  fieldsetTitle = 'Fieldset Title';
+
   loading = false;
 
   formTitle = 'Personal Info';

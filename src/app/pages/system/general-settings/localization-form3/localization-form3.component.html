@@ -1,17 +1,19 @@
 <ix-form [formGroup]="form" (cancel)="cancelled()" [title]="formTitle" (formSubmit)="submit($event)" [loading]="loading">
-  <ix-input
-    label="Name"
-    name="name"
-    required="true"
-    tooltip="nameTooltip"
-    placeholder="namePlaceholder"
-    [formControlName]="nameFormControlName"
-  ></ix-input>
-  <ix-select
-    [label]="siblingLabel"
-    name="sibling"
-    required="true"
-    [options]="siblingOptions"
-    [tooltip]="siblingTooltip"
-    [formControlName]="siblingFormControlName"></ix-select>
+  <ix-fieldset [disable]="loading" [divider]="false" [title]="fieldsetTitle">
+    <ix-input
+      label="Name"
+      name="name"
+      required="true"
+      tooltip="nameTooltip"
+      placeholder="namePlaceholder"
+      [formControlName]="nameFormControlName"
+    ></ix-input>
+    <ix-select
+      [label]="siblingLabel"
+      name="sibling"
+      required="true"
+      [options]="siblingOptions"
+      [tooltip]="siblingTooltip"
+      [formControlName]="siblingFormControlName"></ix-select>
+  </ix-fieldset>
 </ix-form>

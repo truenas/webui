@@ -10,6 +10,7 @@ import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import { IxFieldset } from 'app/pages/system/general-settings/localization-form3/components/ix-fieldset/ix-fieldset.component';
 import { IxForm } from 'app/pages/system/general-settings/localization-form3/components/ix-form/ix-form.component';
 import { IxInput } from 'app/pages/system/general-settings/localization-form3/components/ix-input/ix-input.component';
 import { IxSelect } from 'app/pages/system/general-settings/localization-form3/components/ix-select/ix-select.component';
@@ -69,6 +70,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     IxInput,
     IxSelect,
     IxForm,
+    IxFieldset,
     BootEnvironmentListComponent,
     BootEnvironmentCloneComponent,
     BootEnvironmentRenameComponent,

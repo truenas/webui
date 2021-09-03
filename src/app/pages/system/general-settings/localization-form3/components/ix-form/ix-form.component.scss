@@ -8,7 +8,7 @@
 }
 
 .form-actions {
-  margin: 16px 8px;
+  margin: 16px 21px;
 
   button {
     margin: 0 4px;
@@ -19,10 +19,9 @@
   margin: 16px 0 !important;
 }
 
-
-mat-card-title {
+.title {
   color: var(--fg1) !important;
-  font-size: 14px !important;
-  margin-left: 8px !important;
+  font-size: medium;
+  margin-left: 21px !important;
   margin-top: 8px !important;
 }
