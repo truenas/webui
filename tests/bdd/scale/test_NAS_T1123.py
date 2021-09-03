@@ -118,7 +118,7 @@ def if_the_smb_serivce_is_not_started_start_the_service_and_click_on_smb_start_a
     time.sleep(2)
 
 
-@then(parsers.parse('Send a file to the share with {nas_IP}/"{mysmbshare}" and "{user}" and "{password}"'))
+@then(parsers.parse('Send a file to the share with nas_ip/"{mysmbshare}" and "{user}" and "{password}"'))
 def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd1234(driver, nas_ip, mysmbshare, user, password):
     """Send a file to the share with nas_IP/"{mysmbshare}" and "{user}" and "{password}"."""
     run_cmd('touch testfile.txt')

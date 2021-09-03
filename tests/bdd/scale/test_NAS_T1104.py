@@ -140,6 +140,9 @@ def click_advanced_and_input_the_computer_account_ou_ca_ou(driver, ca_ou):
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Computer Account OU"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Computer Account OU"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Computer Account OU"]').send_keys(ca_ou)
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Netbios Name"]', 'inputable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Netbios Name"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Netbios Name"]').send_keys("scaletestcycle")
 
 
 @then('check the Enable box and click SAVE.')
