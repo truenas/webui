@@ -4,7 +4,7 @@
       *ngFor="let row of zfsPoolRows; let pool = index;"
       class="no-padding"
       id="expansionpanel_zfs_{{row.name}}"
-      [expanded]="row.status !== 'LOCKED'"
+      [expanded]="row.status !== PoolStatus.Locked"
       [disabled]="row.status === PoolStatus.Offline"
       ix-auto
       ix-auto-type="expansion-panel"
@@ -31,10 +31,10 @@
             <i class="material-icons green-icon" *ngIf="row.healthy; else status;">check_circle</i>
             <ng-template #status>
               <i class="material-icons orange-icon" *ngIf="row.status === PoolStatus.Degraded">warning</i>
-              <i class="material-icons yellow-icon" *ngIf="row.status === 'LOCKED'">lock</i>
+              <i class="material-icons yellow-icon" *ngIf="row.status === PoolStatus.Locked">lock</i>
               <i class="material-icons blue-icon" *ngIf="row.status === PoolStatus.Faulted">help</i>
               <i class="material-icons red-icon"
-                *ngIf="row.status !== PoolStatus.Degraded && row.status !== 'LOCKED' && row.status !== PoolStatus.Faulted"
+                *ngIf="row.status !== PoolStatus.Degraded && row.status !== PoolStatus.Locked && row.status !== PoolStatus.Faulted"
               >cancel</i>
             </ng-template>
           </span>

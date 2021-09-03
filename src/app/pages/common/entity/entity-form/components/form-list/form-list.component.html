@@ -16,7 +16,7 @@
     </button>
   </div>
   <ng-container *ngIf="listsFromArray?.controls.length > 0;else empty">
-    <div *ngFor="let liControl of listsFromArray.controls; let i = index" [fxLayout]="config.width == '100%' ? 'row wrap' : (default)"
+    <div *ngFor="let liControl of listsFromArray.controls; let i = index" [fxLayout]="config.width == '100%' ? 'row wrap' : ''"
         ix-auto ix-auto-type="list-item" ix-auto-identifier="{{i}}" class="form-list-item">
       <ng-container *ngFor="let field of config.listFields[i]; let ii = index" >
         <div *ngIf="!field.isHidden" fxFlex="calc(100% - 100px)"

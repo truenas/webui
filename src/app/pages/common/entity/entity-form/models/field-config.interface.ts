@@ -63,6 +63,7 @@ export interface FormCheckboxConfig<P = any> extends BaseFieldConfig<P> {
   expandedHeight?: boolean;
   onChange?(data: any): void;
   updater?: any;
+  customEventMethod?: () => void;
 }
 
 export interface FormChipConfig<P = any> extends BaseFieldConfig<P> {
@@ -71,6 +72,7 @@ export interface FormChipConfig<P = any> extends BaseFieldConfig<P> {
   searchOptions?: Option[];
   updateLocal?: boolean;
   updater?: any;
+  togglePw?: boolean;
 }
 
 export interface FormComboboxConfig<P = any> extends BaseFieldConfig<P> {
@@ -83,6 +85,7 @@ export interface FormComboboxConfig<P = any> extends BaseFieldConfig<P> {
   searchOptions?: Option[];
   updateLocal?: boolean;
   updater?: any;
+  inputType?: string;
 }
 
 export interface FormDictConfig<P = any> extends BaseFieldConfig<P> {
@@ -117,6 +120,8 @@ export interface FormInputConfig<P = any> extends BaseFieldConfig<P> {
 
 export interface FormIpWithNetmaskConfig<P = any> extends BaseFieldConfig<P> {
   netmaskPreset?: number;
+  inputType?: string;
+  togglePw?: boolean;
 }
 
 export interface FormListConfig<P = any> extends BaseFieldConfig<P> {
@@ -125,17 +130,21 @@ export interface FormListConfig<P = any> extends BaseFieldConfig<P> {
   label?: string;
   listFields?: FieldConfig[][];
   templateListField?: FieldConfig[];
+  hideButton?: boolean;
 }
 
 export interface FormParagraphConfig<P = any> extends BaseFieldConfig<P> {
   isLargeText?: boolean;
   paragraphIcon?: string;
   paragraphIconSize?: string;
-  paraText?: any;
+  paraText?: string;
+  inputType?: string;
 }
 
 export interface FormPermissionsConfig<P = any> extends BaseFieldConfig<P> {
   hideOthersPermissions?: boolean;
+  inputType?: string;
+  options?: Option[];
 }
 
 export interface FormRadioConfig<P = any> extends BaseFieldConfig<P>{
@@ -165,6 +174,7 @@ export interface FormSelectionListConfig<P = any> extends BaseFieldConfig<P> {
   inlineFields?: boolean;
   inlineFieldFlex?: string;
   onChange?(data: any): void;
+  options?: Option[];
 }
 
 export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
@@ -195,6 +205,7 @@ export interface FormUploadConfig<P = any> extends BaseFieldConfig<P> {
   message?: any;
   rootSelectable?: boolean;
   updater?: (uploadComponent: FormUploadComponent, parent: P) => void;
+  multiple?: boolean;
 }
 
 export interface FormToggleButtonConfig<P = any> extends BaseFieldConfig<P> {
