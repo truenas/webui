@@ -129,8 +129,8 @@ def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd123
 
 
 @then('Verify that the is on nas_ip with root and password')
-def verify_that_the_is_on_nas_ip_with_root_and_testing(nas_ip, password):
+def verify_that_the_is_on_nas_ip_with_root_and_password(nas_ip, password):
     """Verify that the is on "nasIP" with "root" and password."""
-    results = post(nas_url, 'filesystem/stat/', ("root", root_password), f'{smb_path}/testfile.txt')
+    results = post(nas_ip, 'filesystem/stat/', ("root", password), f'{smb_path}/testfile.txt')
     assert results.status_code == 200, results.text
 
