@@ -3,7 +3,7 @@ import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
 
 @Component({
   selector: 'app-shell',
-  template: '<terminal [conf]="this"></terminal>',
+  template: '<app-terminal [conf]="this"></app-terminal>',
 })
 export class ShellComponent implements TerminalConfiguration {
 }

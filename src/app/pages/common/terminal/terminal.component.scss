@@ -1,4 +1,6 @@
-@import 'xterm/css/xterm.css';
+:host ::ng-deep {
+  @import 'xterm/css/xterm';
+}
 
 .terminal-wrapper {
   background: black;

@@ -1,5 +1,6 @@
 import {
-  Component, ElementRef, Input, OnDestroy, OnInit, ViewChild, ViewEncapsulation,
+  ChangeDetectionStrategy,
+  Component, ElementRef, Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -18,12 +19,11 @@ import { CopyPasteMessageComponent } from './copy-paste-message.component';
 
 @UntilDestroy()
 @Component({
-  selector: 'terminal',
+  selector: 'app-terminal',
   templateUrl: './terminal.component.html',
   styleUrls: ['./terminal.component.scss'],
   providers: [ShellService],
-  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
-  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TerminalComponent implements OnInit, OnDestroy {
   @Input('conf') conf: TerminalConfiguration;
