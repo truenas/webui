@@ -98,6 +98,7 @@ export class UserListComponent {
       this.showOneTimeBuiltinMsg();
     }
   }
+
   getActions(row) {
     const actions = [];
     actions.push({
