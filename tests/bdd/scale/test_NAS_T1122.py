@@ -103,7 +103,7 @@ def click_the_save_button_return_to_the_pools_page_click_on_the_my_acl_dataset_3
     time.sleep(1)
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
     time.sleep(2)
-    assert wait_on_element(driver, 5, '//mat-panel-title[contains(.,"systems")]')
+    assert wait_on_element(driver, 5, '//mat-panel-title[contains(.,"system")]')
     driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
@@ -114,7 +114,7 @@ def click_the_save_button_return_to_the_pools_page_click_on_the_my_acl_dataset_3
 def the_edit_acl_page_should_open_verify_the_new_acl_item_for_user_ericbsd_exists(driver, user):
     """the Edit ACL page should open, verify the new ACL item for user "{user}" exists."""
     time.sleep(2)
-    assert wait_on_element(driver, 5, '//div[contains(text(),"{user}")]')
+    assert wait_on_element(driver, 5, '//div[contains(text(),"User - ericbsd")]')
     ## return to dashboard
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
