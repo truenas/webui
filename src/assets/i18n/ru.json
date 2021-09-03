@@ -792,6 +792,7 @@
   "Record SMB service messages up to the specified log level.  By default, error and warning level messages are logged.": "",
   "Reenter Password": "",
   "Refresh All": "",
+  "Refresh Events": "",
   "Refresh Token": "",
   "Refreshing": "",
   "Region Name": "",

@@ -81,6 +81,14 @@
 <div class="button-bar" mat-dialog-actions align="end">
   <button
     mat-button
+    class="mat-button mat-primary"
+    (click)="refreshEvents()"
+    ix-auto ix-auto-type="button" ix-auto-identifier="refresh"
+  >
+    {{ helptext.actionBtnText.refreshEvents | translate }}
+  </button>
+  <button
+    mat-button
     class="mat-button mat-secondary"
     (click)="dialogRef.close(false)"
     ix-auto ix-auto-type="button" ix-auto-identifier="CLOSE"

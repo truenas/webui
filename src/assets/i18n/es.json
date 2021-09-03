@@ -2345,6 +2345,7 @@
   "Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A  <i>GUI SSL Certificate</i> is required for <i>HTTPS</i>. Activating  this also sets the <a  href=\"https://en.wikipedia.org/wiki/HTTP_Strict_Transport_Security\"  target=\"_blank\">HTTP Strict Transport Security (HSTS)</a> maximum age  to <i>31536000</i> seconds (one year). This means that after a  browser connects to the web interface for the first time, the browser  continues to use HTTPS and renews this setting every year.": "",
   "Reenter Password": "",
   "Refresh All": "",
+  "Refresh Events": "",
   "Refresh Token": "",
   "Refreshing": "",
   "Region Name": "",

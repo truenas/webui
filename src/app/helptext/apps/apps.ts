@@ -524,6 +524,7 @@ export default {
 
   actionBtnText: {
     close: T('Close'),
+    refreshEvents: T('Refresh Events'),
   },
 
   chartEventDialog: {
