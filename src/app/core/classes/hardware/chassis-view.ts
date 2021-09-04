@@ -44,7 +44,7 @@ export class ChassisView {
   driveTray: DriveTray;
   driveTraysOffsetY = 0; // if drives don't start at top.
   driveTraysOffsetX = 0; // if drives don't start at top.
-  driveTrays: any;
+  driveTrays: PIXI.Container;
   driveTrayObjects: DriveTray[] = [];
 
   chassis: Sprite;
@@ -306,7 +306,7 @@ export class ChassisView {
       { x: x + 25, y: y + dts.height }, // bottom left
     ];
 
-    dts.proj.mapSprite(dts, quad);
+    (dts as any).proj.mapSprite(dts, quad);
   }
 
   colorDriveTray(slot: number, color: string): void {

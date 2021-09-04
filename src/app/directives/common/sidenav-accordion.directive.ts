@@ -57,7 +57,7 @@ export class SideNavAccordionDirective implements OnInit {
 
   private toggleOpen(): void {
     const elem = this.el.nativeElement;
-    const parenMenuItems = document.getElementsByClassName('has-submenu');
+    const parenMenuItems = document.getElementsByClassName('has-submenu') as HTMLCollectionOf<HTMLElement>;
 
     if (domHelper.hasClass(elem, 'open')) {
       domHelper.removeClass(parenMenuItems, 'open');

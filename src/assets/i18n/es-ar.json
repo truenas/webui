@@ -152,6 +152,7 @@
   "Delete Children": "",
   "Delete snapshot {name}?": "",
   "Delete the zvol {zvolName} and all snapshots of it?": "",
+  "Delete this item?": "",
   "Deleted {n, plural, one {# snapshot} other {# snapshots}}": "",
   "Deleting Snapshots": "",
   "Deployments": "",

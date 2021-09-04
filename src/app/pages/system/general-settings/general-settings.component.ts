@@ -41,7 +41,7 @@ export class GeneralSettingsComponent implements OnInit {
   ntpTitle = helptext.ntpTitle;
   localeData: DataCard;
   configData: any;
-  displayedColumns: any;
+  displayedColumns: string[];
   subs: any;
   dataSource: NtpServer[];
   formEvent$: Subject<CoreEvent>;
@@ -186,7 +186,7 @@ export class GeneralSettingsComponent implements OnInit {
             { label: helptext.stg_guiv6address.placeholder, value: res.ui_v6address.join(', ') },
             { label: helptext.stg_guihttpsport.placeholder, value: res.ui_httpsport },
             { label: helptext.stg_guihttpsprotocols.placeholder, value: res.ui_httpsprotocols.join(', ') },
-            { label: helptext.stg_guihttpsredirect.placeholder, value: res.ui_httpsredirect },
+            { label: helptext.stg_guihttpsredirect.placeholder, value: res.ui_httpsredirect as any },
             {
               label: helptext.crash_reporting.placeholder,
               value: res.crash_reporting ? helptext.enabled : helptext.disabled,

@@ -112,7 +112,11 @@ import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kuberne
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { MailConfig, MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
-import { NetworkActivityChoice, NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
+import {
+  NetworkActivityChoice,
+  NetworkConfiguration,
+  NetworkConfigurationUpdate,
+} from 'app/interfaces/network-configuration.interface';
 import { NetworkInterface, ServiceRestartedOnNetworkSync } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { AddNfsPrincipal, NfsConfig } from 'app/interfaces/nfs-config.interface';
@@ -123,7 +127,7 @@ import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interf
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
-import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
+import { ImportDiskParams, PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
 import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { CreatePoolScrub, PoolScrub, PoolScrubParams } from 'app/interfaces/pool-scrub.interface';
 import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
@@ -517,7 +521,7 @@ export type ApiDirectory = {
   // Network
   'network.general.summary': { params: void; response: NetworkSummary };
   'network.configuration.activity_choices': { params: void; response: NetworkActivityChoice[] };
-  'network.configuration.update': { params: any; response: any };
+  'network.configuration.update': { params: [NetworkConfigurationUpdate]; response: NetworkConfiguration };
   'network.configuration.config': { params: void; response: NetworkConfiguration };
 
   // Kerberos
@@ -607,7 +611,7 @@ export type ApiDirectory = {
   'pool.export': { params: PoolExportParams; response: void };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.get_disks': { params: [ids: string[]]; response: string[] };
-  'pool.import_disk': { params: any; response: any };
+  'pool.import_disk': { params: ImportDiskParams; response: any };
   'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: string };
   'pool.import_disk_msdosfs_locales': { params: void; response: string[] };
   'pool.import_find': { params: void; response: PoolFindResult[] };

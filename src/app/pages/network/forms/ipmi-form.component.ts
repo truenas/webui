@@ -6,6 +6,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/ipmi/ipmi';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -253,7 +254,7 @@ export class IPMIFromComponent implements FormConfiguration {
     status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
   }
 
-  customSubmit(payload: any): Subscription {
+  customSubmit(payload: IpmiUpdate): Subscription {
     let call$ = this.ws.call('ipmi.update', [this.channelValue, payload]);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       call$ = this.ws.call('failover.call_remote', ['ipmi.update', [this.channelValue, payload]]);

@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { helptext_system_failover } from 'app/helptext/system/failover';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FailoverUpdate } from 'app/interfaces/failover.interface';
@@ -74,20 +75,20 @@ export class FailoverComponent implements FormConfiguration {
       id: 'sync_from_peer',
       name: T('Sync from Peer'),
       function: () => {
-        this.dialog.confirm(helptext_system_failover.dialog_sync_from_peer_title,
-          helptext_system_failover.dialog_sync_from_peer_message, false,
-          helptext_system_failover.dialog_button_ok).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
-          if (confirm) {
-            this.load.open();
-            this.ws.call('failover.sync_from_peer').pipe(untilDestroyed(this)).subscribe(() => {
-              this.load.close();
-              this.dialog.info(helptext_system_failover.confirm_dialogs.sync_title,
-                helptext_system_failover.confirm_dialogs.sync_from_message, '', 'info', true);
-            }, (err) => {
-              this.load.close();
-              new EntityUtils().handleWSError(this.entityForm, err);
-            });
-          }
+        this.dialog.confirm({
+          title: helptext_system_failover.dialog_sync_from_peer_title,
+          message: helptext_system_failover.dialog_sync_from_peer_message,
+          buttonMsg: helptext_system_failover.dialog_button_ok,
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          this.load.open();
+          this.ws.call('failover.sync_from_peer').pipe(untilDestroyed(this)).subscribe(() => {
+            this.load.close();
+            this.dialog.info(helptext_system_failover.confirm_dialogs.sync_title,
+              helptext_system_failover.confirm_dialogs.sync_from_message, '', 'info', true);
+          }, (err) => {
+            this.load.close();
+            new EntityUtils().handleWSError(this.entityForm, err);
+          });
         });
       },
     },

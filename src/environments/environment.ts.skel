@@ -3,11 +3,6 @@
 import { ApplicationRef } from '@angular/core';
 import { enableDebugTools } from '@angular/platform-browser';
 
-// Environment Providers
-let PROVIDERS: any[] = [
-  // common env directives
-];
-
 export const environment = {
   remote: '$SERVER$',
   port: 4200,
@@ -31,12 +26,4 @@ _decorateModuleRef = (modRef: any) => {
   return modRef;
 };
 
-// Development
-PROVIDERS = [
-  ...PROVIDERS,
-  // custom providers in development
-];
-
 export const decorateModuleRef = _decorateModuleRef;
-
-export const ENV_PROVIDERS = [...PROVIDERS];

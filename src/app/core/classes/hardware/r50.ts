@@ -1,4 +1,4 @@
-import { Container } from 'pixi.js';
+import { Container, Transform } from 'pixi.js';
 import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
 
@@ -105,7 +105,7 @@ export class R50 extends Chassis {
     if (rearChassis) {
       this.rear = new ChassisView();
       const rscale = 0.95;
-      this.rear.driveTrays.scale = { x: rscale, y: rscale };
+      (this.rear.driveTrays as any).scale = { x: rscale, y: rscale };
       this.rear.driveTraysOffsetX = -26;
       this.rear.driveTraysOffsetY = -60;
       this.rear.container = new PIXI.Container();
@@ -121,7 +121,7 @@ export class R50 extends Chassis {
   }
 
   generatePerspectiveOffset(): void {
-    this.front.driveTrays.transform.position.x = 32;
-    this.front.driveTrays.transform.position.y = 32;
+    (this.front.driveTrays.transform as Transform).position.x = 32;
+    (this.front.driveTrays.transform as Transform).position.y = 32;
   }
 }

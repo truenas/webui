@@ -13,7 +13,7 @@ export interface LdapConfig {
   hostname: string[];
   id: number;
   kerberos_principal: string;
-  kerberos_realm: any;
+  kerberos_realm: number;
   schema: string;
   ssl: string;
   timeout: number;

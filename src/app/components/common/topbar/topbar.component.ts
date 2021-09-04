@@ -275,7 +275,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.sysGenService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.legacy_ui) {
         this.exposeLegacyUI = res.legacy_ui;
-        window.localStorage.setItem('exposeLegacyUI', res.legacy_ui);
+        window.localStorage.setItem('exposeLegacyUI', res.legacy_ui as any);
       }
     });
   }

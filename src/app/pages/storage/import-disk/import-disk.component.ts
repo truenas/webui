@@ -175,7 +175,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
 
   customSubmit(payload: any): void {
     this.custActions = [];
-    const fs_options: any = {};
+    const fs_options: Record<string, unknown> = {};
     if (payload.fs_type === 'msdosfs' && payload.msdosfs_locale) {
       fs_options['locale'] = payload.msdosfs_locale;
     }
