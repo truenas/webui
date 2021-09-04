@@ -73,7 +73,6 @@ import { EntityRowDetailsComponent } from './entity-table/entity-row-details.com
 import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
 import { EntityTableRowDetailsComponent } from './entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
-import { EntityTableService } from './entity-table/entity-table.service';
 import { EntityTaskComponent } from './entity-task/entity-task.component';
 import { EntityTemplateDirective } from './entity-template.directive';
 import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
@@ -243,7 +242,6 @@ import { TableService } from './table/table.service';
   ],
   providers: [
     EntityFormService,
-    EntityTableService,
     AppLoaderService,
     DocsService,
     JobService,
