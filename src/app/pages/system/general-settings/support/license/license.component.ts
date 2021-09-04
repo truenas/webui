@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter } from 'rxjs/operators';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -41,14 +42,16 @@ export class LicenseComponent implements FormConfiguration {
       this.loader.close();
       // To make sure EULA opens on reload; removed from local storage (in topbar) on acceptance of EULA
       window.localStorage.setItem('upgrading_status', 'upgrading');
-      this.dialog.confirm(helptext.update_license.reload_dialog_title,
-        helptext.update_license.reload_dialog_message, true, helptext.update_license.reload_dialog_action,
-        false, '', '', '', '', true, '', true)
-        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            document.location.reload(true);
-          }
-        });
+      this.dialog.confirm({
+        title: helptext.update_license.reload_dialog_title,
+        message: helptext.update_license.reload_dialog_message,
+        hideCheckBox: true,
+        buttonMsg: helptext.update_license.reload_dialog_action,
+        hideCancel: true,
+        disableClose: true,
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        document.location.reload(true);
+      });
       this.modalService.close('slide-in-form');
     }, (err) => {
       this.loader.close();

@@ -1057,6 +1057,7 @@
   "Status: ": "",
   "Stop Rollback if Snapshots Exist:": "",
   "Stop TrueCommand Cloud Connection": "",
+  "Stop {serviceName}?": "",
   "Stopped": "",
   "Stopped the scrub on pool <i>{poolName}</i>.": "",
   "Stopping": "",

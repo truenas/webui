@@ -3280,6 +3280,7 @@
   "Stop Scrub": "",
   "Stop TrueCommand Cloud Connection": "",
   "Stop this cloud sync?": "",
+  "Stop {serviceName}?": "",
   "Stopped": "",
   "Stopped the scrub on pool <i>{poolName}</i>.": "",
   "Stopping": "",

@@ -258,17 +258,16 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   onMemoryError(row: VirtualMachineRow): void {
-    const memoryDialog = this.dialogService.confirm(
-      helptext.memory_dialog.title,
-      helptext.memory_dialog.message,
-      true,
-      helptext.memory_dialog.buttonMsg,
-      true,
-      helptext.memory_dialog.secondaryCheckBoxMsg,
-      undefined,
-      [{ overcommit: false }],
-      helptext.memory_dialog.tooltip,
-    );
+    const memoryDialog = this.dialogService.confirm({
+      title: helptext.memory_dialog.title,
+      message: helptext.memory_dialog.message,
+      hideCheckBox: true,
+      buttonMsg: helptext.memory_dialog.buttonMsg,
+      secondaryCheckBox: true,
+      secondaryCheckBoxMsg: helptext.memory_dialog.secondaryCheckBoxMsg,
+      data: [{ overcommit: false }],
+      tooltip: helptext.memory_dialog.tooltip,
+    });
 
     memoryDialog.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe(() => {
       memoryDialog.componentInstance.isSubmitEnabled = !memoryDialog.componentInstance.isSubmitEnabled;
