@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 import { SiblingInfo } from 'app/pages/system/general-settings/localization-form3/interfaces/sibling-info.interface';
 import { Localization3Service } from 'app/pages/system/general-settings/localization-form3/services/localization.service';
@@ -35,6 +36,10 @@ export class LocalizationForm3 implements OnInit {
   ];
   readonly siblingFormControlName = 'sibling';
 
+  familyMemberTooltip = 'Pick a family member';
+  familyMemberPlaceholder = 'Family Member';
+  readonly familyMemberFormControlName = 'familyMember';
+
   ngOnInit(): void {
     this.form = this.fb.group({
       name: ['', [Validators.required]],
@@ -53,6 +58,40 @@ export class LocalizationForm3 implements OnInit {
         };
       });
     });
+  }
+
+  filteredFamilyMembers = of([
+    { label: 'Mike', value: 'mike' },
+    { label: 'Jessica', value: 'Jessica' },
+    { label: 'Asad', value: 'asad' },
+  ]);
+  familyMembers = [
+    { label: 'Hassan', value: 'hassan' },
+    { label: 'Yuan', value: 'yuan' },
+  ];
+
+  filterFamilyMembers(value: string): void {
+    const filtered = [
+      { label: 'Mike', value: 'mike' },
+      { label: 'Jessica', value: 'Jessica' },
+      { label: 'Asad', value: 'asad' },
+    ].filter((option: Option) => option.value.toString().includes(value) || option.label.toString().includes(value));
+    if (filtered.length) {
+      this.filteredFamilyMembers = of(filtered);
+    } else {
+      this.filteredFamilyMembers = of([
+        { label: 'Mike', value: 'mike' },
+        { label: 'Jessica', value: 'Jessica' },
+        { label: 'Asad', value: 'asad' },
+      ]);
+    }
+  }
+
+  loadMoreFamilyMembers(): Option[] {
+    return [
+      { label: 'Hassan', value: 'hassan' },
+      { label: 'Yuan', value: 'yuan' },
+    ];
   }
 
   cancelled(): void {

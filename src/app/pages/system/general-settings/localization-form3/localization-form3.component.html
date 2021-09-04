@@ -15,5 +15,16 @@
       [options]="siblingOptions"
       [tooltip]="siblingTooltip"
       [formControlName]="siblingFormControlName"></ix-select>
+    <ix-combobox
+      [label]="'Family Member'"
+      required="true"
+      [tooltip]="familyMemberTooltip"
+      placeholder="familyMemberPlaceholder"
+      [formControlName]="familyMemberFormControlName"
+      (filter)="filterFamilyMembers($event)"
+      (scrollEnd)="loadMoreFamilyMembers()"
+      [filteredOptions]="filteredFamilyMembers"
+      [options]="familyMembers"
+    ></ix-combobox>
   </ix-fieldset>
 </ix-form>
