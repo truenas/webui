@@ -65,8 +65,13 @@ export class EncryptionService {
     const fileName = 'pool_' + poolName + '_recovery.key';
     this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(row)], fileName]).subscribe((res) => {
       this.loader.close();
-      this.dialogService.confirm(helptext.set_recoverykey_dialog_title, helptext.set_recoverykey_dialog_message,
-        true, helptext.set_recoverykey_dialog_button, false, '', '', '', '', true).subscribe(() => {
+      this.dialogService.confirm({
+        title: helptext.set_recoverykey_dialog_title,
+        message: helptext.set_recoverykey_dialog_message,
+        hideCheckBox: true,
+        buttonMsg: helptext.set_recoverykey_dialog_button,
+        hideCancel: true,
+      }).subscribe(() => {
         const url = res[1];
         const mimetype = 'application/octet-stream';
         this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {

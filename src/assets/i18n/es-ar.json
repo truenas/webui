@@ -591,6 +591,7 @@
   "Static Route: Destination": "",
   "Static Route: Gateway": "",
   "Static Routes": "",
+  "Stop {serviceName}?": "",
   "Stopped": "",
   "Stopped the scrub on pool <i>{poolName}</i>.": "",
   "Stopping": "",

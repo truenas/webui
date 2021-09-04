@@ -7,23 +7,7 @@ import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 @Component({
   selector: 'toolbar-select',
   styleUrls: ['toolbar-select.component.scss'],
-  template: `
-    <div class="form-element dynamic-field form-select">
-      <mat-form-field>
-        <mat-select [(ngModel)]="config.selectedValue" (selectionChange)="onChange($event)">
-          <div>
-            <mat-selection-list>
-              <ng-container *ngFor="let option of config.options; let i=index">
-                <mat-option [value]="option.value">
-                  {{ option.label | translate }}
-                </mat-option>
-              </ng-container>
-            </mat-selection-list>
-          </div>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  `,
+  templateUrl: './toolbar-select.component.html',
 })
 export class ToolbarSelectComponent extends IxAbstractObject {
   @Input() config?: any;

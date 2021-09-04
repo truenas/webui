@@ -222,8 +222,13 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
   showOneTimeBuiltinMsg(): void {
     this.prefService.preferences.showGroupListMessage = false;
     this.prefService.savePreferences();
-    this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message,
-      true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
+    this.dialogService.confirm({
+      title: helptext.builtinMessageDialog.title,
+      message: helptext.builtinMessageDialog.message,
+      hideCheckBox: true,
+      buttonMsg: helptext.builtinMessageDialog.button,
+      hideCancel: true,
+    });
   }
 
   doAdd(): void {
