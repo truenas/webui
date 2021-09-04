@@ -12,6 +12,7 @@ export interface VirtualMachine {
   devices: VmDevice[];
   grubconfig: string;
   hide_from_msr: boolean;
+  ensure_display_device: boolean;
   id: number;
   memory: number;
   name: string;

@@ -121,14 +121,13 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   getStatusItemInfo(pool: Pool): ItemInfo {
     let level = 'safe';
     let icon = 'mdi-check-circle';
-    const value = pool.status == 'ONLINE' && !pool.healthy ? T('Unhealthy') : pool.status;
+    const value = pool.status == PoolStatus.Online && !pool.healthy ? T('Unhealthy') : pool.status;
 
-    switch (pool.status as string) {
-      // TODO: Unexpected statuses, possibly introduced on frontend
-      case 'HEALTHY':
+    switch (pool.status) {
+      case PoolStatus.Healthy:
         break;
-      case 'LOCKED':
-      case 'UNKNOWN':
+      case PoolStatus.Locked:
+      case PoolStatus.Unknown:
       case PoolStatus.Offline:
       case PoolStatus.Degraded:
         level = 'warn';

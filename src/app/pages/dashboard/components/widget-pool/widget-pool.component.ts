@@ -1,16 +1,21 @@
 import {
-  Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, TemplateRef, ChangeDetectorRef, OnChanges,
-  SimpleChanges,
+  AfterViewInit,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  OnDestroy,
   OnInit,
+  SimpleChanges,
+  TemplateRef,
+  ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
-import {
-  tween,
-  styler,
-} from 'popmotion';
+import { styler, tween } from 'popmotion';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -70,6 +75,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @ViewChild('empty', { static: false }) empty: TemplateRef<void>;
   templates: { [template: string]: TemplateRef<void> };
   tpl: TemplateRef<void>;
+
+  readonly PoolStatus = PoolStatus;
 
   // NAVIGATION
   currentSlide = '0';
@@ -399,14 +406,13 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   checkVolumeHealth(): void {
-    switch (this.poolState.status as string) {
-      // TODO: Unexpected statuses, possibly introduced on frontend
-      case 'HEALTHY':
+    switch (this.poolState.status) {
+      case PoolStatus.Healthy:
         break;
-      case 'LOCKED':
+      case PoolStatus.Locked:
         this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'locked');
         break;
-      case 'UNKNOWN':
+      case PoolStatus.Unknown:
       case PoolStatus.Offline:
         this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'unknown');
         break;

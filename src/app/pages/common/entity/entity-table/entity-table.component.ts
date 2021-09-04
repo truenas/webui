@@ -3,7 +3,7 @@ import {
 } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild,
+  AfterViewChecked, Component, Input, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -61,7 +61,7 @@ export interface Command {
     ]),
   ],
 })
-export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, OnDestroy {
+export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked, OnDestroy {
   @Input() title = '';
   @Input() conf: EntityTableConfig;
 
@@ -174,6 +174,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   };
 
   isAllSelected = false;
+  globalActionsInit = false;
 
   constructor(
     protected core: CoreService,
@@ -366,11 +367,12 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     setTimeout(() => { this.setShowSpinner(); }, 500);
   }
 
-  ngAfterViewInit(): void {
+  ngAfterViewChecked(): void {
     // If actionsConfig was disabled, don't show the default toolbar. like the Table is in a Tab.
-    if (!this.conf.disableActionsConfig) {
+    if (!this.conf.disableActionsConfig && !this.globalActionsInit) {
       // Setup Actions in Page Title Component
       this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
+      this.globalActionsInit = true;
     }
   }
 
