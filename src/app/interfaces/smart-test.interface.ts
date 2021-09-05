@@ -12,6 +12,8 @@ export interface SmartTest {
   type: SmartTestType;
 }
 
+export type SmartTestUpdate = Omit<SmartTest, 'id'>;
+
 export interface SmartTestUi extends SmartTest {
   cron_schedule: string;
   frequency: string;

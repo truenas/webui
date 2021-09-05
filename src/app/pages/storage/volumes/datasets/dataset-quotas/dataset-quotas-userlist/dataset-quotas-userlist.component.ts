@@ -142,13 +142,13 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
               const entryData = data.formValue;
               const payload = [];
               payload.push({
-                quota_type: 'USER',
-                id: res[0].id,
+                quota_type: DatasetQuotaType.User,
+                id: String(res[0].id),
                 quota_value: self.storageService.convertHumanStringToNum(entryData.data_quota),
               },
               {
-                quota_type: 'USEROBJ',
-                id: res[0].id,
+                quota_type: DatasetQuotaType.UserObj,
+                id: String(res[0].id),
                 quota_value: entryData.obj_quota,
               });
               self.loader.open();

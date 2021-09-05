@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
@@ -281,38 +282,38 @@ export class GuiFormComponent implements FormConfiguration {
            && this.addresses.every((val, index) => val === new_addresses[index]))
         || !(this.v6addresses.length === new_v6addresses.length
            && this.v6addresses.every((val, index) => val === new_v6addresses[index]))) {
-      this.dialog.confirm(helptext.dialog_confirm_title, helptext.dialog_confirm_title)
-        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            let href = window.location.href;
-            const hostname = window.location.hostname;
-            let port = window.location.port;
-            const protocol = window.location.protocol;
+      this.dialog.confirm({
+        title: helptext.dialog_confirm_title,
+        message: helptext.dialog_confirm_title,
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        let href = window.location.href;
+        const hostname = window.location.hostname;
+        let port = window.location.port;
+        const protocol = window.location.protocol;
 
-            if (new_http_port !== this.http_port && protocol == 'http:') {
-              port = new_http_port;
-            } else if (new_https_port !== this.https_port && protocol == 'https:') {
-              port = new_https_port;
-            }
+        if (new_http_port !== this.http_port && protocol == 'http:') {
+          port = new_http_port;
+        } else if (new_https_port !== this.https_port && protocol == 'https:') {
+          port = new_https_port;
+        }
 
-            href = protocol + '//' + hostname + ':' + port + window.location.pathname;
+        href = protocol + '//' + hostname + ':' + port + window.location.pathname;
 
-            this.loader.open();
-            this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
-            this.ws.call('service.restart', [ServiceName.Http]).pipe(untilDestroyed(this)).subscribe(
-              () => {},
-              (res: WebsocketError) => {
-                this.loader.close();
-                this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);
-              },
-            );
+        this.loader.open();
+        this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
+        this.ws.call('service.restart', [ServiceName.Http]).pipe(untilDestroyed(this)).subscribe(
+          () => {},
+          (res: WebsocketError) => {
+            this.loader.close();
+            this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);
+          },
+        );
 
-            this.ws.reconnect(protocol, hostname + ':' + port);
-            setTimeout(() => {
-              this.reconnect(href);
-            }, 1000);
-          }
-        });
+        this.ws.reconnect(protocol, hostname + ':' + port);
+        setTimeout(() => {
+          this.reconnect(href);
+        }, 1000);
+      });
     }
     this.language.setLanguage(value.language);
     this.modalService.refreshTable();

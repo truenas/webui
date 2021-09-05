@@ -4,6 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/idmap';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -397,25 +398,25 @@ export class IdmapFormComponent implements FormConfiguration {
 
   afterSubmit(): void {
     this.modalService.refreshTable();
-    this.dialogService.confirm(helptext.idmap.clear_cache_dialog.title, helptext.idmap.clear_cache_dialog.message,
-      true)
-      .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        if (res) {
-          this.dialogRef = this.dialog.open(EntityJobComponent, {
-            data: { title: (helptext.idmap.clear_cache_dialog.job_title) }, disableClose: true,
-          });
-          this.dialogRef.componentInstance.setCall('idmap.clear_idmap_cache');
-          this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-            this.dialog.closeAll();
-            this.dialogService.info(helptext.idmap.clear_cache_dialog.success_title,
-              helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true);
-          });
-          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
-            this.dialog.closeAll();
-            new EntityUtils().handleWSError(this.entityForm, res);
-          });
-        }
+    this.dialogService.confirm({
+      title: helptext.idmap.clear_cache_dialog.title,
+      message: helptext.idmap.clear_cache_dialog.message,
+      hideCheckBox: true,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.dialogRef = this.dialog.open(EntityJobComponent, {
+        data: { title: (helptext.idmap.clear_cache_dialog.job_title) }, disableClose: true,
       });
+      this.dialogRef.componentInstance.setCall('idmap.clear_idmap_cache');
+      this.dialogRef.componentInstance.submit();
+      this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+        this.dialog.closeAll();
+        this.dialogService.info(helptext.idmap.clear_cache_dialog.success_title,
+          helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true);
+      });
+      this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+        this.dialog.closeAll();
+        new EntityUtils().handleWSError(this.entityForm, res);
+      });
+    });
   }
 }

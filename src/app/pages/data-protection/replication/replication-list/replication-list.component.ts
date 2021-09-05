@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -118,28 +119,30 @@ export class ReplicationListComponent implements EntityTableConfig {
         name: 'run',
         label: T('Run Now'),
         onClick: (row: ReplicationTaskUi) => {
-          this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-            if (res) {
-              row.state = { state: JobState.Running };
-              this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
-                (jobId: number) => {
-                  this.dialog.info(
-                    T('Task started'),
-                    T('Replication <i>') + row.name + T('</i> has started.'),
-                    '500px',
-                    'info',
-                    true,
-                  );
-                  this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
-                    row.state = { state: job.state };
-                    row.job = job;
-                  });
-                },
-                (err) => {
-                  new EntityUtils().handleWSError(this.entityList, err);
-                },
-              );
-            }
+          this.dialog.confirm({
+            title: T('Run Now'),
+            message: T('Replicate <i>') + row.name + T('</i> now?'),
+            hideCheckBox: true,
+          }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+            row.state = { state: JobState.Running };
+            this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
+              (jobId: number) => {
+                this.dialog.info(
+                  T('Task started'),
+                  T('Replication <i>') + row.name + T('</i> has started.'),
+                  '500px',
+                  'info',
+                  true,
+                );
+                this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
+                  row.state = { state: job.state };
+                  row.job = job;
+                });
+              },
+              (err) => {
+                new EntityUtils().handleWSError(this.entityList, err);
+              },
+            );
           });
         },
       },

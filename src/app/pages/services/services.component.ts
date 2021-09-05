@@ -158,16 +158,12 @@ export class Services implements EntityTableConfig, OnInit {
           filter(Boolean),
         ).pipe(untilDestroyed(this)).subscribe(() => this.updateService(rpc, service));
       } else {
-        this.dialog.confirm(
-          T('Alert'),
-          T('Stop ') + serviceName + '?',
-          true,
-          T('Stop'),
-        ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (!res) {
-            return;
-          }
-
+        this.dialog.confirm({
+          title: T('Alert'),
+          message: this.translate.instant('Stop {serviceName}?', { serviceName }),
+          hideCheckBox: true,
+          buttonMsg: T('Stop'),
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
           this.updateService(rpc, service);
         });
       }
