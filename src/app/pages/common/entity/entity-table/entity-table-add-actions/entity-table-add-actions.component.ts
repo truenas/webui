@@ -3,10 +3,11 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalAction } from 'app/interfaces/global-action.interface';
 import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { EntityTableComponent } from './entity-table.component';
+import { GlobalAction } from 'app/interfaces/global-action.interface';
+import { EntityTableAddActionsConfig } from 'app/pages/common/entity/entity-table/entity-table-add-actions/entity-table-add-actions-config.interface';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 @UntilDestroy()
 @Component({
@@ -16,7 +17,7 @@ import { EntityTableComponent } from './entity-table.component';
 export class EntityTableAddActionsComponent implements GlobalAction, OnInit, AfterViewInit {
   @ViewChild('filter', { static: false }) filter: ElementRef;
   @Input('entity') entity: EntityTableComponent;
-  conf: any;
+  conf: EntityTableAddActionsConfig;
 
   actions: any[];
   menuTriggerMessage = 'Click for options';

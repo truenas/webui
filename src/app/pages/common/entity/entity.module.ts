@@ -22,6 +22,7 @@ import { FormSelectionListComponent } from 'app/pages/common/entity/entity-form/
 import { TooltipComponent } from 'app/pages/common/entity/entity-form/components/tooltip/tooltip.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityTableActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-actions/entity-table-actions.component';
+import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import { WizardSummaryComponent } from 'app/pages/common/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
 import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
@@ -70,7 +71,6 @@ import { EntityJobComponent } from './entity-job/entity-job.component';
 import { EntitySnackbarComponent } from './entity-snackbar/entity-snackbar.component';
 import { DynamicComponentDirective } from './entity-table/dynamic-component.directive';
 import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
-import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
 import { EntityTableRowDetailsComponent } from './entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
 import { EntityTaskComponent } from './entity-task/entity-task.component';

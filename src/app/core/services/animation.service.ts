@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ScrollToEvent } from 'app/interfaces/events/scroll-to-event.interface';
 import {
   tween,
   value,
@@ -11,7 +10,8 @@ import {
   timeline,
   ColdSubscription,
 } from 'popmotion';
-import { CoreEvent } from 'app/interfaces/events';
+import { AnimateEvent } from 'app/interfaces/events/animate-event.interface';
+import { ScrollToEvent } from 'app/interfaces/events/scroll-to-event.interface';
 import { Timeout } from 'app/interfaces/timeout.interface';
 import { DisplayObject } from '../classes/display-object';
 import { CoreService } from './core-service/core.service';
@@ -39,7 +39,7 @@ export class AnimationService {
       this.scrollTo(evt.data);
     });
 
-    core.register({ observerClass: this, eventName: 'Animate' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'Animate' }).pipe(untilDestroyed(this)).subscribe((evt: AnimateEvent) => {
       const config: AnimationConfig = evt.data;
       switch (config.animation) {
         case 'Flip':

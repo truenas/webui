@@ -11,6 +11,10 @@ import { Subject, BehaviorSubject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingGraphsEvent } from 'app/interfaces/events/reporting-graphs-event.interface';
+import {
+  UserPreferencesChangedEvent, UserPreferencesEvent,
+  UserPreferencesReadyEvent,
+} from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -98,15 +102,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 

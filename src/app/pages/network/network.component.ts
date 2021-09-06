@@ -13,6 +13,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
+import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
@@ -298,7 +299,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.core
       .register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
       .pipe(untilDestroyed(this))
-      .subscribe((evt: CoreEvent) => {
+      .subscribe((evt: NetworkInterfacesChangedEvent) => {
         if (evt && evt.data.checkin) {
           this.checkin_remaining = null;
           this.checkinWaiting = false;

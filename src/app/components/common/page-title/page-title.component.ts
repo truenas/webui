@@ -1,16 +1,18 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router, } from '@angular/router';
+import {
+  AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild,
+} from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter } from 'rxjs/operators';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ProductType } from 'app/enums/product-type.enum';
-import { CoreEvent } from 'app/interfaces/events';
 import { GlobalActionsEvent } from 'app/interfaces/events/global-actions-event.interface';
+import { PseudoRouteChangeEvent } from 'app/interfaces/events/pseudo-route-change-event.interface';
 import { GlobalAction, GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { LocaleService } from 'app/services/locale.service';
 import { PageTitleService } from 'app/services/page-title.service';
 import { RoutePart, RoutePartsService } from 'app/services/route-parts/route-parts.service';
-import { filter } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -27,7 +29,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   private globalActionsConfig: GlobalActionConfig;
   private globalActions: GlobalAction;
 
-  routeParts: (RoutePart & { disabled?: boolean })[];
+  routeParts: RoutePart[];
   isEnabled = true;
   constructor(
     private router: Router,
@@ -83,7 +85,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     // Pseudo routing events (for reports page)
-    this.core.register({ observerClass: this, eventName: 'PseudoRouteChange' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'PseudoRouteChange' }).pipe(untilDestroyed(this)).subscribe((evt: PseudoRouteChangeEvent) => {
       this.routeParts = evt.data;
       // generate url from parts
       this.routeParts.map((item, i) => {
