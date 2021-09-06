@@ -29,7 +29,7 @@ export class IdmapFormComponent implements FormConfiguration {
   queryCall: 'idmap.query' = 'idmap.query';
   addCall: 'idmap.create' = 'idmap.create';
   editCall: 'idmap.update' = 'idmap.update';
-  pk: any;
+  pk: number;
   queryKey = 'id';
   private getRow = new Subscription();
   rangeLowValidation = [
@@ -290,7 +290,7 @@ export class IdmapFormComponent implements FormConfiguration {
   constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
     private modalService: ModalService,
     protected dialogService: DialogService, protected dialog: MatDialog) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
     });

@@ -964,7 +964,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     return stepNumber;
   }
 
-  getField(fieldName: any): AbstractControl {
+  getField(fieldName: string): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = (< FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];

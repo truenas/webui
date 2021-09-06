@@ -235,6 +235,7 @@
   "Delete Server": "",
   "Delete snapshot {name}?": "",
   "Delete the zvol {zvolName} and all snapshots of it?": "",
+  "Delete this item?": "",
   "Deleting Snapshots": "",
   "Deleting...": "",
   "Deny": "",

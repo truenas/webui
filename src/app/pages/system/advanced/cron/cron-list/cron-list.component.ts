@@ -100,7 +100,11 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
         icon: 'play_arrow',
         onClick: (row: CronjobRow) =>
           this.dialog
-            .confirm(T('Run Now'), T('Run this job now?'), true)
+            .confirm({
+              title: T('Run Now'),
+              message: T('Run this job now?'),
+              hideCheckBox: true,
+            })
             .pipe(
               filter((run) => !!run),
               switchMap(() => this.ws.call('cronjob.run', [row.id])),

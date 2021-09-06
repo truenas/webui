@@ -49,10 +49,10 @@ export class FormTextareaComponent implements Field {
   }
 
   changeListener($event: Event): void {
-    this.readFile($event.target);
+    this.readFile($event.target as HTMLInputElement);
   }
 
-  readFile(inputValue: any): void {
+  readFile(inputValue: HTMLInputElement): void {
     const file: File = inputValue.files[0];
     const fReader: FileReader = new FileReader();
 
@@ -67,9 +67,9 @@ export class FormTextareaComponent implements Field {
     }
   }
 
-  contents(result: any): void {
+  contents(result: string | ArrayBuffer): void {
     if (this.config.fileType == 'binary') {
-      this.group.controls[this.config.name].setValue(btoa(result));
+      this.group.controls[this.config.name].setValue(btoa(result as string));
     } else {
       this.group.controls[this.config.name].setValue(result);
     }

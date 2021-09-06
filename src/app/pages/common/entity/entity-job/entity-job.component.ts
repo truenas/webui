@@ -32,7 +32,7 @@ export class EntityJobComponent implements OnInit {
   showCloseButton = true;
   showAbortButton = false; // enable to abort job
   jobId: number;
-  progressNumberType: any;
+  progressNumberType: string;
   hideProgressValue = false;
   altMessage: string;
   showRealtimeLogs = false;

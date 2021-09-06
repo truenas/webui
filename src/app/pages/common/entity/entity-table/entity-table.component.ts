@@ -119,7 +119,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
   colMaxWidths: { name: string; maxWidth: number }[] = [];
 
   expandedRows = document.querySelectorAll('.expanded-row').length;
-  expandedElement: any | null = null;
+  expandedElement: Row | null = null;
 
   dataSource: MatTableDataSource<any>;
   rows: Row[] = [];

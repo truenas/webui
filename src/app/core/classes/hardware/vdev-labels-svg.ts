@@ -1,4 +1,5 @@
 import { ElementRef } from '@angular/core';
+import { Selection } from 'd3';
 import * as d3 from 'd3';
 import { Application, Container } from 'pixi.js';
 import { Subject } from 'rxjs';
@@ -19,7 +20,7 @@ export class VDevLabelsSVG {
 
   events$: Subject<CoreEvent>;
 
-  protected svg: any; // Our d3 generated svg layer
+  protected svg: Selection<SVGSVGElement, unknown, HTMLElement, unknown>; // Our d3 generated svg layer
   protected mainStage: Container; // WebGL Canvas
   protected app: Application;
   protected chassis: ChassisView; // The chassis we are labelling
@@ -29,7 +30,7 @@ export class VDevLabelsSVG {
   highlightedDiskName: string;
   selectedDisk: EnclosureDisk;
 
-  private trays: any = {};
+  private trays: Record<string, any> = {};
 
   constructor(chassis: ChassisView, app: Application, theme: Theme, disk: EnclosureDisk) {
     this.selectedDisk = disk;
@@ -69,11 +70,11 @@ export class VDevLabelsSVG {
           break;
         case 'DisableHighlightMode':
           tiles = this.getParent().querySelectorAll('rect.tile');
-          this.showAllTiles(tiles);
+          this.showAllTiles(tiles as NodeListOf<HTMLElement>);
           break;
         case 'HighlightDisk':
           tiles = this.getParent().querySelectorAll('rect.tile');
-          this.hideAllTiles(tiles);
+          this.hideAllTiles(tiles as NodeListOf<HTMLElement>);
 
           this.highlightedDiskName = evt.data.devname;
           this.showTile(evt.data.devname);
@@ -202,13 +203,13 @@ export class VDevLabelsSVG {
     }
   }
 
-  hideAllTiles(tiles: NodeListOf<any>): void {
+  hideAllTiles(tiles: NodeListOf<HTMLElement>): void {
     tiles.forEach((item) => {
       item.style.opacity = '0';
     });
   }
 
-  showAllTiles(tiles: NodeListOf<any>): void {
+  showAllTiles(tiles: NodeListOf<HTMLElement>): void {
     tiles.forEach((item) => {
       item.style.opacity = '1';
     });

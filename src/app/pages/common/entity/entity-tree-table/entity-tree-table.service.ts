@@ -52,8 +52,8 @@ export class EntityTreeTableService {
     });
   }
 
-  findNode(indexPath: number[], treeData: TreeNode[]): any {
-    let currentNode: any;
+  findNode(indexPath: number[], treeData: TreeNode[]): TreeNode {
+    let currentNode: TreeNode;
     indexPath.forEach((tier, index) => {
       currentNode = index == 0 ? treeData[0] : currentNode.children[tier];
     });
@@ -74,7 +74,7 @@ export class EntityTreeTableService {
     return output;
   }
 
-  editNode(prop: string, value: any, indexPath: number[], treeData: TreeNode[]): any {
+  editNode(prop: keyof TreeNode, value: any, indexPath: number[], treeData: TreeNode[]): any {
     const node = this.findNode(indexPath, treeData);
 
     // Clone the data
