@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ScrollToEvent } from 'app/interfaces/events/scroll-to-event.interface';
 import {
   tween,
   value,
@@ -34,7 +35,7 @@ export class AnimationService {
   private activeAnimations: { [targetId: string]: { animation: Timeout; originalState: any } } = {};
 
   constructor(private core: CoreService) {
-    this.core.register({ observerClass: this, eventName: 'ScrollTo' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ScrollTo' }).pipe(untilDestroyed(this)).subscribe((evt: ScrollToEvent) => {
       this.scrollTo(evt.data);
     });
 

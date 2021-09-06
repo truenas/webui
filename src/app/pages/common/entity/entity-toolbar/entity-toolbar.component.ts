@@ -5,8 +5,8 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalAction, EntityToolbarActionConfig } from 'app/interfaces/global-action.interface';
 import { Subject } from 'rxjs';
-import { GlobalAction } from 'app/components/common/page-title/page-title.component';
 import { CoreEvent } from 'app/interfaces/events';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ToolbarConfig } from './models/control-config.interface';
@@ -19,8 +19,8 @@ import { Control } from './models/control.interface';
   styleUrls: ['./entity-toolbar.component.scss'],
 })
 export class EntityToolbarComponent implements OnChanges, GlobalAction {
-  @Input('conf') conf: ToolbarConfig; // ControlConfig[];
-  config: any;
+  @Input('conf') conf: ToolbarConfig;
+  config: ToolbarConfig;
   controller$: Subject<Control>;
   values: any;
 
@@ -54,8 +54,8 @@ export class EntityToolbarComponent implements OnChanges, GlobalAction {
     });
 
     // Setup Initial Values
-    const obj: any = {};
-    this.config.controls.forEach((item: any) => {
+    const obj: Record<string, any> = {};
+    this.config.controls.forEach((item) => {
       obj[item.name] = item.value;
     });
     this.values = obj;
@@ -70,7 +70,7 @@ export class EntityToolbarComponent implements OnChanges, GlobalAction {
   }
 
   // For when config is provided via JS
-  applyConfig(conf: any): void {
+  applyConfig(conf: ToolbarConfig): void {
     this.config = conf;
     this.init();
   }

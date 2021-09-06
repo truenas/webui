@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalAction } from 'app/interfaces/global-action.interface';
 import { fromEvent as observableFromEvent } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { EntityTableComponent } from './entity-table.component';
@@ -12,7 +13,7 @@ import { EntityTableComponent } from './entity-table.component';
   selector: 'app-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html',
 })
-export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
+export class EntityTableAddActionsComponent implements GlobalAction, OnInit, AfterViewInit {
   @ViewChild('filter', { static: false }) filter: ElementRef;
   @Input('entity') entity: EntityTableComponent;
   conf: any;
@@ -39,7 +40,7 @@ export class EntityTableAddActionsComponent implements OnInit, AfterViewInit {
     this.filterInit();
   }
 
-  applyConfig(entity: any): void {
+  applyConfig(entity: EntityTableComponent): void {
     this.entity = entity;
     this.conf = entity.conf;
     this.filterInit();

@@ -1,23 +1,16 @@
-import {
-  Component, OnInit, AfterViewInit, OnDestroy, Input, ViewChild,
-} from '@angular/core';
-import {
-  Router, NavigationEnd, ActivatedRoute,
-} from '@angular/router';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild, } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router, } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter } from 'rxjs/operators';
-import { ViewButtonComponent } from 'app/core/components/view-button/view-button.component';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { GlobalActionsEvent } from 'app/interfaces/events/global-actions-event.interface';
+import { GlobalAction, GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { LocaleService } from 'app/services/locale.service';
 import { PageTitleService } from 'app/services/page-title.service';
 import { RoutePart, RoutePartsService } from 'app/services/route-parts/route-parts.service';
-
-export interface GlobalAction {
-  applyConfig(config: any): any;
-}
+import { filter } from 'rxjs/operators';
 
 @UntilDestroy()
 @Component({
@@ -31,8 +24,8 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   title$ = this.pageTitleService.title$;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   hasInitialized = false;
-  private globalActionsConfig: any;
-  private globalActions: any;
+  private globalActionsConfig: GlobalActionConfig;
+  private globalActions: GlobalAction;
 
   routeParts: (RoutePart & { disabled?: boolean })[];
   isEnabled = true;
@@ -106,7 +99,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
       });
     });
 
-    this.core.register({ observerClass: this, eventName: 'GlobalActions' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'GlobalActions' }).pipe(untilDestroyed(this)).subscribe((evt: GlobalActionsEvent) => {
       // CONFIG OBJECT EXAMPLE: { actionType: EntityTableAddActionsComponent, actionConfig: this };
       this.globalActionsConfig = evt.data;
 
@@ -128,17 +121,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     delete this.globalActionsConfig;
   }
 
-  createAction(): void {
-    this.viewcontroller.layoutContainer = { layout: 'row', align: 'end center', gap: '2px' };
-    this.globalActions = this.viewcontroller.create(ViewButtonComponent);
-    this.globalActions.label = 'Global Action';
-    this.globalActions.tooltipEnabled = true;
-    this.globalActions.tooltipPlacement = 'above';
-    this.globalActions.tooltipText = 'Tooltip Text Goes Here';
-    this.viewcontroller.addChild(this.globalActions);
-  }
-
-  renderActions(config: any): void {
+  renderActions(config: GlobalActionConfig): void {
     if (this.globalActions) {
       this.destroyActions();
     }
