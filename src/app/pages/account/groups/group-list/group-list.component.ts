@@ -3,6 +3,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/group-list';
 import { Group } from 'app/interfaces/group.interface';
@@ -205,15 +206,16 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
     this.translate.get(show).pipe(untilDestroyed(this)).subscribe((action: string) => {
       this.translate.get(helptext.builtins_dialog.title).pipe(untilDestroyed(this)).subscribe((title: string) => {
         this.translate.get(helptext.builtins_dialog.message).pipe(untilDestroyed(this)).subscribe((message: string) => {
-          this.dialogService.confirm(action + title,
-            action + message, true, action)
-            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-              if (res) {
-                this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
-                this.prefService.savePreferences();
-                this.entityList.getData();
-              }
-            });
+          this.dialogService.confirm({
+            title: action + title,
+            message: action + message,
+            hideCheckBox: true,
+            buttonMsg: action,
+          }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+            this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
+            this.prefService.savePreferences();
+            this.entityList.getData();
+          });
         });
       });
     });

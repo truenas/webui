@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -124,18 +125,20 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((dialres: boolean) => {
-              if (dialres) {
-                this.entityList.loader.open();
-                this.entityList.loaderOpen = true;
-                this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe(
-                  () => { this.entityList.getData(); },
-                  (resinner: WebsocketError) => {
-                    new EntityUtils().handleWSError(this, resinner, this.entityList.dialogService);
-                    this.entityList.loader.close();
-                  },
-                );
-              }
+            this.entityList.dialogService.confirm({
+              title: T('Delete'),
+              message: deleteMsg,
+              buttonMsg: T('Delete'),
+            }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.entityList.loader.open();
+              this.entityList.loaderOpen = true;
+              this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe(
+                () => { this.entityList.getData(); },
+                (resinner: WebsocketError) => {
+                  new EntityUtils().handleWSError(this, resinner, this.entityList.dialogService);
+                  this.entityList.loader.close();
+                },
+              );
             });
           },
         );

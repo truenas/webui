@@ -401,12 +401,13 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onGoToLegacy(): void {
-    this.dialogService.confirm(T('Warning'),
-      globalHelptext.legacyUIWarning,
-      true, T('Continue to Legacy UI')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        window.location.href = '/legacy/';
-      }
+    this.dialogService.confirm({
+      title: T('Warning'),
+      message: globalHelptext.legacyUIWarning,
+      hideCheckBox: true,
+      buttonMsg: T('Continue to Legacy UI'),
+    }).pipe(untilDestroyed(this)).subscribe(() => {
+      window.location.href = '/legacy/';
     });
   }
 

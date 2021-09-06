@@ -20,6 +20,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
@@ -441,20 +442,16 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   onSubmit(event: Event): void {
     if (this.conf.confirmSubmit && this.conf.confirmSubmitDialog) {
-      this.dialog.confirm(
-        this.conf.confirmSubmitDialog['title'],
-        this.conf.confirmSubmitDialog['message'],
-        this.conf.confirmSubmitDialog.hasOwnProperty('hideCheckbox')
+      this.dialog.confirm({
+        title: this.conf.confirmSubmitDialog['title'],
+        message: this.conf.confirmSubmitDialog['message'],
+        hideCheckBox: this.conf.confirmSubmitDialog.hasOwnProperty('hideCheckbox')
           ? this.conf.confirmSubmitDialog['hideCheckbox']
           : false,
-        this.conf.confirmSubmitDialog.hasOwnProperty('button')
+        buttonMsg: this.conf.confirmSubmitDialog.hasOwnProperty('button')
           ? this.conf.confirmSubmitDialog['button']
           : T('Ok'),
-      ).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
-        if (!confirm) {
-          return;
-        }
-
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.doSubmit(event);
       });
     } else {

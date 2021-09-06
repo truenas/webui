@@ -142,13 +142,13 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
               const entryData = data.formValue;
               const payload = [];
               payload.push({
-                quota_type: 'GROUP',
-                id: res[0].id,
+                quota_type: DatasetQuotaType.Group,
+                id: String(res[0].id),
                 quota_value: self.storageService.convertHumanStringToNum(entryData.data_quota),
               },
               {
-                quota_type: 'GROUPOBJ',
-                id: res[0].id,
+                quota_type: DatasetQuotaType.GroupObj,
+                id: String(res[0].id),
                 quota_value: entryData.obj_quota,
               });
               self.loader.open();

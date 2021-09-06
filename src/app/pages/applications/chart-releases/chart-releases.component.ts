@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -425,22 +426,22 @@ export class ChartReleasesComponent implements OnInit {
 
   delete(name: string): void {
     this.translate.get(helptext.charts.delete_dialog.msg).pipe(untilDestroyed(this)).subscribe((msg) => {
-      this.dialogService.confirm(helptext.charts.delete_dialog.title, msg + name + '?')
-        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-              data: {
-                title: helptext.charts.delete_dialog.job,
-              },
-            });
-            this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-              this.dialogService.closeAllDialogs();
-              this.refreshChartReleases();
-            });
-          }
+      this.dialogService.confirm({
+        title: helptext.charts.delete_dialog.title,
+        message: msg + name + '?',
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+          data: {
+            title: helptext.charts.delete_dialog.job,
+          },
         });
+        this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          this.dialogService.closeAllDialogs();
+          this.refreshChartReleases();
+        });
+      });
     });
   }
 
