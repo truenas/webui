@@ -237,7 +237,7 @@ export class StorageService {
     }
   }
 
-  poolUnlockServiceChoices(id: string): Observable<Option[]> {
+  poolUnlockServiceOptions(id: string): Observable<Option[]> {
     return this.ws.call('pool.unlock_services_restart_choices', [id]).pipe(
       map((response: Choices) =>
         Object.keys(response || {}).map((serviceId) => ({
