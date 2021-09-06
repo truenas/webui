@@ -634,7 +634,7 @@ export type ApiDirectory = {
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
   'pool.snapshottask.update': { params: any; response: any };
   'pool.unlock': { params: PoolUnlockQuery; response: PoolUnlockResult };
-  'pool.unlock_services_restart_choices': { params: any; response: any };
+  'pool.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.update': { params: any; response: any };
   'pool.upgrade': { params: [id: number]; response: boolean };
 
