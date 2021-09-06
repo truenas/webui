@@ -89,7 +89,7 @@ export class RsyncListComponent implements EntityTableConfig {
     });
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: RsyncTaskUi): EntityTableAction<RsyncTaskUi>[] {
     return [{
       id: row.path,
       icon: 'play_arrow',
@@ -167,11 +167,11 @@ export class RsyncListComponent implements EntityTableConfig {
     });
   }
 
-  onButtonClick(row: any): void {
+  onButtonClick(row: RsyncTaskUi): void {
     this.stateButton(row);
   }
 
-  stateButton(row: any): void {
+  stateButton(row: RsyncTaskUi): void {
     if (row.job) {
       if (row.state.state === JobState.Running) {
         this.entityList.runningStateButton(row.job.id);

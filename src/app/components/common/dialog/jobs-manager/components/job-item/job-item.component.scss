@@ -5,10 +5,27 @@
   &:not(:last-child) {
     border-bottom: 1px solid var(--lines);
   }
+
+  &:hover {
+    background: var(--hover-bg);
+    cursor: pointer;
+  }
+
+  &:focus,
+  &:active {
+    background: var(--hover-bg);
+  }
 }
 
 .job-progress {
   margin: 3px 0;
+}
+
+.job-progress-description {
+  opacity: 0.75;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .job-time {

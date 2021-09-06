@@ -11,7 +11,7 @@ import * as parser from 'cron-parser';
 import * as dateFns from 'date-fns';
 import * as dateFnsTz from 'date-fns-tz';
 import globalHelptext from 'app/helptext/global-helptext';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSchedulerConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SystemGeneralService } from 'app/services';
@@ -33,7 +33,7 @@ interface CronPreset {
 })
 export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, AfterViewChecked {
   // Basic form-select props
-  config: FieldConfig;
+  config: FormSchedulerConfig;
   group: FormGroup;
   fieldShow: string;
   disablePrevious: boolean;

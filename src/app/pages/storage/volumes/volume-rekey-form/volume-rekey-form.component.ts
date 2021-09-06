@@ -7,7 +7,7 @@ import helptext from 'app/helptext/storage/volumes/volume-key';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { EncryptionService } from 'app/services/encryption.service';
 import { T } from 'app/translate-marker';
@@ -79,11 +79,12 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
 
   resourceTransformIncomingRestData(data: Pool): Pool {
     this.poolName = data.name;
-    _.find(this.fieldConfig, { name: 'encrypt-headline' }).paraText += ` <em>${this.poolName}</em>`;
+    const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'encrypt-headline' });
+    config.paraText += ` <em>${this.poolName}</em>`;
     return data;
   }
 
-  pk: any;
+  pk: string;
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
@@ -101,7 +102,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
   }
 
   afterInit(entityForm: EntityFormComponent): void {
-    entityForm.formGroup.controls['encryptionkey_passphrase'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['encryptionkey_passphrase'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       entityForm.setDisabled('set_recoverykey', res === '');
     });
   }

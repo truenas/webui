@@ -1,0 +1,11 @@
+{
+ "parser": {
+   ".html$": "markuplint-angular-parser"
+ },
+ "rules": {
+   "attr-equal-space-after": "never",
+   "attr-equal-space-before": "never",
+   "indentation": 2
+ },
+ "excludeFiles": ["./src/index.html"],
+}

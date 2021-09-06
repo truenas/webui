@@ -18,7 +18,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormExplorerConfig, FormInputConfig, FormParagraphConfig, FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -406,11 +408,11 @@ export class CloudsyncFormComponent implements FormConfiguration {
   ]);
   fieldConfig: FieldConfig[] = [];
 
-  protected credentials: FieldConfig;
-  protected bucket_field: FieldConfig;
-  protected bucket_input_field: FieldConfig;
-  protected folder_field_destination: FieldConfig;
-  protected folder_field_source: FieldConfig;
+  protected credentials: FormSelectConfig;
+  protected bucket_field: FormSelectConfig;
+  protected bucket_input_field: FormInputConfig;
+  protected folder_field_destination: FormExplorerConfig;
+  protected folder_field_source: FormExplorerConfig;
   credentials_list: CloudsyncCredential[] = [];
 
   formGroup: FormGroup;
@@ -466,7 +468,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  getBuckets(credential: any): Observable<any[]> {
+  getBuckets(credential: CloudsyncCredential): Observable<any[]> {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
   }
 
@@ -495,7 +497,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  getBucketFolders(credential: string, bucket: string, node: TreeNode): Promise<any> {
+  getBucketFolders(credential: number, bucket: string, node: TreeNode): Promise<any> {
     const formValue = this.entityForm.formGroup.value;
     const children: any[] = [];
     const data = {
@@ -564,16 +566,14 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
   dataHandler(entityForm: EntityFormComponent): void {
     const data = entityForm.wsResponse;
-    if (data.include && data.include.length) {
-      data.path_source = data.include.map((p: string) => data.path + '/' + p.split('/')[1]);
-    } else {
+    if (data.direction === Direction.Pull) {
       data.path_destination = data.path;
-    }
-    if (data.attributes.include && data.attributes.include.length) {
       data.attributes.folder_source = data.attributes.include.map((p: string) => data.attributes.folder + '/' + p.split('/')[1]);
     } else {
       data.attributes.folder_destination = data.attributes.folder;
+      data.path_source = data.include.map((p: string) => data.path + '/' + p.split('/')[1]);
     }
+
     for (const i in data) {
       const fg = entityForm.formGroup.controls[i];
       if (fg) {
@@ -608,7 +608,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.title = entityForm.isNew ? helptext.cloudsync_task_add : helptext.cloudsync_task_edit;
     this.credentials = this.fieldSets.config('credentials');
     this.bucket_field = this.fieldSets.config('bucket');
-    this.bucket_input_field = this.fieldSets.config('bucket_input');
+    this.bucket_input_field = this.fieldSets.config('bucket_input') as FormInputConfig;
     this.setDisabled('bucket', true, true);
     this.setDisabled('bucket_input', true, true);
     this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
@@ -783,13 +783,14 @@ export class CloudsyncFormComponent implements FormConfiguration {
                   }
                   this.setDisabled('bucket', true, true);
                   this.setDisabled('bucket_input', false, false);
-                  this.dialog.confirm(err.extra ? err.extra.excerpt : (T('Error: ') + err.error), err.reason, true, T('Fix Credential')).pipe(untilDestroyed(this)).subscribe(
-                    (dialog_res: boolean) => {
-                      if (dialog_res) {
-                        this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', String(item.id)]));
-                      }
-                    },
-                  );
+                  this.dialog.confirm({
+                    title: err.extra ? err.extra.excerpt : (T('Error: ') + err.error),
+                    message: err.reason,
+                    hideCheckBox: true,
+                    buttonMsg: T('Fix Credential'),
+                  }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+                    this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', String(item.id)]));
+                  });
                 },
               );
             } else {
@@ -869,7 +870,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     // Update transfer_mode paragraphs when the mode is changed
     this.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode: TransferMode) => {
-      const paragraph = entityForm.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
+      const paragraph: FormParagraphConfig = entityForm.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
       switch (mode) {
         case TransferMode.Sync:
           paragraph.paraText = helptext.transfer_mode_warning_sync;

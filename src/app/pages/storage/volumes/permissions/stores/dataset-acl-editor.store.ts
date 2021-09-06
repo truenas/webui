@@ -239,7 +239,7 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
       switchMap(([_, saveParams]) => this.prepareSetAcl(this.get(), saveParams)),
 
       // Save
-      tap((setAcl) => {
+      tap((setAcl: SetAcl) => {
         const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: helptext.save_dialog.title } });
         dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
 

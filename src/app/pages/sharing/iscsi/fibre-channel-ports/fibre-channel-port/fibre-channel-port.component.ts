@@ -3,7 +3,7 @@ import { FormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -84,7 +84,7 @@ export class FibreChannelPortComponent implements OnInit {
     private entityFormService: EntityFormService,
     private iscsiService: IscsiService,
   ) {
-    const targetField = _.find(this.fieldSets[1].config, { name: 'target' });
+    const targetField: FormSelectConfig = _.find(this.fieldSets[1].config, { name: 'target' });
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       for (let i = 0; i < targets.length; i++) {
         targetField.options.push({

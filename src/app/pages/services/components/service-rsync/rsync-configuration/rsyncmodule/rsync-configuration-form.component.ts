@@ -10,7 +10,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { UserService, WebSocketService } from 'app/services';
 
@@ -137,8 +137,8 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  private rsyncmod_group: FieldConfig;
-  private rsyncmod_user: FieldConfig;
+  private rsyncmod_group: FormComboboxConfig;
+  private rsyncmod_user: FormComboboxConfig;
   protected entityForm: EntityFormComponent;
   customFilter: any;
   constructor(protected ws: WebSocketService, protected router: Router,

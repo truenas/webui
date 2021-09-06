@@ -8,7 +8,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { selectedOptionValidator } from 'app/pages/common/entity/entity-form/validators/invalid-option-selected';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
@@ -130,7 +130,7 @@ export class PortalFormComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
   pk: any;
-  protected authgroup_field: FieldConfig;
+  protected authgroup_field: FormSelectConfig;
   protected entityForm: EntityFormComponent;
   protected ip: any;
 
@@ -142,14 +142,15 @@ export class PortalFormComponent implements FormConfiguration {
 
   prerequisite(): Promise<boolean> {
     return new Promise(async (resolve) => {
-      const listenIpField = _.find(this.fieldSets[2].config, { name: 'listen' }).templateListField[0];
+      const listenIpFieldConfig: FormListConfig = _.find(this.fieldSets[2].config, { name: 'listen' });
+      const listenIpField: FormSelectConfig = listenIpFieldConfig.templateListField[0];
       await this.iscsiService.getIpChoices().toPromise().then((ips) => {
         for (const ip in ips) {
           listenIpField.options.push({ label: ips[ip], value: ip });
         }
-        const listenListFields = _.find(this.fieldSets[2].config, { name: 'listen' }).listFields;
+        const listenListFields = listenIpFieldConfig.listFields;
         for (const listenField of listenListFields) {
-          const ipField = _.find(listenField, { name: 'ip' });
+          const ipField: FormSelectConfig = _.find(listenField, { name: 'ip' });
           ipField.options = listenIpField.options;
         }
         resolve(true);
@@ -171,7 +172,7 @@ export class PortalFormComponent implements FormConfiguration {
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       for (let i = 0; i < accessRecords.length; i++) {
         if (_.find(this.authgroup_field.options, { value: accessRecords[i].tag }) == undefined) {
-          this.authgroup_field.options.push({ label: accessRecords[i].tag, value: accessRecords[i].tag });
+          this.authgroup_field.options.push({ label: String(accessRecords[i].tag), value: accessRecords[i].tag });
         }
       }
     });

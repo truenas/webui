@@ -45,7 +45,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   @ViewChild('container', { static: true }) container: ElementRef;
   scrollContainer: HTMLElement;
   scrolledIndex = 0;
-  isFooterConsoleOpen: boolean;
 
   retroLogo: string;
 
@@ -98,12 +97,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   ngOnInit(): void {
     this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
-
-    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
-      }
-    });
 
     this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';

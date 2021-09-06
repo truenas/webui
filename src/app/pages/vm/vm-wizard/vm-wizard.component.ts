@@ -23,7 +23,9 @@ import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Statfs } from 'app/interfaces/filesystem-stat.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormParagraphConfig, FormSelectConfig, FormUploadConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
@@ -106,7 +108,7 @@ export class VMWizardComponent implements WizardConfiguration {
           value: VmTime.Local,
           options: [
             { label: helptext.time_local_text, value: VmTime.Local },
-            { label: 'UTC', value: VmTime.Utc },
+            { label: helptext.time_utc_text, value: VmTime.Utc },
           ],
         },
         {
@@ -447,6 +449,13 @@ export class VMWizardComponent implements WizardConfiguration {
           value: false,
         },
         {
+          type: 'checkbox',
+          name: 'ensure_display_device',
+          placeholder: T('Ensure Display Device'),
+          tooltip: T('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
+          value: true,
+        },
+        {
           type: 'select',
           placeholder: T("GPU's"),
           name: 'gpus',
@@ -458,9 +467,9 @@ export class VMWizardComponent implements WizardConfiguration {
     },
   ];
 
-  private nicAttach: FieldConfig;
-  private nicType: FieldConfig;
-  private bootloader: FieldConfig;
+  private nicAttach: FormSelectConfig;
+  private nicType: FormSelectConfig;
+  private bootloader: FormSelectConfig;
 
   constructor(
     protected ws: WebSocketService,
@@ -481,12 +490,12 @@ export class VMWizardComponent implements WizardConfiguration {
     this.entityWizard = entityWizard;
     this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((max) => {
       this.maxVCPUs = max;
-      const vcpuLimitConf = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' });
+      const vcpuLimitConf: FormParagraphConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' });
       vcpuLimitConf.paraText = helptext.vcpus_warning + ` ${this.maxVCPUs} ` + helptext.vcpus_warning_b;
     });
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
-      const gpusConf = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
+      const gpusConf: FormSelectConfig = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
       }
@@ -511,17 +520,17 @@ export class VMWizardComponent implements WizardConfiguration {
 
   setValuesFromPref(stepNumber: number, fieldName: string, prefName: string, defaultIndex?: number): void {
     const field = this.getFormControlFromFieldName(fieldName);
-    const options = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName }).options;
+    const config: FormSelectConfig = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
     const storedValue = this.prefService.preferences.storedValues[prefName];
     if (storedValue) {
-      const valueToSet = options.find((o) => o.value === storedValue);
+      const valueToSet = config.options.find((o) => o.value === storedValue);
       if (valueToSet) {
         field.setValue(valueToSet.value);
       } else if (defaultIndex) {
-        field.setValue(options[defaultIndex].value);
+        field.setValue(config.options[defaultIndex].value);
       }
     } else {
-      field.setValue(options[defaultIndex].value);
+      field.setValue(config.options[defaultIndex].value);
     }
   }
 
@@ -532,7 +541,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
     this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
-        const bind = _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' });
+        const bind: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' });
         Object.keys(res).forEach((address) => {
           bind.options.push({ label: address, value: address });
         });
@@ -543,7 +552,7 @@ export class VMWizardComponent implements WizardConfiguration {
     if (this.productType === ProductType.Scale || this.productType === ProductType.ScaleEnterprise) {
       _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' })['isHidden'] = true;
       _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
-      const cpuModel = _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_model' });
+      const cpuModel: FormSelectConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_model' });
       cpuModel.isHidden = false;
 
       this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
@@ -561,12 +570,14 @@ export class VMWizardComponent implements WizardConfiguration {
       .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
       .pipe(map(new EntityUtils().array1DToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe((options) => {
-        this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore').options = options;
+        const config: FormSelectConfig = this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore');
+        config.options = options;
       });
 
     this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
-        _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }).options.push(
+        const config: FormSelectConfig = _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' });
+        config.options.push(
           {
             label: zvol.id, value: zvol.id,
           },
@@ -681,7 +692,7 @@ export class VMWizardComponent implements WizardConfiguration {
             finalIsolatedPciIds.push(gpuValue);
           }
         }
-        const gpusConf = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
+        const gpusConf: FormSelectConfig = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
         if (finalIsolatedPciIds.length >= gpusConf.options.length) {
           const prevSelectedGpus = [];
           for (const gpu of this.gpus) {
@@ -750,7 +761,7 @@ export class VMWizardComponent implements WizardConfiguration {
       this.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
         this.getFormControlFromFieldName('iso_path').setValue(message);
       });
-      const grub = this.bootloader.options.find((option: any) => option.value === VmBootloader.Grub);
+      const grub = this.bootloader.options.find((option) => option.value === VmBootloader.Grub);
       const grubIndex = this.bootloader.options.indexOf(grub);
       if (res === 'Windows') {
         if (grub) {
@@ -796,7 +807,8 @@ export class VMWizardComponent implements WizardConfiguration {
     });
     this.getFormControlFromFieldName('upload_iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
-        _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' }).fileLocation = res;
+        const config: FormUploadConfig = _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' });
+        config.fileLocation = res;
       }
     });
 
@@ -838,30 +850,22 @@ export class VMWizardComponent implements WizardConfiguration {
     });
 
     setTimeout(() => {
-      let globalLabel: string;
-      let globalTooltip: string;
-      this.translate.get(helptext.memory_placeholder).pipe(untilDestroyed(this)).subscribe((mem) => {
-        this.translate.get(helptext.global_label).pipe(untilDestroyed(this)).subscribe((gLabel) => {
-          this.translate.get(helptext.global_tooltip).pipe(untilDestroyed(this)).subscribe((gTooltip) => {
-            this.translate.get(helptext.memory_tooltip).pipe(untilDestroyed(this)).subscribe((mem_tooltip) => {
-              this.translate.get(helptext.memory_unit).pipe(untilDestroyed(this)).subscribe((mem_unit) => {
-                globalLabel = gLabel;
-                globalTooltip = gTooltip;
-                _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' }).placeholder = `${mem} ${globalLabel}`;
-                _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' }).tooltip = `${mem_tooltip} ${globalTooltip} ${mem_unit}`;
-              });
-            });
-          });
-        });
-      });
-      this.translate.get(helptext.volsize_placeholder).pipe(untilDestroyed(this)).subscribe((placeholder) => {
-        this.translate.get(helptext.volsize_tooltip).pipe(untilDestroyed(this)).subscribe((tooltip) => {
-          this.translate.get(helptext.volsize_tooltip_B).pipe(untilDestroyed(this)).subscribe((tooltipB) => {
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).placeholder = `${placeholder} ${globalLabel}`;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).tooltip = `${tooltip} ${globalLabel} ${tooltipB}`;
-          });
-        });
-      });
+      const globalLabel = this.translate.instant(helptext.global_label);
+      const globalTooltip = this.translate.instant(helptext.global_tooltip);
+
+      const memoryPlaceholder = this.translate.instant(helptext.memory_placeholder);
+      const memoryTooltip = this.translate.instant(helptext.memory_tooltip);
+      const memoryUnit = this.translate.instant(helptext.memory_unit);
+      const memoryField = _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' });
+      memoryField.placeholder = `${memoryPlaceholder} ${globalLabel}`;
+      memoryField.tooltip = `${memoryTooltip} ${globalTooltip} ${memoryUnit}`;
+
+      const volsizePlaceholder = this.translate.instant(helptext.volsize_placeholder);
+      const volsizeTooltip = this.translate.instant(helptext.volsize_tooltip);
+      const volsizeTooltipB = this.translate.instant(helptext.volsize_tooltip_B);
+      const volsizeField = _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' });
+      volsizeField.placeholder = `${volsizePlaceholder} ${globalLabel}`;
+      volsizeField.tooltip = `${volsizeTooltip} ${globalLabel} ${volsizeTooltipB}`;
     }, 2000);
   }
 
@@ -927,11 +931,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
         if (errors) {
           config.hasErrors = true;
-          self.translate.get('Cannot allocate').pipe(untilDestroyed(self)).subscribe((msg) => {
-            self.translate.get('to storage for this virtual machine.').pipe(untilDestroyed(self)).subscribe((msg2) => {
-              config.warnings = `${msg} ${self.storageService.humanReadable} ${msg2}`;
-            });
-          });
+          config.warnings = self.translate.instant('Cannot allocate {size} to storage for this virtual machine.', { size: self.storageService.humanReadable });
         } else {
           config.hasErrors = false;
           config.warnings = '';

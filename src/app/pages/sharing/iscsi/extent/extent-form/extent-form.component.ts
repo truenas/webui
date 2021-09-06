@@ -11,7 +11,7 @@ import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -290,7 +290,7 @@ export class ExtentFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
-    const extent_disk_field = _.find(this.fieldConfig, { name: 'disk' });
+    const extent_disk_field: FormSelectConfig = _.find(this.fieldConfig, { name: 'disk' });
     // get device options
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
       const options = [];

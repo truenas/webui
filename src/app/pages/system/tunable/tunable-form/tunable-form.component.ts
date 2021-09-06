@@ -6,7 +6,7 @@ import { TunableType } from 'app/enums/tunable-type.enum';
 import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { T } from 'app/translate-marker';
@@ -28,7 +28,7 @@ export class TunableFormComponent implements FormConfiguration {
   isEntity = true;
 
   protected product_type: ProductType;
-  protected type_fc: FieldConfig;
+  protected type_fc: FormSelectConfig;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

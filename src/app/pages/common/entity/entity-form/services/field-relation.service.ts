@@ -5,7 +5,7 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { FieldConfig } from '../models/field-config.interface';
+import { FieldConfig, FormDictConfig, FormListConfig } from '../models/field-config.interface';
 import { FieldRelation, RelationGroup } from '../models/field-relation.interface';
 
 @UntilDestroy()
@@ -183,18 +183,20 @@ export class FieldRelationService {
       }
     }
 
-    if (config.listFields) {
+    const listConfig: FormListConfig = config as FormListConfig;
+    if (listConfig.listFields) {
       const formArray = formGroup.get(config.name) as FormArray;
-      for (let i = 0; i < config.listFields.length; i++) {
-        config.listFields[i].forEach((subFieldConfig) => {
+      for (let i = 0; i < listConfig.listFields.length; i++) {
+        listConfig.listFields[i].forEach((subFieldConfig) => {
           this.setRelation(subFieldConfig, formArray.at(i) as FormGroup);
         });
       }
     }
 
-    if (config.subFields) {
+    const dictConfig: FormDictConfig = config as FormDictConfig;
+    if (dictConfig.subFields) {
       const dictFormGroup = formGroup.get(config.name) as FormGroup;
-      config.subFields.forEach((subFieldConfig) => {
+      dictConfig.subFields.forEach((subFieldConfig) => {
         this.setRelation(subFieldConfig, dictFormGroup);
       });
     }
@@ -220,18 +222,20 @@ export class FieldRelationService {
       }
     }
 
-    if (config.listFields) {
-      const formArray = formGroup.get(config.name) as FormArray;
-      for (let i = 0; i < config.listFields.length; i++) {
-        config.listFields[i].forEach((subFieldConfig) => {
+    const listConfig: FormListConfig = config as FormListConfig;
+    if (listConfig.listFields) {
+      const formArray = formGroup.get(listConfig.name) as FormArray;
+      for (let i = 0; i < listConfig.listFields.length; i++) {
+        listConfig.listFields[i].forEach((subFieldConfig) => {
           this.refreshRelations(subFieldConfig, formArray.at(i) as FormGroup);
         });
       }
     }
 
-    if (config.subFields) {
+    const dictConfig: FormDictConfig = config as FormDictConfig;
+    if (dictConfig.subFields) {
       const dictFormGroup = formGroup.get(config.name) as FormGroup;
-      config.subFields.forEach((subFieldConfig) => {
+      dictConfig.subFields.forEach((subFieldConfig) => {
         this.refreshRelations(subFieldConfig, dictFormGroup);
       });
     }

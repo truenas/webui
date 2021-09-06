@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormArrayConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @Component({
@@ -8,7 +8,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   styleUrls: ['./form-array.component.scss'],
 })
 export class FormArrayComponent implements Field {
-  config: FieldConfig;
+  config: FormArrayConfig;
   group: any; // TODO: Probably incorrect access in template
   fieldShow: string;
 }

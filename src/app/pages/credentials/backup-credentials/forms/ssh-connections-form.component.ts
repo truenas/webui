@@ -13,7 +13,7 @@ import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -246,7 +246,8 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       this.queryCallOption = [['id', '=', this.rowNum]];
       _.find(this.fieldSets[0].config, { name: 'setup_method' }).isHidden = true;
     } else {
-      _.find(this.fieldSets[1].config, { name: 'private_key' }).options.push({
+      const selectConfig: FormSelectConfig = _.find(this.fieldSets[1].config, { name: 'private_key' });
+      selectConfig.options.push({
         label: 'Generate New',
         value: 'NEW',
       });
@@ -258,7 +259,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       this.namesInUse.push(...sshConnections);
       this.namesInUseConnection.push(...sshConnections);
     });
-    const privateKeyField = _.find(this.fieldSets[1].config, { name: 'private_key' });
+    const privateKeyField: FormSelectConfig = _.find(this.fieldSets[1].config, { name: 'private_key' });
     this.keychainCredentialService.getSSHKeys().toPromise().then((keyPairs) => {
       const namesInUse = keyPairs
         .filter((sshKey) => sshKey.name.endsWith(' Key'))

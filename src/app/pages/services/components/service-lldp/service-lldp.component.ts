@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/services/components/service-lldp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService, ServicesService } from 'app/services';
 
@@ -63,7 +63,7 @@ export class ServiceLLDPComponent implements FormConfiguration {
     entityEdit.submitFunction = (body) => this.ws.call('lldp.update', [body]);
 
     this.services.getLLDPCountries().pipe(untilDestroyed(this)).subscribe((res) => {
-      const countries = this.fieldSets
+      const countries: FormComboboxConfig = this.fieldSets
         .find((set) => set.name === 'General Options')
         .config.find((config) => config.name === 'country');
       for (const country in res) {

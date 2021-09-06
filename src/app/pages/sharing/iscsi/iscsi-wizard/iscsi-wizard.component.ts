@@ -5,10 +5,12 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing/iscsi/iscsi';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
@@ -77,11 +79,11 @@ export class IscsiWizardComponent implements WizardConfiguration {
           options: [
             {
               label: 'Device',
-              value: 'DISK',
+              value: IscsiExtentType.Disk,
             },
             {
               label: 'File',
-              value: 'FILE',
+              value: IscsiExtentType.File,
             },
           ],
         },
@@ -542,40 +544,40 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const disk_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' });
+    const disk_field: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' });
     // get device options
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
       for (const i in res) {
         disk_field.options.push({ label: res[i], value: i });
       }
     });
-    const taregt_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' });
+    const target_field: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' });
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       for (const item of targets) {
-        taregt_field.options.push({ label: item.name, value: item.id });
+        target_field.options.push({ label: item.name, value: item.id });
       }
     });
 
-    this.entityWizard.formArray.get([0]).get('type').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('type').valueChanges.pipe(untilDestroyed(this)).subscribe((value: IscsiExtentType) => {
       this.formTypeUpdate(value);
     });
 
-    this.entityWizard.formArray.get([0]).get('disk').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-      const disableZvolGroup = !(value == 'NEW' && this.entityWizard.formArray.get([0]).get('type').value == 'DISK');
+    this.entityWizard.formArray.get([0]).get('disk').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
+      const disableZvolGroup = !(value == 'NEW' && this.entityWizard.formArray.get([0]).get('type').value == IscsiExtentType.Disk);
       this.disablefieldGroup(this.zvolFieldGroup, disableZvolGroup, 0);
     });
 
-    this.entityWizard.formArray.get([0]).get('dataset').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('dataset').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       if (value) {
         this.getDatasetValue(value);
       }
     });
 
-    this.entityWizard.formArray.get([0]).get('usefor').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('usefor').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       this.formUseforValueUpdate(value);
     });
 
-    this.entityWizard.formArray.get([0]).get('type').setValue('DISK');
+    this.entityWizard.formArray.get([0]).get('type').setValue(IscsiExtentType.Disk);
     this.entityWizard.formArray.get([0]).get('usefor').setValue('vmware');
 
     this.entityWizard.formArray.get([0]).get('target').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
@@ -594,11 +596,12 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   step1Init(): void {
-    const authGroupField = _.find(this.wizardConfig[1].fieldConfig, { name: 'discovery_authgroup' });
-    const listenIpField = _.find(this.wizardConfig[1].fieldConfig, { name: 'listen' }).templateListField[0];
+    const authGroupField: FormSelectConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'discovery_authgroup' }); // select
+    const listenIpFieldConfig: FormListConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'listen' });
+    const listenIpField: FormSelectConfig = listenIpFieldConfig.templateListField[0]; // list
 
     this.iscsiService.listPortals().pipe(untilDestroyed(this)).subscribe((portals) => {
-      const field = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' });
+      const field: FormSelectConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' });
       for (const portal of portals) {
         const ips = portal.listen.map((ip) => ip.ip + ':' + ip.port);
         field.options.push({ label: portal.tag + ' (' + ips + ')', value: portal.id });
@@ -608,7 +611,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       for (let i = 0; i < accessRecords.length; i++) {
         if (_.find(authGroupField.options, { value: accessRecords[i].tag }) == undefined) {
-          authGroupField.options.push({ label: accessRecords[i].tag, value: accessRecords[i].tag });
+          authGroupField.options.push({ label: String(accessRecords[i].tag), value: accessRecords[i].tag });
         }
       }
     });
@@ -618,9 +621,9 @@ export class IscsiWizardComponent implements WizardConfiguration {
         listenIpField.options.push({ label: ips[ip], value: ip });
       }
 
-      const listenListFields = _.find(this.wizardConfig[1].fieldConfig, { name: 'listen' }).listFields;
+      const listenListFields = listenIpFieldConfig.listFields;
       for (const listenField of listenListFields) {
-        const ipField = _.find(listenField, { name: 'ip' });
+        const ipField: FormSelectConfig = _.find(listenField, { name: 'ip' });
         ipField.options = listenIpField.options;
       }
     });
@@ -630,7 +633,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
       this.disablefieldGroup(this.portalFieldGroup, this.disablePortalGroup, 1);
     });
 
-    this.entityWizard.formArray.get([1]).get('discovery_authmethod').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([1]).get('discovery_authmethod').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       this.disableAuth = !(((value === 'CHAP' || value === 'CHAP_MUTUAL') && !this.disablePortalGroup));
 
       authGroupField.required = !this.disableAuth;
@@ -659,7 +662,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
               this.summaryObj[name] = value;
               // get label value
               if (name == 'disk' || name == 'usefor' || name == 'portal' || name == 'target') {
-                const field = _.find(this.wizardConfig[step].fieldConfig, { name });
+                const field: FormSelectConfig = _.find(this.wizardConfig[step].fieldConfig, { name });
                 if (field) {
                   this.summaryObj[name] = _.find(field.options, { value }).label;
                 }
@@ -743,14 +746,14 @@ export class IscsiWizardComponent implements WizardConfiguration {
     });
   }
 
-  formTypeUpdate(type: any): void {
-    const isDevice = type != 'FILE';
+  formTypeUpdate(type: IscsiExtentType): void {
+    const isDevice = type != IscsiExtentType.File;
 
     this.disablefieldGroup(this.fileFieldGroup, isDevice, 0);
     this.disablefieldGroup(this.deviceFieldGroup, !isDevice, 0);
   }
 
-  formUseforValueUpdate(selected: any): void {
+  formUseforValueUpdate(selected: string): void {
     const settings = _.find(this.defaultUseforSettings, { key: selected });
     for (const i in settings.values) {
       const controller = this.entityWizard.formArray.get([0]).get(i);
@@ -758,7 +761,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     }
   }
 
-  getDatasetValue(dataset: any): void {
+  getDatasetValue(dataset: string): void {
     const datasetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'dataset' });
     datasetField.hasErrors = false;
 
@@ -884,7 +887,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
             payload[field] = value[field];
           }
         });
-      } else if (payload.type === 'DISK') {
+      } else if (payload.type === IscsiExtentType.Disk) {
         payload['disk'] = value['disk'];
       }
       payload = Object.assign(payload, _.find(this.defaultUseforSettings, { key: value['usefor'] }).values);

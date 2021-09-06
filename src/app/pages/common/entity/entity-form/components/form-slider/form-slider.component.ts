@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { MatSliderChange } from '@angular/material/slider/slider';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSliderConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
@@ -13,7 +13,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   styleUrls: ['./form-slider.component.scss'],
 })
 export class FormSliderComponent implements Field, OnInit {
-  config: FieldConfig;
+  config: FormSliderConfig;
   group: FormGroup;
   fieldShow: string;
   value: any;

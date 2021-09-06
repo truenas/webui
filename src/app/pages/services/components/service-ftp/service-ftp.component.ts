@@ -9,9 +9,10 @@ import { Observable } from 'rxjs';
 import global_helptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/services/components/service-ftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
@@ -421,7 +422,8 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   ngOnInit(): void {
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.length > 0) {
-        this.fieldSets.config('ssltls_certificate').options = res.map((cert) => ({ label: cert.name, value: cert.id }));
+        const config: FormSelectConfig = this.fieldSets.config('ssltls_certificate');
+        config.options = res.map((cert) => ({ label: cert.name, value: cert.id }));
       }
     });
   }
@@ -514,7 +516,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     data['dirmask'] = dirmask;
   }
 
-  submitFunction(body: any): Observable<any> {
+  submitFunction(body: FtpConfigUpdate): Observable<FtpConfig> {
     return this.ws.call('ftp.update', [body]);
   }
 

@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
+import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -348,7 +349,7 @@ export class SnapshotListComponent implements EntityTableConfig {
   startMultiDeleteProgress(selected: SnapshotListRow[]): void {
     const params = this.wsMultiDeleteParams(selected);
     const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Deleting Snapshots') }, disableClose: true });
-    dialogRef.componentInstance.setCall(this.wsMultiDelete, params);
+    dialogRef.componentInstance.setCall(this.wsMultiDelete, params as CoreBulkQuery);
     dialogRef.componentInstance.submit();
 
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: Job<any[]>) => {

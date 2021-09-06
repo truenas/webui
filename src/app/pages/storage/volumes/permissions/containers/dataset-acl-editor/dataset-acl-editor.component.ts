@@ -9,7 +9,7 @@ import { filter } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormCheckboxConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { SelectPresetModalComponent } from 'app/pages/storage/volumes/permissions/components/select-preset-modal/select-preset-modal.component';
 import { SelectPresetModalConfig } from 'app/pages/storage/volumes/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';
@@ -40,14 +40,14 @@ export class DatasetAclEditorComponent implements OnInit {
     ownerGroup: new FormControl(),
   });
 
-  readonly recursiveFieldConfig: FieldConfig = {
+  readonly recursiveFieldConfig: FormCheckboxConfig = {
     type: 'checkbox',
     name: 'recursive',
     placeholder: helptext.dataset_acl_recursive_placeholder,
     tooltip: helptext.dataset_acl_recursive_tooltip,
     value: false,
   };
-  readonly traverseFieldConfig: FieldConfig = {
+  readonly traverseFieldConfig: FormCheckboxConfig = {
     type: 'checkbox',
     name: 'traverse',
     placeholder: helptext.dataset_acl_traverse_placeholder,
@@ -55,7 +55,7 @@ export class DatasetAclEditorComponent implements OnInit {
     value: false,
   };
 
-  readonly ownerFieldConfig: FieldConfig = {
+  readonly ownerFieldConfig: FormComboboxConfig = {
     type: 'combobox',
     name: 'owner',
     options: [],
@@ -65,7 +65,7 @@ export class DatasetAclEditorComponent implements OnInit {
     updateLocal: true,
   };
 
-  readonly ownerGroupFieldConfig: FieldConfig = {
+  readonly ownerGroupFieldConfig: FormComboboxConfig = {
     type: 'combobox',
     name: 'ownerGroup',
     options: [],

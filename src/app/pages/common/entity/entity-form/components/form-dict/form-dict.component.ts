@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormDictConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
@@ -11,7 +11,7 @@ import { FieldRelationService } from 'app/pages/common/entity/entity-form/servic
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
 export class FormDictComponent implements Field, OnInit {
-  config: FieldConfig;
+  config: FormDictConfig;
   group: FormGroup;
   fieldShow: string;
 

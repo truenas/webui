@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormCheckboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @Component({
@@ -12,7 +12,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   templateUrl: './form-checkbox.component.html',
 })
 export class FormCheckboxComponent implements Field {
-  config: FieldConfig;
+  config: FormCheckboxConfig;
   group: FormGroup;
   fieldShow: string;
 

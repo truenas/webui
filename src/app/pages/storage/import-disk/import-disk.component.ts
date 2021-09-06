@@ -10,7 +10,7 @@ import helptext from 'app/helptext/storage/import-disk/import-disk';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
-  FieldConfig,
+  FieldConfig, FormRadioConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -86,10 +86,10 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     },
   ];
 
-  volume: FieldConfig;
+  volume: FormSelectConfig;
   fs_type: FormControl;
-  private fs_type_list: FieldConfig;
-  msdosfs_locale: FieldConfig;
+  private fs_type_list: FormRadioConfig;
+  msdosfs_locale: FormSelectConfig;
   private entityForm: EntityFormComponent;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   custActions: FormCustomAction[];
@@ -175,7 +175,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
 
   customSubmit(payload: any): void {
     this.custActions = [];
-    const fs_options: any = {};
+    const fs_options: Record<string, unknown> = {};
     if (payload.fs_type === 'msdosfs' && payload.msdosfs_locale) {
       fs_options['locale'] = payload.msdosfs_locale;
     }

@@ -9,7 +9,7 @@ import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
@@ -631,11 +631,11 @@ export class CertificateAddComponent implements WizardConfiguration {
     'KeyUsage',
   ];
 
-  private country: FieldConfig;
-  private signedby: FieldConfig;
-  private csrlist: FieldConfig;
+  private country: FormSelectConfig;
+  private signedby: FormSelectConfig;
+  private csrlist: FormSelectConfig;
   identifier: any;
-  usageField: FieldConfig;
+  usageField: FormSelectConfig;
   private currentProfile: any;
 
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,
@@ -658,7 +658,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     });
 
     this.ws.call('certificate.ec_curve_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      const ec_curves_field = this.getTarget('ec_curve');
+      const ec_curves_field: FormSelectConfig = this.getTarget('ec_curve');
       for (const key in res) {
         ec_curves_field.options.push({ label: res[key], value: key });
       }
@@ -692,10 +692,10 @@ export class CertificateAddComponent implements WizardConfiguration {
       });
     });
 
-    const profilesField = this.getTarget('profiles');
+    const profilesField: FormSelectConfig = this.getTarget('profiles');
     this.ws.call('certificate.profiles').pipe(untilDestroyed(this)).subscribe((profiles) => {
       Object.keys(profiles).forEach((item) => {
-        profilesField.options.push({ label: item, value: profiles[item] });
+        profilesField.options.push({ label: item, value: (profiles[item] as any) });
       });
     });
   }
@@ -707,7 +707,8 @@ export class CertificateAddComponent implements WizardConfiguration {
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
     if (fieldConfig.type == 'select') {
-      const option = fieldConfig.options.find((option: any) => option.value == value);
+      const selectConfig: FormSelectConfig = fieldConfig as FormSelectConfig;
+      const option = selectConfig.options.find((option) => option.value == value);
       if (option) {
         value = option.label;
       }
@@ -899,7 +900,7 @@ export class CertificateAddComponent implements WizardConfiguration {
 
     if (this.type && this.type === 'csr') {
       this.getField('create_type').setValue(helptext_system_certificates.add.csr_create_type.value);
-      const certType = this.getTarget('create_type');
+      const certType: FormSelectConfig = this.getTarget('create_type');
       certType.options = helptext_system_certificates.add.csr_create_type.options;
       certType.placeholder = helptext_system_certificates.add.csr_create_type.placeholder;
       certType.tooltip = helptext_system_certificates.add.csr_create_type.tooltip;
@@ -963,7 +964,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     return stepNumber;
   }
 
-  getField(fieldName: any): AbstractControl {
+  getField(fieldName: string): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = (< FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];

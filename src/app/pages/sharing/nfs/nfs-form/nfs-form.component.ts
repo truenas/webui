@@ -13,7 +13,7 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig, FormListConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import {
   DialogService, NetworkService, WebSocketService, UserService, ModalService,
@@ -267,10 +267,10 @@ export class NFSFormComponent implements FormConfiguration {
     },
   ];
 
-  private maproot_user: FieldConfig;
-  private maproot_group: FieldConfig;
-  private mapall_user: FieldConfig;
-  private mapall_group: FieldConfig;
+  private maproot_user: FormComboboxConfig;
+  private maproot_group: FormComboboxConfig;
+  private mapall_user: FormComboboxConfig;
+  private mapall_group: FormComboboxConfig;
 
   constructor(
     protected userService: UserService,
@@ -279,7 +279,8 @@ export class NFSFormComponent implements FormConfiguration {
     private dialog: DialogService,
     public networkService: NetworkService,
   ) {
-    const pathsTemplate = this.fieldSets.config('paths').templateListField;
+    const paths: FormListConfig = this.fieldSets.config('paths');
+    const pathsTemplate = paths.templateListField;
     if (this.productType.includes(ProductType.Scale)) {
       pathsTemplate.push({
         type: 'input',
@@ -485,7 +486,8 @@ export class NFSFormComponent implements FormConfiguration {
         for (let i = 0; i < groups.length; i++) {
           groupOptions.push({ label: groups[i].group, value: groups[i].group });
         }
-        parent.fieldSets.config(field).searchOptions = groupOptions;
+        const config: FormComboboxConfig = parent.fieldSets.config(field);
+        config.searchOptions = groupOptions;
       });
   }
 
@@ -506,11 +508,12 @@ export class NFSFormComponent implements FormConfiguration {
         for (let i = 0; i < items.length; i++) {
           users.push({ label: items[i].username, value: items[i].username });
         }
-        parent.fieldSets.config(field).searchOptions = users;
+        const config: FormComboboxConfig = parent.fieldSets.config(field);
+        config.searchOptions = users;
       });
   }
 
-  loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, config: FieldConfig): void {
+  loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, fieldConfig: FieldConfig): void {
     parent.userService
       .userQueryDSCache(searchText, length)
       .pipe(untilDestroyed(parent))
@@ -519,6 +522,9 @@ export class NFSFormComponent implements FormConfiguration {
         for (let i = 0; i < items.length; i++) {
           users.push({ label: items[i].username, value: items[i].username });
         }
+
+        const config = fieldConfig as FormComboboxConfig;
+
         if (searchText == '') {
           config.options = config.options.concat(users);
         } else {
@@ -527,7 +533,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, config: FieldConfig): void {
+  loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, fieldConfig: FieldConfig): void {
     parent.userService
       .groupQueryDSCache(searchText, false, length)
       .pipe(untilDestroyed(parent))
@@ -536,6 +542,9 @@ export class NFSFormComponent implements FormConfiguration {
         for (let i = 0; i < items.length; i++) {
           groups.push({ label: items[i].group, value: items[i].group });
         }
+
+        const config = fieldConfig as FormComboboxConfig;
+
         if (searchText == '') {
           config.options = config.options.concat(groups);
         } else {

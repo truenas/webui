@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
@@ -558,10 +558,10 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     'KeyUsage-enabled',
   ];
 
-  private country: FieldConfig;
-  private signedby: FieldConfig;
+  private country: FormSelectConfig;
+  private signedby: FormSelectConfig;
   identifier: any;
-  usageField: FieldConfig;
+  usageField: FormSelectConfig;
   private currenProfile: any;
   private entityForm: EntityWizardComponent;
 
@@ -581,7 +581,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     });
 
     this.ws.call('certificate.ec_curve_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      const ec_curves_field = this.getTarget('ec_curve');
+      const ec_curves_field: FormSelectConfig = this.getTarget('ec_curve');
       for (const key in res) {
         ec_curves_field.options.push({ label: res[key], value: key });
       }
@@ -603,7 +603,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       });
     });
 
-    const profilesField = this.getTarget('profiles');
+    const profilesField: FormSelectConfig = this.getTarget('profiles');
     this.ws.call('certificateauthority.profiles').pipe(untilDestroyed(this)).subscribe((res) => {
       Object.keys(res).forEach((item) => {
         profilesField.options.push({ label: item, value: res[item] });
@@ -618,7 +618,8 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
     if (fieldConfig.type == 'select') {
-      const option = fieldConfig.options.find((option: any) => option.value == value);
+      const config = fieldConfig as FormSelectConfig;
+      const option = config.options.find((option) => option.value == value);
       if (option) {
         value = option.label;
       }

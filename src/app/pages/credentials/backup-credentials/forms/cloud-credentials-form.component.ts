@@ -12,7 +12,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
@@ -1229,7 +1229,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   fieldConfig: FieldConfig[];
 
   protected providers: CloudsyncProvider[];
-  protected providerField: FieldConfig;
+  protected providerField: FormSelectConfig;
   protected entityForm: EntityFormComponent;
 
   custActions = [
@@ -1306,7 +1306,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       },
     );
     const authenticationFieldset = _.find(this.fieldSets, { class: 'authentication' });
-    const privateKeySFTPField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' });
+    const privateKeySFTPField: FormSelectConfig = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' });
     this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]).pipe(untilDestroyed(this)).subscribe(
       (credentials) => {
         for (let i = 0; i < credentials.length; i++) {
@@ -1494,7 +1494,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
           (sshKey) => {
             this.keyID = sshKey.id;
-            const privateKeySFTPField = _.find(this.fieldConfig, { name: 'private_key-SFTP' });
+            const privateKeySFTPField: FormSelectConfig = _.find(this.fieldConfig, { name: 'private_key-SFTP' });
             privateKeySFTPField.options.push({ label: payload.name, value: this.keyID });
             this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
             if (submitting) {
@@ -1591,7 +1591,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       return;
     }
     data = data.result;
-    const drivesConfig = _.find(this.fieldConfig, { name: 'drives-ONEDRIVE' });
+    const drivesConfig: FormSelectConfig = _.find(this.fieldConfig, { name: 'drives-ONEDRIVE' });
     this.entityForm.setDisabled('drives-ONEDRIVE', false, false);
     this.ws.call('cloudsync.onedrive_list_drives', [{
       client_id: data.client_id,

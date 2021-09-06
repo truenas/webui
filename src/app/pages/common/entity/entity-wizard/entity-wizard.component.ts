@@ -5,12 +5,13 @@ import {
 import {
   AbstractControl, FormBuilder, FormGroup,
 } from '@angular/forms';
-import { MatStepper } from '@angular/material/stepper';
+import { MatStep, MatStepper } from '@angular/material/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
@@ -36,7 +37,7 @@ export class EntityWizardComponent implements OnInit {
   summaryValue: any;
   summaryFieldConfigs: FieldConfig[] = [];
 
-  saveSubmitText = T('Submit');
+  saveSubmitText = T('Save');
   customNextText = T('Next');
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
@@ -76,7 +77,7 @@ export class EntityWizardComponent implements OnInit {
     for (const i in this.conf.wizardConfig) {
       // Fallback if no fieldsets are defined
       if (this.conf.wizardConfig[i].fieldSets) {
-        let fieldConfig: any[] = [];
+        let fieldConfig: FieldConfig[] = [];
 
         /* Temp patch to support both FieldSet approaches */
         const fieldSets = this.conf.wizardConfig[i].fieldSets;
@@ -121,7 +122,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  isShow(id: any): any {
+  isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
       if (this.conf.advanced_field.indexOf(id) > -1) {
         return false;
@@ -141,7 +142,7 @@ export class EntityWizardComponent implements OnInit {
     this.router.navigate(new Array('/').concat(route));
   }
 
-  setDisabled(name: string, disable: boolean, stepIndex: any, hide?: boolean): void {
+  setDisabled(name: string, disable: boolean, stepIndex: number | string, hide?: boolean): void {
     if (hide) {
       disable = hide;
     } else {
@@ -149,7 +150,7 @@ export class EntityWizardComponent implements OnInit {
     }
 
     for (const i in this.conf.wizardConfig) {
-      this.conf.wizardConfig[i].fieldConfig = this.conf.wizardConfig[i].fieldConfig.map((item: any) => {
+      this.conf.wizardConfig[i].fieldConfig = this.conf.wizardConfig[i].fieldConfig.map((item) => {
         if (item.name === name) {
           item.disabled = disable;
           item['isHidden'] = hide;
@@ -201,7 +202,7 @@ export class EntityWizardComponent implements OnInit {
     }
   }
 
-  isFieldsetAvailabel(fieldset: any): boolean {
+  isFieldsetAvailabel(fieldset: FieldSet): boolean {
     if (fieldset.config) {
       for (let i = 0; i < fieldset.config.length; i++) {
         if (!fieldset.config[i].isHidden) {
@@ -212,7 +213,7 @@ export class EntityWizardComponent implements OnInit {
     return false;
   }
 
-  handleNext(currentStep: any): void {
+  handleNext(currentStep: MatStep): void {
     currentStep.stepControl.markAllAsTouched();
     if (this.conf.customNext !== undefined) {
       this.conf.customNext(this.stepper);

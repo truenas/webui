@@ -3,7 +3,16 @@ import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig,
+  FormCheckboxConfig,
+  FormDictConfig,
+  FormExplorerConfig,
+  FormInputConfig,
+  FormIpWithNetmaskConfig,
+  FormListConfig,
+  FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { DialogService } from 'app/services';
 import { Relation, RelationGroup } from './entity-form/models/field-relation.interface';
@@ -283,7 +292,7 @@ export class EntityUtils {
 
     const name = schemaConfig.variable;
 
-    const fieldConfig: FieldConfig = {
+    let fieldConfig: FieldConfig = {
       name,
     } as FieldConfig;
 
@@ -314,54 +323,63 @@ export class EntityUtils {
     }
 
     if (schemaConfig.schema.enum) {
-      fieldConfig['type'] = 'select';
-      fieldConfig['enableTextWrapForOptions'] = true;
-      fieldConfig['options'] = schemaConfig.schema.enum.map((option) => ({
+      const selectConfig = fieldConfig as FormSelectConfig;
+      selectConfig['type'] = 'select';
+      selectConfig['enableTextWrapForOptions'] = true;
+      selectConfig['options'] = schemaConfig.schema.enum.map((option) => ({
         value: option.value,
         label: option.description,
       }));
     } else if (schemaConfig.schema.type == 'string') {
-      fieldConfig['type'] = 'input';
+      const inputConfig = fieldConfig as FormInputConfig;
+      inputConfig['type'] = 'input';
       if (schemaConfig.schema.private) {
-        fieldConfig['inputType'] = 'password';
-        fieldConfig['togglePw'] = true;
+        inputConfig['inputType'] = 'password';
+        inputConfig['togglePw'] = true;
       }
 
       if (schemaConfig.schema.min_length !== undefined) {
-        fieldConfig['min'] = schemaConfig.schema.min_length;
+        inputConfig['min'] = schemaConfig.schema.min_length;
       }
 
       if (schemaConfig.schema.max_length !== undefined) {
-        fieldConfig['max'] = schemaConfig.schema.max_length;
+        inputConfig['max'] = schemaConfig.schema.max_length;
       }
     } else if (schemaConfig.schema.type == 'int') {
-      fieldConfig['type'] = 'input';
-      fieldConfig['inputType'] = 'number';
+      const inputConfig = fieldConfig as FormInputConfig;
+      inputConfig['type'] = 'input';
+      inputConfig['inputType'] = 'number';
       if (schemaConfig.schema.min !== undefined) {
-        fieldConfig['min'] = schemaConfig.schema.min;
+        inputConfig['min'] = schemaConfig.schema.min;
       }
 
       if (schemaConfig.schema.max !== undefined) {
-        fieldConfig['max'] = schemaConfig.schema.max;
+        inputConfig['max'] = schemaConfig.schema.max;
       }
     } else if (schemaConfig.schema.type == 'boolean') {
-      fieldConfig['type'] = 'checkbox';
+      const checkboxConfig = fieldConfig as FormCheckboxConfig;
+      checkboxConfig['type'] = 'checkbox';
     } else if (schemaConfig.schema.type == 'ipaddr') {
-      fieldConfig['type'] = 'ipwithnetmask';
+      const ipConfig = fieldConfig as FormIpWithNetmaskConfig;
+      ipConfig['type'] = 'ipwithnetmask';
       if (!schemaConfig.schema.cidr) {
-        fieldConfig['type'] = 'input';
+        ipConfig['type'] = 'input';
       }
     } else if (schemaConfig.schema.type == 'hostpath') {
-      fieldConfig['type'] = 'explorer';
-      fieldConfig['explorerType'] = 'file';
-      fieldConfig['initial'] = '/mnt';
+      const conf: FormExplorerConfig = { ...fieldConfig };
+      conf['type'] = 'explorer';
+      conf['initial'] = '/mnt';
+      conf['explorerType'] = 'file';
+      fieldConfig = conf;
     } else if (schemaConfig.schema.type == 'path') {
-      fieldConfig['type'] = 'input';
+      const inputConfig = fieldConfig as FormInputConfig;
+      inputConfig['type'] = 'input';
     } else if (schemaConfig.schema.type == 'list') {
-      fieldConfig['type'] = 'list';
-      fieldConfig['label'] = `Configure ${schemaConfig.label}`;
-      fieldConfig['width'] = '100%';
-      fieldConfig['listFields'] = [];
+      const listConfig = fieldConfig as FormListConfig;
+      listConfig['type'] = 'list';
+      listConfig['label'] = `Configure ${schemaConfig.label}`;
+      listConfig['width'] = '100%';
+      listConfig['listFields'] = [];
 
       let listFields: FieldConfig[] = [];
       schemaConfig.schema.items.forEach((item) => {
@@ -369,15 +387,16 @@ export class EntityUtils {
         listFields = listFields.concat(fields);
       });
 
-      fieldConfig['templateListField'] = listFields;
+      listConfig['templateListField'] = listFields;
     } else if (schemaConfig.schema.type == 'dict') {
-      fieldConfig['type'] = 'dict';
-      fieldConfig['label'] = schemaConfig.label;
-      fieldConfig['width'] = '100%';
+      const dictConfig = fieldConfig as FormDictConfig;
+      dictConfig['type'] = 'dict';
+      dictConfig['label'] = schemaConfig.label;
+      dictConfig['width'] = '100%';
 
       if (schemaConfig.schema.attrs.length > 0) {
         if (relations) {
-          fieldConfig['relation'] = this.createRelations(relations);
+          dictConfig['relation'] = this.createRelations(relations);
         }
 
         let subFields: FieldConfig[] = [];
@@ -385,7 +404,7 @@ export class EntityUtils {
           const fields = this.parseSchemaFieldConfig(dictConfig);
           subFields = subFields.concat(fields);
         });
-        fieldConfig['subFields'] = subFields;
+        dictConfig['subFields'] = subFields;
       }
     }
 
@@ -455,8 +474,9 @@ export class EntityUtils {
     } else if (Array.isArray(data)) {
       result = [];
       data.forEach((item) => {
+        const listConfig = fieldConfig as FormListConfig;
         let value = item;
-        const subFieldConfig = fieldConfig.templateListField[0];
+        const subFieldConfig = listConfig.templateListField[0];
         if (subFieldConfig.type === 'dict') {
           value = this.remapOneConfigData(item, subFieldConfig);
         }
@@ -467,8 +487,9 @@ export class EntityUtils {
     } else if (typeof data === 'object') {
       result = {} as any;
       for (const key in data) {
+        const dictConfig = fieldConfig as FormDictConfig;
         const subValue = data[key];
-        const subFieldConfig = fieldConfig.subFields.find((fg) => fg.name === key);
+        const subFieldConfig = dictConfig.subFields.find((fg) => fg.name === key);
         const newValue = this.remapOneConfigData(subValue, subFieldConfig);
         result[key] = newValue;
       }

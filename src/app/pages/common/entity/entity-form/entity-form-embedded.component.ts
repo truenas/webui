@@ -29,7 +29,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { FieldSets } from './classes/field-sets';
-import { FieldConfig } from './models/field-config.interface';
+import { FieldConfig, FormArrayConfig } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
@@ -59,6 +59,7 @@ export interface EmbeddedFormConfig {
   dataAttributeHandler?: any;
   route_cancel?: string[];
   route_success?: string[];
+  // TODO: Broken
   route_delete?: string[];
   custom_edit_query?: any;
   custom_add_query?: any;
@@ -369,9 +370,10 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   setArrayValue(data: any[], formArray: FormArray, name: string): void {
     let array_controls: any;
     for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
+      const config: FieldConfig = this.fieldConfig[i];
       if (config.name === name) {
-        array_controls = config.formarray;
+        const arrayConfig: FormArrayConfig = config as FormArrayConfig;
+        array_controls = arrayConfig.formarray;
       }
     }
 

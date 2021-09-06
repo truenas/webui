@@ -830,6 +830,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(background, --bg1, $bg1);
   }
 
+
+
   // Align buttons on UI Prefs form
   .prefs-form .mat-card-actions {
     padding-left: 10px;
@@ -849,6 +851,11 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .fn-theme-primary {
     @include variable(background-color, --primary, $primary);
     @include variable(color, --primary-txt, $primary-txt);
+  }
+
+  .fn-theme-tooltip {
+    @import '~ngx-popperjs/scss/theme';
+    @include ngx-popperjs-theme(var(--primary), var(--primary-txt), 400px, 20001);
   }
 
   .fn-theme-red {
@@ -1054,6 +1061,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .datatable-header-cell .mat-checkbox,
   .datatable-body-cell .mat-checkbox {
     margin-left: 5px;
+  }
+
+  .ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
+    vertical-align: -8px;
   }
 
   // Adjustments to checkboxes and header labels on unique tables

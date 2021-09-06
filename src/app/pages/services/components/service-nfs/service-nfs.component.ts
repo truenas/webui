@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/services/components/service-nfs';
@@ -10,7 +10,7 @@ import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 import { WebSocketService, DialogService } from 'app/services';
@@ -232,9 +232,10 @@ export class ServiceNFSComponent implements FormConfiguration {
       ipChoices.forEach((ip) => {
         this.validBindIps.push(ip.value);
       });
-      this.fieldSets
+      const config: FormSelectConfig = this.fieldSets
         .find((set) => set.name === helptext.nfs_srv_fieldset_general)
-        .config.find((config) => config.name === 'bindip').options = ipChoices;
+        .config.find((config) => config.name === 'bindip');
+      config.options = ipChoices;
     });
 
     entityForm.formGroup.controls['v4_v3owner'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
@@ -280,50 +281,52 @@ export class ServiceNFSComponent implements FormConfiguration {
   addSPN(): void {
     const that = this;
     if (!this.hasNfsStatus && this.adHealth === DirectoryServiceState.Healthy) {
-      this.dialog.confirm(helptext.add_principal_prompt.title,
-        helptext.add_principal_prompt.message, true, helptext.add_principal_prompt.affirmative,
-        false, '', '', '', '', false, helptext.add_principal_prompt.negative).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        if (res) {
-          this.dialog.dialogForm(
-            {
-              title: helptext.add_principal_prompt.title,
-              fieldConfig: [
-                {
-                  type: 'input',
-                  name: 'username',
-                  placeholder: helptext.add_principal_form.username,
-                  required: true,
-                },
-                {
-                  type: 'input',
-                  name: 'password',
-                  inputType: 'password',
-                  togglePw: true,
-                  placeholder: helptext.add_principal_form.password,
-                  required: true,
-                },
-              ],
-              saveButtonText: helptext.add_principal_form.action,
-              customSubmit(entityDialog: EntityDialogComponent) {
-                const value = entityDialog.formValue;
-                const self = entityDialog;
-                self.loader.open();
-                self.ws.call('nfs.add_principal', [{ username: value.username, password: value.password }])
-                  .pipe(untilDestroyed(this)).subscribe(() => {
-                    self.loader.close();
-                    self.dialogRef.close(true);
-                    that.dialog.info(helptext.addSPN.success, helptext.addSPN.success_msg, '500px', 'info');
-                  },
-                  (err: WebsocketError) => {
-                    self.loader.close();
-                    self.dialogRef.close(true);
-                    that.dialog.errorReport(helptext.add_principal_form.error_title,
-                      err.reason, err.trace.formatted);
-                  });
+      this.dialog.confirm({
+        title: helptext.add_principal_prompt.title,
+        message: helptext.add_principal_prompt.message,
+        hideCheckBox: true,
+        buttonMsg: helptext.add_principal_prompt.affirmative,
+        cancelMsg: helptext.add_principal_prompt.negative,
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.dialog.dialogForm(
+          {
+            title: helptext.add_principal_prompt.title,
+            fieldConfig: [
+              {
+                type: 'input',
+                name: 'username',
+                placeholder: helptext.add_principal_form.username,
+                required: true,
               },
+              {
+                type: 'input',
+                name: 'password',
+                inputType: 'password',
+                togglePw: true,
+                placeholder: helptext.add_principal_form.password,
+                required: true,
+              },
+            ],
+            saveButtonText: helptext.add_principal_form.action,
+            customSubmit(entityDialog: EntityDialogComponent) {
+              const value = entityDialog.formValue;
+              const self = entityDialog;
+              self.loader.open();
+              self.ws.call('nfs.add_principal', [{ username: value.username, password: value.password }])
+                .pipe(untilDestroyed(this)).subscribe(() => {
+                  self.loader.close();
+                  self.dialogRef.close(true);
+                  that.dialog.info(helptext.addSPN.success, helptext.addSPN.success_msg, '500px', 'info');
+                },
+                (err: WebsocketError) => {
+                  self.loader.close();
+                  self.dialogRef.close(true);
+                  that.dialog.errorReport(helptext.add_principal_form.error_title,
+                    err.reason, err.trace.formatted);
+                });
             },
-          );
-        }
+          },
+        );
       });
     }
   }

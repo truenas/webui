@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -22,11 +23,13 @@ import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/char
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { ApplicationsService } from '../applications.service';
 import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
 import { ChartFormComponent } from '../forms/chart-form.component';
@@ -296,7 +299,6 @@ export class ChartReleasesComponent implements OnInit {
           appInfo: catalogApp,
           upgradeSummary: res,
         } as ChartUpgradeDialogConfig,
-        disableClose: false,
       });
       dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((version) => {
         if (!version) {
@@ -338,7 +340,6 @@ export class ChartReleasesComponent implements OnInit {
       data: {
         title: helptext.charts.rollback_dialog.job,
       },
-      disableClose: true,
     });
     self.dialogRef.componentInstance.setCall('chart.release.rollback', [self.rollbackChartName, payload]);
     self.dialogRef.componentInstance.submit();
@@ -425,23 +426,22 @@ export class ChartReleasesComponent implements OnInit {
 
   delete(name: string): void {
     this.translate.get(helptext.charts.delete_dialog.msg).pipe(untilDestroyed(this)).subscribe((msg) => {
-      this.dialogService.confirm(helptext.charts.delete_dialog.title, msg + name + '?')
-        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-              data: {
-                title: helptext.charts.delete_dialog.job,
-              },
-              disableClose: true,
-            });
-            this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-              this.dialogService.closeAllDialogs();
-              this.refreshChartReleases();
-            });
-          }
+      this.dialogService.confirm({
+        title: helptext.charts.delete_dialog.title,
+        message: msg + name + '?',
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+          data: {
+            title: helptext.charts.delete_dialog.job,
+          },
         });
+        this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          this.dialogService.closeAllDialogs();
+          this.refreshChartReleases();
+        });
+      });
     });
   }
 
@@ -460,7 +460,6 @@ export class ChartReleasesComponent implements OnInit {
           data: {
             title: helptext.charts.delete_dialog.job,
           },
-          disableClose: true,
         });
         this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', names.map((item) => [item])]);
         this.dialogRef.componentInstance.submit();
@@ -516,15 +515,25 @@ export class ChartReleasesComponent implements OnInit {
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
       if (this.podList.length == 0) {
-        this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
+        this.dialogService.confirm({
+          title: helptext.podConsole.nopod.title,
+          message: helptext.podConsole.nopod.message,
+          hideCheckBox: true,
+          buttonMsg: T('Close'),
+          hideCancel: true,
+        });
       } else {
-        this.choosePod.fieldConfig[0].value = this.podList[0];
-        this.choosePod.fieldConfig[0].options = this.podList.map((item) => ({
+        // Pods
+        const podsConfig: FormSelectConfig = this.choosePod.fieldConfig[0];
+        podsConfig.value = this.podList[0];
+        podsConfig.options = this.podList.map((item) => ({
           label: item,
           value: item,
         }));
-        this.choosePod.fieldConfig[1].value = this.podDetails[this.podList[0]][0];
-        this.choosePod.fieldConfig[1].options = this.podDetails[this.podList[0]].map((item) => ({
+        // Containers
+        const containerConfig: FormSelectConfig = this.choosePod.fieldConfig[1];
+        containerConfig.value = this.podDetails[this.podList[0]][0];
+        containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
           label: item,
           value: item,
         }));
@@ -545,15 +554,25 @@ export class ChartReleasesComponent implements OnInit {
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
       if (this.podList.length == 0) {
-        this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
+        this.dialogService.confirm({
+          title: helptext.podConsole.nopod.title,
+          message: helptext.podConsole.nopod.message,
+          hideCheckBox: true,
+          buttonMsg: T('Close'),
+          hideCancel: true,
+        });
       } else {
-        this.choosePodForLogs.fieldConfig[0].value = this.podList[0];
-        this.choosePodForLogs.fieldConfig[0].options = this.podList.map((item) => ({
+        // Pods
+        const podsConfig: FormSelectConfig = this.choosePodForLogs.fieldConfig[0];
+        podsConfig.value = this.podList[0];
+        podsConfig.options = this.podList.map((item) => ({
           label: item,
           value: item,
         }));
-        this.choosePodForLogs.fieldConfig[1].value = this.podDetails[this.podList[0]][0];
-        this.choosePodForLogs.fieldConfig[1].options = this.podDetails[this.podList[0]].map((item) => ({
+        // Containers
+        const containerConfig: FormSelectConfig = this.choosePodForLogs.fieldConfig[1];
+        containerConfig.value = this.podDetails[this.podList[0]][0];
+        containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
           label: item,
           value: item,
         }));
@@ -585,7 +604,7 @@ export class ChartReleasesComponent implements OnInit {
     const self = entityDialog.parent;
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(self)).subscribe((value) => {
       const containers = self.podDetails[value];
-      const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
+      const containerFC: FormSelectConfig = _.find(entityDialog.fieldConfig, { name: 'containers' });
       containerFC.options = containers.map((item) => ({
         label: item,
         value: item,
@@ -598,7 +617,7 @@ export class ChartReleasesComponent implements OnInit {
     const self = entityDialog.parent;
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(self)).subscribe((value) => {
       const containers = self.podDetails[value];
-      const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
+      const containerFC: FormSelectConfig = _.find(entityDialog.fieldConfig, { name: 'containers' });
       containerFC.options = containers.map((item) => ({
         label: item,
         value: item,
@@ -614,7 +633,6 @@ export class ChartReleasesComponent implements OnInit {
         width: '686px',
         maxWidth: '686px',
         data: catalogApp,
-        disableClose: false,
       });
     }
   }

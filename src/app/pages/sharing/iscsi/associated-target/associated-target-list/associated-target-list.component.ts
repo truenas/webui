@@ -3,7 +3,9 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -85,7 +87,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
       name: 'edit',
       icon: 'edit',
       label: T('Edit'),
-      onClick: (rowinner: any) => { this.entityList.doEdit(rowinner.id); },
+      onClick: (rowinner: IscsiTargetExtent) => { this.entityList.doEdit(rowinner.id); },
     }, {
       id: row.target,
       name: 'delete',
@@ -97,24 +99,26 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
           (res) => {
             let warningMsg = '';
             for (let i = 0; i < res.length; i++) {
-              if (res[i].target.split(':')[1] == rowinner.target) {
+              if (res[i].target.split(':')[1] == (rowinner.target as any)) {
                 warningMsg = '<font color="red">' + T('Warning: iSCSI Target is already in use.</font><br>');
               }
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((dialres: boolean) => {
-              if (dialres) {
-                this.loader.open();
-                this.entityList.loaderOpen = true;
-                this.ws.call(this.wsDelete, [rowinner.id, true]).pipe(untilDestroyed(this)).subscribe(
-                  () => { this.entityList.getData(); },
-                  (resinner: any) => {
-                    new EntityUtils().handleError(this, resinner);
-                    this.loader.close();
-                  },
-                );
-              }
+            this.dialogService.confirm({
+              title: T('Delete'),
+              message: deleteMsg,
+              buttonMsg: T('Delete'),
+            }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.loader.open();
+              this.entityList.loaderOpen = true;
+              this.ws.call(this.wsDelete, [rowinner.id, true]).pipe(untilDestroyed(this)).subscribe(
+                () => { this.entityList.getData(); },
+                (resinner: WebsocketError) => {
+                  new EntityUtils().handleError(this, resinner);
+                  this.loader.close();
+                },
+              );
             });
           },
         );

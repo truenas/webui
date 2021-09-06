@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
@@ -12,7 +13,7 @@ import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -262,12 +263,13 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
       'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_certificates', 'lifetime',
     ];
     fields.forEach((field) => {
-      const paragraph = _.find(this.fieldConfig, { name: field });
+      const paragraph: FormParagraphConfig = _.find(this.fieldConfig, { name: field });
       this.incomingData[field] || this.incomingData[field] === false
         ? paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---';
     });
-    _.find(this.fieldConfig, { name: 'san' }).paraText += this.incomingData.san.join(',');
-    const issuer = _.find(this.fieldConfig, { name: 'issuer' });
+    const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'san' });
+    config.paraText += this.incomingData.san.join(',');
+    const issuer: FormParagraphConfig = _.find(this.fieldConfig, { name: 'issuer' });
     if (_.isObject(this.incomingData.issuer)) {
       issuer.paraText += (this.incomingData.issuer as any).name;
     } else {
@@ -298,12 +300,16 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   }
 
   viewCertificate(): void {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true,
-      helptext_system_certificates.viewDialog.download, false, '',
-      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.exportCertificate();
-      }
+    this.dialog.confirm({
+      title: this.incomingData.name,
+      message: this.incomingData.certificate,
+      hideCheckBox: true,
+      buttonMsg: helptext_system_certificates.viewDialog.download,
+      cancelMsg: helptext_system_certificates.viewDialog.close,
+      textToCopy: this.incomingData.certificate,
+      keyTextArea: true,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.exportCertificate();
     });
   }
 
@@ -329,12 +335,16 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   }
 
   viewKey(): void {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true,
-      helptext_system_certificates.viewDialog.download, false, '',
-      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.privatekey, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.exportKey();
-      }
+    this.dialog.confirm({
+      title: this.incomingData.name,
+      message: this.incomingData.privatekey,
+      hideCheckBox: true,
+      buttonMsg: helptext_system_certificates.viewDialog.download,
+      cancelMsg: helptext_system_certificates.viewDialog.close,
+      textToCopy: this.incomingData.privatekey,
+      keyTextArea: true,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.exportKey();
     });
   }
 

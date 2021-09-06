@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/view-chart/view-chart.component';
+import { ChartConfiguration } from 'app/core/components/view-chart/view-chart.component.types';
 
 interface TimeData {
   start: number;
@@ -67,7 +68,7 @@ export class ViewChartLineComponent extends ViewChartComponent {
     return labels;
   }
 
-  makeConfig(): any {
+  makeConfig(): ChartConfiguration {
     this.chartConfig = {
       bindto: '#' + this._chartId,
       grid: {
