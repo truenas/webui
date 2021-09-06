@@ -8,10 +8,10 @@ import {
   tween,
   styler,
 } from 'popmotion';
-import { WidgetUtils } from 'app/core/components/widgets/widget-utils';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 import { T } from 'app/translate-marker';
 
 interface NetTraffic {
