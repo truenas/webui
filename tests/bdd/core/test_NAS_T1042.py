@@ -154,9 +154,9 @@ def click_submit_the_new_share_should_be_created_without_error(driver):
 @then('click on the guest dataset 3 dots button, select Edit Permissions')
 def click_on_the_guest_dataset_3_dots_button_select_edit_permissions(driver):
     """click on the guest dataset 3 dots button, select Edit Permissions."""
-    assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__guest"]')
+    assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__guest"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__guest"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="action__guest_Edit Permissions"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="action__guest_Edit Permissions"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__guest_Edit Permissions"]').click()
 
 
