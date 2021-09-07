@@ -376,8 +376,8 @@ def click_the_arrow_pointing_to_data_vdevs_click_create_check_confirm_click_crea
     assert wait_on_element(driver, 7, '//h1[contains(.,"Warning")]')
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
+    assert wait_on_element(driver, 7, '//button[contains(.,"Create pool")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Create pool")]').click()
 
 
 @then('Create Pool should appear while pool is being created. You should be returned to the Storage page')
