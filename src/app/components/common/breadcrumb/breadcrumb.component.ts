@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ProductType } from 'app/enums/product-type.enum';
-import { CoreEvent } from 'app/interfaces/events';
+import { PseudoRouteChangeEvent } from 'app/interfaces/events/pseudo-route-change-event.interface';
 import { LocaleService } from 'app/services/locale.service';
 import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-parts.service';
 
@@ -20,7 +20,7 @@ export class BreadcrumbComponent implements OnInit {
   @Input() product_type: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
-  routeParts: (RoutePart & { disabled?: boolean })[];
+  routeParts: RoutePart[];
   isEnabled = true;
   constructor(private router: Router,
     private routePartsService: RoutePartsService,
@@ -72,7 +72,7 @@ export class BreadcrumbComponent implements OnInit {
     // Pseudo routing events (for reports page)
     this.core.register({ observerClass: this, eventName: 'PseudoRouteChange' }).pipe(
       untilDestroyed(this),
-    ).subscribe((evt: CoreEvent) => {
+    ).subscribe((evt: PseudoRouteChangeEvent) => {
       this.routeParts = evt.data;
       // generate url from parts
       this.routeParts.map((item, i) => {

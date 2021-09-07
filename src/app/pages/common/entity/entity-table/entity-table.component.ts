@@ -23,8 +23,10 @@ import {
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { JobState } from 'app/enums/job-state.enum';
-import { CoreEvent } from 'app/interfaces/events';
+import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
+import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
+import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import {
   EntityTableAction,
   EntityTableColumn, EntityTableColumnProp,
@@ -39,7 +41,6 @@ import { T } from 'app/translate-marker';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';
-import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
 
 export interface Command {
   command: string; // Use '|' or '--pipe' to use the output of previous command as input
@@ -139,7 +140,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
   filterValue = ''; // the filter string filled in search input.
   readonly EntityJobState = JobState;
   // Global Actions in Page Title
-  protected actionsConfig: any;
+  protected actionsConfig: GlobalActionConfig;
   loaderOpen = false;
   protected toDeleteRow: Row;
   private interval: Interval;
@@ -189,7 +190,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     protected matDialog: MatDialog,
     public modalService: ModalService,
   ) {
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
       this.multiActionsIconsOnly = evt.data.preferIconsOnly;
     });
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });

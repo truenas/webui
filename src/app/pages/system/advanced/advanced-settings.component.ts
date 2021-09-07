@@ -5,6 +5,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import * as cronParser from 'cron-parser';
 import { Subject } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
@@ -86,7 +87,7 @@ export class AdvancedSettingsComponent implements OnInit {
   };
   isHA = false;
   formEvent$: Subject<CoreEvent>;
-  actionsConfig: any;
+  actionsConfig: GlobalActionConfig;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
 
   cronTableConf: AppTableConfig = {

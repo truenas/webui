@@ -11,6 +11,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { UpdateCheckedEvent } from 'app/interfaces/events/update-checked-event.interface';
+import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
@@ -76,7 +77,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   }
 
   ngAfterViewInit(): void {
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
       this.retroLogo = evt.data.retroLogo ? 1 : 0;
     });
 
