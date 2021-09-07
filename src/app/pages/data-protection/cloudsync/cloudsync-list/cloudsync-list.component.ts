@@ -1,8 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -81,15 +78,10 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   };
 
   constructor(
-    protected router: Router,
     protected ws: WebSocketService,
-    protected translateService: TranslateService,
     protected dialog: DialogService,
     protected job: JobService,
-    protected aroute: ActivatedRoute,
-    protected matDialog: MatDialog,
     protected modalService: ModalService,
-    protected cloudCredentialService: CloudCredentialService,
     protected loader: AppLoaderService,
     protected taskService: TaskService,
   ) {}
@@ -360,21 +352,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   }
 
   doAdd(id?: number): void {
-    this.modalService.open(
-      'slide-in-form',
-      new CloudsyncFormComponent(
-        this.router,
-        this.aroute,
-        this.loader,
-        this.dialog,
-        this.matDialog,
-        this.ws,
-        this.cloudCredentialService,
-        this.job,
-        this.modalService,
-      ),
-      id,
-    );
+    this.modalService.openInSlideIn(CloudsyncFormComponent, id);
   }
 
   doEdit(id: number): void {
