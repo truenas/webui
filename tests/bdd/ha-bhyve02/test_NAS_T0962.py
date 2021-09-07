@@ -209,10 +209,10 @@ def after_go_to_the_dashboard(driver):
 def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
     assert wait_on_element(driver, 10, '//span[text()="(Standby)"]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Initiate Failover"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Initiate Failover"]').click()
+    assert wait_on_element(driver, 10, '//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]', 'clickable')
+    driver.find_element_by_xpath('//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__Initiate Failover"]', 'clickable')
+    assert wait_on_element(driver, 5, '//mat-checkbox[contains(@class,"confirm-checkbox")]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
     assert wait_on_element(driver, 5, '//button[.//text()="Failover"]', 'clickable')
     driver.find_element_by_xpath('//button[.//text()="Failover"]').click()
