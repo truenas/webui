@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -104,18 +105,20 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((dialres: boolean) => {
-              if (dialres) {
-                this.loader.open();
-                this.entityList.loaderOpen = true;
-                this.ws.call(this.wsDelete, [rowinner.id, true]).pipe(untilDestroyed(this)).subscribe(
-                  () => { this.entityList.getData(); },
-                  (resinner: WebsocketError) => {
-                    new EntityUtils().handleError(this, resinner);
-                    this.loader.close();
-                  },
-                );
-              }
+            this.dialogService.confirm({
+              title: T('Delete'),
+              message: deleteMsg,
+              buttonMsg: T('Delete'),
+            }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.loader.open();
+              this.entityList.loaderOpen = true;
+              this.ws.call(this.wsDelete, [rowinner.id, true]).pipe(untilDestroyed(this)).subscribe(
+                () => { this.entityList.getData(); },
+                (resinner: WebsocketError) => {
+                  new EntityUtils().handleError(this, resinner);
+                  this.loader.close();
+                },
+              );
             });
           },
         );

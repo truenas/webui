@@ -8,9 +8,9 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { GlobalAction } from 'app/interfaces/global-action.interface';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { GlobalAction } from 'app/components/common/page-title/page-title.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';

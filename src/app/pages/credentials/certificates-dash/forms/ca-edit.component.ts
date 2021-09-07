@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
@@ -299,12 +300,16 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   }
 
   viewCertificate(): void {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true,
-      helptext_system_certificates.viewDialog.download, false, '',
-      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.exportCertificate();
-      }
+    this.dialog.confirm({
+      title: this.incomingData.name,
+      message: this.incomingData.certificate,
+      hideCheckBox: true,
+      buttonMsg: helptext_system_certificates.viewDialog.download,
+      cancelMsg: helptext_system_certificates.viewDialog.close,
+      textToCopy: this.incomingData.certificate,
+      keyTextArea: true,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.exportCertificate();
     });
   }
 
@@ -330,12 +335,16 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   }
 
   viewKey(): void {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true,
-      helptext_system_certificates.viewDialog.download, false, '',
-      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.privatekey, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.exportKey();
-      }
+    this.dialog.confirm({
+      title: this.incomingData.name,
+      message: this.incomingData.privatekey,
+      hideCheckBox: true,
+      buttonMsg: helptext_system_certificates.viewDialog.download,
+      cancelMsg: helptext_system_certificates.viewDialog.close,
+      textToCopy: this.incomingData.privatekey,
+      keyTextArea: true,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.exportKey();
     });
   }
 

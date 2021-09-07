@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -33,26 +32,9 @@ export class DialogService {
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>
   confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialog, unknown>
-  /**
-   * @deprecated Replace with newer syntax that uses options object.
-   */
-  confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean,
-    secondaryCheckBoxMsg?: string, method?: string, data?: any, tooltip?: any, hideCancel?: boolean, cancelMsg?: string,
-    disableClose?: boolean, textToCopy?: string, keyTextArea?: boolean): any
-  confirm(...args: any[]): any {
-    let options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox;
-    if (typeof args[0] === 'object') {
-      options = args[0];
-    } else {
-      options = _.zipObject(
-        [
-          'title', 'message', 'hideCheckBox', 'buttonMsg', 'secondaryCheckBox', 'secondaryCheckBoxMsg',
-          'method', 'data', 'tooltip', 'hideCancel', 'cancelMsg', 'disableClose', 'textToCopy', 'keyTextArea',
-        ],
-        args,
-      ) as ConfirmOptionsWithSecondaryCheckbox;
-    }
-
+  confirm(
+    options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
+  ): Observable<boolean> | MatDialogRef<ConfirmDialog, unknown> {
     const dialogRef = this.dialog.open(ConfirmDialog, { disableClose: options.disableClose || false });
 
     dialogRef.componentInstance.title = options.title;
@@ -92,7 +74,7 @@ export class DialogService {
       dialogRef.componentInstance.data = options.data;
       dialogRef.componentInstance.method = options.method;
       dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: any) => {
-        const data = (options as ConfirmOptionsWithSecondaryCheckbox).data;
+        const data = options.data;
         if (selection) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
             data[0].reboot = !data[0].reboot;

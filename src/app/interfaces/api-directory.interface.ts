@@ -60,7 +60,11 @@ import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { CoreDownloadQuery, CoreDownloadResponse } from 'app/interfaces/core-download.interface';
-import { CountManualSnapshotsParams, EligibleManualSnapshotsCount } from 'app/interfaces/count-manual-snapshots.interface';
+import {
+  CountManualSnapshotsParams,
+  EligibleManualSnapshotsCount,
+  TargetUnmatchedSnapshotsParams,
+} from 'app/interfaces/count-manual-snapshots.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import {
@@ -70,7 +74,7 @@ import {
 import { DatasetHasVmsQueryParams } from 'app/interfaces/dataset-has-vms-query-params.interface';
 import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
-import { DatasetQuota, DatasetQuotaQueryParams } from 'app/interfaces/dataset-quota.interface';
+import { DatasetQuota, DatasetQuotaQueryParams, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
@@ -85,7 +89,7 @@ import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { FailoverConfig, FailoverUpdate } from 'app/interfaces/failover.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
-import { FtpConfig } from 'app/interfaces/ftp-config.interface';
+import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
 import {
   CreateGroup, DeleteGroupParams, Group, UpdateGroup,
 } from 'app/interfaces/group.interface';
@@ -105,25 +109,29 @@ import {
   IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { KerberosConfig, KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
-import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
+import { KerberosConfig, KerberosKeytab, KerberosKeytabUpdate } from 'app/interfaces/kerberos-config.interface';
+import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
 import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { MailConfig, MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
-import { NetworkActivityChoice, NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
+import {
+  NetworkActivityChoice,
+  NetworkConfiguration,
+  NetworkConfigurationUpdate,
+} from 'app/interfaces/network-configuration.interface';
 import { NetworkInterface, ServiceRestartedOnNetworkSync } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
-import { AddNfsPrincipal, NfsConfig } from 'app/interfaces/nfs-config.interface';
+import { AddNfsPrincipal, NfsConfig, NfsConfigUpdate } from 'app/interfaces/nfs-config.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
-import { OpenvpnClientConfig } from 'app/interfaces/openvpn-client-config.interface';
+import { OpenvpnClientConfig, OpenvpnClientUpdate } from 'app/interfaces/openvpn-client-config.interface';
 import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
-import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
+import { ImportDiskParams, PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
 import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { CreatePoolScrub, PoolScrub, PoolScrubParams } from 'app/interfaces/pool-scrub.interface';
 import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
@@ -132,8 +140,13 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
-import { ReportingConfig, ReportingData, ReportingQueryParams } from 'app/interfaces/reporting.interface';
-import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
+import {
+  ReportingConfig,
+  ReportingConfigUpdate,
+  ReportingData,
+  ReportingQueryParams,
+} from 'app/interfaces/reporting.interface';
+import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { RsyncConfig, RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
 import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
@@ -142,7 +155,7 @@ import { Sensor } from 'app/interfaces/sensor.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import {
-  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest, SmartTestResults, ManualSmartTest,
+  SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest, SmartTestResults, ManualSmartTest, SmartTestUpdate,
 } from 'app/interfaces/smart-test.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { SmbPresets, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
@@ -168,7 +181,7 @@ import {
   SystemUpdateTrains,
   UpdateParams,
 } from 'app/interfaces/system-update.interface';
-import { TftpConfig } from 'app/interfaces/tftp-config.interface';
+import { TftpConfig, TftpConfigUpdate } from 'app/interfaces/tftp-config.interface';
 import {
   TrueCommandConfig,
   TrueCommandConnectionState, TrueCommandUpdateResponse,
@@ -185,8 +198,8 @@ import {
   VmStopParams,
 } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDisplayDevice } from 'app/interfaces/vm-device.interface';
-import { MatchDatastoresWithDatasetsParams } from 'app/interfaces/vmware.interface';
-import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
+import { MatchDatastoresWithDatasets, MatchDatastoresWithDatasetsParams } from 'app/interfaces/vmware.interface';
+import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
 import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
 import { CloneZfsSnapshot, ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { PoolRemoveParams } from './pool-remove.interface';
@@ -517,20 +530,20 @@ export type ApiDirectory = {
   // Network
   'network.general.summary': { params: void; response: NetworkSummary };
   'network.configuration.activity_choices': { params: void; response: NetworkActivityChoice[] };
-  'network.configuration.update': { params: any; response: any };
+  'network.configuration.update': { params: [NetworkConfigurationUpdate]; response: NetworkConfiguration };
   'network.configuration.config': { params: void; response: NetworkConfiguration };
 
   // Kerberos
   'kerberos.realm.query': { params: QueryParams<KerberosRealm>; response: KerberosRealm[] };
-  'kerberos.realm.create': { params: any; response: any };
-  'kerberos.realm.update': { params: any; response: any };
+  'kerberos.realm.create': { params: [KerberosRealmUpdate]; response: KerberosRealm };
+  'kerberos.realm.update': { params: [id: number, update: KerberosRealmUpdate]; response: KerberosRealm };
   'kerberos.realm.delete': { params: [id: number]; response: boolean };
   'kerberos.keytab.has_nfs_principal': { params: any; response: any };
   'kerberos.config': { params: void; response: KerberosConfig };
   'kerberos.update': { params: any; response: any };
   'kerberos.keytab.kerberos_principal_choices': { params: void; response: string[] };
-  'kerberos.keytab.create': { params: any; response: any };
-  'kerberos.keytab.update': { params: any; response: any };
+  'kerberos.keytab.create': { params: [KerberosKeytabUpdate]; response: KerberosKeytab };
+  'kerberos.keytab.update': { params: [id: number, update: KerberosKeytabUpdate]; response: KerberosKeytab };
   'kerberos.keytab.query': { params: QueryParams<KerberosKeytab>; response: KerberosKeytab[] };
   'kerberos.keytab.delete': { params: [id: number]; response: boolean };
 
@@ -556,10 +569,10 @@ export type ApiDirectory = {
   'nfs.bindip_choices': { params: void; response: Choices };
   'nfs.add_principal': { params: [AddNfsPrincipal]; response: boolean };
   'nfs.config': { params: void; response: NfsConfig };
-  'nfs.update': { params: any; response: any };
+  'nfs.update': { params: [NfsConfigUpdate]; response: NfsConfig };
 
   // OpenVPN
-  'openvpn.client.update': { params: any; response: any };
+  'openvpn.client.update': { params: [OpenvpnClientUpdate]; response: OpenvpnClientConfig };
   'openvpn.client.authentication_algorithm_choices': { params: void; response: Choices };
   'openvpn.client.cipher_choices': { params: void; response: Choices };
   'openvpn.server.renew_static_key': { params: void; response: OpenvpnServerConfig };
@@ -597,7 +610,7 @@ export type ApiDirectory = {
   'pool.dataset.query': { params: QueryParams<Dataset, ExtraDatasetQueryOptions>; response: Dataset[] };
   'pool.dataset.query_encrypted_roots_keys': { params: void; response: DatasetEncryptedRootKeys };
   'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: string };
-  'pool.dataset.set_quota': { params: any; response: any };
+  'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
   'pool.dataset.unlock': { params: DatasetUnlockParams; response: DatasetUnlockResult[] };
   'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.dataset.update': { params: any; response: any };
@@ -607,7 +620,7 @@ export type ApiDirectory = {
   'pool.export': { params: PoolExportParams; response: void };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.get_disks': { params: [ids: string[]]; response: string[] };
-  'pool.import_disk': { params: any; response: any };
+  'pool.import_disk': { params: ImportDiskParams; response: any };
   'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: string };
   'pool.import_disk_msdosfs_locales': { params: void; response: string[] };
   'pool.import_find': { params: void; response: PoolFindResult[] };
@@ -623,7 +636,7 @@ export type ApiDirectory = {
   'pool.rekey': { params: any; response: any };
   'pool.remove': { params: PoolRemoveParams; response: any };
   'pool.resilver.config': { params: void; response: ResilverConfig };
-  'pool.resilver.update': { params: any; response: any };
+  'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
   'pool.scrub': { params: PoolScrubParams; response: void };
   'pool.scrub.create': { params: [CreatePoolScrub]; response: PoolScrub };
   'pool.scrub.delete': { params: [id: number]; response: boolean };
@@ -647,7 +660,10 @@ export type ApiDirectory = {
   'replication.delete': { params: [id: number]; response: boolean };
   'replication.count_eligible_manual_snapshots': { params: [CountManualSnapshotsParams]; response: EligibleManualSnapshotsCount };
   'replication.list_naming_schemas': { params: void; response: string[] };
-  'replication.target_unmatched_snapshots': { params: any; response: any };
+  'replication.target_unmatched_snapshots': {
+    params: TargetUnmatchedSnapshotsParams;
+    response: { [dataset: string]: string[] };
+  };
   'replication.update': { params: any; response: any };
 
   // Rsync
@@ -669,7 +685,7 @@ export type ApiDirectory = {
 
   // Reporting
   'reporting.get_data': { params: ReportingQueryParams; response: ReportingData[] };
-  'reporting.update': { params: any; response: any };
+  'reporting.update': { params: [ReportingConfigUpdate]; response: ReportingConfig };
   'reporting.config': { params: void; response: ReportingConfig };
   'reporting.graphs': { params: any; response: any };
 
@@ -731,9 +747,9 @@ export type ApiDirectory = {
   'smart.config': { params: void; response: SmartConfig };
   'smart.test.manual_test': { params: [SmartManualTestParams[]]; response: ManualSmartTest[] };
   'smart.test.query': { params: QueryParams<SmartTest>; response: SmartTest[] };
-  'smart.test.create': { params: any; response: any };
+  'smart.test.create': { params: [SmartTestUpdate]; response: SmartTest };
   'smart.test.results': { params: QueryParams<SmartTestResults>; response: SmartTestResults[] };
-  'smart.test.update': { params: any; response: any };
+  'smart.test.update': { params: [id: number, update: SmartTestUpdate]; response: SmartTest };
   'smart.test.delete': { params: [id: number]; response: boolean };
 
   // SystemDataset
@@ -766,8 +782,8 @@ export type ApiDirectory = {
   'sharing.nfs.create': { params: any; response: any };
   'sharing.nfs.delete': { params: [id: number]; response: boolean };
   'sharing.webdav.query': { params: QueryParams<WebDavShare>; response: WebDavShare[] };
-  'sharing.webdav.update': { params: any; response: any };
-  'sharing.webdav.create': { params: any; response: any };
+  'sharing.webdav.update': { params: [id: number, update: WebDavShareUpdate]; response: WebDavShare };
+  'sharing.webdav.create': { params: [WebDavShareUpdate]; response: WebDavShare };
   'sharing.webdav.delete': { params: [id: number]; response: boolean };
 
   // Tunable
@@ -778,11 +794,11 @@ export type ApiDirectory = {
   'tunable.delete': { params: [id: number]; response: true };
 
   // TFTP
-  'tftp.update': { params: any; response: any };
+  'tftp.update': { params: [TftpConfigUpdate]; response: TftpConfig };
   'tftp.config': { params: void; response: TftpConfig };
 
   // FTP
-  'ftp.update': { params: any; response: any };
+  'ftp.update': { params: [FtpConfigUpdate]; response: FtpConfig };
   'ftp.config': { params: void; response: FtpConfig };
 
   // Truecommand
@@ -833,7 +849,10 @@ export type ApiDirectory = {
   'vmware.create': { params: any; response: any };
   'vmware.update': { params: any; response: any };
   'vmware.delete': { params: [id: number]; response: boolean };
-  'vmware.match_datastores_with_datasets': { params: [MatchDatastoresWithDatasetsParams]; response: any };
+  'vmware.match_datastores_with_datasets': {
+    params: [MatchDatastoresWithDatasetsParams];
+    response: MatchDatastoresWithDatasets;
+  };
 
   // User
   'user.update': { params: [id: number, update: UserUpdate]; response: number };
@@ -868,7 +887,7 @@ export type ApiDirectory = {
   'zfs.snapshot.query': { params: QueryParams<ZfsSnapshot>; response: ZfsSnapshot[] };
   'zfs.snapshot.delete': { params: [id: string, params?: { defer?: boolean; recursive?: boolean }]; response: boolean };
   'zfs.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
-  'zfs.snapshot.rollback': { params: ZfsRollbackParams; response: any };
+  'zfs.snapshot.rollback': { params: ZfsRollbackParams; response: void };
   'zfs.pool.scan': { params: any; response: any };
 
   // staticroute

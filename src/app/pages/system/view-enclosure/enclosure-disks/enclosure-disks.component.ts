@@ -32,11 +32,14 @@ import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { Temperature } from 'app/core/services/disk-temperature.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
+import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { DialogService } from 'app/services/dialog.service';
+import { Theme } from 'app/services/theme/theme.service';
 import { T } from 'app/translate-marker';
 
 export enum EnclosureLocation {
@@ -131,7 +134,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   selectedVdevDisks: string[];
   selectedDisk: EnclosureDisk;
 
-  theme: any;
+  theme: Theme;
   protected themeUtils: ThemeUtils;
   currentView: string; // pools || status || expanders || details
   exitingView: string; // pools || status || expanders || details
@@ -186,7 +189,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
     core.emit({ name: 'DiskTemperaturesSubscribe', sender: this });
 
-    core.register({ observerClass: this, eventName: 'MediaChange' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'MediaChange' }).pipe(untilDestroyed(this)).subscribe((evt: MediaChangeEvent) => {
       this.mqAlias = evt.data.mqAlias;
 
       if (evt.data.mqAlias == 'xs' || evt.data.mqAlias == 'sm' || evt.data.mqAlias == 'md') {
@@ -199,11 +202,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.resizeView();
     });
 
-    core.register({ observerClass: this, eventName: 'ThemeData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'ThemeData' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeDataEvent) => {
       this.theme = evt.data;
     });
 
-    core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
       if (this.theme == evt.data) { return; }
       this.theme = evt.data;
       this.setCurrentView(this.currentView);
@@ -930,7 +933,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
       this.enclosure.events.next({
         name: 'ChangeDriveTrayColor',
-        data: { id: disk.enclosure.slot, color: this.theme[this.theme.accentColors[pIndex]] },
+        data: { id: disk.enclosure.slot, color: this.theme[this.theme.accentColors[pIndex] as keyof Theme] },
       });
     });
   }
