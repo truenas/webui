@@ -178,7 +178,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                   () => {
                     this.dialog.info(
                       T('Task Stopped'),
-                      this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { description: row.description }),
+                      this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
                       '500px',
                       'info',
                       true,

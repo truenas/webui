@@ -85,7 +85,7 @@ export class EntityTreeTableService {
     return clone;
   }
 
-  filteredTable(key: any, value: any, data: any, preserveExpansion = false): TreeNode[] {
+  filteredTable(key: any, value: string, data: any, preserveExpansion = false): TreeNode[] {
     // let flattened = this.buildTable(...args); // ES6 way not working?
     const flattened = preserveExpansion ? this.buildTable(data) : this.buildTable(data, true);
 

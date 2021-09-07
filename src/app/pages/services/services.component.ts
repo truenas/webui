@@ -180,7 +180,7 @@ export class Services implements EntityTableConfig, OnInit {
         if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
           this.dialog.info(
             T('Service failed to stop'),
-            serviceName + ' ' + T('service failed to stop.'),
+            this.translate.instant('{service} service failed to stop.', { service: serviceName }),
           );
         }
         service.state = ServiceStatus.Running;
@@ -189,18 +189,18 @@ export class Services implements EntityTableConfig, OnInit {
         if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
           this.dialog.info(
             T('Service failed to start'),
-            serviceName + ' ' + T('service failed to start.'),
+            this.translate.instant('{service} service failed to start.', { service: serviceName }),
           );
         }
         service.state = ServiceStatus.Stopped;
         service.onChanging = false;
       }
     }, (res) => {
-      let message = this.translate.instant('Error starting service {name}.', { name: serviceName });
+      let message = this.translate.instant('Error starting service {service}.', { service: serviceName });
       if (rpc === 'service.stop') {
-        message = this.translate.instant('Error stopping service {name}.', { name: serviceName });
+        message = this.translate.instant('Error stopping service {service}.', { service: serviceName });
       }
-      this.dialog.errorReport(message + serviceName, res.message, res.stack);
+      this.dialog.errorReport(message, res.message, res.stack);
       service.onChanging = false;
     });
   }

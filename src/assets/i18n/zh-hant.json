@@ -1005,9 +1005,9 @@
   "Error restarting web service": "",
   "Error saving ZVOL.": "",
   "Error starting service OpenVPN {serviceLabel}": "",
-  "Error starting service {name}.": "",
+  "Error starting service {service}.": "",
   "Error stopping service OpenVPN {serviceLabel}": "",
-  "Error stopping service {name}.": "",
+  "Error stopping service {service}.": "",
   "Error submitting file": "",
   "Error updating disks": "",
   "Error while creating the {device} device.\n {reason}": "",
@@ -2948,6 +2948,8 @@
   "{n} failed": "",
   "{n} in progress": "",
   "{service} Service": "",
+  "{service} service failed to start.": "",
+  "{service} service failed to stop.": "",
   "{used} of {total} ({used_pct})": "",
   " Check Notifications for more details.": " 檢視通知項目可查看詳細資訊。",
   " Download Updates": " 下載更新",
@@ -4079,7 +4081,5 @@
   "group": "群組",
   "name": "名稱",
   "overview": "概觀",
-  "password": "密碼",
-  "service failed to start.": "服務啟動失敗。",
-  "service failed to stop.": "服務停止失敗。"
+  "password": "密碼"
 }

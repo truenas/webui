@@ -12,7 +12,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { CoreEvent } from 'app/interfaces/events';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -95,7 +95,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.core.register({
       observerClass: this,
       eventName: 'SysInfo',
-    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
       const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'version' });
       config.paraText += evt.data.version;
     });
