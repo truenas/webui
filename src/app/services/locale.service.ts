@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { UserPreferencesReadyEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { T } from 'app/translate-marker';
 import { SystemGeneralService } from '.';
@@ -37,7 +38,7 @@ export class LocaleService {
   getPrefs(): void {
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
     this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' })
-      .pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+      .pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
         if (this.isWaiting) {
           this.target.next({ name: 'SubmitComplete', sender: this });
           this.isWaiting = false;

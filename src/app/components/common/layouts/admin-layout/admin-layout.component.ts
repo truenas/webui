@@ -10,8 +10,10 @@ import { ConsolePanelModalDialog } from 'app/components/common/dialog/console-pa
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
 import { ProductType } from 'app/enums/product-type.enum';
-import { CoreEvent } from 'app/interfaces/events';
+import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
+import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
@@ -86,7 +88,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     core.register({
       observerClass: this,
       eventName: 'UserPreferencesChanged',
-    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
       this.retroLogo = evt.data.retroLogo ? evt.data.retroLogo : false;
     });
 
@@ -101,14 +103,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     core.register({
       observerClass: this,
       eventName: 'ForceSidenav',
-    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: ForceSidenavEvent) => {
       this.updateSidenav(evt.data);
     });
 
     core.register({
       observerClass: this,
       eventName: 'SidenavStatus',
-    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: SidenavStatusEvent) => {
       this.isSidenavOpen = evt.data.isOpen;
       this.sidenavMode = evt.data.mode;
       this.isSidenavCollapsed = evt.data.isCollapsed;
@@ -144,7 +146,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.scrollToBottomOnFooterBar();
   }
 
-  updateSidenav(force?: string): void {
+  updateSidenav(force?: 'open' | 'close'): void {
     if (force) {
       this.isSidenavOpen = force == 'open';
       this.isSidenotOpen = force != 'open';

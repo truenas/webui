@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -48,7 +49,7 @@ type DashboardNetworkInterface = NetworkInterface & {
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   formComponent: EntityFormConfigurationComponent;
   formEvents$: Subject<CoreEvent> = new Subject();
-  actionsConfig: any;
+  actionsConfig: GlobalActionConfig;
 
   screenType = 'Desktop'; // Desktop || Mobile
   optimalDesktopWidth = '100%';
