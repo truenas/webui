@@ -64,8 +64,8 @@ def navigate_to_storage(driver):
 def when_the_storage_page_appears_click_create(driver):
     """when the storage page appears, click Create."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 7, '//div[contains(.,"Create pool")]//a', 'clickable')
-    driver.find_element_by_xpath('//div[contains(.,"Create pool")]//a').click()
+    assert wait_on_element(driver, 7, '//a[contains(.,"Create Pool")]', 'clickable')
+    driver.find_element_by_xpath('//a[contains(.,"Create Pool")]').click()
 
 
 @then('the Pools page should open')
