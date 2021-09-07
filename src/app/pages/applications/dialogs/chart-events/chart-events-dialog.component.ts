@@ -1,7 +1,8 @@
 import {
-  OnInit, Component, Inject,
+  OnInit, Component, Inject, ViewChild,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatExpansionPanel } from '@angular/material/expansion';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { forkJoin } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
@@ -19,6 +20,7 @@ import { LocaleService } from 'app/services/locale.service';
   templateUrl: './chart-events-dialog.component.html',
 })
 export class ChartEventsDialog implements OnInit {
+  @ViewChild('eventsPannel', { static: true }) eventsPannel: MatExpansionPanel;
   catalogApp: ChartRelease;
   containerImages: { [key: string]: ChartContainerImage } = {};
   chartEvents: ChartReleaseEvent[] = [];
@@ -90,6 +92,7 @@ export class ChartEventsDialog implements OnInit {
     this.appService.getChartReleaseEvents(this.catalogApp.name).pipe(untilDestroyed(this)).subscribe((evt) => {
       this.loader.close();
       this.chartEvents = evt;
+      this.eventsPannel.open();
     });
   }
 }
