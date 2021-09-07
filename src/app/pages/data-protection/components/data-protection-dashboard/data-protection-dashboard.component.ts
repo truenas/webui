@@ -452,6 +452,7 @@ export class DataProtectionDashboardComponent implements OnInit {
       this.datePipe,
       this.entityFormService,
       this.modalService,
+      this.translate,
     );
     this.replicationFormComponent = new ReplicationFormComponent(
       this.ws,
@@ -618,7 +619,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                   (jobId: number) => {
                     this.dialog.info(
                       T('Task started'),
-                      T('Replication <i>') + row.name + T('</i> has started.'),
+                      this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
                       '500px',
                       'info',
                       true,
@@ -714,7 +715,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                   (jobId: number) => {
                     this.dialog.info(
                       T('Task Started'),
-                      this.translate.instant(T('Cloud sync <i>{ taskName }</i> has started.'), { taskName: row.description }),
+                      this.translate.instant(T('Cloud sync <i>{taskName}</i> has started.'), { taskName: row.description }),
                       '500px',
                       'info',
                       true,
@@ -754,7 +755,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                   () => {
                     this.dialog.info(
                       T('Task Stopped'),
-                      this.translate.instant(T('Cloud sync <i>{ taskName }</i> stopped.'), { taskName: row.description }),
+                      this.translate.instant(T('Cloud sync <i>{taskName}</i> stopped.'), { taskName: row.description }),
                       '500px',
                       'info',
                       true,
@@ -787,7 +788,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                   (jobId: number) => {
                     this.dialog.info(
                       T('Task Started'),
-                      this.translate.instant(T('Cloud sync <i>{ taskName }</i> has started.'), { taskName: row.description }),
+                      this.translate.instant(T('Cloud sync <i>{taskName}</i> has started.'), { taskName: row.description }),
                       '500px',
                       'info',
                       true,

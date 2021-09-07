@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -46,6 +47,7 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
     protected ws: WebSocketService,
     private dialog: DialogService,
     public networkService: NetworkService,
+    private translate: TranslateService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -70,6 +72,7 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
       this.ws,
       this.dialog,
       this.networkService,
+      this.translate,
     );
     this.modalService.open('slide-in-form', formComponent, id);
   }

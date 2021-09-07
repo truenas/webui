@@ -469,11 +469,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
           name: T('Pool Options'),
           label: T('Pool Options'),
           onClick: (row: any) => {
-            // const autotrim = (row.autotrim === 'ON');
-
             const self = this;
             this.dialogConf = {
-              title: helptext.pool_options_dialog.dialog_title + row.name,
+              title: self.translate.instant('Edit Pool Options for {name}', { name: row.name }),
               confirmCheckbox: true,
               fieldConfig: [
                 {

@@ -377,6 +377,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           this.ws,
           this.dialog,
           this.networkService,
+          this.translate,
         );
         break;
       case ShareType.SMB:
@@ -387,10 +388,11 @@ export class SharesDashboardComponent implements AfterViewInit {
           this.loader,
           this.sysGeneralService,
           this.modalService,
+          this.translate,
         );
         break;
       case ShareType.WebDAV:
-        formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog, this.loader);
+        formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog, this.loader, this.translate);
         break;
       case ShareType.ISCSI:
         formComponent = new TargetFormComponent(

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { WebSocketService } from 'app/services/ws.service';
@@ -24,9 +23,10 @@ export class ResilverProgressDialogComponent implements OnInit {
   statusLabel = T('Status: ');
   diskName: string;
 
-  constructor(public dialogRef: MatDialogRef < ResilverProgressDialogComponent >,
-    protected translate: TranslateService, protected ws: WebSocketService) {
-  }
+  constructor(
+    protected translate: TranslateService,
+    protected ws: WebSocketService,
+  ) {}
 
   ngOnInit(): void {
     this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((res) => {

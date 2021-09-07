@@ -196,9 +196,9 @@ export class Services implements EntityTableConfig, OnInit {
         service.onChanging = false;
       }
     }, (res) => {
-      let message = T('Error starting service ');
+      let message = this.translate.instant('Error starting service {name}.', { name: serviceName });
       if (rpc === 'service.stop') {
-        message = T('Error stopping service ');
+        message = this.translate.instant('Error stopping service {name}.', { name: serviceName });
       }
       this.dialog.errorReport(message + serviceName, res.message, res.stack);
       service.onChanging = false;

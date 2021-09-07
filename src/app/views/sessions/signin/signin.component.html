@@ -131,9 +131,8 @@
           <div *ngIf="product">
             <div class="fake-icon">?</div>
             <p *ngIf="!ha_status">
-              {{"Connecting to " | translate}} {{product}}
-              {{"... Make sure the " | translate}} {{product}}
-              {{" system is powered on and connected to the network." | translate}}
+              {{ 'Connecting to {product}' | translate: { product } }}
+              {{ '... Make sure the {product} system is powered on and connected to the network.' | translate: { product } }}
             </p>
             <p *ngIf="ha_status">
               {{"Waiting for Active TrueNAS controller to come up..." | translate}}

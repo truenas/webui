@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
@@ -92,6 +93,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     protected loader: AppLoaderService,
     protected datePipe: DatePipe,
     protected entityFormService: EntityFormService,
+    private translate: TranslateService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -129,7 +131,7 @@ export class ReplicationListComponent implements EntityTableConfig {
               (jobId: number) => {
                 this.dialog.info(
                   T('Task started'),
-                  T('Replication <i>') + row.name + T('</i> has started.'),
+                  this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
                   '500px',
                   'info',
                   true,
@@ -266,6 +268,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         this.datePipe,
         this.entityFormService,
         this.modalService,
+        this.translate,
       ),
     );
   }

@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/group-list';
+import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -59,10 +60,15 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
     },
   };
 
-  constructor(private _router: Router, protected dialogService: DialogService,
-    protected loader: AppLoaderService, protected ws: WebSocketService,
-    protected prefService: PreferencesService, private translate: TranslateService,
-    protected aroute: ActivatedRoute, private modalService: ModalService) {}
+  constructor(
+    private _router: Router,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    protected ws: WebSocketService,
+    protected prefService: PreferencesService,
+    private translate: TranslateService,
+    private modalService: ModalService,
+  ) {}
 
   ngOnInit(): void {
     this.refreshGroupForm();
@@ -150,14 +156,17 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
                 fieldConfig: [],
                 confirmCheckbox: true,
                 saveButtonText: helptext.deleteDialog.saveButtonText,
-                preInit() {
+                preInit: () => {
                   if (!usersInGroup.length) {
                     return;
                   }
                   conf.fieldConfig.push({
                     type: 'checkbox',
                     name: 'delete_users',
-                    placeholder: T(`Delete ${usersInGroup.length} user(s) with this primary group?`),
+                    placeholder: this.translate.instant(
+                      'Delete {n, plural, one {# user} other {# users}} with this primary group?',
+                      { n: usersInGroup.length },
+                    ),
                     value: false,
                     onChange: (valueChangeData: { event: MatCheckboxChange }) => {
                       if (valueChangeData.event.checked) {
@@ -200,24 +209,27 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
   }
 
   toggleBuiltins(): void {
-    const show = this.prefService.preferences.hide_builtin_groups
-      ? helptext.builtins_dialog.show
-      : helptext.builtins_dialog.hide;
-    this.translate.get(show).pipe(untilDestroyed(this)).subscribe((action: string) => {
-      this.translate.get(helptext.builtins_dialog.title).pipe(untilDestroyed(this)).subscribe((title: string) => {
-        this.translate.get(helptext.builtins_dialog.message).pipe(untilDestroyed(this)).subscribe((message: string) => {
-          this.dialogService.confirm({
-            title: action + title,
-            message: action + message,
-            hideCheckBox: true,
-            buttonMsg: action,
-          }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-            this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
-            this.prefService.savePreferences();
-            this.entityList.getData();
-          });
-        });
-      });
+    let dialogOptions: ConfirmOptions;
+    if (this.prefService.preferences.hide_builtin_groups) {
+      dialogOptions = {
+        title: this.translate.instant('Show Built-in Groups'),
+        message: this.translate.instant('Show built-in groups (default setting is <i>hidden</i>).'),
+        hideCheckBox: true,
+        buttonMsg: this.translate.instant('Show'),
+      };
+    } else {
+      dialogOptions = {
+        title: this.translate.instant('Hide Built-in Groups'),
+        message: this.translate.instant('Hide built-in groups (default setting is <i>hidden</i>).'),
+        hideCheckBox: true,
+        buttonMsg: this.translate.instant('Hide'),
+      };
+    }
+
+    this.dialogService.confirm(dialogOptions).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
+      this.prefService.savePreferences();
+      this.entityList.getData();
     });
   }
 

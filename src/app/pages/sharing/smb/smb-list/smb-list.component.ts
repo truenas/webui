@@ -85,7 +85,13 @@ export class SMBListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    this.modalService.open('slide-in-form', new SMBFormComponent(this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService), id);
+    this.modalService.open(
+      'slide-in-form',
+      new SMBFormComponent(
+        this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService, this.translate,
+      ),
+      id,
+    );
   }
 
   doEdit(id: number): void {

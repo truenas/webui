@@ -3,8 +3,10 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/user-list';
+import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { UserListRow } from 'app/pages/account/users/user-list/user-list-row.interface';
@@ -115,7 +117,7 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
   }
 
   refreshUserForm(): void {
-    this.addComponent = new UserFormComponent(this.router, this.ws, this.storageService, this.loader,
+    this.addComponent = new UserFormComponent(this.ws, this.storageService, this.loader,
       this.userService, this.validationService, this.modalService);
   }
 
@@ -232,24 +234,24 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
   }
 
   toggleBuiltins(): void {
-    const toggleAction = this.prefService.preferences.hide_builtin_users
-      ? helptext.builtins_dialog.show
-      : helptext.builtins_dialog.hide;
+    let dialogOptions: ConfirmOptions;
+    if (this.prefService.preferences.hide_builtin_users) {
+      dialogOptions = {
+        title: this.translate.instant('Show Built-in Users'),
+        message: this.translate.instant('Show built-in users (default setting is <i>hidden</i>).'),
+        hideCheckBox: true,
+        buttonMsg: this.translate.instant('Show'),
+      };
+    } else {
+      dialogOptions = {
+        title: this.translate.instant('Hide Built-in Users'),
+        message: this.translate.instant('Hide built-in users (default setting is <i>hidden</i>).'),
+        hideCheckBox: true,
+        buttonMsg: this.translate.instant('Hide'),
+      };
+    }
 
-    const action = this.translate.instant(toggleAction);
-    const title = this.translate.instant(helptext.builtins_dialog.title);
-    const message = this.translate.instant(helptext.builtins_dialog.message);
-
-    this.dialogService.confirm({
-      title: action + title,
-      message: action + message,
-      hideCheckBox: true,
-      buttonMsg: action,
-    }).pipe(untilDestroyed(this)).subscribe((result) => {
-      if (!result) {
-        return;
-      }
-
+    this.dialogService.confirm(dialogOptions).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
       this.prefService.savePreferences();
       this.entityList.getData();

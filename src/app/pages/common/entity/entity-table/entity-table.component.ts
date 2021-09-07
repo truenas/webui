@@ -453,8 +453,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
 
       case EmptyType.FirstUse:
         messagePreset = false;
-        title = T('No ') + this.title;
-        message = T('It seems you haven\'t setup any ') + this.title + T(' yet.');
+        title = this.translate.instant('No {item}', { item: this.title });
+        message = this.translate.instant("It seems you haven't setup any {item} yet.", { item: this.title });
         if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.first_use) {
           title = this.conf.emptyTableConfigMessages.first_use.title;
           message = this.conf.emptyTableConfigMessages.first_use.message;
@@ -468,7 +468,9 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
         };
         if (!this.conf.noAdd) {
           if (!messagePreset) {
-            this.emptyTableConf['message'] += T(' Please click the button below to add ') + this.title + T('.');
+            this.emptyTableConf['message'] += this.translate.instant(' Please click the button below to add {item}.', {
+              item: this.title,
+            });
           }
           let buttonText = T('Add ') + this.title;
           if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
@@ -484,8 +486,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
       case EmptyType.NoPageData:
       default:
         messagePreset = false;
-        title = T('No ') + this.title;
-        message = T('The system could not retrieve any ') + this.title + T(' from the database.');
+        title = this.translate.instant('No {item}', { item: this.title });
+        message = this.translate.instant('The system could not retrieve any {item} from the database.', { item: this.title });
         if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.no_page_data) {
           title = this.conf.emptyTableConfigMessages.no_page_data.title;
           message = this.conf.emptyTableConfigMessages.no_page_data.message;
@@ -499,7 +501,9 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
         };
         if (!this.conf.noAdd) {
           if (!messagePreset) {
-            this.emptyTableConf['message'] += T(' Please click the button below to add ') + this.title + T('.');
+            this.emptyTableConf['message'] += this.translate.instant(' Please click the button below to add {item}.', {
+              item: this.title,
+            });
           }
           let buttonText = T('Add ') + this.title;
           if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -11,7 +12,6 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import {
   DialogService, WebSocketService, AppLoaderService, SystemGeneralService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -67,6 +67,7 @@ export class GlobalconfigurationComponent implements FormConfiguration {
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     private sysGeneralService: SystemGeneralService,
+    private translate: TranslateService,
   ) {}
 
   afterInit(entityForm: EntityFormComponent): void {
@@ -98,8 +99,12 @@ export class GlobalconfigurationComponent implements FormConfiguration {
           this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
             this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
               this.loader.close();
-              this.dialogService.info(T('iSCSI') + shared.dialog_started_title,
-                T('The iSCSI') + shared.dialog_started_message, '250px', 'info');
+              this.dialogService.info(
+                this.translate.instant('{service} Service', { service: 'iSCSI' }),
+                this.translate.instant('The {service} service has been enabled.', { service: 'iSCSI' }),
+                '250px',
+                'info',
+              );
             }, (err) => {
               this.loader.close();
               this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
