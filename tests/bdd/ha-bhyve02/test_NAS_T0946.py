@@ -345,8 +345,8 @@ def navigate_to_storage_click_create(driver):
     """navigate to Storage click Create"""
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 7, '//a[@ix-auto="button___POOL_CREATE"]', 'clickable')
-    driver.find_element_by_xpath('//a[@ix-auto="button___POOL_CREATE"]').click()
+    assert wait_on_element(driver, 7, '//button[contains(.,"Create pool")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Create pool")]').click()
 
 
 @then('enter tank for pool name, click the checkbox beside the first disk')
@@ -376,8 +376,8 @@ def click_the_arrow_pointing_to_data_vdevs_click_create_check_confirm_click_crea
     assert wait_on_element(driver, 7, '//h1[contains(.,"Warning")]')
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
-    assert wait_on_element(driver, 7, '//button[contains(.,"Create pool")]', 'clickable')
-    driver.find_element_by_xpath('//button[contains(.,"Create pool")]').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
 
 
 @then('Create Pool should appear while pool is being created. You should be returned to the Storage page')
