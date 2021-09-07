@@ -253,8 +253,9 @@ def on_the_bucket_tab_create_a_folder_and_upload_a_file_in_it(driver):
 def on_the_nas_tad_on_the_cloud_sync_task_click_run_now(driver):
     """on the NAS tad on the cloud sync task, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//div[contains(.,"My S3 AWS Share")]')
-    if not wait_on_element(driver, 1, '//button[@id="action_button___run_now"]', 'clickable'):
+    if not wait_on_element(driver, 2, '//button[@id="action_button___run_now"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@title="Expand/Collapse Row"]', 'clickable')
         driver.find_element_by_xpath('//a[@title="Expand/Collapse Row"]').click()
     time.sleep(1)
