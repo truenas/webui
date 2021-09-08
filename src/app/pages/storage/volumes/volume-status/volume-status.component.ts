@@ -35,14 +35,14 @@ import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
 interface PoolDiskInfo {
-  name: any;
-  read: any;
-  write: any;
-  checksum: any;
+  name: string;
+  read: number;
+  write: number;
+  checksum: number;
   status: any;
   actions?: any;
-  path?: any;
-  guid: any;
+  path?: string;
+  guid: string;
 }
 
 @UntilDestroy()

@@ -189,7 +189,7 @@ export class SupportComponent implements OnInit {
     const self = entityDialog;
     self.loader.open();
     const dialogRef = entityDialog.mdDialog.open(EntityJobComponent,
-      { data: { title: helptext.is_production_job.title, CloseOnClickOutside: false } });
+      { data: { title: helptext.is_production_job.title, closeOnClickOutside: false } });
     dialogRef.componentInstance.setDescription(helptext.is_production_job.message);
 
     self.ws.call(self.conf.method_ws, [true, self.formValue.send_debug]).pipe(untilDestroyed(this)).subscribe(() => {

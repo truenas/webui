@@ -59,6 +59,7 @@ export interface EmbeddedFormConfig {
   dataAttributeHandler?: any;
   route_cancel?: string[];
   route_success?: string[];
+  // TODO: Broken
   route_delete?: string[];
   custom_edit_query?: any;
   custom_add_query?: any;

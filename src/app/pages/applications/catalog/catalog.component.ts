@@ -70,13 +70,20 @@ export class CatalogComponent implements OnInit {
 
   choosePool: DialogFormConfiguration = {
     title: helptext.choosePool.title,
-    fieldConfig: [{
-      type: 'select',
-      name: 'pools',
-      placeholder: helptext.choosePool.placeholder,
-      required: true,
-      options: this.poolList,
-    }],
+    fieldConfig: [
+      {
+        type: 'select',
+        name: 'pools',
+        placeholder: helptext.choosePool.placeholder,
+        required: true,
+        options: this.poolList,
+      },
+      {
+        type: 'checkbox',
+        name: 'migrateApplications',
+        placeholder: helptext.choosePool.migrateApplications,
+      },
+    ],
     method_ws: 'kubernetes.update',
     saveButtonText: helptext.choosePool.action,
     customSubmit: this.doPoolSelect,
@@ -276,10 +283,14 @@ export class CatalogComponent implements OnInit {
         pools.forEach((pool) => {
           this.poolList.push({ label: pool.name, value: pool.name });
         });
+
+        const migrateField = this.choosePool.fieldConfig.find((config) => config.name === 'migrateApplications');
         if (this.selectedPool) {
           this.choosePool.fieldConfig[0].value = this.selectedPool;
+          migrateField.isHidden = false;
         } else {
           delete this.choosePool.fieldConfig[0].value;
+          migrateField.isHidden = true;
         }
 
         this.dialogService.dialogForm(this.choosePool, true);
@@ -325,13 +336,17 @@ export class CatalogComponent implements OnInit {
   doPoolSelect(entityDialog: EntityDialogComponent<this>): void {
     const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
+    const migrateApplications = entityDialog.formGroup.controls['migrateApplications'].value;
+    self.dialogService.closeAllDialogs();
     const dialogRef = self.mdDialog.open(EntityJobComponent, {
       data: {
-        title: (helptext.choosePool.jobTitle),
+        title: helptext.choosePool.jobTitle,
       },
-      disableClose: true,
     });
-    dialogRef.componentInstance.setCall('kubernetes.update', [{ pool }]);
+    dialogRef.componentInstance.setCall('kubernetes.update', [{
+      pool,
+      migrate_applications: migrateApplications,
+    }]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe((res: Job<KubernetesConfig>) => {
       self.selectedPool = pool;
@@ -341,9 +356,6 @@ export class CatalogComponent implements OnInit {
         self.dialogService.info(helptext.choosePool.success, msg + res.result.pool,
           '500px', 'info', true);
       });
-    });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(self)).subscribe((err) => {
-      new EntityUtils().handleWSError(self, err, self.dialogService);
     });
   }
 
@@ -400,7 +412,6 @@ export class CatalogComponent implements OnInit {
         this.mdDialog.open(CatalogSummaryDialog, {
           width: '470px',
           data: catalogAppInfo,
-          disableClose: false,
         });
       }
     });
@@ -409,10 +420,10 @@ export class CatalogComponent implements OnInit {
   syncAll(): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.installing,
+        title: helptext.refreshing,
       },
-      disableClose: true,
     });
+    dialogRef.componentInstance.openJobsManagerOnClose = true;
     dialogRef.componentInstance.setCall('catalog.sync_all');
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

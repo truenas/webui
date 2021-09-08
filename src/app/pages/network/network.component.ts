@@ -13,6 +13,7 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
 import { CoreEvent } from 'app/interfaces/events';
+import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
@@ -48,7 +49,7 @@ import { StaticRouteFormComponent } from './forms/staticroute-form.component';
   styleUrls: ['./network.component.scss'],
 })
 export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
-  protected summayCall: 'network.general.summary' = 'network.general.summary';
+  protected summaryCall: 'network.general.summary' = 'network.general.summary';
   protected configCall: 'network.configuration.config' = 'network.configuration.config';
   formEvent$: Subject<CoreEvent>;
 
@@ -227,22 +228,35 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   getGlobalSettings(): void {
-    combineLatest([this.ws.call(this.configCall), this.ws.call(this.summayCall)])
+    combineLatest([this.ws.call(this.configCall), this.ws.call(this.summaryCall)])
       .pipe(untilDestroyed(this))
       .subscribe(([networkConfig, summary]) => {
         this.networkSummary = summary;
-        this.globalSettingsWidget.data.nameserver = summary.nameservers.map((item) => {
-          switch (item) {
-            case networkConfig.nameserver1:
-              return { label: 'Nameserver 1', value: item };
-            case networkConfig.nameserver2:
-              return { label: 'Nameserver 2', value: item };
-            case networkConfig.nameserver3:
-              return { label: 'Nameserver 3', value: item };
-            default:
-              return { label: 'Nameserver (DHCP)', value: item };
+        this.globalSettingsWidget.data.nameserver = [];
+        const nameserverAttributes: ('nameserver1' | 'nameserver2' | 'nameserver3')[] = [
+          'nameserver1', 'nameserver2', 'nameserver3',
+        ];
+        nameserverAttributes.forEach((attribute, n) => {
+          const nameserver = networkConfig[attribute];
+          if (nameserver) {
+            this.globalSettingsWidget.data.nameserver.push({
+              label: this.translate.instant('Nameserver {n}', { n: n + 1 }),
+              value: nameserver,
+            });
           }
         });
+
+        summary.nameservers.forEach((nameserver) => {
+          if (nameserverAttributes.some((attribute) => networkConfig[attribute] === nameserver)) {
+            return;
+          }
+
+          this.globalSettingsWidget.data.nameserver.push({
+            label: this.translate.instant('Nameserver (DHCP)'),
+            value: nameserver,
+          });
+        });
+
         this.globalSettingsWidget.data.ipv4 = summary.default_routes.filter((item) => ipRegex.v4().test(item));
         this.globalSettingsWidget.data.ipv6 = summary.default_routes.filter((item) => ipRegex.v6().test(item));
 
@@ -298,7 +312,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.core
       .register({ observerClass: this, eventName: 'NetworkInterfacesChanged' })
       .pipe(untilDestroyed(this))
-      .subscribe((evt: CoreEvent) => {
+      .subscribe((evt: NetworkInterfacesChangedEvent) => {
         if (evt && evt.data.checkin) {
           this.checkin_remaining = null;
           this.checkinWaiting = false;

@@ -205,7 +205,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     }
   }
 
-  decryptDisks(stepper: any): void {
+  decryptDisks(stepper: MatStepper): void {
     if (this.devices_fg.status === 'INVALID') {
       this.dialogService.info(T('Disk Selection Required'), T('Select one or more disks to decrypt.'));
       return;
@@ -246,7 +246,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       { data: { title: helptext.find_pools_title }, disableClose: true },
     );
     dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
-    dialogRef.componentInstance.setCall('pool.import_find', []);
+    dialogRef.componentInstance.setCall('pool.import_find');
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && res.result) {

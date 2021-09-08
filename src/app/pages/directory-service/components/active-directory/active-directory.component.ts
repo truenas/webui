@@ -20,6 +20,7 @@ import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-jo
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -413,7 +414,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     return this.ws.call('activedirectory.update', [body]);
   }
 
-  responseOnSubmit(value: any): void {
+  responseOnSubmit(value: ActiveDirectoryConfig & { job_id?: number }): void {
     this.entityEdit.formGroup.controls['kerberos_principal'].setValue(value.kerberos_principal);
     this.entityEdit.formGroup.controls['kerberos_realm'].setValue(value['kerberos_realm']);
 
@@ -448,7 +449,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   // Shows starting progress as a job dialog
   showStartingJob(jobId: number): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Start' }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Start') }, disableClose: true });
     this.dialogRef.componentInstance.jobId = jobId;
     this.dialogRef.componentInstance.wsshow();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

@@ -1,9 +1,15 @@
 :host {
   display: flex;
+  flex: 1;
   flex-direction: column;
 
   mat-spinner {
     margin: 30px auto;
+  }
+
+  .mat-tab-body-wrapper {
+    min-height: 100%;
+    padding: 16px;
   }
 }
 

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -180,7 +181,7 @@ export class LocalizationFormComponent implements FormConfiguration {
     this.language.setLanguage(value.language);
   }
 
-  customSubmit(body: any): any {
+  customSubmit(body: any): Subscription {
     this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
     delete body.date_format;
     delete body.time_format;

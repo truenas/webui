@@ -6,6 +6,7 @@ import {
   FormControl,
   FormGroup,
 } from '@angular/forms';
+import { TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
@@ -105,7 +106,7 @@ export class EntityFormService {
   }
 
   getFilesystemListdirChildren(
-    node: any,
+    node: TreeNode,
     explorerType?: string,
     hideDirs?: string,
     showHiddenFiles = false,

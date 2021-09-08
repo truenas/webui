@@ -21,6 +21,9 @@ export class LayoutService {
     isCollapsed
       ? domHelper.addClass(appBody, this.collapsedMenuClass)
       : domHelper.removeClass(appBody, this.collapsedMenuClass);
-    domHelper.removeClass(document.getElementsByClassName('has-submenu'), 'open');
+    domHelper.removeClass(
+      document.getElementsByClassName('has-submenu') as HTMLCollectionOf<HTMLElement>,
+      'open',
+    );
   }
 }

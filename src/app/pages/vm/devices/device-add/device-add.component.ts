@@ -506,7 +506,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       const config: FormSelectConfig = _.find(this.diskFieldConfig, { name: 'path' });
       config.options.push({
         label: 'Add New', value: 'new', sticky: 'bottom',
-      });
+      } as any);
     });
     // if bootloader == 'GRUB' or bootloader == "UEFI_CSM" or if VM has existing Display device, hide Display option.
     this.ws.call('vm.query', [[['id', '=', this.vmid]]]).pipe(untilDestroyed(this)).subscribe((vm) => {

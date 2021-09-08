@@ -695,7 +695,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     const profilesField: FormSelectConfig = this.getTarget('profiles');
     this.ws.call('certificate.profiles').pipe(untilDestroyed(this)).subscribe((profiles) => {
       Object.keys(profiles).forEach((item) => {
-        profilesField.options.push({ label: item, value: profiles[item] });
+        profilesField.options.push({ label: item, value: (profiles[item] as any) });
       });
     });
   }
@@ -708,7 +708,7 @@ export class CertificateAddComponent implements WizardConfiguration {
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
     if (fieldConfig.type == 'select') {
       const selectConfig: FormSelectConfig = fieldConfig as FormSelectConfig;
-      const option = selectConfig.options.find((option: any) => option.value == value);
+      const option = selectConfig.options.find((option) => option.value == value);
       if (option) {
         value = option.label;
       }
@@ -964,7 +964,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     return stepNumber;
   }
 
-  getField(fieldName: any): AbstractControl {
+  getField(fieldName: string): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = (< FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];

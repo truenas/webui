@@ -1,6 +1,8 @@
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
+import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
+import { FormSelectOption } from 'app/pages/common/entity/entity-form/models/form-select-option.interface';
 import { RelationGroup } from './field-relation.interface';
 
 export enum UnitType {
@@ -61,6 +63,7 @@ export interface FormCheckboxConfig<P = any> extends BaseFieldConfig<P> {
   expandedHeight?: boolean;
   onChange?(data: any): void;
   updater?: any;
+  customEventMethod?: () => void;
 }
 
 export interface FormChipConfig<P = any> extends BaseFieldConfig<P> {
@@ -69,6 +72,7 @@ export interface FormChipConfig<P = any> extends BaseFieldConfig<P> {
   searchOptions?: Option[];
   updateLocal?: boolean;
   updater?: any;
+  togglePw?: boolean;
 }
 
 export interface FormComboboxConfig<P = any> extends BaseFieldConfig<P> {
@@ -81,6 +85,7 @@ export interface FormComboboxConfig<P = any> extends BaseFieldConfig<P> {
   searchOptions?: Option[];
   updateLocal?: boolean;
   updater?: any;
+  inputType?: string;
 }
 
 export interface FormDictConfig<P = any> extends BaseFieldConfig<P> {
@@ -115,6 +120,8 @@ export interface FormInputConfig<P = any> extends BaseFieldConfig<P> {
 
 export interface FormIpWithNetmaskConfig<P = any> extends BaseFieldConfig<P> {
   netmaskPreset?: number;
+  inputType?: string;
+  togglePw?: boolean;
 }
 
 export interface FormListConfig<P = any> extends BaseFieldConfig<P> {
@@ -123,17 +130,21 @@ export interface FormListConfig<P = any> extends BaseFieldConfig<P> {
   label?: string;
   listFields?: FieldConfig[][];
   templateListField?: FieldConfig[];
+  hideButton?: boolean;
 }
 
 export interface FormParagraphConfig<P = any> extends BaseFieldConfig<P> {
   isLargeText?: boolean;
   paragraphIcon?: string;
   paragraphIconSize?: string;
-  paraText?: any;
+  paraText?: string;
+  inputType?: string;
 }
 
 export interface FormPermissionsConfig<P = any> extends BaseFieldConfig<P> {
   hideOthersPermissions?: boolean;
+  inputType?: string;
+  options?: Option[];
 }
 
 export interface FormRadioConfig<P = any> extends BaseFieldConfig<P>{
@@ -156,13 +167,14 @@ export interface FormSelectConfig<P = any> extends BaseFieldConfig<P> {
   inlineLabel?: string;
   multiple?: boolean;
   onChangeOption?(data: any): void;
-  options?: any[];
+  options?: FormSelectOption[];
 }
 
 export interface FormSelectionListConfig<P = any> extends BaseFieldConfig<P> {
   inlineFields?: boolean;
   inlineFieldFlex?: string;
   onChange?(data: any): void;
+  options?: Option[];
 }
 
 export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
@@ -192,7 +204,8 @@ export interface FormUploadConfig<P = any> extends BaseFieldConfig<P> {
   hideButton?: boolean;
   message?: any;
   rootSelectable?: boolean;
-  updater?: any;
+  updater?: (uploadComponent: FormUploadComponent, parent: P) => void;
+  multiple?: boolean;
 }
 
 export interface FormToggleButtonConfig<P = any> extends BaseFieldConfig<P> {

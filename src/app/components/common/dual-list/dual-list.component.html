@@ -6,8 +6,8 @@
     [cdkDropListConnectedTo]="[memberList]"
     (cdkDropListDropped)="drop($event)"
     >
-   <div class="list-title" *ngIf="title1">{{title1}}</div>
-   <div *ngFor="let item of availableItems.totalItems" cdkDrag
+    <div class="list-title" *ngIf="title1">{{title1}}</div>
+    <div *ngFor="let item of availableItems.totalItems" cdkDrag
       class="draggable"
       (cdkDragStarted)="onDragStart($event)"
       [ngClass]="{ chosen: availableItems.isSelected(item) }"

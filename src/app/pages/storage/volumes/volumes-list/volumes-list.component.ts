@@ -17,7 +17,6 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableService } from 'app/pages/common/entity/entity-table/entity-table.service';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
 import { VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list-table-config';
 import { ZfsPoolData } from 'app/pages/storage/volumes/volumes-list/zfs-pool-data.interface';
@@ -100,7 +99,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
   expanded = false;
   paintMe = true;
-  systemdatasetPool: any;
+  systemdatasetPool: string;
   has_encrypted_root: { [pool: string]: boolean } = {};
   has_key_dataset: { [pool: string]: boolean } = {};
   entityEmptyConf: EmptyConfig = {
@@ -160,7 +159,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected messageService: MessageService,
     protected http: HttpClient,
     modalService: ModalService,
-    public tableService: EntityTableService,
     protected validationService: ValidationService,
   ) {
     super(core, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService);
@@ -216,13 +214,15 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         for (const pool of pools) {
           pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();
           if (!pool.is_decrypted) {
-            pool.status = 'LOCKED';
+            pool.status = PoolStatus.Locked;
           }
 
           /* Filter out system datasets */
           const pChild = datasets.find((set) => set.name === pool.name);
           if (pChild) {
-            pChild.children = pChild.children.filter((child: any) => child.name.indexOf(`${pool.name}/.system`) === -1 && child.name.indexOf(`${pool.name}/.glusterfs`) === -1);
+            pChild.children = pChild.children.filter((child: Dataset) => {
+              return child.name.indexOf(`${pool.name}/.system`) === -1 && child.name.indexOf(`${pool.name}/.glusterfs`) === -1;
+            });
           }
           pool.children = pChild ? [pChild] : [];
 

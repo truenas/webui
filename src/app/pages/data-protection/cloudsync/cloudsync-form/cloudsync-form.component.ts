@@ -468,7 +468,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  getBuckets(credential: any): Observable<any[]> {
+  getBuckets(credential: CloudsyncCredential): Observable<any[]> {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
   }
 
@@ -497,7 +497,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  getBucketFolders(credential: string, bucket: string, node: TreeNode): Promise<any> {
+  getBucketFolders(credential: number, bucket: string, node: TreeNode): Promise<any> {
     const formValue = this.entityForm.formGroup.value;
     const children: any[] = [];
     const data = {
@@ -783,13 +783,14 @@ export class CloudsyncFormComponent implements FormConfiguration {
                   }
                   this.setDisabled('bucket', true, true);
                   this.setDisabled('bucket_input', false, false);
-                  this.dialog.confirm(err.extra ? err.extra.excerpt : (T('Error: ') + err.error), err.reason, true, T('Fix Credential')).pipe(untilDestroyed(this)).subscribe(
-                    (dialog_res: boolean) => {
-                      if (dialog_res) {
-                        this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', String(item.id)]));
-                      }
-                    },
-                  );
+                  this.dialog.confirm({
+                    title: err.extra ? err.extra.excerpt : (T('Error: ') + err.error),
+                    message: err.reason,
+                    hideCheckBox: true,
+                    buttonMsg: T('Fix Credential'),
+                  }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+                    this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', String(item.id)]));
+                  });
                 },
               );
             } else {

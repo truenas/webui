@@ -231,7 +231,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
   }
 
   openDialog(payload: any): void {
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Ticket', CloseOnClickOutside: true } });
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Ticket', closeOnClickOutside: true } });
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();

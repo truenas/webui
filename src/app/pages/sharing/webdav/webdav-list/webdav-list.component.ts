@@ -47,7 +47,7 @@ export class WebdavListComponent implements EntityTableConfig {
     private loader: AppLoaderService,
   ) {}
 
-  doAdd(id: any, tableComponent: EntityTableComponent): void {
+  doAdd(id: string, tableComponent: EntityTableComponent): void {
     this.modalService.open('slide-in-form', new WebdavFormComponent(this.router, this.ws, this.dialog, this.loader));
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       tableComponent.getData();

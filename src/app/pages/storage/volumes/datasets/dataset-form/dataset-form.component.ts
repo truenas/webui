@@ -17,6 +17,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -65,6 +66,8 @@ interface DatasetFormData {
   special_small_block_size: number;
 }
 
+type SizeField = 'quota' | 'refquota' | 'reservation' | 'refreservation' | 'special_small_block_size';
+
 @UntilDestroy()
 @Component({
   selector: 'app-dataset-form',
@@ -100,7 +103,7 @@ export class DatasetFormComponent implements FormConfiguration {
   nameIsCaseInsensitive = false;
   productType: ProductType;
 
-  humanReadable = {
+  humanReadable: { [key in SizeField]: string } = {
     quota: '', refquota: '', reservation: '', refreservation: '', special_small_block_size: '',
   };
 
@@ -109,10 +112,11 @@ export class DatasetFormComponent implements FormConfiguration {
 
   parent: string;
   data: any;
-  parent_data: any;
   protected passphrase_parent = false;
 
-  protected size_fields = ['quota', 'refquota', 'reservation', 'refreservation', 'special_small_block_size'];
+  protected size_fields: SizeField[] = [
+    'quota', 'refquota', 'reservation', 'refreservation', 'special_small_block_size',
+  ];
   protected OrigSize: any = {};
   protected OrigHuman: any = {};
 
@@ -834,14 +838,13 @@ export class DatasetFormComponent implements FormConfiguration {
     _.find(this.fieldSets, { name: 'quota_divider' }).divider = !basic_mode;
   }
 
-  // TODO: Narrow down `field` type
-  convertHumanStringToNum(hstr: any, field: string): number {
+  convertHumanStringToNum(hstr: any, field: SizeField): number {
     let num = 0;
     let unit = '';
 
     // empty value is evaluated as null
     if (!hstr) {
-      (this.humanReadable as any)[field] = null;
+      this.humanReadable[field] = null;
       return null;
     }
 
@@ -857,7 +860,7 @@ export class DatasetFormComponent implements FormConfiguration {
       num = (num as any)[1];
     } else {
       // leading number is required
-      (this.humanReadable as any)[field] = '';
+      this.humanReadable[field] = '';
       return NaN;
     }
 
@@ -865,13 +868,13 @@ export class DatasetFormComponent implements FormConfiguration {
     unit = hstr.replace(num, '');
     if ((unit) && !(unit = this.storageService.normalizeUnit(unit))) {
       // error when unit is present but not recognized
-      (this.humanReadable as any)[field] = '';
+      this.humanReadable[field] = '';
       return NaN;
     }
 
     const spacer = (unit) ? ' ' : '';
 
-    (this.humanReadable as any)[field] = num.toString() + spacer + unit;
+    this.humanReadable[field] = num.toString() + spacer + unit;
     return num * this.storageService.convertUnitToNum(unit);
   }
 
@@ -1252,14 +1255,14 @@ export class DatasetFormComponent implements FormConfiguration {
             const readonly: FormSelectConfig = _.find(this.fieldConfig, { name: 'readonly' });
             const atime: FormSelectConfig = _.find(this.fieldConfig, { name: 'atime' });
             const recordsize: FormSelectConfig = _.find(this.fieldConfig, { name: 'recordsize' });
-            const sync_inherit = [{ label: `Inherit (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
-            const compression_inherit = [{ label: `Inherit (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
-            const deduplication_inherit = [{ label: `Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
-            const exec_inherit = [{ label: `Inherit (${pk_dataset[0].exec.rawvalue})`, value: 'INHERIT' }];
-            const readonly_inherit = [{ label: `Inherit (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT' }];
-            const atime_inherit = [{ label: `Inherit (${pk_dataset[0].atime.rawvalue})`, value: 'INHERIT' }];
+            const sync_inherit: Option[] = [{ label: `Inherit (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
+            const compression_inherit: Option[] = [{ label: `Inherit (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
+            const deduplication_inherit: Option[] = [{ label: `Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
+            const exec_inherit: Option[] = [{ label: `Inherit (${pk_dataset[0].exec.rawvalue})`, value: 'INHERIT' }];
+            const readonly_inherit: Option[] = [{ label: `Inherit (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT' }];
+            const atime_inherit: Option[] = [{ label: `Inherit (${pk_dataset[0].atime.rawvalue})`, value: 'INHERIT' }];
             this.storageService.convertHumanStringToNum(pk_dataset[0].recordsize.value);
-            const recordsize_inherit = [{ label: `Inherit (${this.storageService.humanReadable})`, value: 'INHERIT' }];
+            const recordsize_inherit: Option[] = [{ label: `Inherit (${this.storageService.humanReadable})`, value: 'INHERIT' }];
             if (pk_dataset[0].refquota_critical && pk_dataset[0].refquota_critical.value) {
               entityForm.formGroup.controls['refquota_critical'].setValue(pk_dataset[0].refquota_critical.value);
             }
@@ -1294,7 +1297,7 @@ export class DatasetFormComponent implements FormConfiguration {
               const current_dataset = _.find(this.parent_dataset.children, { name: this.pk });
               if (current_dataset.hasOwnProperty('recordsize') && current_dataset['recordsize'].value) {
                 const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'recordsize' });
-                _.find(config.options, { value: current_dataset['recordsize'].value })['hiddenFromDisplay'] = false;
+                (_.find(config.options, { value: current_dataset['recordsize'].value }) as any)['hiddenFromDisplay'] = false;
               }
               const edit_sync: FormSelectConfig = _.find(this.fieldConfig, { name: 'sync' });
               const edit_compression: FormSelectConfig = _.find(this.fieldConfig, { name: 'compression' });
@@ -1304,29 +1307,29 @@ export class DatasetFormComponent implements FormConfiguration {
               const edit_atime: FormSelectConfig = _.find(this.fieldConfig, { name: 'atime' });
               const edit_recordsize: FormSelectConfig = _.find(this.fieldConfig, { name: 'recordsize' });
 
-              const edit_sync_collection = [{ label: `Inherit (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT' }];
+              const edit_sync_collection: Option[] = [{ label: `Inherit (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT' }];
               edit_sync.options = edit_sync_collection.concat(edit_sync.options);
 
-              const edit_compression_collection = [{ label: `Inherit (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT' }];
+              const edit_compression_collection: Option[] = [{ label: `Inherit (${this.parent_dataset.compression.rawvalue})`, value: 'INHERIT' }];
               edit_compression.options = edit_compression_collection.concat(edit_compression.options);
 
-              const edit_deduplication_collection = [{ label: `Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT' }];
+              const edit_deduplication_collection: Option[] = [{ label: `Inherit (${this.parent_dataset.deduplication.rawvalue})`, value: 'INHERIT' }];
               edit_deduplication.options = edit_deduplication_collection.concat(edit_deduplication.options);
 
-              const edit_exec_collection = [{ label: `Inherit (${this.parent_dataset.exec.rawvalue})`, value: 'INHERIT' }];
+              const edit_exec_collection: Option[] = [{ label: `Inherit (${this.parent_dataset.exec.rawvalue})`, value: 'INHERIT' }];
               edit_exec.options = edit_exec_collection.concat(edit_exec.options);
 
-              const edit_readonly_collection = [{ label: `Inherit (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT' }];
+              const edit_readonly_collection: Option[] = [{ label: `Inherit (${this.parent_dataset.readonly.rawvalue})`, value: 'INHERIT' }];
               edit_readonly.options = edit_readonly_collection.concat(edit_readonly.options);
 
-              const edit_atime_collection = [{ label: `Inherit (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT' }];
+              const edit_atime_collection: Option[] = [{ label: `Inherit (${this.parent_dataset.atime.rawvalue})`, value: 'INHERIT' }];
               edit_atime.options = edit_atime_collection.concat(edit_atime.options);
 
               const lastChar = this.parent_dataset.recordsize.value[this.parent_dataset.recordsize.value.length - 1];
               const formattedLabel = lastChar === 'K' || lastChar === 'M'
                 ? `${this.parent_dataset.recordsize.value.slice(0, -1)} ${lastChar}iB`
                 : this.parent_dataset.recordsize.value;
-              const edit_recordsize_collection = [{ label: `Inherit (${formattedLabel})`, value: 'INHERIT' }];
+              const edit_recordsize_collection: Option[] = [{ label: `Inherit (${formattedLabel})`, value: 'INHERIT' }];
               edit_recordsize.options = edit_recordsize_collection.concat(edit_recordsize.options);
               let sync_value = pk_dataset[0].sync.value;
               if (pk_dataset[0].sync.source === ZfsPropertySource.Default) {

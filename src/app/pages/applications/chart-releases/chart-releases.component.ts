@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -28,6 +29,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { ApplicationsService } from '../applications.service';
 import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
 import { ChartFormComponent } from '../forms/chart-form.component';
@@ -297,7 +299,6 @@ export class ChartReleasesComponent implements OnInit {
           appInfo: catalogApp,
           upgradeSummary: res,
         } as ChartUpgradeDialogConfig,
-        disableClose: false,
       });
       dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((version) => {
         if (!version) {
@@ -339,7 +340,6 @@ export class ChartReleasesComponent implements OnInit {
       data: {
         title: helptext.charts.rollback_dialog.job,
       },
-      disableClose: true,
     });
     self.dialogRef.componentInstance.setCall('chart.release.rollback', [self.rollbackChartName, payload]);
     self.dialogRef.componentInstance.submit();
@@ -426,23 +426,22 @@ export class ChartReleasesComponent implements OnInit {
 
   delete(name: string): void {
     this.translate.get(helptext.charts.delete_dialog.msg).pipe(untilDestroyed(this)).subscribe((msg) => {
-      this.dialogService.confirm(helptext.charts.delete_dialog.title, msg + name + '?')
-        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-              data: {
-                title: helptext.charts.delete_dialog.job,
-              },
-              disableClose: true,
-            });
-            this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-              this.dialogService.closeAllDialogs();
-              this.refreshChartReleases();
-            });
-          }
+      this.dialogService.confirm({
+        title: helptext.charts.delete_dialog.title,
+        message: msg + name + '?',
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+          data: {
+            title: helptext.charts.delete_dialog.job,
+          },
         });
+        this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
+        this.dialogRef.componentInstance.submit();
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+          this.dialogService.closeAllDialogs();
+          this.refreshChartReleases();
+        });
+      });
     });
   }
 
@@ -461,7 +460,6 @@ export class ChartReleasesComponent implements OnInit {
           data: {
             title: helptext.charts.delete_dialog.job,
           },
-          disableClose: true,
         });
         this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', names.map((item) => [item])]);
         this.dialogRef.componentInstance.submit();
@@ -517,7 +515,13 @@ export class ChartReleasesComponent implements OnInit {
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
       if (this.podList.length == 0) {
-        this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
+        this.dialogService.confirm({
+          title: helptext.podConsole.nopod.title,
+          message: helptext.podConsole.nopod.message,
+          hideCheckBox: true,
+          buttonMsg: T('Close'),
+          hideCancel: true,
+        });
       } else {
         // Pods
         const podsConfig: FormSelectConfig = this.choosePod.fieldConfig[0];
@@ -550,7 +554,13 @@ export class ChartReleasesComponent implements OnInit {
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
       if (this.podList.length == 0) {
-        this.dialogService.confirm(helptext.podConsole.nopod.title, helptext.podConsole.nopod.message, true, 'Close', false, null, null, null, null, true);
+        this.dialogService.confirm({
+          title: helptext.podConsole.nopod.title,
+          message: helptext.podConsole.nopod.message,
+          hideCheckBox: true,
+          buttonMsg: T('Close'),
+          hideCancel: true,
+        });
       } else {
         // Pods
         const podsConfig: FormSelectConfig = this.choosePodForLogs.fieldConfig[0];
@@ -623,7 +633,6 @@ export class ChartReleasesComponent implements OnInit {
         width: '686px',
         maxWidth: '686px',
         data: catalogApp,
-        disableClose: false,
       });
     }
   }

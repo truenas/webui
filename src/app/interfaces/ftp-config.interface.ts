@@ -41,3 +41,5 @@ export interface FtpConfig {
   tls_opt_stdenvvars: boolean;
   tls_policy: string;
 }
+
+export type FtpConfigUpdate = Omit<FtpConfig, 'id'>;

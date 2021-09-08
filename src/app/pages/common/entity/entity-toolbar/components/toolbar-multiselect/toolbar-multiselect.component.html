@@ -30,11 +30,11 @@
               ix-auto
               ix-auto-type="option"
               ix-auto-identifier="{{id}}_{{config.placeholder}}_{{option.label}}">
-                <span style="color: var(--red);">
-                  <mat-icon *ngIf="checkLength()" class="fn-checked">check_circle</mat-icon>
-                  <mat-icon *ngIf="!checkLength()" class="fn-unchecked">remove</mat-icon>
-                </span>
-                {{ option.label | translate }}
+              <span style="color: var(--red);">
+                <mat-icon *ngIf="checkLength()" class="fn-checked">check_circle</mat-icon>
+                <mat-icon *ngIf="!checkLength()" class="fn-unchecked">remove</mat-icon>
+              </span>
+              {{ option.label | translate }}
             </mat-option>
 
             <!-- else -->
@@ -42,23 +42,26 @@
               ix-auto
               ix-auto-type="option"
               ix-auto-identifier="{{id}}_{{config.placeholder}}_{{option.label}}">
-                <span>
-                  <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
-                  <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
-                </span>
-                {{ option.label | translate }}
-              </mat-option>
+              <span>
+                <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
+                <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+              </span>
+              {{ option.label | translate }}
+            </mat-option>
 
-        </ng-container>
+          </ng-container>
         </mat-selection-list>
       </div>
 
       <div *ngIf="config.options.length == 0">
         <ng-container>
-          <mat-option disabled style="opacity:0.5"
+          <mat-option
+            disabled
+            style="opacity:0.5"
             ix-auto
             ix-auto-type="option"
-            ix-auto-identifier="{{config.placeholder}}_zeroState">
+            ix-auto-identifier="{{config.placeholder}}_zeroState"
+          >
             {{config.zeroStateMessage ? config.zeroStateMessage : '--'}}
           </mat-option>
         </ng-container>

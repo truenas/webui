@@ -10,3 +10,10 @@ export interface PoolFindResult {
 export type PoolImportParams = [
   { guid: string },
 ];
+
+export type ImportDiskParams = [
+  device: string,
+  fsType: string,
+  options: Record<string, unknown>,
+  dstPath: string,
+];

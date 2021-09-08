@@ -1,56 +1,56 @@
 <mat-nav-list class="" role="list">
-    <!--==== Side menu items ====-->
-    <div class="icon-menu" *ngIf="hasIconTypeMenuItem">
-        <!-- Icon menu separator -->
-        <div class="mt-1 mb-1 icon-menu-separator">
-            <mat-divider [style.margin]="'0 -24px'"></mat-divider>
-            <span [ngStyle]="{paddingLeft: 0, marginLeft: '-6px'}" class="nav-section-title text-muted">{{iconTypeMenuTitle}}</span>
-        </div>
-        <!-- Icon menu items -->
-        <div class="icon-menu-item" *ngFor="let item of menuItems">
-            <button *ngIf="!item.disabled && item.type === 'icon'" mat-button [matTooltip]="item.tooltip" (click)="transferToState(item.state)" routerLinkActive="mat-bg-primary"
-                ix-auto ix-auto-type="button" ix-auto-identifier="item">
-                <mat-icon>{{item.icon}}</mat-icon>
-            </button>
-        </div>
+  <!--==== Side menu items ====-->
+  <div class="icon-menu" *ngIf="hasIconTypeMenuItem">
+    <!-- Icon menu separator -->
+    <div class="mt-1 mb-1 icon-menu-separator">
+      <mat-divider [style.margin]="'0 -24px'"></mat-divider>
+      <span [ngStyle]="{paddingLeft: 0, marginLeft: '-6px'}" class="nav-section-title text-muted">{{iconTypeMenuTitle}}</span>
     </div>
-    <!-- Regular menu items -->
-    <div *ngFor="let item of menuItems; let i = index">
-        <!-- if it's not disabled and not a separator and not icon -->
-        <mat-list-item (click)="updateHighlightedClass(item.state)" class="sidebar-list-item top-level" role="listitem" 
-            *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'" 
-            [ngClass]="{'has-submenu': item.type === 'slideOut', 'highlighted': isHighlighted === item.state}" routerLinkActive="highlighted" id="nav-{{i}}"
-            ix-auto ix-auto-type="option" ix-auto-identifier="{{item.name}}">
-            <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'" name="{{item.name.replace(' ', '_')}}-menu" (click)="closeMenu()" class="sidenav-link">
-                <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{item.name}}" matTooltipPosition="right"></span>
-                <!--<mat-icon>{{item.icon}}</mat-icon>-->
-                <mat-icon *ngIf="item.icon !== 'jail_icon' && item.icon !== 'console-line'">{{item.icon}}</mat-icon>
-                <mat-icon *ngIf="item.icon === 'jail_icon'" svgIcon="{{item.icon}}" style="max-width:28px; margin:0 16px 0 10px;"></mat-icon>
-                <mat-icon *ngIf="item.icon === 'console-line'" role="img" fontSet="mdi-set" fontIcon="mdi-{{item.icon}}" style="font-size:24px;"></mat-icon>
-                <span>{{item.name | translate}}</span>
-            </a>
-            <a *ngIf="item.type === 'slideOut'" name="{{item.name.replace(' ', '_')}}-menu" (click)="toggleMenu(item.state, item.sub)" class="sidenav-link">
-                <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="above"></span>
-                <mat-icon>{{item.icon}}</mat-icon>
-                <span>{{item.name | translate}}</span>
-                <span fxFlex></span>
-                <mat-icon class="menu-caret">keyboard_arrow_right</mat-icon>
-            </a>
-
-            <a [href]="item.state" *ngIf="item.type === 'extLink'" target="_blank" name="{{item.name.replace(' ', '_')}}-menu" class="sidenav-link">
-                <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
-                <mat-icon>{{item.icon}}</mat-icon>
-                <span>{{item.name | translate}}</span>
-            </a>
-            <a mat-button style="height: 0; position: absolute;">
-                <!-- 'absorbs' the focus behavior -->
-            </a>
-        </mat-list-item>
-
-        <!-- If item type is separator -->
-        <div class="mt-1 mb-1" *ngIf="!item.disabled && item.type === 'separator'">
-            <mat-divider></mat-divider>
-            <span class="nav-section-title text-muted" *ngIf="!!item.name">{{item.name | translate}}</span>
-        </div>
+    <!-- Icon menu items -->
+    <div class="icon-menu-item" *ngFor="let item of menuItems">
+      <button *ngIf="!item.disabled && item.type === 'icon'" mat-button [matTooltip]="item.tooltip" routerLinkActive="mat-bg-primary"
+              ix-auto ix-auto-type="button" ix-auto-identifier="item">
+        <mat-icon>{{item.icon}}</mat-icon>
+      </button>
     </div>
+  </div>
+  <!-- Regular menu items -->
+  <div *ngFor="let item of menuItems; let i = index">
+    <!-- if it's not disabled and not a separator and not icon -->
+    <mat-list-item (click)="updateHighlightedClass(item.state)" class="sidebar-list-item top-level" role="listitem"
+          *ngIf="!item.disabled && item.type !== 'separator' && item.type !== 'icon'"
+          [ngClass]="{'has-submenu': item.type === 'slideOut', 'highlighted': isHighlighted === item.state}" routerLinkActive="highlighted" id="nav-{{i}}"
+          ix-auto ix-auto-type="option" ix-auto-identifier="{{item.name}}">
+      <a [routerLink]="['/', item.state]" *ngIf="item.type === 'link'" name="{{item.name.replace(' ', '_')}}-menu" (click)="closeMenu()" class="sidenav-link">
+        <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{item.name}}" matTooltipPosition="right"></span>
+        <!--<mat-icon>{{item.icon}}</mat-icon>-->
+        <mat-icon *ngIf="item.icon !== 'jail_icon' && item.icon !== 'console-line'">{{item.icon}}</mat-icon>
+        <mat-icon *ngIf="item.icon === 'jail_icon'" svgIcon="{{item.icon}}" style="max-width:28px; margin:0 16px 0 10px;"></mat-icon>
+        <mat-icon *ngIf="item.icon === 'console-line'" role="img" fontSet="mdi-set" fontIcon="mdi-{{item.icon}}" style="font-size:24px;"></mat-icon>
+        <span>{{item.name | translate}}</span>
+      </a>
+      <a *ngIf="item.type === 'slideOut'" name="{{item.name.replace(' ', '_')}}-menu" (click)="toggleMenu(item.state, item.sub)" class="sidenav-link">
+        <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="above"></span>
+        <mat-icon>{{item.icon}}</mat-icon>
+        <span>{{item.name | translate}}</span>
+        <span fxFlex></span>
+        <mat-icon class="menu-caret">keyboard_arrow_right</mat-icon>
+      </a>
+
+      <a [href]="item.state" *ngIf="item.type === 'extLink'" target="_blank" name="{{item.name.replace(' ', '_')}}-menu" class="sidenav-link">
+        <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
+        <mat-icon>{{item.icon}}</mat-icon>
+        <span>{{item.name | translate}}</span>
+      </a>
+      <a mat-button style="height: 0; position: absolute;">
+        <!-- 'absorbs' the focus behavior -->
+      </a>
+    </mat-list-item>
+
+    <!-- If item type is separator -->
+    <div class="mt-1 mb-1" *ngIf="!item.disabled && item.type === 'separator'">
+      <mat-divider></mat-divider>
+      <span class="nav-section-title text-muted" *ngIf="!!item.name">{{item.name | translate}}</span>
+    </div>
+  </div>
 </mat-nav-list>

@@ -1,4 +1,3 @@
-
 <mat-card id="train-card">
   <mat-spinner
     [diameter]='40'
@@ -7,27 +6,53 @@
   </mat-spinner>
   <div>
     <div class="train-card-row">
-      <mat-checkbox [(ngModel)]="autoCheck" id="autocheck" [ngModelOptions]="{standalone: true}"
-        (change)="toggleAutoCheck()" ix-auto ix-auto-type="checkbox" ix-auto-identifier="daily-updates">{{"Check for Updates Daily and Download if Available" | translate}}</mat-checkbox>
+      <mat-checkbox
+        [(ngModel)]="autoCheck"
+        id="autocheck"
+        [ngModelOptions]="{standalone: true}"
+        (change)="toggleAutoCheck()"
+        ix-auto ix-auto-type="checkbox" ix-auto-identifier="daily-updates"
+      >{{"Check for Updates Daily and Download if Available" | translate}}</mat-checkbox>
       <tooltip [message]=updatecheck_tooltip ix-auto ix-auto-type="tooltip-icon" ix-auto-identifier="update-check"></tooltip>
     </div>
     <div class="train-card-row train-select-row" *ngIf="trains.length > 1; else trainName">
       <mat-label id="train-label">{{"Train" | translate}}</mat-label>
-      <mat-select class="form-control full-width" id="train-selector" [(ngModel)]="train"  (ngModelChange)="onTrainChanged($event)"
-        ix-auto ix-auto-type="select" ix-auto-identifier="train-select">
-        <mat-option *ngFor="let train of trains" [value]="train.name"
-          ix-auto ix-auto-type="option" ix-auto-identifier="{{train.name}}">{{ train.name }} - {{ train.description }}</mat-option>
+      <mat-select
+        class="form-control full-width"
+        id="train-selector"
+        [(ngModel)]="train"
+        (ngModelChange)="onTrainChanged($event)"
+        ix-auto ix-auto-type="select" ix-auto-identifier="train-select"
+      >
+        <mat-option
+          *ngFor="let train of trains"
+          [value]="train.name"
+          ix-auto ix-auto-type="option" ix-auto-identifier="{{train.name}}"
+        >{{ train.name }} - {{ train.description }}</mat-option>
       </mat-select>
-      <button mat-mini-fab color="primary" id="refresh-button" matTooltip="Refresh" (click)="check()"
-        ix-auto ix-auto-type="button" ix-auto-identifier="refresh">
+      <button
+        mat-mini-fab
+        color="primary"
+        id="refresh-button"
+        matTooltip="Refresh"
+        (click)="check()"
+        ix-auto ix-auto-type="button" ix-auto-identifier="refresh"
+      >
         <mat-icon>refresh</mat-icon>
       </button>
     </div>
     <ng-template #trainName>
       <div class="train-card-row train-select-row">
         <div id="single-train-name">{{"Current Train:" | translate}} {{ train }} <span *ngIf="singleDescription">- {{ singleDescription }}</span></div>
-        <button mat-mini-fab color="primary" [disabled]="isUpdateRunning" id="single-train-refresh-button" matTooltip="Refresh" (click)="check()"
-          ix-auto ix-auto-type="button" ix-auto-identifier="refresh">
+        <button
+          mat-mini-fab
+          color="primary"
+          [disabled]="isUpdateRunning"
+          id="single-train-refresh-button"
+          matTooltip="Refresh"
+          (click)="check()"
+          ix-auto ix-auto-type="button" ix-auto-identifier="refresh"
+        >
           <mat-icon>refresh</mat-icon>
         </button>
       </div>
@@ -50,29 +75,29 @@
       <div *ngIf="error">
         {{ error }}
       </div>
-     </div>
+    </div>
   </div>
 </mat-card>
 
 <mat-card *ngIf="status == SystemUpdateStatus.Available && !updating" id="upgrades-card">
   <mat-card-content id="upgrades-card-scrollbox">
-  <table  class="table table-striped table-sm">
-    <thead>
-      <tr>
-        <th>{{"Operation" | translate}}</th>
-        <th>{{"Name" | translate}}</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let p of packages">
-        <td>{{ p.operation }}</td>
-        <td>{{ p.name }}</td>
-      </tr>
-      <tr *ngIf="packages.length == 0">
-        <td>{{"No update found." | translate}}</td>
-      </tr>
-    </tbody>
-  </table>
+    <table  class="table table-striped table-sm">
+      <thead>
+        <tr>
+          <th>{{"Operation" | translate}}</th>
+          <th>{{"Name" | translate}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of packages">
+          <td>{{ p.operation }}</td>
+          <td>{{ p.name }}</td>
+        </tr>
+        <tr *ngIf="packages.length == 0">
+          <td>{{"No update found." | translate}}</td>
+        </tr>
+      </tbody>
+    </table>
   </mat-card-content>
 </mat-card>
 
@@ -90,7 +115,7 @@
 <mat-card class="p-0" id="changelog-card" *ngIf="changeLog && nightly_train">
   <mat-card-title id="changelog-title">
     <!-- <div class="mat-toolbar mat-card-toolbar"> -->
-      <div >{{"Change log" | translate}}</div>
+    <div >{{"Change log" | translate}}</div>
     <!-- </div> -->
   </mat-card-title>
   <mat-card-content id="changelog-scrollbox">
@@ -142,14 +167,29 @@
 <mat-card id="button-card" *ngIf="!isUpdateRunning">
   <div class="row">
     <div class="col-md-12">
-      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="updates_available" (click)="downloadUpdate()" [disabled]="status == 'REBOOT_REQUIRED'"
-        ix-auto ix-auto-type="button" ix-auto-identifier="DOWNLOAD UPDATES">{{" Download Updates" | translate}}</button>
-      <button mat-button class="btn btn-success update-button mat-basic" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" (click)="applyPendingUpdate()"
-        ix-auto ix-auto-type="button" ix-auto-identifier="APPLY PENDING UPDATE">{{"Apply Pending update" | translate}}</button>
-      <button mat-button class="btn btn-success update-button mat-basic" (click)="manualUpdate()"
-        ix-auto ix-auto-type="button" ix-auto-identifier="INSTALL MANUAL UPDATE FILE">{{"Install Manual Update File" | translate}}</button>
+      <button
+        *ngIf="updates_available"
+        mat-button
+        class="btn btn-success update-button mat-basic"
+        (click)="downloadUpdate()"
+        [disabled]="status == 'REBOOT_REQUIRED'"
+        ix-auto ix-auto-type="button" ix-auto-identifier="DOWNLOAD UPDATES"
+      >{{" Download Updates" | translate}}</button>
+      <button
+        *ngIf="update_downloaded && status !== 'UNAVAILABLE'"
+        mat-button
+        class="btn btn-success update-button mat-basic"
+        (click)="applyPendingUpdate()"
+        ix-auto ix-auto-type="button" ix-auto-identifier="APPLY PENDING UPDATE"
+      >{{"Apply Pending update" | translate}}</button>
+      <button
+        mat-button
+        class="btn btn-success update-button mat-basic"
+        (click)="manualUpdate()"
+        ix-auto ix-auto-type="button" ix-auto-identifier="INSTALL MANUAL UPDATE FILE"
+      >{{"Install Manual Update File" | translate}}</button>
       <!-- <button mat-button class="btn btn-success update-button red-warning-button" *ngIf="failover_upgrade_pending" (click)="applyFailoverUpgrade()">{{"Apply Failover Upgrade" | translate}}</button> -->
-      <p><font color ="red">{{general_update_error}}</font></p>
+      <p><font color="red">{{general_update_error}}</font></p>
     </div>
   </div>
 </mat-card>

@@ -12,7 +12,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { CoreEvent } from 'app/interfaces/events';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -95,7 +95,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.core.register({
       observerClass: this,
       eventName: 'SysInfo',
-    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
       const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'version' });
       config.paraText += evt.data.version;
     });
@@ -169,7 +169,6 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((ures) => {
       this.dialogRef = this.dialog.open(EntityJobComponent, {
         data: { title: helptext.manual_update_action },
-        disableClose: true,
       });
       if (this.isHA) {
         this.dialogRef.componentInstance.disableProgressValue(true);
@@ -195,10 +194,13 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
           this.isUpdateRunning = false;
           this.systemService.updateDone(); // Send 'finished' signal to topbar
           this.router.navigate(['/']);
-          this.dialogService.confirm(helptext.ha_update.complete_title,
-            helptext.ha_update.complete_msg, true,
-            helptext.ha_update.complete_action, false, '', '', '', '', true).pipe(untilDestroyed(this)).subscribe(() => {
-          });
+          this.dialogService.confirm({
+            title: helptext.ha_update.complete_title,
+            message: helptext.ha_update.complete_msg,
+            hideCheckBox: true,
+            buttonMsg: helptext.ha_update.complete_action,
+            hideCancel: true,
+          }).pipe(untilDestroyed(this)).subscribe(() => {});
         }
       });
       this.dialogRef.componentInstance.prefailure.pipe(untilDestroyed(this)).subscribe((prefailure: any) => {
@@ -240,7 +242,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   }
 
   showRunningUpdate(jobId: number): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant(T('Update')) } });
     if (this.isHA) {
       this.dialogRef.componentInstance.disableProgressValue(true);
     }
