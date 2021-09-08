@@ -54,6 +54,15 @@
                   </div>
                 </button>
 
+                <div class="path-locked-status" *ngSwitchCase="'path-locked-status'">
+                  <div class="text-overflow-ellipsis">{{ element[column.prop] }}</div>
+                  <mat-icon
+                    *ngIf="element.locked"
+                    [matTooltip]="'Dataset is currently locked' | translate"
+                    class="append"
+                  >locked</mat-icon>
+                </div>
+
                 <ng-container *ngSwitchDefault>
                   <div class="text-overflow-ellipsis" [matTooltip]="column.enableMatTooltip ? element[column.prop] : null">{{element[column.prop]}}</div>
                 </ng-container>

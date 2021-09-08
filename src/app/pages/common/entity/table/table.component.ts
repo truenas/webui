@@ -33,6 +33,7 @@ export interface AppTableColumn {
   width?: string;
   state?: any;
   button?: boolean;
+  showLockedStatus?: boolean;
   tooltip?: string;
   iconTooltip?: string;
   enableMatTooltip?: boolean;
@@ -337,6 +338,10 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     if (column.prop === 'state' && column.button === true) {
       return 'state-button';
+    }
+
+    if (['path', 'paths'].includes(column.prop) && column.showLockedStatus) {
+      return 'path-locked-status';
     }
 
     return 'textview';
