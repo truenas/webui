@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -90,10 +91,17 @@ export class LocalizationFormComponent implements FormConfiguration {
     private sysGeneralService: SystemGeneralService,
     public localeService: LocaleService,
     private modalService: ModalService,
-  ) {
-    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.configData = res;
-    });
+  ) {}
+
+  prerequisite(): Promise<boolean> {
+    return this.sysGeneralService.getGeneralConfig$.pipe(
+      map((configData) => {
+        this.configData = configData;
+        return true;
+      }),
+      take(1),
+      untilDestroyed(this),
+    ).toPromise();
   }
 
   afterInit(entityEdit: EntityFormComponent): void {

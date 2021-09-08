@@ -6,7 +6,6 @@ import {
   Router, ActivatedRoute,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
@@ -24,7 +23,6 @@ import {
   SystemGeneralService,
   WebSocketService,
 } from 'app/services';
-import { DialogService } from 'app/services/dialog.service';
 import { ErdService } from 'app/services/erd.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
@@ -84,18 +82,14 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   fieldSets: FieldSet[];
   diskReportConfigReady = false;
   actionsConfig: any;
-  formComponent: ReportsConfigComponent;
 
   constructor(
     private erdService: ErdService,
-    public translate: TranslateService,
     public modalService: ModalService,
-    public dialogService: DialogService,
     private router: Router,
     private core: CoreService,
     private route: ActivatedRoute,
     protected ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService,
   ) {}
 
   ngOnInit(): void {
@@ -492,8 +486,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     this.multipathTitles = multipathTitles;
 
-    // uniqueNames = uniqueNames.concat(multipathNames);
-
     const diskDevices = uniqueNames.map((devname) => {
       const spl = devname.split(' ');
       const obj = { label: devname, value: spl[0] };
@@ -504,18 +496,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   showConfigForm(): void {
-    if (this.formComponent) {
-      delete this.formComponent;
-    }
-    this.generateFormComponent();
-    this.modalService.open('slide-in-form', this.formComponent);
-  }
-
-  generateFormComponent(): void {
-    this.formComponent = new ReportsConfigComponent(this.ws, this.dialogService);
-    this.formComponent.title = T('Reports Configuration');
-    this.formComponent.isOneColumnForm = true;
-    this.formComponent.afterModalFormSaved = () => {
+    const formComponent = this.modalService.openInSlideIn(ReportsConfigComponent);
+    formComponent.title = T('Reports Configuration');
+    formComponent.isOneColumnForm = true;
+    formComponent.afterModalFormSaved = () => {
       this.modalService.close('slide-in-form');
     };
   }

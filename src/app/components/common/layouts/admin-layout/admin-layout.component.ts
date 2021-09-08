@@ -136,6 +136,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isSidenavOpen = false;
     }
     this.checkIfConsoleMsgShows();
+    this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.checkIfConsoleMsgShows();
+    });
 
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
 
@@ -187,9 +190,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   checkIfConsoleMsgShows(): void {
-    this.sysGeneralService.getAdvancedConfig$.pipe(
+    this.sysGeneralService.getGeneralConfig$.pipe(
       untilDestroyed(this),
-    ).subscribe((res) => this.onShowConsoleFooterBar(res.consolemsg));
+    ).subscribe((res) => this.onShowConsoleFooterBar(res.ui_consolemsg));
   }
 
   getLogConsoleMsg(): void {
