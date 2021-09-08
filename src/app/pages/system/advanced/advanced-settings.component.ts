@@ -1,11 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Type } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import * as cronParser from 'cron-parser';
 import { Subject } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
@@ -16,6 +15,7 @@ import { helptext_system_general as helptext } from 'app/helptext/system/general
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -68,16 +68,6 @@ export class AdvancedSettingsComponent implements OnInit {
   systemDatasetPool: string;
   entityForm: EntityFormComponent;
   isFirstTime = true;
-
-  // Components included in this dashboard
-  protected tunableFormComponent: TunableFormComponent;
-  protected consoleFormComponent: ConsoleFormComponent;
-  protected isolatedGpuPcisFormComponent: IsolatedGpuPcisFormComponent;
-  protected kernelFormComponent: KernelFormComponent;
-  protected syslogFormComponent: SyslogFormComponent;
-  protected cronFormComponent: CronFormComponent;
-  protected initShutdownFormComponent: InitshutdownFormComponent;
-  protected systemDatasetPoolComponent: SystemDatasetPoolComponent;
 
   emptyPageConf: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -235,11 +225,6 @@ export class AdvancedSettingsComponent implements OnInit {
 
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
-    });
-
-    this.refreshForms();
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshForms();
     });
 
     this.formEvent$ = new Subject();
@@ -418,38 +403,40 @@ export class AdvancedSettingsComponent implements OnInit {
   }
 
   onSettingsPressed(name: CardId, id?: number): void {
-    let addComponent: TunableFormComponent
-    | ConsoleFormComponent
-    | SyslogFormComponent
+    let addComponent: Type<ConsoleFormComponent
     | KernelFormComponent
+    | SyslogFormComponent
+    | TunableFormComponent
     | CronFormComponent
     | InitshutdownFormComponent
+    | SystemDatasetPoolComponent
     | IsolatedGpuPcisFormComponent
-    | SystemDatasetPoolComponent;
+    >;
+
     switch (name) {
       case CardId.Console:
-        addComponent = this.consoleFormComponent;
+        addComponent = ConsoleFormComponent;
         break;
       case CardId.Kernel:
-        addComponent = this.kernelFormComponent;
+        addComponent = KernelFormComponent;
         break;
       case CardId.Syslog:
-        addComponent = this.syslogFormComponent;
+        addComponent = SyslogFormComponent;
         break;
       case CardId.Sysctl:
-        addComponent = this.tunableFormComponent;
+        addComponent = TunableFormComponent;
         break;
       case CardId.Cron:
-        addComponent = this.cronFormComponent;
+        addComponent = CronFormComponent;
         break;
       case CardId.InitShutdown:
-        addComponent = this.initShutdownFormComponent;
+        addComponent = InitshutdownFormComponent;
         break;
       case CardId.SystemDatasetPool:
-        addComponent = this.systemDatasetPoolComponent;
+        addComponent = SystemDatasetPoolComponent;
         break;
       case CardId.Gpus:
-        addComponent = this.isolatedGpuPcisFormComponent;
+        addComponent = IsolatedGpuPcisFormComponent;
         break;
       default:
         break;
@@ -463,14 +450,15 @@ export class AdvancedSettingsComponent implements OnInit {
             this.sysGeneralService.sendConfigData(this.configData as any);
           }
 
-          this.modalService.open('slide-in-form', addComponent, id);
+          this.modalService.openInSlideIn(addComponent, id);
           this.isFirstTime = false;
         });
     } else {
       if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
         this.sysGeneralService.sendConfigData(this.configData as any);
       }
-      this.modalService.open('slide-in-form', addComponent, id);
+
+      this.modalService.openInSlideIn(addComponent, id);
     }
   }
 
@@ -554,59 +542,6 @@ export class AdvancedSettingsComponent implements OnInit {
         card.tableConf.tableComponent.getData();
       }
     });
-  }
-
-  refreshForms(): void {
-    this.tunableFormComponent = new TunableFormComponent(this.ws, this.sysGeneralService);
-    this.consoleFormComponent = new ConsoleFormComponent(
-      this.router,
-      this.language,
-      this.ws,
-      this.dialog,
-      this.loader,
-      this.http,
-      this.storage,
-      this.sysGeneralService,
-      this.modalService,
-    );
-    this.isolatedGpuPcisFormComponent = new IsolatedGpuPcisFormComponent(
-      this.ws,
-      this.loader,
-      this.sysGeneralService,
-      this.modalService,
-    );
-    this.kernelFormComponent = new KernelFormComponent(
-      this.router,
-      this.language,
-      this.ws,
-      this.dialog,
-      this.loader,
-      this.http,
-      this.storage,
-      this.sysGeneralService,
-      this.modalService,
-    );
-    this.syslogFormComponent = new SyslogFormComponent(
-      this.router,
-      this.language,
-      this.ws,
-      this.dialog,
-      this.loader,
-      this.http,
-      this.storage,
-      this.sysGeneralService,
-      this.modalService,
-    );
-    this.cronFormComponent = new CronFormComponent(this.userService, this.modalService);
-    this.initShutdownFormComponent = new InitshutdownFormComponent(this.modalService);
-    this.systemDatasetPoolComponent = new SystemDatasetPoolComponent(
-      this.ws,
-      this.loader,
-      this.dialog,
-      this.translate,
-      this.modalService,
-      this.sysGeneralService,
-    );
   }
 
   cronDataSourceHelper(data: any[]): any[] {

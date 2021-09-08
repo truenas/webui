@@ -18,7 +18,6 @@ import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
-import { ModalService } from 'app/services/modal.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
@@ -62,7 +61,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private media: MediaObserver,
     protected ws: WebSocketService,
     public language: LanguageService,
-    public modalService: ModalService,
     public dialog: MatDialog,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
@@ -256,14 +254,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   onCloseNotify(): void {
     this.isSidenotOpen = false;
-  }
-
-  openModal(id: string): void {
-    this.modalService.open(id, {});
-  }
-
-  closeModal(id: string): void {
-    this.modalService.close(id);
   }
 
   // For the slide-in menu

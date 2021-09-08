@@ -142,7 +142,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     },
   };
 
-  globalSettingsWidget: CardWidgetConf = {
+  globalSettingsWidget: CardWidgetConf<NetworkComponent> = {
     title: T('Global Configuration'),
     data: {},
     parent: this,
