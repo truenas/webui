@@ -28,7 +28,6 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import { ErdService } from 'app/services/erd.service';
 import { NotificationsService } from 'app/services/notifications.service';
-import { ENV_PROVIDERS } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
 import { AppCommonModule } from './components/common/app-common.module';
@@ -119,7 +118,6 @@ import { WebSocketService } from './services/ws.service';
     NotificationsService,
     ErdService,
     JobsManagerStore,
-    ENV_PROVIDERS,
   ],
   bootstrap: [
     AppComponent,

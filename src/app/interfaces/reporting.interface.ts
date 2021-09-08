@@ -101,6 +101,8 @@ export interface ReportingConfig {
   id: number;
 }
 
+export type ReportingConfigUpdate = Omit<ReportingConfig, 'id'>;
+
 export type ReportingQueryParams = [
   [ReportingParams],
   { start: number; end: number },

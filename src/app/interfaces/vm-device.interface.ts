@@ -22,9 +22,9 @@ export interface VmCdRomAttributes {
 
 export interface VmRawFileAttributes {
   boot: boolean;
-  logical_sectorsize: any;
+  logical_sectorsize: number;
   path: string;
-  physical_sectorsize: any;
+  physical_sectorsize: number;
   size: number;
   type: string;
 }
@@ -36,9 +36,9 @@ export interface VmNicAttributes {
 }
 
 export interface VmDiskAttributes {
-  logical_sectorsize: any;
+  logical_sectorsize: number;
   path: string;
-  physical_sectorsize: any;
+  physical_sectorsize: number;
   type: string;
 }
 

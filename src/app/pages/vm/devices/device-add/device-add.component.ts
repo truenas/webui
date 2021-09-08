@@ -50,8 +50,6 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 
-  protected addZvolComponent: ZvolWizardComponent;
-
   fieldConfig: FormSelectConfig[] = [
     {
       type: 'select',
@@ -487,8 +485,6 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       _.find(this.displayFieldConfig, { name: 'wait' }).isHidden = false;
       _.find(this.displayFieldConfig, { name: 'resolution' }).isHidden = false;
     }
-    this.addZvolComponent = new ZvolWizardComponent(this.core, this.router, this.aroute, this.ws, this.loader,
-      this.dialogService, this.storageService, this.translate, this.modalService);
 
     this.afterInit();
   }
@@ -587,7 +583,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   }
 
   addZvol(): void {
-    this.modalService.open('slide-in-form', this.addZvolComponent);
+    this.modalService.openInSlideIn(ZvolWizardComponent);
   }
 
   updateZvolSearchOptions(value = '', parent: this): void {

@@ -85,7 +85,6 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    const formComponent = new KerberosRealmsFormComponent(this.modalService);
-    this.modalService.open('slide-in-form', formComponent, id);
+    this.modalService.openInSlideIn(KerberosRealmsFormComponent, id);
   }
 }

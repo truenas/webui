@@ -52,7 +52,6 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   route_edit: string[] = ['vm', 'edit'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private productType = window.localStorage.getItem('product_type') as ProductType;
-  addComponent: VMWizardComponent;
   hasVirtualizationSupport = false;
   disableActionsConfig = true;
 
@@ -118,22 +117,11 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   ngOnInit(): void {
-    this.refreshVMWizard();
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshVMWizard();
-    });
-
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(
       () => {
         this.entityList.getData();
       },
     );
-  }
-
-  refreshVMWizard(): void {
-    this.addComponent = new VMWizardComponent(this.ws, this.vmService, this.networkService, this.loader,
-      this.dialog, this.messageService, this.dialogService, this.storageService, this.prefService,
-      this.translate, this.modalService, this.systemGeneralService);
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -258,17 +246,16 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   onMemoryError(row: VirtualMachineRow): void {
-    const memoryDialog = this.dialogService.confirm(
-      helptext.memory_dialog.title,
-      helptext.memory_dialog.message,
-      true,
-      helptext.memory_dialog.buttonMsg,
-      true,
-      helptext.memory_dialog.secondaryCheckBoxMsg,
-      undefined,
-      [{ overcommit: false }],
-      helptext.memory_dialog.tooltip,
-    );
+    const memoryDialog = this.dialogService.confirm({
+      title: helptext.memory_dialog.title,
+      message: helptext.memory_dialog.message,
+      hideCheckBox: true,
+      buttonMsg: helptext.memory_dialog.buttonMsg,
+      secondaryCheckBox: true,
+      secondaryCheckBoxMsg: helptext.memory_dialog.secondaryCheckBoxMsg,
+      data: [{ overcommit: false }],
+      tooltip: helptext.memory_dialog.tooltip,
+    });
 
     memoryDialog.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe(() => {
       memoryDialog.componentInstance.isSubmitEnabled = !memoryDialog.componentInstance.isSubmitEnabled;
@@ -673,6 +660,6 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   doAdd(): void {
-    this.modalService.open('slide-in-form', this.addComponent);
+    this.modalService.openInSlideIn(VMWizardComponent);
   }
 }

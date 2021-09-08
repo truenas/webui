@@ -20,6 +20,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { StorageService } from 'app/services/storage.service';
+import { T } from 'app/translate-marker';
 import { ApplicationsService } from '../applications.service';
 
 interface PodLogEvent {
@@ -87,7 +88,13 @@ export class PodLogsComponent implements OnInit, OnDestroy {
 
         const podDetail = res[this.pod_name];
         if (!podDetail) {
-          this.dialogService.confirm(helptext.podLogs.nopod.title, helptext.podLogs.nopod.message, true, 'Close', false, null, null, null, null, true);
+          this.dialogService.confirm({
+            title: helptext.podLogs.nopod.title,
+            message: helptext.podLogs.nopod.message,
+            hideCheckBox: true,
+            buttonMsg: T('Close'),
+            hideCancel: true,
+          });
         }
       });
 

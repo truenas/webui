@@ -89,7 +89,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
-    this.instructions = T(`Enter <strong>${(this.conf as any)['name']}</strong> below to confirm.`);
+    this.instructions = T(`Enter <strong>${this.conf.name}</strong> below to confirm.`);
   }
 
   submit(): void {

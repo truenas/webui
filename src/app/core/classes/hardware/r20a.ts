@@ -1,3 +1,4 @@
+import { Point } from 'pixi.js';
 import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
 
@@ -17,7 +18,7 @@ export class R20A extends Chassis {
     this.front.totalDriveTrays = 12;
 
     const frontScale = 0.98;
-    this.front.driveTrays.scale = { x: frontScale, y: frontScale };
+    this.front.driveTrays.scale = { x: frontScale, y: frontScale } as Point;
     this.front.driveTraysOffsetX = 35;
     this.front.driveTraysOffsetY = -65;
 

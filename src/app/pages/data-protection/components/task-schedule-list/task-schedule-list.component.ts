@@ -8,17 +8,7 @@ import { TaskService } from 'app/services';
 @UntilDestroy()
 @Component({
   selector: 'app-task-schedule-list',
-  template: `
-    <h4 [style.margin]="'6px 16px 12px'">{{ 'Upcoming tasks' | translate }}</h4>
-
-    <mat-divider></mat-divider>
-
-    <mat-list>
-      <mat-list-item *ngFor="let run of futureRuns">
-        {{ run }}
-      </mat-list-item>
-    </mat-list>
-  `,
+  templateUrl: './task-schedule-list.component.html',
 })
 export class TaskScheduleListComponent implements OnInit, OnChanges {
   private static readonly LIST_LENGTH = 5;

@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 
-export interface CardWidgetConf {
+export interface CardWidgetConf<P = any> {
   title: string;
   data: any;
-  parent: any;
+  parent: P;
   icon?: string;
   showGroupTitle?: boolean;
   name?: string;

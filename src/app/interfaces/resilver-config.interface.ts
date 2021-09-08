@@ -5,3 +5,5 @@ export interface ResilverConfig {
   id: number;
   weekday: number[];
 }
+
+export type ResilverConfigUpdate = Omit<ResilverConfig, 'id'>;

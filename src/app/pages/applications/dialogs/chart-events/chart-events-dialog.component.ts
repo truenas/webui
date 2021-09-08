@@ -1,7 +1,10 @@
 import {
-  OnInit, Component, ViewEncapsulation, Inject,
+  OnInit, Component, Inject, ViewChild,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatExpansionPanel } from '@angular/material/expansion';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { forkJoin } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
@@ -10,14 +13,14 @@ import { ApplicationsService } from 'app/pages/applications/applications.service
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
 
+@UntilDestroy()
 @Component({
   selector: 'chart-events-dialog',
   styleUrls: ['./chart-events-dialog.component.scss'],
   templateUrl: './chart-events-dialog.component.html',
-  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
-  encapsulation: ViewEncapsulation.None,
 })
 export class ChartEventsDialog implements OnInit {
+  @ViewChild('eventsPannel', { static: true }) eventsPannel: MatExpansionPanel;
   catalogApp: ChartRelease;
   containerImages: { [key: string]: ChartContainerImage } = {};
   chartEvents: ChartReleaseEvent[] = [];
@@ -35,21 +38,19 @@ export class ChartEventsDialog implements OnInit {
   }
 
   ngOnInit(): void {
-    const chartQueryPromise = this.appService.getChartReleaseWithResources(this.catalogApp.name).toPromise();
-    const chartEventPromise = this.appService.getChartReleaseEvents(this.catalogApp.name).toPromise();
-
     this.loader.open();
-    Promise.all([chartQueryPromise, chartEventPromise]).then(
-      ([charts, events]) => {
-        this.loader.close();
-        if (charts) {
-          this.catalogApp = charts[0];
-        }
-        if (events) {
-          this.chartEvents = events;
-        }
-      },
-    );
+    forkJoin([
+      this.appService.getChartReleaseWithResources(this.catalogApp.name),
+      this.appService.getChartReleaseEvents(this.catalogApp.name),
+    ]).pipe(untilDestroyed(this)).subscribe(([charts, events]) => {
+      this.loader.close();
+      if (charts) {
+        this.catalogApp = charts[0];
+      }
+      if (events) {
+        this.chartEvents = events;
+      }
+    });
   }
 
   // return the container image status
@@ -84,5 +85,14 @@ export class ChartEventsDialog implements OnInit {
     }
 
     return label;
+  }
+
+  refreshEvents(): void {
+    this.loader.open();
+    this.appService.getChartReleaseEvents(this.catalogApp.name).pipe(untilDestroyed(this)).subscribe((evt) => {
+      this.loader.close();
+      this.chartEvents = evt;
+      this.eventsPannel.open();
+    });
   }
 }

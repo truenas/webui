@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
@@ -26,8 +25,6 @@ import { CatalogEditFormComponent } from '../forms/catalog-edit-form.component';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit {
-  addComponent: CatalogAddFormComponent;
-  editComponent: CatalogEditFormComponent;
   title = 'Catalogs';
   queryCall: 'catalog.query' = 'catalog.query';
   wsDelete: 'catalog.delete' = 'catalog.delete';
@@ -71,17 +68,10 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     private dialogService: DialogService,
     private loader: AppLoaderService,
     private ws: WebSocketService,
-    private prefService: PreferencesService,
     private modalService: ModalService,
   ) {}
 
   ngOnInit(): void {
-    this.refreshUserForm();
-
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshUserForm();
-    });
-
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       if (event.fields.method == 'catalog.sync') {
         const jobId = event.fields.id;
@@ -95,11 +85,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
         }
       }
     });
-  }
-
-  refreshUserForm(): void {
-    this.addComponent = new CatalogAddFormComponent(this.mdDialog, this.dialogService, this.modalService);
-    this.editComponent = new CatalogEditFormComponent(this.mdDialog, this.dialogService, this.modalService);
   }
 
   refresh(): void {
@@ -159,11 +144,11 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   }
 
   doAdd(): void {
-    this.modalService.open('slide-in-form', this.addComponent);
+    this.modalService.openInSlideIn(CatalogAddFormComponent);
   }
 
   edit(row: Catalog): void {
-    this.modalService.open('slide-in-form', this.editComponent, row.label);
+    this.modalService.openInSlideIn(CatalogEditFormComponent, row.label);
   }
 
   refreshRow(row: Catalog): void {

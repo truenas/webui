@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
@@ -35,14 +34,14 @@ import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
 interface PoolDiskInfo {
-  name: any;
-  read: any;
-  write: any;
-  checksum: any;
+  name: string;
+  read: number;
+  write: number;
+  checksum: number;
   status: any;
   actions?: any;
-  path?: any;
-  guid: any;
+  path?: string;
+  guid: string;
 }
 
 @UntilDestroy()
@@ -155,8 +154,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     protected aroute: ActivatedRoute,
     protected core: CoreService,
     protected ws: WebSocketService,
-    protected translate: TranslateService,
-    protected router: Router,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected matDialog: MatDialog,
@@ -640,9 +637,8 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   }
 
   onClickEdit(pk: string): void {
-    const diskForm = new DiskFormComponent(this.router, this.ws, this.aroute);
+    const diskForm = this.modalService.openInSlideIn(DiskFormComponent);
     diskForm.inIt(pk);
-    this.modalService.open('slide-in-form', diskForm);
   }
 
   poolRemove(id: number, label: number | string): void {

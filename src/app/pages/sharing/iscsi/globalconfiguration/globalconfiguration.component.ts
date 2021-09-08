@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { shared, helptext_sharing_iscsi } from 'app/helptext/sharing';
@@ -87,24 +88,26 @@ export class GlobalconfigurationComponent implements FormConfiguration {
     this.ws.call('service.query', [[]]).pipe(untilDestroyed(this)).subscribe((service_res) => {
       const service = _.find(service_res, { service: ServiceName.Iscsi });
       if (!service.enable) {
-        this.dialogService.confirm(shared.dialog_title, shared.dialog_message,
-          true, shared.dialog_button).pipe(untilDestroyed(this)).subscribe((dialogRes: boolean) => {
-          if (dialogRes) {
-            this.loader.open();
-            this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
-              this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
-                this.loader.close();
-                this.dialogService.info(T('iSCSI') + shared.dialog_started_title,
-                  T('The iSCSI') + shared.dialog_started_message, '250px', 'info');
-              }, (err) => {
-                this.loader.close();
-                this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
-              });
+        this.dialogService.confirm({
+          title: shared.dialog_title,
+          message: shared.dialog_message,
+          hideCheckBox: true,
+          buttonMsg: shared.dialog_button,
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          this.loader.open();
+          this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
+              this.loader.close();
+              this.dialogService.info(T('iSCSI') + shared.dialog_started_title,
+                T('The iSCSI') + shared.dialog_started_message, '250px', 'info');
             }, (err) => {
               this.loader.close();
               this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
             });
-          }
+          }, (err) => {
+            this.loader.close();
+            this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
+          });
         });
       }
     });

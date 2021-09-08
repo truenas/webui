@@ -1,11 +1,9 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Type } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
@@ -21,7 +19,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
-  WebSocketService, SystemGeneralService, DialogService, LanguageService, StorageService, ValidationService,
+  WebSocketService, SystemGeneralService, DialogService,
 }
   from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -41,17 +39,10 @@ export class GeneralSettingsComponent implements OnInit {
   ntpTitle = helptext.ntpTitle;
   localeData: DataCard;
   configData: any;
-  displayedColumns: any;
+  displayedColumns: string[];
   subs: any;
   dataSource: NtpServer[];
   formEvent$: Subject<CoreEvent>;
-
-  // Components included in this dashboard
-  protected localizationComponent = new LocalizationFormComponent(this.language, this.ws, this.dialog, this.loader,
-    this.sysGeneralService, this.localeService, this.modalService);
-  protected guiComponent = new GuiFormComponent(this.router, this.language, this.ws, this.dialog, this.loader,
-    this.http, this.storage, this.sysGeneralService, this.modalService, this.adminLayout);
-  protected NTPServerFormComponent = new NtpServerFormComponent(this.modalService, this.validationService);
 
   // Dialog forms and info for saving, uploading, resetting config
   protected saveConfigFieldConf: FieldConfig[] = [
@@ -116,12 +107,17 @@ export class GeneralSettingsComponent implements OnInit {
     parent: this,
   };
 
-  constructor(private ws: WebSocketService, private localeService: LocaleService,
-    private sysGeneralService: SystemGeneralService, private modalService: ModalService,
-    private language: LanguageService, private dialog: DialogService, private loader: AppLoaderService,
-    private router: Router, private http: HttpClient, private storage: StorageService,
-    public mdDialog: MatDialog, private core: CoreService, private adminLayout: AdminLayoutComponent,
-    private validationService: ValidationService) { }
+  constructor(
+    private ws: WebSocketService,
+    private localeService: LocaleService,
+    private sysGeneralService: SystemGeneralService,
+    private modalService: ModalService,
+    private dialog: DialogService,
+    private loader: AppLoaderService,
+    private router: Router,
+    public mdDialog: MatDialog,
+    private core: CoreService,
+  ) { }
 
   ngOnInit(): void {
     this.getDataCardData();
@@ -186,7 +182,7 @@ export class GeneralSettingsComponent implements OnInit {
             { label: helptext.stg_guiv6address.placeholder, value: res.ui_v6address.join(', ') },
             { label: helptext.stg_guihttpsport.placeholder, value: res.ui_httpsport },
             { label: helptext.stg_guihttpsprotocols.placeholder, value: res.ui_httpsprotocols.join(', ') },
-            { label: helptext.stg_guihttpsredirect.placeholder, value: res.ui_httpsredirect },
+            { label: helptext.stg_guihttpsredirect.placeholder, value: res.ui_httpsredirect as any },
             {
               label: helptext.crash_reporting.placeholder,
               value: res.crash_reporting ? helptext.enabled : helptext.disabled,
@@ -226,21 +222,19 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   doAdd(name: string, id?: number): void {
-    let addComponent;
+    let addComponent: Type<GuiFormComponent | NtpServerFormComponent | LocalizationFormComponent>;
     switch (name) {
       case 'gui':
-        addComponent = this.guiComponent;
+        addComponent = GuiFormComponent;
         break;
       case 'ntp':
-        addComponent = id
-          ? this.NTPServerFormComponent
-          : new NtpServerFormComponent(this.modalService, this.validationService);
+        addComponent = NtpServerFormComponent;
         break;
       default:
-        addComponent = this.localizationComponent;
+        addComponent = LocalizationFormComponent;
     }
     this.sysGeneralService.sendConfigData(this.configData);
-    this.modalService.open('slide-in-form', addComponent, id);
+    this.modalService.openInSlideIn(addComponent, id);
   }
 
   doNTPDelete(server: NtpServer): void {
