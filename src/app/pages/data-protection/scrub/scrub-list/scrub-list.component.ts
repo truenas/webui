@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
@@ -7,7 +6,7 @@ import { EntityFormService } from 'app/pages/common/entity/entity-form/services/
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
-import { UserService, WebSocketService, TaskService } from 'app/services';
+import { UserService, TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
@@ -54,13 +53,8 @@ export class ScrubListComponent implements EntityTableConfig {
   };
 
   constructor(
-    protected router: Router,
-    protected ws: WebSocketService,
     protected taskService: TaskService,
     protected modalService: ModalService,
-    protected aroute: ActivatedRoute,
-    protected userService: UserService,
-    protected entityFormService: EntityFormService,
     protected translate: TranslateService,
   ) {}
 
@@ -82,7 +76,7 @@ export class ScrubListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    this.modalService.open('slide-in-form', new ScrubFormComponent(this.taskService, this.modalService), id);
+    this.modalService.openInSlideIn(ScrubFormComponent, id);
   }
 
   doEdit(id: number): void {

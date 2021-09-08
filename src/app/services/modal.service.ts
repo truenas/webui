@@ -51,7 +51,7 @@ export class ModalService {
   /**
    * @deprecated Use openInSlideIn
    */
-  open(id: string, conf: any, rowid?: any): void {
+  private open(id: string, conf: any, rowid?: any): void {
     if (rowid) {
       conf.rowid = rowid;
       this.getRow$.next(rowid);
