@@ -6,7 +6,6 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    attribute_value_exist,
     ssh_cmd
 )
 from pytest_bdd import (
@@ -158,14 +157,6 @@ def the_active_directory_setup_should_successfully_save_without_an_error(driver)
     """the Active Directory setup should successfully save without an error."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element_disappear(driver, 30, '//h1[text()="Start"]')
-    # driver.refresh()
-    # if wait_on_element(driver, 2, '//input[@data-placeholder="Username"]', 'inputable'):
-    #     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-    #     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-    #     driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-    #     driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys('testing')
-    #     assert wait_on_element(driver, 5, '//button[@name="signin_button"]', 'clickable')
-    #     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     assert wait_on_element(driver, 7, f'//span[text()="{domain.upper()}"]')
 
 
