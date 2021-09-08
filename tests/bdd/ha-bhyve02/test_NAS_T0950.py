@@ -105,7 +105,7 @@ def the_user_edit_page_should_open(driver):
 @then(parsers.parse('Change the users email for "{email}" and click save'))
 def change_the_users_email_and_click_save(driver, email):
     """Change the users email for "{email}" and click save."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'clickable')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys(email)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')

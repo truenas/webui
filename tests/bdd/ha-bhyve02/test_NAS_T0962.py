@@ -222,10 +222,6 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    # assert wait_on_element(driver, 60, '//p[contains(.,"Waiting for Active TrueNAS controller to come up")]', 'clickable')
-    # element = driver.find_element_by_xpath('//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
-    # while element.is_displayed() is False:
-    #     element = driver.find_element_by_xpath('//p[contains(.,"Waiting for Active TrueNAS controller to come up")]')
     # time.sleep(20)
     # driver.refresh()
     assert wait_on_element(driver, 180, '//input[@data-placeholder="Username"]')
