@@ -137,5 +137,5 @@ def click_summit_account_name_should_be_added_to_the_list(driver, account_name):
     """click Summit, account_name should be added to the list."""
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, f'//div[normalize-space(text())="{account_name}"]')

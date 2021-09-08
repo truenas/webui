@@ -91,7 +91,7 @@ def input_aws_share_for_name_select_generic_as_share_type_and_click_submit(drive
 @then('the dataset should be created without error')
 def the_dataset_should_be_created_without_error(driver):
     """the dataset should be created without error."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"aws_share")]')
 
 
@@ -151,7 +151,7 @@ def under_transfer_mode_select_copy_click_save(driver):
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"COPY")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 
 @then('the new Cloud Sync Tasks should save without error')
@@ -314,7 +314,7 @@ def under_transfer_mode_select_move_click_save(driver):
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"MOVE")]')
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 
 @then('on the bucket add a file in the folder')
@@ -367,7 +367,7 @@ def under_transfer_mode_select_sync_then_click_save(driver):
     assert wait_on_element(driver, 5, '//mat-select[contains(.,"SYNC")]')
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 
 @then('on the bucket tab, upload a file')
@@ -513,7 +513,7 @@ def click_save_the_cloud_sync_tasks_should_save_without_error(driver):
     """click Save, the Cloud Sync Tasks should save without error."""
     assert wait_on_element(driver, 5, '//button[@id="save_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="save_button"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
 
 
 @then('create a file in the directory of the dataset')
