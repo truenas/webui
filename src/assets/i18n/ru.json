@@ -572,6 +572,8 @@
   "Name not found": "",
   "Name of the new dataset created from the  cloned snapshot.": "",
   "Name that was created with the SMB share.": "",
+  "Nameserver (DHCP)": "",
+  "Nameserver {n}": "",
   "Nameservers": "",
   "NetBIOS": "",
   "NetBIOS-NS": "",

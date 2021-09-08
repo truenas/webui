@@ -70,6 +70,8 @@
   "NFSv4": "",
   "NIS": "",
   "NSS": "",
+  "Nameserver (DHCP)": "",
+  "Nameserver {n}": "",
   "NetBIOS": "",
   "NetBIOS-NS": "",
   "Netwait:": "",

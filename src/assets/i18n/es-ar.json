@@ -366,6 +366,8 @@
   "NOTICE": "",
   "NSS": "",
   "Name of the new alert service.": "",
+  "Nameserver (DHCP)": "",
+  "Nameserver {n}": "",
   "NetBIOS": "",
   "NetBIOS-NS": "",
   "Netcat Active Side Max Port": "",
