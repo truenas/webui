@@ -67,12 +67,6 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
         this.toggleDisplay();
       },
     },
-    {
-      label: T('Set Quotas (Bulk)'),
-      onClick: () => {
-        this.router.navigate(['storage', 'group-quotas-form', this.pk]);
-      },
-    },
     ] as EntityTableAction[];
   }
 
