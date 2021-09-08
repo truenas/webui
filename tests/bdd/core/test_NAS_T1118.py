@@ -4,7 +4,8 @@
 from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
-    is_element_present
+    is_element_present,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -93,7 +94,8 @@ def click_verify_credential_to_verify_it_is_valid(driver):
     """click Verify Credential to verify it is valid."""
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__VERIFY CREDENTIAL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__VERIFY CREDENTIAL"]').click()
-    assert wait_on_element(driver, 10, '//h1[normalize-space(text())="Valid"]')
+    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 20, '//h1[normalize-space(text())="Valid"]')
     assert wait_on_element(driver, 10, '//textarea[text()="The Credential is valid."]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
@@ -104,6 +106,7 @@ def click_summit_account_name_should_be_added_to_the_list(driver, account_name):
     """click Summit, account_name should be added to the list."""
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[normalize-space(text())="amazons3creds"]')
 
 
@@ -128,6 +131,7 @@ def click_verify_credential_to_verify_the_key_id_is_invalid(driver):
     """click Verify Credential to verify the key id is invalid."""
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__VERIFY CREDENTIAL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__VERIFY CREDENTIAL"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[normalize-space(text())="Error"]')
     assert wait_on_element(driver, 10, '//span[contains(.,"InvalidAccessKeyId:")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
@@ -149,6 +153,7 @@ def click_verify_credential_to_verify_the_access_key_is_invalid(driver):
     """click Verify Credential to verify the access key is invalid."""
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__VERIFY CREDENTIAL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__VERIFY CREDENTIAL"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[normalize-space(text())="Error"]')
     assert wait_on_element(driver, 10, '//span[contains(.,"SignatureDoesNotMatch:")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')

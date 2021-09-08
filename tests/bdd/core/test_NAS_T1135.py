@@ -126,6 +126,7 @@ def click_verify_credential_to_verify_it_is_valid(driver):
     """click Verify Credential to verify it is valid."""
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__VERIFY CREDENTIAL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__VERIFY CREDENTIAL"]').click()
+    assert wait_on_element_disappear(driver, 20, '//h1[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//h1[normalize-space(text())="Valid"]')
     assert wait_on_element(driver, 10, '//textarea[text()="The Credential is valid."]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
