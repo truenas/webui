@@ -55,7 +55,7 @@
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel>
+    <mat-expansion-panel #eventsPannel>
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{ 'Application Events' | translate }}
@@ -63,7 +63,7 @@
       </mat-expansion-panel-header>
       <div class="expansion-content">
         <div *ngIf="chartEvents.length > 0;else no_event">
-          <div fxLayout="row" fxLayoutAlign="start start" *ngFor="let event of chartEvents; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
+          <div fxLayout="row" fxLayoutAlign="start start" *ngFor="let event of chartEvents.reverse(); let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
             <div class="event-time">{{ event.first_timestamp?.$date | date: 'yyyy-MM-dd H:mm:ss' }}</div>
             <div class="event-message">{{ event.message }}</div>
           </div>
@@ -79,6 +79,14 @@
 </div>
 
 <div class="button-bar" mat-dialog-actions align="end">
+  <button
+    mat-button
+    class="mat-button mat-primary"
+    (click)="refreshEvents()"
+    ix-auto ix-auto-type="button" ix-auto-identifier="refresh"
+  >
+    {{ helptext.actionBtnText.refreshEvents | translate }}
+  </button>
   <button
     mat-button
     class="mat-button mat-secondary"

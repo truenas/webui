@@ -53,7 +53,7 @@ import { T } from 'app/translate-marker';
 
 export interface TaskCard {
   name: string;
-  tableConf: AppTableConfig;
+  tableConf: AppTableConfig<DataProtectionDashboardComponent>;
 }
 
 enum TaskCardId {
@@ -93,15 +93,6 @@ export class DataProtectionDashboardComponent implements OnInit {
   dataCards: TaskCard[] = [];
   disks: Disk[] = [];
   parent: DataProtectionDashboardComponent;
-
-  // Components included in this dashboard
-  protected scrubFormComponent: ScrubFormComponent;
-  protected snapshotFormComponent: SnapshotFormComponent;
-  protected replicationFormComponent: ReplicationFormComponent;
-  protected replicationWizardComponent: ReplicationWizardComponent;
-  protected cloudsyncFormComponent: CloudsyncFormComponent;
-  protected rsyncFormComponent: RsyncFormComponent;
-  protected smartFormComponent: SmartFormComponent;
 
   constructor(
     private ws: WebSocketService,
@@ -143,17 +134,12 @@ export class DataProtectionDashboardComponent implements OnInit {
       this.refreshTables();
     });
 
-    this.refreshForms();
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshForms();
-    });
-
     this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res['action'] === 'open' && res['component'] === 'replicationForm') {
-        this.modalService.open('slide-in-form', this.replicationFormComponent, res['row']);
+        this.modalService.openInSlideIn(ReplicationFormComponent, res['row']);
       }
       if (res['action'] === 'open' && res['component'] === 'replicationWizard') {
-        this.modalService.open('slide-in-form', this.replicationWizardComponent, res['row']);
+        this.modalService.openInSlideIn(ReplicationFormComponent, res['row']);
       }
     });
   }
@@ -188,10 +174,10 @@ export class DataProtectionDashboardComponent implements OnInit {
           },
           parent: this,
           add() {
-            this.parent.modalService.open('slide-in-form', this.parent.scrubFormComponent);
+            this.parent.modalService.openInSlideIn(ScrubFormComponent);
           },
           edit(row) {
-            this.parent.modalService.open('slide-in-form', this.parent.scrubFormComponent, row.id);
+            this.parent.modalService.openInSlideIn(ScrubFormComponent, row.id);
           },
           tableActions: [
             {
@@ -237,10 +223,10 @@ export class DataProtectionDashboardComponent implements OnInit {
           isActionVisible: this.isActionVisible,
           parent: this,
           add() {
-            this.parent.modalService.open('slide-in-form', this.parent.snapshotFormComponent);
+            this.parent.modalService.openInSlideIn(SnapshotFormComponent);
           },
           edit(row) {
-            this.parent.modalService.open('slide-in-form', this.parent.snapshotFormComponent, row.id);
+            this.parent.modalService.openInSlideIn(SnapshotFormComponent, row.id);
           },
           onButtonClick(row) {
             this.parent.stateButton(row);
@@ -280,10 +266,10 @@ export class DataProtectionDashboardComponent implements OnInit {
           ],
           parent: this,
           add() {
-            this.parent.modalService.open('slide-in-form', this.parent.replicationWizardComponent);
+            this.parent.modalService.openInSlideIn(ReplicationWizardComponent);
           },
           edit(row) {
-            this.parent.modalService.open('slide-in-form', this.parent.replicationFormComponent, row.id);
+            this.parent.modalService.openInSlideIn(ReplicationFormComponent, row.id);
           },
           onButtonClick(row) {
             this.parent.stateButton(row);
@@ -328,10 +314,10 @@ export class DataProtectionDashboardComponent implements OnInit {
           ],
           parent: this,
           add() {
-            this.parent.modalService.open('slide-in-form', this.parent.cloudsyncFormComponent);
+            this.parent.modalService.openInSlideIn(CloudsyncFormComponent);
           },
           edit(row) {
-            this.parent.modalService.open('slide-in-form', this.parent.cloudsyncFormComponent, row.id);
+            this.parent.modalService.openInSlideIn(CloudsyncFormComponent, row.id);
           },
           onButtonClick(row) {
             this.parent.stateButton(row);
@@ -373,10 +359,10 @@ export class DataProtectionDashboardComponent implements OnInit {
           isActionVisible: this.isActionVisible,
           parent: this,
           add() {
-            this.parent.modalService.open('slide-in-form', this.parent.rsyncFormComponent);
+            this.parent.modalService.openInSlideIn(RsyncFormComponent);
           },
           edit(row) {
-            this.parent.modalService.open('slide-in-form', this.parent.rsyncFormComponent, row.id);
+            this.parent.modalService.openInSlideIn(RsyncFormComponent, row.id);
           },
           onButtonClick(row) {
             this.parent.stateButton(row);
@@ -417,10 +403,10 @@ export class DataProtectionDashboardComponent implements OnInit {
             },
           ],
           add() {
-            this.parent.modalService.open('slide-in-form', this.parent.smartFormComponent);
+            this.parent.modalService.openInSlideIn(SmartFormComponent);
           },
           edit(row) {
-            this.parent.modalService.open('slide-in-form', this.parent.smartFormComponent, row.id);
+            this.parent.modalService.openInSlideIn(SmartFormComponent, row.id);
           },
         },
       },
@@ -433,53 +419,6 @@ export class DataProtectionDashboardComponent implements OnInit {
         card.tableConf.tableComponent.getData();
       }
     });
-  }
-
-  refreshForms(): void {
-    this.scrubFormComponent = new ScrubFormComponent(this.taskService, this.modalService);
-    this.snapshotFormComponent = new SnapshotFormComponent(
-      this.taskService,
-      this.storage,
-      this.dialog,
-      this.modalService,
-    );
-    this.replicationWizardComponent = new ReplicationWizardComponent(
-      this.keychainCredentialService,
-      this.loader,
-      this.dialog,
-      this.ws,
-      this.replicationService,
-      this.datePipe,
-      this.entityFormService,
-      this.modalService,
-    );
-    this.replicationFormComponent = new ReplicationFormComponent(
-      this.ws,
-      this.taskService,
-      this.storage,
-      this.keychainCredentialService,
-      this.replicationService,
-      this.modalService,
-    );
-    this.cloudsyncFormComponent = new CloudsyncFormComponent(
-      this.router,
-      this.aroute,
-      this.loader,
-      this.dialog,
-      this.mdDialog,
-      this.ws,
-      this.cloudCredentialService,
-      this.job,
-      this.modalService,
-    );
-    this.rsyncFormComponent = new RsyncFormComponent(
-      this.router,
-      this.aroute,
-      this.taskService,
-      this.userService,
-      this.modalService,
-    );
-    this.smartFormComponent = new SmartFormComponent(this.ws, this.modalService);
   }
 
   scrubDataSourceHelper(data: ScrubTaskUi[]): ScrubTaskUi[] {

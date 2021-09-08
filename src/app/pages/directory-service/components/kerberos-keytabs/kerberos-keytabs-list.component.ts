@@ -71,7 +71,6 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    const formComponent = new KerberosKeytabsFormComponent(this.modalService);
-    this.modalService.open('slide-in-form', formComponent, id);
+    this.modalService.openInSlideIn(KerberosKeytabsFormComponent, id);
   }
 }

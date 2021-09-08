@@ -6,11 +6,14 @@ import {
   Router, ActivatedRoute,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { ReportingGraphsEvent } from 'app/interfaces/events/reporting-graphs-event.interface';
+import {
+  UserPreferencesChangedEvent, UserPreferencesEvent,
+  UserPreferencesReadyEvent,
+} from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -20,7 +23,6 @@ import {
   SystemGeneralService,
   WebSocketService,
 } from 'app/services';
-import { DialogService } from 'app/services/dialog.service';
 import { ErdService } from 'app/services/erd.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
@@ -80,33 +82,29 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   fieldSets: FieldSet[];
   diskReportConfigReady = false;
   actionsConfig: any;
-  formComponent: ReportsConfigComponent;
 
   constructor(
     private erdService: ErdService,
-    public translate: TranslateService,
     public modalService: ModalService,
-    public dialogService: DialogService,
     private router: Router,
     private core: CoreService,
     private route: ActivatedRoute,
     protected ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService,
   ) {}
 
   ngOnInit(): void {
     this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
@@ -488,8 +486,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     this.multipathTitles = multipathTitles;
 
-    // uniqueNames = uniqueNames.concat(multipathNames);
-
     const diskDevices = uniqueNames.map((devname) => {
       const spl = devname.split(' ');
       const obj = { label: devname, value: spl[0] };
@@ -500,18 +496,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   showConfigForm(): void {
-    if (this.formComponent) {
-      delete this.formComponent;
-    }
-    this.generateFormComponent();
-    this.modalService.open('slide-in-form', this.formComponent);
-  }
-
-  generateFormComponent(): void {
-    this.formComponent = new ReportsConfigComponent(this.ws, this.dialogService);
-    this.formComponent.title = T('Reports Configuration');
-    this.formComponent.isOneColumnForm = true;
-    this.formComponent.afterModalFormSaved = () => {
+    const formComponent = this.modalService.openInSlideIn(ReportsConfigComponent);
+    formComponent.title = T('Reports Configuration');
+    formComponent.isOneColumnForm = true;
+    formComponent.afterModalFormSaved = () => {
       this.modalService.close('slide-in-form');
     };
   }

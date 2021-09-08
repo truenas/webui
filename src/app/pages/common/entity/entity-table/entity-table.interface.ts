@@ -70,9 +70,6 @@ export interface EntityTableConfig<Row = any> {
   prerequisiteFailedHandler?: (entity: EntityTableComponent) => void;
   afterDelete?(): void;
 
-  addComponent?: any;
-  editComponent?: any;
-
   onRowClick?: (row: Row) => void;
 }
 

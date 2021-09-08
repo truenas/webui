@@ -9,7 +9,7 @@ import { EntityFormService } from 'app/pages/common/entity/entity-form/services/
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
-import { TaskService, WebSocketService } from 'app/services';
+import { TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { T } from 'app/translate-marker';
@@ -60,7 +60,6 @@ export class SmartListComponent implements EntityTableConfig {
   listDisks: Disk[] = [];
 
   constructor(
-    protected ws: WebSocketService,
     protected storageService: StorageService,
     protected modalService: ModalService,
     protected router: Router,
@@ -100,7 +99,7 @@ export class SmartListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    this.modalService.open('slide-in-form', new SmartFormComponent(this.ws, this.modalService), id);
+    this.modalService.openInSlideIn(SmartFormComponent, id);
   }
 
   doEdit(id: number): void {

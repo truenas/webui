@@ -21,7 +21,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
-import { CoreEvent } from 'app/interfaces/events';
+import { ThemeChangedEvent } from 'app/interfaces/events/theme-events.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
@@ -148,7 +148,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
       if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded == true) {
         this.redirect();
       }
