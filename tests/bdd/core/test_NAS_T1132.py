@@ -239,7 +239,7 @@ def input_user_name_and_password_click_sign_in(driver, user_name, password):
     driver.find_element_by_xpath('//input[@id="password-login"]').send_keys(password)
     assert wait_on_element(driver, 5, '//button[@id="login-submit-password"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="login-submit-password"]').click()
-    assert wait_on_element(driver, 5, '//h1[text()="All Files"]')
+    assert wait_on_element(driver, 15, '//h1[text()="All Files"]')
 
 
 @then(parsers.parse('click on {folder1} then click on the test folder'))
