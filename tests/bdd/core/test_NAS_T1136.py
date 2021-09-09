@@ -561,7 +561,7 @@ def on_the_dataset_folder_delete_a_file(driver, nas_ip):
 def verify_the_file_is_removed_from_the_dropbox_test_folder_tab(driver):
     """verify the file is removed from the Dropbox test folder tab."""
     driver.switch_to.window(driver.window_handles[1])
-    time.sleep(0.5)
+    time.sleep(1)
     driver.refresh()
     time.sleep(1)
     assert wait_on_element(driver, 5, '//h2[text()="test"]')
