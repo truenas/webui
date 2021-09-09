@@ -16,7 +16,6 @@ import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { WebSocketService, SystemGeneralService } from 'app/services';
-import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 
@@ -60,7 +59,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     public themeService: ThemeService,
     private media: MediaObserver,
     protected ws: WebSocketService,
-    public language: LanguageService,
     public dialog: MatDialog,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,

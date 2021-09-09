@@ -203,13 +203,13 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     }
 
     if (days > 0) {
-      days === 1 ? this.uptimeString += days + T(' day, ')
+      days === 1
+        ? this.uptimeString += days + T(' day, ')
         : this.uptimeString += days + T(' days, ') + `${hrs}:${pmin}`;
     } else if (hrs > 0) {
       this.uptimeString += `${hrs}:${pmin}`;
     } else {
-      min === 1 ? this.uptimeString += min + T(' minute')
-        : this.uptimeString += min + T(' minutes');
+      this.uptimeString += this.translate.instant('{minute, plural, one {# minute} other {# minutes}}', { minute: min });
     }
 
     this.dateTime = (this.locale.getTimeOnly(this.data.datetime.$date, false, this.data.timezone));

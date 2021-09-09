@@ -1192,14 +1192,22 @@ export class VMWizardComponent implements WizardConfiguration {
                   this.loader.close();
                   this.dialogService.errorReport(
                     T('Error creating VM.'),
-                    T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted,
+                    this.translate.instant(
+                      'Error while creating the {device} device.\n {reason}',
+                      { device: error.device.dtype, reason: error.reason },
+                    ),
+                    error.trace.formatted,
                   );
                 },
                 (err) => {
                   this.loader.close();
                   this.dialogService.errorReport(
                     T('Error creating VM.'),
-                    T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted,
+                    this.translate.instant(
+                      'Error while creating the {device} device.\n {reason}',
+                      { device: error.device.dtype, reason: error.reason },
+                    ),
+                    error.trace.formatted,
                   );
                   new EntityUtils().handleWSError(this, err, this.dialogService);
                 },

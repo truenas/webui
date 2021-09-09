@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -79,6 +80,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
 
   constructor(
     protected ws: WebSocketService,
+    protected translate: TranslateService,
     protected dialog: DialogService,
     protected job: JobService,
     protected modalService: ModalService,
@@ -133,7 +135,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                   (jobId: number) => {
                     this.dialog.info(
                       T('Task Started'),
-                      T('Cloud sync <i>') + row.description + T('</i> has started.'),
+                      this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
                       '500px',
                       'info',
                       true,
@@ -170,7 +172,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                   () => {
                     this.dialog.info(
                       T('Task Stopped'),
-                      T('Cloud sync <i>') + row.description + T('</i> stopped.'),
+                      this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
                       '500px',
                       'info',
                       true,
@@ -203,7 +205,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                   (jobId: number) => {
                     this.dialog.info(
                       T('Task Started'),
-                      T('Cloud sync <i>') + row.description + T('</i> has started.'),
+                      this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
                       '500px',
                       'info',
                       true,

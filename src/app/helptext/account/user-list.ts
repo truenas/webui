@@ -5,12 +5,6 @@ export default {
   user_list_actions_edit_id: 'edit',
   user_list_actions_delete_label: T('Delete'),
 
-  builtins_dialog: {
-    title: T(' Builtin Users'),
-    message: T(' builtin users (default setting is <i>hidden</i>).'),
-    show: T('Show'),
-    hide: T('Hide'),
-  },
   builtinMessageDialog: {
     title: T('Display Note'),
     message: T('All built-in users except <i>root</i> are \
