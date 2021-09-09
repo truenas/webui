@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { SystemGeneralService } from 'app/services';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import {
+  LanguageService, ModalService, SystemGeneralService, WebSocketService,
+} from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
@@ -17,6 +21,8 @@ import { LocaleService } from 'app/services/locale.service';
 })
 export class LocalizationForm2 implements OnInit {
   fieldsetTitle = helptext.localeTitle;
+
+  formIsLoading = false;
 
   sortLanguagesByName = true;
 
@@ -83,12 +89,17 @@ export class LocalizationForm2 implements OnInit {
     private sysGeneralService: SystemGeneralService,
     private fb: FormBuilder,
     public localeService: LocaleService,
+    protected ws: WebSocketService,
+    protected langService: LanguageService,
+    private modalService: ModalService,
+    private router: Router,
   ) {
     this.sysGeneralService.getGeneralConfig$
       .pipe(untilDestroyed(this)).subscribe((res) => {
         this.configData = res;
-        this.formGroup.get('kbdmap').setValue(this.configData.kbdmap);
-        this.formGroup.get('language').setValue(this.configData.language);
+        this.formGroup?.get('kbdmap').setValue(this.configData.kbdmap);
+        this.formGroup?.get('language').setValue(this.configData.language);
+        this.formGroup?.get('timezone').setValue(this.configData.timezone);
         this.setTimeOptions(this.configData.timezone);
       });
   }
@@ -147,8 +158,22 @@ export class LocalizationForm2 implements OnInit {
     this.dateFormat.options = of(dateOptions);
   }
 
-  submit(value: any): void {
-    value;
-    // console.log("value", value);
+  submit(body: any): void {
+    this.formIsLoading = true;
+    this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
+    delete body.date_format;
+    delete body.time_format;
+    this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.sysGeneralService.refreshSysGeneral();
+      this.formIsLoading = false;
+      this.modalService.close('slide-in-form');
+      this.setTimeOptions(body.timezone);
+      this.langService.setLanguage(body.language);
+      this.router.navigate(['/', 'dashboard']);
+    }, (res) => {
+      this.formIsLoading = false;
+      this.modalService.close('slide-in-form');
+      new EntityUtils().handleWSError(this, res);
+    });
   }
 }
