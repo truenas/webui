@@ -17,8 +17,8 @@
       </div>
       <div class="content-box"  (click)="showChartEvents(item.name)">
         <div class="content">
-          <strong class="chart-name" textLimiter threshold="20">{{ item.name }}</strong>
-          <div><span class="version" textLimiter threshold="50"> {{ item.human_version}}</span></div>
+          <strong class="chart-name" textLimiter threshold="20" content="{{ item.name }}"></strong>
+          <div><span class="version" textLimiter threshold="50" content="{{ item.human_version}}"></span></div>
           <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
             <span class="update-label" matTooltip="Available version: {{ item.human_latest_version }}">{{ 'Update available' | translate}}</span>
           </div>
@@ -43,8 +43,7 @@
       </div>
     </div>
 
-    <div class="ports" textLimiter threshold="28">
-      {{ appService.getPorts(item) | lowercase }}
+    <div class="ports" textLimiter threshold="28" content="{{ appService.getPorts(item) | lowercase }}">
     </div>
 
     <div class="more-info">

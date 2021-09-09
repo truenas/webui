@@ -11,7 +11,8 @@
     </div>
   </div>
   <div class="ports">
-    <span>{{ 'Used Ports' | translate }}:</span><span class="value" textLimiter threshold="70">{{ appService.getPorts(catalogApp) || ('No ports are being used.' | translate) }}</span>
+    <span>{{ 'Used Ports' | translate }}:</span>
+    <span class="value" textLimiter threshold="70" content="{{ appService.getPorts(catalogApp) || ('No ports are being used.' | translate) }}"></span>
   </div>
   <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
     <div>
@@ -29,13 +30,20 @@
   </div>
   <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
     <div>
-      <span>{{ 'Catalog' | translate }}:</span><div class="inline-block capitalized-text"><span class="value" textLimiter threshold="14">{{ catalogApp.catalog }}</span></div>
+      <span>{{ 'Catalog' | translate }}:</span>
+      <div class="inline-block capitalized-text">
+        <span class="value" textLimiter threshold="14" content="{{ catalogApp.catalog }}"></span>
+      </div>
     </div>
     <div>
-      <span>{{ 'Train' | translate }}:</span><div class="inline-block capitalized-text"><span class="value" textLimiter threshold="14">{{ catalogApp.catalog_train }}</span></div>
+      <span>{{ 'Train' | translate }}:</span>
+      <div class="inline-block capitalized-text">
+        <span class="value" textLimiter threshold="14" content="{{ catalogApp.catalog_train }}"></span>
+      </div>
     </div>
     <div>
-      <span>{{ 'Item Name' | translate }}:</span><span class="value" textLimiter threshold="14">{{ catalogApp.chart_metadata.name }}</span>
+      <span>{{ 'Item Name' | translate }}:</span>
+      <span class="value" textLimiter threshold="14" content="{{ catalogApp.chart_metadata.name }}"></span>
     </div>
   </div>
   <mat-accordion>
