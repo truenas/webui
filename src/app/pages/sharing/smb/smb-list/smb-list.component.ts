@@ -173,11 +173,8 @@ export class SMBListComponent implements EntityTableConfig {
 
   onCheckboxChange(row: SmbShare): void {
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (res: any) => {
+      (res) => {
         row.enabled = res.enabled;
-        if (!res) {
-          row.enabled = !row.enabled;
-        }
       },
       (err) => {
         row.enabled = !row.enabled;
