@@ -1,6 +1,9 @@
-import { Component, forwardRef, Input } from '@angular/core';
+import {
+  Component, forwardRef, Input, OnChanges, OnInit, SimpleChanges,
+} from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 
 @UntilDestroy()
@@ -16,13 +19,15 @@ import { Option } from 'app/interfaces/option.interface';
     },
   ],
 })
-export class IxSelect implements ControlValueAccessor {
+export class IxSelect implements ControlValueAccessor, OnInit, OnChanges {
   @Input() label: string;
   @Input() value: string | number;
   @Input() hint: string;
-  @Input() options: Option[];
+  @Input() options: Observable<Option[]>;
   @Input() required: boolean;
   @Input() tooltip: string;
+
+  syncOptions: Option[];
 
   formControl = new FormControl(this).value as FormControl;
 
@@ -43,5 +48,21 @@ export class IxSelect implements ControlValueAccessor {
 
   registerOnTouched(onTouched: any): void {
     this.onTouched = onTouched;
+  }
+
+  ngOnInit(): void {
+    this.options?.pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
+      this.syncOptions = options;
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.options) {
+      if (changes.options.currentValue) {
+        changes.options.currentValue.pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
+          this.syncOptions = options;
+        });
+      }
+    }
   }
 }

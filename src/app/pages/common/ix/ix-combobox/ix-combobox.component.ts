@@ -1,5 +1,5 @@
 import {
-  Component, EventEmitter, forwardRef, Input, OnChanges, OnInit, Output, SimpleChanges,
+  Component, forwardRef, Input, OnChanges, OnInit, SimpleChanges,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -26,8 +26,14 @@ export class IxCombobox implements ControlValueAccessor, OnInit, OnChanges {
   @Input() tooltip: string;
   @Input() options: Observable<Option[]>;
 
-  @Input() filter: (options: Option[], filterValue: string) => Observable<Option[]>;
-  @Output() scrollEnd: EventEmitter<void> = new EventEmitter<void>();
+  @Input() filter: (options: Option[], filterValue: string) => Observable<Option[]> =
+  (options: Option[], value: string): Observable<Option[]> => {
+    const filtered = options.filter((option: Option) => {
+      return option.label.toLowerCase().includes(value.toLowerCase())
+          || option.value.toString().toLowerCase().includes(value.toLowerCase());
+    });
+    return of(filtered);
+  };
 
   filteredOptions: Observable<Option[]>;
 
