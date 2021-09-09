@@ -1,13 +1,10 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import {
-  DialogService, NetworkService, WebSocketService, UserService, ModalService,
-} from 'app/services';
+import { WebSocketService, ModalService } from 'app/services';
 import { T } from 'app/translate-marker';
 import { NFSFormComponent } from '../nfs-form/nfs-form.component';
 
@@ -42,12 +39,8 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
   };
 
   constructor(
-    protected userService: UserService,
     private modalService: ModalService,
     protected ws: WebSocketService,
-    private dialog: DialogService,
-    public networkService: NetworkService,
-    private translate: TranslateService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -66,15 +59,7 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
   };
 
   doAdd(id?: number): void {
-    const formComponent = new NFSFormComponent(
-      this.userService,
-      this.modalService,
-      this.ws,
-      this.dialog,
-      this.networkService,
-      this.translate,
-    );
-    this.modalService.open('slide-in-form', formComponent, id);
+    this.modalService.openInSlideIn(NFSFormComponent, id);
   }
 
   doEdit(id: number): void {

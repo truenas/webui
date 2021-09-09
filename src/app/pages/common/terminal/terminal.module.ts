@@ -5,23 +5,26 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
-import { EntityModule } from '../common/entity/entity.module';
-import { ShellComponent } from './shell.component';
-import { routing } from './shell.routing';
+import { CopyPasteMessageComponent } from 'app/pages/common/terminal/copy-paste-message.component';
+import { EntityModule } from '../entity/entity.module';
+import { TerminalComponent } from './terminal.component';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     EntityModule,
-    routing,
     MaterialModule,
     TranslateModule,
     CoreComponents,
     CommonDirectivesModule,
-    TerminalModule,
   ],
-  declarations: [ShellComponent],
+  declarations: [
+    TerminalComponent,
+    CopyPasteMessageComponent,
+  ],
+  exports: [
+    TerminalComponent,
+  ],
 })
-export class ShellModule {}
+export class TerminalModule {}

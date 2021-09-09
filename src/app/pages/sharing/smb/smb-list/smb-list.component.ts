@@ -10,9 +10,7 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import {
-  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
-} from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
@@ -72,8 +70,6 @@ export class SMBListComponent implements EntityTableConfig {
     private dialog: DialogService,
     private translate: TranslateService,
     private modalService: ModalService,
-    private loader: AppLoaderService,
-    private sysGeneralService: SystemGeneralService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -85,13 +81,7 @@ export class SMBListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    this.modalService.open(
-      'slide-in-form',
-      new SMBFormComponent(
-        this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService, this.translate,
-      ),
-      id,
-    );
+    this.modalService.openInSlideIn(SMBFormComponent, id);
   }
 
   doEdit(id: number): void {

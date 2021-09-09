@@ -801,7 +801,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     } else {
       this.router.navigate(new Array('/').concat(this.conf.route_add));
     }
-    // this.modalService.open('slide-in-form', this.conf.addComponent);
   }
 
   doEdit(id: string | number): void {

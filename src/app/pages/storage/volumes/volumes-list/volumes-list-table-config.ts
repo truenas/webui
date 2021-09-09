@@ -338,8 +338,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
   unlockAction(row1: any): void {
     const self = this;
-    this.storageService.poolUnlockServiceChoices(row1.id).pipe(
-      map((serviceChoices) => ({
+    this.storageService.poolUnlockServiceOptions(row1.id).pipe(
+      map((serviceOptions) => ({
         title: T('Unlock ') + row1.name,
         fieldConfig: [
           {
@@ -372,8 +372,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
             placeholder: helptext.unlockDialog_services_placeholder,
             tooltip: helptext.unlockDialog_services_tooltip,
             multiple: true,
-            value: serviceChoices.map((choice) => choice.value),
-            options: serviceChoices,
+            value: serviceOptions.map((option) => option.value),
+            options: serviceOptions,
           },
         ],
         afterInit(entityDialog: EntityDialogComponent) {

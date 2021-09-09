@@ -1,14 +1,10 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { helptext_sharing_webdav } from 'app/helptext/sharing';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
-import {
-  AppLoaderService, DialogService, ModalService, WebSocketService,
-} from 'app/services';
+import { ModalService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -42,22 +38,17 @@ export class WebdavListComponent implements EntityTableConfig {
 
   constructor(
     private modalService: ModalService,
-    private router: Router,
-    private ws: WebSocketService,
-    private dialog: DialogService,
-    private loader: AppLoaderService,
-    private translate: TranslateService,
   ) {}
 
   doAdd(id: string, tableComponent: EntityTableComponent): void {
-    this.modalService.open('slide-in-form', new WebdavFormComponent(this.router, this.ws, this.dialog, this.loader, this.translate));
+    this.modalService.openInSlideIn(WebdavFormComponent);
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       tableComponent.getData();
     });
   }
 
   doEdit(rowId: string, tableComponent: EntityTableComponent): void {
-    this.modalService.open('slide-in-form', new WebdavFormComponent(this.router, this.ws, this.dialog, this.loader, this.translate), rowId);
+    this.modalService.openInSlideIn(WebdavFormComponent, rowId);
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       tableComponent.getData();
     });

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -16,7 +16,7 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  DialogService, StorageService, ValidationService, UserService,
+  DialogService, UserService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
@@ -30,7 +30,7 @@ import { UserFormComponent } from '../user-form/user-form.component';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [UserService],
 })
-export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit {
+export class UserListComponent implements EntityTableConfig<UserListRow> {
   title = 'Users';
   route_add: string[] = ['account', 'users', 'add'];
   route_add_tooltip = 'Add User';
@@ -50,8 +50,6 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
       this.toggleBuiltins();
     },
   };
-
-  addComponent: UserFormComponent;
 
   columns = [
     {
@@ -104,21 +102,7 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
   constructor(private router: Router,
     protected dialogService: DialogService, protected loader: AppLoaderService,
     protected ws: WebSocketService, protected prefService: PreferencesService,
-    private translate: TranslateService, private modalService: ModalService,
-    private storageService: StorageService, private userService: UserService,
-    private validationService: ValidationService) {
-  }
-
-  ngOnInit(): void {
-    this.refreshUserForm();
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshUserForm();
-    });
-  }
-
-  refreshUserForm(): void {
-    this.addComponent = new UserFormComponent(this.ws, this.storageService, this.loader,
-      this.userService, this.validationService, this.modalService);
+    private translate: TranslateService, private modalService: ModalService) {
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -142,7 +126,7 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
       label: helptext.user_list_actions_edit_label,
       name: helptext.user_list_actions_edit_id,
       onClick: (users_edit) => {
-        this.modalService.open('slide-in-form', this.addComponent, users_edit.id);
+        this.modalService.openInSlideIn(UserFormComponent, users_edit.id);
       },
     });
     if (row.builtin !== true) {
@@ -271,6 +255,6 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
   }
 
   doAdd(): void {
-    this.modalService.open('slide-in-form', this.addComponent);
+    this.modalService.openInSlideIn(UserFormComponent);
   }
 }

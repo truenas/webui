@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -25,7 +25,7 @@ import { GroupFormComponent } from '../group-form/group-form.component';
   selector: 'app-group-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
+export class GroupListComponent implements EntityTableConfig<Group> {
   title = 'Groups';
   queryCall: 'group.query' = 'group.query';
   wsDelete: 'group.delete' = 'group.delete';
@@ -41,7 +41,6 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
       this.toggleBuiltins();
     },
   };
-  addComponent: GroupFormComponent;
 
   columns = [
     { name: 'Group', prop: 'group', always_display: true },
@@ -69,17 +68,6 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
     private translate: TranslateService,
     private modalService: ModalService,
   ) {}
-
-  ngOnInit(): void {
-    this.refreshGroupForm();
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshGroupForm();
-    });
-  }
-
-  refreshGroupForm(): void {
-    this.addComponent = new GroupFormComponent(this._router, this.ws, this.modalService);
-  }
 
   resourceTransformIncomingRestData(data: Group[]): Group[] {
     // Default setting is to hide builtin groups
@@ -135,7 +123,7 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
         label: helptext.group_list_actions_label_edit,
         name: helptext.group_list_actions_id_edit,
         onClick: (members_edit: Group) => {
-          this.modalService.open('slide-in-form', this.addComponent, members_edit.id);
+          this.modalService.openInSlideIn(GroupFormComponent, members_edit.id);
         },
       });
       actions.push({
@@ -246,6 +234,6 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
   }
 
   doAdd(): void {
-    this.modalService.open('slide-in-form', this.addComponent);
+    this.modalService.openInSlideIn(GroupFormComponent);
   }
 }

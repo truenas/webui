@@ -59,8 +59,6 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     private ws: WebSocketService,
     private taskService: TaskService,
     private modalService: ModalService,
-    private storageService: StorageService,
-    private dialog: DialogService,
     private translate: TranslateService,
   ) {}
 
@@ -114,11 +112,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   }
 
   doAdd(id?: number): void {
-    this.modalService.open(
-      'slide-in-form',
-      new SnapshotFormComponent(this.taskService, this.storageService, this.dialog, this.modalService),
-      id,
-    );
+    this.modalService.openInSlideIn(SnapshotFormComponent, id);
   }
 
   doEdit(id: number): void {

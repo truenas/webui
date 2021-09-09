@@ -355,18 +355,12 @@ export class ChartReleasesComponent implements OnInit {
 
   edit(name: string): void {
     const catalogApp = this.chartItems[name];
-    const chartFormComponent = new ChartFormComponent(
-      this.mdDialog,
-      this.dialogService,
-      this.modalService,
-      this.appService,
-    );
+    const chartFormComponent = this.modalService.openInSlideIn(ChartFormComponent, name);
     if (catalogApp.chart_metadata.name == ixChartApp) {
       chartFormComponent.setTitle(helptext.launch);
     } else {
       chartFormComponent.setTitle(catalogApp.chart_metadata.name);
     }
-    this.modalService.open('slide-in-form', chartFormComponent, name);
   }
 
   getSelectedItems(): string[] {

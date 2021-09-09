@@ -17,7 +17,6 @@ import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferen
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import { ModalService } from 'app/services/modal.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
@@ -60,7 +59,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     public themeService: ThemeService,
     private media: MediaObserver,
     protected ws: WebSocketService,
-    public modalService: ModalService,
     public dialog: MatDialog,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
@@ -136,6 +134,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isSidenavOpen = false;
     }
     this.checkIfConsoleMsgShows();
+    this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.checkIfConsoleMsgShows();
+    });
 
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
 
@@ -187,9 +188,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   checkIfConsoleMsgShows(): void {
-    this.sysGeneralService.getAdvancedConfig$.pipe(
+    this.sysGeneralService.getGeneralConfig$.pipe(
       untilDestroyed(this),
-    ).subscribe((res) => this.onShowConsoleFooterBar(res.consolemsg));
+    ).subscribe((res) => this.onShowConsoleFooterBar(res.ui_consolemsg));
   }
 
   getLogConsoleMsg(): void {
@@ -254,14 +255,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   onCloseNotify(): void {
     this.isSidenotOpen = false;
-  }
-
-  openModal(id: string): void {
-    this.modalService.open(id, {});
-  }
-
-  closeModal(id: string): void {
-    this.modalService.close(id);
   }
 
   // For the slide-in menu

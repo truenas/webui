@@ -84,7 +84,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   }
 
   doAdd(id?: number): void {
-    this.modalService.open('slide-in-form', new CronFormComponent(this.userService, this.modalService), id);
+    this.modalService.openInSlideIn(CronFormComponent, id);
   }
 
   doEdit(id: number): void {

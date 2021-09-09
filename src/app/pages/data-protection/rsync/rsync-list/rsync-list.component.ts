@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
@@ -70,16 +68,11 @@ export class RsyncListComponent implements EntityTableConfig {
   };
 
   constructor(
-    protected router: Router,
-    protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected taskService: TaskService,
     protected dialog: DialogService,
-    protected translate: TranslateService,
     protected job: JobService,
     protected modalService: ModalService,
-    protected userService: UserService,
-    protected entityFormService: EntityFormService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -184,11 +177,7 @@ export class RsyncListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    this.modalService.open(
-      'slide-in-form',
-      new RsyncFormComponent(this.router, this.aroute, this.taskService, this.userService, this.modalService),
-      id,
-    );
+    this.modalService.openInSlideIn(RsyncFormComponent, id);
   }
 
   doEdit(id: number): void {
