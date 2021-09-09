@@ -1,0 +1,14 @@
+<ix-form [formGroup]="formGroup" (formSubmit)="submit($event)">
+  <ix-fieldset
+    [title]="fieldsetTitle"
+  >
+    <ix-combobox
+      [formControlName]="languageFCName"
+      [label]="language.label"
+      [tooltip]="language.tooltip"
+      [options]="language.options"
+      [filter]="filterLanguage"
+    >
+    </ix-combobox>
+  </ix-fieldset>
+</ix-form>

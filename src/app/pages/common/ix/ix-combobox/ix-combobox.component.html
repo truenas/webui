@@ -11,14 +11,14 @@
 
   <div class="outlined input-container">
     <input matInput
+      [value]="selectedOption?.label"
       [placeholder]="'Search'"
-      [required]="required"
-      [(ngModel)]="value"
-      (ngModelChange)="modelChanged($event)"
+      (input)="onChanged($event.target.value)"
+      (blur)="onTouched()"
       [matAutocomplete]="auto"
     >
-    <mat-autocomplete #auto="matAutocomplete">
-      <mat-option *ngFor="let option of filteredOptions | async" [value]="option.value">
+    <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayWith" (optionSelected)="optionSelected($event.option.value)">
+      <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
         {{option.label}}
       </mat-option>
     </mat-autocomplete>

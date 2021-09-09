@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
-import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SystemGeneralService } from 'app/services';
 
 @UntilDestroy()
@@ -17,8 +17,7 @@ import { SystemGeneralService } from 'app/services';
 })
 export class LocalizationForm2 implements OnInit {
   fieldsetTitle = helptext.localeTitle;
-  languageKey: string;
-  languageList: Choices;
+  readonly languageFCName = 'language';
   sortLanguagesByName = true;
 
   formGroup: FormGroup;
@@ -30,21 +29,20 @@ export class LocalizationForm2 implements OnInit {
   private configData: SystemGeneralConfig;
 
   makeLanguageList(): void {
-    this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.languageList = res;
-      const options = Object.keys(this.languageList || {}).map((key) => ({
+    this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((languageList) => {
+      const options = Object.keys(languageList || {}).map((key) => ({
         label: this.sortLanguagesByName
-          ? `${this.languageList[key]} (${key})`
-          : `${key} (${this.languageList[key]})`,
+          ? `${languageList[key]} (${key})`
+          : `${key} (${languageList[key]})`,
         value: key,
       }));
-
-      this.language.options = _.sortBy(
+      this.language.options = of(_.sortBy(
         options,
         this.sortLanguagesByName ? 'label' : 'value',
-      );
-      this.language.filteredOptions = of([...this.language.options]);
+      ));
       this.formGroup.get('language').setValue(this.configData?.language);
+    }, (err: any) => {
+      new EntityUtils().handleError(this, err);
     });
   }
 
@@ -56,40 +54,20 @@ export class LocalizationForm2 implements OnInit {
       });
   }
 
-  filterLanguage(value: string): void {
-    if (!value || (typeof value).toLowerCase() !== 'string') {
-      return;
-    }
-    const filtered = Object.keys(this.languageList || {})
-      .filter((key: string) =>
-        this.languageList[key].toLowerCase()
-          .includes(value.toLowerCase()));
-    const filteredOptions = filtered.map((key) => ({
-      label: this.sortLanguagesByName
-        ? `${this.languageList[key]} (${key})`
-        : `${key} (${this.languageList[key]})`,
-      value: key,
-    }));
-    this.language.filteredOptions = of(filteredOptions);
+  filterLanguage(options: Option[], value: string): Observable<Option[]> {
+    const filtered = options.filter((option: Option) => {
+      return option.label.toLowerCase().includes(value.toLowerCase())
+        || option.value.toString().toLowerCase().includes(value.toLowerCase());
+    });
+    return of(filtered);
   }
 
   ngOnInit(): void {
     this.formGroup = this.fb.group({
       language: [this.configData?.language, [Validators.required]],
     });
-    this.makeLanguageList();
 
-    this.formGroup.get('language').valueChanges.pipe(untilDestroyed(this)).subscribe((lan: any) => {
-      if ((typeof lan).toLowerCase() !== typeof Option) {
-        this.filterLanguage(lan);
-      } else {
-        this.languageKey = lan.key;
-      }
-      // this.languageKey = this.getKeyByValue(this.languageList, lan);
-      // if (this.languageList[lan]) {
-      //     this.formGroup.get('language').setValue(`${this.languageList[lan]}`);
-      // }
-    });
+    this.makeLanguageList();
   }
 
   getKeyByValue(object: { [key: string]: unknown }, value: unknown): string {
