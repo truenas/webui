@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
@@ -84,6 +85,7 @@ export class ReplicationListComponent implements EntityTableConfig {
     protected job: JobService,
     protected modalService: ModalService,
     protected loader: AppLoaderService,
+    private translate: TranslateService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
