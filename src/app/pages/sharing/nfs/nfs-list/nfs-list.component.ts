@@ -24,7 +24,9 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
   entityList: EntityTableComponent;
 
   columns = [
-    { name: helptext_sharing_nfs.column_path, prop: 'paths', always_display: true },
+    {
+      name: helptext_sharing_nfs.column_path, prop: 'paths', showLockedStatus: true, always_display: true,
+    },
     { name: helptext_sharing_nfs.column_comment, prop: 'comment' },
     { name: helptext_sharing_nfs.column_enabled, prop: 'enabled' },
   ];
