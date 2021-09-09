@@ -115,7 +115,7 @@
                       <li fxLayout="row" *ngIf="cols === 2 && rows === 2">
                         <span class="icon"></span>
                         <span class="label">{{ 'Path' | translate }}:</span>
-                        <span class="storage-value" textLimiter threshold="32">{{ pool.path }}</span>
+                        <span class="storage-value" textLimiter threshold="32" content="{{ pool.path }}"></span>
                       </li>
                     </ul>
                     <ng-container *ngIf="cols === 1">
@@ -123,7 +123,7 @@
                       <ul fxLayout="column" fxFlex="31">
                         <li fxLayout="row">
                           <span class="label">{{ 'Path' | translate }}:</span>
-                          <span class="storage-value" textLimiter threshold="22">{{ pool.path }}</span>
+                          <span class="storage-value" textLimiter threshold="22" content="{{ pool.path }}"></span>
                         </li>
                         <li fxLayout="row">
                           <span class="label">{{ 'Free Space' | translate }}:</span>
