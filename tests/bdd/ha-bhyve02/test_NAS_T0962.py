@@ -239,7 +239,7 @@ def on_the_dashboard_wait_5_second(driver):
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    time.sleep(10)
+    time.sleep(15)
     # assert wait_on_element(driver, 90, '//mat-icon[text()="assignment"]//span[text()="0"]')
 
 
