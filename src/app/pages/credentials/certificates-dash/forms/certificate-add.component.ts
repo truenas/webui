@@ -285,6 +285,7 @@ export class CertificateAddComponent implements WizardConfiguration {
         {
           type: 'input',
           name: 'common',
+          required: true,
           placeholder: helptext_system_certificates.add.common.placeholder,
           tooltip: helptext_system_certificates.add.common.tooltip,
           isHidden: false,
@@ -294,7 +295,6 @@ export class CertificateAddComponent implements WizardConfiguration {
           name: 'san',
           placeholder: helptext_system_certificates.add.san.placeholder,
           tooltip: helptext_system_certificates.add.san.tooltip,
-          required: true,
           validation: helptext_system_certificates.add.san.validation,
           isHidden: false,
         },

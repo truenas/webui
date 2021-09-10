@@ -249,6 +249,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           name: 'common',
           placeholder: helptext_system_ca.add.common.placeholder,
           tooltip: helptext_system_ca.add.common.tooltip,
+          required: true,
           isHidden: false,
         },
         {
@@ -256,7 +257,6 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           name: 'san',
           placeholder: helptext_system_ca.add.san.placeholder,
           tooltip: helptext_system_ca.add.san.tooltip,
-          required: true,
           validation: helptext_system_ca.add.san.validation,
           isHidden: false,
         },
