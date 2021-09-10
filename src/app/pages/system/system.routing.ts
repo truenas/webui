@@ -1,7 +1,7 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
-import { LocalizationForm2 } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
+import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { T } from 'app/translate-marker';
 import { Services } from '../services/services.component';
@@ -39,7 +39,7 @@ export const routes: Routes = [
       data: { title: T('General'), breadcrumb: T('General'), icon: 'build' },
       children: [{
         path: '',
-        component: LocalizationForm2,
+        component: GeneralSettingsComponent,
         data: { title: T('General'), breadcrumb: T('General') },
       }],
     }, {
