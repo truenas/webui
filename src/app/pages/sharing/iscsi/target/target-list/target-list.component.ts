@@ -76,7 +76,7 @@ export class TargetListComponent implements OnInit {
             const payload = [rowinner.id];
             let warningMsg = '';
             for (let i = 0; i < res.length; i++) {
-              if (res[i].target.split(':')[1] == rowinner.name) {
+              if (res[i].target && res[i].target.split(':')[1] == rowinner.name) {
                 warningMsg = '<font color="red">' + T('Warning: iSCSI Target is already in use.</font><br>');
                 payload.push(true); // enable force delele
                 break;
