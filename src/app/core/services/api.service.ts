@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -7,7 +9,6 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebSocketService } from 'app/services/ws.service';
-import { CoreService } from './core-service/core.service';
 
 export interface ApiCall {
   namespace: ApiMethod; // namespace for ws and path for rest
@@ -220,7 +221,7 @@ export class ApiService {
   }
 
   callWebsocket(evt: CoreEvent, def: ApiDefinition): void {
-    const cloneDef = { ...def };
+    const cloneDef = _.cloneDeep(def);
     const asyncCalls = [
       'vm.start',
       'vm.delete',
