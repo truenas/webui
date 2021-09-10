@@ -127,7 +127,7 @@ def on_the_dashboard_click_on_system_on_the_side_menu_click_on_boot(driver):
     """on the Dashboard, click on System on the side menu, click on Boot."""
     assert wait_on_element(driver, 30, '//li[contains(.,"Dashboard")]')
     # Gave more time for the UI to load.
-    assert wait_on_element(driver, 30, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 60, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Boot"]')
