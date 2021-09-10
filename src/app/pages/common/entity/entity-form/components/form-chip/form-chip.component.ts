@@ -2,7 +2,7 @@ import { ENTER } from '@angular/cdk/keycodes';
 import {
   Component, OnInit, ElementRef, ViewChild,
 } from '@angular/core';
-import { FormGroup, FormControl } from '@angular/forms';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { MatAutocompleteSelectedEvent, MatAutocomplete } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -36,6 +36,9 @@ export class FormChipComponent implements Field, OnInit {
 
   ngOnInit(): void {
     this.chipLists = this.group.controls[this.config.name].value || [];
+    if (!this.config.required) {
+      this.group.get(this.config.name).removeValidators(Validators.required);
+    }
     this.group.controls[this.config.name].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       if (this.chipLists !== this.group.controls[this.config.name].value && typeof this.group.controls[this.config.name].value === 'object') {
         this.chipLists = this.group.controls[this.config.name].value;
