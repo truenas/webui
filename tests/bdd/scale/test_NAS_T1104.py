@@ -238,12 +238,11 @@ def click_on_the_dataset_name_3_dots_button_select_edit_permissions(driver, data
 @then(parsers.parse('The Edit ACL page should open, select OPEN for Default ACL Option, select "{group_name}" for Group name, check the Apply Group.'))
 def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_group_name_for_group_name_check_the_apply_group(driver, group_name):
     """The Edit ACL page should open, select OPEN for Default ACL Option, select "{group_name}" for Group name, check the Apply Group.."""
-    assert wait_on_element(driver, 5, '//mat-card-title[text()="Unix Permissions Editor"]')
-    time.sleep(1)
-
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Set ACL")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Set ACL")]').click()
-    time.sleep(1)
+    #assert wait_on_element(driver, 5, '//mat-card-title[text()="Unix Permissions Editor"]')
+    #time.sleep(1)
+    #assert wait_on_element(driver, 5, '//span[contains(text(),"Set ACL")]', 'clickable')
+    #driver.find_element_by_xpath('//span[contains(text(),"Set ACL")]').click()
+    time.sleep(2)
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Default ACL Options"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Default ACL Options"]').click()
     time.sleep(1)
