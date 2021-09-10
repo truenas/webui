@@ -213,8 +213,8 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    # time.sleep(20)
-    # driver.refresh()
+    time.sleep(25)
+    driver.refresh()
     assert wait_on_element(driver, 180, '//input[@data-placeholder="Username"]')
 
 
