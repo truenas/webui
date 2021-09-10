@@ -7,6 +7,7 @@ from function import (
     is_element_present,
     wait_on_element_disappear
 )
+from selenium.common.exceptions import ElementClickInterceptedException
 from pytest_bdd import (
     given,
     scenario,
@@ -48,6 +49,12 @@ def you_should_see_the_dashboard(driver):
     """You should see the dashboard."""
     assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
+        try:
+            assert wait_on_element(driver, 2, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+            driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+        except ElementClickInterceptedException:
+            assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
 
 
 @then('Click on the Credentials item in the left side menu')
