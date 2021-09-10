@@ -4,6 +4,7 @@ import { WebSocketService } from '../../services/ws.service';
 import { RestService } from '../../services/rest.service';
 import { CoreService, CoreEvent } from './core.service';
 import { DialogService } from '../../services';
+import * as _ from 'lodash';
 // import { DataService } from './data.service';
 
 interface ApiCall {
@@ -686,7 +687,7 @@ export class ApiService {
   }
 
   async callWebsocket(evt: CoreEvent, def) {
-    const cloneDef = { ...def };
+    const cloneDef = _.cloneDeep(def);
     const async_calls = [
       'vm.start',
       'vm.delete',
