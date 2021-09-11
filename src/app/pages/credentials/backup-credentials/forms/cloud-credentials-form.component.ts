@@ -9,6 +9,7 @@ import { helptext_system_cloudcredentials as helptext } from 'app/helptext/syste
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -1455,11 +1456,11 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     const dialogService = this.dialog;
     const getOnedriveList = this.getOnedriveList.bind(this);
 
-    const method = (message: any): void => doAuth(message, this.selectedProvider);
+    const method = (message: OauthMessage): void => doAuth(message, this.selectedProvider);
 
     window.addEventListener('message', method, false);
 
-    function doAuth(message: any, selectedProvider: string): void {
+    function doAuth(message: OauthMessage, selectedProvider: string): void {
       if ('oauth_portal' in message.data) {
         if (message.data.error) {
           dialogService.errorReport(T('Error'), message.data.error);

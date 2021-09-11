@@ -20,7 +20,7 @@ import { TableService } from 'app/pages/common/entity/table/table.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form.component';
 import {
-  SystemGeneralService, WebSocketService, DialogService, StorageService,
+  SystemGeneralService, WebSocketService, DialogService, StorageService, ModalServiceMessage,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
@@ -59,7 +59,7 @@ export class CertificatesDashComponent implements OnInit {
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getCards();
     });
-    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: ModalServiceMessage) => {
       if (res['action'] === 'open' && res['component'] === 'acmeComponent') {
         this.openForm(res['row']);
       }
@@ -385,7 +385,7 @@ export class CertificatesDashComponent implements OnInit {
     return [acmeAction, revokeAction, ...caRowActions];
   }
 
-  openForm(id: any): void {
+  openForm(id: number): void {
     setTimeout(() => {
       this.modalService.openInSlideIn(CertificateAcmeAddComponent, id);
     }, 200);

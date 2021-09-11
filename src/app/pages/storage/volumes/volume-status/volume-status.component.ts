@@ -10,6 +10,7 @@ import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
@@ -272,7 +273,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     this.loader.close();
   }
 
-  getAction(data: any, category: any, vdev_type: any): any {
+  getAction(data: any, category: any, vdev_type: VDevType): any {
     const actions = [{
       id: 'edit',
       label: helptext.actions_label.edit,
@@ -467,11 +468,11 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       _.find(actions, { id: 'offline' }).isHidden = true;
     }
 
-    if (vdev_type === 'MIRROR' || vdev_type === 'REPLACING' || vdev_type === 'SPARE') {
+    if (vdev_type === VDevType.Mirror || vdev_type === VDevType.Replacing || vdev_type === VDevType.Spare) {
       _.find(actions, { id: 'detach' }).isHidden = false;
     }
 
-    if (vdev_type === 'MIRROR') {
+    if (vdev_type === VDevType.Mirror) {
       _.find(actions, { id: 'remove' }).isHidden = true;
     }
 
@@ -544,7 +545,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }];
   }
 
-  parseData(data: any, category?: any, vdev_type?: any): PoolDiskInfo {
+  parseData(data: any, category?: any, vdev_type?: VDevType): PoolDiskInfo {
     let stats: any = {
       read_errors: 0,
       write_errors: 0,
@@ -583,7 +584,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     return item;
   }
 
-  parseTopolgy(data: VDev, category: PoolTopologyCategory, vdev_type?: any): TreeNode {
+  parseTopolgy(data: VDev, category: PoolTopologyCategory, vdev_type?: VDevType): TreeNode {
     const node: TreeNode = {};
     node.data = this.parseData(data, category, vdev_type);
     node.expanded = true;

@@ -7,7 +7,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
-import { CardComponent } from 'app/core/components/card/card.component';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { Display } from 'app/core/components/display/display.component';
 import { PageComponent } from 'app/core/components/page/page.component';
@@ -56,7 +55,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ContextMenuComponent,
     PageComponent,
     ViewComponent,
-    CardComponent,
     ViewControlComponent,
     ViewControllerComponent,
     Display,
@@ -95,7 +93,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ViewControlComponent,
     ViewButtonComponent,
     ViewControllerComponent,
-    CardComponent,
     TextLimiterDirective,
     HtmlTooltipDirective,
     TextLimiterTooltipComponent,
@@ -115,7 +112,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ViewControlComponent,
     ViewButtonComponent,
     ViewControllerComponent,
-    CardComponent,
     TextLimiterTooltipComponent,
     CopyButtonComponent,
   ],

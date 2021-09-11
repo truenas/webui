@@ -12,7 +12,7 @@ import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
@@ -468,7 +468,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  getBuckets(credential: CloudsyncCredential): Observable<any[]> {
+  getBuckets(credential: CloudsyncCredential): Observable<CloudsyncBucket[]> {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
   }
 
@@ -483,7 +483,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  setBucketError(error: any): void {
+  setBucketError(error: string): void {
     if (error) {
       this.bucket_field.hasErrors = true;
       this.bucket_field.errors = error;
@@ -755,44 +755,42 @@ export class CloudsyncFormComponent implements FormConfiguration {
                 this.bucket_input_field.tooltip = T('Input the pre-defined S3 bucket to use.');
               }
 
-              this.getBuckets(item).pipe(untilDestroyed(this)).subscribe(
-                (res: any[]) => {
-                  if (entityForm.loaderOpen === false) {
-                    this.loader.close();
-                  } else {
-                    entityForm.loader.close();
-                    entityForm.loaderOpen = false;
-                    entityForm.keepLoaderOpen = false;
-                  }
-                  this.bucket_field.options = [{ label: '----------', value: '' }];
-                  if (res) {
-                    res.forEach((subitem) => {
-                      this.bucket_field.options.push({ label: subitem.Name, value: subitem.Path });
-                    });
-                  }
-                  this.setDisabled('bucket', false, false);
-                  this.setDisabled('bucket_input', true, true);
-                },
-                (err) => {
-                  if (entityForm.loaderOpen === false) {
-                    this.loader.close();
-                  } else {
-                    entityForm.loader.close();
-                    entityForm.loaderOpen = false;
-                    entityForm.keepLoaderOpen = false;
-                  }
-                  this.setDisabled('bucket', true, true);
-                  this.setDisabled('bucket_input', false, false);
-                  this.dialog.confirm({
-                    title: err.extra ? err.extra.excerpt : (T('Error: ') + err.error),
-                    message: err.reason,
-                    hideCheckBox: true,
-                    buttonMsg: T('Fix Credential'),
-                  }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                    this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', String(item.id)]));
+              this.getBuckets(item).pipe(untilDestroyed(this)).subscribe((res) => {
+                if (entityForm.loaderOpen === false) {
+                  this.loader.close();
+                } else {
+                  entityForm.loader.close();
+                  entityForm.loaderOpen = false;
+                  entityForm.keepLoaderOpen = false;
+                }
+                this.bucket_field.options = [{ label: '----------', value: '' }];
+                if (res) {
+                  res.forEach((subitem) => {
+                    this.bucket_field.options.push({ label: subitem.Name, value: subitem.Path });
                   });
-                },
-              );
+                }
+                this.setDisabled('bucket', false, false);
+                this.setDisabled('bucket_input', true, true);
+              },
+              (err) => {
+                if (entityForm.loaderOpen === false) {
+                  this.loader.close();
+                } else {
+                  entityForm.loader.close();
+                  entityForm.loaderOpen = false;
+                  entityForm.keepLoaderOpen = false;
+                }
+                this.setDisabled('bucket', true, true);
+                this.setDisabled('bucket_input', false, false);
+                this.dialog.confirm({
+                  title: err.extra ? err.extra.excerpt : (T('Error: ') + err.error),
+                  message: err.reason,
+                  hideCheckBox: true,
+                  buttonMsg: T('Fix Credential'),
+                }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+                  this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', String(item.id)]));
+                });
+              });
             } else {
               this.setDisabled('bucket', true, true);
               this.setDisabled('bucket_input', true, true);
@@ -836,7 +834,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.formGroup.controls['bwlimit'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       _.find(entityForm.fieldConfig, { name: 'bwlimit' }).hasErrors = false;
       _.find(entityForm.fieldConfig, { name: 'bwlimit' }).errors = null;
-      (this.formGroup.controls['bwlimit'] as any).errors = null;
+      this.formGroup.controls['bwlimit'].setErrors(null);
     });
 
     // When user interacts with direction dropdown, change transfer_mode to COPY
@@ -911,7 +909,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     return transformed;
   }
 
-  handleBwlimit(bwlimit: any): any[] {
+  handleBwlimit(bwlimit: string): any[] {
     const bwlimtArr = [];
 
     for (let i = 0; i < bwlimit.length; i++) {
@@ -930,7 +928,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           _.find(this.fieldConfig, { name: 'bwlimit' }).errors = 'Invalid bandwidth ' + sublimitArr[1];
           (this.formGroup.controls['bwlimit'] as any).setErrors('Invalid bandwidth ' + sublimitArr[1]);
         } else {
-          sublimitArr[1] = this.cloudcredentialService.getByte(sublimitArr[1]);
+          (sublimitArr[1] as any) = this.cloudcredentialService.getByte(sublimitArr[1]);
         }
       }
       const subLimit = {

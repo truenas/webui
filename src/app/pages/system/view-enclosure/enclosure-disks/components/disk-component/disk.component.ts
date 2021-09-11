@@ -8,5 +8,8 @@ import {
   styleUrls: ['./disk.component.scss'],
 })
 export class DiskComponent {
-  @Input() data: any;
+  @Input() data: {
+    name: string;
+    type?: string;
+  };
 }
