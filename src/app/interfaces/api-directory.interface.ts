@@ -113,7 +113,7 @@ import { KerberosConfig, KerberosKeytab, KerberosKeytabUpdate } from 'app/interf
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
 import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
-import { LdapConfig } from 'app/interfaces/ldap-config.interface';
+import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { MailConfig, MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import {
@@ -556,7 +556,7 @@ export type ApiDirectory = {
 
   // Ldap
   'ldap.ssl_choices': { params: void; response: string[] };
-  'ldap.update': { params: any; response: any };
+  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };
   'ldap.schema_choices': { params: void; response: string[] };
   'ldap.config': { params: void; response: LdapConfig };
 
@@ -648,7 +648,7 @@ export type ApiDirectory = {
   'pool.snapshottask.update': { params: any; response: any };
   'pool.unlock': { params: PoolUnlockQuery; response: PoolUnlockResult };
   'pool.unlock_services_restart_choices': { params: [id: string]; response: Choices };
-  'pool.update': { params: any; response: any };
+  'pool.update': { params: any; response: Pool };
   'pool.upgrade': { params: [id: number]; response: boolean };
 
   // Replication

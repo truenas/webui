@@ -286,7 +286,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       this.encrypted = (< FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
       this.devices = _.find(this.wizardConfig[1].fieldConfig, { name: 'devices' });
       this.devices_fg = (< FormGroup > entityWizard.formArray.get([1]).get('devices'));
-      this.key = _.find(this.wizardConfig[1].fieldConfig, { name: 'key' });
+      this.key = _.find(this.wizardConfig[1].fieldConfig, { name: 'key' }) as FormUploadConfig;
       this.key_fg = (< FormGroup > entityWizard.formArray.get([1]).get('key'));
       this.passphrase = _.find(this.wizardConfig[1].fieldConfig, { name: 'passphrase' }) as FormInputConfig;
       this.passphrase_fg = (< FormGroup > entityWizard.formArray.get([1]).get('passphrase'));

@@ -125,7 +125,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
       }
       this.tftp_username = this.fieldSets
         .find((set) => set.name === helptext.tftp_fieldset_conn)
-        .config.find((config) => config.name === 'username');
+        .config.find((config) => config.name === 'username') as FormComboboxConfig;
       this.tftp_username.options = users;
     });
   }

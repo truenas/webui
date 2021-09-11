@@ -184,7 +184,10 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }
-      this.userField = _.find(this.fieldSets.find((set) => set.name === helptext.heading_owner).config, { name: 'user' });
+      this.userField = _.find(
+        this.fieldSets.find((set) => set.name === helptext.heading_owner).config,
+        { name: 'user' },
+      ) as FormComboboxConfig;
       this.userField.options = users;
     });
 
@@ -193,7 +196,10 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
-      this.groupField = _.find(this.fieldSets.find((set) => set.name === helptext.heading_owner).config, { name: 'group' });
+      this.groupField = _.find(
+        this.fieldSets.find((set) => set.name === helptext.heading_owner).config,
+        { name: 'group' },
+      ) as FormComboboxConfig;
       this.groupField.options = groupOptions;
     });
   }

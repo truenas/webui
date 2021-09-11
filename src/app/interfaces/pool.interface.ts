@@ -39,7 +39,7 @@ export interface PoolScan {
   end_time: ApiTimestamp;
   errors: number;
   function: 'SCRUB'; // TODO: Unknown what other values are
-  pause: any;
+  pause: string;
   percentage: number;
   start_time: ApiTimestamp;
   state: PoolScanState;

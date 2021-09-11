@@ -6,8 +6,9 @@ import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/ipmi/ipmi';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { IpmiUpdate } from 'app/interfaces/ipmi.interface';
+import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -261,7 +262,7 @@ export class IPMIFromComponent implements FormConfiguration {
     });
   }
 
-  loadData(filter: any = []): void {
+  loadData(filter: QueryParams<Ipmi> = []): void {
     let query$ = this.ws.call(this.queryCall, filter);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       query$ = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);

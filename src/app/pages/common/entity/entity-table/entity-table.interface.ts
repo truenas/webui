@@ -82,6 +82,7 @@ export interface EntityTableAction<Row = any> {
   label: string;
   onClick: ((row: Row) => void) | (() => void);
   disabled?: boolean;
+  actions?: EntityTableAction[];
 }
 
 export interface EntityTableMultiAction<Row = any> {

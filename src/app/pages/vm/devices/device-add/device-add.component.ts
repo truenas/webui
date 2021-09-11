@@ -604,7 +604,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       searchedZvols.push({
         label: 'Add New', value: 'new', sticky: 'bottom',
       });
-      const config: FormComboboxConfig = _.find(parent.diskFieldConfig, { name: 'path' });
+      const config = _.find(parent.diskFieldConfig, { name: 'path' }) as FormComboboxConfig;
       config.searchOptions = searchedZvols;
     });
   }

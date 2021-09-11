@@ -4,6 +4,7 @@ import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { DiskDataEvent, DisksRequestEvent } from 'app/interfaces/events/disk-data-event.interface';
 import { EnclosureDataEvent } from 'app/interfaces/events/enclosure-data-event.interface';
 import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
+import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
@@ -60,4 +61,5 @@ export type CoreEvent =
   | MediaChangeEvent
   | NetworkInterfacesChangedEvent
   | AuthenticatedEvent
-  | UserPreferencesEvent;
+  | UserPreferencesEvent
+  | LabelDrivesEvent;

@@ -1404,7 +1404,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     const tenantCtrl = entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'];
     const tenantIdCtrl = entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'];
     entityForm.formGroup.controls['auth_version-OPENSTACK_SWIFT'].valueChanges.pipe(untilDestroyed(this)).subscribe(
-      (res: any) => {
+      (res: number) => {
         if (res === 1) {
           this.setFieldRequired('tenant-OPENSTACK_SWIFT', false, entityForm);
           this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', false, entityForm);

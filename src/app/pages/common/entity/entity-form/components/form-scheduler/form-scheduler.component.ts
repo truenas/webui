@@ -51,10 +51,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   isOpen = false;
   formControl = new FormControl();
-  private _currentValue: string;
-  get currentValue(): any {
-    return this.group.controls[this.config.name].value;
-  }
 
   private _minutes = '0';
   private _hours = '*';
@@ -763,7 +759,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
   }
 
-  updateCronTab(preset?: any): void {
+  updateCronTab(preset?: string): void {
     this.crontab = '';
     if (!preset) {
       const result = this.minutes + ' ' + this.hours + ' ' + this.days + ' ' + this._months + ' ' + this._daysOfWeek;

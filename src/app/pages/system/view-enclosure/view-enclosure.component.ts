@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { ErrorMessage } from 'app/core/classes/ix-interfaces';
-import { SystemProfiler } from 'app/core/classes/system-profiler';
+import { EnclosureMetadata, SystemProfiler } from 'app/core/classes/system-profiler';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -17,7 +17,7 @@ import { SensorDataEvent } from 'app/interfaces/events/sensor-data-event.interfa
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 
-interface ViewConfig {
+export interface ViewConfig {
   name: string;
   alias: string; // Used for tab label
   icon: string;
@@ -48,7 +48,7 @@ export class ViewEnclosureComponent implements OnDestroy {
 
   scrollContainer: HTMLElement;
   system: SystemProfiler;
-  selectedEnclosure: any;
+  selectedEnclosure: EnclosureMetadata;
   views: ViewConfig[] = [];
   spinner = true;
 
