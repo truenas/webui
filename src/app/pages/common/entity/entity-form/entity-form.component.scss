@@ -166,3 +166,18 @@ span.form-message.warning {
     padding: 16px !important;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .entity-form .form-line:last-child {
+    margin-right: 0;
+  }
+
+  .fieldset-label:empty {
+    display: none;
+  }
+
+  .fieldset {
+    padding-bottom: 0;
+  }
+
+}

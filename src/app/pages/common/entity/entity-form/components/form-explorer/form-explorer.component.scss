@@ -68,15 +68,8 @@
 }
 
 @media screen and (max-width: 768px) {
-  .form-ex-flex-container {
-    display: flex;
-    flex-direction: column;
-    margin-left: -10px;
-  }
-
   .form-explorer {
     margin-bottom: 20px;
-    padding: 3px 10px 10px;
   }
 
   #box1 {

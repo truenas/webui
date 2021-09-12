@@ -24,3 +24,11 @@ input {
     margin: 48px 0 22px;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .form-checkbox {
+    &.expanded-height {
+      margin: 22px 0;
+    }
+  }
+}

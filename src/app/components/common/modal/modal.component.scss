@@ -112,3 +112,10 @@ body.jw-modal-open .slide-in-form .jw-modal-body {
   /* body overflow is hidden to hide main scrollbar when modal window is open */
   overflow: hidden;
 }
+
+@media screen and (max-width: 768px) {
+  .slide-in-form {
+    min-width: auto;
+    width: auto;
+  }
+}

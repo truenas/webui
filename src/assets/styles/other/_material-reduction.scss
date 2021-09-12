@@ -803,6 +803,12 @@ mat-card.mat-card .mat-list-base {
   margin-left: 8px;
 }
 
+@media screen and (max-width: 768px) {
+  .entity-table-controls > div {
+    margin-top: 8px !important;
+  }
+}
+
 #row-filter.form-element {
   display: inline;
   margin: 0;
@@ -977,5 +983,13 @@ ul.nested-list li {
 
   &[data-popper-placement=bottom] {
     margin-left: 11px !important;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .mat-button {
+    font-size: 12px;
+    min-width: auto;
+    padding: 0 8px;
   }
 }
