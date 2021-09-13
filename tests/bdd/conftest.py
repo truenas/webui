@@ -150,10 +150,11 @@ def pytest_runtest_makereport(item):
                     web_driver.close()
             web_driver.switch_to.window(initial_tab)
         # if test that use disable failover make sure to enable failover back.
-        if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
-            if element_exist('//mat-icon[@svgicon="ha_disabled"]'):
-                enable_failover()
-        elif 'T1010' in screenshot_name:
+        # if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
+        #     if element_exist('//mat-icon[@svgicon="ha_disabled"]'):
+        #         enable_failover()
+        # elif 'T1010' in screenshot_name:
+        if 'T1010' in screenshot_name:
             disable_active_directory()
         elif 'T1013' in screenshot_name:
             disable_ldap()
