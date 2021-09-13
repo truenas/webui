@@ -330,7 +330,7 @@ def select_NFS4_OPEN_for_Default_ACL_Option_then_click_continue(driver):
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
-@then(parsers.parse('On the Edit ACL, select "{user_name}" for User name'))
+@then(parsers.parse('on the Edit ACL, select "{user_name}" for User name'))
 def on_the_edit_acl_select_the_user_name(driver, user_name):
     """On the Edit ACL, select "{user_name}" for User name."""
     assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
