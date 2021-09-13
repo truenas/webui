@@ -172,7 +172,7 @@
           </ng-container>
 
           <!-- Interactive Checkbox Column -->
-          <ng-container *ngIf="(column == 'enabled' || column == 'enable' || column == 'autostart') && isInteractive(column)" matColumnDef="{{column}}">
+          <ng-container *ngIf="['enabled', 'enable', 'autostart'].includes(column) && isInteractive(column)" matColumnDef="{{column}}">
             <th class="toggle-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
             <td class="toggle-column" mat-cell *matCellDef="let element" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
               <mat-checkbox
@@ -183,6 +183,23 @@
               (change)="this.conf.onCheckboxChange(element)"
               (click)="$event.stopPropagation()"
               ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{ column }}__{{ element.name}}"></mat-checkbox>
+            </td>
+          </ng-container>
+
+          <ng-container
+            *ngIf="['path', 'paths'].includes(column) && isInteractive(column)"
+            matColumnDef="{{column}}"
+          >
+            <th mat-header-cell *matHeaderCellDef>{{ currentColumns[i].name }}</th>
+            <td mat-cell *matCellDef="let element" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
+              <div class="path-locked-status">
+                <div class="text-overflow-ellipsis">{{ element[column] }}</div>
+                <mat-icon
+                  *ngIf="element.locked"
+                  [matTooltip]="'Dataset is currently locked' | translate"
+                  class="append"
+                >locked</mat-icon>
+              </div>
             </td>
           </ng-container>
 

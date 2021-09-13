@@ -1189,7 +1189,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
 
   isInteractive(column: string): boolean {
     const item = this.currentColumns.find((obj) => obj.prop === column);
-    return (item?.checkbox || item?.toggle || item?.button);
+    return (item?.checkbox || item?.toggle || item?.button || item?.showLockedStatus);
   }
 
   doRowClick(element: Row): void {

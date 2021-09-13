@@ -4,7 +4,9 @@ import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, ModalService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
 import { NFSFormComponent } from '../nfs-form/nfs-form.component';
 
@@ -14,8 +16,9 @@ import { NFSFormComponent } from '../nfs-form/nfs-form.component';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class NFSListComponent implements EntityTableConfig<NfsShare> {
-  title = 'NFS';
+  title = T('NFS');
   queryCall: 'sharing.nfs.query' = 'sharing.nfs.query';
+  updateCall: 'sharing.nfs.update' = 'sharing.nfs.update';
   wsDelete: 'sharing.nfs.delete' = 'sharing.nfs.delete';
   route_add: string[] = ['sharing', 'nfs', 'add'];
   route_add_tooltip = 'Add Unix (NFS) Share';
@@ -24,9 +27,11 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
   entityList: EntityTableComponent;
 
   columns = [
-    { name: helptext_sharing_nfs.column_path, prop: 'paths', always_display: true },
+    {
+      name: helptext_sharing_nfs.column_path, prop: 'paths', showLockedStatus: true, always_display: true,
+    },
     { name: helptext_sharing_nfs.column_comment, prop: 'comment' },
-    { name: helptext_sharing_nfs.column_enabled, prop: 'enabled' },
+    { name: helptext_sharing_nfs.column_enabled, prop: 'enabled', checkbox: true },
   ];
   rowIdentifier = 'nfs_paths';
   config = {
@@ -41,6 +46,7 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
   constructor(
     private modalService: ModalService,
     protected ws: WebSocketService,
+    private dialog: DialogService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -64,5 +70,19 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
 
   doEdit(id: number): void {
     this.doAdd(id);
+  }
+
+  onCheckboxChange(row: NfsShare): void {
+    this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }])
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (res) => {
+          row.enabled = res.enabled;
+        },
+        (err) => {
+          row.enabled = !row.enabled;
+          new EntityUtils().handleWSError(this, err, this.dialog);
+        },
+      );
   }
 }

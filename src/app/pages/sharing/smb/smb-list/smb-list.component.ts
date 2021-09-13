@@ -43,7 +43,7 @@ export class SMBListComponent implements EntityTableConfig {
 
   columns = [
     { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
-    { name: helptext_sharing_smb.column_path, prop: 'path' },
+    { name: helptext_sharing_smb.column_path, prop: 'path', showLockedStatus: true },
     { name: helptext_sharing_smb.column_comment, prop: 'comment' },
     { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
   ];
@@ -173,11 +173,8 @@ export class SMBListComponent implements EntityTableConfig {
 
   onCheckboxChange(row: SmbShare): void {
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (res: any) => {
+      (res) => {
         row.enabled = res.enabled;
-        if (!res) {
-          row.enabled = !row.enabled;
-        }
       },
       (err) => {
         row.enabled = !row.enabled;

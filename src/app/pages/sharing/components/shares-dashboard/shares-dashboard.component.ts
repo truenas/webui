@@ -179,7 +179,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           emptyEntityLarge: false,
           parent: this,
           columns: [
-            { name: helptext_sharing_nfs.column_path, prop: 'paths' },
+            { name: helptext_sharing_nfs.column_path, prop: 'paths', showLockedStatus: true },
             { name: helptext_sharing_nfs.column_comment, prop: 'comment', hiddenIfEmpty: true },
             {
               name: helptext_sharing_nfs.column_enabled,
@@ -268,7 +268,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           columns: [
             { prop: 'name', name: helptext_sharing_webdav.column_name },
             { prop: 'comment', name: helptext_sharing_webdav.column_comment, hiddenIfEmpty: true },
-            { prop: 'path', name: helptext_sharing_webdav.column_path },
+            { prop: 'path', name: helptext_sharing_webdav.column_path, showLockedStatus: true },
             {
               prop: 'perm',
               name: helptext_sharing_webdav.column_perm,
@@ -326,7 +326,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           parent: this,
           columns: [
             { name: helptext_sharing_smb.column_name, prop: 'name' },
-            { name: helptext_sharing_smb.column_path, prop: 'path' },
+            { name: helptext_sharing_smb.column_path, prop: 'path', showLockedStatus: true },
             { name: helptext_sharing_smb.column_comment, prop: 'comment', hiddenIfEmpty: true },
             {
               name: helptext_sharing_smb.column_enabled,
