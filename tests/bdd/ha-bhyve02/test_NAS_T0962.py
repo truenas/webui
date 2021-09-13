@@ -52,6 +52,7 @@ def if_the_login_page_appears_enter_root_and_testing(driver, user, password):
 def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     """on the Dashboard, click Network on the left sidebar."""
     assert wait_on_element(driver, 7, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
@@ -213,8 +214,8 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    time.sleep(25)
-    driver.refresh()
+    # time.sleep(25)
+    # driver.refresh()
     assert wait_on_element(driver, 180, '//input[@data-placeholder="Username"]')
 
 
@@ -239,8 +240,8 @@ def on_the_dashboard_wait_5_second(driver):
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    assert wait_on_element(driver, 60, '//span[contains(.,"System Information")]')
     time.sleep(15)
-    # assert wait_on_element(driver, 90, '//mat-icon[text()="assignment"]//span[text()="0"]')
 
 
 @then('after click Storage on the left sidebar Storage')
