@@ -6,6 +6,7 @@ import { EnclosureDataEvent } from 'app/interfaces/events/enclosure-data-event.i
 import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
+import { MemoryStatsEvent } from 'app/interfaces/events/memory-stats-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
@@ -62,4 +63,5 @@ export type CoreEvent =
   | NetworkInterfacesChangedEvent
   | AuthenticatedEvent
   | UserPreferencesEvent
-  | LabelDrivesEvent;
+  | LabelDrivesEvent
+  | MemoryStatsEvent;

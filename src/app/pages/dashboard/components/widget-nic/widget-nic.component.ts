@@ -8,8 +8,11 @@ import {
   tween,
   styler,
 } from 'popmotion';
+import { Subject } from 'rxjs';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { DashboardNicState } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 import { T } from 'app/translate-marker';
@@ -33,8 +36,8 @@ interface Slide {
   styleUrls: ['./widget-nic.component.scss'],
 })
 export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
-  @Input() stats: any;
-  @Input() nicState: any;
+  @Input() stats: Subject<CoreEvent>;
+  @Input() nicState: DashboardNicState;
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
   @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
   traffic: NetTraffic;
@@ -57,10 +60,10 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     { name: T('empty') },
   ];
 
-  get ipAddresses(): any[] {
+  get ipAddresses(): NetworkInterfaceAlias[] {
     if (!this.nicState && !this.nicState.aliases) { return []; }
 
-    return this.nicState.aliases.filter((item: any) =>
+    return this.nicState.aliases.filter((item) =>
       [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
   }
 
@@ -163,8 +166,8 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     return -1;
   }
 
-  manageInterface(_interface: any): void {
-    const navigationExtras: NavigationExtras = { state: { editInterface: _interface.name } };
+  manageInterface(nicState: DashboardNicState): void {
+    const navigationExtras: NavigationExtras = { state: { editInterface: nicState.name } };
     this.router.navigate(['network'], navigationExtras);
   }
 }

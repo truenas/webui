@@ -140,7 +140,6 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
   private rsyncmod_group: FormComboboxConfig;
   private rsyncmod_user: FormComboboxConfig;
   protected entityForm: EntityFormComponent;
-  customFilter: any;
   constructor(protected ws: WebSocketService, protected router: Router,
     protected userService: UserService, protected route: ActivatedRoute) {
   }

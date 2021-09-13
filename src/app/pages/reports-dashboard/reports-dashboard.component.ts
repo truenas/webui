@@ -19,6 +19,7 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { MultipathDisk } from 'app/pages/reports-dashboard/multipath-disk.interface';
 import {
   SystemGeneralService,
   WebSocketService,
@@ -50,7 +51,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
   retroLogo: string;
 
-  multipathTitles: any = {};
+  multipathTitles: { [disk: string]: string } = {};
   diskReports: Report[];
   otherReports: Report[];
   activeReports: Report[] = [];
@@ -72,10 +73,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   values: any[] = [];
   toolbarConfig: ToolbarConfig;
   protected isEntity = true;
-  diskDevices: any[] = [];
-  diskMetrics: any[] = [];
-  categoryDevices: any[] = [];
-  categoryMetrics: any[] = [];
+  diskDevices: Option[] = [];
+  diskMetrics: Option[] = [];
   saveSubmitText = T('Generate Reports');
   actionButtonsAlign = 'left';
   fieldConfig: FieldConfig[] = [];
@@ -141,10 +140,16 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   diskQueries(): void {
-    this.ws.call('multipath.query').pipe(untilDestroyed(this)).subscribe((multipath_res: any[]) => {
-      let multipathDisks: any[] = [];
+    this.ws.call('multipath.query').pipe(untilDestroyed(this)).subscribe((multipath_res) => {
+      let multipathDisks: MultipathDisk[] = [];
       multipath_res.forEach((m) => {
-        const children = m.children.map((child: any) => ({ disk: m.name.replace('multipath/', ''), name: child.name, status: child.status }));
+        const children = m.children.map((child) => {
+          return {
+            disk: m.name.replace('multipath/', ''),
+            name: child.name,
+            status: child.status,
+          };
+        });
         multipathDisks = multipathDisks.concat(children);
       });
 
@@ -344,7 +349,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
           options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
           customTriggerValue: 'Select Disks',
           value: this.diskDevices?.length && selectedDisks
-            ? this.diskDevices.filter((device) => selectedDisks.includes(device.value)) : null,
+            ? this.diskDevices.filter((device) => selectedDisks.includes(device.value as string))
+            : null,
         },
         {
           type: 'multiselect',
@@ -466,14 +472,14 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.visibleReports = visible;
   }
 
-  parseDisks(disks: Disk[], multipathDisks: any[]): void {
+  parseDisks(disks: Disk[], multipathDisks: MultipathDisk[]): void {
     const uniqueNames = disks
       .filter((disk) => !disk.devname.includes('multipath'))
       .map((disk) => disk.devname);
 
     const activeDisks = multipathDisks.filter((disk) => disk.status == 'ACTIVE');
 
-    const multipathTitles: any = {};
+    const multipathTitles: { [disk: string]: string } = {};
 
     const multipathNames = activeDisks.map((disk) => {
       const label = disk.disk; // disk.name + ' (multipath : ' + disk.disk  + ')';
@@ -488,8 +494,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     const diskDevices = uniqueNames.map((devname) => {
       const spl = devname.split(' ');
-      const obj = { label: devname, value: spl[0] };
-      return obj;
+      return { label: devname, value: spl[0] };
     });
 
     this.diskDevices = diskDevices.concat(multipathNames);

@@ -20,6 +20,7 @@ import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { Theme } from 'app/services/theme/theme.service';
 import { T } from 'app/translate-marker';
 
@@ -36,8 +37,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   @Input() cpuModel: string;
   chart: any;// Chart.js instance with per core data
   ctx: CanvasRenderingContext2D; // canvas context for chart.js
-  private _cpuData: any;
-  get cpuData(): any { return this._cpuData; }
+  private _cpuData: WidgetCpuData;
+  get cpuData(): WidgetCpuData { return this._cpuData; }
   set cpuData(value) {
     this._cpuData = value;
   }
@@ -143,10 +144,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  parseCpuData(cpuData: AllCpusUpdate): any[][] {
+  parseCpuData(cpuData: AllCpusUpdate): (string | number)[][] {
     this.tempAvailable = Boolean(cpuData.temperature && Object.keys(cpuData.temperature).length > 0);
-    const usageColumn: any[] = ['Usage'];
-    let temperatureColumn: any[] = ['Temperature'];
+    const usageColumn: (string | number)[] = ['Usage'];
+    let temperatureColumn: string[] = ['Temperature'];
     const temperatureValues = [];
 
     // Filter out stats per thread
@@ -207,11 +208,12 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   setCpuData(cpuData: AllCpusUpdate): void {
-    const config: any = {};
-    config.title = 'Cores';
-    config.orientation = 'horizontal';
-    config.max = 100;
-    config.data = this.parseCpuData(cpuData);
+    const config = {
+      title: this.translate.instant('Cores'),
+      orientation: 'horizontal',
+      max: 100,
+      data: this.parseCpuData(cpuData),
+    };
     this.cpuData = config;
     this.coresChartInit();
   }
@@ -333,7 +335,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  protected makeDatasets(data: any[]): ChartDataSets[] {
+  protected makeDatasets(data: (string | number)[][]): ChartDataSets[] {
     const datasets: ChartDataSets[] = [];
     const labels: string[] = [];
     for (let i = 0; i < this.threadCount; i++) {
@@ -344,8 +346,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     // Create the data...
     data.forEach((item, index) => {
       const ds: ChartDataSets = {
-        label: item[0],
-        data: data[index].slice(1),
+        label: item[0] as any,
+        data: data[index].slice(1) as any,
         backgroundColor: '',
         borderColor: '',
         borderWidth: 1,

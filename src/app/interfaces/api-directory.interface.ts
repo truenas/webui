@@ -116,6 +116,7 @@ import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kuberne
 import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { MailConfig, MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
+import { Multipath } from 'app/interfaces/multipath.interface';
 import {
   NetworkActivityChoice,
   NetworkConfiguration,
@@ -158,7 +159,9 @@ import {
   SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest, SmartTestResults, ManualSmartTest, SmartTestUpdate,
 } from 'app/interfaces/smart-test.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
-import { SmbPresets, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
+import {
+  SmbPresets, SmbShare, SmbSharesec, SmbShareUpdate,
+} from 'app/interfaces/smb-share.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { RemoteSshScanParams, SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
@@ -448,7 +451,7 @@ export type ApiDirectory = {
   'kubernetes.bindip_choices': { params: void; response: Choices };
 
   // Multipath
-  'multipath.query': { params: any; response: any };
+  'multipath.query': { params: QueryParams<Multipath>; response: Multipath[] };
 
   // Mail
   'mail.config': { params: void; response: MailConfig };
@@ -774,7 +777,7 @@ export type ApiDirectory = {
   // Sharing
   'sharing.smb.query': { params: QueryParams<SmbShare>; response: SmbShare[] };
   'sharing.smb.create': { params: any; response: any };
-  'sharing.smb.update': { params: any; response: any };
+  'sharing.smb.update': { params: [id: number, update: SmbShareUpdate]; response: SmbShare };
   'sharing.smb.delete': { params: [id: number]; response: boolean };
   'sharing.smb.presets': { params: void; response: SmbPresets };
   'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };
