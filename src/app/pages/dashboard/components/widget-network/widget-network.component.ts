@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
+import { filter, take } from 'rxjs/operators';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
@@ -15,8 +16,9 @@ import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/ent
 import { TableService } from 'app/pages/common/entity/table/table.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
-import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { WebSocketService } from 'app/services';
+import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
 
 interface NicInfo {
@@ -117,10 +119,19 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     },
   };
 
+  loadingEmptyConfig = {
+    type: EmptyType.Loading,
+    large: false,
+    title: T('Loading'),
+  };
+
   constructor(
-    public router: Router, private ws: WebSocketService,
+    public router: Router,
+    private ws: WebSocketService,
     private reportsService: ReportsService,
-    private tableService: TableService, public translate: TranslateService,
+    private tableService: TableService,
+    public translate: TranslateService,
+    private dialog: DialogService,
   ) {
     super(translate);
     this.configurable = false;
@@ -204,11 +215,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
         lastSent: 0,
         lastReceived: 0,
         chartData: null,
-        emptyConfig: {
-          type: EmptyType.Loading,
-          large: false,
-          title: T('Loading'),
-        },
+        emptyConfig: this.loadingEmptyConfig,
       };
     });
   }
@@ -327,21 +334,42 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
         this.nicInfoMap[nic.name].chartData = chartData;
       },
-      () => {
+      (err) => {
         // Handle the error
-        const errorString = this.translate.instant(T('Error getting chart data'));
-        this.nicInfoMap[nic.name].emptyConfig = this.chartDataError(errorString);
+        let emptyConfig: EmptyConfig = {
+          type: EmptyType.Errors,
+          large: false,
+          compact: true,
+          title: this.translate.instant(T('Error getting chart data')),
+        };
+
+        if ([ReportingDatabaseError.FailedExport, ReportingDatabaseError.InvalidTimestamp].includes(err.error)) {
+          const errorMessage = err.reason ? err.reason.replace('[EINVALIDRRDTIMESTAMP] ', '') : null;
+          const helpMessage = this.translate.instant('You can clear reporting database and start data collection immediately.');
+          emptyConfig = {
+            type: EmptyType.Errors,
+            large: false,
+            compact: false,
+            title: this.translate.instant('The reporting database is broken'),
+            button: {
+              label: this.translate.instant('Fix database'),
+              action: () => {
+                this.dialog.confirm({
+                  title: this.translate.instant('The reporting database is broken'),
+                  message: `${errorMessage}<br/>${helpMessage}`,
+                  buttonMsg: this.translate.instant('Clear'),
+                }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+                  this.nicInfoMap[nic.name].emptyConfig = this.loadingEmptyConfig;
+                  this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();
+                });
+              },
+            },
+          };
+        }
+
+        this.nicInfoMap[nic.name].emptyConfig = emptyConfig;
       });
     });
-  }
-
-  chartDataError(err: string): EmptyConfig {
-    return {
-      type: EmptyType.Errors,
-      large: false,
-      compact: true,
-      title: err,
-    };
   }
 
   getChartBodyClassess(nic: BaseNetworkInterface): string[] {

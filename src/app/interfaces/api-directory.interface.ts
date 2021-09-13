@@ -688,6 +688,7 @@ export type ApiDirectory = {
   'reporting.update': { params: [ReportingConfigUpdate]; response: ReportingConfig };
   'reporting.config': { params: void; response: ReportingConfig };
   'reporting.graphs': { params: any; response: any };
+  'reporting.clear': { params: void; response: void };
 
   // S3
   's3.bindip_choices': { params: void; response: Choices };
