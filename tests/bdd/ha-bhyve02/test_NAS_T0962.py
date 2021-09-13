@@ -200,6 +200,7 @@ def after_go_to_the_dashboard(driver):
 @then('click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER')
 def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver):
     """click INITIATE FAILOVER, click the confirm checkbox, and press FAILOVER."""
+    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
     assert wait_on_element(driver, 10, '//span[text()="(Standby)"]')
     assert wait_on_element(driver, 10, '//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]', 'clickable')
     driver.find_element_by_xpath('//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]').click()
@@ -214,8 +215,6 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    # time.sleep(25)
-    # driver.refresh()
     assert wait_on_element(driver, 180, '//input[@data-placeholder="Username"]')
 
 
@@ -367,8 +366,13 @@ def click_on_the_my_ad_dataset_3_dots_button_select_view_permissions(driver, dat
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
 
 
-@then(parsers.parse('on the permission box, verify that the user and group name is "{name}"'))
-def on_the_permission_box_verify_that_the_user_and_group_name_is_name(driver, name):
-    """on the permission box, verify that the user and group name is "{name}"."""
-    assert wait_on_element(driver, 5, f'//div[text()="{name}"]')
-    assert wait_on_element(driver, 5, f'//div[text()="{name}" and @class="item-value"]')
+@then(parsers.parse('on the permission box, verify that the user is "{use_name}"'))
+def on_the_permission_box_verify_that_the_user_is_user_name(driver, user_name):
+    """on the permission box, verify that the user is "{user_name}"."""
+    assert wait_on_element(driver, 5, f'//div[text()="{user_name}"]')
+
+
+@then(parsers.parse('verify the group name is "{group_name}"'))
+def verify_the_group_name_is_group_name(driver, group_name):
+    """verify the group name is "{group_name}"."""
+    assert wait_on_element(driver, 5, f'//div[text()="{group_name}" and @class="item-value"]')
