@@ -236,7 +236,7 @@ def navigate_to_dashboard(driver):
     time.sleep(0.5)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
-    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
+    if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
@@ -272,7 +272,7 @@ def at_the_login_page_enter_root_and_password(driver, user, password):
     assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     assert wait_on_element(driver, 60, '//span[contains(.,"System Information")]')
-    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
+    if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
         driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
