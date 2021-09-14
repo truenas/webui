@@ -150,5 +150,6 @@ def revert_your_changes_and_click_save(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherExec"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 5, '//div[@ix-auto="value__ericbsd_Username"]')
+    wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//div[@ix-auto="value__ericbsd_Username"]')
