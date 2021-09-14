@@ -228,7 +228,11 @@ export class ApiService {
     ];
 
     if (evt.data) {
+      // Assign args of both of these objects because there are cases where
+      // cloneDef's apiCall attr will be replaced by the preProcessor
+      // but also cases where it won't be. Need to assign both.
       cloneDef.apiCall.args = evt.data;
+      def.apiCall.args = evt.data;
 
       if (def.preProcessor && !asyncCalls.includes(def.apiCall.namespace)) {
         cloneDef.apiCall = def.preProcessor(def.apiCall);
