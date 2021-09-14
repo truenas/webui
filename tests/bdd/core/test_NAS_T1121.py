@@ -462,7 +462,7 @@ def delete_the_folder_from_the_s3_bucket_in_the_aws_web_console(driver, nas_ip):
     """delete the folder from the S3 bucket in the AWS web console."""
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
-    time.sleep(1)
+    time.sleep(2)
     assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
     assert wait_on_element(driver, 5, f'//span[text()="{my_bucket}"]')
     driver.find_element_by_xpath(f'//span[text()="{my_bucket}"]').click()
