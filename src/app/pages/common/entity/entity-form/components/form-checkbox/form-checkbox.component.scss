@@ -25,7 +25,8 @@ input {
   }
 }
 
-@media screen and (max-width: 768px) {
+@import 'cssvars';
+@media #{$media-lt-sm} {
   .form-checkbox {
     &.expanded-height {
       margin: 22px 0;

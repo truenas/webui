@@ -67,7 +67,8 @@
   padding: 2px 5px;
 }
 
-@media screen and (max-width: 768px) {
+@import 'cssvars';
+@media #{$media-lt-sm} {
   .form-explorer {
     margin-bottom: 20px;
   }

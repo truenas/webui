@@ -113,7 +113,8 @@ body.jw-modal-open .slide-in-form .jw-modal-body {
   overflow: hidden;
 }
 
-@media screen and (max-width: 768px) {
+@import 'cssvars';
+@media #{$media-lt-sm} {
   .slide-in-form {
     min-width: auto;
     width: auto;

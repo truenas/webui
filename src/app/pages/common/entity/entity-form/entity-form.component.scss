@@ -167,7 +167,8 @@ span.form-message.warning {
   }
 }
 
-@media screen and (max-width: 768px) {
+@import 'cssvars';
+@media #{$media-lt-sm} {
   .entity-form .form-line:last-child {
     margin-right: 0;
   }
