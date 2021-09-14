@@ -6,6 +6,7 @@ import { Observable, Subject } from 'rxjs/Rx';
 
 import { environment } from '../../environments/environment';
 import { filter, map } from 'rxjs/operators';
+import _ from 'lodash';
 
 @Injectable()
 export class WebSocketService {
@@ -107,7 +108,7 @@ export class WebSocketService {
     }
 
     if (data.msg == 'result') {
-      const call = this.pendingCalls.get(data.id);
+      const call = _.cloneDeep(this.pendingCalls.get(data.id));
 
       this.pendingCalls.delete(data.id);
       if (data.error) {
