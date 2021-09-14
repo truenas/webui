@@ -234,12 +234,12 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
 @then('on the Dashboard, wait 5 second')
 def on_the_dashboard_wait_5_second(driver):
     """on the Dashboard, wait 5 second."""
-    assert wait_on_element(driver, 10, '//h1[text()="Dashboard"]')
+    assert wait_on_element(driver, 60, '//h1[text()="Dashboard"]')
     # make sure HA is enable before going forward
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    assert wait_on_element(driver, 60, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
     time.sleep(15)
 
 
