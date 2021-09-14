@@ -3,11 +3,20 @@
     <div class="logo">
       <img [src]="catalogApp.chart_metadata.icon" [src-fallback]="imagePlaceholder"/>
     </div>
-    <div fxLayout="row" fxLayoutAlign="start center">
-      <strong class="chart-name">{{ catalogApp.name }}</strong>
-      <span class="version"> {{ catalogApp.human_version }}</span>
-      <span class="value">{{ appStatus() | translate }}</span>
-      <mat-icon *ngIf="getUpdateVersionTooltip()" class="version-tooltip" matTooltip="{{ getUpdateVersionTooltip() }}">info</mat-icon>
+    <div fxLayout="colomn" fxLayoutAlign="start center">
+      <div fxLayout="row" fxLayoutAlign="start center">
+        <strong class="chart-name">{{ catalogApp.name }}</strong>
+        <span class="value">{{ appStatus() | translate }}</span>
+        <mat-icon *ngIf="getUpdateVersionTooltip()" class="version-tooltip" matTooltip="{{ getUpdateVersionTooltip() }}">info</mat-icon>
+      </div>
+      <div fxLayout="row" fxLayoutAlign="start center">
+        <span class="version-label">{{ 'Container Version' | translate }}</span>
+        <span class="version"> {{ catalogApp.chart_metadata.appVersion }}</span>
+      </div>  
+      <div fxLayout="row" fxLayoutAlign="start center">
+        <span class="version-label">{{ 'App Version' | translate }}</span>
+        <span class="version"> {{ catalogApp.version }}</span>
+      </div>
     </div>
   </div>
   <div class="ports">
