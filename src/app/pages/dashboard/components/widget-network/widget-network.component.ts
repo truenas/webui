@@ -12,6 +12,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { ReportingParams } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { TableService } from 'app/pages/common/entity/table/table.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -334,42 +335,43 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
 
         this.nicInfoMap[nic.name].chartData = chartData;
       },
-      (err) => {
-        // Handle the error
-        let emptyConfig: EmptyConfig = {
-          type: EmptyType.Errors,
-          large: false,
-          compact: true,
-          title: this.translate.instant(T('Error getting chart data')),
-        };
-
-        if ([ReportingDatabaseError.FailedExport, ReportingDatabaseError.InvalidTimestamp].includes(err.error)) {
-          const errorMessage = err.reason ? err.reason.replace('[EINVALIDRRDTIMESTAMP] ', '') : null;
-          const helpMessage = this.translate.instant('You can clear reporting database and start data collection immediately.');
-          emptyConfig = {
-            type: EmptyType.Errors,
-            large: false,
-            compact: false,
-            title: this.translate.instant('The reporting database is broken'),
-            button: {
-              label: this.translate.instant('Fix database'),
-              action: () => {
-                this.dialog.confirm({
-                  title: this.translate.instant('The reporting database is broken'),
-                  message: `${errorMessage}<br/>${helpMessage}`,
-                  buttonMsg: this.translate.instant('Clear'),
-                }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                  this.nicInfoMap[nic.name].emptyConfig = this.loadingEmptyConfig;
-                  this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();
-                });
-              },
-            },
-          };
-        }
-
-        this.nicInfoMap[nic.name].emptyConfig = emptyConfig;
+      (err: WebsocketError) => {
+        this.nicInfoMap[nic.name].emptyConfig = this.chartDataError(err, nic);
       });
     });
+  }
+
+  chartDataError(err: WebsocketError, nic: BaseNetworkInterface): EmptyConfig {
+    if ([ReportingDatabaseError.FailedExport, ReportingDatabaseError.InvalidTimestamp].includes(err.error)) {
+      const errorMessage = err.reason ? err.reason.replace('[EINVALIDRRDTIMESTAMP] ', '') : null;
+      const helpMessage = this.translate.instant('You can clear reporting database and start data collection immediately.');
+      return {
+        type: EmptyType.Errors,
+        large: false,
+        compact: false,
+        title: this.translate.instant('The reporting database is broken'),
+        button: {
+          label: this.translate.instant('Fix database'),
+          action: () => {
+            this.dialog.confirm({
+              title: this.translate.instant('The reporting database is broken'),
+              message: `${errorMessage}<br/>${helpMessage}`,
+              buttonMsg: this.translate.instant('Clear'),
+            }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.nicInfoMap[nic.name].emptyConfig = this.loadingEmptyConfig;
+              this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe();
+            });
+          },
+        },
+      };
+    }
+
+    return {
+      type: EmptyType.Errors,
+      large: false,
+      compact: true,
+      title: this.translate.instant(T('Error getting chart data')),
+    };
   }
 
   getChartBodyClassess(nic: BaseNetworkInterface): string[] {

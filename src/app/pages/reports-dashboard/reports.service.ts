@@ -82,9 +82,6 @@ export class ReportsService implements OnDestroy {
         this.core.emit({ name: 'ReportData-' + data.sender, data: data.data, sender: this });
       }
     };
-    this.reportsUtils.onmessageerror = (error) => {
-      console.info('reportUtils', error);
-    };
   }
 
   ngOnDestroy(): void {
