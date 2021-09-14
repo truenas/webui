@@ -24,7 +24,7 @@ export class PasswordDialog {
   data: string;
   tooltip = globalHelptext.rootpw.tooltip;
   hideCancel = false;
-  customSumbit: any;
+  customSubmit: any;
   showPassword = false;
   inputType = 'password';
   errors = '';

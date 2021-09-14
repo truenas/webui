@@ -25,46 +25,12 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DatasetFormData } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form-data.interface';
 import { StorageService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-
-interface DatasetFormData {
-  name: string;
-  acltype?: string;
-  comments: string;
-  sync: string;
-  compression: string;
-  atime: string;
-  share_type: string;
-  aclmode?: string;
-  refquota: number;
-  refquota_unit?: string;
-  quota: number;
-  quota_unit?: string;
-  refreservation: number;
-  refreservation_unit?: string;
-  reservation: number;
-  reservation_unit?: string;
-  deduplication: string;
-  exec: string;
-  readonly: string;
-  snapdir: string;
-  copies: string;
-  recordsize: string;
-  casesensitivity: string;
-  quota_warning: number;
-  quota_warning_inherit: boolean;
-  quota_critical: number;
-  quota_critical_inherit: boolean;
-  refquota_warning: number;
-  refquota_warning_inherit: boolean;
-  refquota_critical: number;
-  refquota_critical_inherit: boolean;
-  special_small_block_size: number;
-}
 
 type SizeField = 'quota' | 'refquota' | 'reservation' | 'refreservation' | 'special_small_block_size';
 
@@ -1164,7 +1130,7 @@ export class DatasetFormComponent implements FormConfiguration {
               for (let i = 0; i < this.encryption_fields.length; i++) {
                 this.entityForm.setDisabled(this.encryption_fields[i], true, true);
               }
-              inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: any) => {
+              inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: boolean) => {
                 this.inherit_encryption = inherit;
                 if (inherit) {
                   for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -1190,7 +1156,7 @@ export class DatasetFormComponent implements FormConfiguration {
                   }
                 }
               });
-              encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: any) => {
+              encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: boolean) => {
                 // if on an encrypted parent we should warn the user, otherwise just disable the fields
                 if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
                   this.dialogService.confirm({
@@ -1230,7 +1196,7 @@ export class DatasetFormComponent implements FormConfiguration {
                   }
                 }
               });
-              encryption_type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: any) => {
+              encryption_type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: string) => {
                 this.encryption_type = type;
                 const key = (type === 'key');
                 this.entityForm.setDisabled('passphrase', key, key);
@@ -1403,7 +1369,7 @@ export class DatasetFormComponent implements FormConfiguration {
     return false;
   }
 
-  resourceTransformIncomingRestData(wsResponse: any): any {
+  resourceTransformIncomingRestData(wsResponse: Dataset): DatasetFormData {
     if (wsResponse.special_small_block_size && wsResponse.special_small_block_size.rawvalue === '0') {
       delete wsResponse.special_small_block_size;
     }
@@ -1423,7 +1389,7 @@ export class DatasetFormComponent implements FormConfiguration {
       ? this.getFieldValueOrNone(wsResponse.refquota_critical)
       : this.critical;
     const refquota_critical_inherit = this.isInherited(wsResponse.refquota_critical, refquota_critical);
-    const sizeValues: any = {};
+    const sizeValues: { [field in SizeField]?: any } = {};
     for (let i = 0; i < this.size_fields.length; i++) {
       const field = this.size_fields[i];
       if (wsResponse[field] && wsResponse[field].rawvalue) {
@@ -1431,7 +1397,7 @@ export class DatasetFormComponent implements FormConfiguration {
       }
       sizeValues[field] = this.getFieldValueOrRaw(wsResponse[field]);
       this.convertHumanStringToNum(sizeValues[field], field);
-      this.OrigHuman[field] = (this.humanReadable as any)[field];
+      this.OrigHuman[field] = this.humanReadable[field];
     }
 
     const returnValue: DatasetFormData = {
@@ -1441,7 +1407,7 @@ export class DatasetFormComponent implements FormConfiguration {
       acltype: this.getFieldValueOrRaw(wsResponse.acltype),
       aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
       casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
-      comments: wsResponse.comments === undefined ? wsResponse.comments : (wsResponse.comments.source === 'LOCAL' ? wsResponse.comments.value : undefined),
+      comments: wsResponse.comments === undefined ? undefined : (wsResponse.comments.source === 'LOCAL' ? wsResponse.comments.value : undefined),
       compression: this.getFieldValueOrRaw(wsResponse.compression),
       copies: this.getFieldValueOrRaw(wsResponse.copies),
       deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),

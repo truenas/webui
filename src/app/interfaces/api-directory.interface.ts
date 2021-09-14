@@ -597,7 +597,7 @@ export type ApiDirectory = {
   'pool.dataset.encryption_algorithm_choices': { params: void; response: Choices };
   'pool.dataset.encryption_summary': {
     params: [path: string, params?: DatasetEncryptionSummaryQueryParams];
-    response: DatasetEncryptionSummary;
+    response: DatasetEncryptionSummary[];
   };
   'pool.dataset.export_key': { params: [id: string, download?: boolean]; response: string };
   'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
@@ -611,7 +611,7 @@ export type ApiDirectory = {
   'pool.dataset.query_encrypted_roots_keys': { params: void; response: DatasetEncryptedRootKeys };
   'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: string };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
-  'pool.dataset.unlock': { params: DatasetUnlockParams; response: DatasetUnlockResult[] };
+  'pool.dataset.unlock': { params: DatasetUnlockParams; response: DatasetUnlockResult };
   'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.dataset.update': { params: any; response: any };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };

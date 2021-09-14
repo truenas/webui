@@ -111,7 +111,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.fieldConfig = entityForm.fieldConfig;
     this.volume = _.find(this.fieldConfig, { name: 'volume' });
-    this.fs_type_list = _.find(this.fieldConfig, { name: 'fs_type' });
+    this.fs_type_list = _.find(this.fieldConfig, { name: 'fs_type' }) as FormRadioConfig;
     this.msdosfs_locale = _.find(this.fieldConfig, { name: 'msdosfs_locale' });
     this.fs_type = entityForm.formGroup.controls['fs_type'] as FormControl;
 

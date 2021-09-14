@@ -13,6 +13,7 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
@@ -24,6 +25,7 @@ import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/e
 import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
+import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
@@ -89,13 +91,13 @@ export class AdvancedSettingsComponent implements OnInit {
       title: T('Cron Job'),
       key_props: ['user', 'command', 'description'],
     },
-    getActions: (): AppTableAction[] => {
+    getActions: (): AppTableAction<CronjobRow>[] => {
       return [
         {
           name: 'play',
           icon: 'play_arrow',
           matTooltip: T('Run job'),
-          onClick: (row: any): void => {
+          onClick: (row: CronjobRow): void => {
             this.dialog
               .confirm({ title: T('Run Now'), message: T('Run this job now?'), hideCheckBox: true })
               .pipe(
@@ -544,16 +546,18 @@ export class AdvancedSettingsComponent implements OnInit {
     });
   }
 
-  cronDataSourceHelper(data: any[]): any[] {
+  cronDataSourceHelper(data: Cronjob[]): CronjobRow[] {
     return data.map((job) => {
-      job.cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
+      const schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
+      return {
+        ...job,
+        cron_schedule: schedule,
 
-      /* Weird type assertions are due to a type definition error in the cron-parser library */
-      job.next_run = ((cronParser.parseExpression(job.cron_schedule, { iterator: true }).next() as unknown) as {
-        value: { _date: any };
-      }).value._date.fromNow();
-
-      return job;
+        /* Weird type assertions are due to a type definition error in the cron-parser library */
+        next_run: ((cronParser.parseExpression(schedule, { iterator: true }).next() as unknown) as {
+          value: { _date: any };
+        }).value._date.fromNow(),
+      };
     });
   }
 }

@@ -1,4 +1,6 @@
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
+import { MatRadioChange } from '@angular/material/radio/radio';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
@@ -61,7 +63,7 @@ export interface FormButtonConfig<P = any> extends BaseFieldConfig<P> {
 
 export interface FormCheckboxConfig<P = any> extends BaseFieldConfig<P> {
   expandedHeight?: boolean;
-  onChange?(data: any): void;
+  onChange?(data: { event: MatCheckboxChange }): void;
   updater?: any;
   customEventMethod?: () => void;
 }
@@ -80,12 +82,18 @@ export interface FormComboboxConfig<P = any> extends BaseFieldConfig<P> {
   inlineFields?: boolean;
   inlineFieldFlex?: string;
   loadMoreOptions?: any;
-  options?: any[];
+  options?: FormComboboxOption[];
   searchable?: boolean;
-  searchOptions?: Option[];
+  searchOptions?: FormComboboxOption[];
   updateLocal?: boolean;
   updater?: any;
   inputType?: string;
+}
+
+export interface FormComboboxOption {
+  label: string;
+  value: string | number;
+  sticky?: string;
 }
 
 export interface FormDictConfig<P = any> extends BaseFieldConfig<P> {
@@ -150,7 +158,7 @@ export interface FormPermissionsConfig<P = any> extends BaseFieldConfig<P> {
 export interface FormRadioConfig<P = any> extends BaseFieldConfig<P>{
   inlineFields?: boolean;
   inlineFieldFlex?: string;
-  onChange?(data: any): void;
+  onChange?(data: { event: MatRadioChange }): void;
   options?: any[];
 }
 

@@ -4,6 +4,12 @@ import {
 import { Subject } from 'rxjs';
 import { ModalComponent } from 'app/components/common/modal/modal.component';
 
+export interface ModalServiceMessage {
+  action: string;
+  component: string;
+  row: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ModalService {
   private modals: ModalComponent[] = [];
@@ -12,7 +18,7 @@ export class ModalService {
   onClose$ = new Subject();
   refreshForm$ = new Subject();
   getRow$ = new Subject();
-  message$ = new Subject();
+  message$ = new Subject<ModalServiceMessage>();
 
   constructor(
     private componentFactoryResolver: ComponentFactoryResolver,
@@ -27,7 +33,7 @@ export class ModalService {
     this.refreshForm$.next();
   }
 
-  message(message: any): void {
+  message(message: ModalServiceMessage): void {
     this.message$.next(message);
   }
 
