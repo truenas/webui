@@ -91,6 +91,8 @@ export class SupportComponent implements OnInit {
       this.product_image = '/servers/X10.png';
     } else if (sys_product.includes('X20')) {
       this.product_image = '/servers/X20.png';
+    } else if (sys_product.includes('M30')) {
+      this.product_image = '/servers/M30.png';
     } else if (sys_product.includes('M40')) {
       this.product_image = '/servers/M40.png';
     } else if (sys_product.includes('M50')) {
