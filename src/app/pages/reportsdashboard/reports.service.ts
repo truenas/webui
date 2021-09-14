@@ -2,6 +2,8 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { WebSocketService } from 'app/services/ws.service';
 import { Subject } from 'rxjs';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService } from 'app/services';
 
 /*
  * This service acts as a proxy between middleware/web worker
@@ -14,6 +16,11 @@ export interface Command {
   options?: any[]; // Function parameters
 }
 
+export enum ReportingDatabaseError {
+  FailedExport = 22,
+  InvalidTimestamp = 206,
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -21,12 +28,12 @@ export class ReportsService implements OnDestroy {
   dataEvents: Subject<CoreEvent> = new Subject<CoreEvent>();
   private reportsUtils: Worker;
 
-  constructor(private ws: WebSocketService, private core: CoreService) {
+  constructor(private ws: WebSocketService, private core: CoreService, private dialog: DialogService) {
     // @ts-ignore
     this.reportsUtils = new Worker('./reports-utils.worker', { type: 'module' });
 
-    core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
-      ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((raw_res) => {
+    this.core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
+      this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((raw_res) => {
         let res;
 
         // If requested, we truncate trailing null values
@@ -61,9 +68,10 @@ export class ReportsService implements OnDestroy {
 
           this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: repl, sender: evt.sender.chartId });
         } else {
-          // this.core.emit({name:"ReportData-" + evt.sender.chartId, data: res[0], sender:this});
           this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: commands, sender: evt.sender.chartId });
         }
+      }, (err) => {
+        this.reportsUtils.postMessage({ name: 'FetchingError', data: err, sender: evt.sender.chartId });
       });
     });
 

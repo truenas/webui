@@ -4,7 +4,7 @@
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
         <mat-card-title fxFlex="65%">
           <h3>
-            {{reportTitle}} 
+            {{reportTitle}}
             <span *ngIf="multipathTitle">
               {{multipathTitle}}
               <mat-icon class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
@@ -12,7 +12,7 @@
           </h3>
         </mat-card-title>
         <!-- Controls/Tools -->
-        <div fxFlex="calc(35%)" class="line-chart-tools-wrapper" *ngIf="!report.empty">
+        <div fxFlex="calc(35%)" class="line-chart-tools-wrapper" *ngIf="!report.empty || !report.error">
           <div class="line-chart-tools" *ngIf="localControls">
             <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex >= (zoomLevels.length - 1)" (click)="timeZoomIn()"
               ix-auto ix-auto-type="button" ix-auto-identifier="{{reportTitle}}_zoomIn">
@@ -36,152 +36,167 @@
           </div>
         </div>
       </mat-toolbar-row>
-      <!-- <mat-divider></mat-divider>-->
 
-        <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
+      <mat-card-content
+        fxLayout="row wrap"
+        fxLayout.gt-xs="row wrap"
+        fxLayoutAlign="space-between start"
+        fxFlex="100"
+      >
 
-          <ng-container *ngIf="report.empty">
-            <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
-              <div class="chart-wrapper-empty">
-                <div class="chart-wrapper-child">
-                  <div>
-                    <mat-icon class="empty-icon">bar_chart</mat-icon>
-                  </div>
-                  <h4 class="empty-title">{{ report.empty.title }}</h4>
-                  <p class="empty-message">{{report.empty.message}}</p>
-                  <button mat-raised-button color="primary" (click)="report.empty.button.click()">{{report.empty.button.text}}</button>
+        <ng-container *ngIf="report.error">
+          <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
+            <div class="chart-wrapper-empty">
+              <div class="chart-wrapper-child">
+                <div>
+                  <mat-icon fontSet="mdi-set" fontIcon="mdi-alert" class="empty-icon"></mat-icon>
                 </div>
+                <h4 class="empty-title">{{ report.error.title }}</h4>
+                <p class="empty-message">{{ report.error.message }}</p>
+                <button mat-raised-button color="primary" (click)="report.error.button.click()">{{ report.error.button.text }}</button>
               </div>
             </div>
-          </ng-container>
-          
-          <ng-container *ngIf="!report.empty">
-            <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
-              <div class="chart-wrapper" >
-                <linechart
-                  *ngIf="report && data && chartColors"
-                  [chartId]="chartId"
-                  [chartColors]="chartColors"
-                  [data]="data"
-                  [title]="report.title"
-                  [timezone]="timezone"
-                  [labelY]="report.vertical_label"
-                  type="line"
-                  interactive="false">
-                </linechart>
-              </div>
-  
-  
-            <!-- Legend Section -->
-            <div class="legend-wrapper timestamps">
-              <!-- Time Stamps -->
-              <div class="legend-timestamp">
-                <div >
-                  <span *ngIf="data && legendData">
-                    <h4>
-                      <strong>Start:</strong> 
-                      <span style="font-weight:normal;">&nbsp;&nbsp;{{startTime}}</span>
-                      <br ngClass.gt-sm="hidden">
-                      <span style="margin-left:0px;" class="text-small"> ({{timezone}})</span>
-                    </h4>
-                  </span>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="report.empty">
+          <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
+            <div class="chart-wrapper-empty">
+              <div class="chart-wrapper-child">
+                <div>
+                  <mat-icon class="empty-icon">bar_chart</mat-icon>
                 </div>
-              </div>
-              <!-- <div class="legend-timestamp" fxFlex="calc(50% - 32px)"> -->
-              <div class="legend-timestamp">
-                <div >
-                  <span *ngIf="data && legendData">
-                    <h4>
-                      <strong>End:</strong> 
-                      <span style="font-weight:normal;">&nbsp;&nbsp;{{endTime}}</span>
-                      <br ngClass.gt-sm="hidden">
-                      <span style="opacity:0;" class="text-small"> ({{timezone}})</span>
-                    </h4>
-                  </span>
-                </div>
+                <h4 class="empty-title">{{ report.empty.title }}</h4>
+                <p class="empty-message">{{ report.empty.message }}</p>
+                <button mat-raised-button color="primary" (click)="report.empty.button.click()">{{ report.empty.button.text }}</button>
               </div>
             </div>
-  
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="!report.empty || !report.error">
+          <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
+            <div class="chart-wrapper" >
+              <linechart
+                *ngIf="report && data && chartColors"
+                [chartId]="chartId"
+                [chartColors]="chartColors"
+                [data]="data"
+                [title]="report.title"
+                [timezone]="timezone"
+                [labelY]="report.vertical_label"
+                type="line"
+                interactive="false">
+              </linechart>
             </div>
-  
-            <section class="legend" #legendElement fxFlex="400px" fxLayout="column" fxLayoutAlign="start"  >
-  
-            <div *ngIf="report && data && data.legend" class="legend-timestamp" fxFlex="32px">
+
+
+          <!-- Legend Section -->
+          <div class="legend-wrapper timestamps">
+            <!-- Time Stamps -->
+            <div class="legend-timestamp">
               <div >
-                <span *ngIf="data && legendData && legendData.xHTML">
+                <span *ngIf="data && legendData">
                   <h4>
-                    <strong>Time:</strong> 
-                    <span *ngIf="legendData && legendData.xHTML" style="font-weight:normal;">
-                      &nbsp;&nbsp;
-                      {{legendData.xHTML}}
-                    </span>
+                    <strong>Start:</strong>
+                    <span style="font-weight:normal;">&nbsp;&nbsp;{{startTime}}</span>
+                    <br ngClass.gt-sm="hidden">
+                    <span style="margin-left:0px;" class="text-small"> ({{timezone}})</span>
                   </h4>
                 </span>
               </div>
             </div>
-  
-            <div *ngIf="report && data && data.legend" class="legend-group-wrapper" fxFlex="calc(100% - 64px)" >
-              <table class="legend-table">
-                <!-- Table Header-->
-                <tr class="legend-group header">
-                  <th class="legend-label"><strong>Key</strong></th>
-                  <ng-container *ngIf="data && data.aggregations">
-                    <th class="legend-label" *ngFor="let key of aggregationKeys">
-                      <strong>{{key}}</strong>
-                    </th>
-                  </ng-container>
-                </tr>
-  
-                <!-- Table Rows -->
-                <tr class="legend-group"
-                  *ngFor="let legendItem of data.legend; let i=index">
-  
-                    <td class="legend-label" >
-                      <!--Legend Label-->
-                      <div *ngIf="chartColors && legendItem"
-                        class="swatch"
-                        [style.background-color]="chartColors[i]" >
-                        </div>
-                      <span class="legend-item"><strong>{{legendItem}}</strong></span>
-  
-                      <span *ngIf="legendData && legendData.series">
-                        <span  class="tooltip-value" >
-                           <span style="font-weight:normal;"> : {{legendData.series[i].yHTML}}</span>
-                        </span>
-                      </span>
-                    </td>
-  
-                  <!-- Aggregations -->
-                  <ng-container *ngIf="data && data.aggregations">
-                    <td style="opacity:0.75; border:red;"
-                      *ngFor="let key of aggregationKeys"
-                      class="report-analytics" >
-  
-                      <span>
-                        {{data.aggregations[key][i] ? data.aggregations[key][i] : 'null'}}
-                      </span>
-  
-                    </td>
-                  </ng-container>
-                </tr>
-              </table>
-  
+            <!-- <div class="legend-timestamp" fxFlex="calc(50% - 32px)"> -->
+            <div class="legend-timestamp">
+              <div >
+                <span *ngIf="data && legendData">
+                  <h4>
+                    <strong>End:</strong>
+                    <span style="font-weight:normal;">&nbsp;&nbsp;{{endTime}}</span>
+                    <br ngClass.gt-sm="hidden">
+                    <span style="opacity:0;" class="text-small"> ({{timezone}})</span>
+                  </h4>
+                </span>
               </div>
-            </section>
-          </ng-container>
-          <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
-          <!-- Chart -->
-          
+            </div>
+          </div>
 
-        </mat-card-content>
+          </div>
 
+          <section class="legend" #legendElement fxFlex="400px" fxLayout="column" fxLayoutAlign="start"  >
+
+          <div *ngIf="report && data && data.legend" class="legend-timestamp" fxFlex="32px">
+            <div >
+              <span *ngIf="data && legendData && legendData.xHTML">
+                <h4>
+                  <strong>Time:</strong>
+                  <span *ngIf="legendData && legendData.xHTML" style="font-weight:normal;">
+                    &nbsp;&nbsp;
+                    {{legendData.xHTML}}
+                  </span>
+                </h4>
+              </span>
+            </div>
+          </div>
+
+          <div *ngIf="report && data && data.legend" class="legend-group-wrapper" fxFlex="calc(100% - 64px)" >
+            <table class="legend-table">
+              <!-- Table Header-->
+              <tr class="legend-group header">
+                <th class="legend-label"><strong>Key</strong></th>
+                <ng-container *ngIf="data && data.aggregations">
+                  <th class="legend-label" *ngFor="let key of aggregationKeys">
+                    <strong>{{key}}</strong>
+                  </th>
+                </ng-container>
+              </tr>
+
+              <!-- Table Rows -->
+              <tr class="legend-group"
+                *ngFor="let legendItem of data.legend; let i=index">
+
+                  <td class="legend-label" >
+                    <!--Legend Label-->
+                    <div *ngIf="chartColors && legendItem"
+                      class="swatch"
+                      [style.background-color]="chartColors[i]" >
+                      </div>
+                    <span class="legend-item"><strong>{{legendItem}}</strong></span>
+
+                    <span *ngIf="legendData && legendData.series">
+                      <span  class="tooltip-value" >
+                          <span style="font-weight:normal;"> : {{legendData.series[i].yHTML}}</span>
+                      </span>
+                    </span>
+                  </td>
+
+                <!-- Aggregations -->
+                <ng-container *ngIf="data && data.aggregations">
+                  <td style="opacity:0.75; border:red;"
+                    *ngFor="let key of aggregationKeys"
+                    class="report-analytics" >
+
+                    <span>
+                      {{data.aggregations[key][i] ? data.aggregations[key][i] : 'null'}}
+                    </span>
+
+                  </td>
+                </ng-container>
+              </tr>
+            </table>
+
+            </div>
+          </section>
+        </ng-container>
+
+      </mat-card-content>
     </mat-card>
 
     <mat-card *ngIf="!ready && retroLogo" class="front zero-state" fxLayout="row wrap" fxlayoutGap="16px" fxLayoutAlign="center center">
-          <mat-icon *ngIf="retroLogo == 1" class="generic" svgIcon="freenas_logo_full"></mat-icon>
-          <mat-icon *ngIf="retroLogo == 0 && product_type == 'CORE'" class="generic" svgIcon="truenas_core_logo_full"></mat-icon>
-          <mat-icon *ngIf="retroLogo == 0 && product_type == 'ENTERPRISE'" class="generic" svgIcon="truenas_enterprise_logo_full"></mat-icon>
-          <mat-icon *ngIf="retroLogo == 0 && product_type == 'SCALE'" class="generic" svgIcon="truenas_scale_logo_full"></mat-icon>
+      <mat-icon *ngIf="retroLogo == 1" class="generic" svgIcon="freenas_logo_full"></mat-icon>
+      <mat-icon *ngIf="retroLogo == 0 && product_type == 'CORE'" class="generic" svgIcon="truenas_core_logo_full"></mat-icon>
+      <mat-icon *ngIf="retroLogo == 0 && product_type == 'ENTERPRISE'" class="generic" svgIcon="truenas_enterprise_logo_full"></mat-icon>
+      <mat-icon *ngIf="retroLogo == 0 && product_type == 'SCALE'" class="generic" svgIcon="truenas_scale_logo_full"></mat-icon>
     </mat-card>
 
     <ng-template *ngIf="configurable">

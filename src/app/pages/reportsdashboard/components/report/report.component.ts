@@ -3,8 +3,8 @@ import {
 } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/coreserviceinjector';
 import { CoreService, CoreEvent } from 'app/core/services/core.service';
-import { WebSocketService } from 'app/services/';
-import { ReportsService } from '../../reports.service';
+import { DialogService, WebSocketService } from 'app/services/';
+import { ReportingDatabaseError, ReportsService } from '../../reports.service';
 import { MaterialModule } from 'app/appMaterial.module';
 import { Subject } from 'rxjs/Subject';
 import { NgForm } from '@angular/forms';
@@ -20,7 +20,8 @@ import { WidgetComponent } from 'app/core/components/widgets/widget/widget.compo
 import { TranslateService } from '@ngx-translate/core';
 import { LocaleService } from 'app/services/locale.service';
 
-import { T } from '../../../../translate-marker';
+import { T } from 'app/translate-marker';
+import { filter, take, takeUntil } from 'rxjs/operators';
 
 interface DateTime {
   dateFormat: string;
@@ -53,6 +54,7 @@ export interface Report {
   identifiers?: string[];
   isRendered?: boolean[];
   empty?: EmptyReportMessage;
+  error?: EmptyReportMessage;
 }
 
 export interface EmptyReportMessage {
@@ -174,15 +176,18 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     return result.toLowerCase() !== 'invalid date' ? result : null;
   }
 
-  constructor(public router: Router,
+  constructor(
+    public router: Router,
     public translate: TranslateService,
-    private rs: ReportsService,
+    private dialog: DialogService,
     private ws: WebSocketService,
-    protected localeService: LocaleService) {
+    protected localeService: LocaleService,
+  ) {
     super(translate);
 
     this.core.register({ observerClass: this, eventName: 'ReportData-' + this.chartId }).subscribe((evt: CoreEvent) => {
       this.data = evt.data;
+      this.handleError(evt);
     });
 
     this.core.register({ observerClass: this, eventName: 'LegendEvent-' + this.chartId }).subscribe((evt: CoreEvent) => {
@@ -410,6 +415,38 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
       if (form.value[i]) {
         filtered.push(i);
       }
+    }
+  }
+
+  handleError(evt: CoreEvent): void {
+    if (evt.data && evt.data.name === 'FetchingError'
+      && [
+        ReportingDatabaseError.FailedExport,
+        ReportingDatabaseError.InvalidTimestamp,
+      ].includes(evt.data.data.error)
+    ) {
+      const err = evt.data.data;
+      const errorMessage = err.reason ? err.reason.replace('[EINVALIDRRDTIMESTAMP] ', '') : null;
+      const helpMessage = this.translate.instant('You can clear reporting database and start data collection immediately.');
+      const message = errorMessage ? `${errorMessage}<br>${helpMessage}` : helpMessage;
+      this.report.error = {
+        title: this.translate.instant('The reporting database is broken'),
+        message,
+        button: {
+          text: this.translate.instant('Fix database'),
+          click: () => {
+            this.dialog.confirm({
+              title: this.translate.instant('The reporting database is broken'),
+              message,
+              buttonMsg: this.translate.instant('Clear'),
+            }).pipe(filter(Boolean), take(1)).subscribe(() => {
+              this.ws.call('reporting.clear').pipe(take(1)).subscribe(() => {
+                window.location.reload();
+              });
+            });
+          },
+        },
+      };
     }
   }
 }
