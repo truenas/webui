@@ -42,7 +42,9 @@ def if_login_appear_enter_user_and_password(driver, user, password):
 def you_should_see_the_dashboard_and_system_information(driver):
     """You should see the dashboard and "System Information"."""
     assert wait_on_element(driver, 7, '//span[contains(.,"System Information")]')
-    driver.find_element_by_xpath('//span[contains(.,"System Information")]')
+    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
+        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('Click on the Accounts item in the left side menu')
