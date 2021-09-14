@@ -113,6 +113,9 @@ def click_agree(driver):
     """Click Agree."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__I AGREE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
+        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('We should be returned to license information')
