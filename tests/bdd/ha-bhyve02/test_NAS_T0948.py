@@ -61,13 +61,13 @@ def click_on_the_credentials_item_in_the_left_side_menu(driver):
 @then('The Credentials menu should expand to the right')
 def the_credentials_menu_should_expand_to_the_right(driver):
     """The Credentials menu should expand to the right."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Local Users"]')
+    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]')
 
 
 @then('Click on Local Users')
 def click_on_localusers(driver):
     """Click on Local Users."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Local Users"]').click()
+    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
 
 
 @then('The Users page should open')
@@ -104,6 +104,7 @@ def the_user_edit_page_should_open(driver):
 @then('Change the users shell and click save')
 def change_the_users_shell_and_click_save(driver):
     """Change the users shell and click save."""
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]')
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(0.5)
