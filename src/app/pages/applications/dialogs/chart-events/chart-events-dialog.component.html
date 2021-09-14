@@ -10,11 +10,11 @@
         <mat-icon *ngIf="getUpdateVersionTooltip()" class="version-tooltip" matTooltip="{{ getUpdateVersionTooltip() }}">info</mat-icon>
       </div>
       <div fxLayout="row" fxLayoutAlign="start center">
-        <span class="version-label">{{ 'Container Version' | translate }}</span>
+        <span class="version-label">{{ 'Container Version' | translate }}:</span>
         <span class="version"> {{ catalogApp.chart_metadata.appVersion }}</span>
       </div>  
       <div fxLayout="row" fxLayoutAlign="start center">
-        <span class="version-label">{{ 'App Version' | translate }}</span>
+        <span class="version-label">{{ 'App Version' | translate }}:</span>
         <span class="version"> {{ catalogApp.version }}</span>
       </div>
     </div>
