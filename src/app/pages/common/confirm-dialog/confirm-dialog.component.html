@@ -2,7 +2,7 @@
 <div mat-dialog-content id="confirm-msg">
   <span *ngIf="secondaryCheckBox">
     <mat-checkbox id="confirm-dialog__secondary-checkbox" class="confirm-checkbox" *ngIf="secondaryCheckBox" (change)="secondaryCheckBoxEvent()"
-        ix-auto
+        ix-auto color="primary"
         ix-auto-type="checkbox"
         ix-auto-identifier="{{secondaryCheckBoxMsg | uppercase}}">
       <span id="confirm-label">{{ secondaryCheckBoxMsg | translate }}</span> </mat-checkbox>
@@ -17,6 +17,7 @@
 
 <div mat-dialog-actions>
   <mat-checkbox
+    color="primary"
     *ngIf="!hideCheckBox"
     id="confirm-dialog__confirm-checkbox"
     name="confirm_checkbox"
