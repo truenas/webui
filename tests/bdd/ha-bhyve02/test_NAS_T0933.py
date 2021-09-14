@@ -236,15 +236,15 @@ def navigate_to_dashboard(driver):
     time.sleep(0.5)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
-    if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
-        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('Press INITIATE FAILOVER, check confirm and press FAILOVER')
 def press_initiate_failover_check_confirm_and_press_failover(driver):
     """Press INITIATE FAILOVER, check confirm and press FAILOVER"""
-    driver.refresh()
+    # driver.refresh()
+    # if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
+    #     assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    #     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 60, '//button[@ix-auto="button__INITIATE FAILOVER"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__INITIATE FAILOVER"]').click()
     assert wait_on_element(driver, 5, '//h1[contains(.,"Initiate Failover")]')
