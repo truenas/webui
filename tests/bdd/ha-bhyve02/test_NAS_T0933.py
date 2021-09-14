@@ -236,6 +236,9 @@ def navigate_to_dashboard(driver):
     time.sleep(0.5)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
+    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
+        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('Press INITIATE FAILOVER, check confirm and press FAILOVER')
@@ -268,14 +271,16 @@ def at_the_login_page_enter_root_and_password(driver, user, password):
     driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
     assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 60, '//span[contains(.,"System Information")]')
+    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
+        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then(parsers.parse('ssh and input {tdbdump_command} after failover'))
 def ssh_and_input_tdbdump_comman_dafter_failover(driver, tdbdump_command):
     """ssh and input {tdbdump_command} after failover."""
     global ssh_result2
-    print('after failover')
     ssh_result2 = ssh_cmd(tdbdump_command, 'root', passwd, host)
     assert ssh_result2['result'], ssh_result2['output']
     assert '\\' in ssh_result1['output'], ssh_result1['output']
