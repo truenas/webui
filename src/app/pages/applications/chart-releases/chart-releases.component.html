@@ -18,11 +18,12 @@
       <div class="content-box"  (click)="showChartEvents(item.name)">
         <div class="content">
           <strong class="chart-name" textLimiter threshold="20" content="{{ item.name }}"></strong>
-          <div><span class="version" textLimiter threshold="50" content="{{ item.human_version}}"></span></div>
           <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
             <span class="update-label" matTooltip="Available version: {{ item.human_latest_version }}">{{ 'Update available' | translate}}</span>
           </div>
           <ng-template #elseBlock><div class="update-label">{{ 'Up to date' | translate }}</div></ng-template>
+          <div class="version-label">{{ 'Container Version:' | translate }}<span class="version" textLimiter threshold="50" content="{{ item.chart_metadata.appVersion}}"></span></div>
+          <div class="version-label">{{ 'App Version:' | translate }}<span class="version" textLimiter threshold="50" content="{{ item.version}}"></span></div>
         </div>
 
         <div class="chart-button-row" fxLayout="row" fxLayoutAlign="end end" (click)="$event.stopPropagation()">

@@ -161,6 +161,11 @@ mat-tab-group {
         color: var(--fg2);
         white-space: nowrap;
       }
+      .version-label {
+        color: var(--fg2);
+        padding-right: 5px;
+        white-space: nowrap;
+      }
 
       .version-value {
         color: rgba(255, 255, 255, 0.5);
