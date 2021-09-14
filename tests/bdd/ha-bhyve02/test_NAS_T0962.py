@@ -240,7 +240,7 @@ def on_the_dashboard_wait_5_second(driver):
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
-    time.sleep(15)
+    time.sleep(20)
 
 
 @then('after click Storage on the left sidebar Storage')
