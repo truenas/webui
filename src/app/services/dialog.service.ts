@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -73,7 +74,7 @@ export class DialogService {
       dialogRef.componentInstance.secondaryCheckBoxMsg = options.secondaryCheckBoxMsg;
       dialogRef.componentInstance.data = options.data;
       dialogRef.componentInstance.method = options.method;
-      dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: any) => {
+      dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: boolean) => {
         const data = options.data;
         if (selection) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
@@ -124,7 +125,7 @@ export class DialogService {
 
   select(
     title: string,
-    options: any[],
+    options: Option[],
     optionPlaceHolder: string,
     method: ApiMethod,
     params?: any,
@@ -162,14 +163,20 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  dialogFormWide(conf: any): Observable<boolean> {
+  dialogFormWide(conf: DialogFormConfiguration): Observable<boolean> {
     const dialogRef = this.dialog.open(EntityDialogComponent, { width: '550px', disableClose: true });
     dialogRef.componentInstance.conf = conf;
 
     return dialogRef.afterClosed();
   }
 
-  doubleConfirm(title: string, message: string, name: string, confirmBox?: boolean, buttonMsg?: string): any {
+  doubleConfirm(
+    title: string,
+    message: string,
+    name: string,
+    confirmBox?: boolean,
+    buttonMsg?: string,
+  ): Observable<boolean> {
     const conf = {
       title,
       message,

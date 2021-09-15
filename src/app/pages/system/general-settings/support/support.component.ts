@@ -1,4 +1,5 @@
 import { Component, OnInit, Type } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
@@ -144,7 +145,7 @@ export class SupportComponent implements OnInit {
     this.modalService.openInSlideIn(ProactiveComponent);
   }
 
-  updateProductionStatus(e: any): void {
+  updateProductionStatus(e: MatCheckboxChange): void {
     if (e.checked) {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {

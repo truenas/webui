@@ -2,15 +2,16 @@ import {
   Component,
 } from '@angular/core';
 import { GlobalAction } from 'app/interfaces/global-action.interface';
+import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
 
 @Component({
   selector: 'reports-global-controls',
   templateUrl: './reports-global-controls.component.html',
 })
 export class ReportsGlobalControlsComponent implements GlobalAction {
-  config: any; // Reports page
+  config: ReportsDashboardComponent; // Reports page
 
-  applyConfig(conf: any): void {
+  applyConfig(conf: ReportsDashboardComponent): void {
     this.config = conf;
   }
 }

@@ -10,6 +10,7 @@ import helptext from 'app/helptext/services/components/service-smb';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig, FormComboboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -28,9 +29,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 export class ServiceSMBComponent implements FormConfiguration {
   queryCall: 'smb.config' = 'smb.config';
   route_success: string[] = ['services'];
-  formGroup: any;
   error: string;
-  query_call = 'directoryservice.idmap_';
   protected idmap_type = 'tdb';
   protected targetDS = '5';
   isBasicMode = true;
@@ -332,7 +331,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     protected dialog: MatDialog,
   ) {}
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: SmbConfig): SmbConfig {
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
       return this.compareBindIps(data);
@@ -340,13 +339,13 @@ export class ServiceSMBComponent implements FormConfiguration {
     return data;
   }
 
-  compareBindIps(data: any): any {
+  compareBindIps(data: SmbConfig): SmbConfig {
     // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
     data.bindip = data.bindip ? data.bindip : [];
     if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
-      data.bindip.forEach((ip: any) => {
+      data.bindip.forEach((ip) => {
         if (!Object.values(this.validBindIps).includes(ip)) {
-          data.bindip.splice(data.bindip[ip], 1);
+          data.bindip.splice((data.bindip as any)[ip], 1);
         }
       });
     } else {

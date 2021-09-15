@@ -147,7 +147,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     return this.localeService.formatDateTime(new Date(this.currentEndDate), this.timezone);
   }
 
-  formatTime(stamp: any): string {
+  formatTime(stamp: string): string {
     const parsed = Date.parse(stamp);
     const result = this.localeService.formatDateTimeWithNoTz(new Date(parsed));
     return result.toLowerCase() !== 'invalid date' ? result : null;

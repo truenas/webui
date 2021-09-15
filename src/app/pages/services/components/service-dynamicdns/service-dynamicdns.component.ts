@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-dynamic-dns';
+import { DynamicDnsConfig } from 'app/interfaces/dynamic-dns.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -168,7 +169,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     return value;
   }
 
-  submitFunction(entityForm: any): Observable<any> {
+  submitFunction(entityForm: any): Observable<DynamicDnsConfig> {
     if (entityForm.domain.length === 0) {
       entityForm.domain = [];
     }

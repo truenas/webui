@@ -91,7 +91,7 @@ export class TableService {
 
     if (table.tableConf.deleteMsg && table.tableConf.deleteMsg.doubleConfirm) {
       // double confirm: input delete item's name to confirm deletion
-      table.tableConf.deleteMsg.doubleConfirm(item).pipe(untilDestroyed(this)).subscribe((doubleConfirmDialog: any) => {
+      table.tableConf.deleteMsg.doubleConfirm(item).pipe(untilDestroyed(this)).subscribe((doubleConfirmDialog) => {
         if (doubleConfirmDialog) {
           this.doDelete(table, item);
         }

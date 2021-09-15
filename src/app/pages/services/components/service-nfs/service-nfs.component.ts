@@ -205,13 +205,13 @@ export class ServiceNFSComponent implements FormConfiguration {
     return false;
   }
 
-  compareBindIps(data: any): any {
+  compareBindIps(data: NfsConfig): NfsConfig {
     // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
     data.bindip = data.bindip ? data.bindip : [];
     if (this.validBindIps && this.validBindIps.length > 0) {
-      data.bindip.forEach((ip: any) => {
+      data.bindip.forEach((ip) => {
         if (!this.validBindIps.includes(ip)) {
-          data.bindip.splice(data.bindip[ip], 1);
+          data.bindip.splice((data.bindip as any)[ip], 1);
         }
       });
     } else {

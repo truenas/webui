@@ -154,12 +154,12 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
       });
     });
 
-    this.entityForm.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.entityForm.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.dq = res;
       this.allowSubmit();
     });
 
-    this.entityForm.formGroup.controls['obj_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.entityForm.formGroup.controls['obj_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.oq = res;
       this.allowSubmit();
     });

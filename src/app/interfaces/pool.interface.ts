@@ -38,7 +38,7 @@ export interface PoolScan {
   bytes_to_process: number;
   end_time: ApiTimestamp;
   errors: number;
-  function: 'SCRUB'; // TODO: Unknown what other values are
+  function: 'SCRUB' | 'RESILVER'; // TODO: Unknown what other values are
   pause: string;
   percentage: number;
   start_time: ApiTimestamp;
