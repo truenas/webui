@@ -29,11 +29,11 @@ export default {
     },
     filter_dialog: {
       title_show: T('Show All Users'),
-      message_show: T('Show all available users, including those that have not used any data.'),
+      message_show: T('Show all available users, including those that do not have quotas set.'),
       button_show: T('Show'),
 
       title_filter: T('Filter Users'),
-      message_filter: T('Show only those users who are using data. This is the default view.'),
+      message_filter: T('Show only those users who have quotas. This is the default view.'),
       button_filter: T('Filter'),
     },
     dialog: {
@@ -71,11 +71,11 @@ export default {
     },
     filter_dialog: {
       title_show: T('Show All Groups'),
-      message_show: T('Show all available groups, even those that have not used any data.'),
+      message_show: T('Show all available groups, including those that do not have quotas set.'),
       button_show: T('Show'),
 
       title_filter: T('Filter Groups'),
-      message_filter: T('Shows only the groups that are using data. This is the default view.'),
+      message_filter: T('Shows only the groups that have quotas. This is the default view.'),
       button_filter: T('Filter'),
     },
     dialog: {
