@@ -216,7 +216,7 @@ def on_the_nas_tab_expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 60, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(1)
+    time.sleep(5)
 
 
 @then('verify the file is copied from the S3 bucket into the dataset')
@@ -266,7 +266,7 @@ def on_the_nas_tad_on_the_cloud_sync_task_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 60, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(1)
+    time.sleep(5)
 
 
 @then('verify the folder and file is copied from the S3 bucket to the dataset')
@@ -544,7 +544,7 @@ def on_the_nas_tab_expand_the_task_and_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 60, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(1)
+    time.sleep(5)
 
 
 @then('verify the file appear in the S3 bucket')
@@ -621,7 +621,7 @@ def delete_the_file_from_the_dataset_and_click_run_now(driver, nas_ip):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 60, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(1)
+    time.sleep(5)
 
 
 @then('on the bucket tab, verify the file is deleted')
@@ -652,7 +652,7 @@ def delete_the_folder_from_the_dataset_then_click_run_now(driver, nas_ip):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 60, '//button[@id="My S3 AWS Share_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(1)
+    time.sleep(5)
 
 
 @then('on the bucket tab, verify the folder is deleted')
