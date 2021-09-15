@@ -152,6 +152,22 @@ export class SystemGeneralService {
     return this.ws.call('system.general.language_choices');
   }
 
+  languageOptions(sortLanguagesByName: boolean): Observable<Option[]> {
+    return this.languageChoices().pipe(map((languageList: Choices): Option[] => {
+      let options = Object.keys(languageList || {}).map((key) => ({
+        label: sortLanguagesByName
+          ? `${languageList[key]} (${key})`
+          : `${key} (${languageList[key]})`,
+        value: key,
+      }));
+      options = _.sortBy(
+        options,
+        sortLanguagesByName ? 'label' : 'value',
+      );
+      return options;
+    }));
+  }
+
   timezoneChoices(): Observable<Option[]> {
     return this.ws.call('system.general.timezone_choices').pipe(
       map((response) =>
