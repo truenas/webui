@@ -1,4 +1,9 @@
-import { Enclosure } from 'app/interfaces/enclosure.interface';
+import {
+  Enclosure,
+  EnclosureElement,
+  EnclosureElementData,
+  EnclosureElementsGroup,
+} from 'app/interfaces/enclosure.interface';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { Sensor } from 'app/interfaces/sensor.interface';
 import {
@@ -14,16 +19,16 @@ export interface EnclosureDisk extends Disk {
 export interface EnclosureMetadata {
   model: string;
   disks?: EnclosureDisk[];
-  diskKeys?: any;
-  poolKeys?: any;
+  diskKeys?: { [diskName: string]: number };
+  poolKeys?: { [pool: string]: number };
   enclosureKey?: number;
 }
 
 export interface VDevMetadata {
   pool: string;
   type: string;
-  disks?: any; // {devname: index} Only for mirrors and RAIDZ
-  diskEnclosures?: any; // {devname: index} Only for mirrors and RAIDZ
+  disks?: { [devName: string]: number }; // {devname: index} Only for mirrors and RAIDZ
+  diskEnclosures?: { [devName: string]: number }; // {devname: index} Only for mirrors and RAIDZ
   poolIndex: number;
   vdevIndex: number;
 
@@ -148,15 +153,17 @@ export class SystemProfiler {
   private parseSensorData(obj: Sensor[]): void {
     const powerStatus = obj.filter((v) => v.name.startsWith('PS'));
     if (this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model == 'M Series') {
-      const elements = powerStatus.map((item: any) => {
-        item.descriptor = item.name;
-        item.status = item.value == 1 ? 'OK' : 'FAILED';
-        item.value = 'NONE';
-        item.data = { Descriptor: item.descriptor, Value: item.value, Status: item.status };
-        item.name = 'Power Supply';
-        return item;
-      });
-      const powerSupply: any = { name: 'Power Supply', elements, header: ['Descriptor', 'Status', 'Value'] };
+      const elements = powerStatus.map((item) => {
+        const status = item.value == 1 ? 'OK' : 'FAILED';
+        return {
+          descriptor: item.name,
+          status,
+          value: 'NONE',
+          data: { Descriptor: item.name, Value: String(item.value), Status: status } as EnclosureElementData,
+          name: 'Power Supply',
+        };
+      }) as EnclosureElement[];
+      const powerSupply = { name: 'Power Supply', elements, header: ['Descriptor', 'Status', 'Value'] } as EnclosureElementsGroup;
       this.enclosures[this.headIndex].elements.push(powerSupply);
     }
   }
@@ -187,7 +194,7 @@ export class SystemProfiler {
         disks: {},
       };
 
-      const stats: any = {}; // Store stats from pool.query disk info
+      const stats: { [name: string]: VDevStats } = {}; // Store stats from pool.query disk info
 
       if (vdev.children.length == 0 && vdev.device) {
         const name = vdev.disk;
@@ -209,13 +216,13 @@ export class SystemProfiler {
     return this.pools[alias.poolIndex].topology.data[alias.vdevIndex];
   }
 
-  storeVdevInfo(vdev: VDevMetadata, stats: any): void {
+  storeVdevInfo(vdev: VDevMetadata, stats: { [name: string]: VDevStats }): void {
     for (const diskName in vdev.disks) {
       this.addVDevToDiskInfo(diskName, vdev, stats[diskName]);
     }
   }
 
-  addVDevToDiskInfo(diskName: string, vdev: VDevMetadata, stats?: any): void {
+  addVDevToDiskInfo(diskName: string, vdev: VDevMetadata, stats?: VDevStats): void {
     const enclosureIndex = this.getEnclosureNumber(diskName);
     const enclosure: EnclosureMetadata = this.profile[enclosureIndex];
     if (!enclosure) {
@@ -298,7 +305,7 @@ export class SystemProfiler {
     return typeof result == 'undefined' ? -1 : result;
   }
 
-  getEnclosureExpanders(index: number): any[] {
+  getEnclosureExpanders(index: number): EnclosureElement[] | EnclosureElementsGroup[] {
     if (this.rearIndex && index == this.rearIndex) { index = this.headIndex; }
     const raw = this.enclosures[index].elements.filter((item) => item.name == 'SAS Expander');
 

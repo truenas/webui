@@ -113,9 +113,10 @@ import { KerberosConfig, KerberosKeytab, KerberosKeytabUpdate } from 'app/interf
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
 import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
-import { LdapConfig } from 'app/interfaces/ldap-config.interface';
+import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { MailConfig, MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
+import { Multipath } from 'app/interfaces/multipath.interface';
 import {
   NetworkActivityChoice,
   NetworkConfiguration,
@@ -158,7 +159,9 @@ import {
   SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest, SmartTestResults, ManualSmartTest, SmartTestUpdate,
 } from 'app/interfaces/smart-test.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
-import { SmbPresets, SmbShare, SmbSharesec } from 'app/interfaces/smb-share.interface';
+import {
+  SmbPresets, SmbShare, SmbSharesec, SmbShareUpdate,
+} from 'app/interfaces/smb-share.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
 import { RemoteSshScanParams, SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
@@ -448,7 +451,7 @@ export type ApiDirectory = {
   'kubernetes.bindip_choices': { params: void; response: Choices };
 
   // Multipath
-  'multipath.query': { params: any; response: any };
+  'multipath.query': { params: QueryParams<Multipath>; response: Multipath[] };
 
   // Mail
   'mail.config': { params: void; response: MailConfig };
@@ -556,7 +559,7 @@ export type ApiDirectory = {
 
   // Ldap
   'ldap.ssl_choices': { params: void; response: string[] };
-  'ldap.update': { params: any; response: any };
+  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };
   'ldap.schema_choices': { params: void; response: string[] };
   'ldap.config': { params: void; response: LdapConfig };
 
@@ -597,7 +600,7 @@ export type ApiDirectory = {
   'pool.dataset.encryption_algorithm_choices': { params: void; response: Choices };
   'pool.dataset.encryption_summary': {
     params: [path: string, params?: DatasetEncryptionSummaryQueryParams];
-    response: DatasetEncryptionSummary;
+    response: DatasetEncryptionSummary[];
   };
   'pool.dataset.export_key': { params: [id: string, download?: boolean]; response: string };
   'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
@@ -611,7 +614,7 @@ export type ApiDirectory = {
   'pool.dataset.query_encrypted_roots_keys': { params: void; response: DatasetEncryptedRootKeys };
   'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: string };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
-  'pool.dataset.unlock': { params: DatasetUnlockParams; response: DatasetUnlockResult[] };
+  'pool.dataset.unlock': { params: DatasetUnlockParams; response: DatasetUnlockResult };
   'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.dataset.update': { params: any; response: any };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
@@ -648,7 +651,7 @@ export type ApiDirectory = {
   'pool.snapshottask.update': { params: any; response: any };
   'pool.unlock': { params: PoolUnlockQuery; response: PoolUnlockResult };
   'pool.unlock_services_restart_choices': { params: [id: string]; response: Choices };
-  'pool.update': { params: any; response: any };
+  'pool.update': { params: any; response: Pool };
   'pool.upgrade': { params: [id: number]; response: boolean };
 
   // Replication
@@ -775,7 +778,7 @@ export type ApiDirectory = {
   // Sharing
   'sharing.smb.query': { params: QueryParams<SmbShare>; response: SmbShare[] };
   'sharing.smb.create': { params: any; response: any };
-  'sharing.smb.update': { params: any; response: any };
+  'sharing.smb.update': { params: [id: number, update: SmbShareUpdate]; response: SmbShare };
   'sharing.smb.delete': { params: [id: number]; response: boolean };
   'sharing.smb.presets': { params: void; response: SmbPresets };
   'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };

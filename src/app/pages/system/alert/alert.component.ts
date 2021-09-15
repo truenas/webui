@@ -16,6 +16,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AlertDefaults } from 'app/pages/system/alert/alert-defaults.interface';
 import { DialogService, WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
@@ -52,7 +53,7 @@ export class AlertConfigComponent implements OnInit {
   ];
   formGroup: FormGroup;
   isReady = false;
-  protected defaults: any[] = [];
+  protected defaults: AlertDefaults[] = [];
 
   selectedIndex = 0;
 
@@ -218,7 +219,7 @@ export class AlertConfigComponent implements OnInit {
       const alertClass = keyValues[0];
       const classKey = keyValues[1];
       const def = _.find(this.defaults, { id: alertClass });
-      if (def[classKey].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
+      if (def[classKey as keyof AlertDefaults].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
         // do not submit defaults in the payload
         if (!payload.classes[alertClass]) {
           payload.classes[alertClass] = {};

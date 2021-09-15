@@ -84,7 +84,7 @@ export class FormUploadComponent {
     }
   }
 
-  newMessage(message: any): void {
+  newMessage(message: string): void {
     if (this.config.message) {
       this.config.message.newMessage(message);
     }

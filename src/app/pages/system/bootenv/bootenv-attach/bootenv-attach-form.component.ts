@@ -22,7 +22,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot', 'status'];
   isEntity = true;
   addCall: 'boot.attach' = 'boot.attach';
-  pk: any;
+  pk: string;
   isNew = true;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
 

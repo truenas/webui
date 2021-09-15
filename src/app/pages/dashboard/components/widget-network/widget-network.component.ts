@@ -7,6 +7,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
 import { sub } from 'date-fns';
 import { filter, take } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { BaseNetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
@@ -44,7 +45,7 @@ interface NicInfoMap {
   styleUrls: ['./widget-network.component.scss'],
 })
 export class WidgetNetworkComponent extends WidgetComponent implements AfterViewInit, OnDestroy {
-  @Input() stats: any;
+  @Input() stats: Subject<CoreEvent>;
   @Input() nics: BaseNetworkInterface[];
 
   readonly emptyTypes = EmptyType;

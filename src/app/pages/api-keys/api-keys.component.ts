@@ -157,7 +157,7 @@ export class ApiKeysComponent implements EntityTableConfig {
     dialogRef.componentInstance.message = `
         ${helptext.apikeyCopyDialog.api_key_warning} <br><br>
         ${helptext.apikeyCopyDialog.api_key}:<br> ${key}`;
-    dialogRef.componentInstance.customSumbit = () => {
+    dialogRef.componentInstance.customSubmit = () => {
       self.clipboard.copy(key);
     };
   }

@@ -15,6 +15,16 @@ import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-v
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { IscsiService, WebSocketService, AppLoaderService } from 'app/services';
 
+interface PortalListen {
+  ip: string[];
+  port: string;
+}
+
+interface PortalAddress {
+  ip: string;
+  port: string;
+}
+
 @UntilDestroy()
 @Component({
   selector: 'app-iscsi-portal-add',
@@ -129,10 +139,10 @@ export class PortalFormComponent implements FormConfiguration {
   ];
 
   fieldConfig: FieldConfig[];
-  pk: any;
+  pk: number;
   protected authgroup_field: FormSelectConfig;
   protected entityForm: EntityFormComponent;
-  protected ip: any;
+  protected ip: PortalAddress[];
 
   constructor(protected router: Router,
     protected iscsiService: IscsiService,
@@ -182,7 +192,7 @@ export class PortalFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    entityForm.formGroup.controls['listen'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['listen'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: PortalListen[]) => {
       this.genPortalAddress(res);
     });
   }
@@ -201,12 +211,12 @@ export class PortalFormComponent implements FormConfiguration {
     );
   }
 
-  genPortalAddress(data: any): void {
-    let ips: any[] = [];
+  genPortalAddress(data: PortalListen[]): void {
+    let ips: PortalAddress[] = [];
     for (let i = 0; i < data.length; i++) {
       if (data[i]['ip']) {
         const samePortIps = data[i]['ip'].reduce(
-          (fullIps: any[], currip: any) => fullIps.concat({ ip: currip, port: data[i]['port'] }),
+          (fullIps: PortalAddress[], currip: string) => fullIps.concat({ ip: currip, port: data[i]['port'] }),
           [],
         );
         ips = ips.concat(samePortIps);

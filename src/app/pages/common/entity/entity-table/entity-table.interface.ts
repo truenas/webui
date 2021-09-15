@@ -82,6 +82,7 @@ export interface EntityTableAction<Row = any> {
   label: string;
   onClick: ((row: Row) => void) | (() => void);
   disabled?: boolean;
+  actions?: EntityTableAction[];
 }
 
 export interface EntityTableMultiAction<Row = any> {
@@ -127,6 +128,7 @@ export interface EntityTableColumn {
   toggle?: boolean;
   button?: boolean;
   enableMatTooltip?: boolean;
+  showLockedStatus?: boolean;
 
   icon?: string;
   widget?: {

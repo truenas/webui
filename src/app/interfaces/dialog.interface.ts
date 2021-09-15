@@ -5,7 +5,7 @@ export interface ConfirmOptions {
   message: string;
   hideCheckBox?: boolean;
   buttonMsg?: string;
-  tooltip?: any;
+  tooltip?: string;
   hideCancel?: boolean;
   cancelMsg?: string;
   disableClose?: boolean;

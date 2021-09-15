@@ -4,7 +4,7 @@ export interface LdapConfig {
   basedn: string;
   binddn: string;
   bindpw: string;
-  cert_name: any;
+  cert_name: string;
   certificate: any;
   disable_freenas_cache: boolean;
   dns_timeout: number;
@@ -20,3 +20,5 @@ export interface LdapConfig {
   uri_list: string[];
   validate_certificates: boolean;
 }
+
+export type LdapConfigUpdate = Omit<LdapConfig, 'id' | 'cert_name' | 'uri_list'>;

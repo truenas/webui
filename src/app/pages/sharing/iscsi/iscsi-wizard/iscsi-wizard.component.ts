@@ -580,7 +580,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     this.entityWizard.formArray.get([0]).get('type').setValue(IscsiExtentType.Disk);
     this.entityWizard.formArray.get([0]).get('usefor').setValue('vmware');
 
-    this.entityWizard.formArray.get([0]).get('target').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('target').valueChanges.pipe(untilDestroyed(this)).subscribe((value: number | string) => {
       if (value !== 'NEW' && !this.wizardConfig[1].skip && !this.wizardConfig[2].skip) {
         this.wizardConfig[1].skip = true;
         this.wizardConfig[2].skip = true;
@@ -628,7 +628,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
       }
     });
 
-    this.entityWizard.formArray.get([1]).get('portal').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([1]).get('portal').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string | number) => {
       this.disablePortalGroup = value !== 'NEW';
       this.disablefieldGroup(this.portalFieldGroup, this.disablePortalGroup, 1);
     });
@@ -645,7 +645,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
       this.entityWizard.formArray.get([1]).get('discovery_authgroup').updateValueAndValidity();
     });
 
-    this.entityWizard.formArray.get([1]).get('discovery_authgroup').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([1]).get('discovery_authgroup').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string | number) => {
       this.disableAuthGroup = value !== 'NEW';
       this.disablefieldGroup(this.authAccessFieldGroup, this.disableAuthGroup, 1);
     });

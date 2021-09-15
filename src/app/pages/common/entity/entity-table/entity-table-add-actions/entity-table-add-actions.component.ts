@@ -8,6 +8,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { GlobalAction } from 'app/interfaces/global-action.interface';
 import { EntityTableAddActionsConfig } from 'app/pages/common/entity/entity-table/entity-table-add-actions/entity-table-add-actions-config.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 @UntilDestroy()
 @Component({
@@ -19,7 +20,7 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
   @Input('entity') entity: EntityTableComponent;
   conf: EntityTableAddActionsConfig;
 
-  actions: any[];
+  actions: EntityTableAction[];
   menuTriggerMessage = 'Click for options';
 
   spin = true;

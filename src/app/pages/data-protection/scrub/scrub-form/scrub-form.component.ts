@@ -130,7 +130,7 @@ export class ScrubFormComponent implements FormConfiguration {
     delete value.cron_schedule;
   }
 
-  resourceTransformIncomingRestData(data: PoolScrub): any {
+  resourceTransformIncomingRestData(data: PoolScrub): PoolScrub & { cron_schedule: string } {
     this.entityForm.formGroup.controls['threshold'].setValue(data.threshold);
     this.entityForm.formGroup.controls['enabled'].setValue(data.enabled);
     this.entityForm.formGroup.controls['description'].setValue(data.description);

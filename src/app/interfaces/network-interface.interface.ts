@@ -34,6 +34,7 @@ export interface PhysicalNetworkInterface extends BaseNetworkInterface {
 
 export interface BridgeNetworkInterface extends BaseNetworkInterface {
   type: NetworkInterfaceType.Bridge;
+  bridge_members?: string[];
 }
 
 export interface VlanNetworkInterface extends BaseNetworkInterface {
