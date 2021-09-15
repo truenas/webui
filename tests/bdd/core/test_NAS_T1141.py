@@ -188,7 +188,7 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     if not wait_on_element(driver, 1, '//button[@ix-auto="button___edit"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Google Drive task"]', 'clickable')
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Google Drive task"]').click()
-    time.sleep(0.5)
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
