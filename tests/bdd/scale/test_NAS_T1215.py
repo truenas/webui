@@ -6,6 +6,7 @@ import time
 import glob
 import sys
 import os
+import zipfile
 from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
@@ -50,12 +51,12 @@ def you_should_be_on_the_dashboard_click_on_directory_services_in_the_side_menu(
     """you should be on the dashboard, click on Directory Services in the side menu."""
     time.sleep(2)
     # temp fix for 1st start popup bug
-    #assert wait_on_element(driver, 5, '//div[contains(.,"Welcome to your new NAS")]')
-    #assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    #driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    #assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    #assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    #driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    assert wait_on_element(driver, 5, '//div[contains(.,"Welcome to your new NAS")]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     # / temp fix for 1st start popup bug
     time.sleep(1)
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
@@ -74,6 +75,20 @@ def click_on_advanced_and_kerberos_keytab_add(driver):
     driver.find_element_by_xpath('//span[contains(text(),"CONTINUE")]').click()
     time.sleep(1)
     driver.find_element_by_xpath('//mat-card[contains(.,"Kerberos Keytab")]//span[contains(text(),"Add")]').click()
+
+@then(parsers.parse('open the zip with {zipstring}'))
+def open_the_zip_with_zipstring(driver, zipstring):
+    """open the zip with zipstring,"""
+    # openzip zip
+    global zip_file
+    global keytab_zip
+    global keytab_zip_path
+    keytab_zip_path = os.getcwd() + '/KEYTABNAME.zip'
+    assert glob.glob(keytab_zip_path)
+    keytab_zip = sorted(glob.glob(keytab_zip_path))[-1]
+    zip_file = zipfile.ZipFile(keytab_zip)
+    zip_file.extractall(pwd = bytes(zipstring, 'utf-8'))
+    zip_file.close()
 
 
 @then('name the keytab and upload the file and click save')
