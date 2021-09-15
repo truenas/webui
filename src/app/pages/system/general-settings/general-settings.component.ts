@@ -8,6 +8,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -38,7 +39,7 @@ export class GeneralSettingsComponent implements OnInit {
   supportTitle = helptext.supportTitle;
   ntpTitle = helptext.ntpTitle;
   localeData: DataCard;
-  configData: any;
+  configData: SystemGeneralConfig;
   displayedColumns: string[];
   subs: any;
   dataSource: NtpServer[];
@@ -322,7 +323,7 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   uploadConfigSubmit(entityDialog: EntityDialogComponent<GeneralSettingsComponent>): void {
-    const config: FormUploadConfig = entityDialog.conf.fieldConfig[0];
+    const config = entityDialog.conf.fieldConfig[0] as FormUploadConfig;
     const parent: GeneralSettingsComponent = config.parent;
     const formData: FormData = new FormData();
 

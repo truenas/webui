@@ -158,7 +158,7 @@ export class FormExplorerComponent implements Field, OnInit {
     this.valueHandler(selectedTreeNodes);
   }
 
-  valueHandler(selectedTreeNodes: any): void {
+  valueHandler(selectedTreeNodes: TreeNode[]): void {
     const res = [];
     for (let i = 0; i < selectedTreeNodes.length; i++) {
       if (selectedTreeNodes[i] == undefined) {

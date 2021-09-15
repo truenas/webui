@@ -12,6 +12,7 @@ import { of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
@@ -630,7 +631,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
         dialogRef.componentInstance.success
           .pipe(
-            switchMap((r: any) => {
+            switchMap((r: Job<Pool>) => {
               if (this.isEncrypted) {
                 const downloadDialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                 downloadDialogRef.componentInstance.new = true;

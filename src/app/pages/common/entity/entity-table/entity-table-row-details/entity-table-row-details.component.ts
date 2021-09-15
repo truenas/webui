@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import cronstrue from 'cronstrue';
 import * as _ from 'lodash';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableAction, EntityTableColumn } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityTableComponent } from '../entity-table.component';
 
 @Component({
@@ -15,7 +15,7 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   @Input() config: any;
   @Input() parent: EntityTableComponent;
 
-  columns: any[] = [];
+  columns: EntityTableColumn[] = [];
   actions: EntityTableAction[] = [];
 
   ngOnInit(): void {

@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { helptext_system_failover } from 'app/helptext/system/failover';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FailoverUpdate } from 'app/interfaces/failover.interface';
+import { FailoverConfig, FailoverUpdate } from 'app/interfaces/failover.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -185,7 +185,7 @@ export class FailoverComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(value: any): any {
+  resourceTransformIncomingRestData(value: FailoverConfig): FailoverConfig {
     this.alreadyDisabled = value['disabled'];
     value['master'] = true;
     return value;

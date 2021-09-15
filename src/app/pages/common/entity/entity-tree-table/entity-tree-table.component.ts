@@ -49,8 +49,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
 
   // Table Props
   displayedColumns: string[];
-  treeDataSource: any;
-  tableDataSource: any[];
+  treeDataSource: TreeNode[];
+  tableDataSource: TreeNode[];
 
   constructor(private ws: WebSocketService,
     private treeTableService: EntityTreeTableService,
@@ -147,9 +147,9 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     return null;
   }
 
-  expandNode(rootNode: any): void {
+  expandNode(rootNode: TreeNode): void {
     const value = rootNode.expanded ? rootNode.expanded = false : true;
-    this.treeDataSource = this.treeTableService.editNode('expanded', value, rootNode.indexPath, this.treeDataSource);
+    this.treeDataSource = this.treeTableService.editNode('expanded', value, (rootNode as any).indexPath, this.treeDataSource);
 
     if (this.filter.value.length > 0) {
       this.tableDataSource = this.treeTableService.filteredTable(

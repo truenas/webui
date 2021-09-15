@@ -51,20 +51,20 @@ export interface BaseFieldConfig<P = any> {
 }
 
 export interface FormArrayConfig<P = any> extends BaseFieldConfig<P> {
-  formarray?: any;
+  formarray?: FieldConfig[];
 }
 
 export interface FormButtonConfig<P = any> extends BaseFieldConfig<P> {
   buttonClass: string;
   buttonColor: string;
   customEventActionLabel?: string;
-  customEventMethod?(data: any): void;
+  customEventMethod?: (event: any) => void;
 }
 
 export interface FormCheckboxConfig<P = any> extends BaseFieldConfig<P> {
   expandedHeight?: boolean;
   onChange?(data: { event: MatCheckboxChange }): void;
-  updater?: any;
+  updater?: (parent: P) => void;
   customEventMethod?: () => void;
 }
 
@@ -73,7 +73,7 @@ export interface FormChipConfig<P = any> extends BaseFieldConfig<P> {
   options?: any[];
   searchOptions?: Option[];
   updateLocal?: boolean;
-  updater?: any;
+  updater?: (value: any, parent: P, config?: FormChipConfig) => void;
   togglePw?: boolean;
 }
 
@@ -81,12 +81,12 @@ export interface FormComboboxConfig<P = any> extends BaseFieldConfig<P> {
   enableTextWrapForOptions?: boolean;
   inlineFields?: boolean;
   inlineFieldFlex?: string;
-  loadMoreOptions?: any;
+  loadMoreOptions?: (length: number, parent: P, searchText: string, config?: FormComboboxConfig) => void;
   options?: FormComboboxOption[];
   searchable?: boolean;
   searchOptions?: FormComboboxOption[];
   updateLocal?: boolean;
-  updater?: any;
+  updater?: (value: string, parent: P, config?: FormComboboxConfig) => void;
   inputType?: string;
 }
 
@@ -119,7 +119,7 @@ export interface FormInputConfig<P = any> extends BaseFieldConfig<P> {
   inputUnit?: InputUnitConfig;
   isDoubleConfirm?: boolean;
   label?: string;
-  maskValue?: any;
+  maskValue?: string;
   max?: number;
   min?: number;
   searchable?: boolean;
@@ -159,7 +159,14 @@ export interface FormRadioConfig<P = any> extends BaseFieldConfig<P>{
   inlineFields?: boolean;
   inlineFieldFlex?: string;
   onChange?(data: { event: MatRadioChange }): void;
-  options?: any[];
+  options?: FormRadioOption[];
+}
+
+export interface FormRadioOption {
+  label: string;
+  value: any;
+  hiddenFromDisplay?: boolean;
+  tooltip?: string;
 }
 
 export interface FormSchedulerConfig<P = any> extends BaseFieldConfig<P> {
@@ -191,7 +198,7 @@ export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
 }
 
 export interface FormTaskConfig<P = any> extends BaseFieldConfig<P> {
-  tabs?: any[];
+  tabs?: FieldConfig[];
   tabName?: string;
 }
 
@@ -217,7 +224,13 @@ export interface FormUploadConfig<P = any> extends BaseFieldConfig<P> {
 }
 
 export interface FormToggleButtonConfig<P = any> extends BaseFieldConfig<P> {
-  options?: any[];
+  options?: FormToggleButtonOption[];
+}
+
+export interface FormToggleButtonOption {
+  label: string;
+  value: any;
+  checked?: boolean;
 }
 
 export type FieldConfig<P = any> = BaseFieldConfig<P>

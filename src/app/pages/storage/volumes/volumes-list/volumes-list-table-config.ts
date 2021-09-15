@@ -499,7 +499,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 dialogRef.componentInstance.setDescription(helptext.pool_options_dialog.saving_pool_options);
                 dialogRef.componentInstance.setCall(method, payload);
                 dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.pipe(untilDestroyed(self, 'destroy')).subscribe((res: any) => {
+                dialogRef.componentInstance.success.pipe(untilDestroyed(self, 'destroy')).subscribe((res: Job<Pool>) => {
                   if (res) {
                     dialogRef.close();
                     entityDialog.dialogRef.close();

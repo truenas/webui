@@ -17,7 +17,7 @@ export class FormRadioComponent implements Field, OnInit, OnDestroy {
   config: FormRadioConfig;
   group: FormGroup;
   fieldShow: string;
-  radioValue: any;
+  radioValue: string | number;
   valueChangesSubscription: Subscription;
 
   get radioLayout(): string {

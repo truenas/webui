@@ -312,7 +312,7 @@ export class ServiceSMBComponent implements FormConfiguration {
       groups.forEach((item) => {
         groupOptions.push({ label: item.group, value: item.group });
       });
-      this.cifs_srv_admin_group = otherSet.config.find((config) => config.name === 'admin_group');
+      this.cifs_srv_admin_group = otherSet.config.find((config) => config.name === 'admin_group') as FormComboboxConfig;
       groupOptions.forEach((group) => {
         this.cifs_srv_admin_group.options.push({ label: group.label, value: group.value });
       });
