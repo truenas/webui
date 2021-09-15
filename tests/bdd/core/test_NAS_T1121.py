@@ -462,11 +462,12 @@ def delete_the_folder_from_the_s3_bucket_in_the_aws_web_console(driver, nas_ip):
     """delete the folder from the S3 bucket in the AWS web console."""
     driver.switch_to.window(driver.window_handles[1])
     driver.refresh()
-    time.sleep(2)
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//h1[text()="my_folder/"]')
     assert wait_on_element(driver, 5, f'//span[text()="{my_bucket}"]')
     driver.find_element_by_xpath(f'//span[text()="{my_bucket}"]').click()
     assert wait_on_element(driver, 5, f'//h1[text()="{my_bucket}"]')
+    time.sleep(1)
     assert wait_on_element(driver, 5, '(//awsui-checkbox[contains(@class,"checkbox-index-all")])[2]', 'clickable')
     driver.find_element_by_xpath('(//awsui-checkbox[contains(@class,"checkbox-index-all")])[2]').click()
     assert wait_on_element(driver, 5, '//awsui-button[@id="delete-objects-button"]/button', 'clickable')
