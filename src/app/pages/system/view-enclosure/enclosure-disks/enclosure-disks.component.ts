@@ -402,6 +402,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new R20A(true);
         break;
       case 'R20':
+      case 'R20B':
         this.chassis = new R20(true);
         break;
       case 'R40':
@@ -508,6 +509,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new R20A(true);
         break;
       case 'R20':
+      case 'R20B':
         this.chassis = new R20(true);
         break;
       case 'R40':
