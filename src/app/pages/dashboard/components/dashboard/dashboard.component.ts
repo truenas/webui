@@ -10,6 +10,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
@@ -20,7 +21,7 @@ import {
   NetworkInterfaceState,
 } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { ReportingRealtimeUpdate, VirtualMemoryUpdate } from 'app/interfaces/reporting.interface';
+import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
@@ -35,10 +36,12 @@ import { T } from 'app/translate-marker';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {
-  state: NetworkInterfaceState & {
-    vlans: any[];
-    lagg_ports: string[];
-  };
+  state: DashboardNicState;
+};
+
+export type DashboardNicState = NetworkInterfaceState & {
+  vlans: any[];
+  lagg_ports: string[];
 };
 
 @UntilDestroy()
@@ -327,7 +330,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       if (update.virtual_memory) {
-        const memStats: VirtualMemoryUpdate & { arc_size?: number } = { ...update.virtual_memory };
+        const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
         if (update.zfs && update.zfs.arc_size != null) {
           memStats.arc_size = update.zfs.arc_size;
@@ -512,7 +515,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  dataFromConfig(item: DashConfigItem): any {
+  dataFromConfig(item: DashConfigItem): Subject<CoreEvent> | DashboardNicState | Pool | Pool[] {
     let spl: string[];
     let key: string;
     let value: string;
@@ -522,7 +525,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       value = spl[1];
     }
 
-    let data: any;
+    // TODO: Convoluted typing, split apart.
+    // eslint-disable-next-line rxjs/finnish
+    let data: Subject<CoreEvent> | DashboardNicState | Pool | Pool[];
 
     switch (item.name.toLowerCase()) {
       case 'cpu':
@@ -532,23 +537,27 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         data = this.statsDataEvent$;
         break;
       case 'pool':
-        data = spl
+        const pools = spl
           ? this.pools.filter((pool) => pool[key as keyof Pool] == value)
           : console.warn('DashConfigItem has no identifier!');
-        if (data) { data = data[0]; }
+        if (pools) { data = pools[0]; }
         break;
       case 'interface':
-        data = spl
+        const nics = spl
           ? this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] == value)
           : console.warn('DashConfigItem has no identifier!');
-        if (data) { data = data[0].state; }
+        if (nics) { data = nics[0].state; }
         break;
       case 'storage':
         data = this.pools;
         break;
     }
 
-    return data || console.warn('Data for this widget is not available!');
+    if (!data) {
+      console.warn('Data for this widget is not available!');
+    }
+
+    return data;
   }
 
   toggleShake(): void {

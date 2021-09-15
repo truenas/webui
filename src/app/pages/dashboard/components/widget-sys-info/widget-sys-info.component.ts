@@ -246,6 +246,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     } else if (sys_product.includes('X20')) {
       this.product_image = '/servers/X20.png';
       this.product_model = 'X20';
+    } else if (sys_product.includes('M30')) {
+      this.product_image = '/servers/M30.png';
+      this.product_model = 'M30';
     } else if (sys_product.includes('M40')) {
       this.product_image = '/servers/M40.png';
       this.product_model = 'M40';

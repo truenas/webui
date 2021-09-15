@@ -37,7 +37,7 @@ import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/s
 import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/smart-form.component';
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import {
-  DialogService,
+  DialogService, ModalServiceMessage,
   ReplicationService,
   StorageService,
   TaskService,
@@ -134,7 +134,7 @@ export class DataProtectionDashboardComponent implements OnInit {
       this.refreshTables();
     });
 
-    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: ModalServiceMessage) => {
       if (res['action'] === 'open' && res['component'] === 'replicationForm') {
         this.modalService.openInSlideIn(ReplicationFormComponent, res['row']);
       }
@@ -798,7 +798,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               entityDialog.formGroup
                 .get('transfer_mode')
                 .valueChanges.pipe(untilDestroyed(this))
-                .subscribe((mode: any) => {
+                .subscribe((mode: TransferMode) => {
                   const paragraph: FormParagraphConfig = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                   switch (mode) {
                     case TransferMode.Sync:

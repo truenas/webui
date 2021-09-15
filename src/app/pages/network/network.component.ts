@@ -16,6 +16,7 @@ import ipmiHelptext from 'app/helptext/network/ipmi/ipmi';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -24,6 +25,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/pages/common/entity/table/table.component';
 import { TableService } from 'app/pages/common/entity/table/table.service';
 import { IpmiRow } from 'app/pages/network/network-dashboard.interface';
+import { NetworkInterfaceUi } from 'app/pages/network/network-interface-ui.interface';
 import {
   AppLoaderService,
   DialogService,
@@ -80,10 +82,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     add() {
       this.parent.showInterfacesForm();
     },
-    edit(row: any) {
+    edit(row: NetworkInterfaceUi) {
       this.parent.showInterfacesForm(row.id);
     },
-    delete(row: any, table: TableComponent) {
+    delete(row: NetworkInterfaceUi, table: TableComponent) {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? T('Reset configuration for ') : T('Delete ');
       if (this.parent.ha_enabled) {
         this.parent.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
@@ -103,13 +105,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       key_props: ['name'],
     },
     confirmDeleteDialog: {
-      buildTitle: (intf: any): string => {
+      buildTitle: (intf: NetworkInterfaceUi): string => {
         if (intf.type === NetworkInterfaceType.Physical) {
           return T('Reset Configuration');
         }
         return T('Delete');
       },
-      buttonMsg: (intf: any): string => {
+      buttonMsg: (intf: NetworkInterfaceUi): string => {
         if (intf.type === NetworkInterfaceType.Physical) {
           return T('Reset Configuration');
         }
@@ -535,69 +537,67 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.core.unregister({ observerClass: this });
   }
 
-  getInterfaceInOutInfo(tableSource: any[]): void {
+  getInterfaceInOutInfo(tableSource: NetworkInterfaceUi[]): void {
     this.ws
       .sub<ReportingRealtimeUpdate>('reporting.realtime')
       .pipe(untilDestroyed(this))
       .subscribe((evt) => {
         if (evt.interfaces) {
-          tableSource.map((row) => {
+          tableSource.forEach((row) => {
+            if (!evt.interfaces[row.id]) {
+              return;
+            }
             row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
             row.received_bytes = evt.interfaces[row.id].received_bytes;
             row.sent = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].sent_bytes);
             row.sent_bytes = evt.interfaces[row.id].sent_bytes;
-            return row;
           });
         }
       });
   }
 
-  interfaceDataSourceHelper(res: any[]): any[] {
-    const rows = res;
-    for (let i = 0; i < rows.length; i++) {
+  interfaceDataSourceHelper(res: NetworkInterface[]): NetworkInterfaceUi[] {
+    return res.map((networkInterface) => {
+      const transformed = { ...networkInterface } as NetworkInterfaceUi;
       // TODO: Replace with probably enum for link_state.
-      rows[i]['link_state'] = rows[i]['state']['link_state'].replace('LINK_STATE_', '');
+      transformed['link_state'] = networkInterface['state']['link_state'].replace('LINK_STATE_', '');
       const addresses = new Set([]);
-      for (let j = 0; j < rows[i]['aliases'].length; j++) {
-        const alias = rows[i]['aliases'][j];
+      for (let j = 0; j < transformed['aliases'].length; j++) {
+        const alias = transformed['aliases'][j];
         // TODO: See if checks can be removed or replace with enum.
         if (alias.type.startsWith('INET')) {
           addresses.add(alias.address + '/' + alias.netmask);
         }
       }
 
-      if (rows[i]['ipv4_dhcp'] || rows[i]['ipv6_auto']) {
-        for (let j = 0; j < rows[i]['state']['aliases'].length; j++) {
-          const alias = rows[i]['state']['aliases'][j];
+      if (transformed['ipv4_dhcp'] || transformed['ipv6_auto']) {
+        for (let j = 0; j < transformed['state']['aliases'].length; j++) {
+          const alias = transformed['state']['aliases'][j];
           if (alias.type.startsWith('INET')) {
             addresses.add(alias.address + '/' + alias.netmask);
           }
         }
       }
-      if (rows[i].hasOwnProperty('failover_aliases')) {
-        for (let j = 0; j < rows[i]['failover_aliases'].length; j++) {
-          const alias = rows[i]['failover_aliases'][j];
+      if (transformed.hasOwnProperty('failover_aliases')) {
+        for (let j = 0; j < transformed['failover_aliases'].length; j++) {
+          const alias = transformed['failover_aliases'][j];
           if (alias.type.startsWith('INET')) {
             addresses.add(alias.address + '/' + alias.netmask);
           }
         }
       }
-      rows[i]['addresses'] = Array.from(addresses);
-      if (rows[i].type === NetworkInterfaceType.Physical) {
-        rows[i].active_media_type = rows[i]['state']['active_media_type'];
-        rows[i].active_media_subtype = rows[i]['state']['active_media_subtype'];
-      } else if (rows[i].type === NetworkInterfaceType.Vlan) {
-        rows[i].vlan_tag = rows[i]['vlan_tag'];
-        rows[i].vlan_parent_interface = rows[i]['vlan_parent_interface'];
-      } else if (rows[i].type === NetworkInterfaceType.Bridge) {
-        rows[i].bridge_members = rows[i]['bridge_members'];
-      } else if (rows[i].type === NetworkInterfaceType.LinkAggregation) {
-        rows[i].lagg_ports = rows[i]['lag_ports'];
-        rows[i].lagg_protocol = rows[i]['lag_protocol'];
+      transformed['addresses'] = Array.from(addresses);
+      if (networkInterface.type === NetworkInterfaceType.Physical) {
+        transformed.active_media_type = networkInterface['state']['active_media_type'];
+        transformed.active_media_subtype = networkInterface['state']['active_media_subtype'];
+      } else if (networkInterface.type === NetworkInterfaceType.LinkAggregation) {
+        transformed.lagg_ports = networkInterface['lag_ports'];
+        transformed.lagg_protocol = networkInterface['lag_protocol'];
       }
-      rows[i].mac_address = rows[i]['state']['link_address'];
-    }
-    return res;
+      transformed.mac_address = networkInterface['state']['link_address'];
+
+      return transformed;
+    });
   }
 
   ipmiDataSourceHelper(ipmi: Ipmi[]): IpmiRow[] {
@@ -638,7 +638,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     configurationComponent.afterModalFormClosed = this.getGlobalSettings.bind(this);
   }
 
-  showInterfacesForm(id?: number): void {
+  showInterfacesForm(id?: string): void {
     const interfacesForm = this.modalService.openInSlideIn(InterfacesFormComponent, id);
     interfacesForm.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
   }

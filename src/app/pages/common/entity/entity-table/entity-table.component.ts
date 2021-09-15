@@ -3,7 +3,7 @@ import {
 } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  AfterViewChecked, Component, Input, OnDestroy, OnInit, ViewChild,
+  AfterViewChecked, Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -66,7 +66,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
   @Input() title = '';
   @Input() conf: EntityTableConfig;
 
-  @ViewChild('newEntityTable', { static: false }) entitytable: any;
+  @ViewChild('newEntityTable', { static: false }) entitytable: TemplateRef<void>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -697,7 +697,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
   isTableOverflow(): boolean {
     let hasHorizontalScrollbar = false;
     if (this.entitytable) {
-      const parentNode = this.entitytable._elementRef.nativeElement.parentNode;
+      const parentNode = this.entitytable.elementRef.nativeElement.parentNode;
       hasHorizontalScrollbar = parentNode.scrollWidth > parentNode.clientWidth;
     }
     return hasHorizontalScrollbar;
@@ -835,7 +835,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     return deleteMsg;
   }
 
-  doDelete(item: any, action?: any): void {
+  doDelete(item: any, action?: string): void {
     const deleteMsg = this.conf.confirmDeleteDialog && this.conf.confirmDeleteDialog.isMessageComplete
       ? ''
       : this.getDeleteMessage(item, action);
@@ -1032,7 +1032,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
   }
 
   // Next section operates the checkboxes to show/hide columns
-  toggle(col: any): void {
+  toggle(col: EntityTableColumn): void {
     const isChecked = this.isChecked(col);
     this.anythingClicked = true;
 
@@ -1123,13 +1123,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     }
   }
 
-  stateClickable(value: any, colConfig: any): boolean {
-    if (colConfig.infoStates) {
-      return _.indexOf(colConfig.infoStates, value) < 0;
-    }
-    return value !== JobState.Pending;
-  }
-
   runningStateButton(jobid: number): void {
     const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Task is running') } });
     dialogRef.componentInstance.jobId = jobid;
@@ -1189,7 +1182,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
 
   isInteractive(column: string): boolean {
     const item = this.currentColumns.find((obj) => obj.prop === column);
-    return (item?.checkbox || item?.toggle || item?.button);
+    return (item?.checkbox || item?.toggle || item?.button || item?.showLockedStatus);
   }
 
   doRowClick(element: Row): void {

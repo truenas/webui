@@ -61,20 +61,20 @@ export class EntityTreeTableService {
     return currentNode;
   }
 
-  findParents(indexPath: number[], data: TreeNode[], asObject = true): any {
-    const output = asObject ? {} : [];
+  findParents(indexPath: number[], data: TreeNode[]): { [id: string]: boolean } {
+    const output: { [id: string]: boolean } = {};
     const path = Object.assign([], indexPath);
 
     for (let i = indexPath.length - 1; i >= 0; i--) {
       const node = this.findNode(path, data);
-      (output as any)[node.data.id] = true;
+      output[node.data.id] = true;
       path.pop();
     }
 
     return output;
   }
 
-  editNode(prop: keyof TreeNode, value: any, indexPath: number[], treeData: TreeNode[]): any {
+  editNode(prop: keyof TreeNode, value: any, indexPath: number[], treeData: TreeNode[]): TreeNode[] {
     const node = this.findNode(indexPath, treeData);
 
     // Clone the data
@@ -85,12 +85,12 @@ export class EntityTreeTableService {
     return clone;
   }
 
-  filteredTable(key: any, value: string, data: any, preserveExpansion = false): TreeNode[] {
+  filteredTable(key: string, value: string, data: any, preserveExpansion = false): TreeNode[] {
     // let flattened = this.buildTable(...args); // ES6 way not working?
     const flattened = preserveExpansion ? this.buildTable(data) : this.buildTable(data, true);
 
     // Parents we need to keep
-    let preserve: any = {};
+    let preserve: { [id: string]: boolean } = {};
 
     for (let index = flattened.length - 1; index >= 0; index--) {
       const row = flattened[index];

@@ -19,7 +19,6 @@ export class NtpServerFormComponent implements FormConfiguration {
   title = helptext.header;
   protected isOneColumnForm = true;
 
-  pk: any;
   queryKey = 'id';
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

@@ -90,7 +90,7 @@ export class ReportsService implements OnDestroy {
     this.reportsUtils.postMessage({ name: 'ProcessCommands', data: pipeLine, sender: 'chartID' });
   }
 
-  truncateData(data: number[][]): any {
+  truncateData(data: number[][]): number[][] {
     let finished = false;
     let index = data.length - 1;
     do {

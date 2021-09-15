@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -203,12 +204,16 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
           }).pipe(untilDestroyed(this)).subscribe(() => {});
         }
       });
-      this.dialogRef.componentInstance.prefailure.pipe(untilDestroyed(this)).subscribe((prefailure: any) => {
-        this.dialogRef.close(false);
-        this.dialogService.errorReport(helptext.manual_update_error_dialog.message,
-          `${prefailure.status.toString()} ${prefailure.statusText}`);
-        this.save_button_enabled = true;
-      });
+      this.dialogRef.componentInstance.prefailure
+        .pipe(untilDestroyed(this))
+        .subscribe((prefailure: HttpErrorResponse) => {
+          this.dialogRef.close(false);
+          this.dialogService.errorReport(
+            helptext.manual_update_error_dialog.message,
+            `${prefailure.status.toString()} ${prefailure.statusText}`,
+          );
+          this.save_button_enabled = true;
+        });
       this.dialogRef.componentInstance.failure
         .pipe(take(1))
         .pipe(untilDestroyed(this)).subscribe((failure) => {

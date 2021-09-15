@@ -119,9 +119,9 @@ export class LocalizationFormComponent implements FormConfiguration {
 
     this.sysGeneralService.timezoneChoices().pipe(untilDestroyed(this)).subscribe((tzChoices) => {
       tzChoices = _.sortBy(tzChoices, [(o) => o.label.toLowerCase()]);
-      const config: FormComboboxConfig = this.fieldSets
+      const config = this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
-        .config.find((config) => config.name === 'timezone');
+        .config.find((config) => config.name === 'timezone') as FormComboboxConfig;
       config.options = tzChoices;
       this.entityForm.formGroup.controls['timezone'].setValue(this.configData.timezone);
     });
@@ -169,9 +169,9 @@ export class LocalizationFormComponent implements FormConfiguration {
           : `${key} (${this.languageList[key]})`,
         value: key,
       }));
-      const config: FormComboboxConfig = this.fieldSets
+      const config = this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
-        .config.find((config) => config.name === 'language');
+        .config.find((config) => config.name === 'language') as FormComboboxConfig;
       config.options = _.sortBy(
         options,
         this.sortLanguagesByName ? 'label' : 'value',

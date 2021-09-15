@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,13 +24,10 @@ export class PasswordDialog {
   data: string;
   tooltip = globalHelptext.rootpw.tooltip;
   hideCancel = false;
-  customSumbit: any;
   showPassword = false;
   inputType = 'password';
   errors = '';
   password = '';
-
-  @Output() switchSelectionEmitter = new EventEmitter<any>();
 
   constructor(
     public dialogRef: MatDialogRef<PasswordDialog>,

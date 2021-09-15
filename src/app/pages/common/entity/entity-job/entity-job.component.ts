@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
   OnInit, Component, EventEmitter, Output, Inject,
 } from '@angular/core';
@@ -48,7 +48,7 @@ export class EntityJobComponent implements OnInit {
   @Output() success = new EventEmitter<Job>();
   @Output() aborted = new EventEmitter<Job>();
   @Output() failure = new EventEmitter<Job>();
-  @Output() prefailure = new EventEmitter();
+  @Output() prefailure = new EventEmitter<HttpErrorResponse>();
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent, MatDialogConfig>,
     private ws: WebSocketService,
@@ -201,19 +201,17 @@ export class EntityJobComponent implements OnInit {
       );
   }
 
-  wspost(path: string, options: any): void {
-    this.http.post(path, options).pipe(untilDestroyed(this)).subscribe(
-      (res: any) => {
-        this.job = res;
-        if (this.job && (this.job as any).job_id) {
-          this.jobId = (this.job as any).job_id;
-        }
-        this.wsshow();
-      },
-      (err) => {
-        this.prefailure.emit(err);
-      },
-    );
+  wspost(path: string, options: unknown): void {
+    this.http.post(path, options).pipe(untilDestroyed(this)).subscribe((res: Job) => {
+      this.job = res;
+      if (this.job && (this.job as any).job_id) {
+        this.jobId = (this.job as any).job_id;
+      }
+      this.wsshow();
+    },
+    (err: HttpErrorResponse) => {
+      this.prefailure.emit(err);
+    });
   }
 
   wsshow(): void {

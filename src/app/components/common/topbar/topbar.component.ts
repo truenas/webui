@@ -13,6 +13,7 @@ import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/
 import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { LayoutService } from 'app/core/services/layout.service';
+import { AlertLevel } from 'app/enums/alert-level.enum';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -198,14 +199,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     const notifications = this.notificationsService.getNotificationList();
 
     notifications.forEach((notificationAlert: NotificationAlert) => {
-      if (notificationAlert.dismissed === false && notificationAlert.level !== 'INFO') {
+      if (notificationAlert.dismissed === false && notificationAlert.level !== AlertLevel.Info) {
         this.notifications.push(notificationAlert);
       }
     });
     this.notificationsService.getNotifications().pipe(untilDestroyed(this)).subscribe((notifications1) => {
       this.notifications = [];
       notifications1.forEach((notificationAlert: NotificationAlert) => {
-        if (notificationAlert.dismissed === false && notificationAlert.level !== 'INFO') {
+        if (notificationAlert.dismissed === false && notificationAlert.level !== AlertLevel.Info) {
           this.notifications.push(notificationAlert);
         }
       });

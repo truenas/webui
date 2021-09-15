@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -46,7 +45,7 @@ export class ServicesService {
   renewStaticKey(): Observable<OpenvpnServerConfig> {
     return this.ws.call('openvpn.server.renew_static_key');
   }
-  updateOpenVPN(call: ApiMethod, body: any): Observable<any> {
+  updateOpenVPN(call: 'openvpn.client.update' | 'openvpn.server.update', body: any): Observable<any> {
     return this.ws.call(call, [body]);
   }
   getClientInfo(): Observable<OpenvpnClientConfig> {

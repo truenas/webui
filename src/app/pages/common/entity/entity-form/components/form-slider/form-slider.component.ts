@@ -16,7 +16,7 @@ export class FormSliderComponent implements Field, OnInit {
   config: FormSliderConfig;
   group: FormGroup;
   fieldShow: string;
-  value: any;
+  value: number;
 
   constructor(public translate: TranslateService) {}
 

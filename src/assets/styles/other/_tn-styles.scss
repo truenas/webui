@@ -323,13 +323,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-checkbox-disabled .mat-checkbox-label {
-    @include variable(color, --fg2, $fg2);
+    @include variable(color, --grey, #4d4d4d);
     opacity: 0.6;
   }
 
   .mat-checkbox-disabled .mat-checkbox-frame,
   .mat-checkbox-disabled .mat-checkbox-inner-container {
-    opacity: 0.4;
+    opacity: 0.7;
   }
 
   .menu-toggle {
@@ -987,6 +987,18 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-checkbox .mat-checkbox-background {
     @include variable(border-color, --primary, $primary, !important);
+    border: solid 2px;
+  }
+
+  .mat-checkbox.mat-checkbox-disabled,
+  .mat-checkbox.mat-checkbox-checked.mat-checkbox-disabled {
+    cursor: not-allowed;
+  }
+
+  .mat-checkbox.mat-checkbox-disabled .mat-checkbox-background,
+  .mat-checkbox.mat-checkbox-checked.mat-checkbox-disabled .mat-checkbox-background {
+    @include variable(background, --grey, #4d4d4d, !important);
+    @include variable(border-color, --grey, #4d4d4d, !important);
     border: solid 2px;
   }
 

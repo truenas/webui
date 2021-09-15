@@ -15,7 +15,9 @@ import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewChartBarComponent } from 'app/core/components/view-chart-bar/view-chart-bar.component';
 import { ViewChartGaugeComponent } from 'app/core/components/view-chart-gauge/view-chart-gauge.component';
 import { CoreEvent } from 'app/interfaces/events';
+import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { WidgetMemoryData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { Theme } from 'app/services/theme/theme.service';
 import { T } from 'app/translate-marker';
 
@@ -32,8 +34,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   @Input() ecc = false;
   chart: Chart;// chart instance
   ctx: CanvasRenderingContext2D; // canvas context for chart.js
-  private _memData: any;
-  get memData(): any { return this._memData; }
+  private _memData: WidgetMemoryData;
+  get memData(): WidgetMemoryData { return this._memData; }
   set memData(value) {
     this._memData = value;
     if (this.legendData && typeof this.legendIndex !== 'undefined') {
@@ -45,7 +47,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   isReady = false;
-  usage: any;
   title: string = T('Memory');
   subtitle: string = T('% of all cores');
   widgetColorCssVar = 'var(--accent)';
@@ -103,7 +104,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     return value / 1024 / 1024 / 1024;
   }
 
-  parseMemData(data: any): string[][] {
+  parseMemData(data: MemoryStatsEventData): string[][] {
     /*
      * PROVIDED BY MIDDLEWARE
      * total
@@ -131,17 +132,14 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     return columns;
   }
 
-  aggregate(data: any[]): number {
-    return data.reduce((total, num) => total + num);
-  }
-
-  setMemData(data: any): void {
-    const config: any = {};
-    config.title = 'Cores';
-    config.orientation = 'vertical';
-    config.units = 'GiB';
-    config.max = this.bytesToGigabytes(data.total).toFixed(1);
-    config.data = this.parseMemData(data);
+  setMemData(data: MemoryStatsEventData): void {
+    const config = {
+      title: this.translate.instant('Cores'),
+      orientation: 'vertical',
+      units: 'GiB',
+      max: this.bytesToGigabytes(data.total).toFixed(1),
+      data: this.parseMemData(data),
+    };
     this.memData = config;
     this.memChartInit();
   }
@@ -206,12 +204,12 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     }
   }
 
-  protected makeDatasets(data: any[]): ChartDataSets[] {
+  protected makeDatasets(data: string[][]): ChartDataSets[] {
     const datasets: ChartDataSets[] = [];
 
     const ds: ChartDataSets = {
       label: this.labels as any,
-      data: data.map((x) => x[1]),
+      data: data.map((x) => x[1] as any),
       backgroundColor: [],
       borderColor: [],
       borderWidth: 1,

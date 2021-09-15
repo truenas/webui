@@ -3,13 +3,13 @@ import {
   Component, ElementRef, Input, OnInit, ViewChild,
 } from '@angular/core';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { AppTableConfig } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
 
 export interface InputExpandableTableConf extends AppTableConfig {
   detailsHref?: string;
   expandableTableComponent?: ExpandableTableComponent;
   limitRows?: number;
-  configure?(): any;
+  configure?: () => void;
   limitRowsByMaxHeight?: boolean;
 }
 
@@ -26,7 +26,7 @@ export enum ExpandableTableState {
 export class ExpandableTableComponent implements OnInit, AfterViewChecked {
   title = '';
   titleHref: string;
-  actions: any[];
+  actions: AppTableAction[];
   isEmpty = true;
   isExpanded = false;
   readonly ServiceStatus = ServiceStatus;

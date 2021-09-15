@@ -4,12 +4,6 @@ import { Thread } from 'app/core/classes/thread';
 import { CoreEvent } from 'app/interfaces/events';
 import { CoreService } from './core-service/core.service';
 
-export interface ProcessTask {
-  responseEvent: string;
-  operation: string;
-  data: any[];
-}
-
 @UntilDestroy()
 @Injectable()
 export class ChartDataUtilsService {

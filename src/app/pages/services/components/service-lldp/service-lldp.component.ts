@@ -63,9 +63,9 @@ export class ServiceLLDPComponent implements FormConfiguration {
     entityEdit.submitFunction = (body) => this.ws.call('lldp.update', [body]);
 
     this.services.getLLDPCountries().pipe(untilDestroyed(this)).subscribe((res) => {
-      const countries: FormComboboxConfig = this.fieldSets
+      const countries = this.fieldSets
         .find((set) => set.name === 'General Options')
-        .config.find((config) => config.name === 'country');
+        .config.find((config) => config.name === 'country') as FormComboboxConfig;
       for (const country in res) {
         countries.options.push({ label: `${country} (${res[country]})`, value: `${country}` });
       }

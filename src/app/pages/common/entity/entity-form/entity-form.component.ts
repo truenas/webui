@@ -571,7 +571,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return false;
   }
 
-  isShow(id: any): boolean {
+  isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
       if (this.conf.advanced_field.indexOf(id) > -1) {
         return false;
@@ -613,7 +613,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   setArrayValue(data: any[], formArray: FormArray, name: string): void {
-    let array_controls: any;
+    let array_controls: FieldConfig[];
     for (const i in this.fieldConfig) {
       const config: FieldConfig = this.fieldConfig[i];
       if (config.name === name) {
