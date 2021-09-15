@@ -249,8 +249,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return theme.accentColors.map((color) => (theme as any)[color]);
   }
 
-  private createColorObject(): any {
-    const obj: any = {};
+  private createColorObject(): Record<string, string> {
+    const obj: Record<string, string> = {};
     this.legends.forEach((item, index) => {
       obj[item] = this.colorPattern[index];
     });

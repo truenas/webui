@@ -42,9 +42,7 @@
 
 
       <!-- VISUALIZER -->
-      <div #disksoverview
-               id="disks-overview"
-               [class]="currentView">
+      <div #disksoverview id="disks-overview" [class]="currentView">
         <div #visualizer class="visualizer dom-overlay" id="visualizer"></div>
 
         <!-- DISK NAMES -->
@@ -157,25 +155,25 @@
         <div class="header-container half-height"  id="drive-temps">
           <h3 class="header">Drive Temperatures</h3>
           <div fxLayout="row wrap" fxLayoutGap="10%">
-              <ng-container *ngIf="temperatures && temperatureScales">
-                <ng-container *ngFor="let diskName of temperatures.keys;">
-                  <temperature-meter *ngIf="temperatures.values[diskName]; else notemps"
+            <ng-container *ngIf="temperatures && temperatureScales">
+              <ng-container *ngFor="let diskName of temperatures.keys;">
+                <temperature-meter *ngIf="temperatures.values[diskName]; else notemps"
                     [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' "
                     [source]="diskName"
                     [value]="temperatures.values[diskName]"
                     [unit]="temperatures.unit"
                     [symbolText]="temperatures.symbolText"></temperature-meter>
-                  <ng-template #notemps>
-                    <div class="no-temp" [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " >
-                      <strong>{{diskName}}:</strong> Unknown{{temperatures.symbolText}}
-                      <tooltip
+                <ng-template #notemps>
+                  <div class="no-temp" [fxFlex]="temperatures && temperatures.keys.length >= 4 ? '40%' : '100%' " >
+                    <strong>{{diskName}}:</strong> Unknown{{temperatures.symbolText}}
+                    <tooltip
                         header="Temperature data missing."
                         message="No temperature data was reported by the system. There can be a number of reasons why this might occur. For troubleshooting tips please go here">
-                      </tooltip>
-                    </div>
-                  </ng-template>
-                </ng-container>
+                    </tooltip>
+                  </div>
+                </ng-template>
               </ng-container>
+            </ng-container>
 
             <ul *ngIf="temperatures && !temperatureScales">
               <ng-container>

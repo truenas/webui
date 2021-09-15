@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityCardAction } from 'app/pages/common/entity/entity-card/entity-card-config.interface';
 import { EntityCardComponent } from './entity-card.component';
 
 @Component({
@@ -11,7 +12,7 @@ export class EntityCardActionsComponent implements OnInit {
   @Input('entity') entity: EntityCardComponent;
   @Input('row') row: any;
 
-  actions: any[];
+  actions: EntityCardAction[];
   showMenu = true;
 
   constructor(public translate: TranslateService) {}

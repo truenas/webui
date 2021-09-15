@@ -12,6 +12,7 @@ import { of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
@@ -543,11 +544,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       disknumErr = this.disknumExtendConfirmMessage;
     }
     if (this.disknumError) {
-      this.dialog.confirm(T('Warning'), disknumErr).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        if (!res) {
-          return;
-        }
-
+      this.dialog.confirm({
+        title: T('Warning'),
+        message: disknumErr,
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.doSubmit();
       });
     } else {
@@ -564,8 +564,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       if (this.stripeVdevTypeError) {
         warnings = warnings + '<br/><br/>' + this.stripeVdevTypeError;
       }
-      this.dialog.confirm(helptext.force_title, warnings).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        this.force = res;
+      this.dialog.confirm({
+        title: helptext.force_title,
+        message: warnings,
+      }).pipe(untilDestroyed(this)).subscribe((force) => {
+        this.force = force;
       });
     }
   }
@@ -628,7 +631,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
         dialogRef.componentInstance.success
           .pipe(
-            switchMap((r: any) => {
+            switchMap((r: Job<Pool>) => {
               if (this.isEncrypted) {
                 const downloadDialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
                 downloadDialogRef.componentInstance.new = true;
@@ -665,7 +668,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   openDialog(): void {
     if (this.isEncrypted) {
-      this.dialog.confirm(T('Warning'), this.encryption_message, false, T('I Understand')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+      this.dialog.confirm({
+        title: T('Warning'),
+        message: this.encryption_message,
+        buttonMsg: T('I Understand'),
+      }).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res) {
           this.isEncrypted = true;
           this.vol_encrypt = 1;

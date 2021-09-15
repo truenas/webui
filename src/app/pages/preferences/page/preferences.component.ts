@@ -8,22 +8,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
 
 @Component({
   selector: 'ui-preferences',
-  template: `
-  <mat-card class="prefs-card">
-  <!--<mat-toolbar-row style="margin-bottom:16px;">
-  <h4>User Preferences</h4>
-  </mat-toolbar-row>
-  <mat-divider></mat-divider>-->
-  <mat-card-content>
-    <general-preferences-form  class="prefs-form"></general-preferences-form>
-  </mat-card-content>
-  <mat-divider></mat-divider>
-  <mat-card-content *ngIf="themeService && themeService.customThemes && themeService.customThemes.length > 0">
-    <custom-theme-manager-form  class="prefs-form"></custom-theme-manager-form>
-  </mat-card-content>
-
-  </mat-card>
-  `,
+  templateUrl: './preferences.component.html',
   styleUrls: ['./preferences.component.scss'],
 })
 export class PreferencesPage implements OnDestroy {

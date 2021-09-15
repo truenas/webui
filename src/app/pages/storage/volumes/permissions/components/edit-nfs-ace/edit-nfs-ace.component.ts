@@ -66,14 +66,14 @@ export class EditNfsAceComponent implements FormConfiguration, OnChanges {
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
       const userOptions = users.map((user) => ({ label: user.username, value: user.username }));
 
-      const userControl: FormComboboxConfig = this.fieldConfig.find((config) => config.name === 'user');
+      const userControl = this.fieldConfig.find((config) => config.name === 'user') as FormComboboxConfig;
       userControl.options = userOptions;
     });
 
     this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions = groups.map((group) => ({ label: group.group, value: group.group }));
 
-      const groupControl: FormComboboxConfig = this.fieldConfig.find((config) => config.name === 'group');
+      const groupControl = this.fieldConfig.find((config) => config.name === 'group') as FormComboboxConfig;
       groupControl.options = groupOptions;
     });
   }

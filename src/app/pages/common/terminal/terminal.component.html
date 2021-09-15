@@ -1,0 +1,9 @@
+<div class="terminal-wrapper">
+  <div
+		id="terminal"
+		[ngStyle]="{'font-size' : fontSize+'px'}"
+		#terminal
+		(window:resize)="onResize()"
+		(contextmenu)="onRightClick()"
+	></div>
+</div>

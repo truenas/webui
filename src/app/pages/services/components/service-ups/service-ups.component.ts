@@ -273,8 +273,8 @@ export class ServiceUPSComponent implements FormConfiguration {
     this.entityForm = entityForm;
 
     const generalSet = this.fieldSets.find((set) => set.name === helptext.ups_fieldset_general);
-    this.ups_driver = generalSet.config.find((config) => config.name === 'driver');
-    this.ups_port = generalSet.config.find((config) => config.name === 'port');
+    this.ups_driver = generalSet.config.find((config) => config.name === 'driver') as FormComboboxConfig;
+    this.ups_port = generalSet.config.find((config) => config.name === 'port') as FormComboboxConfig;
 
     this.ws.call('ups.driver_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.ups_drivers_list = res;

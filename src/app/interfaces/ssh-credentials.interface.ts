@@ -6,7 +6,7 @@ export interface SshCredentials {
   port: number;
   username: string;
   private_key: number;
-  remote_host_key: any;
+  remote_host_key: string;
   cipher: CipherType;
   connect_timeout: number;
 }

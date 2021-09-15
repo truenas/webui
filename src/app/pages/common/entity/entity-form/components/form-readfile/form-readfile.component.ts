@@ -20,10 +20,10 @@ export class FormReadFileComponent implements Field {
     public translate: TranslateService) {}
 
   changeListener($event: Event): void {
-    this.readFile($event.target);
+    this.readFile($event.target as HTMLInputElement);
   }
 
-  readFile(inputValue: any): any {
+  readFile(inputValue: HTMLInputElement): void {
     const file: File = inputValue.files[0];
     const fReader: FileReader = new FileReader();
     fReader.onloadend = () => {
@@ -33,7 +33,7 @@ export class FormReadFileComponent implements Field {
     return fReader.readAsText(file);
   }
 
-  contents(result: any): void {
+  contents(result: string | ArrayBuffer): void {
     this.group.controls[this.config.name].setValue(result);
   }
 }

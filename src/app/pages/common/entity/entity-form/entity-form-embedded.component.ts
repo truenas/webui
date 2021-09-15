@@ -59,6 +59,7 @@ export interface EmbeddedFormConfig {
   dataAttributeHandler?: any;
   route_cancel?: string[];
   route_success?: string[];
+  // TODO: Broken
   route_delete?: string[];
   custom_edit_query?: any;
   custom_add_query?: any;
@@ -81,7 +82,7 @@ export interface EmbeddedFormConfig {
   initialCount?: number;
   initialCount_default?: number;
 
-  goBack?(): any;
+  goBack?: () => void;
   onSuccess?(res: any): any;
   multiStateSubmit?: boolean;
 }
@@ -325,7 +326,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     }
   }
 
-  isShow(id: any): any {
+  isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
       if (this.conf.advanced_field.indexOf(id) > -1) {
         return false;
@@ -367,7 +368,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   setArrayValue(data: any[], formArray: FormArray, name: string): void {
-    let array_controls: any;
+    let array_controls: FieldConfig[];
     for (const i in this.fieldConfig) {
       const config: FieldConfig = this.fieldConfig[i];
       if (config.name === name) {

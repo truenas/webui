@@ -1,7 +1,7 @@
 <div mat-dialog-content id="console-box">
   <pre #footerBarScroll class="message">{{consoleMsg}}</pre>
   <div mat-dialog-content class="overflow-hide">
-    <mat-checkbox (change)="onStopRefresh($event)"
+    <mat-checkbox color="primary" (change)="onStopRefresh($event)"
       ix-auto ix-auto-type="mat-checkbox" ix-auto-identifier="{{refreshMsg}}">{{refreshMsg}}</mat-checkbox>
   </div>
 </div>

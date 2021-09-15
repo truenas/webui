@@ -6,3 +6,8 @@ export interface CloudsyncCredential {
   name: string;
   provider: string;
 }
+
+export interface CloudsyncBucket {
+  Name: string;
+  Path: string;
+}

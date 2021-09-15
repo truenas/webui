@@ -301,13 +301,13 @@ export class ExtentFormComponent implements FormConfiguration {
     });
 
     this.extent_type_control = entityForm.formGroup.controls['type'];
-    this.extent_type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.extent_type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       this.formUpdate(value);
     });
 
     this.avail_threshold_field = _.find(this.fieldConfig, { name: 'avail_threshold' });
     this.extent_disk_control = entityForm.formGroup.controls['disk'];
-    this.extent_disk_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.extent_disk_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       // zvol
       if (_.startsWith(value, 'zvol')) {
         this.avail_threshold_field.isHidden = false;

@@ -1,6 +1,14 @@
-import { Injectable } from '@angular/core';
+import {
+  ComponentFactoryResolver, Injectable, Injector, Type,
+} from '@angular/core';
 import { Subject } from 'rxjs';
 import { ModalComponent } from 'app/components/common/modal/modal.component';
+
+export interface ModalServiceMessage {
+  action: string;
+  component: string;
+  row: number;
+}
 
 @Injectable({ providedIn: 'root' })
 export class ModalService {
@@ -10,7 +18,12 @@ export class ModalService {
   onClose$ = new Subject();
   refreshForm$ = new Subject();
   getRow$ = new Subject();
-  message$ = new Subject();
+  message$ = new Subject<ModalServiceMessage>();
+
+  constructor(
+    private componentFactoryResolver: ComponentFactoryResolver,
+    private injector: Injector,
+  ) {}
 
   refreshTable(): void {
     this.refreshTable$.next();
@@ -20,7 +33,7 @@ export class ModalService {
     this.refreshForm$.next();
   }
 
-  message(message: any): void {
+  message(message: ModalServiceMessage): void {
     this.message$.next(message);
   }
 
@@ -34,7 +47,17 @@ export class ModalService {
     this.modals = this.modals.filter((x) => x.id !== id);
   }
 
-  open(id: string, conf: any, rowid?: any): void {
+  openInSlideIn<T>(componentType: Type<T>, rowId?: string | number): T {
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(componentType);
+    const componentRef = componentFactory.create(this.injector);
+    this.open('slide-in-form', componentRef.instance, rowId);
+    return componentRef.instance;
+  }
+
+  /**
+   * @deprecated Use openInSlideIn
+   */
+  private open(id: string, conf: any, rowid?: any): void {
     if (rowid) {
       conf.rowid = rowid;
       this.getRow$.next(rowid);

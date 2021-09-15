@@ -18,6 +18,7 @@ import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-fo
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { ActiveDirectoryConfigUi } from 'app/pages/directory-service/components/active-directory/active-directory-config-ui.interface';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
@@ -303,10 +304,11 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     protected dialogservice: DialogService,
   ) { }
 
-  resourceTransformIncomingRestData(data: ActiveDirectoryConfig): any {
-    const transformed: any = {
+  resourceTransformIncomingRestData(data: ActiveDirectoryConfig): ActiveDirectoryConfigUi {
+    const transformed: ActiveDirectoryConfigUi = {
       ...data,
       netbiosalias: data.netbiosalias.join(' '),
+      kerberos_realm: null,
     };
     if (data['kerberos_realm'] && data['kerberos_realm'] !== null) {
       transformed['kerberos_realm'] = data['kerberos_realm'].id;
@@ -414,7 +416,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     return this.ws.call('activedirectory.update', [body]);
   }
 
-  responseOnSubmit(value: any): void {
+  responseOnSubmit(value: ActiveDirectoryConfig & { job_id?: number }): void {
     this.entityEdit.formGroup.controls['kerberos_principal'].setValue(value.kerberos_principal);
     this.entityEdit.formGroup.controls['kerberos_realm'].setValue(value['kerberos_realm']);
 

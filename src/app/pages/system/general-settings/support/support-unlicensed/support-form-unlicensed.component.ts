@@ -11,7 +11,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
 import { ModalService } from 'app/services/modal.service';
@@ -26,8 +26,8 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
   password: any;
   username: any;
-  category: any;
-  screenshot: any;
+  category: FormSelectConfig;
+  screenshot: FieldConfig;
   password_fc: FieldConfig;
   username_fc: FieldConfig;
   subs: any[];
@@ -185,7 +185,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   }
 
   customSubmit(entityEdit: any): void {
-    const payload: any = {};
+    const payload = {} as CreateNewTicket;
     payload['username'] = entityEdit.username;
     payload['password'] = entityEdit.password;
     payload['category'] = entityEdit.category;
@@ -231,7 +231,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
         this.resetForm();
       }
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }

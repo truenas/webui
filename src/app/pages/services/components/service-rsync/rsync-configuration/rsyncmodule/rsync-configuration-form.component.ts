@@ -140,7 +140,6 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
   private rsyncmod_group: FormComboboxConfig;
   private rsyncmod_user: FormComboboxConfig;
   protected entityForm: EntityFormComponent;
-  customFilter: any;
   constructor(protected ws: WebSocketService, protected router: Router,
     protected userService: UserService, protected route: ActivatedRoute) {
   }
@@ -151,14 +150,14 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
 
     const accessSet = _.find(this.fieldSets, { name: helptext.rsyncd_fieldset_access });
 
-    this.rsyncmod_user = accessSet.config.find((config) => config.name === 'user');
+    this.rsyncmod_user = accessSet.config.find((config) => config.name === 'user') as FormComboboxConfig;
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
       users.forEach((user) => {
         this.rsyncmod_user.options.push({ label: user.username, value: user.username });
       });
     });
 
-    this.rsyncmod_group = accessSet.config.find((config) => config.name === 'group');
+    this.rsyncmod_group = accessSet.config.find((config) => config.name === 'group') as FormComboboxConfig;
     this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
       groups.forEach((group) => {
         this.rsyncmod_group.options.push({ label: group.group, value: group.group });

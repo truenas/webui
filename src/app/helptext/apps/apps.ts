@@ -5,6 +5,7 @@ export default {
   choosePool: {
     title: T('Choose a pool for Apps'),
     placeholder: T('Pools'),
+    migrateApplications: T('Migrate applications to the new pool'),
     action: T('Choose'),
     jobTitle: T('Configuring...'),
     success: T('Success'),
@@ -36,6 +37,7 @@ export default {
   },
 
   installing: T('Installing'),
+  updating: T('Updating'),
   refreshing: T('Refreshing'),
   starting: T('Starting'),
   stopping: T('Stopping'),
@@ -92,12 +94,6 @@ export default {
   catalogPlaceholder: T('Search Catalogs'),
   dockerPlaceholder: T('Search Docker Images'),
 
-  install: {
-    title: T('Ready to Install'),
-    msg1: T('Install '),
-    msg2: T(' on pool '),
-  },
-
   noPool: {
     title: T('No Pools Found'),
     message: T('At least one pool must be available to use apps'),
@@ -106,10 +102,6 @@ export default {
 
   kubForm: {
     title: T('Kubernetes Settings'),
-    pool: {
-      placeholder: T('Pool'),
-      tooltip: T('Choose a pool for the Apps'),
-    },
     reInit: {
       title: T('Settings Requiring Re-Initialization'),
       formWarning: T('Changing settings below will result in Kubernetes cluster re-initialization deleting installed apps and their data.'),
@@ -156,14 +148,7 @@ export default {
   charts: {
     delete_dialog: {
       title: T('Delete'),
-      msg: T('Delete '),
       job: T('Deleting...'),
-    },
-
-    update_dialog: {
-      title: T('Update'),
-      msg: T('Update '),
-      job: T('Updating...'),
     },
 
     upgrade_dialog: {
@@ -526,6 +511,7 @@ export default {
 
   actionBtnText: {
     close: T('Close'),
+    refreshEvents: T('Refresh Events'),
   },
 
   chartEventDialog: {

@@ -5,10 +5,6 @@
   width: 100%;
 }
 
-/*.report.widget{
-  height: 480px;
-}*/
-
 .mat-card-content {
   height: 100%;
   margin: 0;
@@ -131,14 +127,6 @@ span.tooltip-value {
   margin-top: -7px;
 }
 
-/*.disk-grid-controls button.previous{
-  right:56px;
-}
-
-.disk-grid-controls button.next{
-  right:16px;
-}*/
-
 .disk-grid-control {
   background-color: rgba(255, 255, 255, 0.1);
   border: solid 1px rgba(255, 255, 255, 0.15);
@@ -150,8 +138,6 @@ span.tooltip-value {
 }
 
 .disk-tile {
-  /*background-color:rgba(0,0,0,0.15);*/
-  /*background-color:rgba(0, 208, 214,0.5);*/
   background-color: var(--bg1);
 }
 
@@ -162,14 +148,8 @@ span.tooltip-value {
   width: 100%;
 }
 
-.high-density,
-.diskset .mat-grid-list {
-  /*background-color:rgba(0,0,0,0.8);*/
-}
-
 .high-density .disk-name {
   bottom: -5px;
-  /*font-size: 12px;*/
   font-size: 60%;
   margin: 0;
   position: absolute;
@@ -183,7 +163,6 @@ span.tooltip-value {
 .high-density .disk-icon {
   font-size: 160%;
   position: absolute;
-  /*display:none;*/
   width: 100%;
 }
 
@@ -202,10 +181,6 @@ span.tooltip-value {
 
 .disk-details {
   width: 100%;
-  /*height: 240px;
-  background: rgba(0,0,0,0.05);
-  border: solid 1px rgba(0,0,0,0.1);
-  padding: 8px;*/
 }
 
 .disk-detail-header {
@@ -228,7 +203,6 @@ p.value {
 }
 
 span.disk-detail-title {
-  /*font-size: 1.25em;*/
   text-align: left;
 }
 
@@ -301,7 +275,6 @@ span.disk-detail-subtitle {
 .disk-detail-temp-label span.value {
   font-size: 2.75em;
   line-height: 1em;
-  /*margin-left: 12px;*/
 }
 
 .disk-detail-temp-label.hot span.value {
@@ -350,10 +323,6 @@ span.disk-detail-subtitle {
 
 .card-bg-wrapper {
   min-height: 100%;
-  /*background-color:var(--primary);
-  color:var(--primary-txt);*/
-  /*background-color:#333;
-  color:#fff;*/
 }
 
 .zero-state h4 {
@@ -367,16 +336,12 @@ div.line-chart-tools-wrapper {
 
 div.line-chart-tools-wrapper button {
   display: inline-block;
-  width: 64px;
+  margin: 0 12px;
+  width: 40px;
 }
 
 div.line-chart-tools {
-  /*width:64px;
-  min-height:100%;
-  margin-left:16px;*/
   text-align: right;
-  /*background-color:var(--primary);
-  color:var(--primary-txt);*/
 }
 
 div.line-chart-tools ul {
@@ -385,42 +350,21 @@ div.line-chart-tools ul {
 
 div.line-chart-tools .tool-icon {
   font-size: 18px;
-  width: 64px;
+  margin: 0 12px;
+  width: 40px;
 }
 
 /* Mobile */
 .disk-array-ui.column {
   width: 100%;
 }
-/*.disk-array-ui.column .disk-name{
-  font-size:14px;
-}
-.disk-array-ui.column .disk-icon{
-  font-size:16px;
-}
-.disk-array-ui.column .disk-details{
-height:calc(100% - 48px);
-}*/
 
-/* IMPORTED */
-/*.card-bg-wrapper,
-  .chart-wrapper{
-    height:calc(100% - 64px);
-  }*/
 .chart-wrapper {
   height: 200px;
 }
 
-.card-bg-wrapper {
-  /*width:40%;*/
-  /*border-right:solid 1px var(--bg1);
-    background-color:var(--primary);
-    color:var(--primary-txt);*/
-}
-
 .card-bg {
   background-position: 50%;
-  /*background-color:rgba(0,0,0,0.15);*/
   background-repeat: no-repeat;
   background-size: contain;
   height: 100%;
@@ -432,24 +376,8 @@ height:calc(100% - 48px);
   text-align: left;
 }
 
-/*.logo-bg{
-  padding: 24px;
-  border: solid #dedede 8px;
-  border-color:rgba(128,128,128,0.5);
-  box-shadow: 0 3px 5px rgba(0,0,0,0.55);
-  border-radius: 50%;
-  top: 28%;
-  left: 21%;
-  display: table;
-  position: absolute;
-  background-color: #999;
-  }*/
-
 .logo-bg .os-logo {
   margin-top: 16%;
-  /*padding: 10px 10px 4px 14px;
-    width: 100px;
-    height: 100px;*/
   width: 50%;
 }
 
@@ -489,7 +417,6 @@ height:calc(100% - 48px);
   height: 55%;
   padding: 8px;
   width: 100%;
-  /*color:#fff;*/
 }
 
 .pool-data {
@@ -503,8 +430,6 @@ height:calc(100% - 48px);
 }
 
 .title-wrapper {
-  /*background-color:rgba(0,0,0,0.5);
-  color:#fff;*/
   background-color: rgba(0, 0, 0, 0.1);
   height: 45%;
   padding: 16px;
@@ -557,7 +482,6 @@ p.value {
 }
 
 .xs .title-wrapper {
-  /*bottom: -100%;*/
   height: 72px;
   position: absolute;
   top: 0;
@@ -599,15 +523,12 @@ p.value {
 .legend-group {
   border: solid 1px rgba(0, 0, 0, 0);
   border-radius: 4px;
-  /*margin-right: 20px;*/
-  /*max-width: calc(50% - 16px) !important;*/
-  /*background-color: rgba(0,0,0,0.1);*/
-  /*padding: 8px;*/
   margin: 0 0 0 4px;
 }
 
 h3 {
   display: inline-block;
+  font-size: 1.5rem;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -649,7 +570,6 @@ h3 {
 
 .report .mat-card.zero-state {
   min-height: 325px;
-  /*background-color:rgba(0,0,0,0.0);*/
   position: relative;
 }
 
@@ -660,3 +580,7 @@ h3 {
   width: auto;
 }
 
+.report .legend-group .report-analytics {
+  border: var(--red);
+  opacity: 0.75;
+}

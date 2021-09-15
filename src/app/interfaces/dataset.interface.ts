@@ -35,6 +35,7 @@ export interface Dataset {
   refreservation: ZfsProperty<number>;
   reservation: ZfsProperty<number>;
   snapdir: ZfsProperty<number>;
+  share_type: ZfsProperty<string>;
   special_small_block_size: ZfsProperty<string>;
   sync: ZfsProperty<string>;
   xattr: ZfsProperty<boolean>;
@@ -47,7 +48,7 @@ export interface Dataset {
   refquota_warning?: ZfsProperty<number>;
   quota_critical?: ZfsProperty<number>;
   quota_warning?: ZfsProperty<number>;
-  comments?: ZfsProperty<number>;
+  comments?: ZfsProperty<string>;
 
   // Present for type === DatasetType.Volume
   volsize?: ZfsProperty<number>;

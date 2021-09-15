@@ -7,24 +7,28 @@
       [fxLayout.gt-md]="isProductImageRack ? 'column' : 'row wrap'"
       fxLayoutAlign="space-evenly center">
 
-      <div [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
+      <div
+        [fxFlex.gt-md]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
         [fxFlex.gt-xs]="isProductImageRack ? 'calc(40% - 32px)' : '40%'"
         [fxFlex.xs]="isProductImageRack ? 'calc(200px - 32px)' : '40%'"
         style="background-size:contain; background-repeat: no-repeat; background-position:50%;"
-        [style.background-image]="'url(assets/images/' + product_image + ')'">
-          <!--<app-sys-image [product_image]="product_image"></app-sys-image>-->
-          <img class="invisible" [src]="'assets/images/' + product_image"/>
+        [style.background-image]="'url(assets/images/' + product_image + ')'"
+      >
+        <!--<app-sys-image [product_image]="product_image"></app-sys-image>-->
+        <img class="invisible" [src]="'assets/images/' + product_image"/>
 
       </div>
 
-      <div *ngIf="systemInfo"
+      <div
+        *ngIf="systemInfo"
         [fxFlex.gt-md]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
         fxFlex.gt-xs="calc(60% - 32px)"
         [fxFlex.xs]="isProductImageRack ? 'calc(50% - 32px)' : 'calc(60% - 32px)'"
         fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="16px"
-        [class]="extraMargin ? 'extra-margin' : 'regular-margin'">
+        [class]="extraMargin ? 'extra-margin' : 'regular-margin'"
+      >
 
-          <app-sys-info
+        <app-sys-info
           *ngIf="!hasLicense; else licensedSysInfo"
           [version]='systemInfo.version'
           [model]="systemInfo.model"
@@ -54,12 +58,12 @@
           </div>
         </div>
         <div *ngIf="hasLicense">
-          <mat-checkbox (change)="updateProductionStatus($event)" [(ngModel)]="isProduction">
+          <mat-checkbox color="primary" (change)="updateProductionStatus($event)" [(ngModel)]="isProduction">
             {{ 'This is a production system' | translate}}</mat-checkbox>
         </div>
 
         <!-- ACTION BUTTONS -->
-        <div fxLayout="row" fxLayoutGap="8px" class="actions button-group" [class]="isProductImageTall ? 'btn-fixed' : ''">
+        <div fxLayout="row" fxLayoutGap="8px" class="actions button-group" [class.btn-fixed]="!isProductImageRack">
           <button id="update-license-btn" (click)="updateLicense()" mat-button color="default">
             {{ licenseButtonText | translate }}
           </button>
@@ -93,14 +97,22 @@
             </mat-menu>
           </ng-container>
           <ng-template #elseBlock>
-            <button id="file-ticket-btn" (click)="fileTicket()" mat-button color="default"
+            <button
+              id="file-ticket-btn"
+              (click)="fileTicket()"
+              mat-button color="default"
               ix-auto
               ix-auto-type="button"
               ix-auto-identifier="{{ticketText}}"
             >
               {{ ticketText | translate }}
             </button>
-            <button id="proactive-btn" (click)="openProactive()" mat-button color="default" *ngIf="hasLicense"
+            <button
+              *ngIf="hasLicense"
+              id="proactive-btn"
+              (click)="openProactive()"
+              mat-button
+              color="default"
               ix-auto
               ix-auto-type="button"
               ix-auto-identifier="{{proactiveText}}"

@@ -10,6 +10,9 @@ import { posixPermissionsToDescription } from 'app/pages/storage/volumes/permiss
 
 export function posixAceToPermissionItem(translate: TranslateService, ace: PosixAclItem): PermissionItem {
   let name = translate.instant(posixAclTagLabels.get(ace.tag));
+  if (ace.default) {
+    name = `${name} – ${translate.instant('default')}`;
+  }
 
   let type: PermissionsItemType;
   switch (ace.tag) {

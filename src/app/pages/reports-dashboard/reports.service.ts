@@ -22,7 +22,7 @@ export class ReportsService implements OnDestroy {
   private reportsUtils: Worker;
 
   constructor(private ws: WebSocketService, protected http: HttpClient, private core: CoreService) {
-    this.reportsUtils = new Worker('./reports-utils.worker', { type: 'module' });
+    this.reportsUtils = new Worker(new URL('./reports-utils.worker', import.meta.url), { type: 'module' });
 
     core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
       ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((raw_res) => {
@@ -90,7 +90,7 @@ export class ReportsService implements OnDestroy {
     this.reportsUtils.postMessage({ name: 'ProcessCommands', data: pipeLine, sender: 'chartID' });
   }
 
-  truncateData(data: number[][]): any {
+  truncateData(data: number[][]): number[][] {
     let finished = false;
     let index = data.length - 1;
     do {

@@ -1,4 +1,6 @@
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
+import { MatRadioChange } from '@angular/material/radio/radio';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
@@ -49,20 +51,21 @@ export interface BaseFieldConfig<P = any> {
 }
 
 export interface FormArrayConfig<P = any> extends BaseFieldConfig<P> {
-  formarray?: any;
+  formarray?: FieldConfig[];
 }
 
 export interface FormButtonConfig<P = any> extends BaseFieldConfig<P> {
   buttonClass: string;
   buttonColor: string;
   customEventActionLabel?: string;
-  customEventMethod?(data: any): void;
+  customEventMethod?: (event: any) => void;
 }
 
 export interface FormCheckboxConfig<P = any> extends BaseFieldConfig<P> {
   expandedHeight?: boolean;
-  onChange?(data: any): void;
-  updater?: any;
+  onChange?(data: { event: MatCheckboxChange }): void;
+  updater?: (parent: P) => void;
+  customEventMethod?: () => void;
 }
 
 export interface FormChipConfig<P = any> extends BaseFieldConfig<P> {
@@ -70,19 +73,27 @@ export interface FormChipConfig<P = any> extends BaseFieldConfig<P> {
   options?: any[];
   searchOptions?: Option[];
   updateLocal?: boolean;
-  updater?: any;
+  updater?: (value: any, parent: P, config?: FormChipConfig) => void;
+  togglePw?: boolean;
 }
 
 export interface FormComboboxConfig<P = any> extends BaseFieldConfig<P> {
   enableTextWrapForOptions?: boolean;
   inlineFields?: boolean;
   inlineFieldFlex?: string;
-  loadMoreOptions?: any;
-  options?: any[];
+  loadMoreOptions?: (length: number, parent: P, searchText: string, config?: FormComboboxConfig) => void;
+  options?: FormComboboxOption[];
   searchable?: boolean;
-  searchOptions?: Option[];
+  searchOptions?: FormComboboxOption[];
   updateLocal?: boolean;
-  updater?: any;
+  updater?: (value: string, parent: P, config?: FormComboboxConfig) => void;
+  inputType?: string;
+}
+
+export interface FormComboboxOption {
+  label: string;
+  value: string | number;
+  sticky?: string;
 }
 
 export interface FormDictConfig<P = any> extends BaseFieldConfig<P> {
@@ -108,7 +119,7 @@ export interface FormInputConfig<P = any> extends BaseFieldConfig<P> {
   inputUnit?: InputUnitConfig;
   isDoubleConfirm?: boolean;
   label?: string;
-  maskValue?: any;
+  maskValue?: string;
   max?: number;
   min?: number;
   searchable?: boolean;
@@ -117,6 +128,8 @@ export interface FormInputConfig<P = any> extends BaseFieldConfig<P> {
 
 export interface FormIpWithNetmaskConfig<P = any> extends BaseFieldConfig<P> {
   netmaskPreset?: number;
+  inputType?: string;
+  togglePw?: boolean;
 }
 
 export interface FormListConfig<P = any> extends BaseFieldConfig<P> {
@@ -125,24 +138,35 @@ export interface FormListConfig<P = any> extends BaseFieldConfig<P> {
   label?: string;
   listFields?: FieldConfig[][];
   templateListField?: FieldConfig[];
+  hideButton?: boolean;
 }
 
 export interface FormParagraphConfig<P = any> extends BaseFieldConfig<P> {
   isLargeText?: boolean;
   paragraphIcon?: string;
   paragraphIconSize?: string;
-  paraText?: any;
+  paraText?: string;
+  inputType?: string;
 }
 
 export interface FormPermissionsConfig<P = any> extends BaseFieldConfig<P> {
   hideOthersPermissions?: boolean;
+  inputType?: string;
+  options?: Option[];
 }
 
 export interface FormRadioConfig<P = any> extends BaseFieldConfig<P>{
   inlineFields?: boolean;
   inlineFieldFlex?: string;
-  onChange?(data: any): void;
-  options?: any[];
+  onChange?(data: { event: MatRadioChange }): void;
+  options?: FormRadioOption[];
+}
+
+export interface FormRadioOption {
+  label: string;
+  value: any;
+  hiddenFromDisplay?: boolean;
+  tooltip?: string;
 }
 
 export interface FormSchedulerConfig<P = any> extends BaseFieldConfig<P> {
@@ -165,6 +189,7 @@ export interface FormSelectionListConfig<P = any> extends BaseFieldConfig<P> {
   inlineFields?: boolean;
   inlineFieldFlex?: string;
   onChange?(data: any): void;
+  options?: Option[];
 }
 
 export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
@@ -173,7 +198,7 @@ export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
 }
 
 export interface FormTaskConfig<P = any> extends BaseFieldConfig<P> {
-  tabs?: any[];
+  tabs?: FieldConfig[];
   tabName?: string;
 }
 
@@ -195,10 +220,17 @@ export interface FormUploadConfig<P = any> extends BaseFieldConfig<P> {
   message?: any;
   rootSelectable?: boolean;
   updater?: (uploadComponent: FormUploadComponent, parent: P) => void;
+  multiple?: boolean;
 }
 
 export interface FormToggleButtonConfig<P = any> extends BaseFieldConfig<P> {
-  options?: any[];
+  options?: FormToggleButtonOption[];
+}
+
+export interface FormToggleButtonOption {
+  label: string;
+  value: any;
+  checked?: boolean;
 }
 
 export type FieldConfig<P = any> = BaseFieldConfig<P>

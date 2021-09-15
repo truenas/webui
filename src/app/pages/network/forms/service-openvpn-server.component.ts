@@ -13,6 +13,7 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import {
   ServicesService, DialogService, AppLoaderService, WebSocketService, StorageService,
 } from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -172,7 +173,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
       function: () => {
         const self = this;
         const conf: DialogFormConfiguration = {
-          title: 'Select Client Certificate',
+          title: T('Select Client Certificate'),
           fieldConfig: [
             {
               type: 'select',
@@ -181,7 +182,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
               options: this.certOptions,
             },
           ],
-          saveButtonText: ('Submit'),
+          saveButtonText: T('Save'),
           customSubmit(entityDialog: EntityDialogComponent) {
             self.ws.call('interface.websocket_local_ip').pipe(untilDestroyed(this)).subscribe((localip) => {
               const value = entityDialog.formValue;

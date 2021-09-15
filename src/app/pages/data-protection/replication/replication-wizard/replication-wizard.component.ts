@@ -1,9 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { Validators, FormArray, FormGroup } from '@angular/forms';
-import {
-  UntilDestroy, untilDestroyed,
-} from '@ngneat/until-destroy';
+import { FormArray, FormGroup, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
@@ -21,17 +20,19 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
 import sshConnectionsHelptex from 'app/helptext/system/ssh-connections';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
-import {
-  ReplicationTask,
-} from 'app/interfaces/replication-task.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
-  FieldConfig, FormExplorerConfig, FormParagraphConfig, FormSelectConfig,
+  FieldConfig,
+  FormExplorerConfig,
+  FormParagraphConfig,
+  FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -783,11 +784,17 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   protected source_fieldSet: FieldSet;
   protected target_fieldSet: FieldSet;
 
-  constructor(private keychainCredentialService: KeychainCredentialService,
-    private loader: AppLoaderService, private dialogService: DialogService,
-    private ws: WebSocketService, private replicationService: ReplicationService,
-    private datePipe: DatePipe, private entityFormService: EntityFormService,
-    private modalService: ModalService) {
+  constructor(
+    private keychainCredentialService: KeychainCredentialService,
+    private loader: AppLoaderService,
+    private dialogService: DialogService,
+    private ws: WebSocketService,
+    private replicationService: ReplicationService,
+    private datePipe: DatePipe,
+    private entityFormService: EntityFormService,
+    private modalService: ModalService,
+    private translate: TranslateService,
+  ) {
     this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((res) => {
       this.namesInUse.push(...res.map((replication) => replication.name));
     });
@@ -995,7 +1002,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
+      this.replicationService.getRemoteDataset(TransportMode.SSH, sshCredentials, this).then(
         (res) => {
           const sourceDatasetsFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
           const prevErrors = sourceDatasetsFormControl.errors;
@@ -1039,7 +1046,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
+      this.replicationService.getRemoteDataset(TransportMode.SSH, sshCredentials, this).then(
         (res) => {
           const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('target_dataset');
           const prevErrors = targetDatasetFormControl.errors;
@@ -1364,7 +1371,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication'] != undefined) {
       await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
         () => {
-          this.dialogService.info(T('Task started'), T('Replication <i>') + value['name'] + T('</i> has started.'), '500px', 'info', true);
+          this.dialogService.info(
+            T('Task started'),
+            this.translate.instant('Replication <i>{name}</i> has started.', { name: value['name'] }),
+            '500px',
+            'info',
+            true,
+          );
         },
       );
     }
@@ -1501,7 +1514,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     const nameRegexFormControl = this.entityWizard.formArray.get([0]).get('name_regex');
 
-    const payload: any[] = [{
+    const payload: CountManualSnapshotsParams[] = [{
       datasets: this.entityWizard.formArray.get([0]).get('source_datasets').value || [],
       transport,
       ssh_credentials: transport === TransportMode.Local ? null : this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value,
@@ -1514,7 +1527,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
 
     if (payload[0].datasets.length > 0) {
-      this.ws.call('replication.count_eligible_manual_snapshots', payload).pipe(untilDestroyed(this)).subscribe(
+      this.ws.call('replication.count_eligible_manual_snapshots', [payload[0]]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.eligibleSnapshots = res.eligible;
           const isPush = this.entityWizard.formArray.get([0]).get('source_datasets_from').value === DatasetSource.Local;

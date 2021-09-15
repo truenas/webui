@@ -3,6 +3,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { ThemeChangeRequestEvent } from 'app/interfaces/events/theme-events.interface';
+import {
+  UserPreferencesChangedEvent,
+  UserPreferencesReadyEvent,
+} from 'app/interfaces/events/user-preferences-event.interface';
 import { WebSocketService } from 'app/services';
 
 export const DefaultTheme = {
@@ -291,7 +296,7 @@ export class ThemeService {
     });
 
     // Use only for testing
-    this.core.register({ observerClass: this, eventName: 'ThemeChangeRequest' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeChangeRequest' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangeRequestEvent) => {
       this.changeTheme(evt.data);
       this.core.emit({ name: 'ThemeChanged', data: this.findTheme(this.activeTheme), sender: this });
     });
@@ -311,18 +316,18 @@ export class ThemeService {
       }
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
       this.onPreferences(evt);
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
       this.onPreferences(evt);
     });
   }
 
-  onPreferences(evt: CoreEvent): void {
+  onPreferences(evt: UserPreferencesChangedEvent | UserPreferencesReadyEvent): void {
     if (evt.data.customThemes) {
-      this.customThemes = evt.data.customThemes;
+      this.customThemes = evt.data.customThemes as any;
     }
 
     this.activeTheme = evt.data.userTheme == 'default' ? this.defaultTheme : evt.data.userTheme;

@@ -13,10 +13,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, sub } from 'date-fns';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { WebSocketService, SystemGeneralService } from 'app/services/';
@@ -146,7 +147,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     return this.localeService.formatDateTime(new Date(this.currentEndDate), this.timezone);
   }
 
-  formatTime(stamp: any): string {
+  formatTime(stamp: string): string {
     const parsed = Date.parse(stamp);
     const result = this.localeService.formatDateTimeWithNoTz(new Date(parsed));
     return result.toLowerCase() !== 'invalid date' ? result : null;
@@ -169,11 +170,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
       this.legendData = clone;
     });
 
-    this.core.register({ observerClass: this, eventName: 'ThemeData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeData' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeDataEvent) => {
       this.chartColors = this.processThemeColors(evt.data);
     });
 
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
       this.chartColors = this.processThemeColors(evt.data);
     });
 

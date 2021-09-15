@@ -3,6 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { OpenvpnClientUpdate } from 'app/interfaces/openvpn-client-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -125,7 +126,9 @@ export class OpenvpnClientComponent implements FormConfiguration {
   constructor(protected services: ServicesService) { }
 
   afterInit(entityEdit: EntityFormComponent): void {
-    entityEdit.submitFunction = (body: any) => this.services.updateOpenVPN('openvpn.client.update', body);
+    entityEdit.submitFunction = (body: OpenvpnClientUpdate) => {
+      return this.services.updateOpenVPN('openvpn.client.update', body);
+    };
 
     this.services.getOpenVPNClientAuthAlgorithmChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'authentication_algorithm');

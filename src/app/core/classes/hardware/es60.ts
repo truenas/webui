@@ -1,4 +1,4 @@
-import { Container } from 'pixi.js';
+import { Container, Transform } from 'pixi.js';
 import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
 
@@ -40,7 +40,7 @@ export class ES60 extends Chassis {
   }
 
   generatePerspectiveOffset(): void {
-    this.front.driveTrays.transform.position.x = 32;
-    this.front.driveTrays.transform.position.y = 32;
+    (this.front.driveTrays.transform as Transform).position.x = 32;
+    (this.front.driveTrays.transform as Transform).position.y = 32;
   }
 }

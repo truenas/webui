@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
   OnInit, Component, EventEmitter, Output, Inject,
 } from '@angular/core';
@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import { filter, map } from 'rxjs/operators';
 import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { EntityJobConfig } from 'app/pages/common/entity/entity-job/entity-job-config.interface';
 import { WebSocketService } from 'app/services/';
@@ -32,7 +32,7 @@ export class EntityJobComponent implements OnInit {
   showCloseButton = true;
   showAbortButton = false; // enable to abort job
   jobId: number;
-  progressNumberType: any;
+  progressNumberType: string;
   hideProgressValue = false;
   altMessage: string;
   showRealtimeLogs = false;
@@ -48,7 +48,7 @@ export class EntityJobComponent implements OnInit {
   @Output() success = new EventEmitter<Job>();
   @Output() aborted = new EventEmitter<Job>();
   @Output() failure = new EventEmitter<Job>();
-  @Output() prefailure = new EventEmitter();
+  @Output() prefailure = new EventEmitter<HttpErrorResponse>();
   constructor(
     public dialogRef: MatDialogRef<EntityJobComponent, MatDialogConfig>,
     private ws: WebSocketService,
@@ -107,7 +107,7 @@ export class EntityJobComponent implements OnInit {
     }
   }
 
-  setCall(method: ApiMethod, args?: any[]): void {
+  setCall<K extends ApiMethod>(method: K, args?: ApiDirectory[K]['params']): void {
     this.method = method;
     if (args) {
       this.args = args;
@@ -201,19 +201,17 @@ export class EntityJobComponent implements OnInit {
       );
   }
 
-  wspost(path: string, options: any): void {
-    this.http.post(path, options).pipe(untilDestroyed(this)).subscribe(
-      (res: any) => {
-        this.job = res;
-        if (this.job && (this.job as any).job_id) {
-          this.jobId = (this.job as any).job_id;
-        }
-        this.wsshow();
-      },
-      (err) => {
-        this.prefailure.emit(err);
-      },
-    );
+  wspost(path: string, options: unknown): void {
+    this.http.post(path, options).pipe(untilDestroyed(this)).subscribe((res: Job) => {
+      this.job = res;
+      if (this.job && (this.job as any).job_id) {
+        this.jobId = (this.job as any).job_id;
+      }
+      this.wsshow();
+    },
+    (err: HttpErrorResponse) => {
+      this.prefailure.emit(err);
+    });
   }
 
   wsshow(): void {

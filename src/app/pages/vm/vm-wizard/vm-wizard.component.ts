@@ -449,6 +449,13 @@ export class VMWizardComponent implements WizardConfiguration {
           value: false,
         },
         {
+          type: 'checkbox',
+          name: 'ensure_display_device',
+          placeholder: T('Ensure Display Device'),
+          tooltip: T('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
+          value: true,
+        },
+        {
           type: 'select',
           placeholder: T("GPU's"),
           name: 'gpus',
@@ -800,7 +807,7 @@ export class VMWizardComponent implements WizardConfiguration {
     });
     this.getFormControlFromFieldName('upload_iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
-        const config: FormUploadConfig = _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' });
+        const config = _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' }) as FormUploadConfig;
         config.fileLocation = res;
       }
     });
@@ -843,30 +850,22 @@ export class VMWizardComponent implements WizardConfiguration {
     });
 
     setTimeout(() => {
-      let globalLabel: string;
-      let globalTooltip: string;
-      this.translate.get(helptext.memory_placeholder).pipe(untilDestroyed(this)).subscribe((mem) => {
-        this.translate.get(helptext.global_label).pipe(untilDestroyed(this)).subscribe((gLabel) => {
-          this.translate.get(helptext.global_tooltip).pipe(untilDestroyed(this)).subscribe((gTooltip) => {
-            this.translate.get(helptext.memory_tooltip).pipe(untilDestroyed(this)).subscribe((mem_tooltip) => {
-              this.translate.get(helptext.memory_unit).pipe(untilDestroyed(this)).subscribe((mem_unit) => {
-                globalLabel = gLabel;
-                globalTooltip = gTooltip;
-                _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' }).placeholder = `${mem} ${globalLabel}`;
-                _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' }).tooltip = `${mem_tooltip} ${globalTooltip} ${mem_unit}`;
-              });
-            });
-          });
-        });
-      });
-      this.translate.get(helptext.volsize_placeholder).pipe(untilDestroyed(this)).subscribe((placeholder) => {
-        this.translate.get(helptext.volsize_tooltip).pipe(untilDestroyed(this)).subscribe((tooltip) => {
-          this.translate.get(helptext.volsize_tooltip_B).pipe(untilDestroyed(this)).subscribe((tooltipB) => {
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).placeholder = `${placeholder} ${globalLabel}`;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' }).tooltip = `${tooltip} ${globalLabel} ${tooltipB}`;
-          });
-        });
-      });
+      const globalLabel = this.translate.instant(helptext.global_label);
+      const globalTooltip = this.translate.instant(helptext.global_tooltip);
+
+      const memoryPlaceholder = this.translate.instant(helptext.memory_placeholder);
+      const memoryTooltip = this.translate.instant(helptext.memory_tooltip);
+      const memoryUnit = this.translate.instant(helptext.memory_unit);
+      const memoryField = _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' });
+      memoryField.placeholder = `${memoryPlaceholder} ${globalLabel}`;
+      memoryField.tooltip = `${memoryTooltip} ${globalTooltip} ${memoryUnit}`;
+
+      const volsizePlaceholder = this.translate.instant(helptext.volsize_placeholder);
+      const volsizeTooltip = this.translate.instant(helptext.volsize_tooltip);
+      const volsizeTooltipB = this.translate.instant(helptext.volsize_tooltip_B);
+      const volsizeField = _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' });
+      volsizeField.placeholder = `${volsizePlaceholder} ${globalLabel}`;
+      volsizeField.tooltip = `${volsizeTooltip} ${globalLabel} ${volsizeTooltipB}`;
     }, 2000);
   }
 
@@ -932,11 +931,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
         if (errors) {
           config.hasErrors = true;
-          self.translate.get('Cannot allocate').pipe(untilDestroyed(self)).subscribe((msg) => {
-            self.translate.get('to storage for this virtual machine.').pipe(untilDestroyed(self)).subscribe((msg2) => {
-              config.warnings = `${msg} ${self.storageService.humanReadable} ${msg2}`;
-            });
-          });
+          config.warnings = self.translate.instant('Cannot allocate {size} to storage for this virtual machine.', { size: self.storageService.humanReadable });
         } else {
           config.hasErrors = false;
           config.warnings = '';
@@ -1197,14 +1192,22 @@ export class VMWizardComponent implements WizardConfiguration {
                   this.loader.close();
                   this.dialogService.errorReport(
                     T('Error creating VM.'),
-                    T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted,
+                    this.translate.instant(
+                      'Error while creating the {device} device.\n {reason}',
+                      { device: error.device.dtype, reason: error.reason },
+                    ),
+                    error.trace.formatted,
                   );
                 },
                 (err) => {
                   this.loader.close();
                   this.dialogService.errorReport(
                     T('Error creating VM.'),
-                    T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted,
+                    this.translate.instant(
+                      'Error while creating the {device} device.\n {reason}',
+                      { device: error.device.dtype, reason: error.reason },
+                    ),
+                    error.trace.formatted,
                   );
                   new EntityUtils().handleWSError(this, err, this.dialogService);
                 },

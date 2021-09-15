@@ -126,7 +126,7 @@ export class CronFormComponent {
     this.title = entityForm.isNew ? helptext.cron_job_add : helptext.cron_job_edit;
 
     // Setup user field options
-    this.user_field = _.find(this.fieldSets[0].config, { name: 'user' });
+    this.user_field = _.find(this.fieldSets[0].config, { name: 'user' }) as FormComboboxConfig;
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
       for (let i = 0; i < items.length; i++) {
         this.user_field.options.push({
@@ -137,7 +137,7 @@ export class CronFormComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: Cronjob): any {
+  resourceTransformIncomingRestData(data: Cronjob): Cronjob & { cron_picker: string } {
     const schedule = data['schedule'];
     return {
       ...data,

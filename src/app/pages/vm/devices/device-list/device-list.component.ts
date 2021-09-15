@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -50,7 +51,7 @@ export class DeviceListComponent implements EntityTableConfig {
 
   globalConfig = {
     id: 'config',
-    tooltip: T('Close (return to VM list'),
+    tooltip: T('Close (return to VM list)'),
     icon: 'highlight_off',
     onClick: () => {
       this.router.navigate(new Array('').concat(['vm']));
@@ -154,23 +155,25 @@ export class DeviceListComponent implements EntityTableConfig {
 
   deviceDelete(row: VmDevice): void {
     this.translate.get('Delete').pipe(untilDestroyed(this)).subscribe((msg) => {
-      this.dialogService.confirm(T('Delete'), `${msg} <b>${row.dtype} ${row.id}</b>`,
-        true, T('Delete Device')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        if (res) {
-          this.loader.open();
-          this.loaderOpen = true;
-          if (this.wsDelete) {
-            this.ws.call(this.wsDelete, ['vm.device', row.id]).pipe(untilDestroyed(this)).subscribe(
-              () => {
-                this.entityList.getData();
-                this.loader.close();
-              },
-              (resinner) => {
-                new EntityUtils().handleError(this, resinner);
-                this.loader.close();
-              },
-            );
-          }
+      this.dialogService.confirm({
+        title: T('Delete'),
+        message: `${msg} <b>${row.dtype} ${row.id}</b>`,
+        hideCheckBox: true,
+        buttonMsg: T('Delete Device'),
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.loader.open();
+        this.loaderOpen = true;
+        if (this.wsDelete) {
+          this.ws.call(this.wsDelete, ['vm.device', row.id]).pipe(untilDestroyed(this)).subscribe(
+            () => {
+              this.entityList.getData();
+              this.loader.close();
+            },
+            (resinner) => {
+              new EntityUtils().handleError(this, resinner);
+              this.loader.close();
+            },
+          );
         }
       });
     });

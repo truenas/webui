@@ -37,7 +37,7 @@ export class EntityWizardComponent implements OnInit {
   summaryValue: any;
   summaryFieldConfigs: FieldConfig[] = [];
 
-  saveSubmitText = T('Submit');
+  saveSubmitText = T('Save');
   customNextText = T('Next');
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 

@@ -138,7 +138,7 @@ export class ChartFormComponent implements FormConfiguration {
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.installing,
+        title: helptext.updating,
       },
     });
     this.dialogRef.componentInstance.setCall(this.editCall, payload);

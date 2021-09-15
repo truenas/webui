@@ -7,6 +7,7 @@ export interface RoutePart {
   params?: Params;
   url: string;
   toplevel: boolean;
+  disabled?: boolean;
 }
 
 @Injectable()
