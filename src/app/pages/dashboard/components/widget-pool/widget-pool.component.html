@@ -105,7 +105,7 @@
 
                         <ng-template #noerrors>
                           <span *ngIf="poolState.status == PoolStatus.Locked || !poolState.is_decrypted" 
-                            class="{{poolHealth.level}} lock-icon-wrapper icon">
+                            class="lock-icon-wrapper icon">
                             <mat-icon>lock</mat-icon>
                           </span>
                           <span *ngIf="poolState.is_decrypted && ( poolState.status == PoolStatus.Online || poolState.status == PoolStatus.Healthy )" 
