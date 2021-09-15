@@ -135,18 +135,19 @@ export class DiskListComponent {
           'storage', 'disks', 'edit', row.identifier,
         ]));
       },
-    }, {
-      id: parentRow.name,
-      icon: 'format_list_bulleted',
-      name: 'manual_test',
-      label: T('Manual Test'),
-      onClick: (row) => {
-        this.manualTest(row);
-      },
     }];
 
     for (const key in this.SMARTdiskChoices) {
       if (key === parentRow.identifier) {
+        actions.push({
+          id: parentRow.name,
+          icon: 'format_list_bulleted',
+          name: 'manual_test',
+          label: T('Manual Test'),
+          onClick: (row) => {
+            this.manualTest(row);
+          },
+        });
         actions.push({
           id: parentRow.name,
           icon: 'format_list_bulleted',
