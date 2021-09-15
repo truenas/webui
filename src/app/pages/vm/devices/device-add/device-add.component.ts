@@ -10,7 +10,12 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import helptext from 'app/helptext/vm/devices/device-add-edit';
 import { CoreEvent } from 'app/interfaces/events';
-import { FieldConfig, FormSelectConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig,
+  FormSelectConfig,
+  FormComboboxConfig,
+  FormComboboxOption,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
@@ -49,8 +54,6 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   custActions: any[];
   error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
-
-  protected addZvolComponent: ZvolWizardComponent;
 
   fieldConfig: FormSelectConfig[] = [
     {
@@ -487,8 +490,6 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       _.find(this.displayFieldConfig, { name: 'wait' }).isHidden = false;
       _.find(this.displayFieldConfig, { name: 'resolution' }).isHidden = false;
     }
-    this.addZvolComponent = new ZvolWizardComponent(this.core, this.router, this.aroute, this.ws, this.loader,
-      this.dialogService, this.storageService, this.translate, this.modalService);
 
     this.afterInit();
   }
@@ -587,12 +588,12 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   }
 
   addZvol(): void {
-    this.modalService.open('slide-in-form', this.addZvolComponent);
+    this.modalService.openInSlideIn(ZvolWizardComponent);
   }
 
   updateZvolSearchOptions(value = '', parent: this): void {
     parent.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume], ['id', '^', value]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
-      const searchedZvols = [];
+      const searchedZvols: FormComboboxOption[] = [];
       zvols.forEach((zvol) => {
         searchedZvols.push(
           {
@@ -602,7 +603,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       });
       searchedZvols.push({
         label: 'Add New', value: 'new', sticky: 'bottom',
-      } as any);
+      });
       const config: FormComboboxConfig = _.find(parent.diskFieldConfig, { name: 'path' });
       config.searchOptions = searchedZvols;
     });

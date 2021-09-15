@@ -1,6 +1,6 @@
 <div mat-dialog-content>
   <div class="title-div" fxLayout="row" fxLayoutAlign="space-between center">
-    <strong class="catalog-name" textLimiter threshold="40">{{ catalog.label }} {{ 'Catalog Summary' | translate }}</strong>
+    <strong class="catalog-name" textLimiter threshold="40" content="{{ catalog.label }} {{ 'Catalog Summary' | translate }}"></strong>
     <span class="status active" *ngIf="catalog.healthy">{{ 'Healthy' | translate }}</span>
     <span class="status other" *ngIf="!catalog.healthy">{{ 'Unhealthy' | translate }}</span>
   </div>
@@ -42,13 +42,13 @@
       <div *ngFor="let item of filteredItems; let i = index" class="detail-row value-row" [ngClass]="{'row-dark': i%2==0, 'row-light': i%2==1}">
         <div fxLayout="row" fxLayoutAlign="center start">
           <div fxFlex="25%" class="item-train">
-            <span textLimiter threshold="15">{{ item.train }}</span>
+            <span textLimiter threshold="15" content="{{ item.train }}"></span>
           </div>
           <span fxFlex="25%" class="item-app" >
-            <span textLimiter threshold="15">{{ item.app }}</span>
+            <span textLimiter threshold="15" content="{{ item.app }}"></span>
           </span>
           <span fxFlex="50%" class="info-col" >
-            <span textLimiter threshold="22">{{ item.human_version }}</span><span>{{ versionStatusLabel(item) }}</span>
+            <span textLimiter threshold="22" content="{{ item.human_version }}"></span><span>{{ versionStatusLabel(item) }}</span>
           </span>
         </div>
       </div>

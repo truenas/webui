@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
+import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import {
   VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
@@ -25,6 +26,7 @@ import { routing } from './vm.routing';
     CoreComponents,
     EntityModule, CommonModule, FormsModule, TranslateModule,
     ReactiveFormsModule, routing, MaterialModule, FlexLayoutModule, // , BrowserModule
+    TerminalModule,
   ],
   declarations: [
     VMListComponent,

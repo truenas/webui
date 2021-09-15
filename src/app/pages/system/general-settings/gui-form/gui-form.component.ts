@@ -5,8 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
-import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
+import { filter, map, take } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -150,11 +149,17 @@ export class GuiFormComponent implements FormConfiguration {
     protected storage: StorageService,
     private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
-    private adminLayout: AdminLayoutComponent,
-  ) {
-    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.configData = res;
-    });
+  ) {}
+
+  prerequisite(): Promise<boolean> {
+    return this.sysGeneralService.getGeneralConfig$.pipe(
+      map((configData) => {
+        this.configData = configData;
+        return true;
+      }),
+      take(1),
+      untilDestroyed(this),
+    ).toPromise();
   }
 
   ipValidator(name: 'ui_address' | 'ui_v6address', wildcard: string): ValidatorFn {
@@ -327,7 +332,6 @@ export class GuiFormComponent implements FormConfiguration {
       this.sysGeneralService.refreshSysGeneral();
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
-      this.adminLayout.onShowConsoleFooterBar(body['ui_consolemsg']);
       this.afterSubmit(body);
     }, (res) => {
       this.loader.close();

@@ -23,6 +23,7 @@
 
             <div fxFlex="25%" class="inline" style="padding-top: 50px;">
               <mat-checkbox
+                color="primary"
                 id="pool-manager__encryption-checkbox"
                 [(ngModel)]="isEncrypted"
                 class="form-control"
@@ -272,13 +273,13 @@
             <ngx-datatable-column [width]="82" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
               <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
                 <div class="headerCheckBox">
-                  <mat-checkbox id="pool-manager__disks-table-checkall" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
+                  <mat-checkbox color="primary" id="pool-manager__disks-table-checkall" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
                 </div>
               </ng-template>
 
               <ng-template ngx-datatable-cell-template let-value="value" let-rowIndex="rowIndex" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
                 <div>
-                  <mat-checkbox *ngIf="disks[rowIndex]" id="pool-manager__disks-{{disks[rowIndex].devname}}" name="disk_{{rowIndex}}_checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
+                  <mat-checkbox color="primary" *ngIf="disks[rowIndex]" id="pool-manager__disks-{{disks[rowIndex].devname}}" name="disk_{{rowIndex}}_checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"></mat-checkbox>
                 </div>
               </ng-template>
             </ngx-datatable-column>
@@ -384,7 +385,7 @@
       <div *ngIf="logVdevTypeWarning" class="sizeMessage" [style.color]="'orange'" [innerHTML]="logVdevTypeWarning"></div>
       <div *ngIf="error" class="sizeMessage" [style.color]="'red'" [innerHTML]="error"></div>
       <div class="forceCreateCheckbox" *ngIf="has_savable_errors">
-        <mat-checkbox id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()">{{'Force' | translate}}</mat-checkbox>
+        <mat-checkbox color="primary" id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()">{{'Force' | translate}}</mat-checkbox>
       </div>
       <div class="buttons" id="pool-manager__button-group">
         <button id="pool-manager__create-button" mat-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>

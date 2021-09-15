@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -18,7 +19,6 @@ import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/valida
 import {
   DialogService, NetworkService, WebSocketService, UserService, ModalService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -278,6 +278,7 @@ export class NFSFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     private dialog: DialogService,
     public networkService: NetworkService,
+    private translate: TranslateService,
   ) {
     const paths: FormListConfig = this.fieldSets.config('paths');
     const pathsTemplate = paths.templateListField;
@@ -442,13 +443,12 @@ export class NFSFormComponent implements FormConfiguration {
                         .pipe(untilDestroyed(this))
                         .subscribe(
                           () => {
-                            this.dialog
-                              .info(
-                                T('NFS') + shared.dialog_started_title,
-                                T('The NFS') + shared.dialog_started_message,
-                                '250px',
-                                'info',
-                              )
+                            this.dialog.info(
+                              this.translate.instant('{service} Service', { service: 'NFS' }),
+                              this.translate.instant('The {service} service has been enabled.', { service: 'NFS' }),
+                              '250px',
+                              'info',
+                            )
                               .pipe(untilDestroyed(this))
                               .subscribe(() => {
                                 this.dialog.closeAllDialogs();

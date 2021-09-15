@@ -12,9 +12,9 @@ import { Interval } from 'app/interfaces/timeout.interface';
   templateUrl: './console-panel-dialog.component.html',
 })
 export class ConsolePanelModalDialog implements OnInit {
-  refreshMsg = 'Check to stop refresh';
+  refreshMsg = this.translate.instant('Check to stop refresh');
   intervalPing: Interval;
-  consoleMsg = 'Loading...';
+  consoleMsg = this.translate.instant('Loading...');
   @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
   onEventEmitter = new EventEmitter();
 
@@ -61,10 +61,10 @@ export class ConsolePanelModalDialog implements OnInit {
   onStopRefresh(data: MatCheckboxChange): void {
     if (data.checked) {
       clearInterval(this.intervalPing);
-      this.refreshMsg = 'Uncheck to restart refresh';
+      this.refreshMsg = this.translate.instant('Uncheck to restart refresh');
     } else {
       this.getLogConsoleMsg();
-      this.refreshMsg = 'Check to stop refresh';
+      this.refreshMsg = this.translate.instant('Check to stop refresh');
     }
   }
 }

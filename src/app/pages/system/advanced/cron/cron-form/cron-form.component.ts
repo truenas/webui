@@ -137,7 +137,7 @@ export class CronFormComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: Cronjob): any {
+  resourceTransformIncomingRestData(data: Cronjob): Cronjob & { cron_picker: string } {
     const schedule = data['schedule'];
     return {
       ...data,

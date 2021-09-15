@@ -1,11 +1,11 @@
-.ix-blue chart-events-dialog div.mat-dialog-content {
-  max-width: unset;
-  overflow: auto !important;
-}
-
-chart-events-dialog {
+:host ::ng-deep {
 
   font-size: 14px !important;
+
+  .mat-dialog-content {
+    max-width: unset;
+    overflow: auto !important;
+  }
 
   .logo-container {
     height: 100px;

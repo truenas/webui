@@ -25,6 +25,7 @@ import { CoreComponents } from 'app/core/components/core-components.module';
 import { setCoreServiceInjector } from 'app/core/services/core-service-injector';
 import { CoreServices } from 'app/core/services/core-services.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import { ErdService } from 'app/services/erd.service';
 import { NotificationsService } from 'app/services/notifications.service';
 import { AppComponent } from './app.component';
@@ -87,6 +88,7 @@ import { WebSocketService } from './services/ws.service';
     FormsModule,
     ReactiveFormsModule,
     EntityModule,
+    TerminalModule,
     CommonDirectivesModule,
     NgxWebstorageModule.forRoot(),
   ],

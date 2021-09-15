@@ -64,8 +64,8 @@ def navigate_to_storage(driver):
 def when_the_storage_page_appears_click_create(driver):
     """when the storage page appears, click Create."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Storage")]')
-    assert wait_on_element(driver, 7, '//a[@ix-auto="button___POOL_CREATE"]', 'clickable')
-    driver.find_element_by_xpath('//a[@ix-auto="button___POOL_CREATE"]').click()
+    assert wait_on_element(driver, 7, '//a[contains(.,"Create Pool")]', 'clickable')
+    driver.find_element_by_xpath('//a[contains(.,"Create Pool")]').click()
 
 
 @then('the Pools page should open')
@@ -135,8 +135,7 @@ def you_should_be_returned_to_the_list_of_pools(driver):
 @then(parsers.parse('the {pool_name} pool should be on the Pools list'))
 def the_dozer_pool_should_be_on_the_pools_list(driver, pool_name):
     """the "dozer" pool should be on the Pools list."""
-    assert wait_on_element(driver, 7, '//mat-panel-title[contains(.,"tank")]')
-    driver.find_element_by_xpath('//td[contains(.,"tank")]')
+    assert wait_on_element(driver, 7, f'//mat-panel-title[contains(.,"{pool_name}")]')
 
 
 @then('navigate to System Setting and click Misc')
@@ -144,8 +143,8 @@ def navigate_to_system_setting_and_click_misc(driver):
     """navigate to System Setting and click Misc."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Advanced"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Advanced"]').click()
+    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]').click()
 
 
 @then('the Advanced page should open')
@@ -201,6 +200,5 @@ def navigate_to_dashboard(driver):
 @then('refresh and wait for the second node to be up')
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
-    driver.refresh()
     assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
     assert wait_on_element(driver, 10, '//mat-icon[@svgicon="ha_enabled"]')

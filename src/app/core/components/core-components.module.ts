@@ -7,7 +7,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
-import { CardComponent } from 'app/core/components/card/card.component';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { Display } from 'app/core/components/display/display.component';
 import { PageComponent } from 'app/core/components/page/page.component';
@@ -25,7 +24,6 @@ import { ViewControllerComponent } from 'app/core/components/view-controller/vie
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
-import { CopyPasteMessageComponent } from 'app/pages/shell/copy-paste-message.component';
 import { StorageService } from 'app/services/storage.service';
 import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.directive';
@@ -55,10 +53,8 @@ import { ConvertPipe } from './pipes/convert.pipe';
   ],
   declarations: [
     ContextMenuComponent,
-    CopyPasteMessageComponent,
     PageComponent,
     ViewComponent,
-    CardComponent,
     ViewControlComponent,
     ViewControllerComponent,
     Display,
@@ -85,7 +81,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     FlexLayoutModule,
     Display,
     ContextMenuComponent,
-    CopyPasteMessageComponent,
     PageComponent,
     ViewComponent,
     ViewChartComponent,
@@ -98,7 +93,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ViewControlComponent,
     ViewButtonComponent,
     ViewControllerComponent,
-    CardComponent,
     TextLimiterDirective,
     HtmlTooltipDirective,
     TextLimiterTooltipComponent,
@@ -107,7 +101,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
   ],
   entryComponents: [
     ContextMenuComponent,
-    CopyPasteMessageComponent,
     ViewComponent,
     ViewChartComponent,
     ViewChartAreaComponent,
@@ -119,7 +112,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ViewControlComponent,
     ViewButtonComponent,
     ViewControllerComponent,
-    CardComponent,
     TextLimiterTooltipComponent,
     CopyButtonComponent,
   ],

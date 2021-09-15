@@ -51,7 +51,7 @@ export class DeviceListComponent implements EntityTableConfig {
 
   globalConfig = {
     id: 'config',
-    tooltip: T('Close (return to VM list'),
+    tooltip: T('Close (return to VM list)'),
     icon: 'highlight_off',
     onClick: () => {
       this.router.navigate(new Array('').concat(['vm']));

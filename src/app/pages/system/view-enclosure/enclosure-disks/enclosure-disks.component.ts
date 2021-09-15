@@ -31,6 +31,7 @@ import { SystemProfiler, EnclosureMetadata, EnclosureDisk } from 'app/core/class
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { Temperature } from 'app/core/services/disk-temperature.service';
+import { EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
@@ -96,8 +97,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     return chassisView;
   }
 
-  private _expanders: any[] = [];
-  get expanders(): any[] {
+  private _expanders: EnclosureElement[] | EnclosureElementsGroup[] = [];
+  get expanders(): EnclosureElement[] | EnclosureElementsGroup[] {
     if (!this.system.platform.includes('MINI') && this.system.enclosures && this.selectedEnclosure.disks[0]) {
       const enclosureNumber = Number(this.selectedEnclosure.disks[0].enclosure.number);
       return this.system.getEnclosureExpanders(enclosureNumber);

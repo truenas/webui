@@ -58,7 +58,7 @@
           </div>
         </div>
         <div *ngIf="hasLicense">
-          <mat-checkbox (change)="updateProductionStatus($event)" [(ngModel)]="isProduction">
+          <mat-checkbox color="primary" (change)="updateProductionStatus($event)" [(ngModel)]="isProduction">
             {{ 'This is a production system' | translate}}</mat-checkbox>
         </div>
 

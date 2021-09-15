@@ -33,16 +33,7 @@ export class IPMIFromComponent implements FormConfiguration {
   currentControllerLabel: string;
   failoverControllerLabel: string;
   managementIP: string;
-  options: Option[] = [
-    { label: 'Indefinitely', value: 'force' },
-    { label: '15 seconds', value: 15 },
-    { label: '30 seconds', value: 30 },
-    { label: '1 minute', value: 60 },
-    { label: '2 minute', value: 120 },
-    { label: '3 minute', value: 180 },
-    { label: '4 minute', value: 240 },
-    { label: 'Turn OFF', value: 0 },
-  ];
+  options: Option[] = helptext.ipmiOptions;
   custActions = [
     {
       id: 'ipmi_identify',

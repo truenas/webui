@@ -1,11 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Type } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import * as cronParser from 'cron-parser';
 import { Subject } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
@@ -14,8 +13,10 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -24,6 +25,7 @@ import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/e
 import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
+import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
 import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
@@ -69,16 +71,6 @@ export class AdvancedSettingsComponent implements OnInit {
   entityForm: EntityFormComponent;
   isFirstTime = true;
 
-  // Components included in this dashboard
-  protected tunableFormComponent: TunableFormComponent;
-  protected consoleFormComponent: ConsoleFormComponent;
-  protected isolatedGpuPcisFormComponent: IsolatedGpuPcisFormComponent;
-  protected kernelFormComponent: KernelFormComponent;
-  protected syslogFormComponent: SyslogFormComponent;
-  protected cronFormComponent: CronFormComponent;
-  protected initShutdownFormComponent: InitshutdownFormComponent;
-  protected systemDatasetPoolComponent: SystemDatasetPoolComponent;
-
   emptyPageConf: EmptyConfig = {
     type: EmptyType.NoPageData,
     title: T('No sysctls configured'),
@@ -99,13 +91,13 @@ export class AdvancedSettingsComponent implements OnInit {
       title: T('Cron Job'),
       key_props: ['user', 'command', 'description'],
     },
-    getActions: (): AppTableAction[] => {
+    getActions: (): AppTableAction<CronjobRow>[] => {
       return [
         {
           name: 'play',
           icon: 'play_arrow',
           matTooltip: T('Run job'),
-          onClick: (row: any): void => {
+          onClick: (row: CronjobRow): void => {
             this.dialog
               .confirm({ title: T('Run Now'), message: T('Run this job now?'), hideCheckBox: true })
               .pipe(
@@ -235,11 +227,6 @@ export class AdvancedSettingsComponent implements OnInit {
 
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
-    });
-
-    this.refreshForms();
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshForms();
     });
 
     this.formEvent$ = new Subject();
@@ -418,38 +405,40 @@ export class AdvancedSettingsComponent implements OnInit {
   }
 
   onSettingsPressed(name: CardId, id?: number): void {
-    let addComponent: TunableFormComponent
-    | ConsoleFormComponent
-    | SyslogFormComponent
+    let addComponent: Type<ConsoleFormComponent
     | KernelFormComponent
+    | SyslogFormComponent
+    | TunableFormComponent
     | CronFormComponent
     | InitshutdownFormComponent
+    | SystemDatasetPoolComponent
     | IsolatedGpuPcisFormComponent
-    | SystemDatasetPoolComponent;
+    >;
+
     switch (name) {
       case CardId.Console:
-        addComponent = this.consoleFormComponent;
+        addComponent = ConsoleFormComponent;
         break;
       case CardId.Kernel:
-        addComponent = this.kernelFormComponent;
+        addComponent = KernelFormComponent;
         break;
       case CardId.Syslog:
-        addComponent = this.syslogFormComponent;
+        addComponent = SyslogFormComponent;
         break;
       case CardId.Sysctl:
-        addComponent = this.tunableFormComponent;
+        addComponent = TunableFormComponent;
         break;
       case CardId.Cron:
-        addComponent = this.cronFormComponent;
+        addComponent = CronFormComponent;
         break;
       case CardId.InitShutdown:
-        addComponent = this.initShutdownFormComponent;
+        addComponent = InitshutdownFormComponent;
         break;
       case CardId.SystemDatasetPool:
-        addComponent = this.systemDatasetPoolComponent;
+        addComponent = SystemDatasetPoolComponent;
         break;
       case CardId.Gpus:
-        addComponent = this.isolatedGpuPcisFormComponent;
+        addComponent = IsolatedGpuPcisFormComponent;
         break;
       default:
         break;
@@ -463,14 +452,15 @@ export class AdvancedSettingsComponent implements OnInit {
             this.sysGeneralService.sendConfigData(this.configData as any);
           }
 
-          this.modalService.open('slide-in-form', addComponent, id);
+          this.modalService.openInSlideIn(addComponent, id);
           this.isFirstTime = false;
         });
     } else {
       if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
         this.sysGeneralService.sendConfigData(this.configData as any);
       }
-      this.modalService.open('slide-in-form', addComponent, id);
+
+      this.modalService.openInSlideIn(addComponent, id);
     }
   }
 
@@ -556,69 +546,18 @@ export class AdvancedSettingsComponent implements OnInit {
     });
   }
 
-  refreshForms(): void {
-    this.tunableFormComponent = new TunableFormComponent(this.ws, this.sysGeneralService);
-    this.consoleFormComponent = new ConsoleFormComponent(
-      this.router,
-      this.language,
-      this.ws,
-      this.dialog,
-      this.loader,
-      this.http,
-      this.storage,
-      this.sysGeneralService,
-      this.modalService,
-    );
-    this.isolatedGpuPcisFormComponent = new IsolatedGpuPcisFormComponent(
-      this.ws,
-      this.loader,
-      this.sysGeneralService,
-      this.modalService,
-    );
-    this.kernelFormComponent = new KernelFormComponent(
-      this.router,
-      this.language,
-      this.ws,
-      this.dialog,
-      this.loader,
-      this.http,
-      this.storage,
-      this.sysGeneralService,
-      this.modalService,
-    );
-    this.syslogFormComponent = new SyslogFormComponent(
-      this.router,
-      this.language,
-      this.ws,
-      this.dialog,
-      this.loader,
-      this.http,
-      this.storage,
-      this.sysGeneralService,
-      this.modalService,
-    );
-    this.cronFormComponent = new CronFormComponent(this.userService, this.modalService);
-    this.initShutdownFormComponent = new InitshutdownFormComponent(this.modalService);
-    this.systemDatasetPoolComponent = new SystemDatasetPoolComponent(
-      this.ws,
-      this.loader,
-      this.dialog,
-      this.translate,
-      this.modalService,
-      this.sysGeneralService,
-    );
-  }
-
-  cronDataSourceHelper(data: any[]): any[] {
+  cronDataSourceHelper(data: Cronjob[]): CronjobRow[] {
     return data.map((job) => {
-      job.cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
+      const schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
+      return {
+        ...job,
+        cron_schedule: schedule,
 
-      /* Weird type assertions are due to a type definition error in the cron-parser library */
-      job.next_run = ((cronParser.parseExpression(job.cron_schedule, { iterator: true }).next() as unknown) as {
-        value: { _date: any };
-      }).value._date.fromNow();
-
-      return job;
+        /* Weird type assertions are due to a type definition error in the cron-parser library */
+        next_run: ((cronParser.parseExpression(schedule, { iterator: true }).next() as unknown) as {
+          value: { _date: any };
+        }).value._date.fromNow(),
+      };
     });
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Navigation, Router } from '@angular/router';
+import { Navigation, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
@@ -12,6 +12,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
+import ipmiHelptext from 'app/helptext/network/ipmi/ipmi';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
@@ -26,8 +27,6 @@ import { IpmiRow } from 'app/pages/network/network-dashboard.interface';
 import {
   AppLoaderService,
   DialogService,
-  NetworkService,
-  ServicesService,
   StorageService,
   WebSocketService,
 } from 'app/services';
@@ -79,10 +78,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     parent: this,
     add() {
-      this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent);
+      this.parent.showInterfacesForm();
     },
     edit(row: any) {
-      this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent, row.id);
+      this.parent.showInterfacesForm(row.id);
     },
     delete(row: any, table: TableComponent) {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? T('Reset configuration for ') : T('Delete ');
@@ -95,7 +94,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     afterGetData() {
       const state = this.parent.navigation.extras.state as { editInterface: string };
       if (state && state.editInterface) {
-        this.parent.modalService.open('slide-in-form', this.parent.interfaceComponent, state.editInterface);
+        this.parent.modalService.openInSlideIn(InterfacesFormComponent, state.editInterface);
       }
     },
     afterDelete: this.afterDelete.bind(this),
@@ -131,10 +130,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     ],
     parent: this,
     add() {
-      this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent);
+      this.parent.showStaticRouteForm();
     },
     edit(row: StaticRoute) {
-      this.parent.modalService.open('slide-in-form', this.parent.staticRouteFormComponent, row.id);
+      this.parent.showStaticRouteForm(row.id);
     },
     deleteMsg: {
       title: 'static route',
@@ -142,7 +141,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     },
   };
 
-  globalSettingsWidget: CardWidgetConf = {
+  globalSettingsWidget: CardWidgetConf<NetworkComponent> = {
     title: T('Global Configuration'),
     data: {},
     parent: this,
@@ -150,7 +149,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     showGroupTitle: true,
     name: 'globalSettings',
     onclick() {
-      this.parent.modalService.open('slide-in-form', this.parent.addComponent);
+      this.parent.showConfigForm();
     },
   };
 
@@ -169,17 +168,17 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     isActionVisible: this.isOpenVpnActionVisible,
     edit(row: Service) {
       if (row.service === ServiceName.OpenVpnClient) {
-        this.parent.modalService.open('slide-in-form', this.parent.openvpnClientComponent, row.id);
+        this.parent.modalService.openInSlideIn(OpenvpnClientComponent, row.id);
       } else if (row.service === ServiceName.OpenVpnServer) {
-        this.parent.modalService.open('slide-in-form', this.parent.openvpnServerComponent, row.id);
+        this.parent.modalService.openInSlideIn(OpenvpnServerComponent, row.id);
       }
     },
     afterGetData() {
       const state = this.parent.navigation.extras.state as { configureOpenVPN: string };
       if (state && state.configureOpenVPN) {
         state.configureOpenVPN === 'client'
-          ? this.parent.modalService.open('slide-in-form', this.parent.openvpnClientComponent)
-          : this.parent.modalService.open('slide-in-form', this.parent.openvpnServerComponent);
+          ? this.parent.modalService.openInSlideIn(OpenvpnClientComponent)
+          : this.parent.modalService.openInSlideIn(OpenvpnServerComponent);
       }
     },
   };
@@ -194,31 +193,21 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
     edit(row: IpmiRow) {
-      this.parent.modalService.open('slide-in-form', this.parent.impiFormComponent, row.id);
+      this.parent.modalService.openInSlideIn(IPMIFromComponent, row.id);
     },
   };
 
   networkSummary: NetworkSummary;
   impiEnabled: boolean;
 
-  protected addComponent: ConfigurationComponent;
-  protected interfaceComponent: InterfacesFormComponent;
-  protected staticRouteFormComponent: StaticRouteFormComponent;
-  protected openvpnClientComponent: OpenvpnClientComponent;
-  protected openvpnServerComponent: OpenvpnServerComponent;
-  protected impiFormComponent: IPMIFromComponent;
-
   hasConsoleFooter = false;
   constructor(
     private ws: WebSocketService,
     private router: Router,
-    private aroute: ActivatedRoute,
-    private networkService: NetworkService,
     private dialog: DialogService,
     private storageService: StorageService,
     private loader: AppLoaderService,
     private modalService: ModalService,
-    private servicesService: ServicesService,
     private translate: TranslateService,
     private tableService: TableService,
   ) {
@@ -296,11 +285,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   ngOnInit(): void {
-    this.refreshNetworkForms();
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshNetworkForms();
-    });
-
     this.ws
       .call('system.advanced.config')
       .pipe(untilDestroyed(this))
@@ -544,32 +528,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.router.navigate(['/', 'system', 'failover']);
   }
 
-  refreshNetworkForms(): void {
-    this.addComponent = new ConfigurationComponent(this.router, this.ws);
-    this.addComponent.afterModalFormClosed = this.getGlobalSettings.bind(this); // update global config card
-    this.interfaceComponent = new InterfacesFormComponent(
-      this.router,
-      this.aroute,
-      this.networkService,
-      this.dialog,
-      this.ws,
-    );
-    this.interfaceComponent.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
-    this.staticRouteFormComponent = new StaticRouteFormComponent(this.aroute, this.ws, this.networkService);
-    if (this.staticRoutesTableConf.tableComponent) {
-      this.staticRouteFormComponent.afterModalFormClosed = () => this.staticRoutesTableConf.tableComponent.getData();
-    }
-    this.openvpnClientComponent = new OpenvpnClientComponent(this.servicesService);
-    this.openvpnServerComponent = new OpenvpnServerComponent(
-      this.servicesService,
-      this.dialog,
-      this.loader,
-      this.ws,
-      this.storageService,
-    );
-    this.impiFormComponent = new IPMIFromComponent(this.ws, this.dialog, this.loader);
-  }
-
   ngOnDestroy(): void {
     if (this.formEvent$) {
       this.formEvent$.complete();
@@ -657,7 +615,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       onClick: () => {
         this.dialog.select(
           this.translate.instant(T('IPMI Identify')),
-          this.impiFormComponent.options,
+          ipmiHelptext.ipmiOptions,
           this.translate.instant(T('IPMI flash duration')),
           'ipmi.identify',
           'seconds',
@@ -676,7 +634,20 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   }
 
   showConfigForm(): void {
-    this.modalService.open('slide-in-form', this.addComponent);
+    const configurationComponent = this.modalService.openInSlideIn(ConfigurationComponent);
+    configurationComponent.afterModalFormClosed = this.getGlobalSettings.bind(this);
+  }
+
+  showInterfacesForm(id?: number): void {
+    const interfacesForm = this.modalService.openInSlideIn(InterfacesFormComponent, id);
+    interfacesForm.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
+  }
+
+  showStaticRouteForm(id?: number): void {
+    const staticRouteFormComponent = this.modalService.openInSlideIn(StaticRouteFormComponent, id);
+    if (this.staticRoutesTableConf.tableComponent) {
+      staticRouteFormComponent.afterModalFormClosed = () => this.staticRoutesTableConf.tableComponent.getData();
+    }
   }
 
   openvpnDataSourceHelper(res: any[]): any[] {

@@ -1,7 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -9,7 +7,7 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { AppLoaderService, ModalService, WebSocketService } from 'app/services';
+import { ModalService } from 'app/services';
 import { IscsiService } from 'app/services/iscsi.service';
 import { T } from 'app/translate-marker';
 
@@ -55,11 +53,6 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   constructor(
     private iscsiService: IscsiService,
     private modalService: ModalService,
-    private router: Router,
-    private aroute: ActivatedRoute,
-    private loader: AppLoaderService,
-    private translate: TranslateService,
-    private ws: WebSocketService,
   ) {}
 
   ngOnInit(): void {
@@ -76,19 +69,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   }
 
   doAdd(rowId: string = null): void {
-    this.modalService.open(
-      'slide-in-form',
-      new TargetFormComponent(
-        this.router,
-        this.aroute,
-        this.iscsiService,
-        this.loader,
-        this.translate,
-        this.ws,
-        this.modalService,
-      ),
-      rowId,
-    );
+    this.modalService.openInSlideIn(TargetFormComponent, rowId);
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });

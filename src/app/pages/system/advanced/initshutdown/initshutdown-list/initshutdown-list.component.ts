@@ -52,7 +52,7 @@ export class InitshutdownListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    this.modalService.open('slide-in-form', new InitshutdownFormComponent(this.modalService), id);
+    this.modalService.openInSlideIn(InitshutdownFormComponent, id);
   }
 
   doEdit(id: number): void {

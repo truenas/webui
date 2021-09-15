@@ -55,8 +55,6 @@ export class CatalogComponent implements OnInit {
   catalogSyncJobs: CatalogSyncJob[] = [];
   selectedPool = '';
   private poolList: Option[] = [];
-  private kubernetesForm: KubernetesSettingsComponent;
-  private chartWizardComponent: ChartWizardComponent;
 
   protected utils: CommonUtils;
   imagePlaceholder = appImagePlaceholder;
@@ -108,10 +106,6 @@ export class CatalogComponent implements OnInit {
   ngOnInit(): void {
     this.loadCatalogs();
     this.checkForConfiguredPool();
-    this.refreshForms();
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshForms();
-    });
 
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       const catalogSyncJob = this.catalogSyncJobs.find((job) => job.id == event.fields.id);
@@ -209,7 +203,7 @@ export class CatalogComponent implements OnInit {
         case 'select_pool':
           return this.selectPool();
         case 'advanced_settings':
-          this.modalService.open('slide-in-form', this.kubernetesForm);
+          this.modalService.openInSlideIn(KubernetesSettingsComponent);
           break;
         case 'unset_pool':
           this.doUnsetPool();
@@ -235,22 +229,6 @@ export class CatalogComponent implements OnInit {
       value: Boolean(this.selectedPool),
       catalogNames: this.catalogNames,
     });
-  }
-
-  refreshForms(): void {
-    this.kubernetesForm = new KubernetesSettingsComponent(
-      this.ws,
-      this.appLoaderService,
-      this.dialogService,
-      this.modalService,
-      this.appService,
-    );
-    this.chartWizardComponent = new ChartWizardComponent(
-      this.mdDialog,
-      this.dialogService,
-      this.modalService,
-      this.appService,
-    );
   }
 
   checkForConfiguredPool(): void {
@@ -372,8 +350,8 @@ export class CatalogComponent implements OnInit {
         };
         catalogAppInfo.schema = catalogApp.versions[catalogApp.latest_version].schema;
 
-        this.chartWizardComponent.setCatalogApp(catalogAppInfo);
-        this.modalService.open('slide-in-form', this.chartWizardComponent);
+        const chartWizard = this.modalService.openInSlideIn(ChartWizardComponent);
+        chartWizard.setCatalogApp(catalogAppInfo);
       }
     });
   }

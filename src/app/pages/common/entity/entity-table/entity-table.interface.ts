@@ -70,9 +70,6 @@ export interface EntityTableConfig<Row = any> {
   prerequisiteFailedHandler?: (entity: EntityTableComponent) => void;
   afterDelete?(): void;
 
-  addComponent?: any;
-  editComponent?: any;
-
   onRowClick?: (row: Row) => void;
 }
 
@@ -130,6 +127,7 @@ export interface EntityTableColumn {
   toggle?: boolean;
   button?: boolean;
   enableMatTooltip?: boolean;
+  showLockedStatus?: boolean;
 
   icon?: string;
   widget?: {

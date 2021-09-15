@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
+import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -14,6 +14,7 @@ import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { VolumeDataEvent } from 'app/interfaces/events/volume-data-event.interface';
+import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import {
   NetworkInterface,
   NetworkInterfaceState,
@@ -47,7 +48,6 @@ type DashboardNetworkInterface = NetworkInterface & {
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
-  formComponent: EntityFormConfigurationComponent;
   formEvents$: Subject<CoreEvent> = new Subject();
   actionsConfig: GlobalActionConfig;
 
@@ -118,6 +118,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     public mediaObserver: MediaObserver,
     private el: ElementRef,
     public modalService: ModalService,
+    private translate: TranslateService,
   ) {
     core.register({ observerClass: this, eventName: 'SidenavStatus' }).pipe(untilDestroyed(this)).subscribe(() => {
       setTimeout(() => {
@@ -559,15 +560,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showConfigForm(): void {
-    // this.modalService.open('slide-in-form', this.addComponent);
-    if (this.formComponent) {
-      delete this.formComponent;
-    }
-    this.generateFormComponent();
-    this.modalService.open('slide-in-form', this.formComponent);
-  }
-
-  generateFormComponent(): void {
     const widgetTypes: string[] = [];
     this.dashState.forEach((item) => {
       if (widgetTypes.indexOf(item.name) == -1) {
@@ -599,12 +591,12 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       },
     ] as FieldSet[];
 
-    this.formComponent = new EntityFormConfigurationComponent();
-    this.formComponent.fieldSets = new FieldSets(fieldSets);
-    this.formComponent.title = 'Dashboard Configuration';
-    this.formComponent.isOneColumnForm = true;
-    this.formComponent.formType = 'EntityFormComponent';
-    this.formComponent.target = this.formEvents$;
+    const formComponent = this.modalService.openInSlideIn(EntityFormConfigurationComponent);
+    formComponent.fieldSets = new FieldSets(fieldSets);
+    formComponent.title = this.translate.instant('Dashboard Configuration');
+    formComponent.isOneColumnForm = true;
+    formComponent.formType = 'EntityFormComponent';
+    formComponent.target = this.formEvents$;
   }
 
   formHandler(evt: CoreEvent): void {

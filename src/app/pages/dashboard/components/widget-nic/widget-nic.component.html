@@ -60,7 +60,7 @@
 
                 <div fxFlex="66" class="left-content">
                   <div class="nic-name" [ngClass]="{ 'up': nicState.link_state == LinkState.Up, 'down': nicState.link_state !== LinkState.Up }">
-                    <span textLimiter threshold="7" >{{nicState.name | translate}}</span>
+                    <span textLimiter threshold="7" content="{{nicState.name | translate}}"></span>
                   </div>
 
                   <div class="link-state" [ngClass]="{'up': nicState.link_state == LinkState.Up, 'down': nicState.link_state !== LinkState.Up}">

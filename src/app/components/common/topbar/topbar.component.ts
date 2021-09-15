@@ -16,6 +16,7 @@ import { LayoutService } from 'app/core/services/layout.service';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
@@ -230,7 +231,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       observerClass: this,
       eventName: 'Resilvering',
     }).pipe(untilDestroyed(this)).subscribe((evt: ResilverEvent) => {
-      if (evt.data.scan.state == 'FINISHED') {
+      if (evt.data.scan.state == PoolScanState.Finished) {
         this.showResilvering = false;
         this.resilveringDetails = '';
       } else {

@@ -35,8 +35,6 @@ export class VdevComponent implements OnInit {
   error: string;
   diskSizeErrorMsg = helptext.vdev_diskSizeErrorMsg;
   vdev_type_tooltip = helptext.vdev_type_tooltip;
-  vdev_size_error = helptext.vdev_size_error;
-  vdev_size_error_2 = helptext.vdev_size_error_2;
   vdev_disks_error: boolean;
   vdev_disks_size_error: boolean;
   vdev_type_disabled = false;
@@ -152,7 +150,10 @@ export class VdevComponent implements OnInit {
     }
     if (this.group === 'data') {
       if (this.disks.length > 0 && this.disks.length < this.mindisks[this.type]) {
-        this.error = this.vdev_size_error + this.mindisks[this.type] + this.vdev_size_error_2;
+        this.error = this.translate.instant(
+          'This type of VDEV requires at least {n, plural, one {# disk} other {# disks}}.',
+          { n: this.mindisks[this.type] },
+        );
         this.vdev_disks_error = true;
       } else {
         this.vdev_disks_error = false;

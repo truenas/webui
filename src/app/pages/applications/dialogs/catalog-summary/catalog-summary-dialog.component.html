@@ -1,17 +1,24 @@
 <div mat-dialog-content>
   <div class="title-div" fxLayout="row" fxLayoutAlign="space-between center">
-    <strong class="catalog-name" textLimiter threshold="40">{{ catalogApp.name }} {{ 'Application Summary' | translate }}</strong>
+    <strong class="catalog-name" textLimiter threshold="40" content="{{ catalogApp.name }} {{ 'Application Summary' | translate }}"></strong>
     <span class="status active" *ngIf="catalogApp.healthy">{{ 'Healthy' | translate }}</span>
     <span class="status other" *ngIf="!catalogApp.healthy">{{ 'Unhealthy' | translate }}</span>
   </div>
   <div class="description" [innerHTML]="catalogApp.app_readme">
   </div>
   <div class="categories" fxLayout="row" fxLayoutAlign="space-between center">
-    <div><span>{{ 'Catalog' | translate }}:</span><div class="value capitalized-text" textLimiter threshold="20">{{ catalogApp.catalog.label }}</div></div>
-    <div><span>{{ 'Train' | translate }}:</span><div class="value capitalized-text" textLimiter threshold="20">{{ catalogApp.catalog.train }}</div></div>
+    <div>
+      <span>{{ 'Catalog' | translate }}:</span>
+      <div class="value capitalized-text" textLimiter threshold="20" content="{{ catalogApp.catalog.label }}"></div>
+    </div>
+    <div>
+      <span>{{ 'Train' | translate }}:</span>
+      <div class="value capitalized-text" textLimiter threshold="20" content="{{ catalogApp.catalog.train }}"></div>
+    </div>
   </div>
   <div class="categories">
-    <span>{{ 'Categories' | translate }}:</span><span class="value" textLimiter threshold="35">{{ catalogApp.categories.join(', ') }}</span>
+    <span>{{ 'Categories' | translate }}:</span>
+    <span class="value" textLimiter threshold="35" content="{{ catalogApp.categories.join(', ') }}"></span>
   </div>
   <div class="resource" fxLayout="row" fxLayoutAlign="space-between center">
     <div>
@@ -39,7 +46,7 @@
       <div *ngFor="let version of filteredVersions | keyvalue; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0, 'row-light': i%2==1}">
         <div fxLayout="row" fxLayoutAlign="center start">
           <div fxFlex="70%" class="version-number">
-            <span textLimiter threshold="30">{{ version.key }}</span>
+            <span textLimiter threshold="30" content="{{ version.key }}"></span>
             <span>{{ versionStatusLabel(version) }}</span>
           </div>
           <span fxFlex="30%" class="text-center info-col" >
