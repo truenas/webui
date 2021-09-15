@@ -16,8 +16,16 @@
           <div class="logo">
             <img [src]="item.icon_url" [src-fallback]="imagePlaceholder"/>
           </div>
-          <div class="badge-area">
-            <div class="partner-badge capitalized-text">
+          <div class="badge-area" style="background-color: var(--primary)" *ngIf="item.catalog.label == 'OFFICIAL'">
+            <div class="capitalized-text" >
+              {{ item.catalog.label }}
+            </div>
+            <div class="train-badge capitalized-text">
+              {{ item.catalog.train }}
+            </div>
+          </div>
+        <div class="badge-area" *ngIf="item.catalog.label != 'OFFICIAL'">
+            <div class="capitalized-text">
               {{ item.catalog.label }}
             </div>
             <div class="train-badge capitalized-text">
