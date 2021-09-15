@@ -68,12 +68,11 @@ export class GroupListComponent {
 
   afterInit(entityList: any) {
     this.entityList = entityList;
-    setTimeout(() => {
-      if (this.prefService.preferences.showGroupListMessage) {
-        this.showOneTimeBuiltinMsg();
-      }
-    }, 2000);
+    if (this.prefService.preferences.showGroupListMessage) {
+      this.showOneTimeBuiltinMsg();
+    }
   }
+
   isActionVisible(actionId: string, row: any) {
     if (actionId === 'delete' && row.builtin === true) {
       return false;

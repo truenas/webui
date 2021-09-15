@@ -76,6 +76,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   actionButtonsAlign = 'left';
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[];
+  disksWithNoTempGraphs: { [disk: string]: Report };
   diskReportConfigReady = false;
 
   constructor(
@@ -152,6 +153,30 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
       });
 
       this.ws.call('disk.query').subscribe((res) => {
+        const noTempDisks = res.filter((disk) => disk.hddstandby !== 'ALWAYS ON' && !disk.hddstandby_force);
+        if (!this.disksWithNoTempGraphs) {
+          this.disksWithNoTempGraphs = {};
+        }
+        for (const disk of noTempDisks) {
+          this.disksWithNoTempGraphs[disk.name] = {
+            identifiers: [disk.identifier],
+            name: disk.name + '-temp',
+            title: 'Disk Temperatur ' + disk.name,
+            empty: {
+              title: T('Disk Temperatures Not Available'),
+              message: T('This disk cannot collect temperature data the way it is currently configured. Please either enable ‘Force HDD Standby’ or set ‘HDD Standby’ to ‘Never’ in order to enable temperature data collection.'),
+              button: {
+                text: T('Edit Disk'),
+                click: () => {
+                  this.router.navigate(new Array('/').concat([
+                    'storage', 'disks', 'edit', disk.identifier,
+                  ]));
+                },
+              },
+            },
+          };
+        }
+
         this.parseDisks(res, multipathDisks);
         this.core.emit({ name: 'ReportingGraphsRequest', sender: this });
       });
@@ -430,6 +455,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   buildDiskReport(device: string | any[], metric: string | any[]) {
+    let metricValue: string;
+    if (Array.isArray(metric)) {
+      metricValue = metric[0].value;
+    } else {
+      metricValue = metric;
+    }
     // Convert strings to arrays
     if (typeof device == 'string') {
       device = [device];
@@ -452,6 +483,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
         visible.push(index);
       }
     });
+
+    const visibleNoTempDisks = device.filter((dev) => Object.keys(this.disksWithNoTempGraphs).includes(dev));
+
+    if (metric.indexOf('disktemp') !== -1 && visibleNoTempDisks.length) {
+      for (const disk of visibleNoTempDisks) {
+        this.activeReports.push(this.disksWithNoTempGraphs[disk]);
+        visible.push(this.activeReports.length - 1);
+      }
+    }
 
     this.visibleReports = visible;
   }

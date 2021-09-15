@@ -29,8 +29,7 @@ export const helptext = {
   reset_button: T('Reset to Defaults'),
   dialog: {
     title: T('Change Settings and Clear Report History?'),
-    message: T('Report history is cleared when <i>CPU reporting</i>, <i>Graph Age</i>, \
- or <i>Graph Points</i> are changed.'),
+    message: T('Report history is cleared when <i>Graph Age</i> or <i>Graph Points</i> are changed.'),
     action: T('Continue'),
   },
   graphite_separateinstances_placeholder: T('Graphite Separate Instances'),
