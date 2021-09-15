@@ -14,6 +14,11 @@ export interface Command {
   options?: any[]; // Function parameters
 }
 
+export enum ReportingDatabaseError {
+  FailedExport = 22,
+  InvalidTimestamp = 206,
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -25,8 +30,8 @@ export class ReportsService implements OnDestroy {
     // @ts-ignore
     this.reportsUtils = new Worker('./reports-utils.worker', { type: 'module' });
 
-    core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
-      ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((raw_res) => {
+    this.core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
+      this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((raw_res) => {
         let res;
 
         // If requested, we truncate trailing null values
@@ -64,6 +69,8 @@ export class ReportsService implements OnDestroy {
           // this.core.emit({name:"ReportData-" + evt.sender.chartId, data: res[0], sender:this});
           this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: commands, sender: evt.sender.chartId });
         }
+      }, (err) => {
+        this.reportsUtils.postMessage({ name: 'FetchingError', data: err, sender: evt.sender.chartId });
       });
     });
 
