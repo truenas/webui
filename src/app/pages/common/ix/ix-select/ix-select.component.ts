@@ -1,5 +1,5 @@
 import {
-  Component, forwardRef, Input, OnChanges, OnInit,
+  Component, forwardRef, Input,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -19,7 +19,7 @@ import { Option } from 'app/interfaces/option.interface';
     },
   ],
 })
-export class IxSelect implements ControlValueAccessor, OnInit, OnChanges {
+export class IxSelect implements ControlValueAccessor {
   @Input() label: string;
   @Input() value: string | number;
   @Input() hint: string;
