@@ -28,9 +28,10 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
   title = helptext.users.table_title;
   protected entityList: EntityTableComponent;
   quotaValue: number;
-  protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['used_bytes', '>', 0], ['obj_used', '>', 0]]]];
+  protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
   protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected useFullFilter = true;
+  route_add: string[];
 
   columns = [
     {
@@ -64,12 +65,6 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
       label: T('Toggle Display'),
       onClick: () => {
         this.toggleDisplay();
-      },
-    },
-    {
-      label: T('Set Quotas (Bulk)'),
-      onClick: () => {
-        this.router.navigate(['storage', 'user-quotas-form', this.pk]);
       },
     },
     ] as EntityTableAction[];
@@ -176,6 +171,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
     this.entityList = entityList;
     const paramMap = this.aroute.snapshot.params;
     this.pk = paramMap.pk;
+    this.route_add = ['storage', 'user-quotas-form', this.pk];
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
   }
 

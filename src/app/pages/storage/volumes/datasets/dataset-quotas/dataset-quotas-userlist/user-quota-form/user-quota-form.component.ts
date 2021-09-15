@@ -142,7 +142,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
-    this.route_success = ['storage', 'pools', 'user-quotas', this.pk];
+    this.route_success = ['storage', 'user-quotas', this.pk];
     this.selectedEntriesField = _.find(this.fieldConfig, { name: 'system_entries' });
     this.selectedEntriesValue = this.entityForm.formGroup.controls['system_entries'] as FormControl;
     this.entryField = _.find(this.fieldSets.find((set) => set.name === helptext.users.user_title).config,
