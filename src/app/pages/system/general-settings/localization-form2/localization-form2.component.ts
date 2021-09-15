@@ -37,6 +37,7 @@ export class LocalizationForm2 implements OnInit {
     fcName: 'language',
     label: helptext.stg_language.placeholder,
     tooltip: helptext.stg_language.tooltip,
+    options: this.sysGeneralService.languageOptions(this.sortLanguagesByName),
   };
 
   kbdMap: {
@@ -113,7 +114,7 @@ export class LocalizationForm2 implements OnInit {
       time_format: [this.localeService.getPreferredTimeFormat()],
     });
 
-    this.makeLanguageList();
+    // this.makeLanguageList();
     this.makeKbdMapOptions();
     this.makeTimezoneOptions();
     this.setTimeOptions(this.configData?.timezone);
