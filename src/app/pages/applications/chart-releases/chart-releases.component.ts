@@ -293,8 +293,9 @@ export class ChartReleasesComponent implements OnInit {
       this.appLoaderService.close();
 
       const dialogRef = this.mdDialog.open(ChartUpgradeDialog, {
-        width: '500px',
-        maxWidth: '500px',
+        width: '50vw',
+        minWidth: '500px',
+        maxWidth: '1000px',
         data: {
           appInfo: catalogApp,
           upgradeSummary: res,
