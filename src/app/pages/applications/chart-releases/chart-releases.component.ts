@@ -295,7 +295,7 @@ export class ChartReleasesComponent implements OnInit {
       const dialogRef = this.mdDialog.open(ChartUpgradeDialog, {
         width: '50vw',
         minWidth: '500px',
-        maxWidth: '1000px',
+        maxWidth: '750px',
         data: {
           appInfo: catalogApp,
           upgradeSummary: res,
@@ -621,8 +621,9 @@ export class ChartReleasesComponent implements OnInit {
     const catalogApp = this.chartItems[name];
     if (catalogApp) {
       this.mdDialog.open(ChartEventsDialog, {
-        width: '686px',
-        maxWidth: '686px',
+        width: '50vw',
+        minWidth: '650px',
+        maxWidth: '850px',
         data: catalogApp,
       });
     }
