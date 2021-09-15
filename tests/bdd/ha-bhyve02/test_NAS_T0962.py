@@ -24,7 +24,7 @@ def test_verify_active_directory_works_after_failover_with_new_system_dataset(dr
 
 
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_tnbhyve01tnixsystemsnet(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """the browser is open, navigate to "{nas_url}"."""
     global host
     host = nas_url
