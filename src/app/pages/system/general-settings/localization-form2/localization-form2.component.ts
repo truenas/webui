@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -20,7 +20,7 @@ import { LocaleService } from 'app/services/locale.service';
   templateUrl: './localization-form2.component.html',
   styleUrls: ['./localization-form2.component.scss'],
 })
-export class LocalizationForm2 implements OnInit {
+export class LocalizationForm2 {
   fieldsetTitle = helptext.localeTitle;
 
   formIsLoading = false;
