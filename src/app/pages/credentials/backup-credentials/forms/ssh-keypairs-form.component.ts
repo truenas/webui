@@ -31,7 +31,7 @@ export class SshKeypairsFormComponent implements FormConfiguration {
   isEntity = true;
   protected entityForm: EntityFormComponent;
   protected isOneColumnForm = true;
-  private rowNum: any;
+  private rowNum: number;
   title = helptext.formTitle;
   private getRow = new Subscription();
 
@@ -113,7 +113,7 @@ export class SshKeypairsFormComponent implements FormConfiguration {
 
   constructor(private aroute: ActivatedRoute, private ws: WebSocketService, private loader: AppLoaderService,
     private dialogService: DialogService, private storage: StorageService, private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.rowNum = rowId;
       this.getRow.unsubscribe();
     });

@@ -2,6 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormArray, FormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
@@ -783,11 +784,17 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   protected source_fieldSet: FieldSet;
   protected target_fieldSet: FieldSet;
 
-  constructor(private keychainCredentialService: KeychainCredentialService,
-    private loader: AppLoaderService, private dialogService: DialogService,
-    private ws: WebSocketService, private replicationService: ReplicationService,
-    private datePipe: DatePipe, private entityFormService: EntityFormService,
-    private modalService: ModalService) {
+  constructor(
+    private keychainCredentialService: KeychainCredentialService,
+    private loader: AppLoaderService,
+    private dialogService: DialogService,
+    private ws: WebSocketService,
+    private replicationService: ReplicationService,
+    private datePipe: DatePipe,
+    private entityFormService: EntityFormService,
+    private modalService: ModalService,
+    private translate: TranslateService,
+  ) {
     this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((res) => {
       this.namesInUse.push(...res.map((replication) => replication.name));
     });
@@ -1364,7 +1371,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication'] != undefined) {
       await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
         () => {
-          this.dialogService.info(T('Task started'), T('Replication <i>') + value['name'] + T('</i> has started.'), '500px', 'info', true);
+          this.dialogService.info(
+            T('Task started'),
+            this.translate.instant('Replication <i>{name}</i> has started.', { name: value['name'] }),
+            '500px',
+            'info',
+            true,
+          );
         },
       );
     }

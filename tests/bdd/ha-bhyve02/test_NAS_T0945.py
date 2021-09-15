@@ -2,6 +2,7 @@
 """High Availability (tn09) feature tests."""
 
 import time
+from selenium.common.exceptions import ElementClickInterceptedException
 from function import (
     is_element_present,
     wait_on_element,
@@ -52,21 +53,27 @@ def login_appear_enter_root_and_password(driver, user, password):
 def you_should_see_the_dashboard(driver):
     """you should see the dashboard."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Dashboard")]')
-    if wait_on_element(driver, 1, '//div[contains(.,"Looking for help?")]'):
-        assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]')
-        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    if wait_on_element(driver, 1, '//button[@ix-auto="button__I AGREE"]'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
+    if wait_on_element(driver, 2, '//h1[contains(.,"End User License Agreement - TrueNAS")]'):
+        try:
+            assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
+            driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+            assert wait_on_element(driver, 2, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+            driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+        except ElementClickInterceptedException:
+            assert wait_on_element(driver, 2, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+            driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+            assert wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable')
+            driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
 
 
 @then('go to System Settings, click Services')
 def go_to_system_settings_click_services(driver):
     """go to System Settings, click Services."""
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__System Settings"]')
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Services"]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
+    assert wait_on_element(driver, 5, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
 
 
 @then('the service page should open')

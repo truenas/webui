@@ -2,7 +2,7 @@ import {
   Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked, ElementRef,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
@@ -33,6 +33,7 @@ export interface AppTableColumn {
   width?: string;
   state?: any;
   button?: boolean;
+  showLockedStatus?: boolean;
   tooltip?: string;
   iconTooltip?: string;
   enableMatTooltip?: boolean;
@@ -67,7 +68,7 @@ export interface AppTableConfig<P = any> {
     title: string;
     key_props: string[];
     id_prop?: string;
-    doubleConfirm?(item: any): any;
+    doubleConfirm?(item: any): Observable<boolean>;
   }; //
   tableComponent?: TableComponent;
   emptyEntityLarge?: boolean;
@@ -337,6 +338,10 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     if (column.prop === 'state' && column.button === true) {
       return 'state-button';
+    }
+
+    if (['path', 'paths'].includes(column.prop) && column.showLockedStatus) {
+      return 'path-locked-status';
     }
 
     return 'textview';

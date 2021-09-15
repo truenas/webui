@@ -807,7 +807,7 @@ export class VMWizardComponent implements WizardConfiguration {
     });
     this.getFormControlFromFieldName('upload_iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
-        const config: FormUploadConfig = _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' });
+        const config = _.find(this.wizardConfig[4].fieldConfig, { name: 'upload_iso' }) as FormUploadConfig;
         config.fileLocation = res;
       }
     });
@@ -1192,14 +1192,22 @@ export class VMWizardComponent implements WizardConfiguration {
                   this.loader.close();
                   this.dialogService.errorReport(
                     T('Error creating VM.'),
-                    T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted,
+                    this.translate.instant(
+                      'Error while creating the {device} device.\n {reason}',
+                      { device: error.device.dtype, reason: error.reason },
+                    ),
+                    error.trace.formatted,
                   );
                 },
                 (err) => {
                   this.loader.close();
                   this.dialogService.errorReport(
                     T('Error creating VM.'),
-                    T('Error while creating the ') + error.device.dtype + ' device.\n' + error.reason, error.trace.formatted,
+                    this.translate.instant(
+                      'Error while creating the {device} device.\n {reason}',
+                      { device: error.device.dtype, reason: error.reason },
+                    ),
+                    error.trace.formatted,
                   );
                   new EntityUtils().handleWSError(this, err, this.dialogService);
                 },

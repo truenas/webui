@@ -19,7 +19,7 @@
         </mat-card-title>
         <!-- Controls/Tools -->
         <div fxFlex="calc(35%)" class="line-chart-tools-wrapper">
-          <div class="line-chart-tools" *ngIf="localControls">
+          <div class="line-chart-tools" *ngIf="localControls && !report?.errorConf">
             <button
               class="tool-icon"
               mat-icon-button
@@ -70,7 +70,7 @@
         </div>
       </mat-toolbar-row>
 
-      <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
+      <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100" *ngIf="!report?.errorConf">
         <!-- Chart -->
         <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
           <div class="chart-wrapper">
@@ -184,6 +184,16 @@
             </div>
           </ng-container>
         </section>
+      </mat-card-content>
+
+      <mat-card-content
+        *ngIf="report?.errorConf"
+        fxLayout="row wrap"
+        fxLayout.gt-xs="row wrap"
+        fxLayoutAlign="space-between start"
+        fxFlex="100"
+      >
+        <entity-empty [conf]="report.errorConf"></entity-empty>
       </mat-card-content>
     </mat-card>
 

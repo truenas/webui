@@ -7,13 +7,6 @@ export default {
   group_list_actions_id_edit: 'edit',
   group_list_actions_label_delete: T('Delete'),
 
-  builtins_dialog: {
-    title: T(' Built-in Groups'),
-    message: T(' built-in groups (default setting is <i>hidden</i>).'),
-    show: T('Show'),
-    hide: T('Hide'),
-  },
-
   builtinMessageDialog: {
     title: T('Display Note'),
     message: T('All built-in groups are \

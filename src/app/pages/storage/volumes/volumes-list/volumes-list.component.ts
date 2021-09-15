@@ -112,9 +112,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       action: this.createPool.bind(this),
     },
   };
-  protected addZvolComponent: ZvolFormComponent;
-  protected addDatasetFormComponent: DatasetFormComponent;
-  protected editDatasetFormComponent: DatasetFormComponent;
   protected aroute: ActivatedRoute;
   private refreshTableSubscription: Subscription;
   private datasetQuery: 'pool.dataset.query' = 'pool.dataset.query';
@@ -300,39 +297,26 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
       this.dialogService.errorReport(T('Error getting pool data.'), res.message, res.stack);
     });
-
-    this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.ws, this.loader,
-      this.dialogService, this.storageService, this.translate, this.modalService);
-
-    this.addDatasetFormComponent = new DatasetFormComponent(
-      this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService,
-    );
   }
 
   addZvol(id: string, isNew: boolean): void {
-    this.addZvolComponent = new ZvolFormComponent(this.router, this.aroute, this.ws, this.loader,
-      this.dialogService, this.storageService, this.translate, this.modalService);
-    this.addZvolComponent.setParent(id);
-    this.addZvolComponent.isNew = isNew;
-    this.modalService.open('slide-in-form', this.addZvolComponent, id);
+    const addZvolComponent = this.modalService.openInSlideIn(ZvolFormComponent, id);
+    addZvolComponent.setParent(id);
+    addZvolComponent.isNew = isNew;
   }
 
   addDataset(pool: any, id: string): void {
-    this.addDatasetFormComponent.setParent(id);
-    this.addDatasetFormComponent.setVolId(pool);
-    this.addDatasetFormComponent.setTitle(T('Add Dataset'));
-    this.modalService.open('slide-in-form', this.addDatasetFormComponent, id);
+    const addDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent, id);
+    addDatasetComponent.setParent(id);
+    addDatasetComponent.setVolId(pool);
+    addDatasetComponent.setTitle(T('Add Dataset'));
   }
 
   editDataset(pool: string, id: string): void {
-    this.editDatasetFormComponent = new DatasetFormComponent(
-      this.router, this.aroute, this.ws, this.loader, this.dialogService, this.storageService, this.modalService,
-    );
-
-    this.editDatasetFormComponent.setPk(id);
-    this.editDatasetFormComponent.setVolId(pool);
-    this.editDatasetFormComponent.setTitle(T('Edit Dataset'));
-    this.modalService.open('slide-in-form', this.editDatasetFormComponent, id);
+    const editDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent, id);
+    editDatasetComponent.setPk(id);
+    editDatasetComponent.setVolId(pool);
+    editDatasetComponent.setTitle(T('Edit Dataset'));
   }
 
   createPool(): void {

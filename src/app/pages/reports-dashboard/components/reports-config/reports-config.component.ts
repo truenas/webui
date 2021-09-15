@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/reporting';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { ReportingConfig } from 'app/interfaces/reporting.interface';
+import { ReportingConfig, ReportingConfigUpdate } from 'app/interfaces/reporting.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -17,7 +17,6 @@ import { DialogService, WebSocketService } from 'app/services';
   styleUrls: ['reports-config.component.scss'],
 })
 export class ReportsConfigComponent implements FormConfiguration {
-  job: any = {};
   queryCall: 'reporting.config' = 'reporting.config';
   title: string;
   isOneColumnForm: boolean;
@@ -124,7 +123,7 @@ export class ReportsConfigComponent implements FormConfiguration {
     }
   }
 
-  doSubmit(body: any): Subscription {
+  doSubmit(body: ReportingConfigUpdate): Subscription {
     this.graphAge = body.graph_age;
     this.graphPoints = body.graph_points;
     this.isCpuCheckboxChecked = body.cpu_in_percentage;

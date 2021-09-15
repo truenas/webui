@@ -94,12 +94,6 @@ export default {
   catalogPlaceholder: T('Search Catalogs'),
   dockerPlaceholder: T('Search Docker Images'),
 
-  install: {
-    title: T('Ready to Install'),
-    msg1: T('Install '),
-    msg2: T(' on pool '),
-  },
-
   noPool: {
     title: T('No Pools Found'),
     message: T('At least one pool must be available to use apps'),
@@ -154,14 +148,7 @@ export default {
   charts: {
     delete_dialog: {
       title: T('Delete'),
-      msg: T('Delete '),
       job: T('Deleting...'),
-    },
-
-    update_dialog: {
-      title: T('Update'),
-      msg: T('Update '),
-      job: T('Updating...'),
     },
 
     upgrade_dialog: {
@@ -524,6 +511,7 @@ export default {
 
   actionBtnText: {
     close: T('Close'),
+    refreshEvents: T('Refresh Events'),
   },
 
   chartEventDialog: {

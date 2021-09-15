@@ -61,13 +61,13 @@ def click_on_the_credentials_item_in_the_left_side_menu(driver):
 @then('The Credentials menu should expand to the right')
 def the_credentials_menu_should_expand_to_the_right(driver):
     """The Credentials menu should expand to the right."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
+    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
 
 
 @then('Click on Local Users')
 def click_on_localusers(driver):
     """Click on Local Users."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Local Users"]').click()
+    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
 
 
 @then('The Users page should open')
@@ -105,7 +105,7 @@ def the_user_edit_page_should_open(driver):
 @then(parsers.parse('Change the users email for "{email}" and click save'))
 def change_the_users_email_and_click_save(driver, email):
     """Change the users email for "{email}" and click save."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'clickable')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys(email)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')

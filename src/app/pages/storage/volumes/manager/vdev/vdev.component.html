@@ -29,13 +29,13 @@
     <ngx-datatable-column [width]="82" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
       <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
         <div class="headerCheckBox">
-          <mat-checkbox id="vdev__disk-table-checkall-{{group}}-{{index}}" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
+          <mat-checkbox color="primary" id="vdev__disk-table-checkall-{{group}}-{{index}}" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"></mat-checkbox>
         </div>
       </ng-template>
 
       <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-rowIndex="rowIndex" let-onCheckboxChangeFn="onCheckboxChangeFn">
         <div>
-          <mat-checkbox id="vdev__disks-{{disks[rowIndex] ? disks[rowIndex].devname : rowIndex}}" [checked]="isSelected" (change)="onCheckboxChangeFn($event)">&nbsp;</mat-checkbox>
+          <mat-checkbox color="primary" id="vdev__disks-{{disks[rowIndex] ? disks[rowIndex].devname : rowIndex}}" [checked]="isSelected" (change)="onCheckboxChangeFn($event)">&nbsp;</mat-checkbox>
         </div>
       </ng-template>
     </ngx-datatable-column>
@@ -104,5 +104,3 @@
   <div *ngIf="error" [style.color]="'red'" [innerHTML]="error" class="datainfo"></div>
 </div>
 </div>
-
-

@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
+import { DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -353,7 +354,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
       dialogRef.componentInstance.setCall(this.queryCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetEncryptionSummary[]>) => {
       dialogRef.close();
       // show summary dialog;
       const errors = [];
@@ -401,7 +402,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
       dialogRef.componentInstance.setCall(this.updateCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetUnlockResult>) => {
       dialogRef.close();
       const errors = [];
       const skipped = [];

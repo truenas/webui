@@ -93,8 +93,7 @@ export class TargetFormComponent implements FormConfiguration {
               options: [],
               required: true,
               validation: helptext_sharing_iscsi.target_form_validators_portal,
-              class: 'inline',
-              width: '50%',
+              width: '100%',
             },
             {
               type: 'select',
@@ -103,14 +102,14 @@ export class TargetFormComponent implements FormConfiguration {
               tooltip: helptext_sharing_iscsi.target_form_tooltip_initiator,
               value: null,
               options: [],
-              class: 'inline',
-              width: '50%',
+              width: '100%',
             },
             {
               type: 'select',
               name: 'authmethod',
               placeholder: helptext_sharing_iscsi.target_form_placeholder_authmethod,
               tooltip: helptext_sharing_iscsi.target_form_tooltip_authmethod,
+              width: '100%',
               value: 'NONE',
               options: [
                 {
@@ -126,8 +125,6 @@ export class TargetFormComponent implements FormConfiguration {
                   value: 'CHAP_MUTUAL',
                 },
               ],
-              class: 'inline',
-              width: '50%',
             },
             {
               type: 'select',
@@ -135,9 +132,8 @@ export class TargetFormComponent implements FormConfiguration {
               placeholder: helptext_sharing_iscsi.target_form_placeholder_auth,
               tooltip: helptext_sharing_iscsi.target_form_tooltip_auth,
               value: null,
+              width: '100%',
               options: [],
-              class: 'inline',
-              width: '50%',
             },
           ],
           listFields: [],

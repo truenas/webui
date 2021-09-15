@@ -1,9 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Component, OnInit, Type } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -36,18 +33,12 @@ export class SupportComponent implements OnInit {
   ticketText = helptext.ticket;
   proactiveText = helptext.proactive.title;
 
-  protected licenseComponent = new LicenseComponent(this.ws, this.modalService, this.loader, this.dialog);
-  protected supportFormLicensed = new SupportFormLicensedComponent(this.mdDialog, this.loader,
-    this.ws, this.dialog, this.router, this.modalService);
-  protected supportFormUnlicensed = new SupportFormUnlicensedComponent(this.ws, this.mdDialog, this.modalService);
-  protected proactiveComponent = new ProactiveComponent(this.ws, this.loader, this.dialog, this.translate,
-    this.modalService);
-
-  constructor(protected ws: WebSocketService,
-    protected prefService: PreferencesService,
-    private modalService: ModalService, private loader: AppLoaderService,
-    private dialog: DialogService, private mdDialog: MatDialog,
-    private router: Router, private translate: TranslateService) {}
+  constructor(
+    protected ws: WebSocketService,
+    private modalService: ModalService,
+    private loader: AppLoaderService,
+    private dialog: DialogService,
+  ) {}
 
   ngOnInit(): void {
     this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
@@ -140,19 +131,21 @@ export class SupportComponent implements OnInit {
   }
 
   updateLicense(): void {
-    this.modalService.open('slide-in-form', this.licenseComponent);
+    this.modalService.openInSlideIn(LicenseComponent);
   }
 
   fileTicket(): void {
-    const component = this.hasLicense ? this.supportFormLicensed : this.supportFormUnlicensed;
-    this.modalService.open('slide-in-form', component);
+    const component: Type<SupportFormLicensedComponent | SupportFormUnlicensedComponent> = this.hasLicense
+      ? SupportFormLicensedComponent
+      : SupportFormUnlicensedComponent;
+    this.modalService.openInSlideIn(component);
   }
 
   openProactive(): void {
-    this.modalService.open('slide-in-form', this.proactiveComponent);
+    this.modalService.openInSlideIn(ProactiveComponent);
   }
 
-  updateProductionStatus(e: any): void {
+  updateProductionStatus(e: MatCheckboxChange): void {
     if (e.checked) {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {

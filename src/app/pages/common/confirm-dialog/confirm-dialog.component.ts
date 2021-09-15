@@ -25,8 +25,7 @@ export class ConfirmDialog {
   hideCancel = false;
   textToCopy: string;
   keyTextArea: boolean;
-  // TODO: Typo
-  customSumbit: any;
+  customSubmit: () => void;
 
   @Output() switchSelectionEmitter = new EventEmitter<boolean>();
 

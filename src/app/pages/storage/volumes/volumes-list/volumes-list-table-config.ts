@@ -338,8 +338,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
   unlockAction(row1: any): void {
     const self = this;
-    this.storageService.poolUnlockServiceChoices(row1.id).pipe(
-      map((serviceChoices) => ({
+    this.storageService.poolUnlockServiceOptions(row1.id).pipe(
+      map((serviceOptions) => ({
         title: T('Unlock ') + row1.name,
         fieldConfig: [
           {
@@ -372,8 +372,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
             placeholder: helptext.unlockDialog_services_placeholder,
             tooltip: helptext.unlockDialog_services_tooltip,
             multiple: true,
-            value: serviceChoices.map((choice) => choice.value),
-            options: serviceChoices,
+            value: serviceOptions.map((option) => option.value),
+            options: serviceOptions,
           },
         ],
         afterInit(entityDialog: EntityDialogComponent) {
@@ -469,11 +469,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
           name: T('Pool Options'),
           label: T('Pool Options'),
           onClick: (row: any) => {
-            // const autotrim = (row.autotrim === 'ON');
-
             const self = this;
             this.dialogConf = {
-              title: helptext.pool_options_dialog.dialog_title + row.name,
+              title: self.translate.instant('Edit Pool Options for {name}', { name: row.name }),
               confirmCheckbox: true,
               fieldConfig: [
                 {
@@ -501,7 +499,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 dialogRef.componentInstance.setDescription(helptext.pool_options_dialog.saving_pool_options);
                 dialogRef.componentInstance.setCall(method, payload);
                 dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.pipe(untilDestroyed(self, 'destroy')).subscribe((res: any) => {
+                dialogRef.componentInstance.success.pipe(untilDestroyed(self, 'destroy')).subscribe((res: Job<Pool>) => {
                   if (res) {
                     dialogRef.close();
                     entityDialog.dialogRef.close();

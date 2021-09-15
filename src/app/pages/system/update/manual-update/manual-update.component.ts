@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,7 +13,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { CoreEvent } from 'app/interfaces/events';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -95,7 +96,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.core.register({
       observerClass: this,
       eventName: 'SysInfo',
-    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
       const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'version' });
       config.paraText += evt.data.version;
     });
@@ -203,12 +204,16 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
           }).pipe(untilDestroyed(this)).subscribe(() => {});
         }
       });
-      this.dialogRef.componentInstance.prefailure.pipe(untilDestroyed(this)).subscribe((prefailure: any) => {
-        this.dialogRef.close(false);
-        this.dialogService.errorReport(helptext.manual_update_error_dialog.message,
-          `${prefailure.status.toString()} ${prefailure.statusText}`);
-        this.save_button_enabled = true;
-      });
+      this.dialogRef.componentInstance.prefailure
+        .pipe(untilDestroyed(this))
+        .subscribe((prefailure: HttpErrorResponse) => {
+          this.dialogRef.close(false);
+          this.dialogService.errorReport(
+            helptext.manual_update_error_dialog.message,
+            `${prefailure.status.toString()} ${prefailure.statusText}`,
+          );
+          this.save_button_enabled = true;
+        });
       this.dialogRef.componentInstance.failure
         .pipe(take(1))
         .pipe(untilDestroyed(this)).subscribe((failure) => {

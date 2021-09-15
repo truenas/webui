@@ -3,7 +3,10 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { FormToggleButtonConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FormToggleButtonConfig,
+  FormToggleButtonOption,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
@@ -49,7 +52,7 @@ export class FormToggleButtonComponent implements Field, OnInit {
     });
   }
 
-  check(item: any): void {
+  check(item: FormToggleButtonOption): void {
     this.init = false;
     item.checked = !item.checked;
     const target = _.findIndex(this.groupValue, _.unary(_.partialRight(_.includes, item.value)));

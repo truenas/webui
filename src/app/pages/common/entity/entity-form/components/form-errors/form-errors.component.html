@@ -1,27 +1,27 @@
 <div class="form-error" *ngIf="control.dirty || control.touched">
   <mat-error *ngIf="control.hasError('required') && !config.hideErrMsg">
-    {{config.placeholder}} {{" is required." | translate}}
+    {{ '{field} is required.' | translate: { field: config.placeholder } }}
   </mat-error>
   <mat-error *ngIf="control.hasError('minlength')">
-    {{"The length of " | translate}} {{config.placeholder}} {{" should be at least " | translate}} {{control.errors.minlength.requiredLength}}
+    {{ 'The length of {field} should be at least {minLength}.' | translate: { field: config.placeholder, minLength: control.errors.minlength.requiredLength } }}
   </mat-error>
   <mat-error *ngIf="control.hasError('maxlength')">
-    {{"The length of " | translate}} {{config.placeholder}} {{" should be no more than " | translate}} {{control.errors.maxlength.requiredLength}}
+    {{ 'The length of {field} should be no more than {maxLength}.' | translate: { field: config.placeholder, maxLength: control.errors.maxlength.requiredLength } }}
   </mat-error>
   <mat-error *ngIf="control.hasError('min')">
-    {{"Minimum value is " | translate}} {{control.errors.min.min}}.
+    {{ 'Minimum value is {value}.' | translate: { value: control.errors.min.min } }}
   </mat-error>
   <mat-error *ngIf="control.hasError('atLeastOne')">
     {{control.errors.fields[0]}} {{" and " | translate}} {{control.errors.fields[1]}} {{". At least one is required." | translate}}
   </mat-error>
   <mat-error *ngIf="control.hasError('greaterThan')">
-    {{"Value must be greater than " | translate}} {{control.errors.fields[0]}}.
+    {{ 'Value must be greater than {value}.' | translate: { value: control.errors.fields[0] } }}
   </mat-error>
   <mat-error *ngIf="control.hasError('forbidden')">
-    {{"The name " | translate}} <i>{{control.errors.value}}</i> {{"is already in use." | translate}}
+    {{ 'The name "{value}" is already in use.' | translate: { value: control.errors.value } }}
   </mat-error>
   <mat-error *ngIf="control.hasError('range')">
-    {{"The value is out of range. Enter a value between " | translate}} {{control.errors.rangeValue.min}} {{" and " | translate }} {{control.errors.rangeValue.max}}.
+    {{ 'The value is out of range. Enter a value between {min} and {max}.' | translate: { min: control.errors.rangeValue.min, max: control.errors.rangeValue.max } }}
   </mat-error>
   <mat-error *ngIf="control.hasError('regex') || control.hasError('pattern') && !config.hideErrMsg">
     {{"Invalid format or character." | translate}}

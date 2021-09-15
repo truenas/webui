@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import { ResilverData } from 'app/interfaces/resilver-job.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
 
@@ -15,18 +16,18 @@ export class ResilverProgressDialogComponent implements OnInit {
   tooltip: string;
   hideCancel = false;
   final = false;
-  parent: any;
   progressTotalPercent = 0;
-  state: any;
-  resilveringDetails: any;
+  state: PoolScanState;
+  resilveringDetails: ResilverData;
   title = T('Resilvering Status');
   description = T('Resilvering pool: ');
   statusLabel = T('Status: ');
   diskName: string;
 
-  constructor(public dialogRef: MatDialogRef < ResilverProgressDialogComponent >,
-    protected translate: TranslateService, protected ws: WebSocketService) {
-  }
+  constructor(
+    protected translate: TranslateService,
+    protected ws: WebSocketService,
+  ) {}
 
   ngOnInit(): void {
     this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((res) => {

@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -354,18 +355,12 @@ export class ChartReleasesComponent implements OnInit {
 
   edit(name: string): void {
     const catalogApp = this.chartItems[name];
-    const chartFormComponent = new ChartFormComponent(
-      this.mdDialog,
-      this.dialogService,
-      this.modalService,
-      this.appService,
-    );
+    const chartFormComponent = this.modalService.openInSlideIn(ChartFormComponent, name);
     if (catalogApp.chart_metadata.name == ixChartApp) {
       chartFormComponent.setTitle(helptext.launch);
     } else {
       chartFormComponent.setTitle(catalogApp.chart_metadata.name);
     }
-    this.modalService.open('slide-in-form', chartFormComponent, name);
   }
 
   getSelectedItems(): string[] {
@@ -424,63 +419,59 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   delete(name: string): void {
-    this.translate.get(helptext.charts.delete_dialog.msg).pipe(untilDestroyed(this)).subscribe((msg) => {
-      this.dialogService.confirm(helptext.charts.delete_dialog.title, msg + name + '?')
-        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-              data: {
-                title: helptext.charts.delete_dialog.job,
-              },
-            });
-            this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
-            this.dialogRef.componentInstance.submit();
-            this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-              this.dialogService.closeAllDialogs();
-              this.refreshChartReleases();
-            });
-          }
-        });
+    this.dialogService.confirm({
+      title: helptext.charts.delete_dialog.title,
+      message: this.translate.instant('Delete {name}?', { name }),
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+        data: {
+          title: helptext.charts.delete_dialog.job,
+        },
+      });
+      this.dialogRef.componentInstance.setCall('chart.release.delete', [name]);
+      this.dialogRef.componentInstance.submit();
+      this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+        this.dialogService.closeAllDialogs();
+        this.refreshChartReleases();
+      });
     });
   }
 
   bulkDelete(names: string[]): void {
-    const name = names.join(',');
-    this.translate.get(helptext.charts.delete_dialog.msg).pipe(untilDestroyed(this)).subscribe((msg) => {
-      this.dialogService.confirm({
-        title: helptext.charts.delete_dialog.title,
-        message: msg + name + '?',
-      }).pipe(untilDestroyed(this)).subscribe((wasConfirmed) => {
-        if (!wasConfirmed) {
-          return;
-        }
+    const name = names.join(', ');
+    this.dialogService.confirm({
+      title: helptext.charts.delete_dialog.title,
+      message: this.translate.instant('Delete {name}?', { name }),
+    }).pipe(untilDestroyed(this)).subscribe((wasConfirmed) => {
+      if (!wasConfirmed) {
+        return;
+      }
 
-        this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-          data: {
-            title: helptext.charts.delete_dialog.job,
-          },
-        });
-        this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', names.map((item) => [item])]);
-        this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
-          (res: Job<CoreBulkResponse[]>) => {
-            this.dialogService.closeAllDialogs();
-            let message = '';
-            for (let i = 0; i < res.result.length; i++) {
-              if (res.result[i].error != null) {
-                message = message + '<li>' + res.result[i].error + '</li>';
-              }
-            }
-
-            if (message !== '') {
-              message = '<ul>' + message + '</ul>';
-              this.dialogService.errorReport(helptext.bulkActions.title, message);
-            }
-            this.modalService.close('slide-in-form');
-            this.refreshChartReleases();
-          },
-        );
+      this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+        data: {
+          title: helptext.charts.delete_dialog.job,
+        },
       });
+      this.dialogRef.componentInstance.setCall('core.bulk', ['chart.release.delete', names.map((item) => [item])]);
+      this.dialogRef.componentInstance.submit();
+      this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(
+        (res: Job<CoreBulkResponse[]>) => {
+          this.dialogService.closeAllDialogs();
+          let message = '';
+          for (let i = 0; i < res.result.length; i++) {
+            if (res.result[i].error != null) {
+              message = message + '<li>' + res.result[i].error + '</li>';
+            }
+          }
+
+          if (message !== '') {
+            message = '<ul>' + message + '</ul>';
+            this.dialogService.errorReport(helptext.bulkActions.title, message);
+          }
+          this.modalService.close('slide-in-form');
+          this.refreshChartReleases();
+        },
+      );
     });
   }
 

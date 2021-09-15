@@ -8,3 +8,5 @@ export interface WebDavShare {
   perm: boolean;
   ro: boolean;
 }
+
+export type WebDavShareUpdate = Omit<WebDavShare, 'id' | 'locked'>;

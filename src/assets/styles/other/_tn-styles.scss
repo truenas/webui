@@ -1,13 +1,14 @@
+@use '~@angular/material' as mat;
 @import '../../../../node_modules/@angular/material/theming';
-@include mat-core();
+@include mat.core();
 @import '../scss-imports/cssvars';
 
 // mandatory stuff for theming
-$freenas-primary: mat-palette($md-primary);
-$freenas-accent: mat-palette($md-accent);
+$freenas-primary: mat.define-palette($md-primary);
+$freenas-accent: mat.define-palette($md-accent);
 
 // include the custom theme components into a theme object
-$freenas-theme: mat-light-theme($freenas-primary, $freenas-accent);
+$freenas-theme: mat.define-light-theme($freenas-primary, $freenas-accent);
 
 $primary-dark: darken(map-get($md-primary, 500), 8%);
 
@@ -38,7 +39,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
 // include the custom theme object into the angular material theme
 .ix-blue {
-  @include angular-material-theme($freenas-theme);
+  @include mat.all-component-themes($freenas-theme);
 
   // UI SHELL
   .mat-sidenav-container {
@@ -322,13 +323,13 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-checkbox-disabled .mat-checkbox-label {
-    @include variable(color, --fg2, $fg2);
+    @include variable(color, --grey, #4d4d4d);
     opacity: 0.6;
   }
 
   .mat-checkbox-disabled .mat-checkbox-frame,
   .mat-checkbox-disabled .mat-checkbox-inner-container {
-    opacity: 0.4;
+    opacity: 0.7;
   }
 
   .menu-toggle {
@@ -829,8 +830,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     @include variable(background, --bg1, $bg1);
   }
 
-   
-  
+
+
   // Align buttons on UI Prefs form
   .prefs-form .mat-card-actions {
     padding-left: 10px;
@@ -989,6 +990,18 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     border: solid 2px;
   }
 
+  .mat-checkbox.mat-checkbox-disabled,
+  .mat-checkbox.mat-checkbox-checked.mat-checkbox-disabled {
+    cursor: not-allowed;
+  }
+
+  .mat-checkbox.mat-checkbox-disabled .mat-checkbox-background,
+  .mat-checkbox.mat-checkbox-checked.mat-checkbox-disabled .mat-checkbox-background {
+    @include variable(background, --grey, #4d4d4d, !important);
+    @include variable(border-color, --grey, #4d4d4d, !important);
+    border: solid 2px;
+  }
+
   .form-selection-list {
     .mat-pseudo-checkbox {
       @include variable(border-color, --primary, $primary, !important);
@@ -1060,6 +1073,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .datatable-header-cell .mat-checkbox,
   .datatable-body-cell .mat-checkbox {
     margin-left: 5px;
+  }
+
+  .ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
+    vertical-align: -8px;
   }
 
   // Adjustments to checkboxes and header labels on unique tables
