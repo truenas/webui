@@ -805,17 +805,22 @@ mat-card.mat-card .mat-list-base {
   margin-left: 8px;
 }
 
-@media #{$media-lt-sm} {
-  .entity-table-controls > div {
-    margin-top: 8px !important;
-  }
-}
 
 #row-filter.form-element {
   display: inline;
   margin: 0;
   max-height: 36px;
   width: unset !important;
+}
+
+@media #{$media-lt-sm} {
+  .entity-table-controls > div {
+    margin-top: 8px;
+  }
+
+  #row-filter.search-field {
+    margin-top: 8px;
+  }
 }
 
 #row-filter.form-element .mat-form-field-wrapper {
