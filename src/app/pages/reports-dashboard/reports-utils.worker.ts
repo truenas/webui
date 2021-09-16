@@ -348,5 +348,8 @@ addEventListener('message', ({ data }) => {
       output = processCommands(evt.data);
       emit({ name: 'ReportData', data: output, sender: evt.sender });
       break;
+    case 'FetchingError':
+      emit({ name: 'ReportData', data, sender: evt.sender });
+      break;
   }
 });
