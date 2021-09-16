@@ -44,11 +44,11 @@ export class FormComboboxComponent implements Field {
     this.searchTextChanged$.next(query);
   }
 
-  onChangeOption(value: any): void {
+  onChangeOption(value: string | number): void {
     this.group.controls[this.config.name].setValue(value);
   }
 
-  updateSearchOptions(value: any): void {
+  updateSearchOptions(value: string): void {
     if (this.config.updater && this.config.parent) {
       if (this.config.updateLocal) {
         this.config.updater(value, this.config.parent, this.config);

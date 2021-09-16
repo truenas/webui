@@ -26,4 +26,5 @@ export interface AdvancedConfig {
   traceback: boolean;
   uploadcrash: boolean;
   sed_passwd: string;
+  legacy_ui?: boolean;
 }

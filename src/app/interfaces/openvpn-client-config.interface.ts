@@ -11,7 +11,9 @@ export interface OpenvpnClientConfig {
   port: number;
   protocol: string;
   remote: string;
-  root_ca: any;
-  tls_crypt_auth: any;
+  root_ca: number;
+  tls_crypt_auth: string;
   tls_crypt_auth_enabled: boolean;
 }
+
+export type OpenvpnClientUpdate = Omit<OpenvpnClientConfig, 'id' | 'interface'>;

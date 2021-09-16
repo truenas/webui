@@ -21,7 +21,9 @@ import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { PoolProcess } from 'app/interfaces/pool-process.interface';
+import { PoolUnlockQuery } from 'app/interfaces/pool-unlock-query.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -336,8 +338,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
   unlockAction(row1: any): void {
     const self = this;
-    this.storageService.poolUnlockServiceChoices(row1.id).pipe(
-      map((serviceChoices) => ({
+    this.storageService.poolUnlockServiceOptions(row1.id).pipe(
+      map((serviceOptions) => ({
         title: T('Unlock ') + row1.name,
         fieldConfig: [
           {
@@ -370,8 +372,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
             placeholder: helptext.unlockDialog_services_placeholder,
             tooltip: helptext.unlockDialog_services_tooltip,
             multiple: true,
-            value: serviceChoices.map((choice) => choice.value),
-            options: serviceChoices,
+            value: serviceOptions.map((option) => option.value),
+            options: serviceOptions,
           },
         ],
         afterInit(entityDialog: EntityDialogComponent) {
@@ -405,7 +407,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
         customSubmit(entityDialog: EntityDialogComponent) {
           let done = false;
           const value = entityDialog.formValue;
-          const params = [row1.id, { passphrase: value.passphrase, services_restart: value.services_restart }];
+          const params: PoolUnlockQuery = [
+            row1.id,
+            { passphrase: value.passphrase, services_restart: value.services_restart },
+          ];
           const dialogRef = self.mdDialog.open(EntityJobComponent, {
             data: { title: T('Unlocking Pool') },
             disableClose: true,
@@ -464,11 +469,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
           name: T('Pool Options'),
           label: T('Pool Options'),
           onClick: (row: any) => {
-            // const autotrim = (row.autotrim === 'ON');
-
             const self = this;
             this.dialogConf = {
-              title: helptext.pool_options_dialog.dialog_title + row.name,
+              title: self.translate.instant('Edit Pool Options for {name}', { name: row.name }),
               confirmCheckbox: true,
               fieldConfig: [
                 {
@@ -496,7 +499,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 dialogRef.componentInstance.setDescription(helptext.pool_options_dialog.saving_pool_options);
                 dialogRef.componentInstance.setCall(method, payload);
                 dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.pipe(untilDestroyed(self, 'destroy')).subscribe((res: any) => {
+                dialogRef.componentInstance.success.pipe(untilDestroyed(self, 'destroy')).subscribe((res: Job<Pool>) => {
                   if (res) {
                     dialogRef.close();
                     entityDialog.dialogRef.close();
@@ -826,7 +829,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   this.dialogRef = this.mdDialog.open(EntityJobComponent, {
                     data: { title: T('Scrub Pool') },
                   });
-                  this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, 'START']);
+                  this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, PoolScrubAction.Start]);
                   this.dialogRef.componentInstance.submit();
                   this.dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((jobres: any) => {
                     this.dialogRef.close(false);
@@ -1513,12 +1516,11 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 const formValue = entityDialog.formValue;
                 let method: ApiMethod = 'pool.dataset.change_key';
                 const body: any = {};
-                const payload = [row.id];
                 if (formValue.inherit_encryption) {
                   if (row.is_encrypted_root) { // only try to change to inherit if not currently inheriting
                     method = 'pool.dataset.inherit_parent_encryption_properties';
                     entityDialog.loader.open();
-                    entityDialog.ws.call(method, payload).pipe(untilDestroyed(self, 'destroy')).subscribe(() => {
+                    entityDialog.ws.call(method, [row.id]).pipe(untilDestroyed(self, 'destroy')).subscribe(() => {
                       entityDialog.loader.close();
                       self.dialogService.info(
                         helptext.encryption_options_dialog.dialog_saved_title,
@@ -1545,7 +1547,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     body['passphrase'] = formValue.passphrase;
                     body['pbkdf2iters'] = formValue.pbkdf2iters;
                   }
-                  payload.push(body);
                   const dialogRef = self.mdDialog.open(EntityJobComponent, {
                     data: { title: helptext.encryption_options_dialog.save_encryption_options },
                     disableClose: true,
@@ -1553,7 +1554,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   dialogRef.componentInstance.setDescription(
                     helptext.encryption_options_dialog.saving_encryption_options,
                   );
-                  dialogRef.componentInstance.setCall(method, payload);
+                  dialogRef.componentInstance.setCall(method, [row.id, body]);
                   dialogRef.componentInstance.submit();
                   dialogRef.componentInstance.success.pipe(untilDestroyed(self, 'destroy')).subscribe((res: any) => {
                     if (res) {
@@ -1599,7 +1600,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 method: 'pool.dataset.lock',
                 data: params,
               });
-              ds.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
+              ds.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this, 'destroy')).subscribe((res: boolean) => {
                 force_umount = res;
               });
               ds.afterClosed().pipe(
@@ -1657,7 +1658,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 });
                 dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.id]);
                 dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
+                dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((res: Job<string>) => {
                   dialogRef.close();
                   this.dialogService.confirm({
                     title: this.translate.instant('Key for {id}', { id: rowData.id }),

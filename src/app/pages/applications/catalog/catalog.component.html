@@ -27,10 +27,9 @@
         </div>
         <div class="content" fxLayout="column" fxLayoutAlign="center center">
           <div class="catalog-title">
-            <h3 textLimiter threshold="15">{{ item.name }}</h3>
+            <h3 textLimiter threshold="15" content="{{item.name}}"></h3>
           </div>
-          <div class="catalog-version" textLimiter threshold="32" fxFlex="100%">
-            {{ item.latest_human_version }}
+          <div class="catalog-version" textLimiter threshold="32" fxFlex="100%" content="{{ item.latest_human_version }}">
           </div>
           <div class="button-row" (click)="$event.stopPropagation()">
             <button

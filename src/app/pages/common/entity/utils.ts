@@ -293,9 +293,9 @@ export class EntityUtils {
 
     const name = schemaConfig.variable;
 
-    let fieldConfig: FieldConfig<any> = {
+    let fieldConfig: FieldConfig = {
       name,
-    } as FieldConfig<any>;
+    } as FieldConfig;
 
     if (schemaConfig.schema.required !== undefined) {
       fieldConfig.required = schemaConfig.schema.required;

@@ -32,6 +32,8 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   dataSource: DirectoryServicesMonitorRow[] = [];
   showSpinner = false;
 
+  readonly DirectoryServiceState = DirectoryServiceState;
+
   constructor(private ws: WebSocketService, private router: Router) {}
 
   ngOnInit(): void {

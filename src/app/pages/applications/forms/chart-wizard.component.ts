@@ -7,6 +7,7 @@ import { ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
+import { ChartReleaseCreate } from 'app/interfaces/chart-release.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -136,26 +137,23 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   }
 
   customSubmit(data: any): void {
-    const apiCall = this.addCall;
     delete data.version;
 
     data = new EntityUtils().remapAppSubmitData(data);
-    const payload = [];
-    payload.push({
-      catalog: this.catalogApp.catalog.id,
-      item: this.catalogApp.name,
-      release_name: data.release_name,
-      train: this.catalogApp.catalog.train,
-      version: this.selectedVersionKey,
-      values: data,
-    });
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: helptext.installing,
       },
     });
-    this.dialogRef.componentInstance.setCall(apiCall, payload);
+    this.dialogRef.componentInstance.setCall(this.addCall, [{
+      catalog: this.catalogApp.catalog.id,
+      item: this.catalogApp.name,
+      release_name: data.release_name,
+      train: this.catalogApp.catalog.train,
+      version: this.selectedVersionKey,
+      values: data,
+    } as ChartReleaseCreate]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();

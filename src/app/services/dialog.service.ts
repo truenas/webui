@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -33,26 +33,9 @@ export class DialogService {
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>
   confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialog, unknown>
-  /**
-   * @deprecated Replace with newer syntax that uses options object.
-   */
-  confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean,
-    secondaryCheckBoxMsg?: string, method?: string, data?: any, tooltip?: any, hideCancel?: boolean, cancelMsg?: string,
-    disableClose?: boolean, textToCopy?: string, keyTextArea?: boolean): any
-  confirm(...args: any[]): any {
-    let options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox;
-    if (typeof args[0] === 'object') {
-      options = args[0];
-    } else {
-      options = _.zipObject(
-        [
-          'title', 'message', 'hideCheckBox', 'buttonMsg', 'secondaryCheckBox', 'secondaryCheckBoxMsg',
-          'method', 'data', 'tooltip', 'hideCancel', 'cancelMsg', 'disableClose', 'textToCopy', 'keyTextArea',
-        ],
-        args,
-      ) as ConfirmOptionsWithSecondaryCheckbox;
-    }
-
+  confirm(
+    options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
+  ): Observable<boolean> | MatDialogRef<ConfirmDialog, unknown> {
     const dialogRef = this.dialog.open(ConfirmDialog, { disableClose: options.disableClose || false });
 
     dialogRef.componentInstance.title = options.title;
@@ -91,8 +74,8 @@ export class DialogService {
       dialogRef.componentInstance.secondaryCheckBoxMsg = options.secondaryCheckBoxMsg;
       dialogRef.componentInstance.data = options.data;
       dialogRef.componentInstance.method = options.method;
-      dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: any) => {
-        const data = (options as ConfirmOptionsWithSecondaryCheckbox).data;
+      dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: boolean) => {
+        const data = options.data;
         if (selection) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
             data[0].reboot = !data[0].reboot;
@@ -142,7 +125,7 @@ export class DialogService {
 
   select(
     title: string,
-    options: any[],
+    options: Option[],
     optionPlaceHolder: string,
     method: ApiMethod,
     params?: any,
@@ -180,14 +163,20 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  dialogFormWide(conf: any): Observable<boolean> {
+  dialogFormWide(conf: DialogFormConfiguration): Observable<boolean> {
     const dialogRef = this.dialog.open(EntityDialogComponent, { width: '550px', disableClose: true });
     dialogRef.componentInstance.conf = conf;
 
     return dialogRef.afterClosed();
   }
 
-  doubleConfirm(title: string, message: string, name: string, confirmBox?: boolean, buttonMsg?: string): any {
+  doubleConfirm(
+    title: string,
+    message: string,
+    name: string,
+    confirmBox?: boolean,
+    buttonMsg?: string,
+  ): Observable<boolean> {
     const conf = {
       title,
       message,

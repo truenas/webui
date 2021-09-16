@@ -54,3 +54,7 @@ export interface SmbSharesecAce {
   };
   ae_who_sid: string;
 }
+
+export type SmbShareUpdate = {
+  timemachine_quota?: number;
+} & Partial<Omit<SmbShare, 'id' | 'locked' | 'vuid'>>;

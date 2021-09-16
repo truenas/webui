@@ -45,6 +45,18 @@ export type CatalogQueryParams = QueryParams<Catalog, {
   };
 }>;
 
+export interface CatalogUpdate {
+  preferred_trains: string[];
+}
+
+export interface CatalogCreate {
+  label: string;
+  repository: string;
+  branch: string;
+  preferred_trains: string[];
+  force: boolean;
+}
+
 export interface CatalogTrain {
   [application: string]: CatalogApp;
 }
@@ -119,4 +131,18 @@ export interface ChartMetadataDependency {
 
 export interface CatalogItems {
   [train: string]: CatalogTrain;
+}
+
+export interface CatalogItemsQueryParams {
+  cache?: boolean;
+  cache_only?: boolean;
+  retrieve_all_trains?: boolean;
+  retrieve_versions?: boolean;
+  trains?: string[];
+}
+
+export interface GetItemDetailsParams {
+  cache?: boolean;
+  catalog?: string;
+  train?: string;
 }

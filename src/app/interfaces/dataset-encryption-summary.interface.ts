@@ -10,6 +10,15 @@ export interface DatasetEncryptionSummary {
   valid_key: boolean;
 }
 
+export interface DatasetEncryptionSummaryQueryParams {
+  key_file?: boolean;
+  datasets?: {
+    name: string;
+    key: string;
+    passphrase: string;
+  }[];
+}
+
 export interface DatasetEncryptedRootKeys {
   [mountpoint: string]: string;
 }

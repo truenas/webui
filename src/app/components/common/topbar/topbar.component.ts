@@ -13,16 +13,23 @@ import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/
 import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { LayoutService } from 'app/core/services/layout.service';
+import { AlertLevel } from 'app/enums/alert-level.enum';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
 import { CoreEvent } from 'app/interfaces/events';
+import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { ResilverEvent } from 'app/interfaces/events/resilver-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import {
+  UserPreferencesEvent,
+  UserPreferencesReadyEvent,
+} from 'app/interfaces/events/user-preferences-event.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -192,14 +199,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     const notifications = this.notificationsService.getNotificationList();
 
     notifications.forEach((notificationAlert: NotificationAlert) => {
-      if (notificationAlert.dismissed === false && notificationAlert.level !== 'INFO') {
+      if (notificationAlert.dismissed === false && notificationAlert.level !== AlertLevel.Info) {
         this.notifications.push(notificationAlert);
       }
     });
     this.notificationsService.getNotifications().pipe(untilDestroyed(this)).subscribe((notifications1) => {
       this.notifications = [];
       notifications1.forEach((notificationAlert: NotificationAlert) => {
-        if (notificationAlert.dismissed === false && notificationAlert.level !== 'INFO') {
+        if (notificationAlert.dismissed === false && notificationAlert.level !== AlertLevel.Info) {
           this.notifications.push(notificationAlert);
         }
       });
@@ -207,7 +214,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
-    this.core.register({ observerClass: this, eventName: 'NetworkInterfacesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'NetworkInterfacesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: NetworkInterfacesChangedEvent) => {
       if (evt && evt.data.commit) {
         this.pendingNetworkChanges = false;
         this.checkNetworkCheckinWaiting();
@@ -225,7 +232,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       observerClass: this,
       eventName: 'Resilvering',
     }).pipe(untilDestroyed(this)).subscribe((evt: ResilverEvent) => {
-      if (evt.data.scan.state == 'FINISHED') {
+      if (evt.data.scan.state == PoolScanState.Finished) {
         this.showResilvering = false;
         this.resilveringDetails = '';
       } else {
@@ -247,10 +254,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
     this.core.emit({ name: 'SysInfoRequest', sender: this });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesEvent) => {
       this.preferencesHandler(evt);
     });
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
       this.preferencesHandler(evt);
     });
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
@@ -260,7 +267,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
   }
 
-  preferencesHandler(evt: CoreEvent): void {
+  preferencesHandler(evt: UserPreferencesEvent | UserPreferencesReadyEvent): void {
     if (this.isWaiting) {
       this.target.next({ name: 'SubmitComplete', sender: this });
       this.isWaiting = false;
@@ -275,7 +282,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.sysGenService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.legacy_ui) {
         this.exposeLegacyUI = res.legacy_ui;
-        window.localStorage.setItem('exposeLegacyUI', res.legacy_ui);
+        window.localStorage.setItem('exposeLegacyUI', res.legacy_ui as any);
       }
     });
   }

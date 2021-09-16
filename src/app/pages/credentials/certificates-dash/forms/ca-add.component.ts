@@ -4,6 +4,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_ca } from 'app/helptext/system/ca';
+import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -560,9 +561,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   private country: FormSelectConfig;
   private signedby: FormSelectConfig;
-  identifier: any;
+  identifier: string;
   usageField: FormSelectConfig;
-  private currenProfile: any;
+  private currenProfile: CertificateProfile;
   private entityForm: EntityWizardComponent;
 
   constructor(protected ws: WebSocketService, private modalService: ModalService,
@@ -619,7 +620,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
     if (fieldConfig.type == 'select') {
       const config = fieldConfig as FormSelectConfig;
-      const option = config.options.find((option: any) => option.value == value);
+      const option = config.options.find((option) => option.value == value);
       if (option) {
         value = option.label;
       }
@@ -759,7 +760,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       this.setSummary();
     });
 
-    this.getField('profiles').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.getField('profiles').valueChanges.pipe(untilDestroyed(this)).subscribe((res: CertificateProfile) => {
       // undo revious profile settings
       this.loadProfiels(this.currenProfile, true);
       // load selected profile settings
@@ -777,9 +778,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     this.setSummary();
   }
 
-  loadProfiels(value: any, reset?: boolean): void {
+  loadProfiels(value: CertificateProfile, reset?: boolean): void {
     if (value) {
-      Object.keys(value).forEach((item) => {
+      Object.keys(value).forEach((item: keyof CertificateProfile) => {
         if (item === 'cert_extensions') {
           Object.keys(value['cert_extensions']).forEach((type) => {
             Object.keys(value['cert_extensions'][type]).forEach((prop) => {

@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
@@ -11,6 +10,7 @@ import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
@@ -35,14 +35,14 @@ import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
 interface PoolDiskInfo {
-  name: any;
-  read: any;
-  write: any;
-  checksum: any;
+  name: string;
+  read: number;
+  write: number;
+  checksum: number;
   status: any;
   actions?: any;
-  path?: any;
-  guid: any;
+  path?: string;
+  guid: string;
 }
 
 @UntilDestroy()
@@ -155,8 +155,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     protected aroute: ActivatedRoute,
     protected core: CoreService,
     protected ws: WebSocketService,
-    protected translate: TranslateService,
-    protected router: Router,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected matDialog: MatDialog,
@@ -275,7 +273,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     this.loader.close();
   }
 
-  getAction(data: any, category: any, vdev_type: any): any {
+  getAction(data: any, category: any, vdev_type: VDevType): any {
     const actions = [{
       id: 'edit',
       label: helptext.actions_label.edit,
@@ -383,7 +381,13 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               entityDialog.dialogRef.close(true);
               entityDialog.parent.getData();
               entityDialog.parent.getUnusedDisk();
-              entityDialog.parent.dialogService.info(helptext.replace_disk.title, helptext.replace_disk.info_dialog_content + name + '.', '', 'info', true);
+              entityDialog.parent.dialogService.info(
+                helptext.replace_disk.title,
+                entityDialog.parent.translate.instant('Successfully replaced disk {disk}.', { disk: name }),
+                '',
+                'info',
+                true,
+              );
             });
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();
@@ -464,11 +468,11 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       _.find(actions, { id: 'offline' }).isHidden = true;
     }
 
-    if (vdev_type === 'MIRROR' || vdev_type === 'REPLACING' || vdev_type === 'SPARE') {
+    if (vdev_type === VDevType.Mirror || vdev_type === VDevType.Replacing || vdev_type === VDevType.Spare) {
       _.find(actions, { id: 'detach' }).isHidden = false;
     }
 
-    if (vdev_type === 'MIRROR') {
+    if (vdev_type === VDevType.Mirror) {
       _.find(actions, { id: 'remove' }).isHidden = true;
     }
 
@@ -541,7 +545,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }];
   }
 
-  parseData(data: any, category?: any, vdev_type?: any): PoolDiskInfo {
+  parseData(data: any, category?: any, vdev_type?: VDevType): PoolDiskInfo {
     let stats: any = {
       read_errors: 0,
       write_errors: 0,
@@ -580,7 +584,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     return item;
   }
 
-  parseTopolgy(data: VDev, category: PoolTopologyCategory, vdev_type?: any): TreeNode {
+  parseTopolgy(data: VDev, category: PoolTopologyCategory, vdev_type?: VDevType): TreeNode {
     const node: TreeNode = {};
     node.data = this.parseData(data, category, vdev_type);
     node.expanded = true;
@@ -640,9 +644,8 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   }
 
   onClickEdit(pk: string): void {
-    const diskForm = new DiskFormComponent(this.router, this.ws, this.aroute);
+    const diskForm = this.modalService.openInSlideIn(DiskFormComponent);
     diskForm.inIt(pk);
-    this.modalService.open('slide-in-form', diskForm);
   }
 
   poolRemove(id: number, label: number | string): void {

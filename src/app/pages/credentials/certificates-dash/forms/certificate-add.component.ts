@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
-import { Certificate } from 'app/interfaces/certificate.interface';
+import { Certificate, CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -634,9 +634,9 @@ export class CertificateAddComponent implements WizardConfiguration {
   private country: FormSelectConfig;
   private signedby: FormSelectConfig;
   private csrlist: FormSelectConfig;
-  identifier: any;
+  identifier: string;
   usageField: FormSelectConfig;
-  private currentProfile: any;
+  private currentProfile: CertificateProfile;
 
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,
     protected systemGeneralService: SystemGeneralService, private modalService: ModalService,
@@ -695,7 +695,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     const profilesField: FormSelectConfig = this.getTarget('profiles');
     this.ws.call('certificate.profiles').pipe(untilDestroyed(this)).subscribe((profiles) => {
       Object.keys(profiles).forEach((item) => {
-        profilesField.options.push({ label: item, value: (profiles[item] as any) });
+        profilesField.options.push({ label: item, value: (profiles[item]) });
       });
     });
   }
@@ -889,7 +889,7 @@ export class CertificateAddComponent implements WizardConfiguration {
       this.setSummary();
     });
 
-    this.getField('profiles').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.getField('profiles').valueChanges.pipe(untilDestroyed(this)).subscribe((res: CertificateProfile) => {
       // undo revious profile settings
       this.loadProfiles(this.currentProfile, true);
       // load selected profile settings
@@ -915,9 +915,9 @@ export class CertificateAddComponent implements WizardConfiguration {
     this.setSummary();
   }
 
-  loadProfiles(value: any, reset?: boolean): void {
+  loadProfiles(value: CertificateProfile, reset?: boolean): void {
     if (value) {
-      Object.keys(value).forEach((item) => {
+      Object.keys(value).forEach((item: keyof CertificateProfile) => {
         if (item === 'cert_extensions') {
           Object.keys(value['cert_extensions']).forEach((type) => {
             Object.keys(value['cert_extensions'][type]).forEach((prop) => {
@@ -964,7 +964,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     return stepNumber;
   }
 
-  getField(fieldName: any): AbstractControl {
+  getField(fieldName: string): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
       const target = (< FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];

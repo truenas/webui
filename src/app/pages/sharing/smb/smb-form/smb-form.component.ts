@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable, of } from 'rxjs';
 import {
@@ -22,7 +23,6 @@ import {
   AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -300,6 +300,7 @@ export class SMBFormComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
+    private translate: TranslateService,
   ) {
     combineLatest([this.ws.call('sharing.smb.query', []), this.modalService.getRow$])
       .pipe(map(([shares, pk]) => shares.filter((share) => share.id !== pk).map((share) => share.name)))
@@ -479,13 +480,14 @@ export class SMBFormComponent implements FormConfiguration {
                       if (doEnableService) {
                         return this.ws.call('service.update', [cifsService.id, { enable: true }]).pipe(
                           switchMap(() => this.ws.call('service.start', [cifsService.service])),
-                          switchMap(() =>
-                            this.dialog.info(
-                              T('SMB') + shared.dialog_started_title,
-                              T('The SMB') + shared.dialog_started_message,
+                          switchMap(() => {
+                            return this.dialog.info(
+                              this.translate.instant('{service} Service', { service: 'SMB' }),
+                              this.translate.instant('The {service} service has been enabled.', { service: 'SMB' }),
                               '250px',
                               'info',
-                            )),
+                            );
+                          }),
                           catchError((error) =>
                             this.dialog.errorReport(error.error, error.reason, error.trace.formatted)),
                         );

@@ -9,3 +9,5 @@ export interface KerberosKeytab {
   id: number;
   name: string;
 }
+
+export type KerberosKeytabUpdate = Omit<KerberosKeytab, 'id'>;

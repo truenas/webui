@@ -6,17 +6,15 @@ import {
   AfterViewInit,
   OnDestroy,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { GlobalAction } from 'app/components/common/page-title/page-title.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
+import { GlobalAction } from 'app/interfaces/global-action.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard/volume-import-wizard.component';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
-import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -43,11 +41,6 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
   constructor(
     private core: CoreService,
     private modalService: ModalService,
-    private ws: WebSocketService,
-    private loader: AppLoaderService,
-    private dialog: MatDialog,
-    private dialogService: DialogService,
-    private messageService: MessageService,
   ) {}
 
   ngOnDestroy(): void {
@@ -95,16 +88,6 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
   }
 
   onClickImport(): void {
-    this.modalService.open(
-      'slide-in-form',
-      new VolumeImportWizardComponent(
-        this.ws,
-        this.loader,
-        this.dialog,
-        this.dialogService,
-        this.messageService,
-        this.modalService,
-      ),
-    );
+    this.modalService.openInSlideIn(VolumeImportWizardComponent);
   }
 }

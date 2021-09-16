@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/2fa';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -135,22 +136,23 @@ export class TwoFactorComponent implements FormConfiguration {
       id: 'enable_action',
       name: helptext.two_factor.enable_button,
       function: () => {
-        this.dialog.confirm(helptext.two_factor.confirm_dialog.title,
-          helptext.two_factor.confirm_dialog.message, true,
-          helptext.two_factor.confirm_dialog.btn).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.loader.open();
-            this.ws.call('auth.twofactor.update', [{ enabled: true }]).pipe(untilDestroyed(this)).subscribe(() => {
-              this.loader.close();
-              this.TwoFactorEnabled = true;
-              this.updateEnabledStatus();
-              this.updateSecretAndUri();
-            }, (err) => {
-              this.loader.close();
-              this.dialog.errorReport(helptext.two_factor.error,
-                err.reason, err.trace.formatted);
-            });
-          }
+        this.dialog.confirm({
+          title: helptext.two_factor.confirm_dialog.title,
+          message: helptext.two_factor.confirm_dialog.message,
+          hideCheckBox: true,
+          buttonMsg: helptext.two_factor.confirm_dialog.btn,
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          this.loader.open();
+          this.ws.call('auth.twofactor.update', [{ enabled: true }]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.loader.close();
+            this.TwoFactorEnabled = true;
+            this.updateEnabledStatus();
+            this.updateSecretAndUri();
+          }, (err) => {
+            this.loader.close();
+            this.dialog.errorReport(helptext.two_factor.error,
+              err.reason, err.trace.formatted);
+          });
         });
       },
     },
@@ -253,15 +255,16 @@ export class TwoFactorComponent implements FormConfiguration {
     if (data.otp_digits === this.digitsOnLoad && data.interval === this.intervalOnLoad) {
       this.doSubmit(data);
     } else {
-      this.dialog.confirm(helptext.two_factor.submitDialog.title,
-        helptext.two_factor.submitDialog.message, true, helptext.two_factor.submitDialog.btn)
-        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.intervalOnLoad = data.interval;
-            this.digitsOnLoad = data.otp_digits;
-            this.doSubmit(data, true);
-          }
-        });
+      this.dialog.confirm({
+        title: helptext.two_factor.submitDialog.title,
+        message: helptext.two_factor.submitDialog.message,
+        hideCheckBox: true,
+        buttonMsg: helptext.two_factor.submitDialog.btn,
+      }).pipe(untilDestroyed(this)).subscribe(() => {
+        this.intervalOnLoad = data.interval;
+        this.digitsOnLoad = data.otp_digits;
+        this.doSubmit(data, true);
+      });
     }
   }
 
@@ -293,21 +296,22 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   renewSecret(): void {
-    this.dialog.confirm(helptext.two_factor.renewSecret.title,
-      helptext.two_factor.renewSecret.message, true,
-      helptext.two_factor.renewSecret.btn).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.loader.open();
-        this.ws.call('auth.twofactor.renew_secret').pipe(untilDestroyed(this)).subscribe(() => {
-          this.loader.close();
-          this.updateSecretAndUri();
-        },
-        (err) => {
-          this.loader.close();
-          this.dialog.errorReport(helptext.two_factor.error,
-            err.reason, err.trace.formatted);
-        });
-      }
+    this.dialog.confirm({
+      title: helptext.two_factor.renewSecret.title,
+      message: helptext.two_factor.renewSecret.message,
+      hideCheckBox: true,
+      buttonMsg: helptext.two_factor.renewSecret.btn,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.loader.open();
+      this.ws.call('auth.twofactor.renew_secret').pipe(untilDestroyed(this)).subscribe(() => {
+        this.loader.close();
+        this.updateSecretAndUri();
+      },
+      (err) => {
+        this.loader.close();
+        this.dialog.errorReport(helptext.two_factor.error,
+          err.reason, err.trace.formatted);
+      });
     });
   }
 

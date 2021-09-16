@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, Route } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { ProductType } from 'app/enums/product-type.enum';
 import { WebSocketService } from 'app/services/ws.service';
+
+export interface EntityDashboardRoutePart extends Route {
+  addPath?: string;
+}
 
 @UntilDestroy()
 @Component({
@@ -13,11 +17,9 @@ import { WebSocketService } from 'app/services/ws.service';
   styleUrls: ['./entity-dashboard.component.scss'],
 })
 export class EntityDashboardComponent implements OnInit {
-  routeParts: any[] = [];
+  routeParts: EntityDashboardRoutePart[] = [];
   protected parent = '';
 
-  protected freenas_exclude = ['failover', 'viewenclosure'];
-  protected truenas_exclude = ['acmedns'];
   protected scale_exclude = ['nis', 'multipaths'];
   protected enterpriseOnly = ['viewenclosure'];
 
@@ -34,7 +36,7 @@ export class EntityDashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.parent = this.aroute.parent.parent.routeConfig.path;
-    const routeConfigs: any = this.aroute.parent.routeConfig.children;
+    const routeConfigs: EntityDashboardRoutePart[] = this.aroute.parent.routeConfig.children;
     for (const i in routeConfigs) {
       if (routeConfigs[i].path !== '' && routeConfigs[i].path.indexOf(':') < 0) {
         if (_.find(routeConfigs[i].children, { path: 'add' })) {
@@ -72,11 +74,11 @@ export class EntityDashboardComponent implements OnInit {
     this.routeParts = _.remove(this.routeParts, (r) => r['path'] !== element);
   }
 
-  goList(item: any): void {
+  goList(item: EntityDashboardRoutePart): void {
     this.router.navigate(new Array('/').concat([this.parent, item.path]));
   }
 
-  goAdd(item: any): void {
+  goAdd(item: EntityDashboardRoutePart): void {
     this.router.navigate(new Array('/').concat([this.parent, item.path, item.addPath]));
   }
 }

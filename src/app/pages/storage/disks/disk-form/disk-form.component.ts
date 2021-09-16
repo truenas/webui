@@ -180,7 +180,7 @@ export class DiskFormComponent implements FormConfiguration {
 
   title: string;
 
-  rowid: any;
+  rowid: string;
 
   constructor(
     private _router: Router,
@@ -190,7 +190,7 @@ export class DiskFormComponent implements FormConfiguration {
   }
 
   resourceTransformIncomingRestData(data: Disk): Disk {
-    const transformed: any = { ...data };
+    const transformed = { ...data };
     delete transformed.passwd;
     return transformed;
   }

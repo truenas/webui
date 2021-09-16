@@ -1,96 +1,95 @@
 <div fxLayout="row wrap" fxLayoutAlign="center center">
   <mat-card class="chart-item" *ngFor="let item of filteredChartItems">
-      <div class="content-wrapper" fxLayout="row">
-        <div class="logo-container">
-          <div class="logo">
-            <img [src]="item.chart_metadata.icon" [src-fallback]="imagePlaceholder"/>
-          </div>
-          <div class="badge-area">
-            <div class="partner-badge capitalized-text">
-                {{ item.catalog }}
-            </div>
-            <div class="train-badge capitalized-text">
-                {{ item.catalog_train }}
-            </div>
-          </div>
-          <mat-checkbox color="primary" class="bulk-checkbox" [(ngModel)]="item.selected" (change)="onChangeCheck()"></mat-checkbox>
+    <div class="content-wrapper" fxLayout="row">
+      <div class="logo-container">
+        <div class="logo">
+          <img [src]="item.chart_metadata.icon" [src-fallback]="imagePlaceholder"/>
         </div>
-        <div class="content-box"  (click)="showChartEvents(item.name)">
-          <div class="content">
-            <strong class="chart-name" textLimiter threshold="20">{{ item.name }}</strong>
-            <div><span class="version" textLimiter threshold="50"> {{ item.human_version}}</span></div>
-            <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
-              <span class="update-label" matTooltip="Available version: {{ item.human_latest_version }}">{{ 'Update available' | translate}}</span>
-            </div>
-            <ng-template #elseBlock><div class="update-label">{{ 'Up to date' | translate }}</div></ng-template>
+        <div class="badge-area">
+          <div class="partner-badge capitalized-text">
+            {{ item.catalog }}
           </div>
+          <div class="train-badge capitalized-text">
+            {{ item.catalog_train }}
+          </div>
+        </div>
+        <mat-checkbox color="primary" class="bulk-checkbox" [(ngModel)]="item.selected" (change)="onChangeCheck()"></mat-checkbox>
+      </div>
+      <div class="content-box"  (click)="showChartEvents(item.name)">
+        <div class="content">
+          <strong class="chart-name" textLimiter threshold="20" content="{{ item.name }}"></strong>
+          <div><span class="version" textLimiter threshold="50" content="{{ item.human_version}}"></span></div>
+          <div *ngIf="item.update_available || item.container_images_update_available; else elseBlock">
+            <span class="update-label" matTooltip="Available version: {{ item.human_latest_version }}">{{ 'Update available' | translate}}</span>
+          </div>
+          <ng-template #elseBlock><div class="update-label">{{ 'Up to date' | translate }}</div></ng-template>
+        </div>
 
-          <div class="chart-button-row" fxLayout="row" fxLayoutAlign="end end" (click)="$event.stopPropagation()">
-            <button mat-button (click)="portal(item)" *ngIf="item.status === ChartReleaseStatus.Active && item.portals && item.portals.web_portal && item.portals.web_portal[0]"
+        <div class="chart-button-row" fxLayout="row" fxLayoutAlign="end end" (click)="$event.stopPropagation()">
+          <button mat-button (click)="portal(item)" *ngIf="item.status === ChartReleaseStatus.Active && item.portals && item.portals.web_portal && item.portals.web_portal[0]"
               ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-portal">
-              {{ 'Portal' | translate }}
-            </button>
-            <button mat-button (click)="stop(item.name)" *ngIf="item.status !== ChartReleaseStatus.Stopped"
-              ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-stop">
-              {{ 'Stop' | translate }}
-            </button>
-            <button mat-button (click)="start(item.name)" *ngIf="item.status === ChartReleaseStatus.Stopped"
-              ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-start">
-              {{ 'Start' | translate }}
-            </button>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="ports" textLimiter threshold="28">
-        {{ appService.getPorts(item) | lowercase }}
-      </div>
-
-      <div class="more-info">
-          <span class="status" [ngClass]="item.status === ChartReleaseStatus.Active ? 'active' : 'other'">{{item.status}}
-            <ng-container *ngIf="item.pod_status.desired > 1">{{ item.pod_status.available }}/{{ item.pod_status.desired }}</ng-container>
-
-          </span>
-          <button name="chart-actions" mat-icon-button [matMenuTriggerFor]="actionsMenu"
-            ix-auto ix-auto-type="button" ix-auto-identifier="chart-actions">
-            <mat-icon>more_vert</mat-icon>
+            {{ 'Portal' | translate }}
           </button>
-          <mat-menu #actionsMenu="matMenu">
-            <button name="update" mat-menu-item (click)="update(item.name)"
+          <button mat-button (click)="stop(item.name)" *ngIf="item.status !== ChartReleaseStatus.Stopped"
+              ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-stop">
+            {{ 'Stop' | translate }}
+          </button>
+          <button mat-button (click)="start(item.name)" *ngIf="item.status === ChartReleaseStatus.Stopped"
+              ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-start">
+            {{ 'Start' | translate }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="ports" textLimiter threshold="28" content="{{ appService.getPorts(item) | lowercase }}">
+    </div>
+
+    <div class="more-info">
+      <span class="status" [ngClass]="item.status === ChartReleaseStatus.Active ? 'active' : 'other'">{{item.status}}
+        <ng-container *ngIf="item.pod_status.desired > 1">{{ item.pod_status.available }}/{{ item.pod_status.desired }}</ng-container>
+
+      </span>
+      <button name="chart-actions" mat-icon-button [matMenuTriggerFor]="actionsMenu"
+            ix-auto ix-auto-type="button" ix-auto-identifier="chart-actions">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #actionsMenu="matMenu">
+        <button name="update" mat-menu-item (click)="update(item.name)"
               [disabled]="!item.update_available && !item.container_images_update_available"
               ix-auto ix-auto-type="option" ix-auto-identifier="update">
-              <mat-icon>call_made</mat-icon>
-              <span>{{'Upgrade' | translate}}</span>
-            </button>
-            <button name="roll-back" mat-menu-item (click)="rollback(item.name)"
+          <mat-icon>call_made</mat-icon>
+          <span>{{'Upgrade' | translate}}</span>
+        </button>
+        <button name="roll-back" mat-menu-item (click)="rollback(item.name)"
               [disabled]="!item.history"
               ix-auto ix-auto-type="option" ix-auto-identifier="rollback">
-              <mat-icon>replay</mat-icon>
-              <span>{{'Roll Back' | translate}}</span>
-            </button>
-            <button name="edit" mat-menu-item (click)="edit(item.name)"
+          <mat-icon>replay</mat-icon>
+          <span>{{'Roll Back' | translate}}</span>
+        </button>
+        <button name="edit" mat-menu-item (click)="edit(item.name)"
               ix-auto ix-auto-type="option" ix-auto-identifier="edit">
-              <mat-icon>edit</mat-icon>
-              <span>{{'Edit' | translate}}</span>
-            </button>
-            <button name="shell" mat-menu-item (click)="openShell(item.name)"
+          <mat-icon>edit</mat-icon>
+          <span>{{'Edit' | translate}}</span>
+        </button>
+        <button name="shell" mat-menu-item (click)="openShell(item.name)"
               ix-auto ix-auto-type="option" ix-auto-identifier="shell">
-              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-console-line" style="font-size:24px;line-height: 22px;"></mat-icon>
-              <span>{{'Shell' | translate}}</span>
-            </button>
-            <button name="logs" mat-menu-item (click)="openLogs(item.name)"
+          <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-console-line" style="font-size:24px;line-height: 22px;"></mat-icon>
+          <span>{{'Shell' | translate}}</span>
+        </button>
+        <button name="logs" mat-menu-item (click)="openLogs(item.name)"
               ix-auto ix-auto-type="option" ix-auto-identifier="shell">
-              <mat-icon>description</mat-icon>
-              <span>{{'Logs' | translate}}</span>
-            </button>
-            <button name="delete" mat-menu-item (click)="delete(item.name)"
+          <mat-icon>description</mat-icon>
+          <span>{{'Logs' | translate}}</span>
+        </button>
+        <button name="delete" mat-menu-item (click)="delete(item.name)"
               ix-auto ix-auto-type="option" ix-auto-identifier="delete">
-              <mat-icon>delete</mat-icon>
-              <span>{{'Delete' | translate}}</span>
-            </button>
-        </mat-menu>
-      </div>
+          <mat-icon>delete</mat-icon>
+          <span>{{'Delete' | translate}}</span>
+        </button>
+      </mat-menu>
+    </div>
   </mat-card>
 
   <entity-empty *ngIf="filteredChartItems.length == 0" [conf]="emptyPageConf"></entity-empty>

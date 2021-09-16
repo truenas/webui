@@ -3,6 +3,7 @@ import { FormControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset-quota-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
@@ -27,9 +28,10 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
   title = helptext.groups.table_title;
   protected entityList: EntityTableComponent;
   quotaValue: number;
-  protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['used_bytes', '>', 0], ['obj_used', '>', 0]]]];
+  protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
   protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected useFullFilter = true;
+  route_add: string[];
 
   columns = [
     {
@@ -63,12 +65,6 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
       label: T('Toggle Display'),
       onClick: () => {
         this.toggleDisplay();
-      },
-    },
-    {
-      label: T('Set Quotas (Bulk)'),
-      onClick: () => {
-        this.router.navigate(['storage', 'group-quotas-form', this.pk]);
       },
     },
     ] as EntityTableAction[];
@@ -141,13 +137,13 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
               const entryData = data.formValue;
               const payload = [];
               payload.push({
-                quota_type: 'GROUP',
-                id: res[0].id,
+                quota_type: DatasetQuotaType.Group,
+                id: String(res[0].id),
                 quota_value: self.storageService.convertHumanStringToNum(entryData.data_quota),
               },
               {
-                quota_type: 'GROUPOBJ',
-                id: res[0].id,
+                quota_type: DatasetQuotaType.GroupObj,
+                id: String(res[0].id),
                 quota_value: entryData.obj_quota,
               });
               self.loader.open();
@@ -175,6 +171,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
     this.entityList = entityList;
     const paramMap = this.aroute.snapshot.params;
     this.pk = paramMap.pk;
+    this.route_add = ['storage', 'group-quotas-form', this.pk];
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
   }
 
@@ -200,7 +197,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
   }
 
   blurEvent(parent: this): void {
-    (<HTMLInputElement>document.getElementById('data-quota_input')).value = parent.storageService.humanReadable;
+    (document.getElementById('data-quota_input') as HTMLInputElement).value = parent.storageService.humanReadable;
   }
 
   toggleDisplay(): void {
@@ -214,14 +211,17 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
       message = helptext.groups.filter_dialog.message_filter;
       button = helptext.groups.filter_dialog.button_filter;
     }
-    this.dialogService.confirm(title, message, true, button).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.entityList.loader.open();
-        this.useFullFilter = !this.useFullFilter;
-        window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
-        this.entityList.getData();
-        this.loader.close();
-      }
+    this.dialogService.confirm({
+      title,
+      message,
+      hideCheckBox: true,
+      buttonMsg: button,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.entityList.loader.open();
+      this.useFullFilter = !this.useFullFilter;
+      window.localStorage.setItem('useFullFilter', this.useFullFilter.toString());
+      this.entityList.getData();
+      this.loader.close();
     });
   }
 

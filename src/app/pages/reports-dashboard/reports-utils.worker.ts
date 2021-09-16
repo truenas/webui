@@ -23,7 +23,7 @@ function arrayAvg(input: number[]): number {
   return maxDecimals(avg);
 }
 
-function avgFromReportData(input: any[]): number[][] {
+function avgFromReportData(input: number[][]): number[][] {
   const output: number[][] = [];
   input.forEach((item) => {
     const avg = arrayAvg(item);
@@ -111,7 +111,7 @@ function convertByKilo(input: number): { value: number; suffix: string; shortNam
 }
 
 function formatValue(value: number, units: string): string | number {
-  let output: any = value;
+  let output: string | number = value;
   if (typeof value !== 'number') { return value; }
 
   let converted;
@@ -347,6 +347,9 @@ addEventListener('message', ({ data }) => {
     case 'ProcessCommandsAsReportData':
       output = processCommands(evt.data);
       emit({ name: 'ReportData', data: output, sender: evt.sender });
+      break;
+    case 'FetchingError':
+      emit({ name: 'ReportData', data, sender: evt.sender });
       break;
   }
 });

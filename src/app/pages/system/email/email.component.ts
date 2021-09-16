@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
+import { MatRadioChange } from '@angular/material/radio/radio';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -11,6 +13,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { helptext_system_email } from 'app/helptext/system/email';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
+import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -106,7 +109,7 @@ export class EmailComponent implements FormConfiguration {
         {
           type: 'radio',
           name: 'send_mail_method',
-          onChange: (data) => {
+          onChange: (data: { event: MatRadioChange }) => {
             this.sendMailMethod.setValue(data.event.value);
           },
           placeholder: helptext_system_email.send_mail_method.placeholder,
@@ -155,7 +158,7 @@ export class EmailComponent implements FormConfiguration {
         {
           type: 'checkbox',
           name: 'smtp',
-          onChange: (data: any) => {
+          onChange: (data: { event: MatCheckboxChange }) => {
             this.smtp.setValue(data.event.checked);
           },
           placeholder: helptext_system_email.auth.smtp.placeholder,
@@ -210,7 +213,7 @@ export class EmailComponent implements FormConfiguration {
               + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
             window.addEventListener('message', doAuth, false);
 
-            function doAuth(message: any): void {
+            function doAuth(message: OauthMessage<OAuthData>): void {
               if (message.data.oauth_portal) {
                 if (message.data.error) {
                   dialogService.errorReport(T('Error'), message.data.error);
@@ -242,7 +245,7 @@ export class EmailComponent implements FormConfiguration {
     protected loader: AppLoaderService,
   ) {}
 
-  resourceTransformIncomingRestData(data: MailConfig): any {
+  resourceTransformIncomingRestData(data: MailConfig): MailConfig {
     if (_.isEmpty(data.oauth)) {
       this.sendMailMethod.setValue(true);
     } else {

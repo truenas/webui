@@ -150,18 +150,19 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       onClick: (row: Disk) => {
         this.router.navigate(['/', 'storage', 'disks', 'edit', row.identifier]);
       },
-    }, {
-      id: parentRow.name,
-      icon: 'format_list_bulleted',
-      name: 'manual_test',
-      label: T('Manual Test'),
-      onClick: (row: Disk) => {
-        this.manualTest(row);
-      },
     }];
 
     for (const key in this.SMARTdiskChoices) {
       if (key === parentRow.identifier) {
+        actions.push({
+          id: parentRow.name,
+          icon: 'format_list_bulleted',
+          name: 'manual_test',
+          label: T('Manual Test'),
+          onClick: (row: Disk) => {
+            this.manualTest(row);
+          },
+        });
         actions.push({
           id: parentRow.name,
           icon: 'format_list_bulleted',

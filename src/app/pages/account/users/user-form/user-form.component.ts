@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { AbstractControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/account/user-form';
@@ -306,13 +305,14 @@ export class UserFormComponent implements FormConfiguration {
   private groups: FormSelectConfig;
   private password_disabled: AbstractControl;
 
-  constructor(protected router: Router,
+  constructor(
     protected ws: WebSocketService,
     protected storageService: StorageService,
     public loader: AppLoaderService,
     private userService: UserService,
     protected validationService: ValidationService,
-    private modalService: ModalService) {
+    private modalService: ModalService,
+  ) {
     this.ws.call('user.query').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.namesInUse.push(...res.map((user) => user.username));

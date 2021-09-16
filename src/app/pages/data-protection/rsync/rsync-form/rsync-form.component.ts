@@ -256,7 +256,7 @@ export class RsyncFormComponent implements FormConfiguration {
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.rsync_task_add : helptext.rsync_task_edit;
 
-    this.user_field = this.fieldSets.config('user');
+    this.user_field = this.fieldSets.config('user') as FormComboboxConfig;
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
       for (let i = 0; i < items.length; i++) {
         this.user_field.options.push({

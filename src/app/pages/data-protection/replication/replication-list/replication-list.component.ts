@@ -1,8 +1,9 @@
 import { DatePipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -82,15 +83,9 @@ export class ReplicationListComponent implements EntityTableConfig {
     private ws: WebSocketService,
     private dialog: DialogService,
     protected job: JobService,
-    protected storage: StorageService,
-    protected http: HttpClient,
     protected modalService: ModalService,
-    protected taskService: TaskService,
-    protected keychainCredentialService: KeychainCredentialService,
-    protected replicationService: ReplicationService,
     protected loader: AppLoaderService,
-    protected datePipe: DatePipe,
-    protected entityFormService: EntityFormService,
+    private translate: TranslateService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -118,28 +113,30 @@ export class ReplicationListComponent implements EntityTableConfig {
         name: 'run',
         label: T('Run Now'),
         onClick: (row: ReplicationTaskUi) => {
-          this.dialog.confirm(T('Run Now'), T('Replicate <i>') + row.name + T('</i> now?'), true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-            if (res) {
-              row.state = { state: JobState.Running };
-              this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
-                (jobId: number) => {
-                  this.dialog.info(
-                    T('Task started'),
-                    T('Replication <i>') + row.name + T('</i> has started.'),
-                    '500px',
-                    'info',
-                    true,
-                  );
-                  this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
-                    row.state = { state: job.state };
-                    row.job = job;
-                  });
-                },
-                (err) => {
-                  new EntityUtils().handleWSError(this.entityList, err);
-                },
-              );
-            }
+          this.dialog.confirm({
+            title: T('Run Now'),
+            message: T('Replicate <i>') + row.name + T('</i> now?'),
+            hideCheckBox: true,
+          }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+            row.state = { state: JobState.Running };
+            this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
+              (jobId: number) => {
+                this.dialog.info(
+                  T('Task started'),
+                  this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
+                  '500px',
+                  'info',
+                  true,
+                );
+                this.job.getJobStatus(jobId).pipe(untilDestroyed(this)).subscribe((job: Job) => {
+                  row.state = { state: job.state };
+                  row.job = job;
+                });
+              },
+              (err) => {
+                new EntityUtils().handleWSError(this.entityList, err);
+              },
+            );
           });
         },
       },
@@ -252,33 +249,10 @@ export class ReplicationListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.modalService.open(
-      'slide-in-form',
-      new ReplicationWizardComponent(
-        this.keychainCredentialService,
-        this.loader,
-        this.dialog,
-        this.ws,
-        this.replicationService,
-        this.datePipe,
-        this.entityFormService,
-        this.modalService,
-      ),
-    );
+    this.modalService.openInSlideIn(ReplicationWizardComponent);
   }
 
   doEdit(id: number): void {
-    this.modalService.open(
-      'slide-in-form',
-      new ReplicationFormComponent(
-        this.ws,
-        this.taskService,
-        this.storage,
-        this.keychainCredentialService,
-        this.replicationService,
-        this.modalService,
-      ),
-      id,
-    );
+    this.modalService.openInSlideIn(ReplicationFormComponent, id);
   }
 }

@@ -37,12 +37,6 @@ div.table-container {
   }
 }
 
-.text-overflow-ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
 .table-component {
   max-width: 100%;
   table-layout: fixed;
@@ -92,4 +86,29 @@ button div.label-warning-icon {
 button div.label-warning-icon .mat-icon {
   font-size: 14px;
   margin: 0;
+}
+
+.path-locked-status {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+
+  mat-icon {
+    cursor: help;
+    flex-shrink: 0;
+    font-size: 14px;
+    height: 14px;
+    top: auto;
+    vertical-align: middle;
+    width: 14px;
+
+    &.prepend {
+      margin-right: 4px;
+    }
+
+    &.append {
+      margin-left: 4px;
+    }
+  }
 }

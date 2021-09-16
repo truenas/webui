@@ -11,6 +11,7 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { FormSelectOption } from 'app/pages/common/entity/entity-form/models/form-select-option.interface';
 import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
 import { T } from 'app/translate-marker';
@@ -71,7 +72,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
 
     // When the default value is null, Change it to 'null_value' string
     if (this.control.value === null) {
-      (this.control as any).value = NULL_VALUE;
+      this.control.setValue(NULL_VALUE);
     }
 
     // if control has a value on init
@@ -89,7 +90,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: any) => {
       // When set the value to null, Change it to 'null_value' string
       if (this.control.value === null) {
-        (this.control as any).value = NULL_VALUE;
+        this.control.setValue(NULL_VALUE);
       }
 
       if (evt) {
@@ -132,7 +133,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     }
   }
 
-  showAlert(option: any): void {
+  showAlert(option: FormSelectOption): void {
     if (!this.shouldAlertOnOption(option) || this.disableAlert) return;
 
     const conf: DialogFormConfiguration = {
@@ -157,7 +158,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this.dialog.dialogForm(conf);
   }
 
-  onSelect(option: any): void {
+  onSelect(option: FormSelectOption): void {
     if (this.config.alert) {
       this.showAlert(option);
     }
@@ -200,7 +201,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     return option.hiddenFromDisplay ? option.hiddenFromDisplay : false;
   }
 
-  onToggleSelect(option: any): void {
+  onToggleSelect(option: FormSelectOption): void {
     if (!this.config.multiple) {
       this.onSelect(option);
       return;
@@ -226,7 +227,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this.formValue = '';
   }
 
-  shouldAlertOnOption(option: any): boolean {
+  shouldAlertOnOption(option: FormSelectOption): boolean {
     return this.config.alert ? this.config.alert.forValues.findIndex((v) => v == option.value) >= 0 : false;
   }
 }

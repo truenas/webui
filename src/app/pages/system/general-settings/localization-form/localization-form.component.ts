@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -89,10 +91,17 @@ export class LocalizationFormComponent implements FormConfiguration {
     private sysGeneralService: SystemGeneralService,
     public localeService: LocaleService,
     private modalService: ModalService,
-  ) {
-    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.configData = res;
-    });
+  ) {}
+
+  prerequisite(): Promise<boolean> {
+    return this.sysGeneralService.getGeneralConfig$.pipe(
+      map((configData) => {
+        this.configData = configData;
+        return true;
+      }),
+      take(1),
+      untilDestroyed(this),
+    ).toPromise();
   }
 
   afterInit(entityEdit: EntityFormComponent): void {
@@ -110,9 +119,9 @@ export class LocalizationFormComponent implements FormConfiguration {
 
     this.sysGeneralService.timezoneChoices().pipe(untilDestroyed(this)).subscribe((tzChoices) => {
       tzChoices = _.sortBy(tzChoices, [(o) => o.label.toLowerCase()]);
-      const config: FormComboboxConfig = this.fieldSets
+      const config = this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
-        .config.find((config) => config.name === 'timezone');
+        .config.find((config) => config.name === 'timezone') as FormComboboxConfig;
       config.options = tzChoices;
       this.entityForm.formGroup.controls['timezone'].setValue(this.configData.timezone);
     });
@@ -164,9 +173,9 @@ export class LocalizationFormComponent implements FormConfiguration {
           : `${key} (${this.languageList[key]})`,
         value: key,
       }));
-      const config: FormComboboxConfig = this.fieldSets
+      const config = this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
-        .config.find((config) => config.name === 'language');
+        .config.find((config) => config.name === 'language') as FormComboboxConfig;
       config.options = _.sortBy(
         options,
         this.sortLanguagesByName ? 'label' : 'value',
@@ -184,7 +193,7 @@ export class LocalizationFormComponent implements FormConfiguration {
     this.language.setLanguage(value.language);
   }
 
-  customSubmit(body: any): any {
+  customSubmit(body: any): Subscription {
     this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
     delete body.date_format;
     delete body.time_format;

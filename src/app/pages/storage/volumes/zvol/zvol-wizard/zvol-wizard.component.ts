@@ -14,7 +14,7 @@ import { DatasetType } from 'app/enums/dataset-type.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
-import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { EntityWizardAction, WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
@@ -51,7 +51,6 @@ export class ZvolWizardComponent implements WizardConfiguration {
   protected pk: any;
   protected path: string;
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
-  protected compression: any;
   advanced_field = ['volblocksize'];
   isBasicMode = true;
   protected isNew = true;
@@ -71,7 +70,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   protected origVolSize: number;
   protected origHuman: string;
 
-  custActions: any[] = [
+  custActions: EntityWizardAction[] = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -265,7 +264,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
     },
   ];
 
-  isCustActionVisible(actionId: any, stepperIndex: number): boolean {
+  isCustActionVisible(actionId: string, stepperIndex: number): boolean {
     if (!(stepperIndex == 1)) {
       return false;
     }

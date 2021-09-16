@@ -83,8 +83,7 @@ export class ApplicationsService {
   }
 
   getUpgradeSummary(name: string, version?: string): Observable<UpgradeSummary> {
-    const payload = [];
-    payload.push(name);
+    const payload: [name: string, params?: { item_version: string }] = [name];
     if (version) {
       payload.push({ item_version: version });
     }

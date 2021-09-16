@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -60,6 +61,7 @@ export class Services implements EntityTableConfig, OnInit {
   constructor(
     protected ws: WebSocketService,
     protected router: Router,
+    private translate: TranslateService,
     private dialog: DialogService,
     private iscsiService: IscsiService,
     private sysGeneralService: SystemGeneralService,
@@ -146,26 +148,22 @@ export class Services implements EntityTableConfig, OnInit {
             const msg = sessions.length == 0 ? '' : T('<font color="red"> There are ') + sessions.length
               + T(' active iSCSI connections.</font><br>Stop the ' + serviceName + ' service and close these connections?');
 
-            return this.dialog.confirm(
-              T('Alert'),
-              msg == '' ? T('Stop ') + serviceName + '?' : msg,
-              true,
-              T('Stop'),
-            );
+            return this.dialog.confirm({
+              title: T('Alert'),
+              message: msg == '' ? this.translate.instant('Stop {serviceName}?', { serviceName }) : msg,
+              hideCheckBox: true,
+              buttonMsg: T('Stop'),
+            });
           }),
           filter(Boolean),
         ).pipe(untilDestroyed(this)).subscribe(() => this.updateService(rpc, service));
       } else {
-        this.dialog.confirm(
-          T('Alert'),
-          T('Stop ') + serviceName + '?',
-          true,
-          T('Stop'),
-        ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (!res) {
-            return;
-          }
-
+        this.dialog.confirm({
+          title: T('Alert'),
+          message: this.translate.instant('Stop {serviceName}?', { serviceName }),
+          hideCheckBox: true,
+          buttonMsg: T('Stop'),
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
           this.updateService(rpc, service);
         });
       }
@@ -182,7 +180,7 @@ export class Services implements EntityTableConfig, OnInit {
         if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
           this.dialog.info(
             T('Service failed to stop'),
-            serviceName + ' ' + T('service failed to stop.'),
+            this.translate.instant('{service} service failed to stop.', { service: serviceName }),
           );
         }
         service.state = ServiceStatus.Running;
@@ -191,18 +189,18 @@ export class Services implements EntityTableConfig, OnInit {
         if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
           this.dialog.info(
             T('Service failed to start'),
-            serviceName + ' ' + T('service failed to start.'),
+            this.translate.instant('{service} service failed to start.', { service: serviceName }),
           );
         }
         service.state = ServiceStatus.Stopped;
         service.onChanging = false;
       }
     }, (res) => {
-      let message = T('Error starting service ');
+      let message = this.translate.instant('Error starting service {service}.', { service: serviceName });
       if (rpc === 'service.stop') {
-        message = T('Error stopping service ');
+        message = this.translate.instant('Error stopping service {service}.', { service: serviceName });
       }
-      this.dialog.errorReport(message + serviceName, res.message, res.stack);
+      this.dialog.errorReport(message, res.message, res.stack);
       service.onChanging = false;
     });
   }

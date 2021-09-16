@@ -132,7 +132,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
   }
 
   afterInit(entityForm: EntityFormComponent): void {
-    entityForm.formGroup.controls['remove_passphrase'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['remove_passphrase'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         entityForm.setDisabled('passphrase', true);
         entityForm.setDisabled('passphrase2', true);
@@ -141,7 +141,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
         entityForm.setDisabled('passphrase2', false);
       }
     });
-    entityForm.formGroup.controls['adminpw'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['adminpw'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.admin_pw = res;
       const btn = <HTMLInputElement> document.getElementById('cust_button_Download Encryption Key');
       this.admin_pw !== '' ? btn.disabled = false : btn.disabled = true;

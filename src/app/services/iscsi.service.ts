@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Choices } from 'app/interfaces/choices.interface';
+import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import {
   IscsiAuthAccess, IscsiExtent,
   IscsiInitiatorGroup,
@@ -43,7 +44,7 @@ export class IscsiService {
     return this.ws.call('iscsi.auth.query', []);
   }
 
-  getGlobalSessions(): Observable<any[]> {
+  getGlobalSessions(): Observable<IscsiGlobalSession[]> {
     return this.ws.call('iscsi.global.sessions');
   }
 }
