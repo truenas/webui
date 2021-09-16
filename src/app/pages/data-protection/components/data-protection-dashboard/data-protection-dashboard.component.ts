@@ -591,7 +591,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               parent.loader.open();
               parent.ws
                 .call('replication.restore', [row.id, entityDialog.formValue])
-                .pipe(untilDestroyed(this))
+                .pipe(untilDestroyed(entityDialog))
                 .subscribe(
                   () => {
                     entityDialog.dialogRef.close(true);
@@ -778,7 +778,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             afterInit(entityDialog: EntityDialogComponent) {
               entityDialog.formGroup
                 .get('transfer_mode')
-                .valueChanges.pipe(untilDestroyed(this))
+                .valueChanges.pipe(untilDestroyed(entityDialog))
                 .subscribe((mode: TransferMode) => {
                   const paragraph: FormParagraphConfig = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                   switch (mode) {
@@ -796,7 +796,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               parent.loader.open();
               parent.ws
                 .call('cloudsync.restore', [row.id, entityDialog.formValue])
-                .pipe(untilDestroyed(this))
+                .pipe(untilDestroyed(entityDialog))
                 .subscribe(
                   () => {
                     entityDialog.dialogRef.close(true);
