@@ -254,12 +254,12 @@ def word_xor(data, key):
     # Data should be a bytes or bytearray, key should be 64 bits.
     # Iterate through the bytes array and
 
-     data = make_bytes(data)
-     key = make_bytes(key)
-     l = len(key)
-     result = bytearray()
-     cycles = int(len(data) / 8) + 1
-     for i in range(cycles):
+    data = make_bytes(data)
+    key = make_bytes(key)
+    l = len(key)
+    result = bytearray()
+    cycles = int(len(data) / 8) + 1
+    for i in range(cycles):
         result += (data[i] ^ key[i % l]).to_bytes(1, 'little')
 
     return result
