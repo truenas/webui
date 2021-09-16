@@ -258,7 +258,7 @@ def word_xor(data, key):
     key = make_bytes(key)
     l = len(key)
     result = bytearray()
-    cycles = int(len(data) / 8) + 1
+    cycles = len(data)
     for i in range(cycles):
         result += (data[i] ^ key[i % l]).to_bytes(1, 'little')
 
