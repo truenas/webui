@@ -439,7 +439,7 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.next_run = this.parent.taskService.getTaskNextRun(task.cron_schedule);
 
       if (task.job === null) {
-        task.state = { state: JobState.Pending };
+        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
         this.parent.job
@@ -518,7 +518,7 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.next_run = this.parent.taskService.getTaskNextRun(task.cron_schedule);
 
       if (task.job === null) {
-        task.state = { state: JobState.Pending };
+        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
         this.parent.job
