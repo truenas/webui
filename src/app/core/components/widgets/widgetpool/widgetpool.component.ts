@@ -519,4 +519,15 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     const spl = value.split('%');
     return parseInt(spl[0]);
   }
+
+  isErrorStatus(status: string): boolean {
+    switch (status) {
+      case 'ONLINE':
+      case 'HEALTHY':
+      case 'LOCKED':
+        return false;
+      default:
+        return true;
+    }
+  }
 }
