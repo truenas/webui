@@ -29,7 +29,9 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { FieldSets } from './classes/field-sets';
-import { FieldConfig, FormArrayConfig } from './models/field-config.interface';
+import {
+  FieldConfig, FormArrayConfig, FormDictConfig, FormListConfig, FormSelectionListConfig, RelationConfig,
+} from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
@@ -203,8 +205,9 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.setControlChangeDetection();
 
     for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
-      if (config.relation.length > 0) {
+      const config = this.getRelationType(this.fieldConfig[i]);
+
+      if (config && config.relation.length > 0) {
         this.setRelation(config);
       }
     }
@@ -393,7 +396,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     });
   }
 
-  setRelation(config: FieldConfig): void {
+  setRelation(fieldConfig: FieldConfig): void {
+    const config: RelationConfig = this.getRelationType(fieldConfig);
     const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
@@ -424,5 +428,21 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
   setHiddenFieldSets(fs: string[]): void {
     this.hiddenFieldSets = fs;
+  }
+
+  getRelationType(config: FieldConfig): RelationConfig | null {
+    switch (config.type) {
+      case 'list':
+        const listConfig: FormListConfig = config;
+        return listConfig;
+      case 'dict':
+        const dictConfig: FormDictConfig = config;
+        return dictConfig;
+      case 'selectionlist':
+        const selectionListConfig: FormSelectionListConfig = config;
+        return selectionListConfig;
+      default:
+        return null;
+    }
   }
 }

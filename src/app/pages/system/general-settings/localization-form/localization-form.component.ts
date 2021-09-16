@@ -146,9 +146,13 @@ export class LocalizationFormComponent implements FormConfiguration {
 
   getDateTimeFormats(): void {
     this.entityForm.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
-    _.find(this.fieldConfig, { name: 'date_format' })['isLoading'] = false;
+
+    const dateFormatConfig: FormSelectConfig = _.find(this.fieldConfig, { name: 'date_format' });
+    dateFormatConfig.isLoading = false;
+
     this.entityForm.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
-    _.find(this.fieldConfig, { name: 'time_format' })['isLoading'] = false;
+    const timeFormatConfig: FormSelectConfig = _.find(this.fieldConfig, { name: 'time_format' });
+    timeFormatConfig.isLoading = false;
   }
 
   makeLanguageList(): void {

@@ -19,24 +19,17 @@ export interface InputUnitConfig {
 
 export interface BaseFieldConfig<P = any> {
   asyncValidation?: AsyncValidatorFn | AsyncValidatorFn[];
-  blurEvent?: (parent: P) => void;
-  blurStatus?: boolean;
   class?: string;
   disabled?: boolean;
   errors?: string;
   hasErrors?: boolean;
   hideErrMsg?: boolean;
-  hint?: string;
   id?: string;
-  initial?: string;
-  initialCount?: number;
   isHidden?: boolean;
-  isLoading?: boolean;
   name: string;
   parent?: P;
   placeholder?: string;
   readonly?: boolean;
-  relation?: RelationGroup[];
   required?: boolean;
   tooltip?: string;
   tooltipPosition?: string;
@@ -45,11 +38,11 @@ export interface BaseFieldConfig<P = any> {
   value?: any;
   warnings?: string;
   width?: string;
-  zeroStateMessage?: string;
 }
 
 export interface FormArrayConfig<P = any> extends BaseFieldConfig<P> {
   formarray?: any;
+  initialCount?: number;
 }
 
 export interface FormButtonConfig<P = any> extends BaseFieldConfig<P> {
@@ -87,6 +80,7 @@ export interface FormComboboxConfig<P = any> extends BaseFieldConfig<P> {
 
 export interface FormDictConfig<P = any> extends BaseFieldConfig<P> {
   label?: string;
+  relation?: RelationGroup[];
   subFields?: FieldConfig[];
 }
 
@@ -96,16 +90,21 @@ export interface FormExplorerConfig<P = any> extends BaseFieldConfig<P> {
   explorerType?: string;
   fileLocation?: string;
   hideDirs?: string;
+  initial?: string;
   multiple?: boolean;
   rootSelectable?: boolean;
   tristate?: boolean;
 }
 
 export interface FormInputConfig<P = any> extends BaseFieldConfig<P> {
-  fileType: string;
+  blurEvent?: (parent: P) => void;
+  blurStatus?: boolean;
+  fileType?: string;
   hideButton?: boolean;
+  hint?: string;
   inputType?: string;
   inputUnit?: InputUnitConfig;
+  isLoading?: boolean;
   isDoubleConfirm?: boolean;
   label?: string;
   maskValue?: any;
@@ -124,6 +123,7 @@ export interface FormListConfig<P = any> extends BaseFieldConfig<P> {
   box?: boolean;
   label?: string;
   listFields?: FieldConfig[][];
+  relation?: RelationGroup[];
   templateListField?: FieldConfig[];
 }
 
@@ -156,15 +156,20 @@ export interface FormSelectConfig<P = any> extends BaseFieldConfig<P> {
   enableTextWrapForOptions?: boolean;
   fileLocation?: string;
   inlineLabel?: string;
+  isLoading?: boolean;
   multiple?: boolean;
   onChangeOption?(data: any): void;
   options?: FormSelectOption[];
+  relation?: RelationGroup[];
+  zeroStateMessage?: string;
 }
 
 export interface FormSelectionListConfig<P = any> extends BaseFieldConfig<P> {
+  hint?: string;
   inlineFields?: boolean;
   inlineFieldFlex?: string;
   onChange?(data: any): void;
+  relation?: RelationGroup[];
 }
 
 export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
@@ -178,6 +183,8 @@ export interface FormTaskConfig<P = any> extends BaseFieldConfig<P> {
 }
 
 export interface FormTextareaConfig<P = any> extends BaseFieldConfig<P> {
+  blurEvent?: (parent: P) => void;
+  blurStatus?: boolean;
   filereader?: boolean;
   fileType: string;
   textAreaRows?: number;
@@ -200,6 +207,10 @@ export interface FormUploadConfig<P = any> extends BaseFieldConfig<P> {
 export interface FormToggleButtonConfig<P = any> extends BaseFieldConfig<P> {
   options?: any[];
 }
+
+export type RelationConfig<P = any> = FormDictConfig<P>
+| FormListConfig
+| FormSelectionListConfig;
 
 export type FieldConfig<P = any> = BaseFieldConfig<P>
 | FormArrayConfig<P>

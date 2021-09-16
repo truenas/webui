@@ -13,7 +13,13 @@ import { FileType } from 'app/enums/file-type.enum';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';
 import {
-  FieldConfig, UnitType, InputUnitConfig, FormArrayConfig, FormListConfig, FormDictConfig,
+  FieldConfig,
+  UnitType,
+  InputUnitConfig,
+  FormArrayConfig,
+  FormListConfig,
+  FormDictConfig,
+  RelationConfig,
 } from '../models/field-config.interface';
 
 @Injectable()
@@ -49,7 +55,11 @@ export class EntityFormService {
         if (formControl) {
           formGroup[controls[i].name] = formControl;
         }
-        controls[i].relation = Array.isArray(controls[i].relation) ? controls[i].relation : [];
+
+        const relationConfig = this.hasRelation(controls[i]);
+        if (relationConfig) {
+          relationConfig.relation = Array.isArray(relationConfig.relation) ? relationConfig.relation : [];
+        }
       }
     }
 
@@ -78,7 +88,8 @@ export class EntityFormService {
       } else if (fieldConfig.type != 'label') {
         formControl = new FormControl(
           { value: fieldConfig.value, disabled: fieldConfig.disabled },
-          fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation, fieldConfig.asyncValidation,
+          fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation,
+          fieldConfig.asyncValidation,
         );
       }
     }
@@ -272,6 +283,20 @@ export class EntityFormService {
     }
     if (type === UnitType.Size) {
       return unit[0] + 'iB';
+    }
+  }
+
+  hasRelation(config: FieldConfig): RelationConfig {
+    switch (config.type) {
+      case 'list':
+        const listConfig: FormListConfig = config;
+        return listConfig;
+      case 'dict':
+        const dictConfig: FormListConfig = config;
+        return dictConfig;
+      case 'selectionlist':
+        const selectionListConfig: FormListConfig = config;
+        return selectionListConfig;
     }
   }
 }

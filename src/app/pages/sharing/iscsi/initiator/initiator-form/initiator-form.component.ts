@@ -5,7 +5,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormDictConfig, FormListConfig, FormSelectionListConfig, RelationConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationGroup } from 'app/pages/common/entity/entity-form/models/field-relation.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
@@ -125,7 +127,8 @@ export class InitiatorFormComponent implements OnInit {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     for (const i in this.fieldConfig) {
       const config = this.fieldConfig[i];
-      if (config.relation.length > 0) {
+      const relationConfig: RelationConfig | null = this.hasRelation(config);
+      if (relationConfig) {
         this.setRelation(config);
       }
     }
@@ -193,7 +196,11 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   setRelation(config: FieldConfig): void {
-    const activations = this.fieldRelationService.findActivationRelation(config.relation);
+    const relationConfig = this.hasRelation(config);
+
+    if (!relationConfig) return;
+
+    const activations = this.fieldRelationService.findActivationRelation(relationConfig.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
         activations, this.formGroup,
@@ -241,6 +248,20 @@ export class InitiatorFormComponent implements OnInit {
     if (this.formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
       this.formGroup.controls[name][method]();
+    }
+  }
+
+  hasRelation(config: FieldConfig): RelationConfig | null {
+    switch (config.type) {
+      case 'list':
+        const listConfig: FormListConfig = config;
+        return listConfig;
+      case 'dict':
+        const dictConfig: FormDictConfig = config;
+        return dictConfig;
+      case 'selectionlist':
+        const selectionListConfig: FormSelectionListConfig = config;
+        return selectionListConfig;
     }
   }
 }

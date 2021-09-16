@@ -5,8 +5,12 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { FieldConfig, FormDictConfig, FormListConfig } from '../models/field-config.interface';
+import {
+  FieldConfig, FormDictConfig, FormListConfig, FormSelectionListConfig,
+} from '../models/field-config.interface';
 import { FieldRelation, RelationGroup } from '../models/field-relation.interface';
+
+type RelationConfig = FormDictConfig | FormListConfig | FormSelectionListConfig;
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
@@ -22,9 +26,10 @@ export class FieldRelationService {
     });
   }
 
-  getRelatedFormControls(model: FieldConfig,
+  getRelatedFormControls(config: FieldConfig,
     controlGroup: FormGroup): FormControl[] {
     const controls: FormControl[] = [];
+    const model = this.getConfigType(config);
 
     model.relation.forEach((relGroup) => relGroup.when.forEach((rel) => {
       if (model.name === rel.name) {
@@ -167,7 +172,9 @@ export class FieldRelationService {
     return control && condition.status === control.status;
   }
 
-  setRelation(config: FieldConfig, formGroup: FormGroup): void {
+  setRelation(conf: FieldConfig, formGroup: FormGroup): void {
+    const config = this.getConfigType(conf);
+
     if (config.relation && config.relation.length > 0) {
       const activations = this.findActivationRelation(config.relation);
       if (activations) {
@@ -209,10 +216,11 @@ export class FieldRelationService {
    * When true (default) will trigger valueChanges and statusChanges.
    */
   refreshRelations(
-    config: FieldConfig,
+    conf: FieldConfig,
     formGroup: FormGroup,
     options: { emitEvent: boolean } = { emitEvent: true },
   ): void {
+    const config = this.getConfigType(conf);
     if (config.relation && config.relation.length > 0) {
       const activations = this.findActivationRelation(config.relation);
       if (activations) {
@@ -570,5 +578,19 @@ export class FieldRelationService {
     }
 
     return result;
+  }
+
+  getConfigType(config: FieldConfig): RelationConfig {
+    switch (config.type) {
+      case 'list':
+        const listConfig: FormListConfig = config;
+        return listConfig;
+      case 'dict':
+        const dictConfig: FormListConfig = config;
+        return dictConfig;
+      case 'selectionlist':
+        const selectionListConfig: FormListConfig = config;
+        return selectionListConfig;
+    }
   }
 }
