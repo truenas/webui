@@ -103,7 +103,8 @@ def input_test_ericbsd_smb_share_as_the_description_click_summit(driver, descrip
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Configure ACL")]')
+    assert wait_on_element_disappear(driver, 7, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Configure ACL")]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
 
 

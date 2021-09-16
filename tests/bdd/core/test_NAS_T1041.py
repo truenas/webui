@@ -159,7 +159,7 @@ def click_to_enable_use_as_home_share_then_click_save(driver):
 @then('the new share should be created without error')
 def the_new_share_should_be_created_without_error(driver):
     """the new share should be created without error."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//a[contains(.,"Edit ACL")]')
 
 
