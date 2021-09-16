@@ -18,7 +18,6 @@ import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'localization-form2',
   templateUrl: './localization-form2.component.html',
-  styleUrls: ['./localization-form2.component.scss'],
 })
 export class LocalizationForm2 implements OnInit {
   fieldsetTitle = helptext.localeTitle;
