@@ -33,7 +33,7 @@
 }
 
 .legend {
-  display:table; 
+  display:table;
 }
 
 .legend-group-wrapper {
@@ -374,7 +374,7 @@ div.line-chart-tools ul{
 div.line-chart-tools li{}
 
 div.line-chart-tools .tool-icon{
-  width:64px; 
+  width:64px;
   font-size:18px;
 }
 
@@ -498,7 +498,7 @@ height:calc(100% - 48px);
   background-color:rgba(0,0,0,0.1);
   height:45%;
   text-align: left;
-  padding: 16px; 
+  padding: 16px;
 }
 
 .title-wrapper .title{
@@ -672,7 +672,17 @@ h3 {
   flex-direction: column;
 }
 
-.empty-icon {
+.empty-icon,
+.error-icon {
   font-size: 3rem;
   padding-right: 21px;
+}
+
+.error-icon {
+  color: var(--red);
+}
+
+.error-title {
+  font-size: 1.25rem;
+  margin: 1rem 0;
 }

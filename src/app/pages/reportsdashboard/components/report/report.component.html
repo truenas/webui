@@ -4,7 +4,7 @@
       <mat-toolbar-row fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between start" fxFlex="100" class="mat-card-toolbar">
         <mat-card-title fxFlex="65%">
           <h3>
-            {{reportTitle}} 
+            {{reportTitle}}
             <span *ngIf="multipathTitle">
               {{multipathTitle}}
               <mat-icon class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
@@ -12,7 +12,7 @@
           </h3>
         </mat-card-title>
         <!-- Controls/Tools -->
-        <div fxFlex="calc(35%)" class="line-chart-tools-wrapper" *ngIf="!report.empty">
+        <div fxFlex="calc(35%)" class="line-chart-tools-wrapper" *ngIf="!report.empty && !report.error">
           <div class="line-chart-tools" *ngIf="localControls">
             <button class="tool-icon" mat-icon-button [disabled]="timeZoomIndex >= (zoomLevels.length - 1)" (click)="timeZoomIn()"
               ix-auto ix-auto-type="button" ix-auto-identifier="{{reportTitle}}_zoomIn">
@@ -40,6 +40,20 @@
 
         <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
 
+          <ng-container *ngIf="report.error">
+            <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
+              <div class="chart-wrapper-empty">
+                <div class="chart-wrapper-child">
+                  <div>
+                    <mat-icon class="error-icon"fontSet="mdi-set" fontIcon="mdi-alert-octagon"></mat-icon>
+                  </div>
+                  <h4 class="error-title">{{ report.error.title }}</h4>
+                  <button mat-raised-button color="primary" (click)="report.error.button.click()">{{ report.error.button.text }}</button>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
           <ng-container *ngIf="report.empty">
             <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
               <div class="chart-wrapper-empty">
@@ -54,8 +68,8 @@
               </div>
             </div>
           </ng-container>
-          
-          <ng-container *ngIf="!report.empty">
+
+          <ng-container *ngIf="!report.empty && !report.error">
             <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
               <div class="chart-wrapper" >
                 <linechart
@@ -70,8 +84,8 @@
                   interactive="false">
                 </linechart>
               </div>
-  
-  
+
+
             <!-- Legend Section -->
             <div class="legend-wrapper timestamps">
               <!-- Time Stamps -->
@@ -79,7 +93,7 @@
                 <div >
                   <span *ngIf="data && legendData">
                     <h4>
-                      <strong>Start:</strong> 
+                      <strong>Start:</strong>
                       <span style="font-weight:normal;">&nbsp;&nbsp;{{startTime}}</span>
                       <br ngClass.gt-sm="hidden">
                       <span style="margin-left:0px;" class="text-small"> ({{timezone}})</span>
@@ -92,7 +106,7 @@
                 <div >
                   <span *ngIf="data && legendData">
                     <h4>
-                      <strong>End:</strong> 
+                      <strong>End:</strong>
                       <span style="font-weight:normal;">&nbsp;&nbsp;{{endTime}}</span>
                       <br ngClass.gt-sm="hidden">
                       <span style="opacity:0;" class="text-small"> ({{timezone}})</span>
@@ -101,16 +115,16 @@
                 </div>
               </div>
             </div>
-  
+
             </div>
-  
+
             <section class="legend" #legendElement fxFlex="400px" fxLayout="column" fxLayoutAlign="start"  >
-  
+
             <div *ngIf="report && data && data.legend" class="legend-timestamp" fxFlex="32px">
               <div >
                 <span *ngIf="data && legendData && legendData.xHTML">
                   <h4>
-                    <strong>Time:</strong> 
+                    <strong>Time:</strong>
                     <span *ngIf="legendData && legendData.xHTML" style="font-weight:normal;">
                       &nbsp;&nbsp;
                       {{legendData.xHTML}}
@@ -119,7 +133,7 @@
                 </span>
               </div>
             </div>
-  
+
             <div *ngIf="report && data && data.legend" class="legend-group-wrapper" fxFlex="calc(100% - 64px)" >
               <table class="legend-table">
                 <!-- Table Header-->
@@ -131,11 +145,11 @@
                     </th>
                   </ng-container>
                 </tr>
-  
+
                 <!-- Table Rows -->
                 <tr class="legend-group"
                   *ngFor="let legendItem of data.legend; let i=index">
-  
+
                     <td class="legend-label" >
                       <!--Legend Label-->
                       <div *ngIf="chartColors && legendItem"
@@ -143,35 +157,35 @@
                         [style.background-color]="chartColors[i]" >
                         </div>
                       <span class="legend-item"><strong>{{legendItem}}</strong></span>
-  
+
                       <span *ngIf="legendData && legendData.series">
                         <span  class="tooltip-value" >
                            <span style="font-weight:normal;"> : {{legendData.series[i].yHTML}}</span>
                         </span>
                       </span>
                     </td>
-  
+
                   <!-- Aggregations -->
                   <ng-container *ngIf="data && data.aggregations">
                     <td style="opacity:0.75; border:red;"
                       *ngFor="let key of aggregationKeys"
                       class="report-analytics" >
-  
+
                       <span>
                         {{data.aggregations[key][i] ? data.aggregations[key][i] : 'null'}}
                       </span>
-  
+
                     </td>
                   </ng-container>
                 </tr>
               </table>
-  
+
               </div>
             </section>
           </ng-container>
           <!--<viewchartline fxFlex="100" fxFlexAlign="end" #chartCpu width="600" height="160" [style.display]="isFlipped ? 'none': 'block'"></viewchartline>-->
           <!-- Chart -->
-          
+
 
         </mat-card-content>
 
