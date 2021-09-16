@@ -1,3 +1,5 @@
+@import 'cssvars';
+
 /* MODAL STYLES
 -------------------------------*/
 
@@ -113,7 +115,6 @@ body.jw-modal-open .slide-in-form .jw-modal-body {
   overflow: hidden;
 }
 
-@import 'cssvars';
 @media #{$media-lt-sm} {
   .slide-in-form {
     min-width: auto;

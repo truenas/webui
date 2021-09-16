@@ -1,3 +1,5 @@
+@import 'cssvars';
+
 input {
   border: 1px solid rgba(0, 0, 0, 0.1);
   color: rgba(0, 0, 0, 0.7);
@@ -25,7 +27,6 @@ input {
   }
 }
 
-@import 'cssvars';
 @media #{$media-lt-sm} {
   .form-checkbox {
     &.expanded-height {

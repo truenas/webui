@@ -1,3 +1,5 @@
+@import 'cssvars';
+
 /*.mat-card{
   max-width:960px;
   margin:0 auto;
@@ -167,7 +169,6 @@ span.form-message.warning {
   }
 }
 
-@import 'cssvars';
 @media #{$media-lt-sm} {
   .entity-form .form-line:last-child {
     margin-right: 0;

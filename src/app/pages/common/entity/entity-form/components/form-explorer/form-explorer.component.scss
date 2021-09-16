@@ -1,3 +1,5 @@
+@import 'cssvars';
+
 .form-ex-flex-container {
   padding: 7px;
 }
@@ -67,7 +69,6 @@
   padding: 2px 5px;
 }
 
-@import 'cssvars';
 @media #{$media-lt-sm} {
   .form-explorer {
     margin-bottom: 20px;
