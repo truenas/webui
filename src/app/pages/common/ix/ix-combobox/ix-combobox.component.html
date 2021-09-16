@@ -14,7 +14,7 @@
       [value]="selectedOption?.label"
       [placeholder]="'Search'"
       (input)="onChanged($event.target.value)"
-      (blur)="onTouched()"
+      (blur)="onTouch()"
       [matAutocomplete]="auto"
     >
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayWith" (optionSelected)="optionSelected($event.option.value)">

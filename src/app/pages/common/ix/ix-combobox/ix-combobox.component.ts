@@ -45,7 +45,7 @@ export class IxCombobox implements ControlValueAccessor, OnChanges {
   syncOptions: Option[];
 
   onChange: (value: string | number) => void = (): void => {};
-  onTouched: () => void = (): void => {};
+  onTouch: () => void = (): void => {};
 
   writeValue(value: string): void {
     this.value = value;
@@ -53,7 +53,7 @@ export class IxCombobox implements ControlValueAccessor, OnChanges {
       this.selectedOption = { ...(this.syncOptions.find((option: Option) => option.value === this.value)) };
     }
     this.onChange(value);
-    this.onTouched();
+    this.onTouch();
   }
 
   onChanged(changedValue: string): void {
@@ -64,12 +64,12 @@ export class IxCombobox implements ControlValueAccessor, OnChanges {
     }
   }
 
-  registerOnChange(onChange: any): void {
+  registerOnChange(onChange: (value: string | number) => void): void {
     this.onChange = onChange;
   }
 
-  registerOnTouched(onTouched: any): void {
-    this.onTouched = onTouched;
+  registerOnTouched(onTouched: () => void): void {
+    this.onTouch = onTouched;
   }
 
   optionSelected(option: Option): void {

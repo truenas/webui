@@ -33,7 +33,7 @@ export class IxInput implements ControlValueAccessor {
   touched = false;
 
   onChange: any = (): void => {};
-  onTouched: any = (): void => {};
+  onTouch: any = (): void => {};
 
   suffixIconClicked(evt: MouseEvent): void {
     this.suffixIconClick.emit(evt);
@@ -42,14 +42,14 @@ export class IxInput implements ControlValueAccessor {
   writeValue(value: string | number): void {
     this.value = value;
     this.onChange(value);
-    this.onTouched();
+    this.onTouch();
   }
 
-  registerOnChange(onChange: any): void {
+  registerOnChange(onChange: (value: string | number) => void): void {
     this.onChange = onChange;
   }
 
-  registerOnTouched(onTouched: any): void {
-    this.onTouched = onTouched;
+  registerOnTouched(onTouched: () => void): void {
+    this.onTouch = onTouched;
   }
 }
