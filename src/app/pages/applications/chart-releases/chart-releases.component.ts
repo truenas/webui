@@ -282,8 +282,8 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  userPortal(chart: ChartRelease): void {
-    window.open(chart.portals.user_portal[0]);
+  portal(chart: ChartRelease): void {
+    window.open(chart.portals.web_portal[0]);
   }
   adminPortal(chart: ChartRelease): void {
     window.open(chart.portals.admin_portal[0]);
