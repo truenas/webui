@@ -1,5 +1,5 @@
 import {
-  Component, forwardRef, Input, OnChanges, OnInit, SimpleChanges,
+  Component, forwardRef, Input, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -19,7 +19,7 @@ import { Option } from 'app/interfaces/option.interface';
     },
   ],
 })
-export class IxCombobox implements ControlValueAccessor, OnInit, OnChanges {
+export class IxCombobox implements ControlValueAccessor, OnChanges {
   @Input() label: string;
   @Input() hint: string;
   @Input() required: boolean;
@@ -86,19 +86,12 @@ export class IxCombobox implements ControlValueAccessor, OnInit, OnChanges {
     }
   }
 
-  ngOnInit(): void {
-    this.filteredOptions = this.options;
-    this.options?.pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
-      this.syncOptions = options;
-    });
-  }
-
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.options) {
       if (changes.options.currentValue) {
-        this.filteredOptions = changes.options.currentValue;
         changes.options.currentValue.pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
           this.syncOptions = options;
+          this.filteredOptions = of(options);
           this.selectedOption = { ...(this.syncOptions.find((option: Option) => option.value === this.value)) };
         });
       }

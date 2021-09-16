@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
@@ -32,7 +33,7 @@ export class LocalizationForm2 implements OnInit {
     readonly fcName: 'language';
     label: string;
     tooltip: string;
-    options?: Observable<Option[]>;
+    options: Observable<Option[]>;
   } = {
     fcName: 'language',
     label: helptext.stg_language.placeholder,
@@ -44,22 +45,26 @@ export class LocalizationForm2 implements OnInit {
     readonly fcName: 'kbdmap';
     label: string;
     tooltip: string;
-    options?: Observable<Option[]>;
+    options: Observable<Option[]>;
   } = {
     fcName: 'kbdmap',
     label: helptext.stg_kbdmap.placeholder,
     tooltip: helptext.stg_kbdmap.tooltip,
+    options: this.sysGeneralService.kbdMapChoices(),
   };
 
   timezone: {
     readonly fcName: 'timezone';
     label: string;
     tooltip: string;
-    options?: Observable<Option[]>;
+    options: Observable<Option[]>;
   } = {
     fcName: 'timezone',
     label: helptext.stg_timezone.placeholder,
     tooltip: helptext.stg_timezone.tooltip,
+    options: this.sysGeneralService.timezoneChoices().pipe(
+      map((tzChoices) => _.sortBy(tzChoices, [(o) => o.label.toLowerCase()])),
+    ),
   };
 
   dateFormat: {
@@ -98,9 +103,9 @@ export class LocalizationForm2 implements OnInit {
     this.sysGeneralService.getGeneralConfig$
       .pipe(untilDestroyed(this)).subscribe((res) => {
         this.configData = res;
-        this.formGroup?.get('kbdmap').setValue(this.configData.kbdmap);
-        this.formGroup?.get('language').setValue(this.configData.language);
-        this.formGroup?.get('timezone').setValue(this.configData.timezone);
+        this.formGroup.get('language').setValue(this.configData?.language);
+        this.formGroup.get('kbdmap').setValue(this.configData?.kbdmap);
+        this.formGroup.get('timezone').setValue(this.configData?.timezone);
         this.setTimeOptions(this.configData.timezone);
       });
   }
@@ -112,42 +117,6 @@ export class LocalizationForm2 implements OnInit {
       timezone: [this.configData?.timezone],
       date_format: [this.localeService.getPreferredDateFormat()],
       time_format: [this.localeService.getPreferredTimeFormat()],
-    });
-
-    // this.makeLanguageList();
-    this.makeKbdMapOptions();
-    this.makeTimezoneOptions();
-    this.setTimeOptions(this.configData?.timezone);
-  }
-
-  makeLanguageList(): void {
-    this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((languageList) => {
-      const options = Object.keys(languageList || {}).map((key) => ({
-        label: this.sortLanguagesByName
-          ? `${languageList[key]} (${key})`
-          : `${key} (${languageList[key]})`,
-        value: key,
-      }));
-      this.language.options = of(_.sortBy(
-        options,
-        this.sortLanguagesByName ? 'label' : 'value',
-      ));
-      this.formGroup.get('language').setValue(this.configData?.language);
-    });
-  }
-
-  makeKbdMapOptions(): void {
-    this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapChoices) => {
-      this.kbdMap.options = of(mapChoices);
-      this.formGroup.get('kbdmap').setValue(this.configData?.kbdmap);
-    });
-  }
-
-  makeTimezoneOptions(): void {
-    this.sysGeneralService.timezoneChoices().pipe(untilDestroyed(this)).subscribe((tzChoices) => {
-      tzChoices = _.sortBy(tzChoices, [(o) => o.label.toLowerCase()]);
-      this.timezone.options = of(tzChoices);
-      this.formGroup.get('timezone').setValue(this.configData?.timezone);
     });
   }
 
