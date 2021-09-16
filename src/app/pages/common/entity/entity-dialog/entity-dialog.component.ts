@@ -10,7 +10,11 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
 import {
-  FieldConfig, FormDictConfig, FormListConfig, FormSelectionListConfig, RelationConfig,
+  FieldConfig,
+  FormDictConfig,
+  FormListConfig,
+  FormSelectionListConfig,
+  RelationConfig,
 } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';

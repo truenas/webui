@@ -6,7 +6,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import {
-  FieldConfig, FormDictConfig, FormListConfig, FormSelectionListConfig,
+  FieldConfig,
+  FormDictConfig,
+  FormListConfig,
+  FormSelectionListConfig,
 } from '../models/field-config.interface';
 import { FieldRelation, RelationGroup } from '../models/field-relation.interface';
 

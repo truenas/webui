@@ -30,7 +30,12 @@ import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { FieldSets } from './classes/field-sets';
 import {
-  FieldConfig, FormArrayConfig, FormDictConfig, FormListConfig, FormSelectionListConfig, RelationConfig,
+  FieldConfig,
+  FormArrayConfig,
+  FormDictConfig,
+  FormListConfig,
+  FormSelectionListConfig,
+  RelationConfig,
 } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
