@@ -50,12 +50,12 @@ def you_should_be_on_the_dashboard_click_on_directory_services_and_then_kerberos
     """you should be on the dashboard, click on Directory Services and then Kerberos Keytabs in the side menu."""
     time.sleep(2)
     # temp fix for 1st start popup bug
-    assert wait_on_element(driver, 5, '//div[contains(.,"Welcome to your new NAS")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    #assert wait_on_element(driver, 5, '//div[contains(.,"Welcome to your new NAS")]')
+    #assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    #driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    #assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    #assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+    #driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     # / temp fix for 1st start popup bug
     time.sleep(1)
     assert wait_on_element(driver, 7, '//span[contains(text(),"Directory Services")]', 'clickable')
