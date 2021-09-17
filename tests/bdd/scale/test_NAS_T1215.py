@@ -76,19 +76,17 @@ def click_on_advanced_and_kerberos_keytab_add(driver):
     time.sleep(1)
     driver.find_element_by_xpath('//mat-card[contains(.,"Kerberos Keytab")]//span[contains(text(),"Add")]').click()
 
-@then(parsers.parse('open the zip with {zipstring}'))
-def open_the_zip_with_zipstring(driver, zipstring):
-    """open the zip with zipstring,"""
-    # openzip zip
-    global zip_file
-    global keytab_zip
-    global keytab_zip_path
-    keytab_zip_path = os.getcwd() + '/KEYTABNAME.zip'
-    assert glob.glob(keytab_zip_path)
-    keytab_zip = sorted(glob.glob(keytab_zip_path))[-1]
-    zip_file = zipfile.ZipFile(keytab_zip)
-    zip_file.extractall(pwd = bytes(zipstring, 'utf-8'))
-    zip_file.close()
+@then(parsers.parse('decode the tabfile with {tabfile_string}'))
+def decode_the_tabfile_with_tabfile_string(driver, tabfile_string):
+    """decode the tabfile with tabfile_string."""
+    # open tabfile
+    global tabfile
+    global tab_result
+    tabfile_path = os.getcwd() + '/tabfile'
+    assert glob.glob(tabfile_path)
+    tabfile = sorted(glob.glob(tabfile_path))[-1]
+    tab_result = word_xor(tabfile, tabfile_string)
+    open('KEYTABNAME.KEYTAB','wb'))write(tab_result)
 
 
 @then('name the keytab and upload the file and click save')
@@ -109,7 +107,6 @@ def name_the_keytab_and_upload_the_file_and_click_save(driver):
     driver.find_element_by_xpath('//input[@type="file"]').send_keys(keytab_file)
     #save
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
-
 
 
 @then('verify that the file was accepted and utilized')
