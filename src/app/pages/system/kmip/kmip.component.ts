@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_kmip } from 'app/helptext/system/kmip';
+import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -181,7 +182,7 @@ export class KmipComponent {
     this.fieldConfig = entityForm.fieldConfig;
   }
 
-  customSubmit(data: any): void {
+  customSubmit(data: KmipConfigUpdate): void {
     if (data['server'] === null) {
       data['server'] = '';
     }

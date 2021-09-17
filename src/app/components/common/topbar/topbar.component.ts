@@ -23,13 +23,15 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
 import { CoreEvent } from 'app/interfaces/events';
+import { HaStatus, HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
-import { ResilverEvent } from 'app/interfaces/events/resilver-event.interface';
+import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import {
   UserPreferencesEvent,
   UserPreferencesReadyEvent,
 } from 'app/interfaces/events/user-preferences-event.interface';
+import { ResilverData } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -68,7 +70,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   showResilvering = false;
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
-  resilveringDetails: any;
+  resilveringDetails: ResilverData;
   themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme = 'ix-blue';
   isTaskMangerOpened = false;
@@ -231,10 +233,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.core.register({
       observerClass: this,
       eventName: 'Resilvering',
-    }).pipe(untilDestroyed(this)).subscribe((evt: ResilverEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
       if (evt.data.scan.state == PoolScanState.Finished) {
         this.showResilvering = false;
-        this.resilveringDetails = '';
+        this.resilveringDetails = null;
       } else {
         this.resilveringDetails = evt.data;
         this.showResilvering = true;
@@ -523,7 +525,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     );
   }
 
-  updateHAInfo(info: any): void {
+  updateHAInfo(info: HaStatus): void {
     this.ha_disabled_reasons = info.reasons;
     if (info.status == 'HA Enabled') {
       this.ha_status_text = helptext.ha_status_text_enabled;
@@ -536,7 +538,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   getHAStatus(): void {
-    this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
       this.updateHAInfo(evt.data);
     });
   }

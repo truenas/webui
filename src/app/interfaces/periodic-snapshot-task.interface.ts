@@ -17,6 +17,8 @@ export interface PeriodicSnapshotTask {
   vmware_sync: boolean;
 }
 
+export type PeriodSnapshotTaskUpdate = Omit<PeriodicSnapshotTask, 'id' | 'state' | 'vmware_sync'>;
+
 export interface PeriodicSnapshotTaskUi extends PeriodicSnapshotTask {
   keepfor: string;
   cron_schedule: string;

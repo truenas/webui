@@ -14,7 +14,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   @Input() entity: EntityTableComponent;
   @Input() row: any;
   @Input() icon_name = 'more_vert';
-  @Input() action: EntityTableAction;
+  @Input() action: string;
   @Input() groups = false;
 
   actions: EntityTableAction[];

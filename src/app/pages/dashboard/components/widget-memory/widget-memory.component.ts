@@ -222,8 +222,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
       const bgRGB = bgColorType == 'hex' ? this.utils.hexToRGB(bgColor).rgb : this.utils.rgbToArray(bgColor);
 
-      (ds.backgroundColor as ChartColor[]).push(this.rgbToString(bgRGB as any, 0.85));
-      (ds.borderColor as ChartColor[]).push(this.rgbToString(bgRGB as any));
+      (ds.backgroundColor as ChartColor[]).push(this.rgbToString(bgRGB, 0.85));
+      (ds.borderColor as ChartColor[]).push(this.rgbToString(bgRGB));
     });
 
     datasets.push(ds);
@@ -235,7 +235,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     return theme.accentColors.map((color) => (theme as any)[color]);
   }
 
-  rgbToString(rgb: string[], alpha?: number): string {
+  rgbToString(rgb: number[], alpha?: number): string {
     const a = alpha ? alpha.toString() : '1';
     return 'rgba(' + rgb.join(',') + ',' + a + ')';
   }
