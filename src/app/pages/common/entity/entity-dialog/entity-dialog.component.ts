@@ -11,9 +11,6 @@ import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
 import {
   FieldConfig,
-  FormDictConfig,
-  FormListConfig,
-  FormSelectionListConfig,
   RelationConfig,
 } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
@@ -86,21 +83,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     for (const i in this.fieldConfig) {
-      const configType = (conf: FieldConfig): RelationConfig => {
-        switch (conf.type) {
-          case 'list':
-            const listConfig: FormListConfig = conf;
-            return listConfig;
-          case 'dict':
-            const dictConfig: FormDictConfig = conf;
-            return dictConfig;
-          case 'selectionlist':
-            const selectionListConfig: FormSelectionListConfig = conf;
-            return selectionListConfig;
-        }
-      };
-
-      const config = configType(this.fieldConfig[i]);
+      const config = this.fieldConfig[i] as RelationConfig;
       if (config.relation.length > 0) {
         this.fieldRelationService.setRelation(config, this.formGroup);
       }

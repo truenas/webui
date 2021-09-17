@@ -32,9 +32,6 @@ import { FieldSets } from './classes/field-sets';
 import {
   FieldConfig,
   FormArrayConfig,
-  FormDictConfig,
-  FormListConfig,
-  FormSelectionListConfig,
   RelationConfig,
 } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
@@ -211,7 +208,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.setControlChangeDetection();
 
     for (const i in this.fieldConfig) {
-      const config = this.getRelationType(this.fieldConfig[i]);
+      const config = this.fieldConfig[i] as RelationConfig;
 
       if (config && config.relation.length > 0) {
         this.setRelation(config);
@@ -403,7 +400,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   setRelation(fieldConfig: FieldConfig): void {
-    const config: RelationConfig = this.getRelationType(fieldConfig);
+    const config: RelationConfig = fieldConfig as RelationConfig;
     const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
@@ -434,21 +431,5 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
   setHiddenFieldSets(fs: string[]): void {
     this.hiddenFieldSets = fs;
-  }
-
-  getRelationType(config: FieldConfig): RelationConfig | null {
-    switch (config.type) {
-      case 'list':
-        const listConfig: FormListConfig = config;
-        return listConfig;
-      case 'dict':
-        const dictConfig: FormDictConfig = config;
-        return dictConfig;
-      case 'selectionlist':
-        const selectionListConfig: FormSelectionListConfig = config;
-        return selectionListConfig;
-      default:
-        return null;
-    }
   }
 }
