@@ -171,8 +171,8 @@ mat-tab-group {
 
     .chart-button-row {
       bottom: 5px;
-	  width: 315px;
-	  height: 45px;
+      width: 315px;
+      height: 45px;
       position: absolute;
       right: 15px;
     }
@@ -220,16 +220,17 @@ mat-tab-group {
     vertical-align: middle;
     padding-right: 5px;
     overflow: hidden;
-	display: flex;
+    display: flex;
   }
   .ports-text {
     width: 100%;
+    /* If the ports text is smaller than 50px, hide all text. otherwise set maxwidth to "unlimited" */
     max-width: max(0px, calc((100% - 50px)*999));
     overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     line-height: 40px;
-	}
+    }
 }
 
 .charts-info {
