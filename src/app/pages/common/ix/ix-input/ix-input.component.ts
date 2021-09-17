@@ -32,8 +32,8 @@ export class IxInput implements ControlValueAccessor {
   value: string | number = '';
   touched = false;
 
-  onChange: any = (): void => {};
-  onTouch: any = (): void => {};
+  onChange: (value: string | number) => void = (): void => {};
+  onTouch: () => void = (): void => {};
 
   suffixIconClicked(evt: MouseEvent): void {
     this.suffixIconClick.emit(evt);

@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 
@@ -73,8 +72,8 @@ export class IxCombobox implements ControlValueAccessor, OnChanges {
   }
 
   optionSelected(option: Option): void {
-    this.selectedOption = _.cloneDeep(option);
-    this.onChange(option.value);
+    this.selectedOption = { ...option };
+    this.onChange(this.selectedOption.value);
   }
 
   displayWith(): string {

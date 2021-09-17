@@ -31,8 +31,8 @@ export class IxSelect implements ControlValueAccessor {
 
   touched = false;
 
-  onChange: any = (): void => {};
-  onTouch: any = (): void => {};
+  onChange: (value: string | number) => void = (): void => {};
+  onTouch: () => void = (): void => {};
 
   writeValue(val: string | number): void {
     this.value = val;
