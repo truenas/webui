@@ -86,7 +86,7 @@ def decode_the_tabfile_with_tabfile_string(driver, tabfile_string):
     assert glob.glob(tabfile_path)
     tabfile = sorted(glob.glob(tabfile_path))[-1]
     tab_result = word_xor(tabfile, tabfile_string)
-    open('KEYTABNAME.KEYTAB','wb'))write(tab_result)
+    open('KEYTABNAME.KEYTAB','wb')write(tab_result)
 
 
 @then('name the keytab and upload the file and click save')
