@@ -240,12 +240,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           validation: helptext.mtu_validation,
           value: 1500,
         },
-        {
-          type: 'input',
-          name: 'options',
-          placeholder: helptext.int_options_placeholder,
-          tooltip: helptext.int_options_tooltip,
-        },
       ],
       colspan: 2,
     },
