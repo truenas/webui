@@ -26,7 +26,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
     const hasGroups = Boolean(this.actions && this.actions[0].actionName);
 
     if (hasGroups == true) {
-      return (this.actions[0].actions.length == 1);
+      return (this.actions[0].actions?.length == 1);
     }
     return (this.actions.length == 1);
   }
