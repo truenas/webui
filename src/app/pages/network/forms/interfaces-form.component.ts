@@ -37,6 +37,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   protected failoverPlaceholder: string;
   saveSubmitText = helptext.int_save_button;
   protected offload_warned = false;
+  protected isOneColumnForm = true;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
