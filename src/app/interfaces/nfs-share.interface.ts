@@ -19,4 +19,4 @@ export interface NfsShare {
   security: NfsSecurityProvider[];
 }
 
-export type NfsShareUpdate = Omit<NfsShare, 'id' | 'locked'>;
+export type NfsShareUpdate = Partial<Omit<NfsShare, 'id' | 'locked'>>;
