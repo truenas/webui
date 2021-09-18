@@ -5,16 +5,7 @@ import helptext from 'app/helptext/shell/shell';
 
 @Component({
   selector: 'app-copy-paste-message',
-  template: `
-      <h1 mat-dialog-title> {{title | translate}}</h1>
-      <div mat-dialog-content [innerHtml]="messageHtml"></div>
-      <div mat-dialog-actions>
-        <span fxFlex></span>
-        <button class="mat-button mat-primary" (click)="dialogRef.close(true)"
-        ix-auto ="CLOSE"
-        >{{"Close" | translate}}</button>
-      </div>
-  `,
+  templateUrl: './copy-paste-message.component.html',
 })
 export class CopyPasteMessageComponent {
   title = helptext.dialog_title;

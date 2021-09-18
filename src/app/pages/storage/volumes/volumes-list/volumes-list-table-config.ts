@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { combineLatest, Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
+import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -680,7 +680,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   id: 'download_key',
                   name: helptext.downloadKey,
                   function: () => {
-                    const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+                    const dialogRef = self.mdDialog.open(DownloadKeyDialogComponent, { disableClose: true });
                     dialogRef.componentInstance.volumeId = row1.id;
                     dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';
                   },

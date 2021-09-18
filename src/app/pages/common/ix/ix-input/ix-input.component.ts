@@ -12,12 +12,12 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => IxInput),
+      useExisting: forwardRef(() => IxInputComponent),
       multi: true,
     },
   ],
 })
-export class IxInput implements ControlValueAccessor {
+export class IxInputComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() prefixText: string;

@@ -13,15 +13,20 @@ import { EntityUtils } from '../entity/utils';
   templateUrl: './error-dialog.component.html',
   styleUrls: ['./error-dialog.component.scss'],
 })
-export class ErrorDialog {
+export class ErrorDialogComponent {
   title: string;
   message: string;
   backtrace: string;
   isCloseMoreInfo = true;
   logs: any;
 
-  constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService,
-    private ws: WebSocketService, public http: HttpClient, public storage: StorageService) {}
+  constructor(
+    public dialogRef: MatDialogRef<ErrorDialogComponent>,
+    public translate: TranslateService,
+    private ws: WebSocketService,
+    public http: HttpClient,
+    public storage: StorageService,
+  ) {}
 
   toggleOpen(): void {
     const dialogs = document.getElementsByClassName('mat-dialog-container');

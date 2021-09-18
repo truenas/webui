@@ -15,11 +15,11 @@ import { Option } from 'app/interfaces/option.interface';
     {
       provide: NG_VALUE_ACCESSOR,
       multi: true,
-      useExisting: forwardRef(() => IxSelect),
+      useExisting: forwardRef(() => IxSelectComponent),
     },
   ],
 })
-export class IxSelect implements ControlValueAccessor {
+export class IxSelectComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() value: string | number;
   @Input() hint: string;

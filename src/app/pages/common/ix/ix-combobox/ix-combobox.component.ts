@@ -14,12 +14,12 @@ import { Option } from 'app/interfaces/option.interface';
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => IxCombobox),
+      useExisting: forwardRef(() => IxComboboxComponent),
       multi: true,
     },
   ],
 })
-export class IxCombobox implements ControlValueAccessor, OnChanges {
+export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
   @Input() label: string;
   @Input() hint: string;
   @Input() required: boolean;

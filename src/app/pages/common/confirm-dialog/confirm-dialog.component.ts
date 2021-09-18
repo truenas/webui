@@ -10,7 +10,7 @@ import { T } from 'app/translate-marker';
   templateUrl: './confirm-dialog.component.html',
   styleUrls: ['./confirm-dialog.component.scss'],
 })
-export class ConfirmDialog {
+export class ConfirmDialogComponent {
   title: string;
   message: string;
   buttonMsg: string = T('Continue');
@@ -29,7 +29,7 @@ export class ConfirmDialog {
 
   @Output() switchSelectionEmitter = new EventEmitter<boolean>();
 
-  constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService) {
+  constructor(public dialogRef: MatDialogRef < ConfirmDialogComponent >, protected translate: TranslateService) {
   }
 
   toggleSubmit(data: MatCheckboxChange): void {

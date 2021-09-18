@@ -134,6 +134,8 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     return this._tableConf;
   }
 
+  // TODO: tableConf can be renamed
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('conf') set tableConf(conf: AppTableConfig) {
     if (!this._tableConf) {
       this._tableConf = conf;
