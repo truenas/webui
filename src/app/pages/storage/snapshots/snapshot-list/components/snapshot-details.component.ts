@@ -7,7 +7,7 @@ import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import {
   EntityAction,
   EntityRowDetails,
-} from 'app/pages/common/entity/entity-table/entity-row-details.interface';
+} from 'app/pages/common/entity/entity-table/entity-row-details/entity-row-details.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { WebSocketService, StorageService, SystemGeneralService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';

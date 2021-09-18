@@ -9,8 +9,8 @@ import { EntityCardComponent } from './entity-card.component';
   templateUrl: './entity-card-actions.component.html',
 })
 export class EntityCardActionsComponent implements OnInit {
-  @Input('entity') entity: EntityCardComponent;
-  @Input('row') row: any;
+  @Input() entity: EntityCardComponent;
+  @Input() row: any;
 
   actions: EntityCardAction[];
   showMenu = true;

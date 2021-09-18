@@ -36,11 +36,7 @@ import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
 @UntilDestroy()
 @Component({
   selector: 'vm-list',
-  template: `
-    <div class="vm-summary" *ngIf="hasVirtualizationSupport">
-        <p *ngIf="availMem"><strong>{{memTitle | translate}}</strong> {{availMem}} - {{memWarning | translate}}</p>
-    </div>
-    <entity-table [title]='title' [conf]='this'></entity-table>`,
+  templateUrl: './vm-list.component.html',
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
 })

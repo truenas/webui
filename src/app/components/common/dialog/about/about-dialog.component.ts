@@ -15,7 +15,7 @@ export interface DialogData {
   styleUrls: ['./about-dialog.component.scss'],
   templateUrl: './about-dialog.component.html',
 })
-export class AboutModalDialog {
+export class AboutDialogComponent {
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   product_type: ProductType;
   extraMsg: boolean;
@@ -25,7 +25,7 @@ export class AboutModalDialog {
   readonly ProductType = ProductType;
 
   constructor(
-    public dialogRef: MatDialogRef<AboutModalDialog>,
+    public dialogRef: MatDialogRef<AboutDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
     private core: CoreService,
     private localeService: LocaleService,

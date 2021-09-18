@@ -8,8 +8,11 @@ import {
 export class IXAutoDirective implements OnChanges {
   static readonly ATTRIBUTE = 'ix-auto';
 
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('ix-auto') tag: string;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('ix-auto-type') type: string;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('ix-auto-identifier') identifier: string;
 
   constructor(private el: ElementRef) {}

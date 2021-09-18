@@ -13,7 +13,7 @@ import { EntityUtils } from '../entity/utils';
   templateUrl: './password-dialog.component.html',
   styleUrls: ['./password-dialog.component.scss'],
 })
-export class PasswordDialog {
+export class PasswordDialogComponent {
   title: string = globalHelptext.rootpw.dialog_title;
   message: string;
   placeholder = globalHelptext.rootpw.placeholder;
@@ -30,7 +30,7 @@ export class PasswordDialog {
   password = '';
 
   constructor(
-    public dialogRef: MatDialogRef<PasswordDialog>,
+    public dialogRef: MatDialogRef<PasswordDialogComponent>,
     protected translate: TranslateService,
     protected sysGeneralService: SystemGeneralService,
   ) {}

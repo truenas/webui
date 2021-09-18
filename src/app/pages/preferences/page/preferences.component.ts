@@ -11,7 +11,7 @@ import { ThemeService } from 'app/services/theme/theme.service';
   templateUrl: './preferences.component.html',
   styleUrls: ['./preferences.component.scss'],
 })
-export class PreferencesPage implements OnDestroy {
+export class PreferencesPageComponent implements OnDestroy {
   /*
    //Preferences Object Structure
    platform:string; // FreeNAS || TrueNAS

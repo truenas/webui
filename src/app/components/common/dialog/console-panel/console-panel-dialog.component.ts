@@ -11,7 +11,7 @@ import { Interval } from 'app/interfaces/timeout.interface';
   styleUrls: ['./console-panel-dialog.component.scss'],
   templateUrl: './console-panel-dialog.component.html',
 })
-export class ConsolePanelModalDialog implements OnInit {
+export class ConsolePanelDialogComponent implements OnInit {
   refreshMsg = this.translate.instant('Check to stop refresh');
   intervalPing: Interval;
   consoleMsg = this.translate.instant('Loading...');
@@ -20,7 +20,7 @@ export class ConsolePanelModalDialog implements OnInit {
 
   constructor(
     protected translate: TranslateService,
-    public dialogRef: MatDialogRef<ConsolePanelModalDialog>,
+    public dialogRef: MatDialogRef<ConsolePanelDialogComponent>,
   ) { }
 
   ngOnInit(): void {

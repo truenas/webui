@@ -6,13 +6,13 @@ import { filter } from 'rxjs/operators';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { ErrorDialog } from 'app/pages/common/error-dialog/error-dialog.component';
+import { ErrorDialogComponent } from 'app/pages/common/error-dialog/error-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/pages/common/general-dialog/general-dialog.component';
-import { InfoDialog } from 'app/pages/common/info-dialog/info-dialog.component';
-import { PasswordDialog } from 'app/pages/common/password-dialog/password-dialog.component';
+import { InfoDialogComponent } from 'app/pages/common/info-dialog/info-dialog.component';
+import { PasswordDialogComponent } from 'app/pages/common/password-dialog/password-dialog.component';
 import { SelectDialogComponent } from 'app/pages/common/select-dialog/select-dialog.component';
 import { T } from 'app/translate-marker';
 import { AppLoaderService } from './app-loader/app-loader.service';
@@ -32,11 +32,11 @@ export class DialogService {
   }
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>
-  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialog, unknown>
+  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialogComponent, unknown>
   confirm(
     options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
-  ): Observable<boolean> | MatDialogRef<ConfirmDialog, unknown> {
-    const dialogRef = this.dialog.open(ConfirmDialog, { disableClose: options.disableClose || false });
+  ): Observable<boolean> | MatDialogRef<ConfirmDialogComponent, unknown> {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, { disableClose: options.disableClose || false });
 
     dialogRef.componentInstance.title = options.title;
     dialogRef.componentInstance.message = options.message;
@@ -92,7 +92,7 @@ export class DialogService {
   }
 
   passwordConfirm(message: string, disableClose = true): Observable<boolean> {
-    const dialogRef = this.dialog.open(PasswordDialog, { disableClose });
+    const dialogRef = this.dialog.open(PasswordDialogComponent, { disableClose });
 
     dialogRef.componentInstance.message = message;
 
@@ -100,7 +100,7 @@ export class DialogService {
   }
 
   errorReport(title: string, message: string, backtrace = '', logs?: any): Observable<boolean> {
-    const dialogRef = this.dialog.open(ErrorDialog);
+    const dialogRef = this.dialog.open(ErrorDialogComponent);
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.message = message;
@@ -113,7 +113,7 @@ export class DialogService {
   }
 
   info(title: string, info: string, width = '500px', icon = 'report_problem', is_html = false): Observable<boolean> {
-    const dialogRef = this.dialog.open(InfoDialog, { width });
+    const dialogRef = this.dialog.open(InfoDialogComponent, { width });
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;

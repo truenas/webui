@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ConsolePanelModalDialog } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
+import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -238,7 +238,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   onShowConsolePanel(): void {
-    const dialogRef = this.dialog.open(ConsolePanelModalDialog, {});
+    const dialogRef = this.dialog.open(ConsolePanelDialogComponent, {});
     const sub = dialogRef.componentInstance.onEventEmitter.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.componentInstance.consoleMsg = this.accumulateConsoleMsg('', 500);
     });
