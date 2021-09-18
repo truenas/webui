@@ -272,7 +272,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.target.next({ name: 'SubmitComplete', sender: this });
       this.isWaiting = false;
     }
-    this.showWelcome = evt.data.showWelcomeDialog;
+    this.showWelcome = evt.data.showWelcomeDialog && !(localStorage.getItem('turnOffWelcomeDialog') as unknown as boolean);
     if (this.showWelcome) {
       this.onShowAbout();
     }
