@@ -1749,33 +1749,32 @@ export class VolumesListTableConfig implements EntityTableConfig {
   }
 
   getMoreDatasetInfo(dataObj: any, parent: any): void {
-    const dataset_data2 = this.datasetData;
     const inherits = this.translate.instant(T('Inherits'));
-    for (const k in dataset_data2) {
-      if (dataset_data2[k].id === dataObj.id) {
-        if (dataset_data2[k].compression) {
-          dataset_data2[k].compression.source !== 'INHERITED'
-            ? dataObj.compression = (dataset_data2[k].compression.parsed)
-            : dataObj.compression = (inherits + ' (' + dataset_data2[k].compression.parsed + ')');
+    this.datasetData.forEach((dataset) => {
+      if (dataset.id === dataObj.id) {
+        if (dataset.compression) {
+          dataset.compression.source !== 'INHERITED'
+            ? dataObj.compression = (dataset.compression.parsed)
+            : dataObj.compression = (inherits + ' (' + dataset.compression.parsed + ')');
         }
-        if (dataset_data2[k].compressratio) {
-          dataset_data2[k].compressratio.source !== 'INHERITED'
-            ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
-            : dataObj.compressratio = (inherits + ' (' + dataset_data2[k].compressratio.parsed + ')');
+        if (dataset.compressratio) {
+          dataset.compressratio.source !== 'INHERITED'
+            ? dataObj.compressratio = (dataset.compressratio.parsed)
+            : dataObj.compressratio = (inherits + ' (' + dataset.compressratio.parsed + ')');
         }
-        if (dataset_data2[k].readonly) {
-          dataset_data2[k].readonly.source !== 'INHERITED'
-            ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
-            : dataObj.readonly = (inherits + ' (' + dataset_data2[k].readonly.parsed + ')');
+        if (dataset.readonly) {
+          dataset.readonly.source !== 'INHERITED'
+            ? dataObj.readonly = (dataset.readonly.parsed)
+            : dataObj.readonly = (inherits + ' (' + dataset.readonly.parsed + ')');
         }
-        if (dataset_data2[k].deduplication) {
-          dataset_data2[k].deduplication.source !== 'INHERITED'
-            ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
-            : dataObj.dedup = (inherits + ' (' + dataset_data2[k].deduplication.parsed + ')');
+        if (dataset.deduplication) {
+          dataset.deduplication.source !== 'INHERITED'
+            ? dataObj.dedup = (dataset.deduplication.parsed)
+            : dataObj.dedup = (inherits + ' (' + dataset.deduplication.parsed + ')');
         }
-        if (dataset_data2[k].comments) {
-          dataset_data2[k].comments.source !== 'INHERITED'
-            ? dataObj.comments = (dataset_data2[k].comments.parsed)
+        if (dataset.comments) {
+          dataset.comments.source !== 'INHERITED'
+            ? dataObj.comments = (dataset.comments.parsed)
             : dataObj.comments = ('');
         }
       }
@@ -1788,6 +1787,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
         this.parentVolumesListComponent.has_encrypted_root[parent.pool] = true;
       }
       dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && parent.encrypted);
-    }
+    });
   }
 }

@@ -358,19 +358,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   setVolumeData(data: Dataset[]): void {
     const vd: VolumesData = {};
 
-    for (const i in data) {
-      if (typeof data[i] == undefined || !data[i]) { continue; }
-      const used_pct = data[i].used.parsed / (data[i].used.parsed + data[i].available.parsed);
+    data.forEach((dataset) => {
+      if (typeof dataset == undefined || !dataset) { return; }
+      const used_pct = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
       const zvol = {
-        avail: data[i].available.parsed,
-        id: data[i].id,
-        name: data[i].name,
-        used: data[i].used.parsed,
+        avail: dataset.available.parsed,
+        id: dataset.id,
+        name: dataset.name,
+        used: dataset.used.parsed,
         used_pct: (used_pct * 100).toFixed(0) + '%',
       };
 
       vd[zvol.id] = zvol;
-    }
+    });
 
     this.volumeData = vd;
   }

@@ -1086,13 +1086,13 @@ export class DatasetFormComponent implements FormConfiguration {
             this.nameIsCaseInsensitive = true;
           }
           if (children.length > 0) {
-            for (const i in children) {
+            children.forEach((child) => {
               if (this.nameIsCaseInsensitive) {
-                this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0].toLowerCase());
+                this.namesInUse.push(/[^/]*$/.exec(child.name)[0].toLowerCase());
               } else {
-                this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
+                this.namesInUse.push(/[^/]*$/.exec(child.name)[0]);
               }
-            }
+            });
           }
 
           if (this.isNew) {

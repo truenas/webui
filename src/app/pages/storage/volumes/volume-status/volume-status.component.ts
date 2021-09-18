@@ -210,17 +210,17 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   getUnusedDisk(): void {
     const availableDisks: Option[] = [];
     const availableDisksForExtend: Option[] = [];
-    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res) => {
-      for (const i in res) {
+    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((disks) => {
+      disks.forEach((disk) => {
         availableDisks.push({
-          label: res[i].devname,
-          value: res[i].identifier,
+          label: disk.devname,
+          value: disk.identifier,
         });
         availableDisksForExtend.push({
-          label: res[i].devname + ' (' + filesize(res[i].size, { standard: 'iec' }) + ')',
-          value: res[i].name,
+          label: disk.devname + ' (' + filesize(disk.size, { standard: 'iec' }) + ')',
+          value: disk.name,
         });
-      }
+      });
       const diskConfig: FormSelectConfig = _.find(this.replaceDiskFormFields, { name: 'disk' });
       diskConfig.options = availableDisks;
 

@@ -329,9 +329,9 @@ export class ZvolWizardComponent implements WizardConfiguration {
       const children = (pk_dataset[0].children);
       entityWizard.setDisabled('name', false, 1);
       if (children.length > 0) {
-        for (const i in children) {
-          this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
-        }
+        children.forEach((child) => {
+          this.namesInUse.push(/[^/]*$/.exec(child.name)[0]);
+        });
       }
       this.translate.get('Inherit').pipe(untilDestroyed(this)).subscribe((inheritTr) => {
         if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {

@@ -1296,14 +1296,14 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe(
       (providers) => {
         this.providers = providers;
-        for (const i in providers) {
+        providers.forEach((provider) => {
           this.providerField.options.push(
             {
-              label: providers[i].title,
-              value: providers[i].name,
+              label: provider.title,
+              value: provider.name,
             },
           );
-        }
+        });
       },
     );
     const authenticationFieldset = _.find(this.fieldSets, { class: 'authentication' });

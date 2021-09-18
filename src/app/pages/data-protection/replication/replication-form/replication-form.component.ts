@@ -54,7 +54,7 @@ export class ReplicationFormComponent implements FormConfiguration {
   editCall: 'replication.update' = 'replication.update';
   isEntity = true;
   protected entityForm: EntityFormComponent;
-  protected queryRes: ReplicationTask[];
+  protected queryRes: ReplicationTask;
   title: string;
   pk: number;
   protected retentionPolicyChoice = [
@@ -1106,24 +1106,22 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
     const sshCredentialsField: FormSelectConfig = this.fieldSets.config('ssh_credentials');
     this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
-      for (const i in connections) {
-        sshCredentialsField.options.push({
-          label: connections[i].name,
-          value: connections[i].id,
-        });
-      }
+      sshCredentialsField.options = connections.map((connection) => ({
+        label: connection.name,
+        value: connection.id,
+      }));
     });
     const periodicSnapshotTasksField: FormSelectConfig = this.fieldSets.config('periodic_snapshot_tasks');
-    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      for (const i in res) {
-        const label = `${res[i].dataset} - ${res[i].naming_schema} - ${res[i].lifetime_value} ${
-          res[i].lifetime_unit
-        } (S) - ${res[i].enabled ? 'Enabled' : 'Disabled'}`;
+    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((tasks) => {
+      tasks.forEach((task) => {
+        const label = `${task.dataset} - ${task.naming_schema} - ${task.lifetime_value} ${
+          task.lifetime_unit
+        } (S) - ${task.enabled ? 'Enabled' : 'Disabled'}`;
         periodicSnapshotTasksField.options.push({
           label,
-          value: res[i].id,
+          value: task.id,
         });
-      }
+      });
     });
 
     const scheduleBeginField: FormSelectConfig = this.fieldSets.config('schedule_begin');
@@ -1527,7 +1525,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
             data[prop] = false;
           } else {
-            data[prop] = Array.isArray(this.queryRes[prop]) ? [] : null;
+            data[prop] = Array.isArray(this.queryRes[prop as keyof ReplicationTask]) ? [] : null;
           }
         }
         if (prop === 'schedule' && data[prop] === false) {

@@ -957,11 +957,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   findDiskBySlotNumber(slot: number): EnclosureDisk {
     const selectedEnclosure = this.getSelectedEnclosure();
-    for (const i in selectedEnclosure.disks) {
-      if (selectedEnclosure.disks[i].enclosure.slot == slot) {
-        return selectedEnclosure.disks[i];
-      }
-    }
+    return selectedEnclosure.disks.find((disk) => {
+      return disk.enclosure.slot == slot;
+    });
   }
 
   toggleHighlightMode(mode: string): void {

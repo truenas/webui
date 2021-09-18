@@ -124,12 +124,11 @@ export class InitiatorFormComponent implements OnInit {
     });
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-    for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
+    this.fieldConfig.forEach((config) => {
       if (config.relation.length > 0) {
         this.setRelation(config);
       }
-    }
+    });
 
     this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.connectedInitiatorsDisabled = res === 'DISABLED';

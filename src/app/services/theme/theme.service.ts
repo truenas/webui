@@ -366,9 +366,9 @@ export class ThemeService {
       name = this.defaultTheme;
     }
 
-    for (const i in this.allThemes) {
-      const t = this.allThemes[i];
-      if (t.name == name) { return t; }
+    const theme = this.allThemes.find((theme) => theme.name == name);
+    if (theme) {
+      return theme;
     }
 
     // Optionally reset if not found
