@@ -17,6 +17,7 @@ import { FormUploadComponent } from 'app/pages/common/entity/entity-form/compone
 import { FieldConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { LocalizationForm2 } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
@@ -24,10 +25,10 @@ import {
 }
   from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ModalService } from 'app/services/modal.service';
 import { GuiFormComponent } from './gui-form/gui-form.component';
-import { LocalizationFormComponent } from './localization-form/localization-form.component';
 
 @UntilDestroy()
 @Component({
@@ -118,6 +119,7 @@ export class GeneralSettingsComponent implements OnInit {
     private router: Router,
     public mdDialog: MatDialog,
     private core: CoreService,
+    private ixModalService: IxModalService,
   ) { }
 
   ngOnInit(): void {
@@ -223,7 +225,7 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   doAdd(name: string, id?: number): void {
-    let addComponent: Type<GuiFormComponent | NtpServerFormComponent | LocalizationFormComponent>;
+    let addComponent: Type<GuiFormComponent | NtpServerFormComponent>;
     switch (name) {
       case 'gui':
         addComponent = GuiFormComponent;
@@ -232,10 +234,12 @@ export class GeneralSettingsComponent implements OnInit {
         addComponent = NtpServerFormComponent;
         break;
       default:
-        addComponent = LocalizationFormComponent;
+        this.ixModalService.open({ component: LocalizationForm2, data: { title: 'Localization Settings' } });
     }
     this.sysGeneralService.sendConfigData(this.configData);
-    this.modalService.openInSlideIn(addComponent, id);
+    if (addComponent) {
+      this.modalService.openInSlideIn(addComponent, id);
+    }
   }
 
   doNTPDelete(server: NtpServer): void {
