@@ -17,7 +17,7 @@ import { FormUploadComponent } from 'app/pages/common/entity/entity-form/compone
 import { FieldConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { LocalizationForm2 } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
+import { LocalizationForm2Component } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
@@ -234,7 +234,7 @@ export class GeneralSettingsComponent implements OnInit {
         addComponent = NtpServerFormComponent;
         break;
       default:
-        this.ixModalService.open({ component: LocalizationForm2, data: { title: 'Localization Settings' } });
+        this.ixModalService.open({ component: LocalizationForm2Component, data: { title: 'Localization Settings' } });
     }
     this.sysGeneralService.sendConfigData(this.configData);
     if (addComponent) {
