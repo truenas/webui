@@ -145,4 +145,8 @@ export class LocalizationForm2Component implements OnInit {
       new EntityUtils().handleWSError(this, res);
     });
   }
+
+  cancel(): void {
+    this.modalService.close();
+  }
 }

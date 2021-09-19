@@ -1,4 +1,4 @@
-<ix-form [formGroup]="formGroup" (formSubmit)="submit($event)" [loading]="formIsLoading">
+<ix-form [formGroup]="formGroup" (formSubmit)="submit($event)" [loading]="formIsLoading" (cancel)="cancel()">
   <ix-fieldset
     [title]="fieldsetTitle"
   >
