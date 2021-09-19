@@ -8,10 +8,10 @@
 }
 
 .form-actions {
-  margin: 16px 21px;
+  margin: 16px 13px;
 
   button {
-    margin: 0 4px;
+    margin-right: 8px;
   }
 }
 
@@ -24,4 +24,8 @@
   font-size: medium;
   margin-left: 21px !important;
   margin-top: 8px !important;
+}
+
+.ix-form-container {
+  padding: 0 8px;
 }

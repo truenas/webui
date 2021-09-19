@@ -10,8 +10,9 @@ import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  LanguageService, ModalService, SystemGeneralService, WebSocketService,
+  LanguageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
@@ -96,7 +97,7 @@ export class LocalizationForm2 implements OnInit {
     public localeService: LocaleService,
     protected ws: WebSocketService,
     protected langService: LanguageService,
-    private modalService: ModalService,
+    private modalService: IxModalService,
     private router: Router,
   ) {
     this.sysGeneralService.getGeneralConfig$
@@ -135,13 +136,12 @@ export class LocalizationForm2 implements OnInit {
     this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.sysGeneralService.refreshSysGeneral();
       this.formIsLoading = false;
-      this.modalService.close('slide-in-form');
+      this.modalService.close();
       this.setTimeOptions(body.timezone);
       this.langService.setLanguage(body.language);
-      this.router.navigate(['/', 'dashboard']);
     }, (res) => {
       this.formIsLoading = false;
-      this.modalService.close('slide-in-form');
+      this.modalService.close();
       new EntityUtils().handleWSError(this, res);
     });
   }
