@@ -12,6 +12,7 @@ import { difference, ListSelection, ListSelectionImpl } from './models';
 export class DualListboxComponent<T extends { id: string }> implements OnInit {
   @Input() key: keyof T = 'id';
   @Input() items: T[];
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('selectedItems') _selectedItems: T[];
   @Output() selectedItemsChange = new EventEmitter<T[]>();
 

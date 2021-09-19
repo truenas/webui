@@ -14,13 +14,13 @@ import { ServiceSSHComponent } from './components/service-ssh/service-ssh.compon
 import { ServiceTFTPComponent } from './components/service-tftp/service-tftp.component';
 import { ServiceUPSComponent } from './components/service-ups/service-ups.component';
 import { ServiceWebdavComponent } from './components/service-webdav/service-webdav.component';
-import { Services } from './services.component';
+import { ServicesComponent } from './services.component';
 
 export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    component: Services,
+    component: ServicesComponent,
   },
   {
     data: { title: 'SSH', breadcrumb: 'SSH' },

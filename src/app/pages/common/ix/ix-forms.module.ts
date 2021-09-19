@@ -6,13 +6,13 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { IxCombobox } from 'app/pages/common/ix/components/ix-combobox/ix-combobox.component';
-import { IxFieldset } from 'app/pages/common/ix/components/ix-fieldset/ix-fieldset.component';
-import { IxForm } from 'app/pages/common/ix/components/ix-form/ix-form.component';
-import { IxInput } from 'app/pages/common/ix/components/ix-input/ix-input.component';
+import { IxComboboxComponent } from 'app/pages/common/ix/components/ix-combobox/ix-combobox.component';
+import { IxFieldsetComponent } from 'app/pages/common/ix/components/ix-fieldset/ix-fieldset.component';
+import { IxFormComponent } from 'app/pages/common/ix/components/ix-form/ix-form.component';
+import { IxInputComponent } from 'app/pages/common/ix/components/ix-input/ix-input.component';
 import { IxModalComponent } from 'app/pages/common/ix/components/ix-modal/ix-modal.component';
 import { IxModalDirective } from 'app/pages/common/ix/components/ix-modal/ix-modal.directive';
-import { IxSelect } from 'app/pages/common/ix/components/ix-select/ix-select.component';
+import { IxSelectComponent } from 'app/pages/common/ix/components/ix-select/ix-select.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 
 @NgModule({
@@ -23,21 +23,22 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     EnclosureModule, CommonDirectivesModule, TranslateModule,
   ],
   declarations: [
-    IxInput,
-    IxSelect,
-    IxCombobox,
-    IxFieldset,
-    IxForm,
+    IxInputComponent,
+    IxSelectComponent,
+    IxComboboxComponent,
+    IxFieldsetComponent,
     IxModalComponent,
     IxModalDirective,
+    IxFormComponent,
   ],
   exports: [
-    IxInput,
-    IxSelect,
-    IxCombobox,
-    IxFieldset,
-    IxForm,
+    IxInputComponent,
+    IxSelectComponent,
+    IxComboboxComponent,
     IxModalComponent,
+    IxFieldsetComponent,
+    IxModalDirective,
+    IxFormComponent,
   ],
 })
 export class IxFormsModule {}

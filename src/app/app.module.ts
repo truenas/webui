@@ -14,8 +14,8 @@ import {
 } from 'ngx-translate-messageformat-compiler';
 import { NgxWebstorageModule } from 'ngx-webstorage';
 import { MaterialModule } from 'app/app-material.module';
-import { ConsolePanelModalDialog } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
+import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
+import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { JobItemComponent } from 'app/components/common/dialog/jobs-manager/components/job-item/job-item.component';
 import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
 import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
@@ -32,21 +32,21 @@ import { NotificationsService } from 'app/services/notifications.service';
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
 import { AppCommonModule } from './components/common/app-common.module';
-import { AboutModalDialog } from './components/common/dialog/about/about-dialog.component';
+import { AboutDialogComponent } from './components/common/dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from './components/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from './components/common/dialog/resilver-progress/resilver-progress.component';
 import { TruecommandComponent } from './components/common/dialog/truecommand/truecommand.component';
-import { ConfirmDialog } from './pages/common/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from './pages/common/confirm-dialog/confirm-dialog.component';
 import { EntityDialogComponent } from './pages/common/entity/entity-dialog/entity-dialog.component';
 import { FormCheckboxComponent } from './pages/common/entity/entity-form/components/form-checkbox/form-checkbox.component';
 import { FormInputComponent } from './pages/common/entity/entity-form/components/form-input/form-input.component';
 import { FormParagraphComponent } from './pages/common/entity/entity-form/components/form-paragraph/form-paragraph.component';
 import { FormSelectComponent } from './pages/common/entity/entity-form/components/form-select/form-select.component';
 import { EntityModule } from './pages/common/entity/entity.module';
-import { ErrorDialog } from './pages/common/error-dialog/error-dialog.component';
+import { ErrorDialogComponent } from './pages/common/error-dialog/error-dialog.component';
 import { GeneralDialogComponent } from './pages/common/general-dialog/general-dialog.component';
-import { InfoDialog } from './pages/common/info-dialog/info-dialog.component';
-import { PasswordDialog } from './pages/common/password-dialog/password-dialog.component';
+import { InfoDialogComponent } from './pages/common/info-dialog/info-dialog.component';
+import { PasswordDialogComponent } from './pages/common/password-dialog/password-dialog.component';
 import { SelectDialogComponent } from './pages/common/select-dialog/select-dialog.component';
 import { AppLoaderComponent } from './services/app-loader/app-loader.component';
 import { AppLoaderModule } from './services/app-loader/app-loader.module';
@@ -95,16 +95,16 @@ import { WebSocketService } from './services/ws.service';
   ],
   declarations: [
     AppComponent,
-    ConfirmDialog,
-    PasswordDialog,
-    ErrorDialog,
-    InfoDialog,
+    ConfirmDialogComponent,
+    PasswordDialogComponent,
+    ErrorDialogComponent,
+    InfoDialogComponent,
     GeneralDialogComponent,
-    AboutModalDialog,
+    AboutDialogComponent,
     TruecommandComponent,
     DirectoryServicesMonitorComponent,
-    ConsolePanelModalDialog,
-    DownloadKeyModalDialog,
+    ConsolePanelDialogComponent,
+    DownloadKeyDialogComponent,
     ResilverProgressDialogComponent,
     SelectDialogComponent,
     JobsManagerComponent,
@@ -126,16 +126,16 @@ import { WebSocketService } from './services/ws.service';
   ],
   entryComponents: [
     AppLoaderComponent,
-    ConfirmDialog,
-    PasswordDialog,
-    ErrorDialog,
-    InfoDialog,
+    ConfirmDialogComponent,
+    PasswordDialogComponent,
+    ErrorDialogComponent,
+    InfoDialogComponent,
     GeneralDialogComponent,
-    AboutModalDialog,
+    AboutDialogComponent,
     TruecommandComponent,
     DirectoryServicesMonitorComponent,
-    ConsolePanelModalDialog,
-    DownloadKeyModalDialog,
+    ConsolePanelDialogComponent,
+    DownloadKeyDialogComponent,
     ResilverProgressDialogComponent,
     SelectDialogComponent,
     EntityDialogComponent,
