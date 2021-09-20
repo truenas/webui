@@ -12,6 +12,7 @@ from function import (
     is_element_present,
     wait_on_element_disappear,
     attribute_value_exist,
+    word_xor
 )
 from pytest_bdd import (
     given,
@@ -61,17 +62,17 @@ def you_should_be_on_the_dashboard_click_on_directory_services_and_then_kerberos
     assert wait_on_element(driver, 7, '//span[contains(text(),"Directory Services")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Directory Services")]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 7, '//mat-list-item[ix-auto="option__Kerberos Keytabs"]', 'clickable') 
-    driver.find_element_by_xpath('//mat-list-item[ix-auto="option__Kerberos Keytabs"]').click()
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Kerberos Keytabs"]', 'clickable') 
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Kerberos Keytabs"]').click()
 
 
 @then('click on Add on the Kerberos Keytab page')
 def click_on_add_on_the_kerberos_keytab_page(driver):
     """click on Add on the Kerberos Keytab page."""
     time.sleep(1)
-    assert wait_on_elemtn(driver, 7, '//div[contains(text(),"Kerberos Keytabs")]')
+    assert wait_on_element(driver, 7, '//div[contains(text(),"Kerberos Keytabs")]')
     time.sleep(1)
-    driver.find_element_by_xpath('//mat-card[contains(.,"Kerberos Keytab")]//span[contains(text(),"Add")]').click()    
+    driver.find_element_by_xpath('//button[@ix-auto="button__Kerberos Keytabs_ADD"]').click()    
 
 
 @then(parsers.parse('decode the tabfile with {tabfile_string}'))
@@ -82,8 +83,12 @@ def decode_the_tabfile_with_tabfile_string(driver, tabfile_string):
     global tab_result
     tabfile_path = os.getcwd() + '/tabfile'
     assert glob.glob(tabfile_path)
+    print(tabfile_path)
     tabfile = sorted(glob.glob(tabfile_path))[-1]
+    print(tabfile)
+    print(tabfile_string)
     tab_result = word_xor(tabfile, tabfile_string)
+    time.sleep(2)
     open('KEYTABNAME.KEYTAB','wb').write(tab_result)
 
 
@@ -104,8 +109,9 @@ def name_the_keytab_and_upload_the_file_and_click_save(driver):
     assert wait_on_element(driver, 7, '//input[@type="file"]', 'clickable')
     driver.find_element_by_xpath('//input[@type="file"]').send_keys(keytab_file)
     #save
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"', 'clickable') 
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"').click()
+    time.sleep(2)
+    #assert wait_on_element(driver, 7, '//button[@ix-auto="button__SUBMIT"', 'clickable') 
+    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
 
 
 @then('verify that the file was accepted and utilized')
