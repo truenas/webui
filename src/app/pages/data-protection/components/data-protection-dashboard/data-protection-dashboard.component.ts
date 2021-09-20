@@ -432,11 +432,12 @@ export class DataProtectionDashboardComponent implements OnInit {
   }
 
   cloudsyncDataSourceHelper(data: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
-    return data.map((task) => {
+    const cloudsyncData = data.map((task) => {
       task.credential = task.credentials.name;
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.frequency = this.parent.taskService.getTaskCronDescription(task.cron_schedule);
       task.next_run = this.parent.taskService.getTaskNextRun(task.cron_schedule);
+      task.next_run_time = this.parent.taskService.getTaskNextTime(task.cron_schedule);
 
       if (task.job === null) {
         task.state = { state: JobState.Pending };
@@ -453,6 +454,12 @@ export class DataProtectionDashboardComponent implements OnInit {
 
       return task;
     });
+
+    cloudsyncData.sort((first, second) => {
+      return first.next_run_time.getTime() - second.next_run_time.getTime();
+    });
+
+    return cloudsyncData;
   }
 
   replicationDataSourceHelper(data: ReplicationTaskUi[]): ReplicationTaskUi[] {
