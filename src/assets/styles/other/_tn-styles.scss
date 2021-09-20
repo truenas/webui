@@ -580,7 +580,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-dialog-content {
-    max-width: 600px;
     overflow: hidden;
     padding-bottom: -3px;
 
@@ -602,7 +601,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       transition: max-height 0.5s linear;
 
       &.open {
-        max-height: calc(100px + 2rem + 4px);
+        margin-bottom: 16px;
+        max-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
         padding: 2px;
       }
 
@@ -610,7 +610,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
         background: var(--contrast-darker);
         border: 1px solid var(--lines);
         color: var(--fg2);
-        max-height: calc(100% - 64px);
+        height: calc(100% - 32px);
         min-height: 100px;
         overflow: auto;
         padding: 1rem;
@@ -626,7 +626,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       transition: max-height 0.5s linear;
 
       &.open {
-        max-height: calc(100px + 2rem + 4px);
+        margin-bottom: 16px;
+        max-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
         padding: 2px;
       }
 
@@ -634,7 +635,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
         background: var(--contrast-darker);
         border: 1px solid var(--lines);
         color: var(--fg2);
-        max-height: calc(100% - 64px);
+        height: calc(100% - 32px);
         min-height: 100px;
         overflow: auto;
         padding: 1rem;
