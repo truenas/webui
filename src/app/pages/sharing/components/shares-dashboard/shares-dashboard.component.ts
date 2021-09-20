@@ -172,7 +172,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           deleteCall: 'sharing.nfs.delete',
           deleteMsg: {
             title: T('NFS Share'),
-            key_props: ['name'],
+            key_props: ['paths'],
           },
           limitRowsByMaxHeight: true,
           hideEntityEmpty: true,
