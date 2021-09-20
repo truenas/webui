@@ -584,6 +584,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     overflow: hidden;
     padding-bottom: -3px;
 
+    .more-info .mat-icon {
+      margin: 0 4px 12px;
+      position: relative;
+      top: 7px;
+    }
+
     .info-panel {
       border: 0;
       max-height: 100px;
