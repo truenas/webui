@@ -1,9 +1,10 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { T } from 'app/translate-marker';
-import { Services } from '../services/services.component';
+import { ServicesComponent } from '../services/services.component';
 import { ShellComponent } from '../shell/shell.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component';
@@ -21,7 +22,6 @@ import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace/bootenv-r
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
 import { EmailComponent } from './email/email.component';
 import { FailoverComponent } from './failover/failover.component';
-import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { SupportComponent } from './general-settings/support/support.component';
 import { TunableFormComponent } from './tunable/tunable-form/tunable-form.component';
@@ -202,7 +202,7 @@ export const routes: Routes = [
     },
     {
       path: 'services',
-      component: Services,
+      component: ServicesComponent,
       data: { title: T('Services'), breadcrumb: T('Services') },
     },
     {

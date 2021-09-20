@@ -289,7 +289,7 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   openQRDialog(): void {
-    this.mdDialog.open(QRDialog, {
+    this.mdDialog.open(QrDialogComponent, {
       width: '300px',
       data: { qrInfo: this.qrInfo },
     });
@@ -333,9 +333,9 @@ export class TwoFactorComponent implements FormConfiguration {
   selector: 'qr-dialog',
   templateUrl: 'qr-dialog.html',
 })
-export class QRDialog {
+export class QrDialogComponent {
   constructor(
-    public dialogRef: MatDialogRef<QRDialog>,
+    public dialogRef: MatDialogRef<QrDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {}
 

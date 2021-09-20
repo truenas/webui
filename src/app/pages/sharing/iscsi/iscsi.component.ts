@@ -11,7 +11,7 @@ import { T } from 'app/translate-marker';
   templateUrl: './iscsi.component.html',
   providers: [IscsiService],
 })
-export class ISCSI implements OnInit {
+export class IscsiComponent implements OnInit {
   activedTab = 'configuration';
   navLinks = [{
     label: T('Target Global Configuration'),

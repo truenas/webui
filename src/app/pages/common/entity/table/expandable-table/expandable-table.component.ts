@@ -32,9 +32,10 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
   readonly ServiceStatus = ServiceStatus;
   readonly ExpandableTableState = ExpandableTableState;
 
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('conf') tableConf: InputExpandableTableConf;
-  @Input('expandableTableState') expandableTableState: ExpandableTableState;
-  @Input('disabled') disabled: boolean;
+  @Input() expandableTableState: ExpandableTableState;
+  @Input() disabled: boolean;
 
   @ViewChild('appTable', { read: ElementRef })
   appTable: ElementRef;

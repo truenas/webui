@@ -15,7 +15,7 @@ import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { ManageCatalogSummaryDialog } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
+import { ManageCatalogSummaryDialogComponent } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { CatalogAddFormComponent } from '../forms/catalog-add-form.component';
 import { CatalogEditFormComponent } from '../forms/catalog-edit-form.component';
 
@@ -156,7 +156,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   }
 
   showSummary(row: Catalog): void {
-    this.mdDialog.open(ManageCatalogSummaryDialog, {
+    this.mdDialog.open(ManageCatalogSummaryDialogComponent, {
       width: '534px',
       data: row,
     });

@@ -1,9 +1,9 @@
-<mat-card *ngIf="widgetConf" class="card-widget">
+<mat-card *ngIf="conf" class="card-widget">
   <mat-toolbar-row class="title-bar">
-    <h3>{{ widgetConf.title | translate }}</h3>
+    <h3>{{ conf.title | translate }}</h3>
     <div class="actions action-icon">
-      <button mat-button color="default" (click)="widgetConf.onclick()"
-        ix-auto ix-auto-type="button" ix-auto-identifier="{{widgetConf.name}}"  
+      <button mat-button color="default" (click)="conf.onclick()"
+        ix-auto ix-auto-type="button" ix-auto-identifier="{{conf.name}}"
       >{{ 'Settings' | translate }}</button>
     </div>
   </mat-toolbar-row>
@@ -11,34 +11,34 @@
 
     <div fxLayout="row" fxLayoutGap="30px">
       <div fxFlex="35%">
-        <mat-list *ngIf="widgetConf.data.nameserver">
+        <mat-list *ngIf="conf.data.nameserver">
           <div class="section-title">{{ 'Nameservers' | translate}}</div>
-          <mat-list-item *ngFor="let nameserver of widgetConf.data.nameserver" class="card-list-item">
+          <mat-list-item *ngFor="let nameserver of conf.data.nameserver" class="card-list-item">
             <span class="label">{{ nameserver.label | translate }}:</span>
             <span class="value">{{ nameserver.value | translate }}</span>
           </mat-list-item>
         </mat-list>
-        <mat-list *ngIf="widgetConf.data.ipv4 && widgetConf.data.ipv4.length > 0">
+        <mat-list *ngIf="conf.data.ipv4 && conf.data.ipv4.length > 0">
           <div class="section-title extra-top">{{ 'Default Route' | translate }}</div>
           <mat-list-item class="card-widget-list-item card-list-item">
-            <mat-icon class="card-widget-list-icon" *ngIf="widgetConf.icon">{{widgetConf.icon}}</mat-icon>
-            <span class="label" *ngIf="widgetConf.showGroupTitle">{{ 'IPv4' | translate }}:</span>
+            <mat-icon class="card-widget-list-icon" *ngIf="conf.icon">{{conf.icon}}</mat-icon>
+            <span class="label" *ngIf="conf.showGroupTitle">{{ 'IPv4' | translate }}:</span>
             <span class="value">
               <ul class="sub-ip-list">
-                <li class="ip-list" *ngFor="let item of widgetConf.data.ipv4">
+                <li class="ip-list" *ngFor="let item of conf.data.ipv4">
                   {{item.ip || item}} <span *ngIf="item.dhcp">{{'(DHCP)'}}</span>
                 </li>
               </ul>
             </span>
           </mat-list-item>
         </mat-list>
-        <mat-list *ngIf="widgetConf.data.ipv6 && widgetConf.data.ipv6.length > 0">
+        <mat-list *ngIf="conf.data.ipv6 && conf.data.ipv6.length > 0">
           <mat-list-item class="card-widget-list-item card-list-item">
-            <mat-icon class="card-widget-list-icon" *ngIf="widgetConf.icon">{{widgetConf.icon}}</mat-icon>
+            <mat-icon class="card-widget-list-icon" *ngIf="conf.icon">{{conf.icon}}</mat-icon>
             <span class="label">{{ 'IPv6' | translate }}:</span>
             <span class="value">
               <ul class="sub-ip-list">
-                <li class="ip-list" *ngFor="let item of widgetConf.data.ipv6">
+                <li class="ip-list" *ngFor="let item of conf.data.ipv6">
                   {{item.ip || item}} <span *ngIf="item.dhcp">{{'(DHCP)'}}</span>
                 </li>
               </ul>
@@ -48,17 +48,17 @@
       </div>
 
       <div fxFlex="65%">
-        <ul class="standard-list" *ngIf="widgetConf.data.hostname">
-          <li><span class="label">{{ 'Hostname:' | translate }}</span> {{widgetConf.data.hostname}}</li>
-          <li><span class="label">{{ 'Domain:' | translate }}</span> {{widgetConf.data.domain}}</li>
-          <li><span class="label">{{ 'Netwait:' | translate }}</span> {{widgetConf.data.netwait}}</li>
-          <li><span class="label">{{ 'HTTP Proxy:' | translate }}</span> {{widgetConf.data.httpproxy}}</li>
-          <li><span class="label">{{ 'Service Announcement:' | translate }}</span> {{widgetConf.data.service_announcement}}</li>
-          <li><span class="label">{{ 'Additional Domains:' | translate }}</span> {{widgetConf.data.additional_domains}}</li>
-          <li><span class="label">{{ 'Hostname Database:' | translate }}</span> {{widgetConf.data.hostnameDB}}</li>
-          <li><span class="label">{{ 'Outbound Network:' | translate }}</span> {{widgetConf.data.outbound}}</li>
+        <ul class="standard-list" *ngIf="conf.data.hostname">
+          <li><span class="label">{{ 'Hostname:' | translate }}</span> {{conf.data.hostname}}</li>
+          <li><span class="label">{{ 'Domain:' | translate }}</span> {{conf.data.domain}}</li>
+          <li><span class="label">{{ 'Netwait:' | translate }}</span> {{conf.data.netwait}}</li>
+          <li><span class="label">{{ 'HTTP Proxy:' | translate }}</span> {{conf.data.httpproxy}}</li>
+          <li><span class="label">{{ 'Service Announcement:' | translate }}</span> {{conf.data.service_announcement}}</li>
+          <li><span class="label">{{ 'Additional Domains:' | translate }}</span> {{conf.data.additional_domains}}</li>
+          <li><span class="label">{{ 'Hostname Database:' | translate }}</span> {{conf.data.hostnameDB}}</li>
+          <li><span class="label">{{ 'Outbound Network:' | translate }}</span> {{conf.data.outbound}}</li>
         </ul>
-      </div>          
+      </div>
     </div>
 
   </mat-card-content>

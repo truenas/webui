@@ -18,7 +18,7 @@ import { EntityFormService } from '../entity-form/services/entity-form.service';
   providers: [TaskService, UserService, EntityFormService],
 })
 export class EntityTaskComponent implements OnInit {
-  @Input('conf') conf: EntityTaskConfiguration;
+  @Input() conf: EntityTaskConfiguration;
 
   protected entityForm: EntityFormComponent;
   protected isEntity = true;

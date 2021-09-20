@@ -7,7 +7,7 @@ import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authoriz
 import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
-import { ISCSI } from './iscsi/iscsi.component';
+import { IscsiComponent } from './iscsi/iscsi.component';
 import { PortalFormComponent } from './iscsi/portal/portal-form/portal-form.component';
 import { TargetFormComponent } from './iscsi/target/target-form/target-form.component';
 import { NFSListComponent } from './nfs/nfs-list/nfs-list.component';
@@ -91,7 +91,7 @@ export const routes: Routes = [
               },
               {
                 path: ':pk',
-                component: ISCSI,
+                component: IscsiComponent,
                 data: { title: '', breadcrumb: '' },
               },
               {

@@ -21,7 +21,7 @@ import { LocaleService } from 'app/services/locale.service';
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
-export class ManageCatalogSummaryDialog implements OnInit {
+export class ManageCatalogSummaryDialogComponent implements OnInit {
   catalog: Catalog;
   statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
   trainOptions: string[] = ['All'];

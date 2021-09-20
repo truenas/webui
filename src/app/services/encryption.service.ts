@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
+import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -46,7 +46,7 @@ export class EncryptionService {
   }
 
   openEncryptDialog(row: string, route_success: string[], poolName: string, addRecoveryKey?: boolean): void {
-    const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+    const dialogRef = this.mdDialog.open(DownloadKeyDialogComponent, { disableClose: true });
     dialogRef.componentInstance.volumeId = parseInt(row);
     dialogRef.componentInstance.fileName = 'pool_' + poolName + '_encryption.key';
     dialogRef.afterClosed().subscribe(() => {

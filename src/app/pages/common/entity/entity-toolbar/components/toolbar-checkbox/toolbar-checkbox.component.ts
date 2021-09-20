@@ -9,13 +9,7 @@ import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 @Component({
   selector: 'toolbar-checkbox',
   styleUrls: ['toolbar-checkbox.component.scss'],
-  template: `
-    <div class="toolbar-checkbox form-element {{ config.class}}" id="row-filter">
-      <mat-checkbox color="primary" (change)="onChange($event)" ix-auto ix-auto-type="checkbox">
-        {{ config.placeholder | translate }}
-      </mat-checkbox>
-    </div>
-  `,
+  templateUrl: './toolbar-checkbox.component.html',
 })
 export class ToolbarCheckboxComponent extends IxAbstractObject {
   @Input() config?: any;
