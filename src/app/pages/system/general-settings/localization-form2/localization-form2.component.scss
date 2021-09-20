@@ -1,9 +1,9 @@
-.form-container {
+.ix-form-container {
   display: flex;
   flex-direction: column;
 }
 
-.form-container > * {
+.ix-form-container > * {
   width: 100%;
 }
 
@@ -17,13 +17,6 @@
 
 .divider {
   margin: 16px 0 !important;
-}
-
-.title {
-  color: var(--fg1) !important;
-  font-size: medium;
-  margin-left: 21px !important;
-  margin-top: 8px !important;
 }
 
 .ix-form-container {

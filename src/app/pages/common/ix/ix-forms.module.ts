@@ -8,7 +8,6 @@ import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxComboboxComponent } from 'app/pages/common/ix/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/pages/common/ix/components/ix-fieldset/ix-fieldset.component';
-import { IxFormComponent } from 'app/pages/common/ix/components/ix-form/ix-form.component';
 import { IxInputComponent } from 'app/pages/common/ix/components/ix-input/ix-input.component';
 import { IxModalComponent } from 'app/pages/common/ix/components/ix-modal/ix-modal.component';
 import { IxModalDirective } from 'app/pages/common/ix/components/ix-modal/ix-modal.directive';
@@ -29,7 +28,6 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxFieldsetComponent,
     IxModalComponent,
     IxModalDirective,
-    IxFormComponent,
   ],
   exports: [
     IxInputComponent,
@@ -38,7 +36,6 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxModalComponent,
     IxFieldsetComponent,
     IxModalDirective,
-    IxFormComponent,
   ],
 })
 export class IxFormsModule {}

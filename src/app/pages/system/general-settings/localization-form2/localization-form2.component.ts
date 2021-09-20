@@ -19,6 +19,7 @@ import { LocaleService } from 'app/services/locale.service';
 @Component({
   selector: 'localization-form2',
   templateUrl: './localization-form2.component.html',
+  styleUrls: ['./localization-form2.component.scss'],
 })
 export class LocalizationForm2Component implements OnInit {
   fieldsetTitle = helptext.localeTitle;
@@ -128,7 +129,8 @@ export class LocalizationForm2Component implements OnInit {
     this.dateFormat.options = of(dateOptions);
   }
 
-  submit(body: any): void {
+  submit(): void {
+    const body = this.formGroup.value;
     this.formIsLoading = true;
     this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
     delete body.date_format;
