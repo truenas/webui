@@ -32,13 +32,13 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
     """the browser is open, the FreeNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
     if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
-        assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
-        driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
+        assert wait_on_element(driver, 10, '//input[@placeholder="Username"]')
+        driver.find_element_by_xpath('//input[@placeholder="Username"]').clear()
+        driver.find_element_by_xpath('//input[@placeholder="Username"]').send_keys('root')
+        driver.find_element_by_xpath('//input[@placeholder="Password"]').clear()
+        driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(root_password)
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
@@ -60,6 +60,7 @@ def you_should_be_on_the_dashboard_click_on_directory_services_and_then_kerberos
     time.sleep(1)
     assert wait_on_element(driver, 7, '//span[contains(text(),"Directory Services")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Directory Services")]').click()
+    time.sleep(1)
     assert wait_on_element(driver, 7, '//mat-list-item[ix-auto="option__Kerberos Keytabs"]', 'clickable') 
     driver.find_element_by_xpath('//mat-list-item[ix-auto="option__Kerberos Keytabs"]').click()
 
