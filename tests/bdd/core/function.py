@@ -7,6 +7,7 @@ import re
 import requests
 import sys
 import time
+from collections.abc import Iterable
 from selenium.common.exceptions import (
     NoSuchElementException,
     TimeoutException
@@ -260,5 +261,5 @@ def word_xor(data, key):
     cycles = len(data)
     for i in range(cycles):
         result += (data[i] ^ key[i % l]).to_bytes(1, 'little')
-
+    
     return result

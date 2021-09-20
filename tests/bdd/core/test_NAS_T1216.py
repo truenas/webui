@@ -75,7 +75,7 @@ def click_on_add_on_the_kerberos_keytab_page(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__Kerberos Keytabs_ADD"]').click()    
 
 
-@then(parsers.parse('decode the tabfile with {tabfile_string}'))
+@then(parsers.parse('decode the tabfile with "{tabfile_string}"'))
 def decode_the_tabfile_with_tabfile_string(driver, tabfile_string):
     """decode the tabfile with tabfile_string."""
     # open tabfile
