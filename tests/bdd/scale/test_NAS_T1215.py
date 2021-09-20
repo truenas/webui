@@ -13,6 +13,7 @@ from function import (
     is_element_present,
     wait_on_element_disappear,
     attribute_value_exist,
+    word_xor
 )
 from pytest_bdd import (
     given,
