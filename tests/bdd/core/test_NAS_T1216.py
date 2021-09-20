@@ -81,14 +81,15 @@ def decode_the_tabfile_with_tabfile_string(driver, tabfile_string):
     # open tabfile
     global tabfile
     global tab_result
+    global datafile
     tabfile_path = os.getcwd() + '/tabfile'
     assert glob.glob(tabfile_path)
+    print("tabfile_path=")
     print(tabfile_path)
-    tabfile = sorted(glob.glob(tabfile_path))[-1]
-    print(tabfile)
-    print(tabfile_string)
-    tab_result = word_xor(tabfile, tabfile_string)
-    print(tab_result)
+    print("-----")
+    #tabfile = sorted(glob.glob(tabfile_path))[-1]
+    datafile = open(os.path.expanduser(tabfile_path), 'rb').read()
+    tab_result = word_xor(datafile, tabfile_string)
     time.sleep(2)
     open('KEYTABNAME.KEYTAB','wb').write(tab_result)
 
