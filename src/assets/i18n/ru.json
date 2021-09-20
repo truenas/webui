@@ -331,7 +331,6 @@
   "Enter a name for the interface. Use the format <samp>bond<i>X</i></samp>, <samp>vlan<i>X</i></samp>, or <samp>br<i>X</i></samp> where <i>X</i> is a number representing a non-parent interface. Read-only when editing an interface.": "",
   "Enter a valid username for the <a href=\"https://jira.ixsystems.com/projects/NAS/issues/\" target=\"_blank\">TrueNAS bug tracking system</a>": "",
   "Enter additional <b>smb.conf</b> options. See the  <a href=\"http://www.oreilly.com/openbook/samba/book/appb_02.html\" target=\"_blank\">Samba Guide</a>  for more information on these settings.<br>  To log more details when a client attempts to authenticate to the share, add  <code>log level = 1, auth_audit:5</code>.": "",
-  "Enter additional parameters from  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" target=\"_blank\">ifconfig(8)</a>.": "",
   "Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> is the chosen key format.": "",
   "Enter any additional settings from <a href=\"https://www.samba.org/ftp/rsync/rsyncd.conf.html\" target=\"_blank\">rsyncd.conf(5)</a>. Separate entries by  pressing <code>Enter</code>.": "",
   "Enter or paste the API key provided from <a href=\"https://portal.ixsystems.com/portal/login/\" target=\"_blank\">iXsystems Account Services</a>. Login or signup is required.": "",

@@ -1210,7 +1210,6 @@
   "Enter a value in seconds for the the UPS to wait before initiating shutdown. Shutdown will not occur if power is restored while the timer is counting down. This value only applies when <b>Shutdown mode</b> is set to <i>UPS goes on battery</i>.": "",
   "Enter accounts that have administrative access. See <a href=\"https://www.freebsd.org/cgi/man.cgi?query=upsd.users\" target=\"_blank\">upsd.users(5)</a> for examples.": "",
   "Enter additional <b>smb.conf</b> options. See the  <a href=\"http://www.oreilly.com/openbook/samba/book/appb_02.html\" target=\"_blank\">Samba Guide</a>  for more information on these settings.<br>  To log more details when a client attempts to authenticate to the share, add  <code>log level = 1, auth_audit:5</code>.": "",
-  "Enter additional parameters from  <a href=\"https://www.freebsd.org/cgi/man.cgi?query=ifconfig\" target=\"_blank\">ifconfig(8)</a>.": "",
   "Enter an IPv4 address. This overrides the default gateway provided by DHCP.": "",
   "Enter an IPv6 address. This overrides the default gateway provided by DHCP.": "",
   "Enter an alphanumeric encryption key. Only available when <i>Passphrase</i> is the chosen key format.": "",
