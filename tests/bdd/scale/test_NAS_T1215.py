@@ -77,7 +77,7 @@ def click_on_advanced_and_kerberos_keytab_add(driver):
     time.sleep(1)
     driver.find_element_by_xpath('//mat-card[contains(.,"Kerberos Keytab")]//span[contains(text(),"Add")]').click()
 
-@then(parsers.parse('decode the tabfile with {tabfile_string}'))
+@then(parsers.parse('decode the tabfile with "{tabfile_string}"'))
 def decode_the_tabfile_with_tabfile_string(driver, tabfile_string):
     """decode the tabfile with tabfile_string."""
     # open tabfile
