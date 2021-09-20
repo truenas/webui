@@ -58,7 +58,7 @@
   </ng-template>
 
   <ng-template #extraAction let-tableExtraActions="tableExtraActions" >
-    <div *ngIf="tableExtraActions">
+    <div id="customActions" *ngIf="tableExtraActions">
       <button mat-icon-button [matMenuTriggerFor]="rowActions" aria-label="Table Actions of Expandable Table">
         <mat-icon>more_vert</mat-icon>
       </button>
