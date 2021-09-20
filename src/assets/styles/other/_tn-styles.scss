@@ -569,6 +569,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
   /////////////////// END SpecSelectors
 
+  .mat-dialog-container {
+    max-width: 800px;
+  }
+
   .mat-dialog-title {
     .warning-icon {
       color: #ffc107;
@@ -588,6 +592,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
 
     .more-info .mat-icon {
+      cursor: pointer;
       margin: 0 4px 12px;
       position: relative;
       top: 7px;
@@ -606,7 +611,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
         padding: 2px;
       }
 
-      textarea {
+      .textarea {
         background: var(--contrast-darker);
         border: 1px solid var(--lines);
         color: var(--fg2);
@@ -614,7 +619,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
         min-height: 100px;
         overflow: auto;
         padding: 1rem;
-        width: calc(100% - 2rem);
       }
     }
 
@@ -631,7 +635,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
         padding: 2px;
       }
 
-      textarea {
+      .textarea {
         background: var(--contrast-darker);
         border: 1px solid var(--lines);
         color: var(--fg2);
@@ -639,7 +643,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
         min-height: 100px;
         overflow: auto;
         padding: 1rem;
-        width: calc(100% - 2rem);
       }
     }
   }
