@@ -86,10 +86,7 @@ def decode_the_tabfile_with_tabfile_string(driver, tabfile_string):
     global datafile
     tabfile_path = os.getcwd() + '/tabfile'
     assert glob.glob(tabfile_path)
-    print("tabfile_path=")
-    print(tabfile_path)
-    print("-----")
-    #tabfile = sorted(glob.glob(tabfile_path))[-1]
+    tabfile = sorted(glob.glob(tabfile_path))[-1]
     datafile = open(os.path.expanduser(tabfile_path), 'rb').read()
     tab_result = word_xor(datafile, tabfile_string)
     time.sleep(2)
