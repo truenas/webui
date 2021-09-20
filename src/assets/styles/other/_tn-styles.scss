@@ -620,9 +620,9 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       }
 
       textarea {
-        background: white;
+        background: var(--contrast-darker);
         border: 1px solid #ddd;
-        color: black;
+        color: var(--fg2);
         max-height: calc(100% - 64px);
         min-height: 100px;
         overflow: auto;
