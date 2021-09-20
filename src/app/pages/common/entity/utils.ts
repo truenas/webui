@@ -515,6 +515,10 @@ export class EntityUtils {
     return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('');
   }
 
+  snakeToHuman(str: string): string {
+    return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  }
+
   getCleanMethod(str: string): string {
     return 'clean' + this.snakeToPascal(str);
   }
