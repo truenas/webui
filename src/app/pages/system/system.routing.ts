@@ -4,7 +4,7 @@ import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { T } from 'app/translate-marker';
-import { Services } from '../services/services.component';
+import { ServicesComponent } from '../services/services.component';
 import { ShellComponent } from '../shell/shell.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component';
@@ -202,7 +202,7 @@ export const routes: Routes = [
     },
     {
       path: 'services',
-      component: Services,
+      component: ServicesComponent,
       data: { title: T('Services'), breadcrumb: T('Services') },
     },
     {

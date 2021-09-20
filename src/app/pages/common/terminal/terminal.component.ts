@@ -26,7 +26,7 @@ import { CopyPasteMessageComponent } from './copy-paste-message.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TerminalComponent implements OnInit, OnDestroy {
-  @Input('conf') conf: TerminalConfiguration;
+  @Input() conf: TerminalConfiguration;
   @ViewChild('terminal', { static: true }) container: ElementRef;
 
   fontSize = 14;

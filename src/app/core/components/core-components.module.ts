@@ -8,7 +8,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
-import { Display } from 'app/core/components/display/display.component';
+import { DisplayComponent } from 'app/core/components/display/display.component';
 import { PageComponent } from 'app/core/components/page/page.component';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { ViewButtonComponent } from 'app/core/components/view-button/view-button.component';
@@ -57,7 +57,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ViewComponent,
     ViewControlComponent,
     ViewControllerComponent,
-    Display,
+    DisplayComponent,
     ViewButtonComponent,
     ViewChartComponent,
     ViewChartAreaComponent,
@@ -79,7 +79,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     OverlayModule,
     PortalModule,
     FlexLayoutModule,
-    Display,
+    DisplayComponent,
     ContextMenuComponent,
     PageComponent,
     ViewComponent,

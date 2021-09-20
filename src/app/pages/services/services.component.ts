@@ -25,7 +25,7 @@ interface ServiceRow extends Service {
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [IscsiService],
 })
-export class Services implements EntityTableConfig, OnInit {
+export class ServicesComponent implements EntityTableConfig, OnInit {
   title = T('Services');
   isFooterConsoleOpen: boolean;
   queryCall: 'service.query' = 'service.query';

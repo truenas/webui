@@ -21,6 +21,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { FormSelectionListComponent } from 'app/pages/common/entity/entity-form/components/form-selection-list/form-selection-list.component';
 import { TooltipComponent } from 'app/pages/common/entity/entity-form/components/tooltip/tooltip.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityRowDetailsComponent } from 'app/pages/common/entity/entity-table/entity-row-details/entity-row-details.component';
 import { EntityTableActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-actions/entity-table-actions.component';
 import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import { WizardSummaryComponent } from 'app/pages/common/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
@@ -70,7 +71,6 @@ import { EntityFormComponent } from './entity-form/entity-form.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
 import { EntitySnackbarComponent } from './entity-snackbar/entity-snackbar.component';
 import { DynamicComponentDirective } from './entity-table/dynamic-component.directive';
-import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
 import { EntityTableRowDetailsComponent } from './entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
 import { EntityTaskComponent } from './entity-task/entity-task.component';
@@ -86,7 +86,7 @@ import { ToolbarSliderComponent } from './entity-toolbar/components/toolbar-slid
 import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
 import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityWizardComponent } from './entity-wizard/entity-wizard.component';
-import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
+import { SmdFabSpeedDialTriggerComponent, SmdFabSpeedDialActionsComponent, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 import { TableComponent } from './table/table.component';
 import { TableService } from './table/table.service';
 
@@ -141,8 +141,8 @@ import { TableService } from './table/table.service';
     FormUploadComponent,
     FormReadFileComponent,
     EntityJobComponent,
-    SmdFabSpeedDialTrigger,
-    SmdFabSpeedDialActions,
+    SmdFabSpeedDialTriggerComponent,
+    SmdFabSpeedDialActionsComponent,
     SmdFabSpeedDialComponent,
     EntityWizardComponent,
     EntityTaskComponent,
@@ -181,8 +181,8 @@ import { TableService } from './table/table.service';
     EntityTableAddActionsComponent,
     EntityTableActionsComponent,
     DynamicFieldDirective,
-    SmdFabSpeedDialTrigger,
-    SmdFabSpeedDialActions,
+    SmdFabSpeedDialTriggerComponent,
+    SmdFabSpeedDialActionsComponent,
     SmdFabSpeedDialComponent,
     TooltipComponent,
     EntityWizardComponent,

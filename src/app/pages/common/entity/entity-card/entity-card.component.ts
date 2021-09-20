@@ -23,7 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [DialogService],
 })
 export class EntityCardComponent extends IxObject implements OnInit, AfterViewInit {
-  @Input('conf') conf: EntityCardConfig;
+  @Input() conf: EntityCardConfig;
   @Input() width: string;
   @Input() height: string;
   @Input() isFlipped = false;

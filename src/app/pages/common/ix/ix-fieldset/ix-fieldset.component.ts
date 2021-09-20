@@ -5,7 +5,7 @@ import { Component, Input } from '@angular/core';
   templateUrl: './ix-fieldset.component.html',
   styleUrls: ['./ix-fieldset.component.scss'],
 })
-export class IxFieldset {
+export class IxFieldsetComponent {
   @Input() disable: boolean;
   @Input() title: string;
   @Input() divider: boolean;

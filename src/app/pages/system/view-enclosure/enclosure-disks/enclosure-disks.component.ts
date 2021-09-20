@@ -79,9 +79,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   @ViewChild('disksoverview', { static: true }) overview: ElementRef;
   @ViewChild('diskdetails', { static: false }) details: ElementRef;
   @ViewChild('domLabels', { static: false }) domLabels: ElementRef;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('system-profiler') system: SystemProfiler;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('selected-enclosure') selectedEnclosure: EnclosureMetadata;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('current-tab') currentTab: ViewConfig;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('controller-events') controllerEvent$: Subject<CoreEvent>;
 
   app: Application;

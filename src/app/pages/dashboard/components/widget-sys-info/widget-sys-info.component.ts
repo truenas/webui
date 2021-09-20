@@ -27,9 +27,9 @@ import { T } from 'app/translate-marker';
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy, AfterViewInit {
   // HA
-  @Input('isHA') isHA = false;
-  @Input('passive') isPassive = false;
-  @Input('enclosure') enclosureSupport = false;
+  @Input() isHA = false;
+  @Input() isPassive = false;
+  @Input() enclosureSupport = false;
 
   title: string = T('System Info');
   data: any;

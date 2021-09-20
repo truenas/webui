@@ -1,5 +1,5 @@
 import {
-  Injectable, EventEmitter, Output,
+  Injectable, EventEmitter,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocalStorage } from 'ngx-webstorage';
@@ -29,8 +29,8 @@ export class ShellService {
 
   // input and output and eventEmmitter
   private shellCmdOutput: ArrayBuffer;
-  @Output() shellOutput = new EventEmitter<ArrayBuffer>();
-  @Output() shellConnected = new EventEmitter<ShellConnectedEvent>();
+  shellOutput = new EventEmitter<ArrayBuffer>();
+  shellConnected = new EventEmitter<ShellConnectedEvent>();
 
   subscriptions = new Map <string, any[]>();
 

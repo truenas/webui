@@ -44,7 +44,7 @@ import { FieldRelationService } from './services/field-relation.service';
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit, AfterViewChecked {
-  @Input('conf') conf: FormConfiguration;
+  @Input() conf: FormConfiguration;
 
   pk: any;
   fieldSetDisplay = 'default';

@@ -10,7 +10,7 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityUtils } from '../common/entity/utils';
 import { ApiKeysRow } from './api-keys-row.interface';
@@ -148,7 +148,7 @@ export class ApiKeysComponent implements EntityTableConfig {
 
   displayKey(key: string): void {
     const self = this;
-    const dialogRef = this.dialog.open(ConfirmDialog, { disableClose: true });
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, { disableClose: true });
     dialogRef.componentInstance.title = helptext.apikeyCopyDialog.title;
     dialogRef.componentInstance.buttonMsg = helptext.apikeyCopyDialog.save_button;
     dialogRef.componentInstance.cancelMsg = helptext.apikeyCopyDialog.close_button;
