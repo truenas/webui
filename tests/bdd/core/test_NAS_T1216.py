@@ -88,6 +88,7 @@ def decode_the_tabfile_with_tabfile_string(driver, tabfile_string):
     print(tabfile)
     print(tabfile_string)
     tab_result = word_xor(tabfile, tabfile_string)
+    print(tab_result)
     time.sleep(2)
     open('KEYTABNAME.KEYTAB','wb').write(tab_result)
 
