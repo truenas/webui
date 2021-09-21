@@ -105,31 +105,22 @@ def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open
 def if_the_smb_serivce_is_not_started_start_the_service_and_click_on_smb_start_automatically_checkbox(driver):
     """If the SMB serivce is not started start the service, and click on SMB Start Automatically checkbox."""
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//services')
+    #assert wait_on_element(driver, 5, '//services')
     # Scroll to SMB service
-    element = driver.find_element_by_xpath('//div[contains(text(),"WebDAV")]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
-    driver.find_element_by_xpath('//div[contains(text(),"SMB")]')
-    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@id="slide-toggle__state_SMB"]', 'class', 'mat-checked')
-    if not value_exist:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="overlay__SMB_Running"]').click()
-    time.sleep(2)
+    #element = driver.find_element_by_xpath('//div[contains(text(),"WebDAV")]')
+    #driver.execute_script("arguments[0].scrollIntoView();", element)
+    #time.sleep(1)
+    #driver.find_element_by_xpath('//div[contains(text(),"SMB")]')
+    #value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@id="slide-toggle__state_SMB"]', 'class', 'mat-checked')
+    #if not value_exist:
+    #    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="overlay__SMB_Running"]').click()
+    #time.sleep(2)
 
 
 @then(parsers.parse('Send a file to the share with nas_ip/"{mysmbshare}" and "{user}" and "{password}"'))
 def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd1234(driver, nas_ip, mysmbshare, user, password):
     """Send a file to the share with nas_IP/"{mysmbshare}" and "{user}" and "{password}"."""
     run_cmd('touch testfile.txt')
-    print(" ")
-    print("**String Values**")
-    print(nas_ip)
-    print(mysmbshare)
-    print("-W AD01 -U")
-    print(user)
-    print("%")
-    print(password)
-    print("-c put testfile.txt testfile.txt")
     results = run_cmd(f'smbclient //{nas_ip}/{mysmbshare} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
     time.sleep(1)
     run_cmd('rm testfile.txt')
