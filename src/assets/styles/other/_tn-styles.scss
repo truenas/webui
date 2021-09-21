@@ -315,6 +315,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow,
   .mat-select-disabled .mat-select-value {
     @include variable(color, --fg2, $fg2);
+    cursor: not-allowed;
     opacity: 0.38;
   }
 
@@ -324,6 +325,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-checkbox-disabled .mat-checkbox-label {
     @include variable(color, --grey, #4d4d4d);
+    cursor: not-allowed;
     opacity: 0.6;
   }
 
