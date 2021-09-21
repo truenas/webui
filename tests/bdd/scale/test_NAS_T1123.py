@@ -7,7 +7,7 @@ from function import (
     is_element_present,
     attribute_value_exist,
     run_cmd,
-    post
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
