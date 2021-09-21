@@ -1,8 +1,7 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -25,7 +24,6 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -38,16 +36,12 @@ import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/s
 import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapshot-form/snapshot-form.component';
 import {
   DialogService, ModalServiceMessage,
-  ReplicationService,
   StorageService,
   TaskService,
-  UserService,
   WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { JobService } from 'app/services/job.service';
-import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
@@ -79,14 +73,8 @@ SmartTestUi
   selector: 'app-data-protection-dashboard',
   templateUrl: './data-protection-dashboard.component.html',
   providers: [
-    DatePipe,
     TaskService,
-    UserService,
-    EntityFormService,
-    KeychainCredentialService,
-    CloudCredentialService,
     JobService,
-    ReplicationService,
   ],
 })
 export class DataProtectionDashboardComponent implements OnInit {
@@ -99,19 +87,12 @@ export class DataProtectionDashboardComponent implements OnInit {
     private modalService: ModalService,
     private dialog: DialogService,
     private loader: AppLoaderService,
-    public mdDialog: MatDialog,
-    private datePipe: DatePipe,
+    private mdDialog: MatDialog,
     private router: Router,
-    private aroute: ActivatedRoute,
     private taskService: TaskService,
-    private userService: UserService,
-    private entityFormService: EntityFormService,
     private storage: StorageService,
-    private keychainCredentialService: KeychainCredentialService,
-    private replicationService: ReplicationService,
-    private cloudCredentialService: CloudCredentialService,
-    private job: JobService,
     private translate: TranslateService,
+    private job: JobService,
   ) {
     this.storage
       .listDisks()
@@ -139,7 +120,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         this.modalService.openInSlideIn(ReplicationFormComponent, res['row']);
       }
       if (res['action'] === 'open' && res['component'] === 'replicationWizard') {
-        this.modalService.openInSlideIn(ReplicationFormComponent, res['row']);
+        this.modalService.openInSlideIn(ReplicationWizardComponent, res['row']);
       }
     });
   }
@@ -176,7 +157,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           add() {
             this.parent.modalService.openInSlideIn(ScrubFormComponent);
           },
-          edit(row) {
+          edit(row: ScrubTaskUi) {
             this.parent.modalService.openInSlideIn(ScrubFormComponent, row.id);
           },
           tableActions: [
@@ -225,7 +206,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           add() {
             this.parent.modalService.openInSlideIn(SnapshotFormComponent);
           },
-          edit(row) {
+          edit(row: PeriodicSnapshotTaskUi) {
             this.parent.modalService.openInSlideIn(SnapshotFormComponent, row.id);
           },
           onButtonClick(row) {
@@ -268,7 +249,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           add() {
             this.parent.modalService.openInSlideIn(ReplicationWizardComponent);
           },
-          edit(row) {
+          edit(row: ReplicationTaskUi) {
             this.parent.modalService.openInSlideIn(ReplicationFormComponent, row.id);
           },
           onButtonClick(row) {
@@ -316,10 +297,10 @@ export class DataProtectionDashboardComponent implements OnInit {
           add() {
             this.parent.modalService.openInSlideIn(CloudsyncFormComponent);
           },
-          edit(row) {
+          edit(row: CloudSyncTaskUi) {
             this.parent.modalService.openInSlideIn(CloudsyncFormComponent, row.id);
           },
-          onButtonClick(row) {
+          onButtonClick(row: CloudSyncTaskUi) {
             this.parent.stateButton(row);
           },
         },
@@ -361,10 +342,10 @@ export class DataProtectionDashboardComponent implements OnInit {
           add() {
             this.parent.modalService.openInSlideIn(RsyncFormComponent);
           },
-          edit(row) {
+          edit(row: RsyncTaskUi) {
             this.parent.modalService.openInSlideIn(RsyncFormComponent, row.id);
           },
-          onButtonClick(row) {
+          onButtonClick(row: RsyncTaskUi) {
             this.parent.stateButton(row);
           },
         },
@@ -405,7 +386,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           add() {
             this.parent.modalService.openInSlideIn(SmartFormComponent);
           },
-          edit(row) {
+          edit(row: SmartTestUi) {
             this.parent.modalService.openInSlideIn(SmartFormComponent, row.id);
           },
         },
@@ -440,7 +421,7 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.next_run_time = this.parent.taskService.getTaskNextTime(task.cron_schedule);
 
       if (task.job === null) {
-        task.state = { state: JobState.Pending };
+        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
         this.parent.job
@@ -525,7 +506,7 @@ export class DataProtectionDashboardComponent implements OnInit {
       task.next_run = this.parent.taskService.getTaskNextRun(task.cron_schedule);
 
       if (task.job === null) {
-        task.state = { state: JobState.Pending };
+        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
         this.parent.job
@@ -617,7 +598,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               parent.loader.open();
               parent.ws
                 .call('replication.restore', [row.id, entityDialog.formValue])
-                .pipe(untilDestroyed(this))
+                .pipe(untilDestroyed(entityDialog))
                 .subscribe(
                   () => {
                     entityDialog.dialogRef.close(true);
@@ -804,7 +785,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             afterInit(entityDialog: EntityDialogComponent) {
               entityDialog.formGroup
                 .get('transfer_mode')
-                .valueChanges.pipe(untilDestroyed(this))
+                .valueChanges.pipe(untilDestroyed(entityDialog))
                 .subscribe((mode: TransferMode) => {
                   const paragraph: FormParagraphConfig = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                   switch (mode) {
@@ -822,7 +803,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               parent.loader.open();
               parent.ws
                 .call('cloudsync.restore', [row.id, entityDialog.formValue])
-                .pipe(untilDestroyed(this))
+                .pipe(untilDestroyed(entityDialog))
                 .subscribe(
                   () => {
                     entityDialog.dialogRef.close(true);
