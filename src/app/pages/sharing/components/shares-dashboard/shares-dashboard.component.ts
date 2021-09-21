@@ -505,7 +505,7 @@ export class SharesDashboardComponent implements AfterViewInit {
 
     this.ws.call(updateCall, [row.id, { [param]: row[param] }]).pipe(untilDestroyed(this)).subscribe(
       (updatedEntity) => {
-        (row as any)[param] = updatedEntity[param];
+        (row as any)[param] = (updatedEntity as any)[param];
       },
       (err: WebsocketError) => {
         (row as any)[param] = !row[param];

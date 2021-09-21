@@ -15,7 +15,7 @@ import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.i
 export class ToolbarMultiSelectComponent extends IxAbstractObject implements OnInit {
   @ViewChild('selectTrigger') mySel: MatSelect;
   @Input() config?: ControlConfig;
-  @Input() controller: Subject<any>;
+  @Input() controller: Subject<Control>;
   allSelected: boolean = null;
   values: any[] = [];
   selectStates: boolean [] = [];
@@ -86,9 +86,5 @@ export class ToolbarMultiSelectComponent extends IxAbstractObject implements OnI
   }
 
   onChangeOption(): void {
-  }
-
-  compareValues(x: any, y: any): boolean {
-    return x == y;
   }
 }

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
+import { OpenvpnServerConfig, OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -221,7 +221,9 @@ export class OpenvpnServerComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    entityEdit.submitFunction = (body: any) => this.services.updateOpenVPN('openvpn.server.update', body);
+    entityEdit.submitFunction = (body: OpenvpnServerConfigUpdate) => {
+      return this.services.updateOpenVPN('openvpn.server.update', body);
+    };
 
     this.services.getClientInfo().pipe(untilDestroyed(this)).subscribe((res) => {
       this.certID = res.client_certificate;

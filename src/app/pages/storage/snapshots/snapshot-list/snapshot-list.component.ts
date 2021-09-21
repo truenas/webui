@@ -6,11 +6,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
-import { CoreBulkQuery } from 'app/interfaces/core-bulk.interface';
+import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -252,14 +252,13 @@ export class SnapshotListComponent implements EntityTableConfig {
     });
   }
 
-  wsMultiDeleteParams(selected: SnapshotListRow[]): any[] {
-    const params: any[] = ['zfs.snapshot.delete'];
-
+  wsMultiDeleteParams(selected: SnapshotListRow[]): (string | string[][])[] {
     const snapshots = selected.map((item) => [item.dataset + '@' + item.snapshot]);
-    params.push(snapshots);
-    params.push('{0}');
-
-    return params;
+    return [
+      'zfs.snapshot.delete',
+      snapshots,
+      '{0}',
+    ];
   }
 
   doDelete(item: SnapshotListRow): void {
@@ -352,40 +351,42 @@ export class SnapshotListComponent implements EntityTableConfig {
     dialogRef.componentInstance.setCall(this.wsMultiDelete, params as CoreBulkQuery);
     dialogRef.componentInstance.submit();
 
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: Job<any[]>) => {
-      const jobErrors: string[] = [];
-      const jobSuccess: any[] = [];
+    dialogRef.componentInstance.success
+      .pipe(untilDestroyed(this))
+      .subscribe((job_res: Job<CoreBulkResponse<boolean>[]>) => {
+        const jobErrors: string[] = [];
+        const jobSuccess: boolean[] = [];
 
-      job_res.result.forEach((item) => {
-        if (item.error) {
-          jobErrors.push(item.error);
+        job_res.result.forEach((item) => {
+          if (item.error) {
+            jobErrors.push(item.error);
+          } else {
+            jobSuccess.push(item.result);
+          }
+        });
+
+        dialogRef.close();
+        this.entityList.getData();
+
+        if (jobErrors.length > 0) {
+          const errorTitle = T('Warning') + ', ' + jobErrors.length + ' of ' + params[1].length + ' ' + T('snapshots could not be deleted.');
+
+          let errorMessage = jobErrors.map((err) => err + '\n').toString();
+          errorMessage = errorMessage.split(',').join('');
+          errorMessage = errorMessage.split('[').join('\n *** [');
+          errorMessage = errorMessage.split(']').join(']\n');
+
+          this.dialogService.errorReport(errorTitle, '', errorMessage);
         } else {
-          jobSuccess.push(item.result);
+          this.dialogService.info(
+            this.translate.instant('Deleted {n, plural, one {# snapshot} other {# snapshots}}', { n: jobSuccess.length }),
+            '',
+            '320px',
+            'info',
+            true,
+          );
         }
       });
-
-      dialogRef.close();
-      this.entityList.getData();
-
-      if (jobErrors.length > 0) {
-        const errorTitle = T('Warning') + ', ' + jobErrors.length + ' of ' + params[1].length + ' ' + T('snapshots could not be deleted.');
-
-        let errorMessage = jobErrors.map((err) => err + '\n').toString();
-        errorMessage = errorMessage.split(',').join('');
-        errorMessage = errorMessage.split('[').join('\n *** [');
-        errorMessage = errorMessage.split(']').join(']\n');
-
-        this.dialogService.errorReport(errorTitle, '', errorMessage);
-      } else {
-        this.dialogService.info(
-          this.translate.instant('Deleted {n, plural, one {# snapshot} other {# snapshots}}', { n: jobSuccess.length }),
-          '',
-          '320px',
-          'info',
-          true,
-        );
-      }
-    });
 
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
@@ -416,9 +417,9 @@ export class SnapshotListComponent implements EntityTableConfig {
     const parent = entityDialog.parent;
     const item = entityDialog.parent.rollback;
     const recursive = entityDialog.formValue.recursive;
-    const data: any = {};
+    const data = {} as ZfsRollbackParams[1];
     if (recursive !== null) {
-      data[recursive] = true;
+      data['recursive'] = true;
     }
     data['force'] = true;
     parent.entityList.loader.open();
