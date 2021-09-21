@@ -91,7 +91,7 @@ def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_nam
 def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open(driver, smbname):
     """"{smbname}" should be added, Click on service and the Service page should open."""
     #assert wait_on_element(driver, 5, '//div[contains(.,"SMB")]')
-    #assert wait_on_element(driver, 5, f'//div[contains(.,"{smbname}")]')
+    assert wait_on_element(driver, 5, f'//div[contains(.,"{smbname}")]')
     time.sleep(2)
     #assert wait_on_element(driver, 7, '//button[@ix-auto="button__ENABLE SERVICE"]', 'clickable')
     #driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
@@ -129,8 +129,8 @@ def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd123
 
 @then('Verify that the is on nas_ip with root and password')
 def verify_that_the_is_on_nas_ip_with_root_and_password(nas_ip, password):
-    """Verify that the is on "nasIP" with "root" and password."""
-    results = post(nas_ip, 'filesystem/stat/', ("root", password), f'{smb_path}/testfile.txt')
-
-    assert results.status_code == 200, results.text
-
+    global results
+    cmd = 'ls -al'
+    results = ssh_cmd(cmd, 'root', None, nas_ip)
+    assert results['result'], results['output']
+    assert 'testfile' in results['output'], results['output']
