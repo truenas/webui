@@ -127,7 +127,7 @@ export default {
 
   vlan_tag_placeholder: T('Vlan Tag'),
   vlan_tag_tooltip: T('Enter the numeric tag configured in the switched network.'),
-  vlan_tag_validation: [rangeValidator(1, 4095), Validators.required],
+  vlan_tag_validation: [rangeValidator(1, 4094), Validators.required],
 
   vlan_pcp_placeholder: T('Priority Code Point'),
   vlan_pcp_tooltip: T('Select the Class of Service. The available 802.1p\
