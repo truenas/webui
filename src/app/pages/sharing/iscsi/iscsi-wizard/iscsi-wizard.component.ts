@@ -771,13 +771,12 @@ export class IscsiWizardComponent implements WizardConfiguration {
         if (datasets.length == 0) {
           datasetField.hasErrors = true;
         } else {
-          for (const i in this.zvolFieldGroup) {
-            const fieldName = this.zvolFieldGroup[i];
+          this.zvolFieldGroup.forEach((fieldName) => {
             if (fieldName in datasets[0]) {
               const controller = this.entityWizard.formArray.get([0]).get(fieldName);
               controller.setValue((datasets[0][fieldName as keyof Dataset] as any).value);
             }
-          }
+          });
         }
       },
     );
@@ -922,15 +921,15 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   rollBack(items: any[]): void {
-    for (const item in items) {
-      if (items[item] != null) {
-        this.ws.call((this.deleteCalls as any)[item], [items[item]]).pipe(untilDestroyed(this)).subscribe(
+    items.forEach((item, i) => {
+      if (item != null) {
+        this.ws.call((this.deleteCalls as any)[i], [item]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
-            console.info('rollback ' + item, res);
+            console.info('rollback ' + i, res);
           },
         );
       }
-    }
+    });
   }
 
   ipValidator(name: string): ValidatorFn {

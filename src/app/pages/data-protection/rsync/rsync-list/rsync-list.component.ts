@@ -147,8 +147,8 @@ export class RsyncListComponent implements EntityTableConfig {
       task.frequency = this.taskService.getTaskNextRun(task.cron_schedule);
       task.next_run = this.taskService.getTaskCronDescription(task.cron_schedule);
 
-      if (task.job == null) {
-        task.state = { state: JobState.Pending };
+      if (task.job === null) {
+        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
         this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: Job) => {

@@ -20,7 +20,7 @@ import { T } from 'app/translate-marker';
   providers: [IscsiService],
 })
 export class TargetListComponent implements EntityTableConfig, OnInit {
-  @Input('fcEnabled') fcEnabled: boolean;
+  @Input() fcEnabled: boolean;
 
   tableTitle = 'Targets';
   queryCall: 'iscsi.target.query' = 'iscsi.target.query';

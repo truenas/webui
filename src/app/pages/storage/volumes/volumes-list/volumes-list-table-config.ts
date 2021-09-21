@@ -10,10 +10,11 @@ import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { combineLatest, Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
+import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -71,7 +72,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
   route_add_tooltip = T('Create or Import Pool');
   showDefaults = false;
   showSpinner: boolean;
-  encryptedStatus: any;
+  // TODO: Unused?
+  encryptedStatus: number;
   private vmware_res_status: boolean;
   dialogConf: DialogFormConfiguration;
   restartServices = false;
@@ -680,7 +682,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   id: 'download_key',
                   name: helptext.downloadKey,
                   function: () => {
-                    const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+                    const dialogRef = self.mdDialog.open(DownloadKeyDialogComponent, { disableClose: true });
                     dialogRef.componentInstance.volumeId = row1.id;
                     dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';
                   },
@@ -793,7 +795,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 return;
               }
 
-              if (pools[0].scan.function === 'SCRUB' && pools[0].scan.state === PoolScanState.Scanning) {
+              if (pools[0].scan.function === PoolScanFunction.Scrub && pools[0].scan.state === PoolScanState.Scanning) {
                 const message = self.translate.instant('Stop the scrub on {poolName}?', { poolName: row1.name });
                 this.dialogService.confirm({
                   message,
@@ -1749,33 +1751,32 @@ export class VolumesListTableConfig implements EntityTableConfig {
   }
 
   getMoreDatasetInfo(dataObj: any, parent: any): void {
-    const dataset_data2 = this.datasetData;
     const inherits = this.translate.instant(T('Inherits'));
-    for (const k in dataset_data2) {
-      if (dataset_data2[k].id === dataObj.id) {
-        if (dataset_data2[k].compression) {
-          dataset_data2[k].compression.source !== 'INHERITED'
-            ? dataObj.compression = (dataset_data2[k].compression.parsed)
-            : dataObj.compression = (inherits + ' (' + dataset_data2[k].compression.parsed + ')');
+    this.datasetData.forEach((dataset) => {
+      if (dataset.id === dataObj.id) {
+        if (dataset.compression) {
+          dataset.compression.source !== 'INHERITED'
+            ? dataObj.compression = (dataset.compression.parsed)
+            : dataObj.compression = (inherits + ' (' + dataset.compression.parsed + ')');
         }
-        if (dataset_data2[k].compressratio) {
-          dataset_data2[k].compressratio.source !== 'INHERITED'
-            ? dataObj.compressratio = (dataset_data2[k].compressratio.parsed)
-            : dataObj.compressratio = (inherits + ' (' + dataset_data2[k].compressratio.parsed + ')');
+        if (dataset.compressratio) {
+          dataset.compressratio.source !== 'INHERITED'
+            ? dataObj.compressratio = (dataset.compressratio.parsed)
+            : dataObj.compressratio = (inherits + ' (' + dataset.compressratio.parsed + ')');
         }
-        if (dataset_data2[k].readonly) {
-          dataset_data2[k].readonly.source !== 'INHERITED'
-            ? dataObj.readonly = (dataset_data2[k].readonly.parsed)
-            : dataObj.readonly = (inherits + ' (' + dataset_data2[k].readonly.parsed + ')');
+        if (dataset.readonly) {
+          dataset.readonly.source !== 'INHERITED'
+            ? dataObj.readonly = (dataset.readonly.parsed)
+            : dataObj.readonly = (inherits + ' (' + dataset.readonly.parsed + ')');
         }
-        if (dataset_data2[k].deduplication) {
-          dataset_data2[k].deduplication.source !== 'INHERITED'
-            ? dataObj.dedup = (dataset_data2[k].deduplication.parsed)
-            : dataObj.dedup = (inherits + ' (' + dataset_data2[k].deduplication.parsed + ')');
+        if (dataset.deduplication) {
+          dataset.deduplication.source !== 'INHERITED'
+            ? dataObj.dedup = (dataset.deduplication.parsed)
+            : dataObj.dedup = (inherits + ' (' + dataset.deduplication.parsed + ')');
         }
-        if (dataset_data2[k].comments) {
-          dataset_data2[k].comments.source !== 'INHERITED'
-            ? dataObj.comments = (dataset_data2[k].comments.parsed)
+        if (dataset.comments) {
+          dataset.comments.source !== 'INHERITED'
+            ? dataObj.comments = (dataset.comments.parsed)
             : dataObj.comments = ('');
         }
       }
@@ -1788,6 +1789,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
         this.parentVolumesListComponent.has_encrypted_root[parent.pool] = true;
       }
       dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && parent.encrypted);
-    }
+    });
   }
 }

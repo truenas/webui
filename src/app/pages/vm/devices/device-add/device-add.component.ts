@@ -515,11 +515,11 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       const vmDisplayDevices = _.filter(vm[0].devices, { dtype: VmDeviceType.Display });
       if (vm[0].bootloader === VmBootloader.Grub || vm[0].bootloader === VmBootloader.UefiCsm || vmDisplayDevices) {
         if (vmDisplayDevices.length) {
-          for (const i in dtypeField.options) {
-            if (dtypeField.options[i].label === 'DISPLAY') {
-              _.pull(dtypeField.options, dtypeField.options[i]);
+          dtypeField.options.forEach((option) => {
+            if (option.label === 'DISPLAY') {
+              _.pull(dtypeField.options, option);
             }
-          }
+          });
         } else {
           const typeField: FormSelectConfig = _.find(this.displayFieldConfig, { name: 'type' });
           _.pull(typeField.options, _.find(typeField.options, { value: (vmDisplayDevices[0].attributes as any).type }));

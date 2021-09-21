@@ -104,7 +104,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
       transformed.next_run = this.taskService.getTaskNextRun(transformed.cron_schedule);
 
       if (task.job === null) {
-        transformed.state = { state: JobState.Pending };
+        transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };
       } else {
         transformed.state = { state: task.job.state };
         this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: Job) => {

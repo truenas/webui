@@ -171,8 +171,8 @@ export class SharesDashboardComponent implements AfterViewInit {
           queryCall: 'sharing.nfs.query',
           deleteCall: 'sharing.nfs.delete',
           deleteMsg: {
-            title: T('Delete'),
-            key_props: ['name'],
+            title: T('NFS Share'),
+            key_props: ['paths'],
           },
           limitRowsByMaxHeight: true,
           hideEntityEmpty: true,
@@ -215,7 +215,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           deleteCall: 'iscsi.target.delete',
           detailsHref: '/sharing/iscsi/target',
           deleteMsg: {
-            title: T('Delete'),
+            title: T('iSCSI'),
             key_props: ['name'],
           },
           limitRowsByMaxHeight: true,
@@ -259,7 +259,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           queryCall: 'sharing.webdav.query',
           deleteCall: 'sharing.webdav.delete',
           deleteMsg: {
-            title: T('Delete'),
+            title: T('WebDAV Share'),
             key_props: ['name'],
           },
           emptyEntityLarge: false,
@@ -317,7 +317,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           queryCall: 'sharing.smb.query',
           deleteCall: 'sharing.smb.delete',
           deleteMsg: {
-            title: T('Delete'),
+            title: T('SMB Share'),
             key_props: ['name'],
           },
           hideEntityEmpty: true,
@@ -505,7 +505,7 @@ export class SharesDashboardComponent implements AfterViewInit {
 
     this.ws.call(updateCall, [row.id, { [param]: row[param] }]).pipe(untilDestroyed(this)).subscribe(
       (updatedEntity) => {
-        (row as any)[param] = updatedEntity[param];
+        (row as any)[param] = (updatedEntity as any)[param];
       },
       (err: WebsocketError) => {
         (row as any)[param] = !row[param];

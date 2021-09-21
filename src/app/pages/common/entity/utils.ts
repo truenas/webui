@@ -12,7 +12,6 @@ import {
   FormIpWithNetmaskConfig,
   FormListConfig,
   FormSelectConfig,
-  RelationConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { DialogService } from 'app/services';
@@ -411,9 +410,8 @@ export class EntityUtils {
 
     if (fieldConfig) {
       if (fieldConfig['type']) {
-        const relationConfig: RelationConfig | null = this.hasRelation(fieldConfig);
-        if (relationConfig && relations) {
-          relationConfig['relation'] = this.createRelations(relations);
+        if (fieldConfig && relations) {
+          fieldConfig['relation'] = this.createRelations(relations);
         }
 
         results.push(fieldConfig);
@@ -425,8 +423,8 @@ export class EntityUtils {
             if (schemaConfig.schema.show_subquestions_if !== undefined) {
               subResults.forEach((subFieldConfig) => {
                 subFieldConfig['isHidden'] = true;
-                const subRelationConfig: RelationConfig | null = this.hasRelation(subFieldConfig);
-                subRelationConfig['relation'] = [{
+
+                subFieldConfig['relation'] = [{
                   action: RelationAction.Show,
                   when: [{
                     name,
@@ -518,21 +516,11 @@ export class EntityUtils {
     return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('');
   }
 
-  getCleanMethod(str: string): string {
-    return 'clean' + this.snakeToPascal(str);
+  snakeToHuman(str: string): string {
+    return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 
-  hasRelation(config: FieldConfig): RelationConfig | null {
-    switch (config.type) {
-      case 'list':
-        const listConfig: FormListConfig = config;
-        return listConfig;
-      case 'dict':
-        const dictConfig: FormListConfig = config;
-        return dictConfig;
-      case 'selectionlist':
-        const selectionListConfig: FormListConfig = config;
-        return selectionListConfig;
-    }
+  getCleanMethod(str: string): string {
+    return 'clean' + this.snakeToPascal(str);
   }
 }

@@ -674,8 +674,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
     // Assume a list and process it
     const list = rule.split(',');
-    for (const i in list) {
-      switch (list[i]) {
+    list.forEach((month) => {
+      switch (month) {
         case 'jan':
           this._jan = true;
           break;
@@ -713,7 +713,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
           this._dec = true;
           break;
       }
-    }
+    });
   }
 
   updateDaysOfWeekFields(rule: string): void {
@@ -732,8 +732,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
     // Assume a list and process it
     const list = rule.split(',');
-    for (const i in list) {
-      switch (list[i]) {
+    list.forEach((weekday) => {
+      switch (weekday) {
         case 'sun':
           this._sun = true;
           break;
@@ -756,7 +756,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
           this._sat = true;
           break;
       }
-    }
+    });
   }
 
   updateCronTab(preset?: string): void {

@@ -13,10 +13,10 @@ import { ApplicationsRoutingModule } from './applications-routing.module';
 import { ApplicationsComponent } from './applications.component';
 import { CatalogComponent } from './catalog/catalog.component';
 import { ChartReleasesComponent } from './chart-releases/chart-releases.component';
-import { CatalogSummaryDialog } from './dialogs/catalog-summary/catalog-summary-dialog.component';
-import { ChartEventsDialog } from './dialogs/chart-events/chart-events-dialog.component';
-import { ChartUpgradeDialog } from './dialogs/chart-upgrade/chart-upgrade-dialog.component';
-import { ManageCatalogSummaryDialog } from './dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
+import { CatalogSummaryDialogComponent } from './dialogs/catalog-summary/catalog-summary-dialog.component';
+import { ChartEventsDialogComponent } from './dialogs/chart-events/chart-events-dialog.component';
+import { ChartUpgradeDialogComponent } from './dialogs/chart-upgrade/chart-upgrade-dialog.component';
+import { ManageCatalogSummaryDialogComponent } from './dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 import { DockerImagesComponent } from './docker-images/docker-images.component';
 import { CatalogAddFormComponent } from './forms/catalog-add-form.component';
 import { CatalogEditFormComponent } from './forms/catalog-edit-form.component';
@@ -55,11 +55,11 @@ import { PodShellComponent } from './pod-shell/pod-shell.component';
     ChartWizardComponent,
     PodShellComponent,
     PodLogsComponent,
-    ChartEventsDialog,
-    ChartUpgradeDialog,
-    CatalogSummaryDialog,
+    ChartEventsDialogComponent,
+    ChartUpgradeDialogComponent,
+    CatalogSummaryDialogComponent,
     ManageCatalogsComponent,
-    ManageCatalogSummaryDialog,
+    ManageCatalogSummaryDialogComponent,
     CatalogAddFormComponent,
     CatalogEditFormComponent,
     PullImageFormComponent,

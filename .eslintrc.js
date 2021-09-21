@@ -136,13 +136,10 @@ module.exports = {
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
         "@typescript-eslint/no-this-alias": "off",
-        "@typescript-eslint/no-for-in-array": "off",
         "@typescript-eslint/prefer-regexp-exec": "off",
         "@typescript-eslint/no-misused-promises": "off",
 
         // Other temporary disables
-        "@angular-eslint/component-class-suffix": "off",
-        "@angular-eslint/no-input-rename": "off",
         "@typescript-eslint/dot-notation": "off",
 
         // Other overwrites
@@ -168,6 +165,9 @@ module.exports = {
         }],
         "@typescript-eslint/ban-types": ["error"],
         "unicorn/filename-case": ["error", { case: "kebabCase"}],
+        "@angular-eslint/component-max-inline-declarations": ["error"],
+        "@angular-eslint/contextual-decorator": ["error"],
+        "@angular-eslint/contextual-lifecycle": ["error"],
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {

@@ -16,4 +16,4 @@ export interface OpenvpnClientConfig {
   tls_crypt_auth_enabled: boolean;
 }
 
-export type OpenvpnClientUpdate = Omit<OpenvpnClientConfig, 'id' | 'interface'>;
+export type OpenvpnClientConfigUpdate = Omit<OpenvpnClientConfig, 'id' | 'interface'>;

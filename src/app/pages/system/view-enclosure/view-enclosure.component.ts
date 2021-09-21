@@ -9,10 +9,10 @@ import { EnclosureMetadata, SystemProfiler } from 'app/core/classes/system-profi
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
-import { DiskDataEvent } from 'app/interfaces/events/disk-data-event.interface';
+import { DisksDataEvent } from 'app/interfaces/events/disks-data-event.interface';
 import { EnclosureDataEvent } from 'app/interfaces/events/enclosure-data-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
-import { ResilverEvent } from 'app/interfaces/events/resilver-event.interface';
+import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SensorDataEvent } from 'app/interfaces/events/sensor-data-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -150,7 +150,7 @@ export class ViewEnclosureComponent implements OnDestroy {
       this.system.sensorData = evt.data;
     });
 
-    core.register({ observerClass: this, eventName: 'Resilvering' }).pipe(untilDestroyed(this)).subscribe((evt: ResilverEvent) => {
+    core.register({ observerClass: this, eventName: 'Resilvering' }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
       if (evt.data.scan.state == PoolScanState.Finished) this.fetchData();
     });
 
@@ -158,7 +158,7 @@ export class ViewEnclosureComponent implements OnDestroy {
       this.fetchData();
     });
 
-    core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DiskDataEvent) => {
+    core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
       this.system.diskData = evt.data;
       core.emit({ name: 'PoolDataRequest', sender: this });
       setTimeout(() => {

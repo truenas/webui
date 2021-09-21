@@ -28,7 +28,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
-import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
+import { CatalogSummaryDialogComponent } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ChartWizardComponent } from '../forms/chart-wizard.component';
 import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 
@@ -387,7 +387,7 @@ export class CatalogComponent implements OnInit {
           label: catalog,
           train,
         };
-        this.mdDialog.open(CatalogSummaryDialog, {
+        this.mdDialog.open(CatalogSummaryDialogComponent, {
           width: '470px',
           data: catalogAppInfo,
         });

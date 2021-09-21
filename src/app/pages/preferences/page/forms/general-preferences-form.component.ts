@@ -209,14 +209,17 @@ export class GeneralPreferencesFormComponent implements EmbeddedFormConfig, OnIn
   }
 
   generateFieldConfig(): void {
-    for (const i in this.fieldSets) {
-      for (const ii in this.fieldSets[i].config) {
-        this.fieldConfig.push(this.fieldSets[i].config[ii]);
-      }
-    }
+    this.fieldSets.forEach((fieldSet) => {
+      fieldSet.config.forEach((config) => {
+        this.fieldConfig.push(config);
+      });
+    });
   }
 
   beforeSubmit(data: any): void {
+    if (data.reset) {
+      localStorage.removeItem('turnOffWelcomeDialog');
+    }
     data.tableDisplayedColumns ? data.tableDisplayedColumns = [] : delete (data.tableDisplayedColumns);
   }
 

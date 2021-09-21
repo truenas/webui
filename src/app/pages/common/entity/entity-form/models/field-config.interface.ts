@@ -1,8 +1,10 @@
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatRadioChange } from '@angular/material/radio/radio';
+import { ITreeOptions } from 'angular-tree-component';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
+import { FormExplorerComponent } from 'app/pages/common/entity/entity-form/components/form-explorer/form-explorer.component';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FormSelectOption } from 'app/pages/common/entity/entity-form/models/form-select-option.interface';
 import { RelationGroup } from './field-relation.interface';
@@ -32,6 +34,7 @@ export interface BaseFieldConfig<P = any> {
   parent?: P;
   placeholder?: string;
   readonly?: boolean;
+  relation?: RelationGroup[];
   required?: boolean;
   tooltip?: string;
   tooltipPosition?: string;
@@ -91,12 +94,14 @@ export interface FormComboboxOption {
 
 export interface FormDictConfig<P = any> extends BaseFieldConfig<P> {
   label?: string;
-  relation?: RelationGroup[];
   subFields?: FieldConfig[];
 }
 
 export interface FormExplorerConfig<P = any> extends BaseFieldConfig<P> {
-  customTemplateStringOptions?: any;
+  customTemplateStringOptions?: ITreeOptions & {
+    explorerComponent?: FormExplorerComponent;
+    explorer?: FormExplorerComponent;
+  };
   explorerParam?: any;
   explorerType?: string;
   fileLocation?: string;
@@ -136,7 +141,6 @@ export interface FormListConfig<P = any> extends BaseFieldConfig<P> {
   box?: boolean;
   label?: string;
   listFields?: FieldConfig[][];
-  relation?: RelationGroup[];
   templateListField?: FieldConfig[];
   hideButton?: boolean;
 }
@@ -184,7 +188,6 @@ export interface FormSelectConfig<P = any> extends BaseFieldConfig<P> {
   multiple?: boolean;
   onChangeOption?(data: any): void;
   options?: FormSelectOption[];
-  relation?: RelationGroup[];
   zeroStateMessage?: string;
 }
 
@@ -194,7 +197,6 @@ export interface FormSelectionListConfig<P = any> extends BaseFieldConfig<P> {
   inlineFieldFlex?: string;
   onChange?(data: any): void;
   options?: Option[];
-  relation?: RelationGroup[];
 }
 
 export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
@@ -239,10 +241,6 @@ export interface FormToggleButtonOption {
   value: any;
   checked?: boolean;
 }
-
-export type RelationConfig<P = any> = FormDictConfig<P>
-| FormListConfig
-| FormSelectionListConfig;
 
 export type FieldConfig<P = any> = BaseFieldConfig<P>
 | FormArrayConfig<P>

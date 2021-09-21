@@ -19,7 +19,7 @@
       <div class="fieldset-container fieldset-display-default" *ngIf="fieldSets">
         <ng-container *ngFor="let fieldSet of fieldSets; let i = index">
           <div [ngClass]="[fieldSet.class ? fieldSet.class : '', isFieldsetAvailabel(fieldSet) ? '' : 'empty-fieldset']" class="entity-form fieldset divider-{{fieldSet.divider}}"
-                  fxLayout="row wrap" fxLayoutGap="24px" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width?fieldSets[i].width:'100%'}} - 16px)">
+                  fxLayout="row wrap" fxLayoutGap.gt-sm="24px" fxLayoutAlign="start start" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSets[i].width?fieldSets[i].width:'100%'}} - 16px)">
             <mat-divider *ngIf="fieldSets[i].divider && i > 0"></mat-divider>
             <h4 *ngIf="fieldSet.label && isFieldsetAvailabel(fieldSet)" class="fieldset-label">{{fieldSet.name | translate}}</h4>
             <div *ngFor="let field of fieldSet.config; let ii = index" fxFlex="100%" fxFlex.gt-xs="calc({{field.width?field.width:'100%'}} - 16px)"

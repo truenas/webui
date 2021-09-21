@@ -3,6 +3,8 @@ import { MatSelectChange } from '@angular/material/select/select';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { ControlConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.interface';
 
 @Component({
   selector: 'toolbar-select',
@@ -10,8 +12,8 @@ import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
   templateUrl: './toolbar-select.component.html',
 })
 export class ToolbarSelectComponent extends IxAbstractObject {
-  @Input() config?: any;
-  @Input() controller: Subject<any>;
+  @Input() config?: ControlConfig;
+  @Input() controller: Subject<Control>;
   selectedValue: string;
 
   constructor(public translate: TranslateService) {

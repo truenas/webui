@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { ResilverJob } from 'app/interfaces/resilver-job.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { BaseService } from '../base.service';
@@ -29,7 +30,7 @@ export class DiskStateService extends BaseService {
 
     // Check for Pool Status
     this.ws.subscribe('zfs.pool.scan').subscribe((res: ResilverJob) => {
-      if (res.fields.scan.function == 'RESILVER') {
+      if (res.fields.scan.function == PoolScanFunction.Resilver) {
         this.core.emit({ name: 'Resilvering', data: res.fields, sender: this });
       }
     });

@@ -9,10 +9,7 @@ import * as _ from 'lodash';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
-import {
-  FieldConfig,
-  RelationConfig,
-} from '../entity-form/models/field-config.interface';
+import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
 import { EntityUtils } from '../utils';
@@ -30,7 +27,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
 
   title: string;
   warning: string;
-  fieldConfig: FieldConfig[] ;
+  fieldConfig: FieldConfig[];
   formGroup: FormGroup;
   saveButtonText: string;
   cancelButtonText = 'Cancel';
@@ -82,12 +79,11 @@ export class EntityDialogComponent<P = any> implements OnInit {
     }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-    for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i] as RelationConfig;
+    this.fieldConfig.forEach((config) => {
       if (config.relation.length > 0) {
         this.fieldRelationService.setRelation(config, this.formGroup);
       }
-    }
+    });
 
     if (this.conf.afterInit) {
       this.conf.afterInit(this);

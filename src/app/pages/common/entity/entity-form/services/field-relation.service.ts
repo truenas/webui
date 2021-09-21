@@ -9,11 +9,8 @@ import {
   FieldConfig,
   FormDictConfig,
   FormListConfig,
-  FormSelectionListConfig,
 } from '../models/field-config.interface';
 import { FieldRelation, RelationGroup } from '../models/field-relation.interface';
-
-type RelationConfig = FormDictConfig | FormListConfig | FormSelectionListConfig;
 
 @UntilDestroy()
 @Injectable({ providedIn: 'root' })
@@ -32,11 +29,11 @@ export class FieldRelationService {
   getRelatedFormControls(config: FieldConfig,
     controlGroup: FormGroup): FormControl[] {
     const controls: FormControl[] = [];
-    const model = this.getConfigType(config);
+    // const model = this.getConfigType(config);
 
-    model.relation.forEach((relGroup) => relGroup.when.forEach((rel) => {
-      if (model.name === rel.name) {
-        throw new Error(`FormControl ${model.name} cannot depend on itself`);
+    config.relation.forEach((relGroup) => relGroup.when.forEach((rel) => {
+      if (config.name === rel.name) {
+        throw new Error(`FormControl ${config.name} cannot depend on itself`);
       }
       const control = <FormControl>controlGroup.get(rel.name);
       if (control
@@ -175,9 +172,7 @@ export class FieldRelationService {
     return control && condition.status === control.status;
   }
 
-  setRelation(conf: FieldConfig, formGroup: FormGroup): void {
-    const config = this.getConfigType(conf);
-
+  setRelation(config: FieldConfig, formGroup: FormGroup): void {
     if (config.relation && config.relation.length > 0) {
       const activations = this.findActivationRelation(config.relation);
       if (activations) {
@@ -219,11 +214,10 @@ export class FieldRelationService {
    * When true (default) will trigger valueChanges and statusChanges.
    */
   refreshRelations(
-    conf: FieldConfig,
+    config: FieldConfig,
     formGroup: FormGroup,
     options: { emitEvent: boolean } = { emitEvent: true },
   ): void {
-    const config = this.getConfigType(conf);
     if (config.relation && config.relation.length > 0) {
       const activations = this.findActivationRelation(config.relation);
       if (activations) {
@@ -581,19 +575,5 @@ export class FieldRelationService {
     }
 
     return result;
-  }
-
-  getConfigType(config: FieldConfig): RelationConfig {
-    switch (config.type) {
-      case 'list':
-        const listConfig: FormListConfig = config;
-        return listConfig;
-      case 'dict':
-        const dictConfig: FormListConfig = config;
-        return dictConfig;
-      case 'selectionlist':
-        const selectionListConfig: FormListConfig = config;
-        return selectionListConfig;
-    }
   }
 }

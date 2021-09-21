@@ -32,9 +32,10 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
   readonly ServiceStatus = ServiceStatus;
   readonly ExpandableTableState = ExpandableTableState;
 
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('conf') tableConf: InputExpandableTableConf;
-  @Input('expandableTableState') expandableTableState: ExpandableTableState;
-  @Input('disabled') disabled: boolean;
+  @Input() expandableTableState: ExpandableTableState;
+  @Input() disabled: boolean;
 
   @ViewChild('appTable', { read: ElementRef })
   appTable: ElementRef;
@@ -74,6 +75,10 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
     const detailsFooterHeight = detailsRow ? detailsRow.offsetHeight : 0;
     const totalHeight = this.appTable.nativeElement.clientHeight;
     const maxRowsHeight = totalHeight - expandableHeaderHeight - tableHeaderHeight - detailsFooterHeight;
+    const customActions = this.appTable.nativeElement.querySelector('#customActions');
+    if (customActions) {
+      expandableHeader.style = 'padding-right: 0';
+    }
     if (this.tableConf.limitRowsByMaxHeight) {
       const prevRowsLimit = this.tableConf.limitRows;
       const tableRowSize = 48;

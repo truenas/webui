@@ -1,22 +1,9 @@
 import { Component, Input } from '@angular/core';
-import { EntityAction, EntityRowDetails } from './entity-row-details.interface';
+import { EntityAction, EntityRowDetails } from 'app/pages/common/entity/entity-table/entity-row-details/entity-row-details.interface';
 
 @Component({
   selector: 'app-entity-row-details',
-  styles: [
-    `
-      p,
-      h4,
-      mat-icon {
-        color: var(--fg2) !important;
-      }
-
-      .button-delete span,
-      .button-delete mat-icon {
-        color: var(--red) !important;
-      }
-    `,
-  ],
+  styleUrls: ['./entity-row-details.component.scss'],
   templateUrl: './entity-row-details.component.html',
 })
 export class EntityRowDetailsComponent {

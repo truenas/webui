@@ -7,7 +7,7 @@ import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import {
-  FieldConfig, FormDictConfig, FormListConfig, FormSelectionListConfig, RelationConfig,
+  FieldConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationGroup } from 'app/pages/common/entity/entity-form/models/field-relation.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -31,7 +31,7 @@ export class InitiatorFormComponent implements OnInit {
   protected editCall: 'iscsi.initiator.update' = 'iscsi.initiator.update';
   protected customFilter: any[] = [[['id', '=']]];
   route_success: string[] = ['sharing', 'iscsi', 'initiator'];
-  protected pk: any;
+  protected pk: number;
 
   fieldConfig: FieldConfig[] = [
     {
@@ -126,13 +126,12 @@ export class InitiatorFormComponent implements OnInit {
     });
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-    for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
-      const relationConfig: RelationConfig | null = this.hasRelation(config);
-      if (relationConfig) {
+
+    this.fieldConfig.forEach((config) => {
+      if (config.relation.length > 0) {
         this.setRelation(config);
       }
-    }
+    });
 
     this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.connectedInitiatorsDisabled = res === 'DISABLED';
@@ -197,11 +196,9 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   setRelation(config: FieldConfig): void {
-    const relationConfig = this.hasRelation(config);
+    if (!config) return;
 
-    if (!relationConfig) return;
-
-    const activations = this.fieldRelationService.findActivationRelation(relationConfig.relation);
+    const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(
         activations, this.formGroup,
@@ -249,20 +246,6 @@ export class InitiatorFormComponent implements OnInit {
     if (this.formGroup.controls[name]) {
       const method = disable ? 'disable' : 'enable';
       this.formGroup.controls[name][method]();
-    }
-  }
-
-  hasRelation(config: FieldConfig): RelationConfig | null {
-    switch (config.type) {
-      case 'list':
-        const listConfig: FormListConfig = config;
-        return listConfig;
-      case 'dict':
-        const dictConfig: FormDictConfig = config;
-        return dictConfig;
-      case 'selectionlist':
-        const selectionListConfig: FormSelectionListConfig = config;
-        return selectionListConfig;
     }
   }
 }

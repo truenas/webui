@@ -14,7 +14,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   @Input() entity: EntityTableComponent;
   @Input() row: any;
   @Input() icon_name = 'more_vert';
-  @Input() action: EntityTableAction;
+  @Input() action: string;
   @Input() groups = false;
 
   actions: EntityTableAction[];
@@ -26,7 +26,7 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
     const hasGroups = Boolean(this.actions && this.actions[0].actionName);
 
     if (hasGroups == true) {
-      return (this.actions[0].actions.length == 1);
+      return (this.actions[0].actions?.length == 1);
     }
     return (this.actions.length == 1);
   }

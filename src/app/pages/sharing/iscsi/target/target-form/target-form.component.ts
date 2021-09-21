@@ -143,7 +143,7 @@ export class TargetFormComponent implements FormConfiguration {
   ];
   fieldConfig: FieldConfig[];
   title = T('Add ISCSI Target');
-  pk: any;
+  pk: number;
   protected entityForm: EntityFormComponent;
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -152,7 +152,7 @@ export class TargetFormComponent implements FormConfiguration {
     public translate: TranslateService,
     protected ws: WebSocketService,
     private modalService: ModalService) {
-    this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: string) => {
+    this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.customFilter = [[['id', '=', rowId]]];
       this.pk = rowId;
     });

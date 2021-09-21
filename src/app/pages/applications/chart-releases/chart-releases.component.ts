@@ -18,7 +18,7 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
-import { ChartUpgradeDialog } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
+import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -31,7 +31,7 @@ import { DialogService, SystemGeneralService, WebSocketService } from 'app/servi
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 import { ApplicationsService } from '../applications.service';
-import { ChartEventsDialog } from '../dialogs/chart-events/chart-events-dialog.component';
+import { ChartEventsDialogComponent } from '../dialogs/chart-events/chart-events-dialog.component';
 import { ChartFormComponent } from '../forms/chart-form.component';
 
 @UntilDestroy()
@@ -282,8 +282,13 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  portal(chart: ChartRelease): void {
-    window.open(chart.portals.web_portal[0]);
+  portalName(name: string = 'web_portal'): string {
+    const humanName = new EntityUtils().snakeToHuman(name);
+    return humanName;
+  }
+
+  portalLink(chart: ChartRelease, name: string = 'web_portal'): void {
+    window.open(chart.portals[name][0]);
   }
 
   update(name: string): void {
@@ -292,7 +297,7 @@ export class ChartReleasesComponent implements OnInit {
     this.appService.getUpgradeSummary(name).pipe(untilDestroyed(this)).subscribe((res: UpgradeSummary) => {
       this.appLoaderService.close();
 
-      const dialogRef = this.mdDialog.open(ChartUpgradeDialog, {
+      const dialogRef = this.mdDialog.open(ChartUpgradeDialogComponent, {
         width: '50vw',
         minWidth: '500px',
         maxWidth: '750px',
@@ -620,7 +625,7 @@ export class ChartReleasesComponent implements OnInit {
   showChartEvents(name: string): void {
     const catalogApp = this.chartItems[name];
     if (catalogApp) {
-      this.mdDialog.open(ChartEventsDialog, {
+      this.mdDialog.open(ChartEventsDialogComponent, {
         width: '50vw',
         minWidth: '650px',
         maxWidth: '850px',
