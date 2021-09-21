@@ -540,14 +540,13 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
   getData(): void {
     const sort: string[] = [];
 
-    for (const i in this.config.sorting.columns) {
-      const col = this.config.sorting.columns[i];
+    this.config.sorting.columns.forEach((col) => {
       if (col.sort === 'asc') {
         sort.push(col.name);
       } else if (col.sort === 'desc') {
         sort.push('-' + col.name);
       }
-    }
+    });
 
     const options: any = { limit: 0 };
     if (sort.length > 0) {

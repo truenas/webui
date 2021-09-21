@@ -215,11 +215,11 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
 
   getSelectedNames(selectedBootenvs: BootenvRow[]): string[][] {
     const selected: string[][] = [];
-    for (const i in selectedBootenvs) {
-      if (selectedBootenvs[i].active === '-' || selectedBootenvs[i].active === '') {
-        selected.push([selectedBootenvs[i].id]);
+    selectedBootenvs.forEach((bootenv) => {
+      if (bootenv.active === '-' || bootenv.active === '') {
+        selected.push([bootenv.id]);
       }
-    }
+    });
     return selected;
   }
 

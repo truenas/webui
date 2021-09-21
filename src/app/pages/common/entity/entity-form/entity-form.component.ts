@@ -163,9 +163,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-    for (const i in this.fieldConfig) {
-      this.fieldRelationService.setRelation(this.fieldConfig[i], this.formGroup);
-    }
+    this.fieldConfig.forEach((config) => {
+      this.fieldRelationService.setRelation(config, this.formGroup);
+    });
   }
 
   addFormControls(fieldSets: FieldSet[]): void {
@@ -614,13 +614,12 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   setArrayValue(data: any[], formArray: FormArray, name: string): void {
     let array_controls: FieldConfig[];
-    for (const i in this.fieldConfig) {
-      const config: FieldConfig = this.fieldConfig[i];
+    this.fieldConfig.forEach((config) => {
       if (config.name === name) {
         const arrayConfig: FormArrayConfig = config as FormArrayConfig;
         array_controls = arrayConfig.formarray;
       }
-    }
+    });
 
     if (this.conf.preHandler) {
       data = this.conf.preHandler(data, formArray);

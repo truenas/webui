@@ -23,7 +23,6 @@ import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
@@ -848,18 +847,19 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     const privateKeyField: FormSelectConfig = _.find(this.dialogFieldConfig, { name: 'private_key' });
     this.keychainCredentialService.getSSHKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
-      for (const i in keyPairs) {
-        (privateKeyField.options as Option[]).push({ label: keyPairs[i].name, value: String(keyPairs[i].id) });
-      }
+      privateKeyField.options = keyPairs.map((keypair) => ({
+        label: keypair.name,
+        value: String(keypair.id),
+      }));
     });
 
     const ssh_credentials_source_field: FormSelectConfig = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' });
     const ssh_credentials_target_field: FormSelectConfig = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' });
     this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
-      for (const i in connections) {
-        ssh_credentials_source_field.options.push({ label: connections[i].name, value: connections[i].id });
-        ssh_credentials_target_field.options.push({ label: connections[i].name, value: connections[i].id });
-      }
+      connections.forEach((connection) => {
+        ssh_credentials_source_field.options.push({ label: connection.name, value: connection.id });
+        ssh_credentials_target_field.options.push({ label: connection.name, value: connection.id });
+      });
       ssh_credentials_source_field.options.push({ label: T('Create New'), value: 'NEW' });
       ssh_credentials_target_field.options.push({ label: T('Create New'), value: 'NEW' });
     });

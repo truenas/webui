@@ -746,19 +746,11 @@ export class CertificateAddComponent implements WizardConfiguration {
 
   afterInit(entity: EntityWizardComponent): void {
     this.entityForm = entity;
-    // this.fieldConfig = entity.fieldConfig;
-    for (const i in this.csrFields) {
-      this.hideField(this.csrFields[i], true);
-    }
-    for (const i in this.importFields) {
-      this.hideField(this.importFields[i], true);
-    }
-    for (const i in this.importCSRFields) {
-      this.hideField(this.importCSRFields[i], true);
-    }
-    for (const i in this.internalFields) {
-      this.hideField(this.internalFields[i], false);
-    }
+
+    this.csrFields.forEach((field) => this.hideField(field, true));
+    this.importFields.forEach((field) => this.hideField(field, true));
+    this.importCSRFields.forEach((field) => this.hideField(field, true));
+    this.internalFields.forEach((field) => this.hideField(field, false));
     this.hideField(this.internalFields[2], true);
     this.getField('csronsys').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.hideField('csrlist', !res);
@@ -767,21 +759,12 @@ export class CertificateAddComponent implements WizardConfiguration {
       this.wizardConfig[2].skip = false;
 
       if (res == 'CERTIFICATE_CREATE_INTERNAL') {
-        for (const i in this.csrFields) {
-          this.hideField(this.csrFields[i], true);
-        }
-        for (const i in this.importFields) {
-          this.hideField(this.importFields[i], true);
-        }
-        for (const i in this.importCSRFields) {
-          this.hideField(this.importCSRFields[i], true);
-        }
-        for (const i in this.internalFields) {
-          this.hideField(this.internalFields[i], false);
-        }
-        for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], false);
-        }
+        this.csrFields.forEach((field) => this.hideField(field, true));
+        this.importFields.forEach((field) => this.hideField(field, true));
+        this.importCSRFields.forEach((field) => this.hideField(field, true));
+        this.internalFields.forEach((field) => this.hideField(field, false));
+        this.extensionFields.forEach((field) => this.hideField(field, false));
+
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (this.getField('key_type').value === 'RSA') {
           this.setDisabled('ec_curve', true);
@@ -791,21 +774,12 @@ export class CertificateAddComponent implements WizardConfiguration {
           this.hideField('ec_curve', false);
         }
       } else if (res == 'CERTIFICATE_CREATE_CSR') {
-        for (const i in this.internalFields) {
-          this.hideField(this.internalFields[i], true);
-        }
-        for (const i in this.importFields) {
-          this.hideField(this.importFields[i], true);
-        }
-        for (const i in this.importCSRFields) {
-          this.hideField(this.importCSRFields[i], true);
-        }
-        for (const i in this.csrFields) {
-          this.hideField(this.csrFields[i], false);
-        }
-        for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], false);
-        }
+        this.csrFields.forEach((field) => this.hideField(field, false));
+        this.importFields.forEach((field) => this.hideField(field, true));
+        this.importCSRFields.forEach((field) => this.hideField(field, true));
+        this.internalFields.forEach((field) => this.hideField(field, true));
+        this.extensionFields.forEach((field) => this.hideField(field, false));
+
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (this.getField('key_type').value === 'RSA') {
           this.setDisabled('ec_curve', true);
@@ -815,21 +789,12 @@ export class CertificateAddComponent implements WizardConfiguration {
           this.hideField('ec_curve', false);
         }
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
-        for (const i in this.internalFields) {
-          this.hideField(this.internalFields[i], true);
-        }
-        for (const i in this.csrFields) {
-          this.hideField(this.csrFields[i], true);
-        }
-        for (const i in this.importCSRFields) {
-          this.hideField(this.importCSRFields[i], true);
-        }
-        for (const i in this.importFields) {
-          this.hideField(this.importFields[i], false);
-        }
-        for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], true);
-        }
+        this.csrFields.forEach((field) => this.hideField(field, true));
+        this.importFields.forEach((field) => this.hideField(field, false));
+        this.importCSRFields.forEach((field) => this.hideField(field, true));
+        this.internalFields.forEach((field) => this.hideField(field, true));
+        this.extensionFields.forEach((field) => this.hideField(field, true));
+
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (!this.getField('csronsys').value) {
           this.hideField('csrlist', true);
@@ -841,21 +806,11 @@ export class CertificateAddComponent implements WizardConfiguration {
 
         this.wizardConfig[2].skip = true;
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED_CSR') {
-        for (const i in this.internalFields) {
-          this.hideField(this.internalFields[i], true);
-        }
-        for (const i in this.csrFields) {
-          this.hideField(this.csrFields[i], true);
-        }
-        for (const i in this.importFields) {
-          this.hideField(this.importFields[i], true);
-        }
-        for (const i in this.importCSRFields) {
-          this.hideField(this.importCSRFields[i], false);
-        }
-        for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], true);
-        }
+        this.csrFields.forEach((field) => this.hideField(field, true));
+        this.importFields.forEach((field) => this.hideField(field, true));
+        this.importCSRFields.forEach((field) => this.hideField(field, false));
+        this.internalFields.forEach((field) => this.hideField(field, true));
+        this.extensionFields.forEach((field) => this.hideField(field, true));
 
         this.wizardConfig[2].skip = true;
       }

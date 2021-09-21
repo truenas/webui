@@ -273,10 +273,9 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           if (this.datastore.options.length > 0) {
             this.datastore.options.length = 0;
           }
-          for (const key in res.datastores) {
-            const datastores = res.datastores[key];
-            this.datastore.options.push({ label: datastores.name, value: datastores.name });
-          }
+          res.datastores.forEach((datastore) => {
+            this.datastore.options.push({ label: datastore.name, value: datastore.name });
+          });
 
           parent.fileSystemList = res.filesystems;
           parent.dataListComplete = res.datastores;

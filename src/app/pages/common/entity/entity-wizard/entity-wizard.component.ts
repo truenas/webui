@@ -74,29 +74,29 @@ export class EntityWizardComponent implements OnInit {
 
   resetFields(): void {
     const wizardformArray = this.formBuilder.array([]);
-    for (const i in this.conf.wizardConfig) {
+    this.conf.wizardConfig.forEach((config) => {
       // Fallback if no fieldsets are defined
-      if (this.conf.wizardConfig[i].fieldSets) {
+      if (config.fieldSets) {
         let fieldConfig: FieldConfig[] = [];
 
         /* Temp patch to support both FieldSet approaches */
-        const fieldSets = this.conf.wizardConfig[i].fieldSets;
+        const fieldSets = config.fieldSets;
         for (let j = 0; j < fieldSets.length; j++) {
           const fieldset = fieldSets[j];
           if (fieldset.config) {
             fieldConfig = fieldConfig.concat(fieldset.config);
           }
         }
-        this.conf.wizardConfig[i].fieldConfig = fieldConfig;
+        config.fieldConfig = fieldConfig;
       } else {
         // const fieldConfig = this.conf.wizardConfig[i].fieldConfig;
-        this.conf.wizardConfig[i].fieldSets = [
+        config.fieldSets = [
           {
             name: 'FallBack',
             class: 'fallback',
             width: '100%',
             divider: false,
-            config: this.conf.wizardConfig[i].fieldConfig,
+            config: config.fieldConfig,
           },
           {
             name: 'divider',
@@ -105,21 +105,20 @@ export class EntityWizardComponent implements OnInit {
           },
         ];
       }
-      wizardformArray.push(this.entityFormService.createFormGroup(this.conf.wizardConfig[i].fieldConfig));
-    }
+      wizardformArray.push(this.entityFormService.createFormGroup(config.fieldConfig));
+    });
 
     this.formGroup = this.formBuilder.group({
       formArray: wizardformArray,
     });
 
-    for (const i in this.conf.wizardConfig) {
-      this.summaryFieldConfigs = this.summaryFieldConfigs.concat(this.conf.wizardConfig[i].fieldConfig);
-      const formGroup = this.formArray.get(i) as FormGroup;
-      for (const j in this.conf.wizardConfig[i].fieldConfig) {
-        const config = this.conf.wizardConfig[i].fieldConfig[j];
-        this.fieldRelationService.setRelation(config, formGroup);
-      }
-    }
+    this.conf.wizardConfig.forEach((config, i) => {
+      this.summaryFieldConfigs = this.summaryFieldConfigs.concat(config.fieldConfig);
+      const formGroup = this.formArray.get(String(i)) as FormGroup;
+      config.fieldConfig.forEach((fieldConfig) => {
+        this.fieldRelationService.setRelation(fieldConfig, formGroup);
+      });
+    });
   }
 
   isShow(id: string): boolean {
@@ -149,15 +148,15 @@ export class EntityWizardComponent implements OnInit {
       hide = false;
     }
 
-    for (const i in this.conf.wizardConfig) {
-      this.conf.wizardConfig[i].fieldConfig = this.conf.wizardConfig[i].fieldConfig.map((item) => {
+    this.conf.wizardConfig.forEach((config) => {
+      config.fieldConfig = config.fieldConfig.map((item) => {
         if (item.name === name) {
           item.disabled = disable;
           item['isHidden'] = hide;
         }
         return item;
       });
-    }
+    });
 
     if ((this.formArray.get([stepIndex]) as FormGroup).controls[name]) {
       const method = disable ? 'disable' : 'enable';
@@ -237,12 +236,11 @@ export class EntityWizardComponent implements OnInit {
   }
 
   clearErrors(): void {
-    for (const i in this.conf.wizardConfig) {
-      for (const j in this.conf.wizardConfig[i].fieldConfig) {
-        const config = this.conf.wizardConfig[i].fieldConfig[j];
+    this.conf.wizardConfig.forEach((wizardConfig) => {
+      wizardConfig.fieldConfig.forEach((config) => {
         config['errors'] = '';
         config['hasErrors'] = false;
-      }
-    }
+      });
+    });
   }
 }

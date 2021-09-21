@@ -437,9 +437,9 @@ export class ZvolFormComponent implements FormConfiguration {
       this.encryption_algorithm = pk_dataset[0].encryption_algorithm.value;
       const children = (pk_dataset[0].children);
       if (children.length > 0) {
-        for (const i in children) {
-          this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
-        }
+        children.forEach((child) => {
+          this.namesInUse.push(/[^/]*$/.exec(child.name)[0]);
+        });
       }
 
       let inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
