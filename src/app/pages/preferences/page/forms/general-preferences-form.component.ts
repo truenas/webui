@@ -217,6 +217,9 @@ export class GeneralPreferencesFormComponent implements EmbeddedFormConfig, OnIn
   }
 
   beforeSubmit(data: any): void {
+    if (data.reset) {
+      localStorage.removeItem('turnOffWelcomeDialog');
+    }
     data.tableDisplayedColumns ? data.tableDisplayedColumns = [] : delete (data.tableDisplayedColumns);
   }
 

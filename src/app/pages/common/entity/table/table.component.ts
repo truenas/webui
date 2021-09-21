@@ -134,6 +134,8 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     return this._tableConf;
   }
 
+  // TODO: tableConf can be renamed
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('conf') set tableConf(conf: AppTableConfig) {
     if (!this._tableConf) {
       this._tableConf = conf;
@@ -294,25 +296,24 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   getButtonClass(row: any): string {
     // Bring warnings to user's attention even if state is finished or successful.
-    if (row.warnings && row.warnings.length > 0) return 'fn-theme-orange';
+    if (row.warnings && row.warnings.length > 0) {
+      return 'fn-theme-orange';
+    }
 
     const state: JobState = row.state;
 
     switch (state) {
       case JobState.Pending:
-        return 'fn-theme-orange';
       case JobState.Running:
-        return 'fn-theme-orange';
       case JobState.Aborted:
         return 'fn-theme-orange';
       case JobState.Finished:
-        return 'fn-theme-green';
       case JobState.Success:
         return 'fn-theme-green';
       case JobState.Error:
-        return 'fn-theme-red';
       case JobState.Failed:
         return 'fn-theme-red';
+      case JobState.Locked:
       case JobState.Hold:
         return 'fn-theme-yellow';
       default:

@@ -1,8 +1,10 @@
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatRadioChange } from '@angular/material/radio/radio';
+import { ITreeOptions } from 'angular-tree-component';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
+import { FormExplorerComponent } from 'app/pages/common/entity/entity-form/components/form-explorer/form-explorer.component';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FormSelectOption } from 'app/pages/common/entity/entity-form/models/form-select-option.interface';
 import { RelationGroup } from './field-relation.interface';
@@ -102,7 +104,10 @@ export interface FormDictConfig<P = any> extends BaseFieldConfig<P> {
 }
 
 export interface FormExplorerConfig<P = any> extends BaseFieldConfig<P> {
-  customTemplateStringOptions?: any;
+  customTemplateStringOptions?: ITreeOptions & {
+    explorerComponent?: FormExplorerComponent;
+    explorer?: FormExplorerComponent;
+  };
   explorerParam?: any;
   explorerType?: string;
   fileLocation?: string;

@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { FormArray, FormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { TreeNode } from 'angular-tree-component';
+import { ITreeOptions, TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';
@@ -22,6 +22,7 @@ import sshConnectionsHelptex from 'app/helptext/system/ssh-connections';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
@@ -157,7 +158,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                 useVirtualScroll: false,
                 useCheckbox: true,
                 useTriState: false,
-              },
+              } as ITreeOptions,
               required: true,
               validation: [Validators.required],
               relation: [{
@@ -987,7 +988,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     });
   }
 
-  getSourceChildren(node: TreeNode): Promise<any> {
+  getSourceChildren(node: TreeNode): Promise<ListdirChild[]> {
     const fromLocal = this.entityWizard.formArray.get([0]).get('source_datasets_from').value === DatasetSource.Local;
     const sshCredentials = this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value;
 
@@ -998,7 +999,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
     if (sshCredentials === 'NEW') {
       return new Promise((resolve) => {
-        resolve(this.entityWizard.formArray.get([0]).get('ssh_credentials_source').setErrors({}));
+        resolve(this.entityWizard.formArray.get([0]).get('ssh_credentials_source').setErrors({}) as any);
       });
     }
     return new Promise((resolve) => {
@@ -1032,7 +1033,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     });
   }
 
-  getTargetChildren(node: TreeNode): Promise<any> {
+  getTargetChildren(node: TreeNode): Promise<ListdirChild[]> {
     const fromLocal = this.entityWizard.formArray.get([0]).get('target_dataset_from').value === DatasetSource.Local;
     const sshCredentials = this.entityWizard.formArray.get([0]).get('ssh_credentials_target').value;
     if (fromLocal) {
@@ -1042,7 +1043,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
     if (sshCredentials === 'NEW') {
       return new Promise((resolve) => {
-        resolve(this.entityWizard.formArray.get([0]).get('ssh_credentials_target').setErrors({}));
+        resolve(this.entityWizard.formArray.get([0]).get('ssh_credentials_target').setErrors({}) as any);
       });
     }
     return new Promise((resolve) => {

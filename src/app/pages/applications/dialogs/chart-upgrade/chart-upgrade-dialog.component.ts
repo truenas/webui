@@ -19,8 +19,7 @@ type Version = Omit<UpgradeSummary, 'upgrade_version' | 'image_update_available'
   styleUrls: ['./chart-upgrade-dialog.component.scss'],
   templateUrl: './chart-upgrade-dialog.component.html',
 })
-
-export class ChartUpgradeDialog {
+export class ChartUpgradeDialogComponent {
   dialogConfig: ChartUpgradeDialogConfig;
   imagePlaceholder = appImagePlaceholder;
   helptext = helptext;
@@ -29,7 +28,7 @@ export class ChartUpgradeDialog {
   selectedVersion: Version;
 
   constructor(
-    public dialogRef: MatDialogRef<ChartUpgradeDialog>,
+    public dialogRef: MatDialogRef<ChartUpgradeDialogComponent>,
     private appLoaderService: AppLoaderService,
     private appService: ApplicationsService,
     public dialogService: DialogService,

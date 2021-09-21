@@ -7,7 +7,7 @@ export interface DisksRequestEvent {
   data: QueryParams<Disk>;
 }
 
-export interface DiskDataEvent {
+export interface DisksDataEvent {
   name: 'DiskData';
   sender: unknown;
   data: Disk[];

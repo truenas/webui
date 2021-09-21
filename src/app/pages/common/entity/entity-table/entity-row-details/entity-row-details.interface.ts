@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { EntityTableComponent } from './entity-table.component';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 
 /**
  * @description A common interface for EntityTable summary row components.

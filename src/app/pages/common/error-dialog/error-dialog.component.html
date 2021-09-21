@@ -17,12 +17,10 @@
     <span>{{ 'More info...' | translate }}</span>
   </div>
   <div id="err-bt-panel" class="backtrace-panel" [ngClass]="{'open':!isCloseMoreInfo}" *ngIf="backtrace">
-    <textarea id="err-bt-text" readonly matInput>{{ 'Error' | translate }}: {{backtrace}}</textarea>
+    <div class="textarea" id="err-bt-text" readonly matInput>{{ 'Error' | translate }}: {{backtrace}}</div>
   </div>
 </div>
 <div mat-dialog-actions>
-  &nbsp;
-  <span fxFlex></span>
   <button mat-button class="mat-button mat-accent" (click)="dialogRef.close(true)"
     ix-auto
     ix-auto-type="button"

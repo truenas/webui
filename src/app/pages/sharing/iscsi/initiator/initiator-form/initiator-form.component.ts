@@ -29,7 +29,7 @@ export class InitiatorFormComponent implements OnInit {
   protected editCall: 'iscsi.initiator.update' = 'iscsi.initiator.update';
   protected customFilter: any[] = [[['id', '=']]];
   route_success: string[] = ['sharing', 'iscsi', 'initiator'];
-  protected pk: any;
+  protected pk: number;
 
   fieldConfig: FieldConfig[] = [
     {

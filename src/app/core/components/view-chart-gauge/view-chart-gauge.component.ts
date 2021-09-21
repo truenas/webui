@@ -12,7 +12,7 @@ export interface GaugeConfig {
   min?: number; // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
   max?: number; // 100 is default
   width?: number; // for adjusting arc thickness
-  data: any;
+  data: (string | number)[];
   subtitle?: string;
 }
 
@@ -24,8 +24,8 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
   subtitle = '';
   chartType = 'gauge';
   chartClass = 'view-chart-gauge';
-  private _data: any;
-  private arc: any;
+  private _data: (string | number)[];
+  private arc: d3.Arc<unknown, d3.DefaultArcObject>;
   chartId = UUID.UUID();
   private doublePI = 2 * Math.PI;
   units = '%'; // default unit type
@@ -54,7 +54,7 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
     this.render();
   }
 
-  get data(): any {
+  get data(): (string | number)[] {
     return this._data;
   }
 
@@ -136,10 +136,10 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
       .attr('class', 'value')
       .attr('d', this.arc);
 
-    this.update(this.config.data[1]);
+    this.update(this.config.data[1] as number);
   }
 
-  update(value: any): void {
+  update(value: number): void {
     if (!document.hidden) {
       d3.transition()
         .select('#gauge-' + this.chartId + ' path.value')
@@ -155,7 +155,7 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
     return (d: any) => {
       const interpolate = d3.interpolate(d.endAngle, newAngle);
 
-      return (t: any) => {
+      return (t: number) => {
         d.endAngle = interpolate(t);
 
         return this.arc(d);

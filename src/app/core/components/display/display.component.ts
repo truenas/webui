@@ -6,7 +6,7 @@ import {
   selector: 'display',
   template: '<ng-container #wrapper></ng-container>',
 })
-export class Display {
+export class DisplayComponent {
   displayList: any[] = []; // items in DOM
   children: any[] = [];
   @ViewChild('wrapper', { static: true }) wrapper: ViewContainerRef;

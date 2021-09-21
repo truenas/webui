@@ -48,6 +48,7 @@ export interface CloudSyncTaskUi extends CloudSyncTask {
   cron_schedule: string;
   frequency: string;
   next_run: string;
+  next_run_time: Date;
   state: DataProtectionTaskState;
 }
 

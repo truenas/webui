@@ -10,7 +10,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   styleUrls: ['./ix-form.component.scss'],
   templateUrl: './ix-form.component.html',
 })
-export class IxForm {
+export class IxFormComponent {
   @Input() formGroup: FormGroup;
   @Input() title: string;
   @Output() cancel = new EventEmitter<boolean>();

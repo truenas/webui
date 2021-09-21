@@ -79,6 +79,7 @@ export interface ChartRelease {
   history: { [key: string]: string };
   resources?: ChartResources;
 
+  // TODO: Frontend field, move to another interface.
   selected?: boolean;
 }
 

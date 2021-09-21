@@ -10,6 +10,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
 import { UpdateCheckedEvent } from 'app/interfaces/events/update-checked-event.interface';
 import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -26,9 +27,9 @@ import { T } from 'app/translate-marker';
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy, AfterViewInit {
   // HA
-  @Input('isHA') isHA = false;
-  @Input('passive') isPassive = false;
-  @Input('enclosure') enclosureSupport = false;
+  @Input() isHA = false;
+  @Input() isPassive = false;
+  @Input() enclosureSupport = false;
 
   title: string = T('System Info');
   data: any;
@@ -94,7 +95,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     });
 
     if (this.isHA && this.isPassive) {
-      this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+      this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
         if (evt.data.status == 'HA Enabled' && !this.data) {
           this.ws.call('failover.call_remote', ['system.info']).pipe(untilDestroyed(this)).subscribe((res) => {
             const evt = { name: 'SysInfoPassive', data: res };

@@ -6,6 +6,6 @@ import { Component, Input } from '@angular/core';
   templateUrl: './tooltip.component.html',
 })
 export class TooltipComponent {
-  @Input('message') message: string;
-  @Input('header') header?: string;
+  @Input() message: string;
+  @Input() header?: string;
 }

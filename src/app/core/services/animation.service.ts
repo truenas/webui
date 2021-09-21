@@ -10,6 +10,7 @@ import {
   timeline,
   ColdSubscription,
 } from 'popmotion';
+import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { AnimateEvent } from 'app/interfaces/events/animate-event.interface';
 import { ScrollToEvent } from 'app/interfaces/events/scroll-to-event.interface';
 import { Timeout } from 'app/interfaces/timeout.interface';
@@ -249,7 +250,7 @@ export class AnimationService {
       }),
     );
 
-    const radiation = (start: any, elementBorder: any): void => {
+    const radiation = (start: any, elementBorder: ValueReaction): void => {
       keyframes({
         values: [
           { borderWidth: 0, borderColor: 'rgb(204, 0, 0, 1)' },

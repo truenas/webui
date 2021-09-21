@@ -10,6 +10,7 @@ import { TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';
 import {
@@ -110,8 +111,8 @@ export class EntityFormService {
     explorerType?: string,
     hideDirs?: string,
     showHiddenFiles = false,
-  ): Promise<any[]> {
-    const children: any[] = [];
+  ): Promise<ListdirChild[]> {
+    const children: ListdirChild[] = [];
     let typeFilter: any;
     explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', FileType.Directory]] : typeFilter = [];
 
@@ -120,7 +121,7 @@ export class EntityFormService {
       res = _.sortBy(res, (o) => o.name.toLowerCase());
 
       for (let i = 0; i < res.length; i++) {
-        const child: any = {};
+        const child = {} as ListdirChild;
         if (!showHiddenFiles) {
           if (res[i].hasOwnProperty('name') && !res[i].name.startsWith('.')) {
             if (res[i].type === FileType.Symlink) {
@@ -168,17 +169,17 @@ export class EntityFormService {
     }); */
   }
 
-  getPoolDatasets(param: [DatasetType[]?] = []): Promise<any[]> {
-    const nodes: any[] = [];
+  getPoolDatasets(param: [DatasetType[]?] = []): Promise<ListdirChild[]> {
+    const nodes: ListdirChild[] = [];
     return this.ws.call('pool.filesystem_choices', param).toPromise().then((res) => {
       for (let i = 0; i < res.length; i++) {
         const pathArr = res[i].split('/');
         if (pathArr.length === 1) {
-          const node = {
+          const node: ListdirChild = {
             name: res[i],
             subTitle: pathArr[0],
             hasChildren: false,
-            children: [] as any,
+            children: [],
           };
           nodes.push(node);
         } else {
@@ -187,11 +188,11 @@ export class EntityFormService {
           while (_.find(parent.children, { subTitle: pathArr[j] })) {
             parent = _.find(parent.children, { subTitle: pathArr[j++] });
           }
-          const node = {
+          const node: ListdirChild = {
             name: res[i],
             subTitle: pathArr[j],
             hasChildren: false,
-            children: [] as any,
+            children: [],
           };
           parent.children.push(node);
           parent.hasChildren = true;

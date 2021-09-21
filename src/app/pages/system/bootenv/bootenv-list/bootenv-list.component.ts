@@ -223,8 +223,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return selected;
   }
 
-  wsMultiDeleteParams(selected: BootenvRow[]): any[] {
-    const params: any[] = ['bootenv.do_delete'];
+  wsMultiDeleteParams(selected: BootenvRow[]): (string | string[][])[] {
+    const params: (string | string[][])[] = ['bootenv.do_delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }

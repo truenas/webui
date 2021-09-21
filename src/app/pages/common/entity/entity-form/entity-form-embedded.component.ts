@@ -95,7 +95,7 @@ export interface EmbeddedFormConfig {
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
-  @Input('conf') conf: EmbeddedFormConfig;
+  @Input() conf: EmbeddedFormConfig;
   @Input() data: any;
   @Input() hiddenFieldSets: string[] = [];
   @Input() target: Subject<CoreEvent>;

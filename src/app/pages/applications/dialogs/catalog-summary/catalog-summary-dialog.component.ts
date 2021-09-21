@@ -14,7 +14,7 @@ import { LocaleService } from 'app/services/locale.service';
   encapsulation: ViewEncapsulation.None,
 })
 
-export class CatalogSummaryDialog implements OnInit {
+export class CatalogSummaryDialogComponent implements OnInit {
   catalogApp: CatalogApp;
   statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
   helptext = helptext;
@@ -22,7 +22,7 @@ export class CatalogSummaryDialog implements OnInit {
   filteredVersions: { [version: string]: CatalogAppVersion };
 
   constructor(
-    public dialogRef: MatDialogRef<CatalogSummaryDialog>,
+    public dialogRef: MatDialogRef<CatalogSummaryDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: CatalogApp,
     protected localeService: LocaleService,
   ) {

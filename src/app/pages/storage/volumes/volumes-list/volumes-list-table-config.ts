@@ -10,10 +10,11 @@ import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { combineLatest, Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
+import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -71,7 +72,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
   route_add_tooltip = T('Create or Import Pool');
   showDefaults = false;
   showSpinner: boolean;
-  encryptedStatus: any;
+  // TODO: Unused?
+  encryptedStatus: number;
   private vmware_res_status: boolean;
   dialogConf: DialogFormConfiguration;
   restartServices = false;
@@ -680,7 +682,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   id: 'download_key',
                   name: helptext.downloadKey,
                   function: () => {
-                    const dialogRef = self.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+                    const dialogRef = self.mdDialog.open(DownloadKeyDialogComponent, { disableClose: true });
                     dialogRef.componentInstance.volumeId = row1.id;
                     dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';
                   },
@@ -793,7 +795,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 return;
               }
 
-              if (pools[0].scan.function === 'SCRUB' && pools[0].scan.state === PoolScanState.Scanning) {
+              if (pools[0].scan.function === PoolScanFunction.Scrub && pools[0].scan.state === PoolScanState.Scanning) {
                 const message = self.translate.instant('Stop the scrub on {poolName}?', { poolName: row1.name });
                 this.dialogService.confirm({
                   message,

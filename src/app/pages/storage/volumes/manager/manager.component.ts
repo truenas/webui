@@ -10,7 +10,7 @@ import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
+import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -633,7 +633,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           .pipe(
             switchMap((r: Job<Pool>) => {
               if (this.isEncrypted) {
-                const downloadDialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
+                const downloadDialogRef = this.mdDialog.open(DownloadKeyDialogComponent, { disableClose: true });
                 downloadDialogRef.componentInstance.new = true;
                 downloadDialogRef.componentInstance.volumeId = r.result.id;
                 downloadDialogRef.componentInstance.volumeName = r.result.name;

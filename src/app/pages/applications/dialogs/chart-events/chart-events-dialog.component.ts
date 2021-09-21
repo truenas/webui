@@ -19,7 +19,7 @@ import { LocaleService } from 'app/services/locale.service';
   styleUrls: ['./chart-events-dialog.component.scss'],
   templateUrl: './chart-events-dialog.component.html',
 })
-export class ChartEventsDialog implements OnInit {
+export class ChartEventsDialogComponent implements OnInit {
   @ViewChild('eventsPannel', { static: true }) eventsPannel: MatExpansionPanel;
   catalogApp: ChartRelease;
   containerImages: { [key: string]: ChartContainerImage } = {};
@@ -28,7 +28,7 @@ export class ChartEventsDialog implements OnInit {
   helptext = helptext;
 
   constructor(
-    public dialogRef: MatDialogRef<ChartEventsDialog>,
+    public dialogRef: MatDialogRef<ChartEventsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ChartRelease,
     protected localeService: LocaleService,
     private loader: AppLoaderService,

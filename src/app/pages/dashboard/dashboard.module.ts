@@ -16,7 +16,7 @@ import { WidgetPoolComponent } from 'app/pages/dashboard/components/widget-pool/
 import { WidgetStorageComponent } from 'app/pages/dashboard/components/widget-storage/widget-storage.component';
 import {
   SimpleFailoverBtnComponent,
-  SimpleFailoverBtnDialog,
+  SimpleFailoverBtnDialogComponent,
 } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard/components/widget-sys-info/widget-sys-info.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -48,7 +48,7 @@ import { routing } from './dashboard.routing';
     WidgetNetworkComponent,
     WidgetStorageComponent,
     SimpleFailoverBtnComponent,
-    SimpleFailoverBtnDialog,
+    SimpleFailoverBtnDialogComponent,
   ],
   entryComponents: [
     WidgetComponent,

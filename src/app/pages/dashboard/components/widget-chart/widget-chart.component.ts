@@ -46,7 +46,6 @@ export class WidgetChartComponent extends WidgetComponent implements OnDestroy {
   // Chart Options
   showLegendValues = false;
   chartId = 'chart-' + UUID.UUID();
-  chart: any;
   maxY = 100; // Highest number in data
   startTime: string;
   endTime: string;
@@ -71,17 +70,6 @@ export class WidgetChartComponent extends WidgetComponent implements OnDestroy {
 
   // Override this method in subclasses
   chartSetup(): void {
-  }
-
-  protected makeTimeAxis(td: TimeData, data: any, axis?: string): any[] {
-    if (!axis) { axis = 'x'; }
-    const labels: any[] = [axis];
-    data[0].data.forEach((item: any, index: number) => {
-      const date = new Date(td.start * 1000 + index * td.step * 1000);
-      labels.push(date);
-    });
-
-    return labels;
   }
 
   timeFromDate(date: Date): string {
@@ -125,7 +113,7 @@ export class WidgetChartComponent extends WidgetComponent implements OnDestroy {
     }
 
     if (operation && operation == 'average') {
-      const average: any[] = [];
+      const average: string[] = [];
       for (let a = 0; a < result.data.length; a++) {
         const dataPoint = result.data[a] / wanted.length;
         average.push(Number(dataPoint).toFixed(2));

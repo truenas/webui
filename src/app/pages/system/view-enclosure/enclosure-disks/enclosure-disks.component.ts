@@ -33,6 +33,7 @@ import {
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { Temperature } from 'app/core/services/disk-temperature.service';
+import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
@@ -78,9 +79,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   @ViewChild('disksoverview', { static: true }) overview: ElementRef;
   @ViewChild('diskdetails', { static: false }) details: ElementRef;
   @ViewChild('domLabels', { static: false }) domLabels: ElementRef;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('system-profiler') system: SystemProfiler;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('selected-enclosure') selectedEnclosure: EnclosureMetadata;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('current-tab') currentTab: ViewConfig;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('controller-events') controllerEvent$: Subject<CoreEvent>;
 
   app: Application;
@@ -1010,7 +1015,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const selectedEnclosure = this.getSelectedEnclosure();
     const enclosure_id = this.system.enclosures[selectedEnclosure.enclosureKey].id;
     const slot = this.selectedDisk.enclosure.slot;
-    const status = !this.identifyBtnRef && !kill ? 'IDENTIFY' : 'CLEAR';
+    const status = !this.identifyBtnRef && !kill ? EnclosureSlotStatus.Identify : EnclosureSlotStatus.Clear;
     const args = [enclosure_id, slot, status];
 
     // Arguments are Str("enclosure_id"), Int("slot"), Str("status", enum=["CLEAR", "FAULT", "IDENTIFY"])

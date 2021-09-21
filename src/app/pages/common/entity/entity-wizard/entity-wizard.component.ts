@@ -28,7 +28,7 @@ import { EntityUtils } from '../utils';
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityWizardComponent implements OnInit {
-  @Input('conf') conf: WizardConfiguration;
+  @Input() conf: WizardConfiguration;
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
 
   formGroup: FormGroup;

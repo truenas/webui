@@ -19,7 +19,7 @@ import { LocaleService } from 'app/services/locale.service';
   selector: 'localization-form2',
   templateUrl: './localization-form2.component.html',
 })
-export class LocalizationForm2 implements OnInit {
+export class LocalizationForm2Component implements OnInit {
   fieldsetTitle = helptext.localeTitle;
 
   formIsLoading = false;

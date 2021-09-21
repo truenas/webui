@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WebSocketService } from 'app/services';
@@ -26,11 +27,6 @@ interface InfoObject {
   timezone: string; // "America/Los_Angeles"
   system_manufacturer: string; // null
   ecc_memory: boolean; // false
-}
-
-interface HAStatus {
-  status: string;
-  reasons?: any;
 }
 
 @Injectable({
@@ -60,7 +56,7 @@ export class SystemProfileService extends BaseService {
     ecc_memory: true,
   };
 
-  private ha_status: HAStatus;
+  private ha_status: HaStatus;
 
   features: SystemFeatures = {
     HA: false,

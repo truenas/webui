@@ -6,8 +6,8 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./temperature-meter.component.scss'],
 })
 export class TemperatureMeterComponent {
-  @Input('source') source: string;
-  @Input('symbolText') symbolText: string;
-  @Input('unit') unit: string;
-  @Input('value') value: number;
+  @Input() source: string;
+  @Input() symbolText: string;
+  @Input() unit: string;
+  @Input() value: number;
 }
