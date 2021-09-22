@@ -245,7 +245,7 @@ export class ServiceNFSComponent implements FormConfiguration {
     });
 
     entityForm.formGroup.controls['v4_krb'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      value ? this.v4krbValue = true : this.v4krbValue = false;
+      this.v4krbValue = !!value;
     });
 
     this.ws.call('kerberos.keytab.has_nfs_principal').pipe(untilDestroyed(this)).subscribe((res) => {

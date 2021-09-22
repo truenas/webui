@@ -708,11 +708,24 @@ export class IscsiWizardComponent implements WizardConfiguration {
       delete summary['Extent']['New Device'];
     } else {
       delete summary['Extent']['File'];
-      this.summaryObj.disk === 'Create New' ? delete summary['Extent']['Device'] : delete summary['Extent']['New Device'];
+      if (this.summaryObj.disk === 'Create New') {
+        delete summary['Extent']['Device'];
+      } else {
+        delete summary['Extent']['New Device'];
+      }
     }
 
-    this.summaryObj.portal === 'Create New' ? delete summary['Portal'] : delete summary['New Portal'];
-    this.summaryObj.discovery_authgroup === 'NEW' ? delete summary['Authorized Access'] : delete summary['New Authorized Access'];
+    if (this.summaryObj.portal === 'Create New') {
+      delete summary['Portal'];
+    } else {
+      delete summary['New Portal'];
+    }
+
+    if (this.summaryObj.discovery_authgroup === 'NEW') {
+      delete summary['Authorized Access'];
+    } else {
+      delete summary['New Authorized Access'];
+    }
 
     if (!this.summaryObj.initiators && !this.summaryObj.auth_network && !this.summaryObj.comment) {
       delete summary['Initiator'];
@@ -736,9 +749,11 @@ export class IscsiWizardComponent implements WizardConfiguration {
         const control = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
         control['isHidden'] = disabled;
         control.disabled = disabled;
-        disabled
-          ? this.entityWizard.formArray.get([stepIndex]).get(field).disable()
-          : this.entityWizard.formArray.get([stepIndex]).get(field).enable();
+        if (disabled) {
+          this.entityWizard.formArray.get([stepIndex]).get(field).disable();
+        } else {
+          this.entityWizard.formArray.get([stepIndex]).get(field).enable();
+        }
         if (disabled) {
           this.summaryObj[field] = null;
         }

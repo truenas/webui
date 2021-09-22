@@ -264,16 +264,21 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     ];
     fields.forEach((field) => {
       const paragraph: FormParagraphConfig = _.find(this.fieldConfig, { name: field });
-      this.incomingData[field] || this.incomingData[field] === false
-        ? paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---';
+      if (this.incomingData[field] || this.incomingData[field] === false) {
+        paragraph.paraText += this.incomingData[field];
+      } else {
+        paragraph.paraText += '---';
+      }
     });
     const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'san' });
     config.paraText += this.incomingData.san.join(',');
     const issuer: FormParagraphConfig = _.find(this.fieldConfig, { name: 'issuer' });
     if (_.isObject(this.incomingData.issuer)) {
       issuer.paraText += (this.incomingData.issuer as any).name;
+    } else if (this.incomingData.issuer) {
+      issuer.paraText += this.incomingData.issuer;
     } else {
-      this.incomingData.issuer ? issuer.paraText += this.incomingData.issuer : issuer.paraText += '---';
+      issuer.paraText += '---';
     }
   }
 

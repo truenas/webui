@@ -165,8 +165,11 @@ export class LocaleService {
     const tempStr = `${this.dateFormat} ${ngTimeFormat}`;
     let dateStr = '';
     for (let i = 0; i < tempStr.length; i++) {
-      tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H' ? dateStr += tempStr[i]
-        : dateStr += tempStr[i].toLowerCase();
+      if (tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H') {
+        dateStr += tempStr[i];
+      } else {
+        dateStr += tempStr[i].toLowerCase();
+      }
     }
     return dateStr;
   }

@@ -246,9 +246,11 @@ export class TwoFactorComponent implements FormConfiguration {
 
   updateEnabledStatus(): void {
     const enabled: FormParagraphConfig = _.find(this.fieldConfig, { name: 'enabled_status' });
-    this.TwoFactorEnabled
-      ? enabled.paraText = helptext.two_factor.enabled_status_true
-      : enabled.paraText = helptext.two_factor.enabled_status_false;
+    if (this.TwoFactorEnabled) {
+      enabled.paraText = helptext.two_factor.enabled_status_true;
+    } else {
+      enabled.paraText = helptext.two_factor.enabled_status_false;
+    }
   }
 
   customSubmit(data: any): void {

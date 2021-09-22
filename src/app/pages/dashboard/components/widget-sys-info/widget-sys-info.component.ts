@@ -68,7 +68,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     super(translate);
     this.configurable = false;
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
+      this.isUpdateRunning = res === 'true';
     });
 
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
@@ -201,9 +201,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     }
 
     if (days > 0) {
-      days === 1
-        ? this.uptimeString += days + T(' day, ')
-        : this.uptimeString += days + T(' days, ') + `${hrs}:${pmin}`;
+      if (days === 1) {
+        this.uptimeString += days + T(' day, ');
+      } else {
+        this.uptimeString += days + T(' days, ') + `${hrs}:${pmin}`;
+      }
     } else if (hrs > 0) {
       this.uptimeString += `${hrs}:${pmin}`;
     } else {

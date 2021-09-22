@@ -397,8 +397,10 @@ export class SMBFormComponent implements FormConfiguration {
             this.dialog.errorReport('Error', err.err, err.backtrace);
           },
         );
+      } else if (source === 'timemachine') {
+        this.checkAllowDeny(entityForm);
       } else {
-        source === 'timemachine' ? this.checkAllowDeny(entityForm) : this.checkAclActions(entityForm);
+        this.checkAclActions(entityForm);
       }
     });
   }

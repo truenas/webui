@@ -259,9 +259,11 @@ export class FieldRelationService {
     fieldConfig.isHidden = hide;
 
     if (formGroup.controls[fieldConfig.name]) {
-      disable
-        ? formGroup.controls[fieldConfig.name].disable(options)
-        : formGroup.controls[fieldConfig.name].enable(options);
+      if (disable) {
+        formGroup.controls[fieldConfig.name].disable(options);
+      } else {
+        formGroup.controls[fieldConfig.name].enable(options);
+      }
     }
   }
 
