@@ -259,14 +259,15 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
     time.sleep(2)
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Who"]')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Who"]')).click()
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Who"]').click()
     driver.find_element_by_xpath('//span[contains(text(),"Group")]').click()
-	time.sleep(1)
+    time.sleep(1)
     driver.find_element_by_xpath('//input[@data-placeholder="Group"]').clear()
     driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys('AD01\Domain users')
     time.sleep(1)
-	driver.find_element_by_xpath('//mat-select[@ix-auto="select__Permissions"]').click()
-	driver.find_element_by_xpath('//span[contains(text(),"Full Control")]).click()
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Permissions"]').click()
+    driver.find_element_by_xpath('//span[contains(text(),"Full Control")]').click()
+    time.sleep(1)
     
 
 
