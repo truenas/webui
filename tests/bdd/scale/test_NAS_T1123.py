@@ -121,9 +121,9 @@ def if_the_smb_serivce_is_not_started_start_the_service_and_click_on_smb_start_a
 def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd1234(driver, nas_ip, mysmbshare, user, password):
     """Send a file to the share with nas_IP/"{mysmbshare}" and "{user}" and "{password}"."""
     run_cmd('touch testfile.txt')
+    time.sleep(2)
     results = run_cmd(f'smbclient //{nas_ip}/{mysmbshare} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
     time.sleep(1)
-    run_cmd('rm testfile.txt')
     assert results['result'], results['output']
 
 
