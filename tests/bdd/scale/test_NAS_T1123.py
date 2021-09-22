@@ -7,7 +7,8 @@ from function import (
     is_element_present,
     attribute_value_exist,
     run_cmd,
-    ssh_cmd
+    ssh_cmd,
+    post
 )
 from pytest_bdd import (
     given,
@@ -128,15 +129,12 @@ def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd123
 
 
 @then('Verify that the is on nas_ip with root and password')
-def verify_that_the_is_on_nas_ip_with_root_and_password(nas_ip, password):
-    results = post(nas_ip, 'filesystem/stat/', ("root", password), f'{smb_path}/testfile.txt')
-    assert results.status_code == 200, results.text
-
-    #global results
-    #cmd = 'ls -al'
-    #results = ssh_cmd(cmd, 'root', None, nas_ip)
-    #assert results['result'], results['output']
-    #assert 'testfile' in results['output'], results['output']
+def verify_that_the_is_on_nas_ip_with_root_and_password(driver, nas_ip, root_password):
+    global results
+    cmd = 'ls -la /mnt/system/my_acl_dataset/'
+    results = ssh_cmd(cmd, 'root', root_password, nas_ip)
+    assert results['result'], results['output']
+    assert 'testfile' in results['output'], results['output']
 
     ## return to dashboard
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
