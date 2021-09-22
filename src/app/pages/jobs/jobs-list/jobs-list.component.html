@@ -71,7 +71,7 @@
                   <mat-progress-bar
                     *ngIf="element.state === JobState.Running"
                     [value]="element.progress.percent"
-                    mode="determinate"
+                    [mode]="element.progress.percent ? 'determinate' : 'indeterminate'"
                     class="jobs-progress"
                     [matTooltip]="element.progress.description"
                   ></mat-progress-bar>
@@ -83,7 +83,7 @@
                 type="button"
                 (click)="onAborted(element)"
                 *ngIf="element.state === JobState.Running && element.abortable"
-                [matTooltip]="'Abort the task' | translate"
+                [matTooltip]="'Abort' | translate"
               >
                 <mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
               </button>
