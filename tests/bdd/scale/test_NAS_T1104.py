@@ -254,6 +254,20 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').click()
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').clear()
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').send_keys('AD01\\administrator')
+    time.sleep(1)
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
+    time.sleep(2)
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Who"]')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Who"]')).click()
+    driver.find_element_by_xpath('//span[contains(text(),"Group")]').click()
+	time.sleep(1)
+    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').clear()
+    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys('AD01\Domain users')
+    time.sleep(1)
+	driver.find_element_by_xpath('//mat-select[@ix-auto="select__Permissions"]').click()
+	driver.find_element_by_xpath('//span[contains(text(),"Full Control")]).click()
+    
 
 
 @then(parsers.parse('click the Save button, which should be returned to the storage page, on the Edit ACL page, verify that the group name is "{group_name}".'))
