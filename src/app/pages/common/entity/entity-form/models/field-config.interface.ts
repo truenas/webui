@@ -52,6 +52,10 @@ export interface BaseFieldConfig<P = any> {
   zeroStateMessage?: string;
 }
 
+export interface FormLabelConfig<P = any> extends BaseFieldConfig<P> {
+  label: string;
+}
+
 export interface FormArrayConfig<P = any> extends BaseFieldConfig<P> {
   formarray?: FieldConfig[];
 }
@@ -239,6 +243,7 @@ export interface FormToggleButtonOption {
 }
 
 export type FieldConfig<P = any> = BaseFieldConfig<P>
+| FormLabelConfig<P>
 | FormArrayConfig<P>
 | FormButtonConfig<P>
 | FormCheckboxConfig<P>

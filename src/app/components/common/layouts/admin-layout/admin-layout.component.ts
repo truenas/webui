@@ -4,6 +4,7 @@ import {
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
+import { MatDrawerMode } from '@angular/material/sidenav/drawer';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
@@ -29,7 +30,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile: boolean;
   isSidenavOpen = true;
   isSidenavCollapsed = false;
-  sidenavMode = 'over';
+  sidenavMode: MatDrawerMode = 'over';
   isShowFooterConsole = false;
   isSidenotOpen = false;
   consoleMsg = '';

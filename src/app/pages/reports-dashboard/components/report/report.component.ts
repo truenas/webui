@@ -223,6 +223,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     }
   }
 
+  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
+  aggregationKey(key: keyof ReportingData['aggregations']): keyof ReportingData['aggregations'] {
+    return key;
+  }
+
   private async setupData(changes: SimpleChanges): Promise<void> {
     const zoom = this.zoomLevels[this.timeZoomIndex];
     const rrdOptions = await this.convertTimespan(zoom.timespan);
