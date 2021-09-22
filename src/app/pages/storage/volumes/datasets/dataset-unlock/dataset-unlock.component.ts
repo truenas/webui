@@ -4,7 +4,6 @@ import {
 import {
   AbstractControl, FormArray, FormControl, FormGroup,
 } from '@angular/forms';
-import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -12,12 +11,13 @@ import * as _ from 'lodash';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
+import { DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import {
-  FieldConfig,
+  FieldConfig, FormCheckboxConfig, FormListConfig, FormParagraphConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -41,18 +41,15 @@ export class DatasetUnlockComponent implements FormConfiguration {
   isEntity = true;
   isNew = true;
   pk: string;
+  dialogOpen = false;
   protected path: string;
   protected entityForm: EntityFormComponent;
-  protected dialogOpen = false;
 
   protected datasets: FormArray;
-  protected datasets_fc: FieldConfig;
-  protected key_file_fc: FieldConfig;
+  protected datasets_fc: FormListConfig;
+  protected key_file_fc: FormCheckboxConfig;
   protected key_file_fg: FormControl;
   protected unlock_children_fg: FormControl;
-  protected master_checkbox_fc: FieldConfig;
-  protected restart_services_fc: FieldSet;
-  protected restart_services_checked: string[] = [];
 
   subs: any;
 
@@ -170,31 +167,6 @@ export class DatasetUnlockComponent implements FormConfiguration {
       name: 'encrypted_roots_divider',
       divider: true,
     },
-    {
-      name: helptext.restart_services_placeholder,
-      label: false,
-      config: [{
-        type: 'checkbox',
-        name: 'master_checkbox',
-        placeholder: helptext.check_all,
-        tooltip: helptext.restart_services_tooltip,
-        isHidden: true,
-        value: false,
-        onChange: (changes: { event: MatCheckboxChange }) => {
-          this.master_checkbox_fc.placeholder = changes.event.checked ? helptext.uncheck_all : helptext.check_all;
-          this.restart_services_fc.config
-            .filter((cfg: FieldConfig) => cfg.name !== 'master_checkbox')
-            .forEach((service: FieldConfig) => {
-              this.entityForm.formGroup.get(service.name).setValue(changes.event.checked);
-              if (changes.event.checked) {
-                this.restart_services_checked.push(service.name);
-              } else {
-                this.restart_services_checked = [];
-              }
-            });
-        },
-      }],
-    },
   ];
 
   constructor(
@@ -220,7 +192,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     this.entityForm = entityEdit;
     this.datasets = entityEdit.formGroup.controls['datasets'] as FormArray;
     this.datasets_fc = _.find(this.fieldConfig, { name: 'datasets' });
-    this.key_file_fc = _.find(this.fieldConfig, { name: 'key_file' });
+    this.key_file_fc = _.find(this.fieldConfig, { name: 'key_file' }) as FormCheckboxConfig;
     const listFields = this.datasets_fc.listFields;
     const dialogRef = this.dialog.open(EntityJobComponent, {
       data: { title: helptext.fetching_encryption_summary_title },
@@ -246,7 +218,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
           }
           const controls = listFields[i];
           const passphrase_fc = _.find(controls, { name: 'passphrase' });
-          const name_text_fc = _.find(controls, { name: 'name_text' });
+          const name_text_fc: FormParagraphConfig = _.find(controls, { name: 'name_text' });
           const result = res.result[i];
 
           (this.datasets.controls[i] as FormGroup).controls['name'].setValue(result['name']);
@@ -326,37 +298,6 @@ export class DatasetUnlockComponent implements FormConfiguration {
           }
         }
       });
-
-    this.restart_services_fc = _.find(this.fieldSets, { name: helptext.restart_services_placeholder });
-    this.master_checkbox_fc = _.find(this.fieldConfig, { name: 'master_checkbox' });
-
-    this.ws.call('pool.dataset.unlock_services_restart_choices', [this.pk])
-      .pipe(untilDestroyed(this))
-      .subscribe((choices) => {
-        if (Object.keys(choices).length) {
-          this.restart_services_fc.label = true;
-          this.master_checkbox_fc.isHidden = false;
-        }
-        for (const key in choices) {
-          const config: FieldConfig = {
-            type: 'checkbox',
-            name: key,
-            placeholder: choices[key],
-            onChange: (changes: { event: MatCheckboxChange }) => {
-              if (changes.event.checked) {
-                this.restart_services_checked.push(key);
-              } else {
-                this.restart_services_checked = this.restart_services_checked.filter((item) => item !== key);
-              }
-              const isAllChecked = this.restart_services_checked.length === Object.keys(choices).length;
-              this.master_checkbox_fc.placeholder = isAllChecked ? helptext.uncheck_all : helptext.check_all;
-              this.entityForm.formGroup.get('master_checkbox').setValue(isAllChecked);
-            },
-          };
-          this.entityForm.formGroup.addControl(key, this.entityFormService.createFormControl(config));
-          this.restart_services_fc.config.push(config);
-        }
-      });
   }
 
   setDisabled(fieldConfig: FieldConfig, formControl: AbstractControl, disable: boolean, hide: boolean): void {
@@ -413,7 +354,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
       dialogRef.componentInstance.setCall(this.queryCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetEncryptionSummary[]>) => {
       dialogRef.close();
       // show summary dialog;
       const errors = [];
@@ -458,11 +399,10 @@ export class DatasetUnlockComponent implements FormConfiguration {
       formData.append('file', this.subs.file);
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
     } else {
-      payload.services_restart = this.restart_services_checked;
       dialogRef.componentInstance.setCall(this.updateCall, [this.pk, payload]);
       dialogRef.componentInstance.submit();
     }
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetUnlockResult>) => {
       dialogRef.close();
       const errors = [];
       const skipped = [];

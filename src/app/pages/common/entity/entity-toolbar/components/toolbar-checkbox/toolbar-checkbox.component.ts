@@ -5,21 +5,17 @@ import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { ControlConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.interface';
 
 @Component({
   selector: 'toolbar-checkbox',
   styleUrls: ['toolbar-checkbox.component.scss'],
-  template: `
-    <div class="toolbar-checkbox form-element {{ config.class}}" id="row-filter">
-      <mat-checkbox color="primary" (change)="onChange($event)" ix-auto ix-auto-type="checkbox">
-        {{ config.placeholder | translate }}
-      </mat-checkbox>
-    </div>
-  `,
+  templateUrl: './toolbar-checkbox.component.html',
 })
 export class ToolbarCheckboxComponent extends IxAbstractObject {
-  @Input() config?: any;
-  @Input() controller: Subject<any>;
+  @Input() config?: ControlConfig;
+  @Input() controller: Subject<Control>;
 
   constructor(public translate: TranslateService) {
     super();

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { helptext_system_acme as helptext, helptext_system_acme } from 'app/helptext/system/acme';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -44,60 +45,67 @@ export class AcmednsFormComponent implements FormConfiguration {
       this.queryCallOption = [['id', '=', rowId]];
       this.getRow.unsubscribe();
     });
-    this.ws.call('acme.dns.authenticator.authenticator_schemas').pipe(untilDestroyed(this)).subscribe((schemas) => {
-      const authenticatorConfig: FieldConfig = {
-        type: 'select',
-        name: 'authenticator',
-        placeholder: helptext.authenticator_provider_placeholder,
-        tooltip: helptext.authenticator_provider_tooltip,
-        options: [
-        ],
-        parent: this,
-      };
-      const fieldSet: FieldSet[] = [
-        {
-          name: 'Add DNS Authenticator',
-          label: true,
-          config: [
-            {
-              type: 'input',
-              name: 'name',
-              placeholder: helptext.authenticator_name_placeholder,
-              tooltip: helptext.authenticator_name_tooltip,
-              required: true,
-              validation: helptext.authenticator_name_validation,
-              parent: this,
-            },
-            authenticatorConfig,
-          ],
-        },
-      ];
+  }
 
-      for (const schema of schemas) {
-        authenticatorConfig.options.push({ label: schema.key, value: schema.key });
-        for (const input of schema.schema) {
-          const conf: FieldConfig = {
-            name: input._name_,
-            type: 'input',
-            required: input._required_,
-            placeholder: input.title,
-            parent: this,
-            relation: [
+  prerequisite(): Promise<boolean> {
+    return this.ws.call('acme.dns.authenticator.authenticator_schemas').pipe(
+      map((schemas) => {
+        const authenticatorConfig: FieldConfig = {
+          type: 'select',
+          name: 'authenticator',
+          placeholder: helptext.authenticator_provider_placeholder,
+          tooltip: helptext.authenticator_provider_tooltip,
+          options: [
+          ],
+          parent: this,
+        };
+        const fieldSet: FieldSet[] = [
+          {
+            name: 'Add DNS Authenticator',
+            label: true,
+            config: [
               {
-                action: RelationAction.Show,
-                when: [{
-                  name: 'authenticator',
-                  value: schema.key,
-                }],
+                type: 'input',
+                name: 'name',
+                placeholder: helptext.authenticator_name_placeholder,
+                tooltip: helptext.authenticator_name_tooltip,
+                required: true,
+                validation: helptext.authenticator_name_validation,
+                parent: this,
               },
+              authenticatorConfig,
             ],
-          };
-          fieldSet[0].config.push(conf);
+          },
+        ];
+
+        for (const schema of schemas) {
+          authenticatorConfig.options.push({ label: schema.key, value: schema.key });
+          for (const input of schema.schema) {
+            const conf: FieldConfig = {
+              name: input._name_,
+              type: 'input',
+              required: input._required_,
+              placeholder: input.title,
+              parent: this,
+              relation: [
+                {
+                  action: RelationAction.Show,
+                  when: [{
+                    name: 'authenticator',
+                    value: schema.key,
+                  }],
+                },
+              ],
+            };
+            fieldSet[0].config.push(conf);
+          }
         }
-      }
-      authenticatorConfig.value = schemas[0].key;
-      this.fieldSets = fieldSet;
-    });
+        authenticatorConfig.value = schemas[0].key;
+        this.fieldSets = fieldSet;
+        return true;
+      }),
+      untilDestroyed(this),
+    ).toPromise();
   }
 
   resourceTransformIncomingRestData(data: DnsAuthenticator): any {
@@ -110,6 +118,7 @@ export class AcmednsFormComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
+    this.entityForm.makeFormGroup();
     this.title = this.rowNum ? helptext_system_acme.edit_title : helptext_system_acme.add_title;
   }
 

@@ -5,6 +5,7 @@ export interface DataProtectionTaskState {
   state: JobState;
   datetime?: ApiTimestamp;
   error?: string;
+  reason?: string;
   warnings?: any;
   progress?: any;
   last_snapshot?: string;

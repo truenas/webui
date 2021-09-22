@@ -1,7 +1,5 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
@@ -70,16 +68,11 @@ export class RsyncListComponent implements EntityTableConfig {
   };
 
   constructor(
-    protected router: Router,
-    protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected taskService: TaskService,
     protected dialog: DialogService,
-    protected translate: TranslateService,
     protected job: JobService,
     protected modalService: ModalService,
-    protected userService: UserService,
-    protected entityFormService: EntityFormService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -89,7 +82,7 @@ export class RsyncListComponent implements EntityTableConfig {
     });
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: RsyncTaskUi): EntityTableAction<RsyncTaskUi>[] {
     return [{
       id: row.path,
       icon: 'play_arrow',
@@ -154,8 +147,8 @@ export class RsyncListComponent implements EntityTableConfig {
       task.frequency = this.taskService.getTaskNextRun(task.cron_schedule);
       task.next_run = this.taskService.getTaskCronDescription(task.cron_schedule);
 
-      if (task.job == null) {
-        task.state = { state: JobState.Pending };
+      if (task.job === null) {
+        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
         this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: Job) => {
@@ -167,11 +160,11 @@ export class RsyncListComponent implements EntityTableConfig {
     });
   }
 
-  onButtonClick(row: any): void {
+  onButtonClick(row: RsyncTaskUi): void {
     this.stateButton(row);
   }
 
-  stateButton(row: any): void {
+  stateButton(row: RsyncTaskUi): void {
     if (row.job) {
       if (row.state.state === JobState.Running) {
         this.entityList.runningStateButton(row.job.id);
@@ -184,11 +177,7 @@ export class RsyncListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    this.modalService.open(
-      'slide-in-form',
-      new RsyncFormComponent(this.router, this.aroute, this.taskService, this.userService, this.modalService),
-      id,
-    );
+    this.modalService.openInSlideIn(RsyncFormComponent, id);
   }
 
   doEdit(id: number): void {

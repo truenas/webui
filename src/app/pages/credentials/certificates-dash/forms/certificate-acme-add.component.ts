@@ -10,7 +10,9 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormListConfig, FormParagraphConfig, FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -35,7 +37,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   commonName: string;
   private getRow = new Subscription();
   private rowNum: any;
-  private dns_map: FieldConfig;
+  private dns_map: FormSelectConfig;
   title = helptext_system_certificates.list.action_create_acme_certificate;
   protected isOneColumnForm = true;
   fieldConfig: FieldConfig[];
@@ -127,7 +129,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   queryCallOption: [QueryFilter<Certificate>];
   initialCount = 1;
   private domainList: FormArray;
-  private domainList_fc: FieldConfig;
+  private domainList_fc: FormListConfig;
 
   constructor(
     protected ws: WebSocketService,
@@ -144,14 +146,15 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
 
   preInit(entityForm: EntityFormComponent): void {
     this.ws.call('acme.dns.authenticator.query').pipe(untilDestroyed(this)).subscribe((authenticators) => {
-      this.dns_map = _.find(this.fieldSets[2].config[0].templateListField, { name: 'authenticators' });
+      const listConfig: FormListConfig = this.fieldSets[2].config[0];
+      this.dns_map = _.find(listConfig.templateListField, { name: 'authenticators' });
       authenticators.forEach((item) => {
         this.dns_map.options.push({ label: item.name, value: item.id });
       });
     });
 
     this.ws.call('certificate.acme_server_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      const acme_directory_uri = _.find(this.fieldSets[0].config, { name: 'acme_directory_uri' });
+      const acme_directory_uri: FormSelectConfig = _.find(this.fieldSets[0].config, { name: 'acme_directory_uri' });
       for (const key in choices) {
         acme_directory_uri.options.push({ label: choices[key], value: key });
       }
@@ -183,8 +186,8 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
             }
 
             const controls = listFields[i];
-            const name_text_fc = _.find(controls, { name: 'name_text' });
-            const auth_fc = _.find(controls, { name: 'authenticators' });
+            const name_text_fc: FormParagraphConfig = _.find(controls, { name: 'name_text' });
+            const auth_fc: FormSelectConfig = _.find(controls, { name: 'authenticators' });
             (this.domainList.controls[i] as FormGroup).controls['name_text'].setValue(domains[i]);
             name_text_fc.paraText = '<b>' + domains[i] + '</b>';
             auth_fc.options = this.dns_map.options;

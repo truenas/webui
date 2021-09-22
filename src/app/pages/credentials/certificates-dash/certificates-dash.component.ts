@@ -20,7 +20,7 @@ import { TableService } from 'app/pages/common/entity/table/table.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form.component';
 import {
-  SystemGeneralService, WebSocketService, AppLoaderService, DialogService, StorageService,
+  SystemGeneralService, WebSocketService, DialogService, StorageService, ModalServiceMessage,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
@@ -39,12 +39,6 @@ import { CertificateEditComponent } from './forms/certificate-edit.component';
 export class CertificatesDashComponent implements OnInit {
   cards: { name: string; tableConf: AppTableConfig<CertificatesDashComponent> }[];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
-  protected certificateAddComponent: CertificateAddComponent;
-  protected certificateEditComponent: CertificateEditComponent;
-  protected certificateAuthorityAddComponent: CertificateAuthorityAddComponent;
-  protected certificateAuthorityEditComponent: CertificateAuthorityEditComponent;
-  protected acmeAddComponent: CertificateAcmeAddComponent;
-  protected acmeDNSComponent: AcmednsFormComponent;
   private downloadActions: AppTableAction[];
   private unsignedCAs: Option[] = [];
   private caId: number;
@@ -54,9 +48,7 @@ export class CertificatesDashComponent implements OnInit {
     private ws: WebSocketService,
     private dialog: MatDialog,
     private systemGeneralService: SystemGeneralService,
-    private loader: AppLoaderService,
     private dialogService: DialogService,
-    private entityFormService: EntityFormService,
     private storage: StorageService,
     private http: HttpClient,
     private tableService: TableService,
@@ -67,13 +59,9 @@ export class CertificatesDashComponent implements OnInit {
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getCards();
     });
-    this.refreshForms();
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshForms();
-    });
-    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.modalService.message$.pipe(untilDestroyed(this)).subscribe((res: ModalServiceMessage) => {
       if (res['action'] === 'open' && res['component'] === 'acmeComponent') {
-        this.openForm(this.acmeAddComponent, res['row']);
+        this.openForm(res['row']);
       }
     });
     this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
@@ -127,10 +115,10 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add() {
-            this.parent.modalService.open('slide-in-form', this.parent.certificateAddComponent);
+            this.parent.modalService.openInSlideIn(CertificateAddComponent);
           },
           edit(row: Certificate) {
-            this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
+            this.parent.modalService.openInSlideIn(CertificateEditComponent, row.id);
           },
         },
       },
@@ -154,10 +142,10 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add() {
-            this.parent.modalService.open('slide-in-form', this.parent.certificateAddComponent, 'csr');
+            this.parent.modalService.openInSlideIn(CertificateAddComponent, 'csr');
           },
           edit(row: Certificate) {
-            this.parent.modalService.open('slide-in-form', this.parent.certificateEditComponent, row.id);
+            this.parent.modalService.openInSlideIn(CertificateEditComponent, row.id);
           },
         },
       },
@@ -194,10 +182,10 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add() {
-            this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityAddComponent);
+            this.parent.modalService.openInSlideIn(CertificateAuthorityAddComponent);
           },
           edit(row: CertificateAuthority) {
-            this.parent.modalService.open('slide-in-form', this.parent.certificateAuthorityEditComponent, row.id);
+            this.parent.modalService.openInSlideIn(CertificateAuthorityEditComponent, row.id);
           },
           delete(row: CertificateAuthority, table: TableComponent) {
             if (row.signed_certificates > 0) {
@@ -227,10 +215,10 @@ export class CertificatesDashComponent implements OnInit {
           ],
           parent: this,
           add() {
-            this.parent.modalService.open('slide-in-form', this.parent.acmeDNSComponent);
+            this.parent.modalService.openInSlideIn(AcmednsFormComponent);
           },
           edit(row: CertificateAuthority) {
-            this.parent.modalService.open('slide-in-form', this.parent.acmeDNSComponent, row.id);
+            this.parent.modalService.openInSlideIn(AcmednsFormComponent, row.id);
           },
         },
       },
@@ -257,27 +245,6 @@ export class CertificatesDashComponent implements OnInit {
       }
     });
     return res;
-  }
-
-  refreshForms(): void {
-    this.certificateAddComponent = new CertificateAddComponent(
-      this.ws, this.dialog, this.systemGeneralService, this.modalService, this.loader, this.dialogService,
-    );
-    this.certificateEditComponent = new CertificateEditComponent(
-      this.ws, this.dialog, this.loader, this.dialogService, this.modalService, this.storage, this.http,
-    );
-    this.certificateAuthorityAddComponent = new CertificateAuthorityAddComponent(
-      this.ws,
-      this.modalService,
-      this.loader,
-      this.dialogService,
-      this.systemGeneralService,
-    );
-    this.certificateAuthorityEditComponent = new CertificateAuthorityEditComponent(this.ws, this.loader,
-      this.modalService, this.storage, this.http, this.dialogService, this.systemGeneralService);
-    this.acmeAddComponent = new CertificateAcmeAddComponent(this.ws, this.loader, this.dialog,
-      this.entityFormService, this.dialogService, this.modalService);
-    this.acmeDNSComponent = new AcmednsFormComponent(this.ws, this.loader, this.dialogService, this.modalService);
   }
 
   certificateActions(): AppTableAction[] {
@@ -365,7 +332,7 @@ export class CertificatesDashComponent implements OnInit {
       name: 'create_ACME',
       matTooltip: T('Create ACME Certificate'),
       onClick: (rowinner: Certificate) => {
-        this.modalService.open('slide-in-form', this.acmeAddComponent, rowinner.id);
+        this.modalService.openInSlideIn(CertificateAcmeAddComponent, rowinner.id);
         event.stopPropagation();
       },
     };
@@ -418,9 +385,9 @@ export class CertificatesDashComponent implements OnInit {
     return [acmeAction, revokeAction, ...caRowActions];
   }
 
-  openForm(component: CertificateAcmeAddComponent, id: any): void {
+  openForm(id: number): void {
     setTimeout(() => {
-      this.modalService.open('slide-in-form', component, id);
+      this.modalService.openInSlideIn(CertificateAcmeAddComponent, id);
     }, 200);
   }
 

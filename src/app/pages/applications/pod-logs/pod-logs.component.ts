@@ -14,11 +14,13 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, ShellService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { StorageService } from 'app/services/storage.service';
+import { T } from 'app/translate-marker';
 import { ApplicationsService } from '../applications.service';
 
 interface PodLogEvent {
@@ -86,7 +88,13 @@ export class PodLogsComponent implements OnInit, OnDestroy {
 
         const podDetail = res[this.pod_name];
         if (!podDetail) {
-          this.dialogService.confirm(helptext.podLogs.nopod.title, helptext.podLogs.nopod.message, true, 'Close', false, null, null, null, null, true);
+          this.dialogService.confirm({
+            title: helptext.podLogs.nopod.title,
+            message: helptext.podLogs.nopod.message,
+            hideCheckBox: true,
+            buttonMsg: T('Close'),
+            hideCancel: true,
+          });
         }
       });
 
@@ -285,8 +293,8 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   afterLogsDialogInit(entityDialog: EntityDialogComponent): void {
     const self = entityDialog.parent as PodLogsComponent;
 
-    const podFC = _.find(entityDialog.fieldConfig, { name: 'pods' });
-    const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' });
+    const podFC: FormSelectConfig = _.find(entityDialog.fieldConfig, { name: 'pods' });
+    const containerFC: FormSelectConfig = _.find(entityDialog.fieldConfig, { name: 'containers' });
 
     // when app selection changed
     entityDialog.formGroup.controls['apps'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {

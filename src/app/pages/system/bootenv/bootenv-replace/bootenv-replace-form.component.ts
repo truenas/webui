@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -32,7 +32,7 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
     },
 
   ];
-  protected diskChoice: FieldConfig;
+  protected diskChoice: FormSelectConfig;
 
   constructor(
     protected router: Router,

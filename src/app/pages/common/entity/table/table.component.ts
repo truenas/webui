@@ -2,7 +2,7 @@ import {
   Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked, ElementRef,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
@@ -33,6 +33,7 @@ export interface AppTableColumn {
   width?: string;
   state?: any;
   button?: boolean;
+  showLockedStatus?: boolean;
   tooltip?: string;
   iconTooltip?: string;
   enableMatTooltip?: boolean;
@@ -67,7 +68,7 @@ export interface AppTableConfig<P = any> {
     title: string;
     key_props: string[];
     id_prop?: string;
-    doubleConfirm?(item: any): any;
+    doubleConfirm?(item: any): Observable<boolean>;
   }; //
   tableComponent?: TableComponent;
   emptyEntityLarge?: boolean;
@@ -133,6 +134,8 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     return this._tableConf;
   }
 
+  // TODO: tableConf can be renamed
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('conf') set tableConf(conf: AppTableConfig) {
     if (!this._tableConf) {
       this._tableConf = conf;
@@ -291,22 +294,26 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.showCollapse = false;
   }
 
-  getButtonClass(state: JobState): string {
+  getButtonClass(row: any): string {
+    // Bring warnings to user's attention even if state is finished or successful.
+    if (row.warnings && row.warnings.length > 0) {
+      return 'fn-theme-orange';
+    }
+
+    const state: JobState = row.state;
+
     switch (state) {
       case JobState.Pending:
-        return 'fn-theme-orange';
       case JobState.Running:
-        return 'fn-theme-orange';
       case JobState.Aborted:
         return 'fn-theme-orange';
       case JobState.Finished:
-        return 'fn-theme-green';
       case JobState.Success:
         return 'fn-theme-green';
       case JobState.Error:
-        return 'fn-theme-red';
       case JobState.Failed:
         return 'fn-theme-red';
+      case JobState.Locked:
       case JobState.Hold:
         return 'fn-theme-yellow';
       default:
@@ -332,6 +339,10 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     if (column.prop === 'state' && column.button === true) {
       return 'state-button';
+    }
+
+    if (['path', 'paths'].includes(column.prop) && column.showLockedStatus) {
+      return 'path-locked-status';
     }
 
     return 'textview';

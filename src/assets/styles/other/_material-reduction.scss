@@ -1,3 +1,5 @@
+@import 'cssvars';
+
 /* TYPOGRAPHY */
 
 body {
@@ -252,8 +254,12 @@ input.mat-input-element::placeholder {
   border: solid 1px var(--lines);
   box-sizing: border-box;
   color: var(--fg1);
-  color: var(--fg1);
   padding: 8px;
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.38;
+  }
 }
 
 .form-element,
@@ -803,11 +809,22 @@ mat-card.mat-card .mat-list-base {
   margin-left: 8px;
 }
 
+
 #row-filter.form-element {
   display: inline;
   margin: 0;
   max-height: 36px;
   width: unset !important;
+}
+
+@media #{$media-lt-sm} {
+  .entity-table-controls > div {
+    margin-top: 8px;
+  }
+
+  #row-filter.search-field {
+    margin-top: 8px;
+  }
 }
 
 #row-filter.form-element .mat-form-field-wrapper {
@@ -936,7 +953,8 @@ ul.nested-list li {
 .expanded-table .mat-expansion-panel-header {
   height: auto !important;
   margin: 5px 0;
-  padding: inherit 0;
+  padding-bottom: inherit;
+  padding-top: inherit;
 }
 
 .expanded-table .mat-expansion-panel-header span {
@@ -961,4 +979,32 @@ ul.nested-list li {
 .form-selection-list.mat-list-base .mat-list-item .mat-list-item-content,
 .form-selection-list.mat-list-base .mat-list-option .mat-list-item-content {
   padding: 0;
+}
+
+.ngxp__container {
+  border-radius: 6px !important;
+
+  &[data-popper-placement=right] {
+    margin-left: 13px !important;
+  }
+
+  &[data-popper-placement=top] {
+    margin-left: 11px !important;
+  }
+
+  &[data-popper-placement=bottom] {
+    margin-left: 11px !important;
+  }
+}
+
+@media #{$media-lt-sm} {
+  .mat-button {
+    font-size: 12px;
+    min-width: auto;
+    padding: 0 8px;
+  }
+}
+
+.form-list-item .form-element {
+  margin: 8px 0;
 }

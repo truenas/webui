@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
@@ -11,15 +10,16 @@ import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import { VDevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
 import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { VDev, VDevStats } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -35,14 +35,14 @@ import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
 interface PoolDiskInfo {
-  name: any;
-  read: any;
-  write: any;
-  checksum: any;
+  name: string;
+  read: number;
+  write: number;
+  checksum: number;
   status: any;
   actions?: any;
-  path?: any;
-  guid: any;
+  path?: string;
+  guid: string;
 }
 
 @UntilDestroy()
@@ -155,8 +155,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     protected aroute: ActivatedRoute,
     protected core: CoreService,
     protected ws: WebSocketService,
-    protected translate: TranslateService,
-    protected router: Router,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected matDialog: MatDialog,
@@ -212,19 +210,22 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   getUnusedDisk(): void {
     const availableDisks: Option[] = [];
     const availableDisksForExtend: Option[] = [];
-    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res) => {
-      for (const i in res) {
+    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((disks) => {
+      disks.forEach((disk) => {
         availableDisks.push({
-          label: res[i].devname,
-          value: res[i].identifier,
+          label: disk.devname,
+          value: disk.identifier,
         });
         availableDisksForExtend.push({
-          label: res[i].devname + ' (' + filesize(res[i].size, { standard: 'iec' }) + ')',
-          value: res[i].name,
+          label: disk.devname + ' (' + filesize(disk.size, { standard: 'iec' }) + ')',
+          value: disk.name,
         });
-      }
-      _.find(this.replaceDiskFormFields, { name: 'disk' }).options = availableDisks;
-      _.find(this.extendVdevFormFields, { name: 'new_disk' }).options = availableDisksForExtend;
+      });
+      const diskConfig: FormSelectConfig = _.find(this.replaceDiskFormFields, { name: 'disk' });
+      diskConfig.options = availableDisks;
+
+      const newDiskConfig: FormSelectConfig = _.find(this.extendVdevFormFields, { name: 'new_disk' });
+      newDiskConfig.options = availableDisksForExtend;
     });
   }
 
@@ -272,7 +273,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     this.loader.close();
   }
 
-  getAction(data: any, category: any, vdev_type: any): any {
+  getAction(data: any, category: PoolTopologyCategory, vdev_type: VDevType): any {
     const actions = [{
       id: 'edit',
       label: helptext.actions_label.edit,
@@ -380,7 +381,13 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               entityDialog.dialogRef.close(true);
               entityDialog.parent.getData();
               entityDialog.parent.getUnusedDisk();
-              entityDialog.parent.dialogService.info(helptext.replace_disk.title, helptext.replace_disk.info_dialog_content + name + '.', '', 'info', true);
+              entityDialog.parent.dialogService.info(
+                helptext.replace_disk.title,
+                entityDialog.parent.translate.instant('Successfully replaced disk {disk}.', { disk: name }),
+                '',
+                'info',
+                true,
+              );
             });
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();
@@ -452,7 +459,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
     if (category == 'data') {
       _.find(actions, { id: 'remove' }).isHidden = true;
-    } else if (category == 'spares') {
+    } else if (category == 'spare') {
       _.find(actions, { id: 'online' }).isHidden = true;
       _.find(actions, { id: 'offline' }).isHidden = true;
       _.find(actions, { id: 'Replace' }).isHidden = true;
@@ -461,11 +468,11 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       _.find(actions, { id: 'offline' }).isHidden = true;
     }
 
-    if (vdev_type === 'MIRROR' || vdev_type === 'REPLACING' || vdev_type === 'SPARE') {
+    if (vdev_type === VDevType.Mirror || vdev_type === VDevType.Replacing || vdev_type === VDevType.Spare) {
       _.find(actions, { id: 'detach' }).isHidden = false;
     }
 
-    if (vdev_type === 'MIRROR') {
+    if (vdev_type === VDevType.Mirror) {
       _.find(actions, { id: 'remove' }).isHidden = true;
     }
 
@@ -538,26 +545,26 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }];
   }
 
-  parseData(data: any, category?: any, vdev_type?: any): PoolDiskInfo {
-    let stats: any = {
+  parseData(data: Pool | VDev, category?: PoolTopologyCategory, vdev_type?: VDevType): PoolDiskInfo {
+    let stats = {
       read_errors: 0,
       write_errors: 0,
       checksum_errors: 0,
-    };
+    } as VDevStats;
 
-    if (data.stats) {
+    if ('stats' in data) {
       stats = data.stats;
     }
-    if (data.type && data.type != 'DISK') {
-      data.name = data.type;
+    if ('type' in data && data.type != VDevType.Disk) {
+      (data as any).name = data.type;
     }
     // use path as the device name if the device name is null
-    if (!data.disk || data.disk == null) {
-      data.disk = data.path;
+    if (!(data as VDev).disk || (data as VDev).disk == null) {
+      (data as any).disk = data.path;
     }
 
     const item: PoolDiskInfo = {
-      name: data.name ? data.name : data.disk,
+      name: 'name' in data ? data.name : data.disk,
       read: stats.read_errors ? stats.read_errors : 0,
       write: stats.write_errors ? stats.write_errors : 0,
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
@@ -567,17 +574,17 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     };
 
     // add actions
-    if (category && data.type) {
-      if (data.type == 'DISK') {
+    if (category && 'type' in data) {
+      if (data.type == VDevType.Disk) {
         item.actions = [{ title: 'Disk Actions', actions: this.getAction(data, category, vdev_type) }];
-      } else if (data.type === 'MIRROR') {
+      } else if (data.type === VDevType.Mirror) {
         item.actions = [{ title: 'Mirror Actions', actions: this.extendAction() }];
       }
     }
     return item;
   }
 
-  parseTopolgy(data: VDev, category: PoolTopologyCategory, vdev_type?: any): TreeNode {
+  parseTopolgy(data: VDev, category: PoolTopologyCategory, vdev_type?: VDevType): TreeNode {
     const node: TreeNode = {};
     node.data = this.parseData(data, category, vdev_type);
     node.expanded = true;
@@ -637,9 +644,8 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   }
 
   onClickEdit(pk: string): void {
-    const diskForm = new DiskFormComponent(this.router, this.ws, this.aroute);
+    const diskForm = this.modalService.openInSlideIn(DiskFormComponent);
     diskForm.inIt(pk);
-    this.modalService.open('slide-in-form', diskForm);
   }
 
   poolRemove(id: number, label: number | string): void {

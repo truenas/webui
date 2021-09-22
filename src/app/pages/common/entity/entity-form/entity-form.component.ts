@@ -20,6 +20,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
@@ -28,7 +29,9 @@ import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { EntityUtils } from '../utils';
-import { FieldConfig } from './models/field-config.interface';
+import {
+  FieldConfig, FormArrayConfig, FormDictConfig, FormListConfig, FormSelectConfig,
+} from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
@@ -41,7 +44,7 @@ import { FieldRelationService } from './services/field-relation.service';
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit, AfterViewChecked {
-  @Input('conf') conf: FormConfiguration;
+  @Input() conf: FormConfiguration;
 
   pk: any;
   fieldSetDisplay = 'default';
@@ -160,9 +163,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-    for (const i in this.fieldConfig) {
-      this.fieldRelationService.setRelation(this.fieldConfig[i], this.formGroup);
-    }
+    this.fieldConfig.forEach((config) => {
+      this.fieldRelationService.setRelation(config, this.formGroup);
+    });
   }
 
   addFormControls(fieldSets: FieldSet[]): void {
@@ -306,7 +309,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             for (const key in this.data) {
               const fg = this.formGroup.controls[key];
               if (fg) {
-                const current_field = this.fieldConfig.find((control) => control.name === key);
+                const current_field: FieldConfig = this.fieldConfig.find((control) => control.name === key);
                 if (current_field.type === 'array') {
                   this.setArrayValue(this.data[key], fg as FormArray, key);
                 } else if (current_field.type === 'list') {
@@ -314,12 +317,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                 } else if (current_field.type === 'dict') {
                   fg.patchValue(this.data[key]);
                 } else {
-                  if (!_.isArray(this.data[key]) && current_field.type === 'select' && current_field.multiple) {
+                  const selectField: FormSelectConfig = current_field as FormSelectConfig;
+                  if (!_.isArray(this.data[key]) && selectField.type === 'select' && selectField.multiple) {
                     if (this.data[key]) {
                       this.data[key] = _.split(this.data[key], ',');
                     }
                   }
-                  if (!(current_field.type === 'select' && current_field.options.length == 0)) {
+                  if (!(selectField.type === 'select' && selectField.options.length == 0)) {
                     fg.setValue(this.data[key]);
                   }
                 }
@@ -348,12 +352,14 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                 this.wsfg = this.formGroup.controls[key];
                 this.wsResponseIdx = this.wsResponse[key];
                 if (this.wsfg) {
-                  const current_field = this.fieldConfig.find((control) => control.name === key);
+                  const current_field: FieldConfig = this.fieldConfig.find((control) => control.name === key);
+                  const selectField: FormSelectConfig = current_field as FormSelectConfig;
+
                   if (current_field.type === 'array') {
                     this.setArrayValue(this.wsResponse[key], this.wsfg as FormArray, key);
                   } else if (current_field.type === 'list' || current_field.type === 'dict') {
                     this.setObjectListValue(this.wsResponse[key], this.wsfg, current_field);
-                  } else if (!(current_field.type === 'select' && current_field.options.length == 0)) {
+                  } else if (!(selectField.type === 'select' && selectField.options.length == 0)) {
                     this.wsfg.setValue(this.wsResponse[key]);
                   }
                 } else if (this.conf.dataAttributeHandler) {
@@ -436,20 +442,16 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   onSubmit(event: Event): void {
     if (this.conf.confirmSubmit && this.conf.confirmSubmitDialog) {
-      this.dialog.confirm(
-        this.conf.confirmSubmitDialog['title'],
-        this.conf.confirmSubmitDialog['message'],
-        this.conf.confirmSubmitDialog.hasOwnProperty('hideCheckbox')
+      this.dialog.confirm({
+        title: this.conf.confirmSubmitDialog['title'],
+        message: this.conf.confirmSubmitDialog['message'],
+        hideCheckBox: this.conf.confirmSubmitDialog.hasOwnProperty('hideCheckbox')
           ? this.conf.confirmSubmitDialog['hideCheckbox']
           : false,
-        this.conf.confirmSubmitDialog.hasOwnProperty('button')
+        buttonMsg: this.conf.confirmSubmitDialog.hasOwnProperty('button')
           ? this.conf.confirmSubmitDialog['button']
           : T('Ok'),
-      ).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
-        if (!confirm) {
-          return;
-        }
-
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.doSubmit(event);
       });
     } else {
@@ -569,7 +571,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return false;
   }
 
-  isShow(id: any): boolean {
+  isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
       if (this.conf.advanced_field.indexOf(id) > -1) {
         return false;
@@ -611,13 +613,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   setArrayValue(data: any[], formArray: FormArray, name: string): void {
-    let array_controls: any;
-    for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
+    let array_controls: FieldConfig[];
+    this.fieldConfig.forEach((config) => {
       if (config.name === name) {
-        array_controls = config.formarray;
+        const arrayConfig: FormArrayConfig = config as FormArrayConfig;
+        array_controls = arrayConfig.formarray;
       }
-    }
+    });
 
     if (this.conf.preHandler) {
       data = this.conf.preHandler(data, formArray);
@@ -637,7 +639,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   setListValue(data: string[], formArray: FormArray, fieldName: string): void {
-    const config = this.fieldConfig.find((conf) => conf.name === fieldName);
+    const fieldConfig = this.fieldConfig.find((conf) => conf.name === fieldName);
+    const config: FormListConfig = fieldConfig as FormListConfig;
     const template: FieldConfig[] = config.templateListField;
 
     config.listFields = [];
@@ -658,41 +661,47 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   addExtraFieldConfigs(value: any, fieldConfig: FieldConfig): void {
     if (value) {
       if (fieldConfig.type == 'list' && Array.isArray(value)) {
-        fieldConfig.listFields = [];
+        const listConfig: FormListConfig = fieldConfig as FormListConfig;
+        listConfig.listFields = [];
         value.forEach((listValue) => {
-          const templateListField = _.cloneDeep(fieldConfig.templateListField);
+          const templateListField = _.cloneDeep(listConfig.templateListField);
           templateListField.forEach((subFieldConfig) => {
             const subValue = listValue[subFieldConfig.name];
             if (subFieldConfig.type == 'list' || subFieldConfig.type == 'dict') {
               this.addExtraFieldConfigs(subValue, subFieldConfig);
             }
           });
-          fieldConfig.listFields.push(templateListField);
+          listConfig.listFields.push(templateListField);
         });
-      } else if (fieldConfig.type == 'dict' && fieldConfig.subFields) {
-        fieldConfig.subFields.forEach((subFieldConfig) => {
-          const subValue = value[subFieldConfig.name];
-          if (subFieldConfig.type == 'list' || subFieldConfig.type == 'dict') {
-            this.addExtraFieldConfigs(subValue, subFieldConfig);
-          }
-        });
+      } else if (fieldConfig.type == 'dict') {
+        const dictConfig = fieldConfig as FormDictConfig;
+        if (dictConfig.subFields) {
+          dictConfig.subFields.forEach((subFieldConfig) => {
+            const subValue = value[subFieldConfig.name];
+            if (subFieldConfig.type == 'list' || subFieldConfig.type == 'dict') {
+              this.addExtraFieldConfigs(subValue, subFieldConfig);
+            }
+          });
+        }
       }
     }
   }
 
   addExtraFormControls(fieldConfig: FieldConfig, formControl: AbstractControl): void {
-    if (fieldConfig.type == 'list' && fieldConfig.listFields) {
-      for (let i = 0; i < fieldConfig.listFields.length; i++) {
-        const formGroup = this.entityFormService.createFormGroup(fieldConfig.listFields[i]);
+    const listConfig: FormListConfig = fieldConfig as FormListConfig;
+    const dictConfig: FormDictConfig = fieldConfig as FormDictConfig;
+    if (listConfig.type == 'list' && listConfig.listFields) {
+      for (let i = 0; i < listConfig.listFields.length; i++) {
+        const formGroup = this.entityFormService.createFormGroup(listConfig.listFields[i]);
         (formControl as FormArray).push(formGroup);
       }
-      for (let i = 0; i < fieldConfig.listFields.length; i++) {
-        fieldConfig.listFields[i].forEach((subFieldConfig) => {
+      for (let i = 0; i < listConfig.listFields.length; i++) {
+        listConfig.listFields[i].forEach((subFieldConfig) => {
           this.fieldRelationService.setRelation(subFieldConfig, (formControl as FormArray).at(i) as FormGroup);
         });
       }
-    } else if (fieldConfig.type == 'dict' && fieldConfig.subFields) {
-      fieldConfig.subFields.forEach((subFieldConfig) => {
+    } else if (dictConfig.type == 'dict' && dictConfig.subFields) {
+      dictConfig.subFields.forEach((subFieldConfig) => {
         if (subFieldConfig.type == 'list' || subFieldConfig.type == 'dict') {
           const subFromControl = formControl.get(subFieldConfig.name);
           this.addExtraFormControls(subFieldConfig, subFromControl);

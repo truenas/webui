@@ -2,28 +2,17 @@ import { Component, Input } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { ControlConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.interface';
 
 @Component({
   selector: 'toolbar-button',
+  templateUrl: './toolbar-button.component.html',
   styleUrls: ['toolbar-button.component.scss'],
-  template: `
-    <div
-      class="toolbar-button" [class.has-tooltip]="config.tooltip">
-      <button
-        ix-auto ix-auto-type="button" [ix-auto-identifier]="id + '_entity_toolbar_' + config.label"
-        (click)="onClick(true)"
-        [color]="config.color ? config.color : 'default'"
-        mat-button
-        [disabled]="config.disabled">
-        {{ config.label | translate }}
-      </button>
-      <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : 'left'"></tooltip>
-    </div>
-  `,
 })
 export class ToolbarButtonComponent extends IxAbstractObject {
-  @Input() config?: any;
-  @Input() controller: Subject<any>;
+  @Input() config?: ControlConfig;
+  @Input() controller: Subject<Control>;
   constructor(public translate: TranslateService) {
     super();
   }

@@ -1,6 +1,6 @@
-import { AfterViewInit, Component } from '@angular/core';
+import { AfterViewInit, Component, Type } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -11,6 +11,7 @@ import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptext_sharing_webdav, helptext_sharing_smb, helptext_sharing_nfs } from 'app/helptext/sharing';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
+import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
@@ -32,13 +33,9 @@ import { NFSFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.compon
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav-form.component';
 import {
-  AppLoaderService,
   DialogService,
   IscsiService,
   ModalService,
-  NetworkService,
-  SystemGeneralService,
-  UserService,
   WebSocketService,
 } from 'app/services';
 import { T } from 'app/translate-marker';
@@ -86,16 +83,10 @@ export class SharesDashboardComponent implements AfterViewInit {
   readonly ServiceStatus = ServiceStatus;
 
   constructor(
-    private userService: UserService,
     private modalService: ModalService,
     private ws: WebSocketService,
     private dialog: DialogService,
-    private networkService: NetworkService,
     private router: Router,
-    private loader: AppLoaderService,
-    private sysGeneralService: SystemGeneralService,
-    private aroute: ActivatedRoute,
-    private iscsiService: IscsiService,
     private translate: TranslateService,
   ) {
     this.getInitialServiceStatus();
@@ -180,15 +171,15 @@ export class SharesDashboardComponent implements AfterViewInit {
           queryCall: 'sharing.nfs.query',
           deleteCall: 'sharing.nfs.delete',
           deleteMsg: {
-            title: T('Delete'),
-            key_props: ['name'],
+            title: T('NFS Share'),
+            key_props: ['paths'],
           },
           limitRowsByMaxHeight: true,
           hideEntityEmpty: true,
           emptyEntityLarge: false,
           parent: this,
           columns: [
-            { name: helptext_sharing_nfs.column_path, prop: 'paths' },
+            { name: helptext_sharing_nfs.column_path, prop: 'paths', showLockedStatus: true },
             { name: helptext_sharing_nfs.column_comment, prop: 'comment', hiddenIfEmpty: true },
             {
               name: helptext_sharing_nfs.column_enabled,
@@ -224,7 +215,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           deleteCall: 'iscsi.target.delete',
           detailsHref: '/sharing/iscsi/target',
           deleteMsg: {
-            title: T('Delete'),
+            title: T('iSCSI'),
             key_props: ['name'],
           },
           limitRowsByMaxHeight: true,
@@ -244,10 +235,10 @@ export class SharesDashboardComponent implements AfterViewInit {
           add() {
             this.parent.add(this.tableComponent, ShareType.ISCSI);
           },
-          edit(row: any) {
+          edit(row: IscsiTarget) {
             this.parent.edit(this.tableComponent, ShareType.ISCSI, row.id);
           },
-          afterGetData: (data: any) => {
+          afterGetData: (data: IscsiTarget[]) => {
             this.iscsiHasItems = 0;
             this.iscsiExpandableState = ExpandableTableState.Collapsed;
             if (data.length > 0) {
@@ -268,7 +259,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           queryCall: 'sharing.webdav.query',
           deleteCall: 'sharing.webdav.delete',
           deleteMsg: {
-            title: T('Delete'),
+            title: T('WebDAV Share'),
             key_props: ['name'],
           },
           emptyEntityLarge: false,
@@ -277,7 +268,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           columns: [
             { prop: 'name', name: helptext_sharing_webdav.column_name },
             { prop: 'comment', name: helptext_sharing_webdav.column_comment, hiddenIfEmpty: true },
-            { prop: 'path', name: helptext_sharing_webdav.column_path },
+            { prop: 'path', name: helptext_sharing_webdav.column_path, showLockedStatus: true },
             {
               prop: 'perm',
               name: helptext_sharing_webdav.column_perm,
@@ -326,7 +317,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           queryCall: 'sharing.smb.query',
           deleteCall: 'sharing.smb.delete',
           deleteMsg: {
-            title: T('Delete'),
+            title: T('SMB Share'),
             key_props: ['name'],
           },
           hideEntityEmpty: true,
@@ -335,7 +326,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           parent: this,
           columns: [
             { name: helptext_sharing_smb.column_name, prop: 'name' },
-            { name: helptext_sharing_smb.column_path, prop: 'path' },
+            { name: helptext_sharing_smb.column_path, prop: 'path', showLockedStatus: true },
             { name: helptext_sharing_smb.column_comment, prop: 'comment', hiddenIfEmpty: true },
             {
               name: helptext_sharing_smb.column_enabled,
@@ -367,43 +358,22 @@ export class SharesDashboardComponent implements AfterViewInit {
   }
 
   add(tableComponent: TableComponent, share: ShareType, id?: number): void {
-    let formComponent: NFSFormComponent | SMBFormComponent | WebdavFormComponent | TargetFormComponent;
+    let formComponent: Type<NFSFormComponent | SMBFormComponent | WebdavFormComponent | TargetFormComponent>;
     switch (share) {
       case ShareType.NFS:
-        formComponent = new NFSFormComponent(
-          this.userService,
-          this.modalService,
-          this.ws,
-          this.dialog,
-          this.networkService,
-        );
+        formComponent = NFSFormComponent;
         break;
       case ShareType.SMB:
-        formComponent = new SMBFormComponent(
-          this.router,
-          this.ws,
-          this.dialog,
-          this.loader,
-          this.sysGeneralService,
-          this.modalService,
-        );
+        formComponent = SMBFormComponent;
         break;
       case ShareType.WebDAV:
-        formComponent = new WebdavFormComponent(this.router, this.ws, this.dialog, this.loader);
+        formComponent = WebdavFormComponent;
         break;
       case ShareType.ISCSI:
-        formComponent = new TargetFormComponent(
-          this.router,
-          this.aroute,
-          this.iscsiService,
-          this.loader,
-          this.translate,
-          this.ws,
-          this.modalService,
-        );
+        formComponent = TargetFormComponent;
         break;
     }
-    this.modalService.open('slide-in-form', formComponent, id);
+    this.modalService.openInSlideIn(formComponent, id);
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       if (!tableComponent) {
         this.refreshDashboard();
@@ -535,7 +505,7 @@ export class SharesDashboardComponent implements AfterViewInit {
 
     this.ws.call(updateCall, [row.id, { [param]: row[param] }]).pipe(untilDestroyed(this)).subscribe(
       (updatedEntity) => {
-        (row as any)[param] = updatedEntity[param];
+        (row as any)[param] = (updatedEntity as any)[param];
       },
       (err: WebsocketError) => {
         (row as any)[param] = !row[param];

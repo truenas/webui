@@ -8,7 +8,7 @@ import urls from 'app/helptext/urls';
   providers: [],
 })
 export class EntityComingsoonComponent {
-  @Input('conf') conf = { help_path: 'hub/scale/dev-notes/' };
+  @Input() conf = { help_path: 'hub/scale/dev-notes/' };
   helpurl: string;
 
   constructor() {

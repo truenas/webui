@@ -29,7 +29,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { FieldSets } from './classes/field-sets';
-import { FieldConfig } from './models/field-config.interface';
+import { FieldConfig, FormArrayConfig } from './models/field-config.interface';
 import { FieldSet } from './models/fieldset.interface';
 import { EntityFormService } from './services/entity-form.service';
 import { FieldRelationService } from './services/field-relation.service';
@@ -59,6 +59,7 @@ export interface EmbeddedFormConfig {
   dataAttributeHandler?: any;
   route_cancel?: string[];
   route_success?: string[];
+  // TODO: Broken
   route_delete?: string[];
   custom_edit_query?: any;
   custom_add_query?: any;
@@ -81,7 +82,7 @@ export interface EmbeddedFormConfig {
   initialCount?: number;
   initialCount_default?: number;
 
-  goBack?(): any;
+  goBack?: () => void;
   onSuccess?(res: any): any;
   multiStateSubmit?: boolean;
 }
@@ -94,7 +95,7 @@ export interface EmbeddedFormConfig {
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
-  @Input('conf') conf: EmbeddedFormConfig;
+  @Input() conf: EmbeddedFormConfig;
   @Input() data: any;
   @Input() hiddenFieldSets: string[] = [];
   @Input() target: Subject<CoreEvent>;
@@ -202,12 +203,11 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
     this.setControlChangeDetection();
 
-    for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
+    this.fieldConfig.forEach((config) => {
       if (config.relation.length > 0) {
         this.setRelation(config);
       }
-    }
+    });
 
     if (this.conf.values) {
       // We are no longer responsible for API calls.
@@ -325,7 +325,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     }
   }
 
-  isShow(id: any): any {
+  isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
       if (this.conf.advanced_field.indexOf(id) > -1) {
         return false;
@@ -367,13 +367,13 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   setArrayValue(data: any[], formArray: FormArray, name: string): void {
-    let array_controls: any;
-    for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
+    let array_controls: FieldConfig[];
+    this.fieldConfig.forEach((config) => {
       if (config.name === name) {
-        array_controls = config.formarray;
+        const arrayConfig: FormArrayConfig = config as FormArrayConfig;
+        array_controls = arrayConfig.formarray;
       }
-    }
+    });
 
     if (this.conf.preHandler) {
       data = this.conf.preHandler(data, formArray);

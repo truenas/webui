@@ -4,31 +4,19 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { ControlConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.interface';
 
 @Component({
   selector: 'toolbar-input',
   styleUrls: ['toolbar-input.component.scss'],
-  template: `
-    <div class="toolbar-input form-element" id="row-filter">
-      <div class="toolbar-input-placeholder" *ngIf="isShowPlaceholder()">{{ config.placeholder }}</div>
-      <mat-form-field>
-        <span matPrefix style="cursor: default; user-select: none;"><mat-icon>search</mat-icon></span>
-        <mat-label>{{config.placeholder}}</mat-label>
-        <input matInput #filter class="mat-input-element" [value]="config.value" (focus)="onFocus()"
-          ix-auto (change)="onChange()" (input)="onChange()" [placeholder]="config.placeholder" (blur)="onBlur()"
-          ix-auto-type="input">
-        <span [ngClass]="{'invisible': !filterValue || filterValue.length == 0}" matSuffix style="cursor: pointer; user-select: none;">
-          <mat-icon (click)="reset()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-        </span>
-      </mat-form-field>
-    </div>
-  `,
+  templateUrl: './toolbar-input.component.html',
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 export class ToolbarInputComponent extends IxAbstractObject {
-  @Input() config?: any;
-  @Input() controller: Subject<any>;
+  @Input() config?: ControlConfig;
+  @Input() controller: Subject<Control>;
 
   @ViewChild('filter', { static: false }) filter: ElementRef;
   filterValue = '';

@@ -6,7 +6,7 @@ import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription, Observer } from 'rxjs';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
@@ -19,7 +19,7 @@ import { T } from 'app/translate-marker';
 })
 export class FormUploadComponent {
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef<HTMLInputElement>;
-  config: FieldConfig;
+  config: FormUploadConfig;
   group: FormGroup;
   fieldShow: string;
   busy: Subscription[] = [];
@@ -84,7 +84,7 @@ export class FormUploadComponent {
     }
   }
 
-  newMessage(message: any): void {
+  newMessage(message: string): void {
     if (this.config.message) {
       this.config.message.newMessage(message);
     }

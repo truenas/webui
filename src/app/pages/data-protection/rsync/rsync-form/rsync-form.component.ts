@@ -10,7 +10,7 @@ import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
@@ -241,7 +241,7 @@ export class RsyncFormComponent implements FormConfiguration {
 
   protected rsync_module_field: string[] = ['remotemodule'];
   protected rsync_ssh_field: string[] = ['remoteport', 'remotepath', 'validate_rpath'];
-  protected user_field: FieldConfig;
+  protected user_field: FormComboboxConfig;
 
   constructor(
     protected router: Router,
@@ -256,7 +256,7 @@ export class RsyncFormComponent implements FormConfiguration {
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.rsync_task_add : helptext.rsync_task_edit;
 
-    this.user_field = this.fieldSets.config('user');
+    this.user_field = this.fieldSets.config('user') as FormComboboxConfig;
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
       for (let i = 0; i < items.length; i++) {
         this.user_field.options.push({

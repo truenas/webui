@@ -1,7 +1,7 @@
 import {
   Component, Input,
 } from '@angular/core';
-import { FieldConfig } from '../../../entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from '../../../entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../utils';
 
 @Component({
@@ -10,10 +10,10 @@ import { EntityUtils } from '../../../utils';
   styleUrls: ['../../entity-wizard.component.scss'],
 })
 export class WizardSummaryComponent {
-  @Input('fieldConfigs') fieldConfigs: FieldConfig[];
-  @Input('value') value: any;
-  @Input('isRoot') isRoot: boolean;
-  @Input('summary') summary: any;
+  @Input() fieldConfigs: FieldConfig[];
+  @Input() value: any;
+  @Input() isRoot: boolean;
+  @Input() summary: any;
 
   isAutoSummary(): boolean {
     if (this.summary && Object.keys(this.summary).length > 0) {
@@ -49,7 +49,8 @@ export class WizardSummaryComponent {
     if (fieldConfig.type == 'list') {
       result = fieldValue.length;
     } else if (fieldConfig.type == 'select') {
-      const selectedOption = fieldConfig.options.find((option) => {
+      const selectConfig: FormSelectConfig = fieldConfig as FormSelectConfig;
+      const selectedOption = selectConfig.options.find((option) => {
         return option.value == new EntityUtils().changeNull2String(fieldValue);
       });
       if (selectedOption) {

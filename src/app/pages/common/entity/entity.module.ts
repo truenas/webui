@@ -13,13 +13,17 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { TreeModule } from 'angular-tree-component';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxFilesizeModule } from 'ngx-filesize';
+import { NgxPopperjsModule } from 'ngx-popperjs';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { FormSelectionListComponent } from 'app/pages/common/entity/entity-form/components/form-selection-list/form-selection-list.component';
+import { TooltipComponent } from 'app/pages/common/entity/entity-form/components/tooltip/tooltip.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { EntityRowDetailsComponent } from 'app/pages/common/entity/entity-table/entity-row-details/entity-row-details.component';
 import { EntityTableActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-actions/entity-table-actions.component';
+import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import { WizardSummaryComponent } from 'app/pages/common/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
 import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
@@ -61,18 +65,14 @@ import { FormTextareaComponent } from './entity-form/components/form-textarea/fo
 import { FormToggleButtonComponent } from './entity-form/components/form-toggle-button/form-toggle-button.component';
 import { FormUploadComponent } from './entity-form/components/form-upload/form-upload.component';
 import { TooltipDocReplacePipe } from './entity-form/components/tooltip/tooltip-docreplace';
-import { TooltipComponent } from './entity-form/components/tooltip/tooltip.component';
 import { EntityFormConfigurationComponent } from './entity-form/entity-form-configuration.component';
 import { EntityFormEmbeddedComponent } from './entity-form/entity-form-embedded.component';
 import { EntityFormComponent } from './entity-form/entity-form.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
 import { EntitySnackbarComponent } from './entity-snackbar/entity-snackbar.component';
 import { DynamicComponentDirective } from './entity-table/dynamic-component.directive';
-import { EntityRowDetailsComponent } from './entity-table/entity-row-details.component';
-import { EntityTableAddActionsComponent } from './entity-table/entity-table-add-actions.component';
 import { EntityTableRowDetailsComponent } from './entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
-import { EntityTableService } from './entity-table/entity-table.service';
 import { EntityTaskComponent } from './entity-task/entity-task.component';
 import { EntityTemplateDirective } from './entity-template.directive';
 import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
@@ -86,7 +86,7 @@ import { ToolbarSliderComponent } from './entity-toolbar/components/toolbar-slid
 import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
 import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityWizardComponent } from './entity-wizard/entity-wizard.component';
-import { SmdFabSpeedDialTrigger, SmdFabSpeedDialActions, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
+import { SmdFabSpeedDialTriggerComponent, SmdFabSpeedDialActionsComponent, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 import { TableComponent } from './table/table.component';
 import { TableService } from './table/table.service';
 
@@ -95,7 +95,7 @@ import { TableService } from './table/table.service';
     CommonModule, FormsModule, ReactiveFormsModule, DragDropModule, RouterModule,
     MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
     NgxUploaderModule, FlexLayoutModule, TranslateModule, CdkTreeModule,
-    OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule,
+    OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule, NgxPopperjsModule.forRoot({ appendTo: 'body' }),
   ],
   declarations: [
     TaskScheduleListComponent,
@@ -141,8 +141,8 @@ import { TableService } from './table/table.service';
     FormUploadComponent,
     FormReadFileComponent,
     EntityJobComponent,
-    SmdFabSpeedDialTrigger,
-    SmdFabSpeedDialActions,
+    SmdFabSpeedDialTriggerComponent,
+    SmdFabSpeedDialActionsComponent,
     SmdFabSpeedDialComponent,
     EntityWizardComponent,
     EntityTaskComponent,
@@ -181,8 +181,8 @@ import { TableService } from './table/table.service';
     EntityTableAddActionsComponent,
     EntityTableActionsComponent,
     DynamicFieldDirective,
-    SmdFabSpeedDialTrigger,
-    SmdFabSpeedDialActions,
+    SmdFabSpeedDialTriggerComponent,
+    SmdFabSpeedDialActionsComponent,
     SmdFabSpeedDialComponent,
     TooltipComponent,
     EntityWizardComponent,
@@ -242,7 +242,6 @@ import { TableService } from './table/table.service';
   ],
   providers: [
     EntityFormService,
-    EntityTableService,
     AppLoaderService,
     DocsService,
     JobService,

@@ -15,7 +15,7 @@ import { LocaleService } from 'app/services/locale.service';
   styleUrls: ['./shutdown.component.scss'],
 })
 export class ShutdownComponent implements OnInit {
-  product_type: ProductType;
+  productType: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
   readonly ProductType = ProductType;
@@ -30,7 +30,7 @@ export class ShutdownComponent implements OnInit {
     private localeService: LocaleService,
   ) {
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.product_type = res as ProductType;
+      this.productType = res as ProductType;
     });
   }
 

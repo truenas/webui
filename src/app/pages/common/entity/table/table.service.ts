@@ -91,7 +91,7 @@ export class TableService {
 
     if (table.tableConf.deleteMsg && table.tableConf.deleteMsg.doubleConfirm) {
       // double confirm: input delete item's name to confirm deletion
-      table.tableConf.deleteMsg.doubleConfirm(item).pipe(untilDestroyed(this)).subscribe((doubleConfirmDialog: any) => {
+      table.tableConf.deleteMsg.doubleConfirm(item).pipe(untilDestroyed(this)).subscribe((doubleConfirmDialog) => {
         if (doubleConfirmDialog) {
           this.doDelete(table, item);
         }
@@ -158,7 +158,7 @@ export class TableService {
         },
       );
     } else {
-      this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Deleting...') }, disableClose: false });
+      this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Deleting...') } });
       this.dialogRef.componentInstance.setCall(table.tableConf.deleteCall, params);
       this.dialogRef.componentInstance.submit();
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

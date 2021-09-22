@@ -62,10 +62,6 @@ export default {
  network performance. Disabling this feature is only recommended when an interface is used for\
  plugin, jail, or virtual machine networking.'),
 
-  int_options_placeholder: T('Options'),
-  int_options_tooltip: T('Enter additional parameters from \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig" target="_blank">ifconfig(8)</a>.'),
-
   alias_address_placeholder: T('IP Address'),
   alias_address_tooltip: T('Define an alias for the interface \
  on this TrueNAS controller. The alias can be an IPv4 or IPv6 \
@@ -131,7 +127,7 @@ export default {
 
   vlan_tag_placeholder: T('Vlan Tag'),
   vlan_tag_tooltip: T('Enter the numeric tag configured in the switched network.'),
-  vlan_tag_validation: [rangeValidator(1, 4095), Validators.required],
+  vlan_tag_validation: [rangeValidator(1, 4094), Validators.required],
 
   vlan_pcp_placeholder: T('Priority Code Point'),
   vlan_pcp_tooltip: T('Select the Class of Service. The available 802.1p\

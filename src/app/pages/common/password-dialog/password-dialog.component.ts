@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -13,7 +13,7 @@ import { EntityUtils } from '../entity/utils';
   templateUrl: './password-dialog.component.html',
   styleUrls: ['./password-dialog.component.scss'],
 })
-export class PasswordDialog {
+export class PasswordDialogComponent {
   title: string = globalHelptext.rootpw.dialog_title;
   message: string;
   placeholder = globalHelptext.rootpw.placeholder;
@@ -24,16 +24,13 @@ export class PasswordDialog {
   data: string;
   tooltip = globalHelptext.rootpw.tooltip;
   hideCancel = false;
-  customSumbit: any;
   showPassword = false;
   inputType = 'password';
   errors = '';
   password = '';
 
-  @Output() switchSelectionEmitter = new EventEmitter<any>();
-
   constructor(
-    public dialogRef: MatDialogRef<PasswordDialog>,
+    public dialogRef: MatDialogRef<PasswordDialogComponent>,
     protected translate: TranslateService,
     protected sysGeneralService: SystemGeneralService,
   ) {}

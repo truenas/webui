@@ -11,7 +11,7 @@ import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.int
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import {
@@ -36,8 +36,8 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   route_success: string[] = ['storage'];
   isEntity = true;
   private entityForm: EntityFormComponent;
-  protected userField: FieldConfig;
-  protected groupField: FieldConfig;
+  protected userField: FormComboboxConfig;
+  protected groupField: FormComboboxConfig;
 
   fieldSets: FieldSet[] = [
     {
@@ -184,7 +184,10 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
       }
-      this.userField = _.find(this.fieldSets.find((set) => set.name === helptext.heading_owner).config, { name: 'user' });
+      this.userField = _.find(
+        this.fieldSets.find((set) => set.name === helptext.heading_owner).config,
+        { name: 'user' },
+      ) as FormComboboxConfig;
       this.userField.options = users;
     });
 
@@ -193,7 +196,10 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
       }
-      this.groupField = _.find(this.fieldSets.find((set) => set.name === helptext.heading_owner).config, { name: 'group' });
+      this.groupField = _.find(
+        this.fieldSets.find((set) => set.name === helptext.heading_owner).config,
+        { name: 'group' },
+      ) as FormComboboxConfig;
       this.groupField.options = groupOptions;
     });
   }
@@ -269,7 +275,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     }
   }
 
-  customSubmit(data: DatasetPermissionsUpdate): void {
+  customSubmit(data: DatasetPermissionsUpdate[1]): void {
     const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Saving Permissions') } });
     dialogRef.componentInstance.setDescription(T('Saving Permissions...'));
     dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);

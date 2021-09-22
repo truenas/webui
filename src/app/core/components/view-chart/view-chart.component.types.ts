@@ -20,7 +20,7 @@ export interface ChartConfiguration {
    * On the other hand, if chart always will be binded, polyfill will not be required because
    * MutationObserver will never be called.
    */
-  bindto?: any;// string | HTMLElement | d3.Selection<any> | null;
+  bindto?: string | HTMLElement;
   size?: {
     /**
      * The desired width of the chart element.

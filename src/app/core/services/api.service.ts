@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as _ from 'lodash';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -7,7 +9,6 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebSocketService } from 'app/services/ws.service';
-import { CoreService } from './core-service/core.service';
 
 export interface ApiCall {
   namespace: ApiMethod; // namespace for ws and path for rest
@@ -220,7 +221,7 @@ export class ApiService {
   }
 
   callWebsocket(evt: CoreEvent, def: ApiDefinition): void {
-    const cloneDef = { ...def };
+    const cloneDef = _.cloneDeep(def);
     const asyncCalls = [
       'vm.start',
       'vm.delete',
@@ -229,13 +230,13 @@ export class ApiService {
     if (evt.data) {
       cloneDef.apiCall.args = evt.data;
 
-      if (def.preProcessor && !asyncCalls.includes(def.apiCall.namespace)) {
-        cloneDef.apiCall = def.preProcessor(def.apiCall);
+      if (cloneDef.preProcessor && !asyncCalls.includes(cloneDef.apiCall.namespace)) {
+        cloneDef.apiCall = cloneDef.preProcessor(cloneDef.apiCall);
       }
 
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if (def.preProcessor && asyncCalls.includes(def.apiCall.namespace)) {
-        cloneDef.apiCall = def.preProcessor(def.apiCall);
+      if (cloneDef.preProcessor && asyncCalls.includes(cloneDef.apiCall.namespace)) {
+        cloneDef.apiCall = cloneDef.preProcessor(cloneDef.apiCall);
         if (!cloneDef.apiCall) {
           this.core.emit({ name: 'VmStopped', data: { id: evt.data[0] } });
           return;
@@ -245,8 +246,8 @@ export class ApiService {
       const call = cloneDef.apiCall;// this.parseEventWs(evt);
       this.ws.call(call.namespace, call.args).pipe(untilDestroyed(this)).subscribe((res) => {
         // PostProcess
-        if (def.postProcessor) {
-          res = def.postProcessor(res, evt.data, this.core);
+        if (cloneDef.postProcessor) {
+          res = cloneDef.postProcessor(res, evt.data, this.core);
         }
         // this.core.emit({name:call.responseEvent, data:res, sender: evt.data}); // OLD WAY
         if (call.responseEvent) {
@@ -262,15 +263,15 @@ export class ApiService {
       });
     } else {
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if (def.preProcessor) {
-        cloneDef.apiCall = def.preProcessor(def.apiCall);
+      if (cloneDef.preProcessor) {
+        cloneDef.apiCall = cloneDef.preProcessor(cloneDef.apiCall);
       }
 
       const call = cloneDef.apiCall;// this.parseEventWs(evt);
       this.ws.call(call.namespace, call.args || []).pipe(untilDestroyed(this)).subscribe((res) => {
         // PostProcess
-        if (def.postProcessor) {
-          res = def.postProcessor(res, evt.data, this.core);
+        if (cloneDef.postProcessor) {
+          res = cloneDef.postProcessor(res, evt.data, this.core);
         }
 
         if (call.responseEvent) {

@@ -142,16 +142,16 @@ export class BackupCredentialsComponent implements OnInit {
     return res.filter((item) => item.type === KeychainCredentialType.SshKeyPair);
   }
 
-  sshKeyPairActions(): AppTableAction[] {
+  sshKeyPairActions(): AppTableAction<KeychainCredential>[] {
     return [{
       icon: 'save_alt',
       name: 'download',
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: KeychainCredential) => {
         const name = rowinner.name;
         for (const keyType in rowinner.attributes) {
-          const key = rowinner.attributes[keyType];
+          const key = rowinner.attributes[keyType as keyof KeychainCredential['attributes']];
           const filename = name + '_' + keyType + '_rsa';
-          const blob = new Blob([key], { type: 'text/plain' });
+          const blob = new Blob([key as any], { type: 'text/plain' });
           this.storage.downloadBlob(blob, filename);
         }
         event.stopPropagation();

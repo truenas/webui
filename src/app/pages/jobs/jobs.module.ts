@@ -10,7 +10,6 @@ import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { routing } from 'app/pages/jobs/jobs.routing';
 import { JobLogsSidebarComponent } from './components/job-logs-sidebar/job-logs-sidebar.component';
 import { JobsListComponent } from './jobs-list/jobs-list.component';
-import { JobsListStore } from './jobs-list/jobs-list.store';
 
 @NgModule({
   declarations: [JobsListComponent, JobLogsSidebarComponent],
@@ -25,9 +24,6 @@ import { JobsListStore } from './jobs-list/jobs-list.store';
     MaterialModule,
     FlexLayoutModule,
     CommonDirectivesModule,
-  ],
-  providers: [
-    JobsListStore,
   ],
 })
 export class JobsModule { }

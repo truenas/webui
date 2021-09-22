@@ -1,12 +1,12 @@
 import {
-  Component, ViewChild, Renderer2, ViewContainerRef, ComponentFactoryResolver, HostBinding,
+  Component, ViewChild, Renderer2, ViewContainerRef, ComponentFactoryResolver, HostBinding, Type,
 } from '@angular/core';
 
 @Component({
   selector: 'display',
   template: '<ng-container #wrapper></ng-container>',
 })
-export class Display {
+export class DisplayComponent {
   displayList: any[] = []; // items in DOM
   children: any[] = [];
   @ViewChild('wrapper', { static: true }) wrapper: ViewContainerRef;
@@ -21,7 +21,7 @@ export class Display {
     private renderer: Renderer2,
   ) {}
 
-  create(component: any): any {
+  create(component: Type<any>): any {
     const compRef = <any> this.resolver.resolveComponentFactory(component).create(this.viewContainerRef.injector);
     this.children.push(compRef);
     return compRef.instance;

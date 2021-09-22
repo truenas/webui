@@ -11,6 +11,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { Option } from 'app/interfaces/option.interface';
 import {
   EmbeddedFormConfig,
   EntityFormEmbeddedComponent,
@@ -46,7 +47,7 @@ export class GeneralPreferencesFormComponent implements EmbeddedFormConfig, OnIn
   saveSubmitText = T('Update Preferences');
   multiStateSubmit = true;
   isEntity = true; // was true
-  private themeOptions: any[] = [];
+  private themeOptions: Option[] = [];
   fieldConfig: FieldConfig[] = [];
   fieldSetDisplay = 'no-margins';// default | carousel | stepper
   fieldSets: FieldSet[] = [
@@ -208,14 +209,17 @@ export class GeneralPreferencesFormComponent implements EmbeddedFormConfig, OnIn
   }
 
   generateFieldConfig(): void {
-    for (const i in this.fieldSets) {
-      for (const ii in this.fieldSets[i].config) {
-        this.fieldConfig.push(this.fieldSets[i].config[ii]);
-      }
-    }
+    this.fieldSets.forEach((fieldSet) => {
+      fieldSet.config.forEach((config) => {
+        this.fieldConfig.push(config);
+      });
+    });
   }
 
   beforeSubmit(data: any): void {
+    if (data.reset) {
+      localStorage.removeItem('turnOffWelcomeDialog');
+    }
     data.tableDisplayedColumns ? data.tableDisplayedColumns = [] : delete (data.tableDisplayedColumns);
   }
 

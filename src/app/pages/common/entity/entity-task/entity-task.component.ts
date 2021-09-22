@@ -3,6 +3,8 @@ import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityTaskConfiguration } from 'app/pages/common/entity/entity-task/entity-task-configuration.interface';
 import { TaskService, UserService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { EntityFormComponent } from '../entity-form';
@@ -16,17 +18,17 @@ import { EntityFormService } from '../entity-form/services/entity-form.service';
   providers: [TaskService, UserService, EntityFormService],
 })
 export class EntityTaskComponent implements OnInit {
-  @Input('conf') conf: any;
+  @Input() conf: EntityTaskConfiguration;
 
   protected entityForm: EntityFormComponent;
   protected isEntity = true;
 
-  protected user_field: any;
-  protected month_field: any;
-  protected day_field: any;
-  protected mintue_field: any;
-  protected hour_field: any;
-  protected daymonth_field: any;
+  protected user_field: FieldConfig;
+  protected month_field: FieldConfig;
+  protected day_field: FieldConfig;
+  protected mintue_field: FieldConfig;
+  protected hour_field: FieldConfig;
+  protected daymonth_field: FieldConfig;
 
   formGroup: FormGroup;
   error: string;
@@ -170,7 +172,7 @@ export class EntityTaskComponent implements OnInit {
     this.showDefaults = true;
   }
 
-  isShow(name: any): any {
+  isShow(name: string): boolean {
     if (this.conf.hide_fileds !== undefined) {
       if (this.conf.hide_fileds.indexOf(name) > -1) {
         return false;

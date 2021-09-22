@@ -9,7 +9,7 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormChipConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
   DialogService, StorageService, WebSocketService, AppLoaderService, UserService,
@@ -26,11 +26,11 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
   pk: string;
   route_success: string[];
   searchedEntries: string[] = [];
-  entryField: FieldConfig;
+  entryField: FormChipConfig;
   isNew = true;
   private dq: string;
   private oq: string;
-  private selectedEntriesField: FieldConfig;
+  private selectedEntriesField: FormSelectConfig;
   private selectedEntriesValue: FormControl;
   private entryErrs: HTMLCollectionOf<Element>;
   private entryErrBool = false;
@@ -144,7 +144,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
-    this.route_success = ['storage', 'pools', 'group-quotas', this.pk];
+    this.route_success = ['storage', 'group-quotas', this.pk];
     this.selectedEntriesField = _.find(this.fieldConfig, { name: 'system_entries' });
     this.selectedEntriesValue = this.entityForm.formGroup.controls['system_entries'] as FormControl;
     this.entryField = _.find(this.fieldSets.find((set) => set.name === helptext.groups.group_title).config,

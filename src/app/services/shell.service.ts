@@ -1,5 +1,5 @@
 import {
-  Injectable, EventEmitter, Output,
+  Injectable, EventEmitter,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocalStorage } from 'ngx-webstorage';
@@ -11,8 +11,7 @@ import { ShellConnectedEvent } from '../interfaces/shell.interface';
 export class ShellService {
   onCloseSubject$: Subject<true> ;
   onOpenSubject$: Subject<true> ;
-  pendingCalls: any;
-  pendingMessages: any[] = [];
+  pendingMessages: string[] = [];
   socket: WebSocket;
   connected = false;
   loggedIn = false;
@@ -21,19 +20,23 @@ export class ShellService {
   redirectUrl = '';
   token: string;
   vmId: number;
-  podInfo: any;
+  podInfo: {
+    chart_release_name: string;
+    pod_name: string;
+    container_name: string;
+    command: string;
+  };
 
   // input and output and eventEmmitter
   private shellCmdOutput: ArrayBuffer;
-  @Output() shellOutput = new EventEmitter<ArrayBuffer>();
-  @Output() shellConnected = new EventEmitter<ShellConnectedEvent>();
+  shellOutput = new EventEmitter<ArrayBuffer>();
+  shellConnected = new EventEmitter<ShellConnectedEvent>();
 
   subscriptions = new Map <string, any[]>();
 
   constructor(private _router: Router) {
     this.onOpenSubject$ = new Subject();
     this.onCloseSubject$ = new Subject();
-    this.pendingCalls = new Map();
   }
 
   connect(): void {
@@ -83,7 +86,7 @@ export class ShellService {
     });
   }
 
-  onmessage(msg: any): void {
+  onmessage(msg: MessageEvent): void {
     let data: any;
 
     try {
@@ -110,7 +113,7 @@ export class ShellService {
     this.shellOutput.emit(this.shellCmdOutput);
   }
 
-  send(payload: any): void {
+  send(payload: string): void {
     if (this.socket.readyState === WebSocket.OPEN) {
       this.socket.send(payload);
     } else {

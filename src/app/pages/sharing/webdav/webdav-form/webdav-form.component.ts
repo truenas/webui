@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptext_sharing_webdav, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -91,6 +93,7 @@ export class WebdavFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     private dialog: DialogService,
     private loader: AppLoaderService,
+    private translate: TranslateService,
   ) {}
 
   afterInit(entityForm: EntityFormComponent): void {
@@ -103,27 +106,35 @@ export class WebdavFormComponent implements FormConfiguration {
   afterSave(): void {
     this.ws.call('service.query', [[]]).pipe(untilDestroyed(this)).subscribe((res) => {
       const service = _.find(res, { service: ServiceName.WebDav });
-      if (!service.enable) {
-        this.dialog.confirm(shared.dialog_title, shared.dialog_message,
-          true, shared.dialog_button).pipe(untilDestroyed(this)).subscribe((dialogRes: boolean) => {
-          if (dialogRes) {
-            this.loader.open();
-            this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
-              this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
-                this.loader.close();
-                this.dialog.info(T('WebDAV') + shared.dialog_started_title, T('The WebDAV') + shared.dialog_started_message, '250px', 'info')
-                  .pipe(untilDestroyed(this)).subscribe(() => {});
-              }, (err) => {
-                this.loader.close();
-                this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
-              });
-            }, (err) => {
-              this.loader.close();
-              this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
-            });
-          }
-        });
+      if (service.enable) {
+        return;
       }
+
+      this.dialog.confirm({
+        title: shared.dialog_title,
+        message: shared.dialog_message,
+        hideCheckBox: true,
+        buttonMsg: shared.dialog_button,
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.loader.open();
+        this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
+          this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.loader.close();
+            this.dialog.info(
+              this.translate.instant('{service} Service', { service: 'WebDAV' }),
+              this.translate.instant('The {service} service has been enabled.', { service: 'WebDAV' }),
+              '250px',
+              'info',
+            ).pipe(untilDestroyed(this)).subscribe(() => {});
+          }, (err) => {
+            this.loader.close();
+            this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
+          });
+        }, (err) => {
+          this.loader.close();
+          this.dialog.errorReport(err.error, err.reason, err.trace.formatted);
+        });
+      });
     });
   }
 }

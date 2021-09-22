@@ -79,4 +79,46 @@ describe('posixAceToPermissionItem', () => {
       { tag: PosixAclTag.Other, perms } as PosixAclItem,
     )).toStrictEqual(expected);
   });
+
+  it('adds a `default` keyword when default flag is on', () => {
+    expect(posixAceToPermissionItem(
+      fakeTranslateService,
+      {
+        tag: PosixAclTag.Group, who: 'johns', default: true, perms,
+      } as PosixAclItem,
+    )).toStrictEqual({
+      description: 'Read | Execute',
+      name: 'Group – default – johns',
+      type: PermissionsItemType.Group,
+    } as PermissionItem);
+
+    expect(posixAceToPermissionItem(
+      fakeTranslateService,
+      {
+        tag: PosixAclTag.UserObject, who: 'john', default: true, perms,
+      } as PosixAclItem,
+    )).toStrictEqual({
+      description: 'Read | Execute',
+      name: 'User Obj – default – john',
+      type: PermissionsItemType.User,
+    });
+
+    expect(posixAceToPermissionItem(
+      fakeTranslateService,
+      { tag: PosixAclTag.Mask, default: true, perms } as PosixAclItem,
+    )).toStrictEqual({
+      description: 'Read | Execute',
+      name: 'Mask – default',
+      type: 'group',
+    });
+
+    expect(posixAceToPermissionItem(
+      fakeTranslateService,
+      { tag: PosixAclTag.Other, default: true, perms } as PosixAclItem,
+    )).toStrictEqual({
+      description: 'Read | Execute',
+      name: 'Other – default',
+      type: 'other',
+    });
+  });
 });

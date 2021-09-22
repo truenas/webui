@@ -9,8 +9,9 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
+import { FormSelectOption } from 'app/pages/common/entity/entity-form/models/form-select-option.interface';
 import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
 import { T } from 'app/translate-marker';
@@ -22,7 +23,7 @@ import { T } from 'app/translate-marker';
   templateUrl: './form-select.component.html',
 })
 export class FormSelectComponent implements Field, AfterViewInit, AfterViewChecked {
-  config: FieldConfig;
+  config: FormSelectConfig;
   group: FormGroup;
   fieldShow: string;
   control: AbstractControl;
@@ -56,7 +57,10 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   ngAfterViewInit(): void {
     // Change the value of null to 'null_value' string
     this.config.options = this.config.options.map((option) => {
-      if (!option.hasOwnProperty('value')) option = { label: option, value: option };
+      if (!option.hasOwnProperty('value')) {
+        // TODO: Check if this support is actually needed.
+        option = { label: (option as any), value: option };
+      }
 
       option.value = this.entityUtils.changeNull2String(option.value);
 
@@ -68,7 +72,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
 
     // When the default value is null, Change it to 'null_value' string
     if (this.control.value === null) {
-      (this.control as any).value = NULL_VALUE;
+      this.control.setValue(NULL_VALUE);
     }
 
     // if control has a value on init
@@ -86,7 +90,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((evt: any) => {
       // When set the value to null, Change it to 'null_value' string
       if (this.control.value === null) {
-        (this.control as any).value = NULL_VALUE;
+        this.control.setValue(NULL_VALUE);
       }
 
       if (evt) {
@@ -129,7 +133,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     }
   }
 
-  showAlert(option: any): void {
+  showAlert(option: FormSelectOption): void {
     if (!this.shouldAlertOnOption(option) || this.disableAlert) return;
 
     const conf: DialogFormConfiguration = {
@@ -154,7 +158,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this.dialog.dialogForm(conf);
   }
 
-  onSelect(option: any): void {
+  onSelect(option: FormSelectOption): void {
     if (this.config.alert) {
       this.showAlert(option);
     }
@@ -197,7 +201,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     return option.hiddenFromDisplay ? option.hiddenFromDisplay : false;
   }
 
-  onToggleSelect(option: any): void {
+  onToggleSelect(option: FormSelectOption): void {
     if (!this.config.multiple) {
       this.onSelect(option);
       return;
@@ -223,7 +227,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     this.formValue = '';
   }
 
-  shouldAlertOnOption(option: any): boolean {
+  shouldAlertOnOption(option: FormSelectOption): boolean {
     return this.config.alert ? this.config.alert.forValues.findIndex((v) => v == option.value) >= 0 : false;
   }
 }

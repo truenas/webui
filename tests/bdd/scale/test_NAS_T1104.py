@@ -276,7 +276,6 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     time.sleep(1)
     driver.find_element_by_xpath('//mat-selection-list//mat-option//span[contains(text(),"Full Control")]').click()
     time.sleep(1)
-    
 
 
 @then(parsers.parse('click the Save button, which should be returned to the storage page, on the Edit ACL page, verify that the group name is "{group_name}".'))

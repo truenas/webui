@@ -4,6 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationGroup } from 'app/pages/common/entity/entity-form/models/field-relation.interface';
@@ -28,7 +29,7 @@ export class InitiatorFormComponent implements OnInit {
   protected editCall: 'iscsi.initiator.update' = 'iscsi.initiator.update';
   protected customFilter: any[] = [[['id', '=']]];
   route_success: string[] = ['sharing', 'iscsi', 'initiator'];
-  protected pk: any;
+  protected pk: number;
 
   fieldConfig: FieldConfig[] = [
     {
@@ -85,7 +86,7 @@ export class InitiatorFormComponent implements OnInit {
   ];
 
   formGroup: FormGroup;
-  connectedInitiators: any[];
+  connectedInitiators: IscsiGlobalSession[];
   connectedInitiatorsDisabled = false;
   connectedInitiatorsTooltip = helptext_sharing_iscsi.initiator_form_tooltip_connected_initiators;
   error: string;
@@ -123,12 +124,11 @@ export class InitiatorFormComponent implements OnInit {
     });
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-    for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
+    this.fieldConfig.forEach((config) => {
       if (config.relation.length > 0) {
         this.setRelation(config);
       }
-    }
+    });
 
     this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.connectedInitiatorsDisabled = res === 'DISABLED';

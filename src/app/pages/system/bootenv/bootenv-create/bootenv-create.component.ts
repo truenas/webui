@@ -18,7 +18,7 @@ import { BootEnvService, WebSocketService } from 'app/services';
 export class BootEnvironmentCreateComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot'];
   addCall: 'bootenv.create' = 'bootenv.create';
-  pk: any;
+  pk: string;
   isNew = false;
   isEntity = true;
   protected entityForm: EntityFormComponent;

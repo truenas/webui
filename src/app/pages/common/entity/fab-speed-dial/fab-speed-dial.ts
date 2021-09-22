@@ -22,11 +22,9 @@ const Z_INDEX_ITEM = 23;
 
 @Component({
   selector: 'smd-fab-trigger',
-  template: `
-        <ng-content select="[mat-fab], [mat-fab]"></ng-content>
-    `,
+  template: '<ng-content select="[mat-fab], [mat-fab]"></ng-content>',
 })
-export class SmdFabSpeedDialTrigger {
+export class SmdFabSpeedDialTriggerComponent {
   /**
      * Whether this trigger should spin (360dg) while opening the speed dial
      */
@@ -52,7 +50,7 @@ export class SmdFabSpeedDialTrigger {
         <ng-content select="[md-mini-fab], [mat-mini-fab]"></ng-content>
     `,
 })
-export class SmdFabSpeedDialActions implements AfterContentInit {
+export class SmdFabSpeedDialActionsComponent implements AfterContentInit {
   @ContentChildren(MatButton) _buttons: QueryList<MatButton>;
 
   constructor(
@@ -131,12 +129,7 @@ export class SmdFabSpeedDialActions implements AfterContentInit {
 
 @Component({
   selector: 'smd-fab-speed-dial',
-  template: `
-        <div class="smd-fab-speed-dial-container">
-            <ng-content select="smd-fab-trigger"></ng-content>
-            <ng-content select="smd-fab-actions"></ng-content>
-        </div>
-    `,
+  templateUrl: './fab-speed-dial.html',
   styleUrls: ['fab-speed-dial.scss'],
   // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
@@ -214,7 +207,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
 
   @Output() openChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  @ContentChild(SmdFabSpeedDialActions, { static: true }) _childActions: SmdFabSpeedDialActions;
+  @ContentChild(SmdFabSpeedDialActionsComponent, { static: true }) _childActions: SmdFabSpeedDialActionsComponent;
 
   constructor(private elementRef: ElementRef, private renderer: Renderer2) {
   }

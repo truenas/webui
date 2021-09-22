@@ -1,0 +1,177 @@
+<div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
+  <div class="card-container front">
+    <mat-card style="overflow: hidden" class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+      <mat-card-content>
+        <mat-toolbar-row>
+          <!-- Mobile Only: Exit widget -->
+          <button
+            fxHide.gt-xs
+            class="mat-card-title-text"
+            mat-icon-button
+            color="default"
+            ix-auto
+            ix-auto-type="button"
+            ix-auto-identifier="goBack"
+          >
+            <mat-icon (click)="goBack()" class="back-arrow">chevron_left</mat-icon></button
+          ><span fxHide.gt-xs>&nbsp;&nbsp;</span>
+
+          <h3 class="mat-card-title-text">
+            <div class="card-title-text">{{ title | translate }}</div>
+          </h3>
+          <div class="controls">
+            <a
+              mat-icon-button
+              ix-auto
+              ix-auto-type="button"
+              ix-auto-identifier="storageReports"
+              [routerLink]="['/reportsdashboard/disk']"
+            >
+              <mat-icon
+                role="img"
+                matTooltip="{{ 'Disk Reports' | translate }}"
+                matTooltipPosition="above"
+                aria-label="Disk Reports"
+              >
+                insert_chart
+              </mat-icon>
+            </a>
+          </div>
+        </mat-toolbar-row>
+
+        <div>
+          <div
+            [ngStyle]="{
+              padding: paddingTop + 'px ' + paddingRight + 'px ' + paddingBottom + 'px ' + paddingLeft + 'px'
+            }"
+          >
+            <mat-grid-list [cols]="cols" [gutterSize]="gap + 'px'" [rowHeight]="rowHeight + 'px'">
+              <mat-grid-tile *ngFor="let pool of pools">
+                <div
+                  class="tile"
+                  fxFlexFill
+                  fxLayout="column"
+                  fxLayoutAlign="start stretch"
+                  [class.rows-3]="rows === 3"
+                  [class.rows-2-2]="rows === 2 && cols == 2"
+                >
+                  <h4 class="tile-header-title">{{ pool.name }}</h4>
+                  <div class="tile-header-button">
+                    <button
+                      mat-icon-button
+                      (click)="router.navigate(['storage/status/' + pool.id.toString()])"
+                      ix-auto
+                      ix-auto-type="button"
+                      ix-auto-identifier="poolStatus"
+                    >
+                      <mat-icon
+                        role="img"
+                        fontSet="mdi-set"
+                        fontIcon="mdi-database"
+                        matTooltip="{{ 'Pool Status' | translate }}"
+                        matTooltipPosition="above"
+                        aria-label="Configure Pools"
+                      >
+                      </mat-icon>
+                    </button>
+                  </div>
+                  <div class="tile-content" fxFlex fxLayout="row" fxLayoutAlign="space-between center">
+                    <ul fxLayout="column" [fxFlex]="cols === 1 ? 31 : 100">
+                      <li fxLayout="row">
+                        <span class="icon {{ poolInfoMap[pool.name]?.status?.level }}"
+                          ><mat-icon
+                            role="img"
+                            fontSet="mdi-set"
+                            fontIcon="{{ poolInfoMap[pool.name]?.status?.icon }}"
+                          ></mat-icon
+                        ></span>
+                        <span class="label">{{ 'Pool Status' | translate }}:</span>
+                        <span class="storage-value">{{ poolInfoMap[pool.name]?.status?.value }}</span>
+                      </li>
+                      <li fxLayout="row">
+                        <span class="icon {{ poolInfoMap[pool.name]?.usedSpace?.level }}"
+                          ><mat-icon
+                            role="img"
+                            fontSet="mdi-set"
+                            fontIcon="{{ poolInfoMap[pool.name]?.usedSpace?.icon }}"
+                          ></mat-icon
+                        ></span>
+                        <span class="label">{{ 'Used Space' | translate }}:</span>
+                        <span class="storage-value">{{
+                          poolInfoMap[pool.name]?.usedSpace?.value
+                        }}</span>
+                      </li>
+                      <li fxLayout="row">
+                        <span class="icon {{ poolInfoMap[pool.name]?.disksWithError?.level }}"
+                          ><mat-icon
+                            role="img"
+                            fontSet="mdi-set"
+                            fontIcon="{{ poolInfoMap[pool.name]?.disksWithError?.icon }}"
+                          ></mat-icon
+                        ></span>
+                        <span class="label">{{ 'Disks with Errors' | translate }}:</span>
+                        <span class="storage-value">{{ poolInfoMap[pool.name]?.disksWithError?.value }}</span>
+                      </li>
+                      <li fxLayout="row" *ngIf="cols === 2 && rows === 2">
+                        <span class="icon"></span>
+                        <span class="label">{{ 'Path' | translate }}:</span>
+                        <span class="storage-value" textLimiter threshold="32" content="{{ pool.path }}"></span>
+                      </li>
+                    </ul>
+                    <ng-container *ngIf="cols === 1">
+                      <div class="divider"></div>
+                      <ul fxLayout="column" fxFlex="31">
+                        <li fxLayout="row">
+                          <span class="label">{{ 'Path' | translate }}:</span>
+                          <span class="storage-value" textLimiter threshold="22" content="{{ pool.path }}"></span>
+                        </li>
+                        <li fxLayout="row">
+                          <span class="label">{{ 'Free Space' | translate }}:</span>
+                          <span class="storage-value">{{ poolInfoMap[pool.name]?.freeSpace }}</span>
+                        </li>
+                        <li fxLayout="row">
+                          <span class="label">{{ 'Total Disks' | translate }}:</span>
+                          <span class="storage-value">{{ poolInfoMap[pool.name]?.totalDisks }}</span>
+                        </li>
+                      </ul>
+                      <div class="divider" *ngIf="pool.topology"></div>
+                      <ul fxLayout="column" fxFlex="31" *ngIf="pool.topology">
+                        <li fxLayout="row">
+                          <span class="label">{{ 'Data' | translate }}:</span>
+                          <span class="storage-value">{{ pool.topology.data.length }} vdev</span>
+                        </li>
+                        <li fxLayout="row">
+                          <span class="label">{{ 'Caches' | translate }}:</span>
+                          <span class="storage-value">{{ pool.topology.cache.length }}</span>
+                        </li>
+                        <li fxLayout="row">
+                          <span class="label">{{ 'Spares' | translate }}:</span>
+                          <span class="storage-value">{{ pool.topology.spare.length }}</span>
+                        </li>
+                      </ul>
+                    </ng-container>
+                  </div>
+                </div>
+              </mat-grid-tile>
+              <mat-grid-tile *ngIf="pools.length % 2 === 1 || pools.length === 0">
+                <a
+                  class="create-new"
+                  fxFill
+                  fxFlex="100"
+                  fxLayout="column"
+                  fxLayoutAlign="center center"
+                  ix-auto
+                  ix-auto-identifier="createNewPool"
+                  [routerLink]="['/storage/manager/']"
+                >
+                  <mat-icon fontSet="mdi-set" fontIcon="mdi-database"></mat-icon>
+                  <span>{{ 'Create Pool' | translate }}</span>
+                </a>
+              </mat-grid-tile>
+            </mat-grid-list>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

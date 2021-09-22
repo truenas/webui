@@ -57,6 +57,7 @@ export interface Disk {
   multipath_name: string;
   name: string;
   number: number;
+  passwd?: string;
   pool: string;
   rotationrate: number;
   serial: string;

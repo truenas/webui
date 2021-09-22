@@ -1,3 +1,4 @@
+import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
@@ -38,8 +39,8 @@ export interface PoolScan {
   bytes_to_process: number;
   end_time: ApiTimestamp;
   errors: number;
-  function: 'SCRUB'; // TODO: Unknown what other values are
-  pause: any;
+  function: PoolScanFunction;
+  pause: string;
   percentage: number;
   start_time: ApiTimestamp;
   state: PoolScanState;

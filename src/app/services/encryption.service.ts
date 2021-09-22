@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { filter } from 'rxjs/operators';
-import { DownloadKeyModalDialog } from 'app/components/common/dialog/download-key/download-key-dialog.component';
+import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -21,7 +21,7 @@ export class EncryptionService {
     protected mdDialog: MatDialog, protected router: Router, protected http: HttpClient) {}
 
   setPassphrase(
-    row: any,
+    row: string,
     encryptKeyPassphrase: string,
     adminPassphrase: string,
     poolName: string,
@@ -45,9 +45,9 @@ export class EncryptionService {
     });
   }
 
-  openEncryptDialog(row: any, route_success: string[], poolName: string, addRecoveryKey?: boolean): void {
-    const dialogRef = this.mdDialog.open(DownloadKeyModalDialog, { disableClose: true });
-    dialogRef.componentInstance.volumeId = row;
+  openEncryptDialog(row: string, route_success: string[], poolName: string, addRecoveryKey?: boolean): void {
+    const dialogRef = this.mdDialog.open(DownloadKeyDialogComponent, { disableClose: true });
+    dialogRef.componentInstance.volumeId = parseInt(row);
     dialogRef.componentInstance.fileName = 'pool_' + poolName + '_encryption.key';
     dialogRef.afterClosed().subscribe(() => {
       if (addRecoveryKey) {
@@ -60,13 +60,18 @@ export class EncryptionService {
     });
   }
 
-  makeRecoveryKey(row: any, poolName: string, route_success: string[]): void {
+  makeRecoveryKey(row: string, poolName: string, route_success: string[]): void {
     this.loader.open();
     const fileName = 'pool_' + poolName + '_recovery.key';
     this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(row)], fileName]).subscribe((res) => {
       this.loader.close();
-      this.dialogService.confirm(helptext.set_recoverykey_dialog_title, helptext.set_recoverykey_dialog_message,
-        true, helptext.set_recoverykey_dialog_button, false, '', '', '', '', true).subscribe(() => {
+      this.dialogService.confirm({
+        title: helptext.set_recoverykey_dialog_title,
+        message: helptext.set_recoverykey_dialog_message,
+        hideCheckBox: true,
+        buttonMsg: helptext.set_recoverykey_dialog_button,
+        hideCancel: true,
+      }).subscribe(() => {
         const url = res[1];
         const mimetype = 'application/octet-stream';
         this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
@@ -88,7 +93,7 @@ export class EncryptionService {
     });
   }
 
-  deleteRecoveryKey(row: any, adminPassphrase: string, poolName: string, route_success: string[]): void {
+  deleteRecoveryKey(row: string, adminPassphrase: string, poolName: string, route_success: string[]): void {
     this.dialogService.confirm({
       title: helptext.delete_recovery_key_title,
       message: helptext.delete_recovery_key_message,

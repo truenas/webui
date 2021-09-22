@@ -22,7 +22,6 @@ import { ModalService } from 'app/services/modal.service';
 export class ProactiveComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
   queryCall: 'support.config' = 'support.config';
-  contacts: any;
   controls: { [key: string]: AbstractControl };
   save_button_enabled: boolean;
   title = helptext.proactive.title;
@@ -205,12 +204,12 @@ export class ProactiveComponent implements FormConfiguration {
     setTimeout(() => {
       this.ws.call('support.is_available').pipe(untilDestroyed(this)).subscribe((res) => {
         if (!res) {
-          for (const i in proactiveFields) {
-            this.entityEdit.setDisabled(proactiveFields[i], true, false);
+          proactiveFields.forEach((field) => {
+            this.entityEdit.setDisabled(field, true, false);
             proactiveParatext.forEach((i) => {
               document.getElementById(i).style.opacity = '0.38';
             });
-          }
+          });
           this.save_button_enabled = false;
         } else {
           this.getContacts();

@@ -5,7 +5,7 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select/select';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormIpWithNetmaskConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { NetworkService } from 'app/services';
 
@@ -16,7 +16,7 @@ import { NetworkService } from 'app/services';
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
 export class FormIpWithNetmaskComponent implements Field, OnInit {
-  config: FieldConfig;
+  config: FormIpWithNetmaskConfig;
   group: FormGroup;
   fieldShow: string;
 

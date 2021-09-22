@@ -1,9 +1,15 @@
 :host {
   display: flex;
+  flex: 1;
   flex-direction: column;
 
   mat-spinner {
     margin: 30px auto;
+  }
+
+  .mat-tab-body-wrapper {
+    min-height: 100%;
+    padding: 16px;
   }
 }
 
@@ -19,6 +25,10 @@ mat-table.jobs-table {
     &:first-of-type {
       padding-left: 24px;
     }
+  }
+
+  .mat-column-name {
+    padding-right: 24px;
   }
 
   .mat-column-state,
