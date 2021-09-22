@@ -2,11 +2,12 @@ import { Component, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as ipRegex from 'ip-regex';
 import isCidr from 'is-cidr';
 import * as _ from 'lodash';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import {
-  LACPDURate, LinkAggregationProtocol, NetworkInterfaceType, XmitHashPolicy,
+  LACPDURate, LinkAggregationProtocol, NetworkInterfaceAliasType, NetworkInterfaceType, XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -563,6 +564,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         if (strings[0]) {
           aliases.push({
             address: strings[0],
+            type: ipRegex.v6().test(strings[0]) ? NetworkInterfaceAliasType.Inet6 : NetworkInterfaceAliasType.Inet,
             netmask: parseInt(strings[1], 10),
           });
         }
