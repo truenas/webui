@@ -224,8 +224,8 @@ def click_summit_the_dataset_name_data_should_be_created(driver, dataset_name):
 def click_on_the_dataset_name_3_dots_button_select_edit_permissions(driver, dataset_name):
     """click on the "{dataset_name}" 3 dots button, select Edit Permissions.."""
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//div[normalize-space(text())="system"]//mat-icon', 'clickable')
-    driver.find_element_by_xpath('//div[normalize-space(text())="system"]//mat-icon').click()
+    #assert wait_on_element(driver, 5, '//div[normalize-space(text())="system"]//mat-icon', 'clickable')
+    #driver.find_element_by_xpath('//div[normalize-space(text())="system"]//mat-icon').click()
     time.sleep(2)
     assert wait_on_element(driver, 5, '//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"my_acl_dataset")]//mat-icon[text()="more_vert"]').click()
