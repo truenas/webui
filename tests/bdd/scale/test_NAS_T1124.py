@@ -19,9 +19,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1123.feature', 'Create an smb share with the system ACL dataset')
-def test_create_an_smb_share_with_the_system_acl_dataset():
-    """Create an smb share with the system ACL dataset."""
+@scenario('features/NAS-T1124.feature', 'SCALE UI: Create an smb share with the tank ACL dataset')
+def test_scale_ui_create_an_smb_share_with_the_tank_acl_dataset():
+    """SCALE UI: Create an smb share with the tank ACL dataset."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
@@ -61,7 +61,7 @@ def the_windows_sharessmb_page_should_open_click_add(driver):
 
 
 @then(parsers.parse('Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
-def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_name_click_to_enable_input_my_smb_test_share_as_description_and_click_summit(driver, path, smbname, description):
+def set_path_to_the_acl_dataset_mnttanktank_acl_dataset_input_mytankshare_as_name_click_to_enable_input_my_tank_test_share_as_description_and_click_summit(driver, path, smbname, description):
     """Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit."""
     time.sleep(1)
     global smb_path
