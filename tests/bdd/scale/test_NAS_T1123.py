@@ -45,10 +45,6 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you should be on the dashboard, click on Sharing then Windows Shares(SMB)')
 def you_should_be_on_the_dashboard_click_on_sharing_then_windows_sharessmb(driver):
     """you should be on the dashboard, click on Sharing then Windows Shares(SMB)."""
-    time.sleep(1)
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
 
@@ -56,31 +52,31 @@ def you_should_be_on_the_dashboard_click_on_sharing_then_windows_sharessmb(drive
 @then('The Windows Shares(SMB) page should open, Click Add')
 def the_windows_sharessmb_page_should_open_click_add(driver):
     """The Windows Shares(SMB) page should open, Click Add."""
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]')
+    assert wait_on_element(driver, 5, '//h1[contains(text(),"Sharing")]')
+    assert wait_on_element(driver, 5, '//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]').click()   
 
 
 @then(parsers.parse('Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
 def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_name_click_to_enable_input_my_smb_test_share_as_description_and_click_summit(driver, path, smbname, description):
     """Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit."""
-    time.sleep(1)
+    assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
     global smb_path
     smb_path = path
     """Set Path to the ACL dataset "/mnt/system/my_acl_dataset"."""
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]')
+    assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(path)
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]')
+    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(smbname)
+    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'clickable')
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Description"]')
+    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Description"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
     time.sleep(1)
@@ -122,9 +118,8 @@ def if_the_smb_serivce_is_not_started_start_the_service_and_click_on_smb_start_a
 def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd1234(driver, nas_ip, mysmbshare, user, password):
     """Send a file to the share with nas_IP/"{mysmbshare}" and "{user}" and "{password}"."""
     run_cmd('touch testfile.txt')
-    time.sleep(2)
     results = run_cmd(f'smbclient //{nas_ip}/{mysmbshare} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
-    time.sleep(1)
+    run_cmd('rm testfile.txt')
     assert results['result'], results['output']
 
 
@@ -135,8 +130,3 @@ def verify_that_the_is_on_nas_ip_with_root_and_password(driver, nas_ip, root_pas
     results = ssh_cmd(cmd, 'root', root_password, nas_ip)
     assert results['result'], results['output']
     assert 'testfile' in results['output'], results['output']
-
-    ## return to dashboard
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
