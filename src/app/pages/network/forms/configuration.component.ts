@@ -240,7 +240,7 @@ export class ConfigurationComponent implements FormConfiguration {
     protected ws: WebSocketService) { }
 
   preInit(): void {
-    const outbound_network_value_field: FormSelectConfig = this.fieldSets.config('outbound_network_value');
+    const outbound_network_value_field = this.fieldSets.config('outbound_network_value') as FormSelectConfig;
     this.ws.call('network.configuration.activity_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       for (const [value, label] of choices) {
         outbound_network_value_field.options.push({ label, value });

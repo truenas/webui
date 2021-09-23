@@ -146,15 +146,15 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
 
   preInit(entityForm: EntityFormComponent): void {
     this.ws.call('acme.dns.authenticator.query').pipe(untilDestroyed(this)).subscribe((authenticators) => {
-      const listConfig: FormListConfig = this.fieldSets[2].config[0];
-      this.dns_map = _.find(listConfig.templateListField, { name: 'authenticators' });
+      const listConfig = this.fieldSets[2].config[0] as FormListConfig;
+      this.dns_map = _.find(listConfig.templateListField, { name: 'authenticators' }) as FormSelectConfig;
       authenticators.forEach((item) => {
         this.dns_map.options.push({ label: item.name, value: item.id });
       });
     });
 
     this.ws.call('certificate.acme_server_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      const acme_directory_uri: FormSelectConfig = _.find(this.fieldSets[0].config, { name: 'acme_directory_uri' });
+      const acme_directory_uri = _.find(this.fieldSets[0].config, { name: 'acme_directory_uri' }) as FormSelectConfig;
       for (const key in choices) {
         acme_directory_uri.options.push({ label: choices[key], value: key });
       }
@@ -167,7 +167,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     this.fieldConfig = entityEdit.fieldConfig;
 
     this.domainList = entityEdit.formGroup.controls['domains'] as FormArray;
-    this.domainList_fc = _.find(this.fieldConfig, { name: 'domains' });
+    this.domainList_fc = _.find(this.fieldConfig, { name: 'domains' }) as FormListConfig;
     const listFields = this.domainList_fc.listFields;
 
     this.ws.call(this.queryCall, [this.queryCallOption]).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -187,7 +187,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
 
             const controls = listFields[i];
             const name_text_fc: FormParagraphConfig = _.find(controls, { name: 'name_text' });
-            const auth_fc: FormSelectConfig = _.find(controls, { name: 'authenticators' });
+            const auth_fc = _.find(controls, { name: 'authenticators' }) as FormSelectConfig;
             (this.domainList.controls[i] as FormGroup).controls['name_text'].setValue(domains[i]);
             name_text_fc.paraText = '<b>' + domains[i] + '</b>';
             auth_fc.options = this.dns_map.options;

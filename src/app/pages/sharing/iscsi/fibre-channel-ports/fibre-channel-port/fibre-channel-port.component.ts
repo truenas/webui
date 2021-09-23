@@ -84,7 +84,7 @@ export class FibreChannelPortComponent implements OnInit {
     private entityFormService: EntityFormService,
     private iscsiService: IscsiService,
   ) {
-    const targetField: FormSelectConfig = _.find(this.fieldSets[1].config, { name: 'target' });
+    const targetField = _.find(this.fieldSets[1].config, { name: 'target' }) as FormSelectConfig;
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       for (let i = 0; i < targets.length; i++) {
         targetField.options.push({

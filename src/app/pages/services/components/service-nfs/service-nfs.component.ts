@@ -232,9 +232,9 @@ export class ServiceNFSComponent implements FormConfiguration {
       ipChoices.forEach((ip) => {
         this.validBindIps.push(ip.value);
       });
-      const config: FormSelectConfig = this.fieldSets
+      const config = this.fieldSets
         .find((set) => set.name === helptext.nfs_srv_fieldset_general)
-        .config.find((config) => config.name === 'bindip');
+        .config.find((config) => config.name === 'bindip') as FormSelectConfig;
       config.options = ipChoices;
     });
 

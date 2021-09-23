@@ -360,13 +360,15 @@ export class EntityUtils {
       const checkboxConfig = fieldConfig as FormCheckboxConfig;
       checkboxConfig['type'] = 'checkbox';
     } else if (schemaConfig.schema.type == 'ipaddr') {
-      const ipConfig = fieldConfig as FormIpWithNetmaskConfig;
-      ipConfig['type'] = 'ipwithnetmask';
       if (!schemaConfig.schema.cidr) {
-        ipConfig['type'] = 'input';
+        const ipInputConfig = fieldConfig as FormInputConfig;
+        ipInputConfig['type'] = 'input';
+      } else {
+        const ipConfig = fieldConfig as FormIpWithNetmaskConfig;
+        ipConfig['type'] = 'ipwithnetmask';
       }
     } else if (schemaConfig.schema.type == 'hostpath') {
-      const conf: FormExplorerConfig = { ...fieldConfig };
+      const conf = { ...fieldConfig } as FormExplorerConfig;
       conf['type'] = 'explorer';
       conf['initial'] = '/mnt';
       conf['explorerType'] = 'file';

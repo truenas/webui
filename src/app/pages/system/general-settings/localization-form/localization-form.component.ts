@@ -110,9 +110,9 @@ export class LocalizationFormComponent implements FormConfiguration {
     this.makeLanguageList();
 
     this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapChoices) => {
-      const config: FormSelectConfig = this.fieldSets
+      const config = this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
-        .config.find((config: FormSelectConfig) => config.name === 'kbdmap');
+        .config.find((config: FormSelectConfig) => config.name === 'kbdmap') as FormSelectConfig;
       config.options = mapChoices;
       this.entityForm.formGroup.controls['kbdmap'].setValue(this.configData.kbdmap);
     });
@@ -141,26 +141,26 @@ export class LocalizationFormComponent implements FormConfiguration {
 
   setTimeOptions(tz: string): void {
     const timeOptions = this.localeService.getTimeFormatOptions(tz);
-    const timeConfig: FormSelectConfig = this.fieldSets
+    const timeConfig = this.fieldSets
       .find((set) => set.name === helptext.stg_fieldset_loc)
-      .config.find((config) => config.name === 'time_format');
+      .config.find((config) => config.name === 'time_format') as FormSelectConfig;
     timeConfig.options = timeOptions;
 
     const dateOptions = this.localeService.getDateFormatOptions(tz);
-    const dateConfig: FormSelectConfig = this.fieldSets
+    const dateConfig = this.fieldSets
       .find((set) => set.name === helptext.stg_fieldset_loc)
-      .config.find((config) => config.name === 'date_format');
+      .config.find((config) => config.name === 'date_format') as FormSelectConfig;
     dateConfig.options = dateOptions;
   }
 
   getDateTimeFormats(): void {
     this.entityForm.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
 
-    const dateFormatConfig: FormSelectConfig = _.find(this.fieldConfig, { name: 'date_format' });
+    const dateFormatConfig = _.find(this.fieldConfig, { name: 'date_format' }) as FormSelectConfig;
     dateFormatConfig.isLoading = false;
 
     this.entityForm.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
-    const timeFormatConfig: FormSelectConfig = _.find(this.fieldConfig, { name: 'time_format' });
+    const timeFormatConfig = _.find(this.fieldConfig, { name: 'time_format' }) as FormSelectConfig;
     timeFormatConfig.isLoading = false;
   }
 

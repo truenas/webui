@@ -280,7 +280,7 @@ export class NFSFormComponent implements FormConfiguration {
     public networkService: NetworkService,
     private translate: TranslateService,
   ) {
-    const paths: FormListConfig = this.fieldSets.config('paths');
+    const paths = this.fieldSets.config('paths') as FormListConfig;
     const pathsTemplate = paths.templateListField;
     if (this.productType.includes(ProductType.Scale)) {
       pathsTemplate.push({

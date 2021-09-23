@@ -162,8 +162,8 @@ export class KmipComponent {
 
   preInit(): void {
     const certificateFieldset: FieldSet = _.find(this.fieldSets, { class: 'certificate' });
-    const certificateField: FormSelectConfig = _.find(certificateFieldset.config, { name: 'certificate' });
-    const certificateAuthorityField: FormSelectConfig = _.find(certificateFieldset.config, { name: 'certificate_authority' });
+    const certificateField = _.find(certificateFieldset.config, { name: 'certificate' }) as FormSelectConfig;
+    const certificateAuthorityField = _.find(certificateFieldset.config, { name: 'certificate_authority' }) as FormSelectConfig;
 
     this.systemGeneralService.getCA().pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {

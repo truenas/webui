@@ -337,7 +337,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
-      this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
+      this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
       realms.forEach((realm) => {
         this.kerberos_realm.options.push(
           { label: realm.realm, value: realm.id },
@@ -346,7 +346,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
+      this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
       res.forEach((item) => {
         this.kerberos_principal.options.push(
           { label: item, value: item },
@@ -355,7 +355,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
 
     this.ws.call('activedirectory.nss_info_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      this.nss_info = _.find(this.fieldConfig, { name: 'nss_info' });
+      this.nss_info = _.find(this.fieldConfig, { name: 'nss_info' }) as FormSelectConfig;
       choices.forEach((choice) => {
         this.nss_info.options.push(
           { label: choice, value: choice },
@@ -425,7 +425,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     }
 
     this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
-      this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
+      this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
       realms.forEach((realm) => {
         this.kerberos_realm.options.push(
           { label: realm.realm, value: realm.id },
@@ -434,7 +434,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
+      this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
       this.kerberos_principal.options.length = 0;
       this.kerberos_principal.options.push({ label: '---', value: null });
       res.forEach((item) => {

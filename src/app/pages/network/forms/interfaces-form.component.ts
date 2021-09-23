@@ -309,7 +309,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private type: FieldConfig;
   private type_fg: FormControl;
   private entityForm: EntityFormComponent;
-  //
+
   protected ipListControl: FormListConfig;
   protected failover_group: FormSelectConfig;
   protected failover_vhid: FormSelectConfig;
@@ -373,9 +373,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.lag_fieldset = _.find(this.fieldSets, { class: 'lag_settings' });
     this.bridge_fieldset = _.find(this.fieldSets, { class: 'bridge_settings' });
     this.failover_fieldset = _.find(this.fieldSets, { class: 'failover_settings' });
-    this.vlan_pint = _.find(this.vlan_fieldset.config, { name: 'vlan_parent_interface' });
+    this.vlan_pint = _.find(this.vlan_fieldset.config, { name: 'vlan_parent_interface' }) as FormSelectConfig;
     this.ws.call('interface.xmit_hash_policy_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      const xmitHashPolicyFieldConfig: FormSelectConfig = _.find(this.fieldConfig, { name: 'xmit_hash_policy' });
+      const xmitHashPolicyFieldConfig = _.find(this.fieldConfig, { name: 'xmit_hash_policy' }) as FormSelectConfig;
       xmitHashPolicyFieldConfig.options = [];
       for (const key in choices) {
         xmitHashPolicyFieldConfig.options.push({ label: key, value: key });
@@ -384,7 +384,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     });
 
     this.ws.call('interface.lacpdu_rate_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      const lacpduRateFieldConfig: FormSelectConfig = _.find(this.fieldConfig, { name: 'lacpdu_rate' });
+      const lacpduRateFieldConfig = _.find(this.fieldConfig, { name: 'lacpdu_rate' }) as FormSelectConfig;
       lacpduRateFieldConfig.options = [];
       for (const key in choices) {
         lacpduRateFieldConfig.options.push({ label: key, value: key });
@@ -395,19 +395,19 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
   afterInit(entityForm: EntityFormComponent): void {
     if (entityForm.pk !== undefined) {
-      this.vlan_pint.type = 'input';
+      this.vlan_pint.type = 'select'; // Why was this set to input??
       this.title = helptext.title_edit;
     } else {
       this.title = helptext.title_add;
     }
-    this.vlan_pint = _.find(this.fieldConfig, { name: 'vlan_parent_interface' });
-    this.bridge_members = _.find(this.fieldConfig, { name: 'bridge_members' });
-    this.lag_ports = _.find(this.fieldConfig, { name: 'lag_ports' });
-    this.lag_protocol = _.find(this.fieldConfig, { name: 'lag_protocol' });
+    this.vlan_pint = _.find(this.fieldConfig, { name: 'vlan_parent_interface' }) as FormSelectConfig;
+    this.bridge_members = _.find(this.fieldConfig, { name: 'bridge_members' }) as FormSelectConfig;
+    this.lag_ports = _.find(this.fieldConfig, { name: 'lag_ports' }) as FormSelectConfig;
+    this.lag_protocol = _.find(this.fieldConfig, { name: 'lag_protocol' }) as FormSelectConfig;
     this.type = _.find(this.fieldConfig, { name: 'type' });
-    this.ipListControl = _.find(this.fieldConfig, { name: 'aliases' });
-    this.failover_group = _.find(this.fieldConfig, { name: 'failover_group' });
-    this.failover_vhid = _.find(this.fieldConfig, { name: 'failover_vhid' });
+    this.ipListControl = _.find(this.fieldConfig, { name: 'aliases' }) as FormListConfig;
+    this.failover_group = _.find(this.fieldConfig, { name: 'failover_group' }) as FormSelectConfig;
+    this.failover_vhid = _.find(this.fieldConfig, { name: 'failover_vhid' }) as FormSelectConfig;
     for (let i = 1; i <= 32; i++) {
       this.failover_group.options.push({ label: String(i), value: i });
     }

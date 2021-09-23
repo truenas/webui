@@ -318,10 +318,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
     if (!this.parent) return;
 
     const sparse = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sparse');
-    const sync: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sync');
-    const compression: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'compression');
-    const deduplication: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'deduplication');
-    const volblocksize: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize');
+    const sync = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sync') as FormSelectConfig;
+    const compression = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'compression') as FormSelectConfig;
+    const deduplication = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'deduplication') as FormSelectConfig;
+    const volblocksize = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize') as FormSelectConfig;
 
     this.isNew = true;
 

@@ -290,7 +290,7 @@ export class ExtentFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
-    const extent_disk_field: FormSelectConfig = _.find(this.fieldConfig, { name: 'disk' });
+    const extent_disk_field = _.find(this.fieldConfig, { name: 'disk' }) as FormSelectConfig;
     // get device options
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
       const options = [];

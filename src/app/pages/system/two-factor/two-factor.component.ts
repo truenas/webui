@@ -224,7 +224,7 @@ export class TwoFactorComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.getURI();
-    const intervalValue: FormInputConfig = _.find(this.fieldConfig, { name: 'interval' });
+    const intervalValue: FormInputConfig = _.find(this.fieldConfig, { name: 'interval' }) as FormInputConfig;
     entityEdit.formGroup.controls['interval'].valueChanges.pipe(untilDestroyed(this)).subscribe((val: string) => {
       if (parseInt(val) !== 30) {
         intervalValue.hint = helptext.two_factor.interval.hint;
