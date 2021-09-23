@@ -38,6 +38,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
+        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -103,6 +104,7 @@ def click_on_the_dataset_name_3_dots_button_select_edit_permissions(driver, data
 def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_group_name_for_group_name_check_the_apply_group(driver):
     """The Edit ACL page should open, select OPEN for Default ACL Option, select "AD01\Administrator" for Group name, check the Apply Group.."""
     assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Owner Group:") and @class="control"]//input', 'inputable')
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').click()
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').clear()
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').send_keys('AD01\\administrator')
