@@ -501,6 +501,15 @@ export class ChartReleasesComponent implements OnInit {
     this.refreshToolbarMenus();
   }
 
+  filterPodNames(podList: string[]): string[] {
+    for (const entry of podList) {
+      if (entry.includes('svclb')) {
+        podList = podList.filter((name) => name !== entry);
+      }
+    }
+    return podList;
+  }
+
   openShell(name: string): void {
     this.podList = [];
     this.podDetails = {};
@@ -510,6 +519,7 @@ export class ChartReleasesComponent implements OnInit {
       this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
+      this.podList = this.filterPodNames(this.podList);
       if (this.podList.length == 0) {
         this.dialogService.confirm({
           title: helptext.podConsole.nopod.title,
@@ -549,6 +559,7 @@ export class ChartReleasesComponent implements OnInit {
       this.appLoaderService.close();
       this.podDetails = { ...res };
       this.podList = Object.keys(this.podDetails);
+      this.podList = this.filterPodNames(this.podList);
       if (this.podList.length == 0) {
         this.dialogService.confirm({
           title: helptext.podConsole.nopod.title,
