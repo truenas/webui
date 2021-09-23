@@ -3,6 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/system/cron-form';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
@@ -18,16 +19,16 @@ import { ModalService } from 'app/services/modal.service';
   styleUrls: ['cron-form.component.scss'],
   providers: [UserService],
 })
-export class CronFormComponent {
-  protected title: string;
-  protected queryCall = 'cronjob.query';
-  protected queryKey = 'id';
-  protected editCall = 'cronjob.update';
-  protected addCall = 'cronjob.create';
-  protected pk: number;
+export class CronFormComponent implements FormConfiguration {
+  title: string;
+  queryCall: 'cronjob.query' = 'cronjob.query';
+  queryKey = 'id';
+  editCall: 'cronjob.update' = 'cronjob.update';
+  addCall: 'cronjob.create' = 'cronjob.create';
+  pk: number;
   protected user_field: FormComboboxConfig;
   protected isOneColumnForm = true;
-  protected isEntity = true;
+  isEntity = true;
 
   isNew = false;
   entityForm: EntityFormComponent;

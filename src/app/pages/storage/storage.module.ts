@@ -10,6 +10,7 @@ import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
 import { AclEditorListComponent } from 'app/pages/storage/volumes/permissions/components/acl-editor-list/acl-editor-list.component';
 import { EditNfsAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
@@ -45,8 +46,8 @@ import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clon
 import { SnapshotDetailsComponent } from './snapshots/snapshot-list/components/snapshot-details.component';
 import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
 import { routing } from './storage.routing';
-import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
-import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
+import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
+import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot/vmware-snapshot-form.component';
 import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
@@ -68,6 +69,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     ReactiveFormsModule, routing, MaterialModule, TreeTableModule,
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
     NgxFilesizeModule, CommonDirectivesModule, CdkAccordionModule,
+    TooltipModule,
   ],
   declarations: [
     VolumesListComponent,

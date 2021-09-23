@@ -67,6 +67,12 @@ export class KubernetesSettingsComponent implements FormConfiguration {
           tooltip: helptext.kubForm.enable_container_image_update.tooltip,
           value: true,
         },
+        {
+          type: 'checkbox',
+          name: 'configure_gpus',
+          placeholder: helptext.kubForm.configure_gpus.placeholder,
+          value: true,
+        },
       ],
     },
     {
@@ -126,6 +132,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
     const setV4InterfaceControl$ = this.appService.getInterfaces().pipe(
       tap((interfaces) => {
         const v4InterfaceControl = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' }) as FormSelectConfig;
+
         interfaces.forEach((i) => {
           v4InterfaceControl.options.push({ label: i.name, value: i.name });
         });

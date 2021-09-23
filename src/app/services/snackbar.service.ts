@@ -5,7 +5,6 @@ import { EntitySnackbarComponent } from 'app/pages/common/entity/entity-snackbar
 @Injectable({
   providedIn: 'root',
 })
-
 export class SnackbarService {
   constructor(private snackbar: MatSnackBar) { }
 

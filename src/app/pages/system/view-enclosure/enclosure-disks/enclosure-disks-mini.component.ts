@@ -10,6 +10,7 @@ import { MINIXLPLUS } from 'app/core/classes/hardware/mini-xl-plus';
 import { EnclosureMetadata } from 'app/core/classes/system-profiler';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { Theme } from 'app/services/theme/theme.service';
 import { EnclosureDisksComponent } from './enclosure-disks.component';
 
 @Component({
@@ -76,7 +77,12 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.container.setTransform(-30);
   }
 
-  count(obj: Record<string, unknown>): number {
+  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
+  themeKey(key: string): keyof Theme {
+    return key as keyof Theme;
+  }
+
+  count(obj: Record<string, unknown> | unknown[]): number {
     return Object.keys(obj).length;
   }
 

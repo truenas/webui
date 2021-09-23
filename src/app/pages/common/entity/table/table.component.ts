@@ -40,7 +40,7 @@ export interface AppTableColumn {
   hidden?: boolean;
   hiddenIfEmpty?: boolean;
   listview?: boolean;
-  getIcon?(element: any, prop: string): void;
+  getIcon?(element: any, prop: string): string;
 }
 
 export interface AppTableConfirmDeleteDialog {

@@ -304,7 +304,7 @@ export class IdmapFormComponent implements FormConfiguration {
     if (data.certificate) {
       data.certificate = data.certificate.id;
     }
-    this.requiredDomains.includes(data.name) ? this.readOnly = true : this.readOnly = false;
+    this.readOnly = this.requiredDomains.includes(data.name);
     return data;
   }
 

@@ -1,4 +1,4 @@
-<div class="job-item" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px">
+<div class="job-item" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px" [class.abortable]="job?.state === JobState.Running && job?.abortable">
   <div fxFlex="100%" (click)="openJobDialog(job)">
     <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
       <span>{{ job.description ? job.description : job.method }}</span>
@@ -8,7 +8,7 @@
     <mat-progress-bar
       *ngIf="job.state === JobState.Running"
       [value]="job.progress.percent"
-      mode="determinate"
+      [mode]="job.progress.percent ? 'determinate' : 'indeterminate'"
       class="job-progress"
     ></mat-progress-bar>
 

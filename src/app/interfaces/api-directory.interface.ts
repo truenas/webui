@@ -330,6 +330,8 @@ export type ApiDirectory = {
   'cronjob.run': { params: [id: number]; response: void };
   'cronjob.query': { params: QueryParams<Cronjob>; response: Cronjob[] };
   'cronjob.delete': { params: [id: number]; response: boolean };
+  'cronjob.create': { params: any; response: any };
+  'cronjob.update': { params: any; response: any };
 
   // Core
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };

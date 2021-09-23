@@ -570,10 +570,17 @@ export class CloudsyncFormComponent implements FormConfiguration {
     const data = entityForm.wsResponse;
     if (data.direction === Direction.Pull) {
       data.path_destination = data.path;
-      data.attributes.folder_source = data.attributes.include.map((p: string) => data.attributes.folder + '/' + p.split('/')[1]);
+
+      if (data.attributes.include) {
+        data.attributes.folder_source = data.attributes.include.map((p: string) => {
+          return data.attributes.folder + '/' + p.split('/')[1];
+        });
+      }
     } else {
       data.attributes.folder_destination = data.attributes.folder;
-      data.path_source = data.include.map((p: string) => data.path + '/' + p.split('/')[1]);
+      if (data.include) {
+        data.path_source = data.include.map((p: string) => data.path + '/' + p.split('/')[1]);
+      }
     }
 
     for (const i in data) {

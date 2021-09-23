@@ -17,6 +17,12 @@
   }
 }
 
+.job-item {
+  &.abortable {
+    max-width: calc(100% - 32px);
+  }
+}
+
 .job-progress {
   margin: 3px 0;
 }

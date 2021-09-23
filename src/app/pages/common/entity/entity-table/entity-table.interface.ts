@@ -78,9 +78,10 @@ export interface EntityTableAction<Row = any> {
   // TODO: Either name or actionName may be unnecessary
   name: string;
   actionName?: string;
+  color?: string;
   icon: string;
   label: string;
-  onClick: ((row: Row) => void) | (() => void);
+  onClick: (row?: Row) => void;
   disabled?: boolean;
   actions?: EntityTableAction[];
 }

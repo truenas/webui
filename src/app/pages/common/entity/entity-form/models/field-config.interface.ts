@@ -45,6 +45,10 @@ export interface BaseFieldConfig<P = any> {
   width?: string;
 }
 
+export interface FormLabelConfig<P = any> extends BaseFieldConfig<P> {
+  label: string;
+}
+
 export interface FormArrayConfig<P = any> extends BaseFieldConfig<P> {
   formarray?: FieldConfig[];
   initialCount?: number;
@@ -265,6 +269,7 @@ export interface FormToggleButtonOption {
 }
 
 export type FieldConfig<P = any> = BaseFieldConfig<P>
+| FormLabelConfig<P>
 | FormArrayConfig<P>
 | FormButtonConfig<P>
 | FormCheckboxConfig<P>

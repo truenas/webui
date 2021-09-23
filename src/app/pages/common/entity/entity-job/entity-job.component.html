@@ -5,36 +5,45 @@
   ix-auto-type="dialog"
   ix-auto-identifier="title"
 >
+
   <div *ngIf="job?.state === JobState.Running">
+    <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
+      <span>{{ job.description ? job.description : job.method }}</span>
+      <small *ngIf="!hideProgressValue">{{ progressTotalPercent || 0 | number: '1.2-2' }}%</small>
+    </div>
+
     <mat-progress-bar
       color="primary"
       mode="determinate"
       [value]="progressTotalPercent"
+      [mode]="progressTotalPercent ? 'determinate' : 'indeterminate'"
+      class="entity-job-progress"
     >
     </mat-progress-bar>
-    <label *ngIf="!hideProgressValue">
-      {{ progressTotalPercent | number: '1.2-2' }}%
-    </label>
+
+    <div class="entity-job-description" *ngIf="description">{{ description }}</div>
   </div>
-  <div>
-    <span *ngIf="description" [innerHTML]="description | translate"></span>
-  </div>
+
   <div *ngIf="!description && !job">
     <mat-progress-bar
       color="primary"
       mode="indeterminate"
+      class="entity-job-progress"
     >
     </mat-progress-bar>
   </div>
+
   <div *ngIf="!description">
     <span *ngIf="altMessage" [innerHTML]="altMessage"></span>
     <span *ngIf="!altMessage">{{ 'Fetching data...' | translate }}</span>
   </div>
+
   <div *ngIf="showRealtimeLogs && realtimeLogs">
     <h5>{{ 'Logs' | translate }}</h5>
     <pre class="message">{{ realtimeLogs }}</pre>
   </div>
 </mat-dialog-content>
+
 <div mat-dialog-actions>
   <button
     mat-button

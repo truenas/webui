@@ -17,8 +17,10 @@ import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { E16 } from 'app/core/classes/hardware/e16';
 import { E24 } from 'app/core/classes/hardware/e24';
 import { E60 } from 'app/core/classes/hardware/e60';
+import { ES102 } from 'app/core/classes/hardware/es102';
 import { ES12 } from 'app/core/classes/hardware/es12';
 import { ES24 } from 'app/core/classes/hardware/es24';
+import { ES24F } from 'app/core/classes/hardware/es24f';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { R10 } from 'app/core/classes/hardware/r10';
@@ -393,6 +395,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.controllerEvent$.next({ name: 'VisualizerReady', sender: this });
   }
 
+  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
+  themeKey(key: string): keyof Theme {
+    return key as keyof Theme;
+  }
+
   createEnclosure(profile: EnclosureMetadata = this.selectedEnclosure): void {
     if (this.currentView == 'details') {
       this.clearDisk();
@@ -433,6 +440,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'ES24':
         this.chassis = new ES24();
         break;
+      case 'ES24F':
+        this.chassis = new ES24F();
+        break;
       case 'E24':
         this.chassis = new E24();
         break;
@@ -441,6 +451,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         break;
       case 'E60':
         this.chassis = new E60();
+        break;
+      case 'ES102':
+        this.chassis = new ES102();
+        this.showCaption = false;
         break;
       default:
         this.controllerEvent$.next({
@@ -542,11 +556,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'ES24':
         chassis = new ES24();
         break;
+      case 'ES24F':
+        chassis = new ES24F();
+        break;
       case 'ES60':
         chassis = new ES60();
         break;
       case 'E60':
         chassis = new E60();
+        break;
+      case 'ES102':
+        chassis = new ES102();
         break;
       default:
         this.controllerEvent$.next({

@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_kmip } from 'app/helptext/system/kmip';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -17,9 +18,9 @@ import { SystemGeneralService, DialogService, WebSocketService } from 'app/servi
   templateUrl: './kmip.component.html',
   styleUrls: ['./kmip.component.scss'],
 })
-export class KmipComponent {
-  protected queryCall: 'kmip.config' = 'kmip.config';
-  protected editCall: 'kmip.update' = 'kmip.update';
+export class KmipComponent implements FormConfiguration {
+  queryCall: 'kmip.config' = 'kmip.config';
+  editCall: 'kmip.update' = 'kmip.update';
   isEntity = false;
 
   entityForm: EntityFormComponent;
