@@ -143,6 +143,9 @@ export default {
       placeholder: T('Enable Container Image Updates'),
       tooltip: T(''),
     },
+    configure_gpus: {
+      placeholder: T('Enable GPU support'),
+    },
   },
 
   charts: {

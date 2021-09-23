@@ -11,7 +11,7 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   imports: [
     CommonModule,
     NgxPopperjsModule,
-    TranslateModule.forChild(),
+    TranslateModule,
     CommonDirectivesModule,
     MaterialModule,
   ],
