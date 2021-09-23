@@ -330,19 +330,18 @@ export class VmFormComponent implements FormConfiguration {
   }
 
   cpuValidator(name: string): any {
-    const self = this;
-    return function validCPU() {
-      const config = self.fieldConfig.find((c) => c.name === name);
+    return () => {
+      const config = this.fieldConfig.find((c) => c.name === name);
       setTimeout(() => {
-        const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
+        const errors = this.vcpus * this.cores * this.threads > this.maxVCPUs
           ? { validCPU: true }
           : null;
 
         if (errors) {
           config.hasErrors = true;
           config.hasErrors = true;
-          self.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(self)).subscribe((warning) => {
-            config.warnings = warning + ` ${self.maxVCPUs}.`;
+          this.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(self)).subscribe((warning) => {
+            config.warnings = warning + ` ${this.maxVCPUs}.`;
           });
         } else {
           config.hasErrors = false;

@@ -184,7 +184,6 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         name: 'wipe',
         label: T('Wipe'),
         onClick: (row) => {
-          const self = this;
           const conf: DialogFormConfiguration = {
             title: helptext.diskWipeDialogForm.title + row.name,
             fieldConfig: [
@@ -219,15 +218,15 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
             afterInit(entityDialogForm: EntityDialogComponent) {
               entityDialogForm.formGroup.controls['disk_name'].setValue(row.name);
             },
-            customSubmit(entityDialogForm: EntityDialogComponent) {
-              self.dialogService.confirm({
+            customSubmit: (entityDialogForm: EntityDialogComponent) => {
+              this.dialogService.confirm({
                 title: helptext.diskWipeDialogForm.title + row.name,
                 message: helptext.diskWipeDialogForm.confirmContent,
               }).pipe(
                 filter(Boolean),
-                untilDestroyed(self),
+                untilDestroyed(this),
               ).subscribe(() => {
-                const dialogRef = self.dialog.open(EntityJobComponent, {
+                const dialogRef = this.dialog.open(EntityJobComponent, {
                   data: { title: helptext.diskWipeDialogForm.title + row.name },
                 });
                 dialogRef.componentInstance.setDescription(helptext.diskWipeDialogForm.startDescription);
@@ -237,20 +236,20 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
                 );
                 dialogRef.componentInstance.submit();
 
-                dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe(() => {
+                dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
                   if (dialogRef.componentInstance) {
                     dialogRef.close(true);
-                    self.dialogService.generalDialog({
+                    this.dialogService.generalDialog({
                       title: helptext.diskWipeDialogForm.title + row.name,
                       message: helptext.diskWipeDialogForm.infoContent,
                       hideCancel: true,
                     });
                   }
                 });
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(self)).subscribe((wipeRes) => {
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((wipeRes) => {
                   dialogRef.componentInstance.setDescription(wipeRes.error);
                 });
-                dialogRef.componentInstance.aborted.pipe(untilDestroyed(self)).subscribe(() => {
+                dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
                   dialogRef.close(true);
                 });
                 entityDialogForm.dialogRef.close(true);
@@ -292,7 +291,6 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
   }
 
   manualTest(selected: Disk | Disk[]): void {
-    const parent = this;
     const disks = Array.isArray(selected) ? selected.map((item) => item.name) : [selected.name];
     const disksIdentifier: SmartManualTestParams[] = Array.isArray(selected)
       ? selected.map((item) => ({ identifier: item.identifier } as SmartManualTestParams))
@@ -333,18 +331,18 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         },
       ],
       saveButtonText: helptext.manual_test_dialog.saveButtonText,
-      customSubmit(entityDialog: EntityDialogComponent) {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         disksIdentifier.forEach((item) => {
           item.type = entityDialog.formValue.type;
         });
 
-        parent.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(parent)).subscribe(
+        this.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(parent)).subscribe(
           (res) => {
             entityDialog.dialogRef.close(true);
-            parent.generateManualTestSummary(res);
+            this.generateManualTestSummary(res);
           },
           (err) => {
-            new EntityUtils().handleWSError(parent, err, parent.dialogService, conf.fieldConfig);
+            new EntityUtils().handleWSError(this, err, this.dialogService, conf.fieldConfig);
           },
         );
       },

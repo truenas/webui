@@ -59,9 +59,8 @@ export class StorageService {
     dlink.href = window.URL.createObjectURL(blob);
     dlink.onclick = () => {
       // revokeObjectURL needs a delay to work properly
-      const that: any = this;
       setTimeout(() => {
-        window.URL.revokeObjectURL(that.href);
+        window.URL.revokeObjectURL((this as any).href);
       }, 1500);
     };
 

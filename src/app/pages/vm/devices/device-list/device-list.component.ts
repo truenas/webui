@@ -73,7 +73,6 @@ export class DeviceListComponent implements EntityTableConfig {
   }
 
   getActions(row: VmDevice): EntityTableAction<VmDevice>[] {
-    const self = this;
     const actions = [];
     actions.push({
       id: row.id,
@@ -101,7 +100,7 @@ export class DeviceListComponent implements EntityTableConfig {
       icon: 'reorder',
       label: T('Change Device Order'),
       onClick: (row1: VmDevice) => {
-        self.translate.get('Change order for ').pipe(untilDestroyed(this)).subscribe((orderMsg) => {
+        this.translate.get('Change order for ').pipe(untilDestroyed(this)).subscribe((orderMsg) => {
           const conf: DialogFormConfiguration = {
             title: T('Change Device Order'),
             message: orderMsg + `<b>${row1.dtype} ${row1.id}</b>`,
@@ -115,23 +114,23 @@ export class DeviceListComponent implements EntityTableConfig {
             preInit(entityDialog: EntityDialogComponent) {
               _.find(entityDialog.fieldConfig, { name: 'order' })['value'] = row1.order;
             },
-            customSubmit(entityDialog: EntityDialogComponent) {
+            customSubmit: (entityDialog: EntityDialogComponent) => {
               const value = entityDialog.formValue;
-              self.loader.open();
-              self.ws.call('vm.device.update', [row1.id, { order: value.order }]).pipe(untilDestroyed(this)).subscribe(() => {
+              this.loader.open();
+              this.ws.call('vm.device.update', [row1.id, { order: value.order }]).pipe(untilDestroyed(this)).subscribe(() => {
                 entityDialog.dialogRef.close(true);
-                self.loader.close();
-                this.parent.entityList.getData();
+                this.loader.close();
+                this.entityList.getData();
               }, () => {
-                self.loader.close();
+                this.loader.close();
               }, () => {
                 entityDialog.dialogRef.close(true);
-                self.loader.close();
-                this.parent.entityList.getData();
+                this.loader.close();
+                this.entityList.getData();
               });
             },
           };
-          self.dialogService.dialogForm(conf);
+          this.dialogService.dialogForm(conf);
         });
       },
     });
@@ -141,7 +140,7 @@ export class DeviceListComponent implements EntityTableConfig {
       icon: 'list',
       label: T('Details'),
       onClick: (device: VmDevice) => {
-        self.translate.get('Change order for ').pipe(untilDestroyed(this)).subscribe((detailMsg) => {
+        this.translate.get('Change order for ').pipe(untilDestroyed(this)).subscribe((detailMsg) => {
           let details = '';
           Object.entries(device.attributes).forEach(([attribute, attributeValue]) => {
             details = `${attribute}: ${attributeValue} \n` + details;

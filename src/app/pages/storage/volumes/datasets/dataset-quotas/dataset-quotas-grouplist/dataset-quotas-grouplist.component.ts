@@ -71,7 +71,6 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
   }
 
   getActions(row: any): EntityTableAction[] {
-    const self = this;
     const actions = [];
     actions.push({
       id: row.path,
@@ -79,9 +78,9 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
       label: T('Edit'),
       name: 'edit',
       onClick: () => {
-        self.loader.open();
-        self.ws.call('pool.dataset.get_quota', [self.pk, DatasetQuotaType.Group, [['id', '=', row.id]]]).pipe(untilDestroyed(this)).subscribe((res) => {
-          self.loader.close();
+        this.loader.open();
+        this.ws.call('pool.dataset.get_quota', [this.pk, DatasetQuotaType.Group, [['id', '=', row.id]]]).pipe(untilDestroyed(this)).subscribe((res) => {
+          this.loader.close();
           const conf: DialogFormConfiguration<this> = {
             title: helptext.groups.dialog.title,
             fieldConfig: [
@@ -97,16 +96,16 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
                 name: 'data_quota',
                 placeholder: helptext.groups.data_quota.placeholder,
                 tooltip: `${helptext.groups.data_quota.tooltip} bytes.`,
-                value: self.storageService.convertBytestoHumanReadable(res[0].quota, 0, null, true),
+                value: this.storageService.convertBytestoHumanReadable(res[0].quota, 0, null, true),
                 id: 'data-quota_input',
                 blurStatus: true,
-                blurEvent: self.blurEvent,
-                parent: self,
+                blurEvent: this.blurEvent,
+                parent: this,
                 validation: [
                   (control: FormControl): ValidationErrors => {
                     const config = conf.fieldConfig.find((c) => c.name === 'data_quota');
-                    self.quotaValue = control.value;
-                    const size = self.storageService.convertHumanStringToNum(control.value);
+                    this.quotaValue = control.value;
+                    const size = this.storageService.convertHumanStringToNum(control.value);
                     const errors = control.value && isNaN(size)
                       ? { invalid_byte_string: true }
                       : null;
@@ -133,34 +132,34 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
             saveButtonText: helptext.shared.set,
             cancelButtonText: helptext.shared.cancel,
 
-            customSubmit(data: EntityDialogComponent) {
+            customSubmit: (data: EntityDialogComponent) => {
               const entryData = data.formValue;
               const payload = [];
               payload.push({
                 quota_type: DatasetQuotaType.Group,
                 id: String(res[0].id),
-                quota_value: self.storageService.convertHumanStringToNum(entryData.data_quota),
+                quota_value: this.storageService.convertHumanStringToNum(entryData.data_quota),
               },
               {
                 quota_type: DatasetQuotaType.GroupObj,
                 id: String(res[0].id),
                 quota_value: entryData.obj_quota,
               });
-              self.loader.open();
-              self.ws.call('pool.dataset.set_quota', [self.pk, payload]).pipe(untilDestroyed(this)).subscribe(() => {
-                self.loader.close();
-                self.dialogService.closeAllDialogs();
-                self.entityList.getData();
+              this.loader.open();
+              this.ws.call('pool.dataset.set_quota', [this.pk, payload]).pipe(untilDestroyed(this)).subscribe(() => {
+                this.loader.close();
+                this.dialogService.closeAllDialogs();
+                this.entityList.getData();
               }, (err) => {
-                self.loader.close();
-                self.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
+                this.loader.close();
+                this.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
               });
             },
           };
           this.dialogService.dialogFormWide(conf);
         }, (err) => {
-          self.loader.close();
-          self.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
+          this.loader.close();
+          this.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
         });
       },
     });

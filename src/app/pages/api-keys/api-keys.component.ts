@@ -78,17 +78,6 @@ export class ApiKeysComponent implements EntityTableConfig {
 
   custActions = [
     {
-      id: 'add',
-      name: helptext.action_add,
-      function: () => {
-        this.apikeysFormConf.title = helptext.formDialog.add_title;
-        this.apikeysFormConf.saveButtonText = helptext.formDialog.add_button;
-        this.apikeysFormConf.method_ws = this.addCall;
-        this.currItem = undefined;
-        this.dialogService.dialogForm(this.apikeysFormConf);
-      },
-    },
-    {
       id: 'docs',
       name: helptext.action_docs,
       function: () => {
@@ -117,10 +106,18 @@ export class ApiKeysComponent implements EntityTableConfig {
     });
   }
 
-  doSubmit(entityDialogForm: EntityDialogComponent<this>): void {
+  doAdd(): void {
+    this.apikeysFormConf.title = helptext.formDialog.add_title;
+    this.apikeysFormConf.saveButtonText = helptext.formDialog.add_button;
+    this.apikeysFormConf.method_ws = this.addCall;
+    this.currItem = undefined;
+    this.dialogService.dialogForm(this.apikeysFormConf);
+  }
+
+  doSubmit(entityDialogForm: EntityDialogComponent<ApiKeysComponent>): void {
     const that = entityDialogForm.parent;
     if (that.currItem) {
-      that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
+      that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(that)).subscribe(
         (res) => {
           entityDialogForm.dialogRef.close(true);
           if (res.key) {
@@ -147,7 +144,6 @@ export class ApiKeysComponent implements EntityTableConfig {
   }
 
   displayKey(key: string): void {
-    const self = this;
     const dialogRef = this.dialog.open(ConfirmDialogComponent, { disableClose: true });
     dialogRef.componentInstance.title = helptext.apikeyCopyDialog.title;
     dialogRef.componentInstance.buttonMsg = helptext.apikeyCopyDialog.save_button;
@@ -158,7 +154,7 @@ export class ApiKeysComponent implements EntityTableConfig {
         ${helptext.apikeyCopyDialog.api_key_warning} <br><br>
         ${helptext.apikeyCopyDialog.api_key}:<br> ${key}`;
     dialogRef.componentInstance.customSubmit = () => {
-      self.clipboard.copy(key);
+      this.clipboard.copy(key);
     };
   }
 

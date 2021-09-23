@@ -73,9 +73,8 @@ export class ServiceLLDPComponent implements FormConfiguration {
   }
 
   countryValidator(code: string): ValidatorFn {
-    const self = this;
-    return function validCode(control: FormControl) {
-      const config = self.fieldConfig.find((c) => c.name === code);
+    return (control: FormControl) => {
+      const config = this.fieldConfig.find((c) => c.name === code);
       if (control.value || control.value === '') {
         const errors = (!(control.value).match(/^[A-Z]{2}$/) && !(control.value === ''))
           ? { validCode: true }

@@ -135,7 +135,6 @@ module.exports = {
         "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
-        "@typescript-eslint/no-this-alias": "off",
         "@typescript-eslint/prefer-regexp-exec": "off",
         "@typescript-eslint/no-misused-promises": "off",
 
