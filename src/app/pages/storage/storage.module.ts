@@ -46,8 +46,8 @@ import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clon
 import { SnapshotDetailsComponent } from './snapshots/snapshot-list/components/snapshot-details.component';
 import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
 import { routing } from './storage.routing';
-import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
-import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
+import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
+import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot/vmware-snapshot-form.component';
 import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';

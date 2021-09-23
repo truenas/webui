@@ -26,7 +26,7 @@ export interface DashConfigItem {
 })
 export class WidgetControllerComponent extends WidgetComponent implements OnDestroy {
   @Input() dashState: DashConfigItem[] = [];
-  @Input() renderedWidgets?: number[] = [];
+  @Input() renderedWidgets?: unknown[] = [];
   @Input() hiddenWidgets?: number[] = [];
   @Input() emptyConfig: EmptyConfig;
   @Input() actionsConfig: ToolbarConfig;

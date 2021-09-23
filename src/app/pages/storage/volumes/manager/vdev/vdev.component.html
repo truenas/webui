@@ -11,10 +11,10 @@
     [rows]="getDisks()"
     [headerHeight]="50"
     [rowHeight]="50"
-    [footerHeight]="'auto'"
+    footerHeight="auto"
     [limit]="10"
     [selected]="selected"
-    [selectionType]="'checkbox'"
+    selectionType="checkbox"
     [externalSorting]="true"
     (sort)='reorderEvent($event)'
     (select)='onSelect($event)'

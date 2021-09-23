@@ -44,24 +44,3 @@ export function toggleClass(el: HTMLElement | HTMLCollectionOf<HTMLElement>, cla
     addClass(el, className);
   }
 }
-
-export function changeTheme(): void {
-  // Remove default
-  /* removeClass(document.body, 'ix-blue');
-
-  themes.forEach((theme) => {
-    removeClass(document.body, theme.name);
-    //removeClass(document.body, 'native');
-  });
-  addClass(document.body, themeName); */
-  addClass(document.body, 'ix-blue');
-}
-
-export function ieChatjsFix(): void {
-  if (window.hasOwnProperty('MSInputMethodContext') || document.hasOwnProperty('documentMode')) {
-    document.body.style.width = '99.9%';
-    setTimeout(() => {
-      document.body.style.width = '100%';
-    });
-  }
-}
