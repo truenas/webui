@@ -105,7 +105,7 @@ def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd123
 @then('Verify that the is on nas_ip with root and password')
 def verify_that_the_is_on_nas_ip_with_root_and_password(driver, nas_ip, root_password):
     global results
-    cmd = 'ls -la /mnt/system/tank_acl_dataset/'
+    cmd = 'ls -la /mnt/tank/tank_acl_dataset/'
     results = ssh_cmd(cmd, 'root', root_password, nas_ip)
     assert results['result'], results['output']
     assert 'testfile' in results['output'], results['output']
