@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetChartComponent } from 'app/pages/dashboard/components/widget-chart/widget-chart.component';
 import { WidgetControllerComponent } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
@@ -27,6 +28,7 @@ import { routing } from './dashboard.routing';
   imports: [
     CoreComponents,
     CommonModule,
+    CommonDirectivesModule,
     FormsModule,
     routing,
     MaterialModule,

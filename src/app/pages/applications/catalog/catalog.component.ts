@@ -235,6 +235,7 @@ export class CatalogComponent implements OnInit {
     this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
       if (!config.pool) {
         this.selectPool();
+        this.updateTab.emit({ name: ApplicationUserEventName.SwitchTab, value: 1 });
       } else {
         this.selectedPool = config.pool;
       }
