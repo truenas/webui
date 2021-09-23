@@ -61,8 +61,10 @@ export class DualListboxComponent<T extends { id: string | number }> implements 
       if (document.querySelector('#counter')) {
         document.querySelector('#counter').remove();
       }
+    } else if (event.previousContainer.id === 'cdk-drop-list-0') {
+      this.select();
     } else {
-      event.previousContainer.id === 'cdk-drop-list-0' ? this.select() : this.return();
+      this.return();
     }
     this.dragging = false;
   }

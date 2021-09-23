@@ -18,9 +18,11 @@ export class LayoutService {
   set isMenuCollapsed(isCollapsed: boolean) {
     const appBody = document.body;
 
-    isCollapsed
-      ? domHelper.addClass(appBody, this.collapsedMenuClass)
-      : domHelper.removeClass(appBody, this.collapsedMenuClass);
+    if (isCollapsed) {
+      domHelper.addClass(appBody, this.collapsedMenuClass);
+    } else {
+      domHelper.removeClass(appBody, this.collapsedMenuClass);
+    }
     domHelper.removeClass(
       document.getElementsByClassName('has-submenu') as HTMLCollectionOf<HTMLElement>,
       'open',
