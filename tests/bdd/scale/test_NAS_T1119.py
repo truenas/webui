@@ -38,6 +38,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
+        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -45,10 +46,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 def on_the_dashboard_click_storage_on_the_left_sidebar(driver):
     """on the Dashboard, click Storagek on the left sidebar.."""
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//span[contains(text(),"System Information")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
 
@@ -102,25 +100,31 @@ def click_on_the_dataset_name_3_dots_button_select_edit_permissions(driver, data
 @then('The Edit ACL page should open, select OPEN for Default ACL Option, select "AD01\Administrator" for Group name, check the Apply Group.')
 def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_group_name_for_group_name_check_the_apply_group(driver):
     """The Edit ACL page should open, select OPEN for Default ACL Option, select "AD01\Administrator" for Group name, check the Apply Group.."""
-    time.sleep(2)
-    #assert wait_on_element(driver, 5, '//mat-card-title[text()="Unix Permissions Editor"]')
-    #assert wait_on_element(driver, 5, '//span[contains(text(),"Set ACL")]', 'clickable')
-    #driver.find_element_by_xpath('//span[contains(text(),"Set ACL")]').click()
-    time.sleep(1)
-    #assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
-    #time.sleep(1)
-    #assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Default ACL Options"]', 'clickable')
-    #driver.find_element_by_xpath('//mat-select[@ix-auto="select__Default ACL Options"]').click()
-    #time.sleep(1)
-    #driver.find_element_by_xpath('//span[contains(text(),"NFS4_OPEN")]').click()
-    #time.sleep(1)
-    #assert wait_on_element(driver, 5, '//span[contains(text(),"Continue")]', 'clickable')
-    #driver.find_element_by_xpath('//span[contains(text(),"Continue")]').click()
-    #time.sleep(1)
+    assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Owner Group:") and @class="control"]//input', 'inputable')
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').click()
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').clear()
     driver.find_element_by_xpath('//div[contains(.,"Owner Group:") and @class="control"]//input').send_keys('AD01\\administrator')
-
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
+    assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
+    assert wait_on_element(driver, 5, '//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"tank_acl_dataset")]//mat-icon[text()="more_vert"]').click()
+    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
+    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
+    assert wait_on_element(driver, 5, '//div[contains(text(),"Dataset Permissions")]')
+    assert wait_on_element(driver, 5, '//mat-icon[normalize-space(text())="edit"]')
+    driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Who"]')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Who"]').click()
+    driver.find_element_by_xpath('//span[contains(text(),"Group")]').click()
+    assert wait_on_element(driver, 5, '//input[@data-placeholder="Group"]', 'inputable')
+    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').clear()
+    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys('AD01\Domain users')
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Permissions"]', 'clickable')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Permissions"]').click()
+    assert wait_on_element(driver, 5, '//mat-selection-list//mat-option//span[contains(text(),"Full Control")]', 'clickable')
+    driver.find_element_by_xpath('//mat-selection-list//mat-option//span[contains(text(),"Full Control")]').click()
 
 @then('click the Save button, which should be returned to the storage page, on the Edit ACL page, verify that the group name is "AD01\Administrator".')
 def click_the_save_button_which_should_be_returned_to_the_storage_page_on_the_edit_acl_page_verify_that_the_group_name_is_ad01administrator(driver):
@@ -136,8 +140,3 @@ def click_the_save_button_which_should_be_returned_to_the_storage_page_on_the_ed
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
     time.sleep(2)
     assert wait_on_element(driver, 5, '//div[contains(text(),"AD01\\administrator")]')
-
-    ## return to dashboard
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
