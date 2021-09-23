@@ -41,6 +41,7 @@
   "Delete {n, plural, one {# user} other {# users}} with this primary group?": "",
   "Delete {name}?": "",
   "EMAIL": "",
+  "Enable GPU support": "",
   "Ensure Display Device": "",
   "Error starting service OpenVPN {serviceLabel}": "",
   "Error starting service {service}.": "",
