@@ -29,7 +29,7 @@
         <h3 class="header">Pools</h3>
         <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
           <div class="legend-item" *ngFor="let pool of enclosurePools; let i=index">
-            <div class="swatch" [style.background]="theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
+            <div class="swatch" [style.background]="theme[themeKey(theme.accentColors[selectedEnclosure.poolKeys[pool]])]">
             </div>{{pool}} <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]].healthy"><mat-icon fontSet="mdi-set" role="img" fontIcon="mdi-alert"></mat-icon></span></div>
         </div>
 
@@ -98,7 +98,7 @@
                 <span *ngIf="selectedVdev.type == 'DISK'">NONE</span>
                 <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
 
-                <span *ngIf="selectedVdev.topology"> {{selectedVdev.topology == 'None' ? '' : '(' + selectedVdev.topology.toUpperCase() + ')'}}</span>
+                <span *ngIf="selectedVdev.topology"> {{ $any(selectedVdev.topology) == 'None' ? '' : '(' + selectedVdev.topology.toUpperCase() + ')'}}</span>
               </li>
 
               <li><strong>Serial:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.serial}}</li>

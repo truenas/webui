@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MarkdownModule } from 'ngx-markdown';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxComboboxComponent } from 'app/pages/common/ix/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/pages/common/ix/ix-fieldset/ix-fieldset.component';
 import { IxFormComponent } from 'app/pages/common/ix/ix-form/ix-form.component';
@@ -14,10 +15,15 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
 
 @NgModule({
   imports: [
-    CommonModule, FormsModule,
-    ReactiveFormsModule, MaterialModule,
-    MarkdownModule.forRoot(), FlexLayoutModule,
-    EnclosureModule, CommonDirectivesModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MaterialModule,
+    MarkdownModule.forRoot(),
+    FlexLayoutModule,
+    EnclosureModule,
+    CommonDirectivesModule,
+    TooltipModule,
   ],
   declarations: [
     IxInputComponent,

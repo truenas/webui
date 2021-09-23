@@ -12,7 +12,7 @@
   <div class="outlined input-container">
     <span *ngIf="prefixText" matPrefix>{{prefixText}} &nbsp;</span>
     <input matInput [required]="required" [(ngModel)]="value" (ngModelChange)="onChange($event)" (blur)="onTouch()">
-    <mat-icon *ngIf="suffixIcon" (click)="suffixIconClick()" matSuffix>{{suffixIcon}}</mat-icon>
+    <mat-icon *ngIf="suffixIcon" (click)="suffixIconClicked($event)" matSuffix>{{suffixIcon}}</mat-icon>
   </div>
   <mat-hint *ngIf="hint">{{hint}}</mat-hint>
 

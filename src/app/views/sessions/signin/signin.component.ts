@@ -191,6 +191,10 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  disabledReason(reason: FailoverDisabledReason): FailoverDisabledReason {
+    return reason;
+  }
+
   loginToken(): void {
     let middleware_token;
     if ((window as any)['MIDDLEWARE_TOKEN']) {

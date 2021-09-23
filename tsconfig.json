@@ -21,6 +21,8 @@
   },
   "angularCompilerOptions": {
     "enableIvy": true,
-    "allowEmptyCodegenFiles": true
+    "allowEmptyCodegenFiles": true,
+    "strictInjectionParameters": true,
+    "fullTemplateTypeCheck": true
   }
 }

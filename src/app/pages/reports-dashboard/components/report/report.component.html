@@ -168,7 +168,7 @@
                 <ng-container *ngIf="data && data.aggregations">
                   <td *ngFor="let key of aggregationKeys" class="report-analytics">
                     <span>
-                      {{ data.aggregations[key][i] ? data.aggregations[key][i] : 'null' }}
+                      {{ data.aggregations[aggregationKey(key)][i] ? data.aggregations[aggregationKey(key)][i] : 'null' }}
                     </span>
                   </td>
                 </ng-container>

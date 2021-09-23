@@ -393,6 +393,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.controllerEvent$.next({ name: 'VisualizerReady', sender: this });
   }
 
+  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
+  themeKey(key: string): keyof Theme {
+    return key as keyof Theme;
+  }
+
   createEnclosure(profile: EnclosureMetadata = this.selectedEnclosure): void {
     if (this.currentView == 'details') {
       this.clearDisk();
