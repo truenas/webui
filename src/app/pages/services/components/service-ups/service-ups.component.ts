@@ -190,31 +190,6 @@ export class ServiceUPSComponent implements FormConfiguration {
         },
       ],
     },
-    {
-      name: helptext.ups_fieldset_email,
-      label: true,
-      width: '50%',
-      config: [
-        {
-          type: 'checkbox',
-          name: 'emailnotify',
-          placeholder: helptext.ups_emailnotify_placeholder,
-          tooltip: helptext.ups_emailnotify_tooltip,
-        },
-        {
-          type: 'chip',
-          name: 'toemail',
-          placeholder: helptext.ups_toemail_placeholder,
-          tooltip: helptext.ups_toemail_tooltip,
-        },
-        {
-          type: 'input',
-          name: 'subject',
-          placeholder: helptext.ups_subject_placeholder,
-          tooltip: helptext.ups_subject_tooltip,
-        },
-      ],
-    },
     { name: 'divier', divider: true },
     {
       name: helptext.ups_fieldset_other,
