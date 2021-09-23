@@ -1,16 +1,16 @@
 <div id="{{config.name}}" class="dynamic-field form-input" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
-	<mat-form-field class="full-width">
-		<input matInput [matDatepicker]="picker" 
+  <mat-form-field class="full-width">
+    <input matInput [matDatepicker]="picker" 
 			[placeholder]="config.placeholder"
 			[value]="config.value"
 			[formControlName]="config.name"
 			ix-auto
 			ix-auto-type="datepicker"
 			ix-auto-identifier="{{config.placeholder}}">
-		<!-- <button matSuffix [matDatepickerToggle]="picker"></button> -->
-		<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-		<mat-datepicker #picker></mat-datepicker>
-	</mat-form-field>
-	<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
-	<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+    <!-- <button matSuffix [matDatepickerToggle]="picker"></button> -->
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+  <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+  <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 </div>

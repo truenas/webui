@@ -82,59 +82,59 @@
         </div>
 
         <!-- STATUS OVERLAY -->
-          <div *ngIf="currentView == 'status' || exitingView == 'status'" class="status stage-left dom-overlay">
-            <div class="content">
-              <h2>Status</h2>
+        <div *ngIf="currentView == 'status' || exitingView == 'status'" class="status stage-left dom-overlay">
+          <div class="content">
+            <h2>Status</h2>
+          </div>
+        </div>
+        <div *ngIf="currentView == 'status' || exitingView == 'status'" class="status stage-right dom-overlay list">
+          <div class="content">
+            <div class="legend">
+              <div><div class="swatch" [style.background]="theme.green"></div>ONLINE</div>
+              <div><div class="swatch" [style.background]="theme.yellow"></div>OTHER</div>
+              <div><div class="swatch" [style.background]="theme.red"></div>FAULT</div>
+              <div><div class="swatch" style="background:#999999;"></div>AVAILABLE</div>
             </div>
           </div>
-          <div *ngIf="currentView == 'status' || exitingView == 'status'" class="status stage-right dom-overlay list">
-            <div class="content">
-              <div class="legend">
-                <div><div class="swatch" [style.background]="theme.green"></div>ONLINE</div>
-                <div><div class="swatch" [style.background]="theme.yellow"></div>OTHER</div>
-                <div><div class="swatch" [style.background]="theme.red"></div>FAULT</div>
-                <div><div class="swatch" style="background:#999999;"></div>AVAILABLE</div>
-              </div>
-            </div>
-          </div>
+        </div>
 
         <!-- DETAILS OVERLAY -->
-          <div *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-left dom-overlay">
-            <div class="content">
-              <h1 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h1>
-              <div class="title">
-                <span class="semibold">vdev: </span>
-                <span *ngIf="selectedVdev.type == 'DISK'"> NONE </span>
-                <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
-              </div>
-              <div *ngIf="selectedVdev.type !== 'None'" class="title">
-                <span class="semibold">Function:</span>
-                <span> {{selectedVdev.topology == 'None' ? 'UNKNOWN' : selectedVdev.topology.toUpperCase()}}</span>
-              </div>
-              <div class="title">
-                <span class="semibold">Slot: </span>
-                <span>{{selectedDisk.enclosure.slot}}</span>
-              </div>
+        <div *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-left dom-overlay">
+          <div class="content">
+            <h1 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h1>
+            <div class="title">
+              <span class="semibold">vdev: </span>
+              <span *ngIf="selectedVdev.type == 'DISK'"> NONE </span>
+              <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
+            </div>
+            <div *ngIf="selectedVdev.type !== 'None'" class="title">
+              <span class="semibold">Function:</span>
+              <span> {{selectedVdev.topology == 'None' ? 'UNKNOWN' : selectedVdev.topology.toUpperCase()}}</span>
+            </div>
+            <div class="title">
+              <span class="semibold">Slot: </span>
+              <span>{{selectedDisk.enclosure.slot}}</span>
             </div>
           </div>
+        </div>
 
-          <div #domLabels *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-right dom-overlay">
-            <div class="content" (mouseenter)="toggleHighlightMode('on')" (mouseleave)="toggleHighlightMode('off')">
+        <div #domLabels *ngIf="currentView == 'details' || exitingView == 'details'" class="details stage-right dom-overlay">
+          <div class="content" (mouseenter)="toggleHighlightMode('on')" (mouseleave)="toggleHighlightMode('off')">
 
-              <div *ngIf="selectedVdevDisks; else noVdevDisks;" class="legend">
-                <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.yellow : theme.cyan"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span>
-                  <span *ngIf="!selectedVdev.slots[disk]">({{ selectedVdev.diskEnclosures[disk] == system.rearIndex ? 'Rear' : selectedVdev.diskEnclosures[disk] }})</span>
-                </div>
+            <div *ngIf="selectedVdevDisks; else noVdevDisks;" class="legend">
+              <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.yellow : theme.cyan"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span>
+                <span *ngIf="!selectedVdev.slots[disk]">({{ selectedVdev.diskEnclosures[disk] == system.rearIndex ? 'Rear' : selectedVdev.diskEnclosures[disk] }})</span>
               </div>
-
-              <ng-template #noVdevDisks>
-                <div class="legend">
-                  <div class="vdev-disk "> No vdev info for disk.</div>
-                </div>
-              </ng-template>
-
             </div>
+
+            <ng-template #noVdevDisks>
+              <div class="legend">
+                <div class="vdev-disk "> No vdev info for disk.</div>
+              </div>
+            </ng-template>
+
           </div>
+        </div>
 
         <!-- CAPTION OVERLAY -->
         <div *ngIf="showCaption && chassis && !chassis.rear && !chassis.internal" class="caption dom-overlay">Choose a Disk</div>

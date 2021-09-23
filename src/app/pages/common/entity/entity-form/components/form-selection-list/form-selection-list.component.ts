@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatSelectionListChange } from '@angular/material/list';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSelectionListConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @Component({
@@ -10,7 +10,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   styleUrls: ['./form-selection-list.component.scss'],
 })
 export class FormSelectionListComponent implements Field {
-  config: FieldConfig;
+  config: FormSelectionListConfig;
   group: FormGroup;
   fieldShow: string;
 

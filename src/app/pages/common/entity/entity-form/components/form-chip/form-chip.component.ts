@@ -8,7 +8,7 @@ import { MatChipInputEvent } from '@angular/material/chips';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Option } from 'app/interfaces/option.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormChipConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
@@ -18,7 +18,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   styleUrls: ['../dynamic-field/dynamic-field.scss', './form-chip.component.scss'],
 })
 export class FormChipComponent implements Field, OnInit {
-  config: FieldConfig;
+  config: FormChipConfig;
   group: FormGroup;
   fieldShow: string;
   chipLists: any[];

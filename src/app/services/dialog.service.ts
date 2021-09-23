@@ -1,18 +1,18 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
-import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
+import { Option } from 'app/interfaces/option.interface';
+import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { ErrorDialog } from 'app/pages/common/error-dialog/error-dialog.component';
+import { ErrorDialogComponent } from 'app/pages/common/error-dialog/error-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/pages/common/general-dialog/general-dialog.component';
-import { InfoDialog } from 'app/pages/common/info-dialog/info-dialog.component';
-import { PasswordDialog } from 'app/pages/common/password-dialog/password-dialog.component';
+import { InfoDialogComponent } from 'app/pages/common/info-dialog/info-dialog.component';
+import { PasswordDialogComponent } from 'app/pages/common/password-dialog/password-dialog.component';
 import { SelectDialogComponent } from 'app/pages/common/select-dialog/select-dialog.component';
 import { T } from 'app/translate-marker';
 import { AppLoaderService } from './app-loader/app-loader.service';
@@ -32,28 +32,11 @@ export class DialogService {
   }
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>
-  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialog, unknown>
-  /**
-   * @deprecated Replace with newer syntax that uses options object.
-   */
-  confirm(title: string, message: string, hideCheckBox?: boolean, buttonMsg?: string, secondaryCheckBox?: boolean,
-    secondaryCheckBoxMsg?: string, method?: string, data?: any, tooltip?: any, hideCancel?: boolean, cancelMsg?: string,
-    disableClose?: boolean, textToCopy?: string, keyTextArea?: boolean): any
-  confirm(...args: any[]): any {
-    let options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox;
-    if (typeof args[0] === 'object') {
-      options = args[0];
-    } else {
-      options = _.zipObject(
-        [
-          'title', 'message', 'hideCheckBox', 'buttonMsg', 'secondaryCheckBox', 'secondaryCheckBoxMsg',
-          'method', 'data', 'tooltip', 'hideCancel', 'cancelMsg', 'disableClose', 'textToCopy', 'keyTextArea',
-        ],
-        args,
-      ) as ConfirmOptionsWithSecondaryCheckbox;
-    }
-
-    const dialogRef = this.dialog.open(ConfirmDialog, { disableClose: options.disableClose || false });
+  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialogComponent, unknown>
+  confirm(
+    options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
+  ): Observable<boolean> | MatDialogRef<ConfirmDialogComponent, unknown> {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, { disableClose: options.disableClose || false });
 
     dialogRef.componentInstance.title = options.title;
     dialogRef.componentInstance.message = options.message;
@@ -91,8 +74,8 @@ export class DialogService {
       dialogRef.componentInstance.secondaryCheckBoxMsg = options.secondaryCheckBoxMsg;
       dialogRef.componentInstance.data = options.data;
       dialogRef.componentInstance.method = options.method;
-      dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: any) => {
-        const data = (options as ConfirmOptionsWithSecondaryCheckbox).data;
+      dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: boolean) => {
+        const data = options.data;
         if (selection) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
             data[0].reboot = !data[0].reboot;
@@ -109,7 +92,7 @@ export class DialogService {
   }
 
   passwordConfirm(message: string, disableClose = true): Observable<boolean> {
-    const dialogRef = this.dialog.open(PasswordDialog, { disableClose });
+    const dialogRef = this.dialog.open(PasswordDialogComponent, { disableClose });
 
     dialogRef.componentInstance.message = message;
 
@@ -117,7 +100,7 @@ export class DialogService {
   }
 
   errorReport(title: string, message: string, backtrace = '', logs?: any): Observable<boolean> {
-    const dialogRef = this.dialog.open(ErrorDialog);
+    const dialogRef = this.dialog.open(ErrorDialogComponent);
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.message = message;
@@ -130,7 +113,7 @@ export class DialogService {
   }
 
   info(title: string, info: string, width = '500px', icon = 'report_problem', is_html = false): Observable<boolean> {
-    const dialogRef = this.dialog.open(InfoDialog, { width });
+    const dialogRef = this.dialog.open(InfoDialogComponent, { width });
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
@@ -142,7 +125,7 @@ export class DialogService {
 
   select(
     title: string,
-    options: any[],
+    options: Option[],
     optionPlaceHolder: string,
     method: ApiMethod,
     params?: any,
@@ -180,14 +163,20 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  dialogFormWide(conf: any): Observable<boolean> {
+  dialogFormWide(conf: DialogFormConfiguration): Observable<boolean> {
     const dialogRef = this.dialog.open(EntityDialogComponent, { width: '550px', disableClose: true });
     dialogRef.componentInstance.conf = conf;
 
     return dialogRef.afterClosed();
   }
 
-  doubleConfirm(title: string, message: string, name: string, confirmBox?: boolean, buttonMsg?: string): any {
+  doubleConfirm(
+    title: string,
+    message: string,
+    name: string,
+    confirmBox?: boolean,
+    buttonMsg?: string,
+  ): Observable<boolean> {
     const conf = {
       title,
       message,

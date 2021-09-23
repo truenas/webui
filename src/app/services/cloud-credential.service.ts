@@ -25,7 +25,7 @@ export class CloudCredentialService {
     return this.ws.call('cloudsync.credentials.query').toPromise();
   }
 
-  getByte(data: string): any {
+  getByte(data: string): number {
     // TODO: Here and in other places extract to proper type
     let unit: keyof CloudCredentialService['byteMap'] = 'K'; // default unit
     let index = -1;

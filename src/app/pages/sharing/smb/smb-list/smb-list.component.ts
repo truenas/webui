@@ -10,9 +10,7 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import {
-  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
-} from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
@@ -45,7 +43,7 @@ export class SMBListComponent implements EntityTableConfig {
 
   columns = [
     { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
-    { name: helptext_sharing_smb.column_path, prop: 'path' },
+    { name: helptext_sharing_smb.column_path, prop: 'path', showLockedStatus: true },
     { name: helptext_sharing_smb.column_comment, prop: 'comment' },
     { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
   ];
@@ -72,8 +70,6 @@ export class SMBListComponent implements EntityTableConfig {
     private dialog: DialogService,
     private translate: TranslateService,
     private modalService: ModalService,
-    private loader: AppLoaderService,
-    private sysGeneralService: SystemGeneralService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -85,7 +81,7 @@ export class SMBListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    this.modalService.open('slide-in-form', new SMBFormComponent(this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService), id);
+    this.modalService.openInSlideIn(SMBFormComponent, id);
   }
 
   doEdit(id: number): void {
@@ -177,11 +173,8 @@ export class SMBListComponent implements EntityTableConfig {
 
   onCheckboxChange(row: SmbShare): void {
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
-      (res: any) => {
+      (res) => {
         row.enabled = res.enabled;
-        if (!res) {
-          row.enabled = !row.enabled;
-        }
       },
       (err) => {
         row.enabled = !row.enabled;

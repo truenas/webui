@@ -33,12 +33,12 @@ export interface Certificate {
   lifetime: number;
   name: string;
   organization: string;
-  organizational_unit: any;
+  organizational_unit: string;
   parsed: boolean;
   privatekey: string;
   privatekey_path: string;
   revoked: boolean;
-  revoked_date: any;
+  revoked_date: string;
   root_path: string;
   san: string[];
   serial: number;

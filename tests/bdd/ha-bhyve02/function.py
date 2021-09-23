@@ -109,7 +109,7 @@ def ssh_cmd(command, username, password, host):
 
 def start_ssh_agent():
     process = run(['ssh-agent', '-s'], stdout=PIPE, universal_newlines=True)
-    torecompil = 'SSH_AUTH_SOCK=(?P<socket>[^;]+).*SSH_AGENT_PID=(?P<pid>\d+)'
+    torecompil = r'SSH_AUTH_SOCK=(?P<socket>[^;]+).*SSH_AGENT_PID=(?P<pid>\d+)'
     OUTPUT_PATTERN = re.compile(torecompil, re.MULTILINE | re.DOTALL)
     match = OUTPUT_PATTERN.search(process.stdout)
     if match is None:

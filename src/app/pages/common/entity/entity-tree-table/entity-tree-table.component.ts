@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'primeng/api';
 import { CoreService } from 'app/core/services/core-service/core.service';
-import { CoreEvent } from 'app/interfaces/events';
+import { TreeTableGlobalFilterEvent } from 'app/interfaces/events/tree-table-global-filter-event.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { EntityUtils } from '../utils';
 import { EntityTreeTable } from './entity-tree-table.model';
@@ -49,8 +49,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
 
   // Table Props
   displayedColumns: string[];
-  treeDataSource: any;
-  tableDataSource: any[];
+  treeDataSource: TreeNode[];
+  tableDataSource: TreeNode[];
 
   constructor(private ws: WebSocketService,
     private treeTableService: EntityTreeTableService,
@@ -120,7 +120,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.core.register({ observerClass: this, eventName: 'TreeTableGlobalFilter' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'TreeTableGlobalFilter' }).pipe(untilDestroyed(this)).subscribe((evt: TreeTableGlobalFilterEvent) => {
       const value = evt.data.value ? evt.data.value : '';
       this.filterNodes(evt.data.column, value);
     });
@@ -147,9 +147,9 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     return null;
   }
 
-  expandNode(rootNode: any): void {
+  expandNode(rootNode: TreeNode): void {
     const value = rootNode.expanded ? rootNode.expanded = false : true;
-    this.treeDataSource = this.treeTableService.editNode('expanded', value, rootNode.indexPath, this.treeDataSource);
+    this.treeDataSource = this.treeTableService.editNode('expanded', value, (rootNode as any).indexPath, this.treeDataSource);
 
     if (this.filter.value.length > 0) {
       this.tableDataSource = this.treeTableService.filteredTable(
@@ -162,7 +162,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     this.table.renderRows();
   }
 
-  filterNodes(key: string, value: any): void {
+  filterNodes(key: string, value: string): void {
     if (value.length > 0) {
       this.tableDataSource = this.treeTableService.filteredTable(key, value, this.treeDataSource);
     } else {

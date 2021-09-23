@@ -20,17 +20,6 @@ table {
   width: 100%;
 }
 
-/*.threedot-column {
-  max-width: 0px !important;
-  padding-right: 10px !important;
-}*/
-
-//.multiselect-column,
-// .threedot-column,
-// .expansion-chevrons-column {
-//max-width: 0px !important;
-// }
-
 th.threedot-column,
 td.threedot-column,
 th.expansion-chevrons-column,
@@ -164,13 +153,6 @@ tr.details-row:hover {
   padding-left: 32px;
 }
 
-//#filter {
-//    position: absolute;
-//    right: 150px;
-//    top: 9px;
-//    z-index: 10;
-//}
-
 #action-button-wrapper {
   height: 36px;
 }
@@ -179,11 +161,6 @@ tr.details-row:hover {
   color: var(--fg2);
   font-weight: 500;
   margin: 0 24px;
-  //    position: absolute;
-  //    font-size: .8rem;
-  //    top: 75px;
-  //    right: 10px;
-  //    z-index: 10;
 }
 
 .legacy-warning-link {
@@ -329,8 +306,36 @@ div#cardHeaderContainer {
   border-right: 1px solid var(--lines);
 }
 
-.text-overflow-ellipsis {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+button div.label-warning-icon {
+  display: inline;
+}
+
+button div.label-warning-icon .mat-icon {
+  font-size: 14px;
+  margin: 0;
+}
+
+.path-locked-status {
+  align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  min-width: 0;
+
+  mat-icon {
+    cursor: help;
+    flex-shrink: 0;
+    font-size: 14px;
+    height: 14px;
+    top: auto;
+    vertical-align: middle;
+    width: 14px;
+
+    &.prepend {
+      margin-right: 4px;
+    }
+
+    &.append {
+      margin-left: 4px;
+    }
+  }
 }

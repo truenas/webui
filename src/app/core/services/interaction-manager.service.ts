@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import {
-  multicast,
-} from 'popmotion';
 import { CoreEvent } from 'app/interfaces/events';
 import { DisplayObject } from '../classes/display-object';
 import { LayoutObject } from '../classes/layout-object';
@@ -34,7 +31,7 @@ export class InteractionManagerService {
     messageBus.register({ observerClass: this, eventName: 'RegisterLayout' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       // Expects LayoutObject and array of CSS selectors
       // let collection: DisplayObject[] = [];
-      const collection: any = {};
+      const collection: { [id: string]: DisplayObject } = {};
       evt.data.selectors.forEach((item: any) => {
         const displayObject = this.registerElement(item, evt.data.layout);
         // collection.push(displayObject);
@@ -109,15 +106,14 @@ export class InteractionManagerService {
 
   registerElement(config: DisplayObjectConfig, layout?: LayoutObject): DisplayObject {
     const selector = config.id;
-    const observable = multicast();
     const el = document.querySelector(selector);
 
     let tracker: DisplayObject;
     if (config.moveHandle) {
       const moveHandle = document.querySelector(config.moveHandle);
-      tracker = new DisplayObject(el, observable, this.messageBus, moveHandle);
+      tracker = new DisplayObject(el, this.messageBus, moveHandle);
     } else {
-      tracker = new DisplayObject(el, observable, this.messageBus);
+      tracker = new DisplayObject(el, this.messageBus);
     }
 
     tracker.anchored = config.anchored ? config.anchored : false;

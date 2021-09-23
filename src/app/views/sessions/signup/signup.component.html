@@ -21,18 +21,18 @@
                 pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
                 value="">
             </mat-form-field>
-            <small 
-              *ngIf="email['errors'] && (email.dirty || email.touched) && (email['errors'].required)" 
+            <small
+              *ngIf="email['errors'] && (email.dirty || email.touched) && (email['errors'].required)"
               class="form-error-msg"> Email is required </small>
 
-              <small 
-                *ngIf="email['errors'] && (email.dirty || email.touched) && (email['errors'].pattern)" 
+            <small
+                *ngIf="email['errors'] && (email.dirty || email.touched) && (email['errors'].pattern)"
                 class="form-error-msg"> Invaild email address </small>
           </div>
 
           <div class="">
             <mat-form-field class="full-width">
-              <input 
+              <input
                 type="password"
                 name="password"
                 required
@@ -41,14 +41,14 @@
                 reverse="true"
                 [(ngModel)]="signupData.password"
                 #password="ngModel"
-                placeholder="Password" 
+                placeholder="Password"
                 value="">
             </mat-form-field>
-            <small 
-              *ngIf="password['errors'] && (password.dirty || password.touched) && (password['errors'].required)" 
+            <small
+              *ngIf="password['errors'] && (password.dirty || password.touched) && (password['errors'].required)"
               class="form-error-msg"> Password is required </small>
           </div>
-          
+
           <div class="">
             <mat-form-field class="full-width">
               <input
@@ -62,22 +62,23 @@
                 placeholder="Confirm Password"
                 value="">
             </mat-form-field>
-            <small 
-              *ngIf="confirmPassword['errors'] && (confirmPassword.dirty || confirmPassword.touched)" 
+            <small
+              *ngIf="confirmPassword['errors'] && (confirmPassword.dirty || confirmPassword.touched)"
               class="form-error-msg"> Password mismatch </small>
           </div>
-          
+
           <div class="pb-1">
             <mat-checkbox
+              color="primary"
               name="isAgreed"
               required
               [(ngModel)]="signupData.isAgreed"
-              #isAgreed="ngModel" 
+              #isAgreed="ngModel"
               class="pb-1">I have read and agree to the terms of service.</mat-checkbox>
 
-              <small 
-                *ngIf="!isAgreed.value && (isAgreed.dirty || isAgreed.touched)" 
-                class="form-error-msg"> You must agree to the terms and conditions </small>
+            <small
+              *ngIf="!isAgreed.value && (isAgreed.dirty || isAgreed.touched)"
+              class="form-error-msg"> You must agree to the terms and conditions </small>
           </div>
 
           <button mat-button class="mat-primary full-width mb-1" [disabled]="signupForm.invalid || !isAgreed.value">Sign up</button>

@@ -1,14 +1,18 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {
   OnInit, Component, EventEmitter, Output, Inject,
 } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA,
+} from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { filter, map } from 'rxjs/operators';
+import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
-import { ApiEvent } from 'app/interfaces/api-event.interface';
+import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
+import { EntityJobConfig } from 'app/pages/common/entity/entity-job/entity-job-config.interface';
 import { WebSocketService } from 'app/services/';
 
 @UntilDestroy()
@@ -28,11 +32,13 @@ export class EntityJobComponent implements OnInit {
   showCloseButton = true;
   showAbortButton = false; // enable to abort job
   jobId: number;
-  progressNumberType: any;
+  progressNumberType: string;
   hideProgressValue = false;
   altMessage: string;
   showRealtimeLogs = false;
-  EntityJobState = JobState;
+  autoCloseOnSuccess = false;
+  openJobsManagerOnClose = false;
+  readonly JobState = JobState;
 
   private realtimeLogsSubscribed = false;
   realtimeLogs = '';
@@ -42,12 +48,13 @@ export class EntityJobComponent implements OnInit {
   @Output() success = new EventEmitter<Job>();
   @Output() aborted = new EventEmitter<Job>();
   @Output() failure = new EventEmitter<Job>();
-  @Output() prefailure = new EventEmitter();
+  @Output() prefailure = new EventEmitter<HttpErrorResponse>();
   constructor(
-    public dialogRef: MatDialogRef <EntityJobComponent>,
+    public dialogRef: MatDialogRef<EntityJobComponent, MatDialogConfig>,
     private ws: WebSocketService,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: EntityJobConfig,
     protected http: HttpClient,
+    private matDialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -58,7 +65,7 @@ export class EntityJobComponent implements OnInit {
     if (this.dialogRef.disableClose) {
       this.showCloseButton = false;
     }
-    if (this.data.CloseOnClickOutside) {
+    if (this.data.closeOnClickOutside) {
       this.showCloseButton = true;
       this.dialogRef.disableClose = true;
     }
@@ -82,9 +89,25 @@ export class EntityJobComponent implements OnInit {
 
       this.description = '<b>Error:</b> ' + job.error;
     });
+
+    if (this.openJobsManagerOnClose) {
+      this.dialogRef.beforeClosed()
+        .pipe(untilDestroyed(this))
+        .subscribe(() => {
+          this.matDialog.open(JobsManagerComponent, {
+            width: '400px',
+            hasBackdrop: true,
+            panelClass: 'topbar-panel',
+            position: {
+              top: '48px',
+              right: '16px',
+            },
+          });
+        });
+    }
   }
 
-  setCall(method: ApiMethod, args?: any[]): void {
+  setCall<K extends ApiMethod>(method: K, args?: ApiDirectory[K]['params']): void {
     this.method = method;
     if (args) {
       this.args = args;
@@ -119,11 +142,12 @@ export class EntityJobComponent implements OnInit {
           this.jobUpdate(jobs[0]);
         }
       });
-    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      if (event.id === this.jobId) {
-        // TODO: Likely broken and has to be event.fields.
-        this.jobUpdate(event as any);
-      }
+    this.ws.subscribe('core.get_jobs').pipe(
+      filter((event) => event.id === this.jobId),
+      map((event) => event.fields),
+      untilDestroyed(this),
+    ).subscribe((job) => {
+      this.jobUpdate(job);
     });
   }
 
@@ -133,10 +157,15 @@ export class EntityJobComponent implements OnInit {
     if (job.progress) {
       this.progress.emit(job.progress);
     }
-    if (job.state === JobState.Success) {
-      this.success.emit(this.job);
-    } else if (job.state === JobState.Failed) {
-      this.failure.emit(this.job);
+    switch (job.state) {
+      case JobState.Success:
+        this.success.emit(this.job);
+        break;
+      case JobState.Failed:
+        this.failure.emit(this.job);
+        break;
+      default:
+        break;
     }
   }
 
@@ -172,21 +201,17 @@ export class EntityJobComponent implements OnInit {
       );
   }
 
-  wspost(path: string, options: any): void {
-    this.http.post(path, options).pipe(untilDestroyed(this)).subscribe(
-      (res: any) => {
-        this.job = res;
-        if (this.job && (this.job as any).job_id) {
-          this.jobId = (this.job as any).job_id;
-        }
-        this.wsshow();
-      },
-      (err) => {
-        this.prefailure.emit(err);
-      },
-      () => {
-      },
-    );
+  wspost(path: string, options: unknown): void {
+    this.http.post(path, options).pipe(untilDestroyed(this)).subscribe((res: Job) => {
+      this.job = res;
+      if (this.job && (this.job as any).job_id) {
+        this.jobId = (this.job as any).job_id;
+      }
+      this.wsshow();
+    },
+    (err: HttpErrorResponse) => {
+      this.prefailure.emit(err);
+    });
   }
 
   wsshow(): void {
@@ -196,34 +221,35 @@ export class EntityJobComponent implements OnInit {
           this.wsjobUpdate(jobs[0]);
         }
       });
-    this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-      if (event.id === this.jobId) {
-        this.wsjobUpdate(event);
-      }
-    });
+    this.ws.subscribe('core.get_jobs')
+      .pipe(
+        filter((event) => event.id === this.jobId),
+        map((event) => event.fields),
+        untilDestroyed(this),
+      )
+      .subscribe((job) => {
+        this.wsjobUpdate(job);
+      });
   }
 
-  wsjobUpdate(job: Job | ApiEvent<Job>): void {
-    this.job = job as Job;
+  wsjobUpdate(job: Job): void {
+    this.job = job;
     this.showAbortButton = this.job.abortable;
-    if ('fields' in job) {
-      this.job.state = job.fields.state;
-    }
     if ('progress' in job) {
       this.progress.emit(job.progress);
     }
-    if ('fields' in job) {
-      if (job.fields.state === JobState.Running) {
-        this.progress.emit(job.fields.progress);
-      } else if (job.fields.state === JobState.Success) {
-        this.success.emit(job.fields);
-      } else if ((job.fields.state === JobState.Failed) || job.fields.error) {
-        this.failure.emit(job.fields);
-      }
-    } else if (job.state === JobState.Success) {
-      this.success.emit(this.job);
-    } else if (job.state === JobState.Failed) {
-      this.failure.emit(this.job);
+    switch (job.state) {
+      case JobState.Success:
+        this.success.emit(this.job);
+        if (this.autoCloseOnSuccess) {
+          this.dialogRef.close();
+        }
+        break;
+      case JobState.Failed:
+        this.failure.emit(this.job);
+        break;
+      default:
+        break;
     }
   }
 

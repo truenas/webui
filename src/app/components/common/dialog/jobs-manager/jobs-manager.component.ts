@@ -4,6 +4,7 @@ import {
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
@@ -43,9 +44,7 @@ export class JobsManagerComponent implements OnInit {
     message: T('Click the button below to see all jobs.'),
     button: {
       label: T('History'),
-      action: () => {
-        this.router.navigate(['/jobs']);
-      },
+      action: this.goToJobs.bind(this),
     },
   };
 
@@ -53,7 +52,10 @@ export class JobsManagerComponent implements OnInit {
     private router: Router,
     private store: JobsManagerStore,
     private cdr: ChangeDetectorRef,
-  ) {}
+    private dialogRef: MatDialogRef<JobsManagerComponent>,
+  ) {
+    this.isLoading = true;
+  }
 
   ngOnInit(): void {
     this.store.state$.pipe(untilDestroyed(this)).subscribe((state) => {
@@ -65,5 +67,14 @@ export class JobsManagerComponent implements OnInit {
 
   onAbort(job: Job): void {
     this.store.remove(job);
+  }
+
+  onChildrenDialogOpened(): void {
+    this.dialogRef.close();
+  }
+
+  goToJobs(): void {
+    this.dialogRef.close();
+    this.router.navigate(['/jobs']);
   }
 }

@@ -6,12 +6,16 @@ import {
   FormControl,
   FormGroup,
 } from '@angular/forms';
+import { TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';
-import { FieldConfig, UnitType, InputUnitConfig } from '../models/field-config.interface';
+import {
+  FieldConfig, UnitType, InputUnitConfig, FormArrayConfig, FormListConfig, FormDictConfig,
+} from '../models/field-config.interface';
 
 @Injectable()
 export class EntityFormService {
@@ -55,20 +59,23 @@ export class EntityFormService {
 
   createFormControl(fieldConfig: FieldConfig): AbstractControl {
     let formControl: AbstractControl;
+    const arrayConfig: FormArrayConfig = fieldConfig as FormArrayConfig;
+    const listConfig: FormListConfig = fieldConfig as FormListConfig;
+    const dictConfig: FormDictConfig = fieldConfig as FormDictConfig;
 
     if (fieldConfig) {
-      if (fieldConfig.formarray) {
-        if (fieldConfig.initialCount == null) {
-          fieldConfig.initialCount = 1;
+      if (arrayConfig.formarray) {
+        if (arrayConfig.initialCount == null) {
+          arrayConfig.initialCount = 1;
         }
-        formControl = this.createFormArray(fieldConfig.formarray, fieldConfig.initialCount);
-      } else if (fieldConfig.listFields) {
+        formControl = this.createFormArray(arrayConfig.formarray, arrayConfig.initialCount);
+      } else if (listConfig.listFields) {
         formControl = this.formBuilder.array([]);
-        fieldConfig.listFields.forEach((listField) => {
+        listConfig.listFields.forEach((listField) => {
           (formControl as FormArray).push(this.createFormGroup(listField));
         });
-      } else if (fieldConfig.subFields) {
-        formControl = this.createFormGroup(fieldConfig.subFields);
+      } else if (dictConfig.subFields) {
+        formControl = this.createFormGroup(dictConfig.subFields);
       } else if (fieldConfig.type != 'label') {
         formControl = new FormControl(
           { value: fieldConfig.value, disabled: fieldConfig.disabled },
@@ -100,12 +107,12 @@ export class EntityFormService {
   }
 
   getFilesystemListdirChildren(
-    node: any,
+    node: TreeNode,
     explorerType?: string,
     hideDirs?: string,
     showHiddenFiles = false,
-  ): Promise<any[]> {
-    const children: any[] = [];
+  ): Promise<ListdirChild[]> {
+    const children: ListdirChild[] = [];
     let typeFilter: any;
     explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', FileType.Directory]] : typeFilter = [];
 
@@ -114,7 +121,7 @@ export class EntityFormService {
       res = _.sortBy(res, (o) => o.name.toLowerCase());
 
       for (let i = 0; i < res.length; i++) {
-        const child: any = {};
+        const child = {} as ListdirChild;
         if (!showHiddenFiles) {
           if (res[i].hasOwnProperty('name') && !res[i].name.startsWith('.')) {
             if (res[i].type === FileType.Symlink) {
@@ -162,17 +169,17 @@ export class EntityFormService {
     }); */
   }
 
-  getPoolDatasets(param: [DatasetType[]?] = []): Promise<any[]> {
-    const nodes: any[] = [];
+  getPoolDatasets(param: [DatasetType[]?] = []): Promise<ListdirChild[]> {
+    const nodes: ListdirChild[] = [];
     return this.ws.call('pool.filesystem_choices', param).toPromise().then((res) => {
       for (let i = 0; i < res.length; i++) {
         const pathArr = res[i].split('/');
         if (pathArr.length === 1) {
-          const node = {
+          const node: ListdirChild = {
             name: res[i],
             subTitle: pathArr[0],
             hasChildren: false,
-            children: [] as any,
+            children: [],
           };
           nodes.push(node);
         } else {
@@ -181,11 +188,11 @@ export class EntityFormService {
           while (_.find(parent.children, { subTitle: pathArr[j] })) {
             parent = _.find(parent.children, { subTitle: pathArr[j++] });
           }
-          const node = {
+          const node: ListdirChild = {
             name: res[i],
             subTitle: pathArr[j],
             hasChildren: false,
-            children: [] as any,
+            children: [],
           };
           parent.children.push(node);
           parent.hasChildren = true;
@@ -202,7 +209,7 @@ export class EntityFormService {
     }
   }
 
-  phraseInputData(value: any, config: InputUnitConfig): any {
+  phraseInputData(value: any, config: InputUnitConfig): string | number {
     if (!value) {
       return value;
     }

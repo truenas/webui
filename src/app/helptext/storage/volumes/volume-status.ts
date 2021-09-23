@@ -55,7 +55,6 @@ export default {
     saveButtonText: T('Replace Disk'),
     title: T('Replacing Disk'),
     description: T('Replacing disk...'),
-    info_dialog_content: T('Successfully replaced disk '),
     err_title: T('Error Replacing Disk'),
     err_msg: T('Could not replace disk.'),
   },

@@ -10,7 +10,9 @@ import {
   timeline,
   ColdSubscription,
 } from 'popmotion';
-import { CoreEvent } from 'app/interfaces/events';
+import { ValueReaction } from 'popmotion/lib/reactions/value';
+import { AnimateEvent } from 'app/interfaces/events/animate-event.interface';
+import { ScrollToEvent } from 'app/interfaces/events/scroll-to-event.interface';
 import { Timeout } from 'app/interfaces/timeout.interface';
 import { DisplayObject } from '../classes/display-object';
 import { CoreService } from './core-service/core.service';
@@ -34,11 +36,11 @@ export class AnimationService {
   private activeAnimations: { [targetId: string]: { animation: Timeout; originalState: any } } = {};
 
   constructor(private core: CoreService) {
-    this.core.register({ observerClass: this, eventName: 'ScrollTo' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ScrollTo' }).pipe(untilDestroyed(this)).subscribe((evt: ScrollToEvent) => {
       this.scrollTo(evt.data);
     });
 
-    core.register({ observerClass: this, eventName: 'Animate' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'Animate' }).pipe(untilDestroyed(this)).subscribe((evt: AnimateEvent) => {
       const config: AnimationConfig = evt.data;
       switch (config.animation) {
         case 'Flip':
@@ -248,7 +250,7 @@ export class AnimationService {
       }),
     );
 
-    const radiation = (start: any, elementBorder: any): void => {
+    const radiation = (start: any, elementBorder: ValueReaction): void => {
       keyframes({
         values: [
           { borderWidth: 0, borderColor: 'rgb(204, 0, 0, 1)' },

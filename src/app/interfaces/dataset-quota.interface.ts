@@ -13,6 +13,12 @@ export interface DatasetQuota {
   used_percent: number;
 }
 
+export interface SetDatasetQuota {
+  quota_type: DatasetQuotaType;
+  id: string;
+  quota_value: number;
+}
+
 export type DatasetQuotaQueryParams = [
   mountpoint: string,
   quotaType: DatasetQuotaType,

@@ -1,5 +1,6 @@
 import 'jest-preset-angular/setup-jest';
 import { APP_BASE_HREF } from '@angular/common';
+import { MATERIAL_SANITY_CHECKS } from '@angular/material/core';
 import { RouterModule } from '@angular/router';
 import { defineGlobalsInjections } from '@ngneat/spectator';
 import {
@@ -40,6 +41,10 @@ defineGlobalsInjections({
     {
       provide: APP_BASE_HREF,
       useValue: '',
+    },
+    {
+      provide: MATERIAL_SANITY_CHECKS,
+      useValue: false,
     },
   ],
 });

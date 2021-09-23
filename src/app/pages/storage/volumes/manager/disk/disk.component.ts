@@ -5,15 +5,7 @@ import * as filesize from 'filesize';
 
 @Component({
   selector: 'app-disk',
-  template: `
-  <span>
-  <i class="material-icons">local_laundry_service
-  </i>
-  <br>
-  {{ data.devname }} ({{ capacity }})
-  <br>
-  </span>
-  `,
+  templateUrl: './disk.component.html',
   styles: [
     'span { float: left; display:inline-block; margin:.05em;} .fa-25 { font-size:2em; color:#1384c0; text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4); }',
   ],

@@ -138,4 +138,3 @@ def verify_that_you_can_ssh_with_the_sshkey(driver, nas_ip):
     assert results['result'], results['output']
     assert 'ssh' in results['output'], results['output']
 
-

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild,
+  AfterViewInit, Component, OnInit, ViewChild,
 } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -14,28 +14,33 @@ import { JobState } from 'app/enums/job-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { JobsListStore } from 'app/pages/jobs/jobs-list/jobs-list.store';
 import { DialogService } from 'app/services';
 import { T } from 'app/translate-marker';
+import { JobTab } from './jobs-list.store';
 
 @UntilDestroy()
 @Component({
   templateUrl: './jobs-list.component.html',
   styleUrls: ['./jobs-list.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [JobsListStore],
 })
-export class JobsListComponent implements OnInit {
+export class JobsListComponent implements OnInit, AfterViewInit {
   paginationPageIndex = 0;
   paginationPageSize = 10;
   paginationPageSizeOptions: number[] = [10, 50, 100];
   paginationShowFirstLastButtons = true;
   queryCall: 'core.get_jobs' = 'core.get_jobs';
-  queryCallOption: QueryParams<Job> = [[], { order_by: ['-id'] }];
+  queryCallOption: QueryParams<Job> = [[], { limit: this.paginationPageSize, order_by: ['-id'] }];
   @ViewChild('taskTable', { static: false }) taskTable: MatTable<Job[]>;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatPaginator) set matPaginator(mp: MatPaginator) {
+    this.paginator = mp;
+    this.dataSource.paginator = this.paginator;
+  }
   dataSource: MatTableDataSource<Job> = new MatTableDataSource<Job>([]);
   displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs_excerpt'];
   viewingLogsForJob: Job;
@@ -43,25 +48,36 @@ export class JobsListComponent implements OnInit {
   toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
   filterString = '';
-  selectedIndex = 0;
+  selectedIndex: JobTab = 0;
+  emptyConfig: EmptyConfig = {
+    type: EmptyType.NoPageData,
+    large: true,
+    title: T('No jobs are available.'),
+    message: T('Please be patient...'),
+  };
+  loadingConfig: EmptyConfig = {
+    type: EmptyType.Loading,
+    large: false,
+    title: T('Loading...'),
+  };
   readonly JobState = JobState;
+  private paginator: MatPaginator;
 
   constructor(
     private core: CoreService,
     private translate: TranslateService,
     private store: JobsListStore,
     private dialogService: DialogService,
-    private cdr: ChangeDetectorRef,
   ) {}
 
   onAborted(job: Job): void {
     this.dialogService
       .confirm({
-        title: this.translate.instant(T('Abort the task')),
-        message: `<pre>${job.method}</pre>`,
+        title: this.translate.instant('Abort'),
+        message: this.translate.instant('Are you sure you want to abort the <b>{task}</b> task?', { task: job.method }),
         hideCheckBox: true,
-        buttonMsg: this.translate.instant(T('Abort')),
-        cancelMsg: this.translate.instant(T('Close')),
+        buttonMsg: this.translate.instant('Abort'),
+        cancelMsg: this.translate.instant('Cancel'),
         disableClose: true,
       })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -78,15 +94,12 @@ export class JobsListComponent implements OnInit {
       this.isLoading = state.isLoading;
       this.dataSource.sort = this.sort;
       this.dataSource.paginator = this.paginator;
-      this.cdr.markForCheck();
     });
+  }
 
-    this.store
-      .getUpdates()
-      .pipe(untilDestroyed(this))
-      .subscribe((job) => {
-        this.handleUpdate(job);
-      });
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
   setupToolbar(): void {
@@ -120,51 +133,6 @@ export class JobsListComponent implements OnInit {
     this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
 
-  handleUpdate(job: Job): void {
-    if (this.selectedIndex === 2 && job.state === JobState.Failed) {
-      this.store.patchState((state) => {
-        return {
-          ...state,
-          jobs: [job, ...state.jobs],
-        };
-      });
-    }
-
-    if (this.selectedIndex === 1) {
-      this.store.patchState((state) => {
-        let modifiedJobs = [...state.jobs];
-        const jobIndex = modifiedJobs.findIndex((item) => item.id === job.id);
-        if (jobIndex === -1) {
-          modifiedJobs = [job, ...state.jobs];
-        } else {
-          modifiedJobs[jobIndex] = job;
-        }
-
-        return {
-          ...state,
-          jobs: modifiedJobs.filter((item) => item.state === JobState.Running),
-        };
-      });
-    }
-
-    if (this.selectedIndex === 0) {
-      this.store.patchState((state) => {
-        let modifiedJobs = [...state.jobs];
-        const jobIndex = state.jobs.findIndex((item) => item.id === job.id);
-        if (jobIndex === -1) {
-          modifiedJobs = [job, ...state.jobs];
-        } else {
-          modifiedJobs[jobIndex] = job;
-        }
-
-        return {
-          ...state,
-          jobs: modifiedJobs,
-        };
-      });
-    }
-  }
-
   viewLogs(job: Job): void {
     this.viewingLogsForJob = job;
   }
@@ -175,16 +143,19 @@ export class JobsListComponent implements OnInit {
 
   onTabChange(tab: MatTabChangeEvent): void {
     this.selectedIndex = tab.index;
-    switch (tab.index) {
-      case 2:
+    switch (this.selectedIndex) {
+      case JobTab.Failed:
         this.store.selectFailedJobs();
+        this.onLogsSidebarClosed();
         break;
-      case 1:
+      case JobTab.Active:
         this.store.selectRunningJobs();
+        this.onLogsSidebarClosed();
         break;
-      case 0:
+      case JobTab.All:
       default:
         this.store.selectAllJobs();
+        this.onLogsSidebarClosed();
         break;
     }
   }

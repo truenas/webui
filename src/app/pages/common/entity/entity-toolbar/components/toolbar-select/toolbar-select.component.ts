@@ -3,31 +3,17 @@ import { MatSelectChange } from '@angular/material/select/select';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { ControlConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.interface';
 
 @Component({
   selector: 'toolbar-select',
   styleUrls: ['toolbar-select.component.scss'],
-  template: `
-    <div class="form-element dynamic-field form-select">
-      <mat-form-field>
-        <mat-select [(ngModel)]="config.selectedValue" (selectionChange)="onChange($event)">
-          <div>
-            <mat-selection-list>
-              <ng-container *ngFor="let option of config.options; let i=index">
-                <mat-option [value]="option.value">
-                  {{ option.label | translate }}
-                </mat-option>
-              </ng-container>
-            </mat-selection-list>
-          </div>
-        </mat-select>
-      </mat-form-field>
-    </div>
-  `,
+  templateUrl: './toolbar-select.component.html',
 })
 export class ToolbarSelectComponent extends IxAbstractObject {
-  @Input() config?: any;
-  @Input() controller: Subject<any>;
+  @Input() config?: ControlConfig;
+  @Input() controller: Subject<Control>;
   selectedValue: string;
 
   constructor(public translate: TranslateService) {

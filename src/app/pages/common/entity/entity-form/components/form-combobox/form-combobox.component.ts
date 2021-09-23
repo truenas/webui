@@ -8,7 +8,7 @@ import { fromEvent, Subject } from 'rxjs';
 import {
   map, takeUntil, debounceTime, distinctUntilChanged,
 } from 'rxjs/operators';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
@@ -18,7 +18,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   templateUrl: './form-combobox.component.html',
 })
 export class FormComboboxComponent implements Field {
-  config: FieldConfig;
+  config: FormComboboxConfig;
   group: FormGroup;
   fieldShow: string;
   searchText = '';
@@ -44,11 +44,11 @@ export class FormComboboxComponent implements Field {
     this.searchTextChanged$.next(query);
   }
 
-  onChangeOption(value: any): void {
+  onChangeOption(value: string | number): void {
     this.group.controls[this.config.name].setValue(value);
   }
 
-  updateSearchOptions(value: any): void {
+  updateSearchOptions(value: string): void {
     if (this.config.updater && this.config.parent) {
       if (this.config.updateLocal) {
         this.config.updater(value, this.config.parent, this.config);

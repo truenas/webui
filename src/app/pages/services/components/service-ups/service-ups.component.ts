@@ -6,7 +6,7 @@ import helptext from 'app/helptext/services/components/service-ups';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { WebSocketService } from 'app/services';
@@ -17,10 +17,10 @@ import { WebSocketService } from 'app/services';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ServiceUPSComponent implements FormConfiguration {
-  protected ups_driver: FieldConfig;
+  protected ups_driver: FormComboboxConfig;
   private ups_drivers_list: Choices = {};
   private ups_driver_key: string;
-  protected ups_port: FieldConfig;
+  protected ups_port: FormComboboxConfig;
   protected entityForm: EntityFormComponent;
 
   queryCall: 'ups.config' = 'ups.config';
@@ -273,8 +273,8 @@ export class ServiceUPSComponent implements FormConfiguration {
     this.entityForm = entityForm;
 
     const generalSet = this.fieldSets.find((set) => set.name === helptext.ups_fieldset_general);
-    this.ups_driver = generalSet.config.find((config) => config.name === 'driver');
-    this.ups_port = generalSet.config.find((config) => config.name === 'port');
+    this.ups_driver = generalSet.config.find((config) => config.name === 'driver') as FormComboboxConfig;
+    this.ups_port = generalSet.config.find((config) => config.name === 'port') as FormComboboxConfig;
 
     this.ws.call('ups.driver_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.ups_drivers_list = res;

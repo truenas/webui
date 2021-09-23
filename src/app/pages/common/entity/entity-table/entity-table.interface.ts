@@ -25,7 +25,7 @@ export interface EntityTableConfig<Row = any> {
   multiActions?: EntityTableMultiAction<Row>[];
   multiActionsIconsOnly?: boolean;
   noActions?: boolean;
-  config?: EntityTableConfigConfig;
+  config: EntityTableConfigConfig;
   confirmDeleteDialog?: EntityTableConfirmDialog<Row>;
   hasDetails?: boolean;
   rowDetailComponent?: Type<unknown>;
@@ -70,9 +70,6 @@ export interface EntityTableConfig<Row = any> {
   prerequisiteFailedHandler?: (entity: EntityTableComponent) => void;
   afterDelete?(): void;
 
-  addComponent?: any;
-  editComponent?: any;
-
   onRowClick?: (row: Row) => void;
 }
 
@@ -85,6 +82,7 @@ export interface EntityTableAction<Row = any> {
   label: string;
   onClick: ((row: Row) => void) | (() => void);
   disabled?: boolean;
+  actions?: EntityTableAction[];
 }
 
 export interface EntityTableMultiAction<Row = any> {
@@ -130,6 +128,7 @@ export interface EntityTableColumn {
   toggle?: boolean;
   button?: boolean;
   enableMatTooltip?: boolean;
+  showLockedStatus?: boolean;
 
   icon?: string;
   widget?: {

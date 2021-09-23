@@ -88,13 +88,13 @@ def click_on_the_credentials_item_in_the_left_side_menu(driver):
 @then('The Credentials menu should expand to the right')
 def the_credentials_menu_should_expand_to_the_right(driver):
     """The Credentials menu should expand to the right."""
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
+    assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
 
 
 @then('Click on Local Users')
 def click_on_localusers(driver):
     """Click on Local Users."""
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Local Users"]').click()
+    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
 
 
 @then('The Users page should open')
@@ -132,7 +132,7 @@ def the_user_edit_page_should_open(driver):
 @then('In the SSH public Key field, paste a public key and save the change')
 def in_the_ssh_public_key_field_paste_a_public_key_and_save_the_change(driver, ssh_key):
     """In the SSH public Key field, paste a public key and save the change."""
-    assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'clickable')
+    assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').clear()
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').send_keys(ssh_key)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')

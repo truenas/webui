@@ -12,8 +12,10 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -40,7 +42,7 @@ export class VmFormComponent implements FormConfiguration {
   route_success: string[] = ['vm'];
   protected entityForm: EntityFormComponent;
   save_button_enabled: boolean;
-  private rawVmData: any;
+  private rawVmData: VirtualMachine;
   vcpus: number;
   cores: number;
   threads: number;
@@ -190,17 +192,24 @@ export class VmFormComponent implements FormConfiguration {
           value: false,
         },
         {
+          type: 'checkbox',
+          name: 'ensure_display_device',
+          placeholder: T('Ensure Display Device'),
+          tooltip: T('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
+          value: true,
+        },
+        {
           type: 'select',
           placeholder: T("GPU's"),
           name: 'gpus',
           multiple: true,
           options: [],
-          required: true,
+          required: false,
         },
       ],
     },
   ];
-  private bootloader: FieldConfig;
+  private bootloader: FormSelectConfig;
 
   constructor(
     protected router: Router,
@@ -263,7 +272,7 @@ export class VmFormComponent implements FormConfiguration {
 
     if (this.productType.includes(ProductType.Scale)) {
       _.find(this.fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
-      const cpuModel = _.find(this.fieldConfig, { name: 'cpu_model' });
+      const cpuModel: FormSelectConfig = _.find(this.fieldConfig, { name: 'cpu_model' });
       cpuModel.isHidden = false;
 
       this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
@@ -289,7 +298,7 @@ export class VmFormComponent implements FormConfiguration {
           finalIsolatedPciIds.push(gpuValue);
         }
       }
-      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
+      const gpusConf: FormSelectConfig = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
       if (finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.gpus) {
@@ -344,15 +353,15 @@ export class VmFormComponent implements FormConfiguration {
     };
   }
 
-  resourceTransformIncomingRestData(vmRes: any): any {
+  resourceTransformIncomingRestData(vmRes: VirtualMachine): any {
     this.rawVmData = vmRes;
-    vmRes['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
+    (vmRes as any)['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
-      const vmPciSlots: string[] = vmRes.devices
-        .filter((device: any) => device.dtype === VmDeviceType.Pci)
-        .map((pciDevice: any) => pciDevice.attributes.pptdev);
-      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
+      const vmPciSlots = (vmRes.devices
+        .filter((device) => device.dtype === VmDeviceType.Pci) as VmPciPassthroughDevice[])
+        .map((pciDevice) => pciDevice.attributes.pptdev);
+      const gpusConf: FormSelectConfig = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
       }
@@ -381,8 +390,10 @@ export class VmFormComponent implements FormConfiguration {
     const pciDevicesToCreate = [];
     const vmPciDeviceIdsToRemove = [];
 
-    const prevVmPciDevices = this.rawVmData.devices.filter((device: any) => device.dtype === VmDeviceType.Pci);
-    const prevVmPciSlots: string[] = prevVmPciDevices.map((pciDevice: any) => pciDevice.attributes.pptdev);
+    const prevVmPciDevices = this.rawVmData.devices.filter((device) => {
+      return device.dtype === VmDeviceType.Pci;
+    }) as VmPciPassthroughDevice[];
+    const prevVmPciSlots: string[] = prevVmPciDevices.map((pciDevice) => pciDevice.attributes.pptdev);
     const prevGpus = this.gpus.filter((gpu) => {
       for (const gpuPciDevice of gpu.devices) {
         if (!prevVmPciSlots.includes(gpuPciDevice.vm_pci_slot)) {
@@ -424,10 +435,10 @@ export class VmFormComponent implements FormConfiguration {
       }
       if (!found) {
         const prevVmGpuPciDevicesPciSlots = prevGpu.devices.map((prevGpuPciDevice) => prevGpuPciDevice.vm_pci_slot);
-        const vmPciDevices = prevVmPciDevices.filter((prevVmPciDevice: any) => {
+        const vmPciDevices = prevVmPciDevices.filter((prevVmPciDevice) => {
           return prevVmGpuPciDevicesPciSlots.includes(prevVmPciDevice.attributes.pptdev);
         });
-        const vmPciDeviceIds = vmPciDevices.map((prevVmPciDevice: any) => prevVmPciDevice.id);
+        const vmPciDeviceIds = vmPciDevices.map((prevVmPciDevice) => prevVmPciDevice.id);
         vmPciDeviceIdsToRemove.push(...vmPciDeviceIds);
       }
     }

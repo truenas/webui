@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @Component({
@@ -10,7 +10,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
 export class FormParagraphComponent implements Field {
-  config: FieldConfig;
+  config: FormParagraphConfig;
   group: FormGroup;
   fieldShow: string;
 

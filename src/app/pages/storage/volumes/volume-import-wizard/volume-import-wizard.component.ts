@@ -10,7 +10,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormInputConfig, FormSelectConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
@@ -172,13 +172,13 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
 
   protected isNew = true;
   protected encrypted: FormGroup;
-  protected devices: FieldConfig;
+  protected devices: FormSelectConfig;
   protected devices_fg: FormGroup;
-  protected key: FieldConfig;
+  protected key: FormUploadConfig;
   protected key_fg: FormGroup;
-  protected passphrase: FieldConfig;
+  protected passphrase: FormInputConfig;
   protected passphrase_fg: FormGroup;
-  protected guid: FieldConfig;
+  protected guid: FormSelectConfig;
   protected pool: any;
   hideCancel = true;
 
@@ -205,7 +205,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     }
   }
 
-  decryptDisks(stepper: any): void {
+  decryptDisks(stepper: MatStepper): void {
     if (this.devices_fg.status === 'INVALID') {
       this.dialogService.info(T('Disk Selection Required'), T('Select one or more disks to decrypt.'));
       return;
@@ -246,7 +246,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       { data: { title: helptext.find_pools_title }, disableClose: true },
     );
     dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
-    dialogRef.componentInstance.setCall('pool.import_find', []);
+    dialogRef.componentInstance.setCall('pool.import_find');
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && res.result) {
@@ -286,9 +286,9 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       this.encrypted = (< FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
       this.devices = _.find(this.wizardConfig[1].fieldConfig, { name: 'devices' });
       this.devices_fg = (< FormGroup > entityWizard.formArray.get([1]).get('devices'));
-      this.key = _.find(this.wizardConfig[1].fieldConfig, { name: 'key' });
+      this.key = _.find(this.wizardConfig[1].fieldConfig, { name: 'key' }) as FormUploadConfig;
       this.key_fg = (< FormGroup > entityWizard.formArray.get([1]).get('key'));
-      this.passphrase = _.find(this.wizardConfig[1].fieldConfig, { name: 'passphrase' });
+      this.passphrase = _.find(this.wizardConfig[1].fieldConfig, { name: 'passphrase' }) as FormInputConfig;
       this.passphrase_fg = (< FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
 
       this.ws.call('disk.get_encrypted', [{ unused: true }]).pipe(untilDestroyed(this)).subscribe((res) => {

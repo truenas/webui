@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
+import { MatRadioChange } from '@angular/material/radio/radio';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -11,9 +13,10 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { helptext_system_email } from 'app/helptext/system/email';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
+import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -66,7 +69,7 @@ export class EmailComponent implements FormConfiguration {
           value.pass = value.pass || this.entityEdit.data.pass;
 
           mailObj['subject'] += ' hostname: ' + systemInfo.hostname;
-          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'EMAIL' }, disableClose: true });
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('EMAIL') }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
@@ -106,7 +109,7 @@ export class EmailComponent implements FormConfiguration {
         {
           type: 'radio',
           name: 'send_mail_method',
-          onChange: (data) => {
+          onChange: (data: { event: MatRadioChange }) => {
             this.sendMailMethod.setValue(data.event.value);
           },
           placeholder: helptext_system_email.send_mail_method.placeholder,
@@ -155,7 +158,7 @@ export class EmailComponent implements FormConfiguration {
         {
           type: 'checkbox',
           name: 'smtp',
-          onChange: (data: any) => {
+          onChange: (data: { event: MatCheckboxChange }) => {
             this.smtp.setValue(data.event.checked);
           },
           placeholder: helptext_system_email.auth.smtp.placeholder,
@@ -210,7 +213,7 @@ export class EmailComponent implements FormConfiguration {
               + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
             window.addEventListener('message', doAuth, false);
 
-            function doAuth(message: any): void {
+            function doAuth(message: OauthMessage<OAuthData>): void {
               if (message.data.oauth_portal) {
                 if (message.data.error) {
                   dialogService.errorReport(T('Error'), message.data.error);
@@ -232,7 +235,7 @@ export class EmailComponent implements FormConfiguration {
 
   private sendMailMethod: FormControl;
   private smtp: FormControl;
-  private pass: FieldConfig;
+  private pass: FormInputConfig;
 
   constructor(
     protected router: Router,
@@ -242,7 +245,7 @@ export class EmailComponent implements FormConfiguration {
     protected loader: AppLoaderService,
   ) {}
 
-  resourceTransformIncomingRestData(data: MailConfig): any {
+  resourceTransformIncomingRestData(data: MailConfig): MailConfig {
     if (_.isEmpty(data.oauth)) {
       this.sendMailMethod.setValue(true);
     } else {
@@ -258,7 +261,7 @@ export class EmailComponent implements FormConfiguration {
     this.ws.call('user.query', [[['username', '=', 'root']]]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.rootEmail = res[0].email;
     });
-    this.pass = this.fieldSets.config('pass');
+    this.pass = this.fieldSets.config('pass') as FormInputConfig;
     this.smtp = entityEdit.formGroup.controls['smtp'] as FormControl;
     this.sendMailMethod = entityEdit.formGroup.controls['send_mail_method'] as FormControl;
 

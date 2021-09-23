@@ -9,8 +9,8 @@ import { DialogService } from 'app/services/dialog.service';
 })
 export class SysInfoComponent {
   @Input() version: string;
-  @Input() model: any;
-  @Input() product: any;
+  @Input() model: string;
+  @Input() product: string;
   @Input() memory: string;
   @Input() serial: string;
   @Input() FN_instructions: string;
@@ -19,7 +19,7 @@ export class SysInfoComponent {
   // Additional fields for licensed customers
   @Input() customer_name: string;
   @Input() features: string;
-  @Input() contract_type: any;
+  @Input() contract_type: string;
   @Input() expiration_date: string;
   @Input() add_hardware: string;
   @Input() daysLeftinContract: number;

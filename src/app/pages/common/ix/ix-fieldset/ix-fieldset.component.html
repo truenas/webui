@@ -1,0 +1,9 @@
+<fieldset>
+  <div *ngIf="title" class="title-container">
+    <label class="title">
+      {{title}}
+    </label>
+  </div>
+  <ng-content></ng-content>
+  <mat-divider *ngIf="divider" class="divider" inset></mat-divider>
+</fieldset>

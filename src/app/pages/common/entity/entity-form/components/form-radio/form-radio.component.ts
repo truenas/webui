@@ -4,7 +4,7 @@ import { MatRadioChange } from '@angular/material/radio/radio';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormRadioConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
@@ -14,10 +14,10 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   templateUrl: './form-radio.component.html',
 })
 export class FormRadioComponent implements Field, OnInit, OnDestroy {
-  config: FieldConfig;
+  config: FormRadioConfig;
   group: FormGroup;
   fieldShow: string;
-  radioValue: any;
+  radioValue: string | number;
   valueChangesSubscription: Subscription;
 
   get radioLayout(): string {

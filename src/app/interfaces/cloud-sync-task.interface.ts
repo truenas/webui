@@ -48,5 +48,16 @@ export interface CloudSyncTaskUi extends CloudSyncTask {
   cron_schedule: string;
   frequency: string;
   next_run: string;
+  next_run_time: Date;
   state: DataProtectionTaskState;
+}
+
+export interface CloudSyncListDirectoryParams {
+  credentials: number;
+  encryption?: boolean;
+  filename_encryption?: boolean;
+  encryption_password?: string;
+  encryption_salt?: string;
+  attributes?: unknown;
+  args?: string;
 }

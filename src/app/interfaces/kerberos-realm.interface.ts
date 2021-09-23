@@ -5,3 +5,5 @@ export interface KerberosRealm {
   kpasswd_server: string[];
   realm: string;
 }
+
+export type KerberosRealmUpdate = Omit<KerberosRealm, 'id'>;

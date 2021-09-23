@@ -1,11 +1,11 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PreferencesPage } from './page/preferences.component';
+import { PreferencesPageComponent } from './page/preferences.component';
 
 export const routes: Routes = [
   {
     path: '',
-    component: PreferencesPage,
+    component: PreferencesPageComponent,
     data: { title: 'Preferences', breadcrumb: 'Preferences' },
     pathMatch: 'full',
   },

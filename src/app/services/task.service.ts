@@ -150,6 +150,12 @@ export class TaskService {
     );
   }
 
+  getTaskNextTime(scheduleExpression: string): Date {
+    const schedule = cronParser.parseExpression(scheduleExpression, { iterator: true });
+
+    return ((schedule.next() as unknown) as { value: { _date: any } }).value._date.toDate();
+  }
+
   getTaskCronDescription(scheduleExpression: string, options: CronOptions = this.cronOptions): string {
     return cronstrue.toString(scheduleExpression, options);
   }

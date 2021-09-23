@@ -1,107 +1,114 @@
-<div id="{{config.name}}" class="dynamic-field form-permissions form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
-	ix-auto ix-auto-type="permissions" ix-auto-identifier="{{config.placeholder}}">
-	<div class="top">
-		<label>
-                  {{ config.placeholder | translate }}
-                  <span *ngIf="config.required">*</span>
-                  &nbsp;&nbsp;
-                </label>
-		<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>
-		<mat-form-field class="full-width" style="display:none">
-			<input matInput [type]="config.inputType ? config.inputType : 'text'"
+<div
+  *ngIf="!config['isHidden']"
+  id="{{config.name}}"
+  class="dynamic-field form-permissions form-element"
+  [formGroup]="group"
+  [ngClass]="fieldShow"
+  [class.has-tooltip]="config.tooltip"
+	ix-auto ix-auto-type="permissions" ix-auto-identifier="{{config.placeholder}}"
+>
+  <div class="top">
+    <label>
+      {{ config.placeholder | translate }}
+      <span *ngIf="config.required">*</span>
+      &nbsp;&nbsp;
+    </label>
+    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+    <mat-form-field class="full-width" style="display:none">
+      <input matInput [type]="config.inputType ? config.inputType : 'text'"
 				[placeholder]="config.placeholder"
 				[attr.value]="config.value"
 				[formControlName]="config.name"
 				ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"
 				>
-		</mat-form-field>
-	</div>
-		<table>
-			<tr>
-				<td></td>
-				<td>{{"Read" | translate}}</td>
-				<td>{{"Write" | translate}}</td>
-				<td>{{"Execute" | translate}}</td>
-			</tr>
-			<tr>
-				<td>
-					{{"User" | translate}}
-				</td>
-				<td>
-					<mat-checkbox color="primary" [checked]="ownerRead" (change)="toggleOwnerRead()"
+    </mat-form-field>
+  </div>
+    <table>
+      <tr>
+        <td></td>
+        <td>{{"Read" | translate}}</td>
+        <td>{{"Write" | translate}}</td>
+        <td>{{"Execute" | translate}}</td>
+      </tr>
+      <tr>
+        <td>
+          {{"User" | translate}}
+        </td>
+        <td>
+          <mat-checkbox color="primary" [checked]="ownerRead" (change)="toggleOwnerRead()"
 						ix-auto
 						ix-auto-type="checkbox"
 						ix-auto-identifier="{{config.name}}_ownerRead">
-					</mat-checkbox>
-				</td>
-				<td>
-					<mat-checkbox color="primary" [checked]="ownerWrite" (change)="toggleOwnerWrite()"
+          </mat-checkbox>
+        </td>
+        <td>
+          <mat-checkbox color="primary" [checked]="ownerWrite" (change)="toggleOwnerWrite()"
 						ix-auto
 						ix-auto-type="checkbox"
 						ix-auto-identifier="{{config.name}}_ownerWrite">
-					</mat-checkbox>
-				</td>
-				<td>
-					<mat-checkbox color="primary" [checked]="ownerExec" (change)="toggleOwnerExec()"
+          </mat-checkbox>
+        </td>
+        <td>
+          <mat-checkbox color="primary" [checked]="ownerExec" (change)="toggleOwnerExec()"
 						ix-auto
 						ix-auto-type="checkbox"
 						ix-auto-identifier="{{config.name}}_ownerExec">
-					</mat-checkbox>
-				</td>
-			</tr>
-			<tr>
-				<td>
-					{{"Group" | translate}}
-				</td>
-				<td>
-					<mat-checkbox color="primary" [checked]="groupRead" (change)="toggleGroupRead()"
+          </mat-checkbox>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          {{"Group" | translate}}
+        </td>
+        <td>
+          <mat-checkbox color="primary" [checked]="groupRead" (change)="toggleGroupRead()"
 						ix-auto
 						ix-auto-type="checkbox"
 						ix-auto-identifier="{{config.name}}_groupRead">
-					</mat-checkbox>
-				</td>
-				<td>
-					<mat-checkbox color="primary" [checked]="groupWrite" (change)="toggleGroupWrite()"
+          </mat-checkbox>
+        </td>
+        <td>
+          <mat-checkbox color="primary" [checked]="groupWrite" (change)="toggleGroupWrite()"
 						ix-auto
 						ix-auto-type="checkbox"
 						ix-auto-identifier="{{config.name}}_groupWrite">
-					</mat-checkbox>
-				</td>
-				<td>
-					<mat-checkbox color="primary" [checked]="groupExec" (change)="toggleGroupExec()"
+          </mat-checkbox>
+        </td>
+        <td>
+          <mat-checkbox color="primary" [checked]="groupExec" (change)="toggleGroupExec()"
 						ix-auto
 						ix-auto-type="checkbox"
 						ix-auto-identifier="{{config.name}}_groupExec">
-					</mat-checkbox>
-				</td>
-			</tr>
-			<tr *ngIf="!config.hideOthersPermissions">
-				<td>
-					{{"Other" | translate}}
-				</td>
-				<td>
-					<mat-checkbox color="primary" [checked]="otherRead" (change)="toggleOtherRead()"
+          </mat-checkbox>
+        </td>
+      </tr>
+      <tr *ngIf="!config.hideOthersPermissions">
+        <td>
+          {{"Other" | translate}}
+        </td>
+        <td>
+          <mat-checkbox color="primary" [checked]="otherRead" (change)="toggleOtherRead()"
 						ix-auto
 						ix-auto-type="checkbox"
 						ix-auto-identifier="{{config.name}}_otherRead">
-					</mat-checkbox><br/>
-				</td>
-				<td>
-					<mat-checkbox color="primary" [checked]="otherWrite" (change)="toggleOtherWrite()"
+          </mat-checkbox><br/>
+        </td>
+        <td>
+          <mat-checkbox color="primary" [checked]="otherWrite" (change)="toggleOtherWrite()"
 						ix-auto
 						ix-auto-type="checkbox"
 						ix-auto-identifier="{{config.name}}_otherWrite">
-					</mat-checkbox><br/>
-				</td>
-				<td>
-					<mat-checkbox color="primary" [checked]="otherExec" (change)="toggleOtherExec()"
+          </mat-checkbox><br/>
+        </td>
+        <td>
+          <mat-checkbox color="primary" [checked]="otherExec" (change)="toggleOtherExec()"
 						ix-auto
 						ix-auto-type="checkbox"
 						ix-auto-identifier="{{config.name}}_otherExec">
-					</mat-checkbox>
-				</td>			
-			</tr>
-		</table>
-	
-	<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+          </mat-checkbox>
+        </td>
+      </tr>
+    </table>
+
+  <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 </div>

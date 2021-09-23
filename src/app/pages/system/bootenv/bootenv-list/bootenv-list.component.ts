@@ -4,6 +4,7 @@ import {
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { filter } from 'rxjs/operators';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -214,37 +215,39 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
 
   getSelectedNames(selectedBootenvs: BootenvRow[]): string[][] {
     const selected: string[][] = [];
-    for (const i in selectedBootenvs) {
-      if (selectedBootenvs[i].active === '-' || selectedBootenvs[i].active === '') {
-        selected.push([selectedBootenvs[i].id]);
+    selectedBootenvs.forEach((bootenv) => {
+      if (bootenv.active === '-' || bootenv.active === '') {
+        selected.push([bootenv.id]);
       }
-    }
+    });
     return selected;
   }
 
-  wsMultiDeleteParams(selected: BootenvRow[]): any[] {
-    const params: any[] = ['bootenv.do_delete'];
+  wsMultiDeleteParams(selected: BootenvRow[]): (string | string[][])[] {
+    const params: (string | string[][])[] = ['bootenv.do_delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }
 
   doActivate(id: string): void {
-    this.dialog.confirm(T('Activate'), T('Activate this Boot Environment?'), false, helptext_system_bootenv.list_dialog_activate_action).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.loader.open();
-        this.loaderOpen = true;
-        this.ws.call(this.wsActivate, [id]).pipe(untilDestroyed(this)).subscribe(
-          () => {
-            this.entityList.getData();
-            this.loader.close();
-            this.entityList.selection.clear();
-          },
-          (res: WebsocketError) => {
-            new EntityUtils().handleWSError(this, res, this.dialog);
-            this.loader.close();
-          },
-        );
-      }
+    this.dialog.confirm({
+      title: T('Activate'),
+      message: T('Activate this Boot Environment?'),
+      buttonMsg: helptext_system_bootenv.list_dialog_activate_action,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.loader.open();
+      this.loaderOpen = true;
+      this.ws.call(this.wsActivate, [id]).pipe(untilDestroyed(this)).subscribe(
+        () => {
+          this.entityList.getData();
+          this.loader.close();
+          this.entityList.selection.clear();
+        },
+        (res: WebsocketError) => {
+          new EntityUtils().handleWSError(this, res, this.dialog);
+          this.loader.close();
+        },
+      );
     });
   }
 
@@ -267,40 +270,44 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
 
   toggleKeep(id: string, status: boolean): void {
     if (!status) {
-      this.dialog.confirm(T('Keep'), T('Keep this Boot Environment?'), false, helptext_system_bootenv.list_dialog_keep_action).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        if (res) {
-          this.loader.open();
-          this.loaderOpen = true;
-          this.ws.call(this.wsKeep, [id, { keep: true }]).pipe(untilDestroyed(this)).subscribe(
-            () => {
-              this.entityList.getData();
-              this.loader.close();
-              this.entityList.selection.clear();
-            },
-            (res: WebsocketError) => {
-              new EntityUtils().handleWSError(this, res, this.dialog);
-              this.loader.close();
-            },
-          );
-        }
+      this.dialog.confirm({
+        title: T('Keep'),
+        message: T('Keep this Boot Environment?'),
+        buttonMsg: helptext_system_bootenv.list_dialog_keep_action,
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.loader.open();
+        this.loaderOpen = true;
+        this.ws.call(this.wsKeep, [id, { keep: true }]).pipe(untilDestroyed(this)).subscribe(
+          () => {
+            this.entityList.getData();
+            this.loader.close();
+            this.entityList.selection.clear();
+          },
+          (res: WebsocketError) => {
+            new EntityUtils().handleWSError(this, res, this.dialog);
+            this.loader.close();
+          },
+        );
       });
     } else {
-      this.dialog.confirm(T('Unkeep'), T('No longer keep this Boot Environment?'), false, helptext_system_bootenv.list_dialog_unkeep_action).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        if (res) {
-          this.loader.open();
-          this.loaderOpen = true;
-          this.ws.call(this.wsKeep, [id, { keep: false }]).pipe(untilDestroyed(this)).subscribe(
-            () => {
-              this.entityList.getData();
-              this.loader.close();
-              this.entityList.selection.clear();
-            },
-            (res: WebsocketError) => {
-              new EntityUtils().handleWSError(this, res, this.dialog);
-              this.loader.close();
-            },
-          );
-        }
+      this.dialog.confirm({
+        title: T('Unkeep'),
+        message: T('No longer keep this Boot Environment?'),
+        buttonMsg: helptext_system_bootenv.list_dialog_unkeep_action,
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.loader.open();
+        this.loaderOpen = true;
+        this.ws.call(this.wsKeep, [id, { keep: false }]).pipe(untilDestroyed(this)).subscribe(
+          () => {
+            this.entityList.getData();
+            this.loader.close();
+            this.entityList.selection.clear();
+          },
+          (res: WebsocketError) => {
+            new EntityUtils().handleWSError(this, res, this.dialog);
+            this.loader.close();
+          },
+        );
       });
     }
   }
@@ -387,19 +394,21 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   }
 
   scrub(): void {
-    this.dialog.confirm(T('Scrub'), T('Start the scrub now?'), false, helptext_system_bootenv.list_dialog_scrub_action).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.loader.open();
-        this.loaderOpen = true;
-        this.ws.call('boot.scrub').pipe(untilDestroyed(this)).subscribe(() => {
-          this.loader.close();
-          this.dialog.info(T('Scrub Started'), T(''), '300px', 'info', true);
-        },
-        (res: WebsocketError) => {
-          new EntityUtils().handleWSError(this, res, this.dialog);
-          this.loader.close();
-        });
-      }
+    this.dialog.confirm({
+      title: T('Scrub'),
+      message: T('Start the scrub now?'),
+      buttonMsg: helptext_system_bootenv.list_dialog_scrub_action,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.loader.open();
+      this.loaderOpen = true;
+      this.ws.call('boot.scrub').pipe(untilDestroyed(this)).subscribe(() => {
+        this.loader.close();
+        this.dialog.info(T('Scrub Started'), T(''), '300px', 'info', true);
+      },
+      (res: WebsocketError) => {
+        new EntityUtils().handleWSError(this, res, this.dialog);
+        this.loader.close();
+      });
     });
   }
 }

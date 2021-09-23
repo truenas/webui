@@ -20,7 +20,7 @@ import {
 } from 'app/interfaces/acl.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
 import { NULL_VALUE } from 'app/pages/common/entity/utils';
@@ -66,14 +66,14 @@ export class EditNfsAceComponent implements FormConfiguration, OnChanges {
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
       const userOptions = users.map((user) => ({ label: user.username, value: user.username }));
 
-      const userControl = this.fieldConfig.find((config) => config.name === 'user');
+      const userControl = this.fieldConfig.find((config) => config.name === 'user') as FormComboboxConfig;
       userControl.options = userOptions;
     });
 
     this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions = groups.map((group) => ({ label: group.group, value: group.group }));
 
-      const groupControl = this.fieldConfig.find((config) => config.name === 'group');
+      const groupControl = this.fieldConfig.find((config) => config.name === 'group') as FormComboboxConfig;
       groupControl.options = groupOptions;
     });
   }

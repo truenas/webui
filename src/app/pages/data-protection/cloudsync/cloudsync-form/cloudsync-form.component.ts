@@ -12,13 +12,16 @@ import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormExplorerConfig, FormInputConfig, FormParagraphConfig, FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -406,11 +409,11 @@ export class CloudsyncFormComponent implements FormConfiguration {
   ]);
   fieldConfig: FieldConfig[] = [];
 
-  protected credentials: FieldConfig;
-  protected bucket_field: FieldConfig;
-  protected bucket_input_field: FieldConfig;
-  protected folder_field_destination: FieldConfig;
-  protected folder_field_source: FieldConfig;
+  protected credentials: FormSelectConfig;
+  protected bucket_field: FormSelectConfig;
+  protected bucket_input_field: FormInputConfig;
+  protected folder_field_destination: FormExplorerConfig;
+  protected folder_field_source: FormExplorerConfig;
   credentials_list: CloudsyncCredential[] = [];
 
   formGroup: FormGroup;
@@ -466,11 +469,11 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  getBuckets(credential: any): Observable<any[]> {
+  getBuckets(credential: CloudsyncCredential): Observable<CloudsyncBucket[]> {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
   }
 
-  getChildren(node: TreeNode): Promise<Promise<any>> {
+  getChildren(node: TreeNode): Promise<Promise<ListdirChild[]>> {
     const credential = this.formGroup.controls['credentials'].value;
     let bucket = this.formGroup.controls['bucket'].value;
     if (this.bucket_field.disabled) {
@@ -481,7 +484,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     });
   }
 
-  setBucketError(error: any): void {
+  setBucketError(error: string): void {
     if (error) {
       this.bucket_field.hasErrors = true;
       this.bucket_field.errors = error;
@@ -495,9 +498,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  getBucketFolders(credential: string, bucket: string, node: TreeNode): Promise<any> {
+  getBucketFolders(credential: number, bucket: string, node: TreeNode): Promise<ListdirChild[]> {
     const formValue = this.entityForm.formGroup.value;
-    const children: any[] = [];
+    const children: ListdirChild[] = [];
     const data = {
       credentials: credential,
       encryption: formValue['encryption'] === undefined ? false : formValue['encryption'],
@@ -518,7 +521,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         this.setBucketError(null);
 
         for (let i = 0; i < res.length; i++) {
-          const child: any = {};
+          const child = {} as ListdirChild;
           if (res[i].IsDir) {
             if (data.attributes.folder == '/') {
               child['name'] = data.attributes.folder + res[i].Name;
@@ -539,6 +542,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           new EntityUtils().handleWSError(this, err, this.dialog);
         }
         node.collapse();
+        return [];
       },
     );
   }
@@ -564,16 +568,21 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
   dataHandler(entityForm: EntityFormComponent): void {
     const data = entityForm.wsResponse;
-    if (data.include && data.include.length) {
-      data.path_source = data.include.map((p: string) => data.path + '/' + p.split('/')[1]);
-    } else {
+    if (data.direction === Direction.Pull) {
       data.path_destination = data.path;
-    }
-    if (data.attributes.include && data.attributes.include.length) {
-      data.attributes.folder_source = data.attributes.include.map((p: string) => data.attributes.folder + '/' + p.split('/')[1]);
+
+      if (data.attributes.include) {
+        data.attributes.folder_source = data.attributes.include.map((p: string) => {
+          return data.attributes.folder + '/' + p.split('/')[1];
+        });
+      }
     } else {
       data.attributes.folder_destination = data.attributes.folder;
+      if (data.include) {
+        data.path_source = data.include.map((p: string) => data.path + '/' + p.split('/')[1]);
+      }
     }
+
     for (const i in data) {
       const fg = entityForm.formGroup.controls[i];
       if (fg) {
@@ -608,7 +617,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.title = entityForm.isNew ? helptext.cloudsync_task_add : helptext.cloudsync_task_edit;
     this.credentials = this.fieldSets.config('credentials');
     this.bucket_field = this.fieldSets.config('bucket');
-    this.bucket_input_field = this.fieldSets.config('bucket_input');
+    this.bucket_input_field = this.fieldSets.config('bucket_input') as FormInputConfig;
     this.setDisabled('bucket', true, true);
     this.setDisabled('bucket_input', true, true);
     this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
@@ -755,43 +764,42 @@ export class CloudsyncFormComponent implements FormConfiguration {
                 this.bucket_input_field.tooltip = T('Input the pre-defined S3 bucket to use.');
               }
 
-              this.getBuckets(item).pipe(untilDestroyed(this)).subscribe(
-                (res: any[]) => {
-                  if (entityForm.loaderOpen === false) {
-                    this.loader.close();
-                  } else {
-                    entityForm.loader.close();
-                    entityForm.loaderOpen = false;
-                    entityForm.keepLoaderOpen = false;
-                  }
-                  this.bucket_field.options = [{ label: '----------', value: '' }];
-                  if (res) {
-                    res.forEach((subitem) => {
-                      this.bucket_field.options.push({ label: subitem.Name, value: subitem.Path });
-                    });
-                  }
-                  this.setDisabled('bucket', false, false);
-                  this.setDisabled('bucket_input', true, true);
-                },
-                (err) => {
-                  if (entityForm.loaderOpen === false) {
-                    this.loader.close();
-                  } else {
-                    entityForm.loader.close();
-                    entityForm.loaderOpen = false;
-                    entityForm.keepLoaderOpen = false;
-                  }
-                  this.setDisabled('bucket', true, true);
-                  this.setDisabled('bucket_input', false, false);
-                  this.dialog.confirm(err.extra ? err.extra.excerpt : (T('Error: ') + err.error), err.reason, true, T('Fix Credential')).pipe(untilDestroyed(this)).subscribe(
-                    (dialog_res: boolean) => {
-                      if (dialog_res) {
-                        this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', String(item.id)]));
-                      }
-                    },
-                  );
-                },
-              );
+              this.getBuckets(item).pipe(untilDestroyed(this)).subscribe((res) => {
+                if (entityForm.loaderOpen === false) {
+                  this.loader.close();
+                } else {
+                  entityForm.loader.close();
+                  entityForm.loaderOpen = false;
+                  entityForm.keepLoaderOpen = false;
+                }
+                this.bucket_field.options = [{ label: '----------', value: '' }];
+                if (res) {
+                  res.forEach((subitem) => {
+                    this.bucket_field.options.push({ label: subitem.Name, value: subitem.Path });
+                  });
+                }
+                this.setDisabled('bucket', false, false);
+                this.setDisabled('bucket_input', true, true);
+              },
+              (err) => {
+                if (entityForm.loaderOpen === false) {
+                  this.loader.close();
+                } else {
+                  entityForm.loader.close();
+                  entityForm.loaderOpen = false;
+                  entityForm.keepLoaderOpen = false;
+                }
+                this.setDisabled('bucket', true, true);
+                this.setDisabled('bucket_input', false, false);
+                this.dialog.confirm({
+                  title: err.extra ? err.extra.excerpt : (T('Error: ') + err.error),
+                  message: err.reason,
+                  hideCheckBox: true,
+                  buttonMsg: T('Fix Credential'),
+                }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+                  this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', String(item.id)]));
+                });
+              });
             } else {
               this.setDisabled('bucket', true, true);
               this.setDisabled('bucket_input', true, true);
@@ -835,7 +843,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.formGroup.controls['bwlimit'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       _.find(entityForm.fieldConfig, { name: 'bwlimit' }).hasErrors = false;
       _.find(entityForm.fieldConfig, { name: 'bwlimit' }).errors = null;
-      (this.formGroup.controls['bwlimit'] as any).errors = null;
+      this.formGroup.controls['bwlimit'].setErrors(null);
     });
 
     // When user interacts with direction dropdown, change transfer_mode to COPY
@@ -869,7 +877,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     // Update transfer_mode paragraphs when the mode is changed
     this.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode: TransferMode) => {
-      const paragraph = entityForm.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
+      const paragraph: FormParagraphConfig = entityForm.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
       switch (mode) {
         case TransferMode.Sync:
           paragraph.paraText = helptext.transfer_mode_warning_sync;
@@ -910,7 +918,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     return transformed;
   }
 
-  handleBwlimit(bwlimit: any): any[] {
+  handleBwlimit(bwlimit: string): any[] {
     const bwlimtArr = [];
 
     for (let i = 0; i < bwlimit.length; i++) {
@@ -929,7 +937,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           _.find(this.fieldConfig, { name: 'bwlimit' }).errors = 'Invalid bandwidth ' + sublimitArr[1];
           (this.formGroup.controls['bwlimit'] as any).setErrors('Invalid bandwidth ' + sublimitArr[1]);
         } else {
-          sublimitArr[1] = this.cloudcredentialService.getByte(sublimitArr[1]);
+          (sublimitArr[1] as any) = this.cloudcredentialService.getByte(sublimitArr[1]);
         }
       }
       const subLimit = {

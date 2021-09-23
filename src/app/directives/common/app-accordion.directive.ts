@@ -28,9 +28,9 @@ export class AppAccordionDirective implements OnInit {
   private toggleOpen(): void {
     const accordionItems = document.getElementsByClassName('app-accordion');
     if (domHelper.hasClass(this.parentLi, 'open')) {
-      domHelper.removeClass(accordionItems, 'open');
+      domHelper.removeClass(accordionItems as HTMLCollectionOf<HTMLElement>, 'open');
     } else {
-      domHelper.removeClass(accordionItems, 'open');
+      domHelper.removeClass(accordionItems as HTMLCollectionOf<HTMLElement>, 'open');
       domHelper.addClass(this.parentLi, 'open');
     }
   }

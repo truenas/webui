@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  TREE_ACTIONS, KEYS, IActionMapping,
+  TREE_ACTIONS, KEYS, IActionMapping, TreeNode, ITreeOptions,
 } from 'angular-tree-component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
+import { FormExplorerConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { T } from 'app/translate-marker';
@@ -18,7 +19,7 @@ import { T } from 'app/translate-marker';
   ],
 })
 export class FormExplorerComponent implements Field, OnInit {
-  config: FieldConfig;
+  config: FormExplorerConfig;
   group: FormGroup;
   fieldShow: string;
   nodes: any[];
@@ -57,7 +58,7 @@ export class FormExplorerComponent implements Field, OnInit {
     },
   };
 
-  customTemplateStringOptions = {
+  customTemplateStringOptions: ITreeOptions = {
     useCheckbox: false,
     displayField: '',
     isExpandedField: 'expanded',
@@ -110,11 +111,11 @@ export class FormExplorerComponent implements Field, OnInit {
     this.customTemplateStringOptions.displayField = this.displayFieldName;
   }
 
-  getChildren(node: any): Promise<any> {
+  getChildren(node: TreeNode): Promise<ListdirChild[]> {
     return new Promise((resolve) => {
       switch (this.config.explorerType) {
         case 'zvol':
-          resolve(this.entityFormService.getDatasetsAndZvolsListChildren());
+          resolve(this.entityFormService.getDatasetsAndZvolsListChildren() as any);
           break;
         case 'directory':
           resolve(
@@ -137,7 +138,7 @@ export class FormExplorerComponent implements Field, OnInit {
     this.treeVisible = !this.treeVisible;
   }
 
-  setPath(node: any): void {
+  setPath(node: TreeNode): void {
     if (this.config.explorerType === 'zvol') {
       if (!node.data.mountpoint) {
         node.data.mountpoint = this.config.initial + '/' + node.data.path;
@@ -158,7 +159,7 @@ export class FormExplorerComponent implements Field, OnInit {
     this.valueHandler(selectedTreeNodes);
   }
 
-  valueHandler(selectedTreeNodes: any): void {
+  valueHandler(selectedTreeNodes: TreeNode[]): void {
     const res = [];
     for (let i = 0; i < selectedTreeNodes.length; i++) {
       if (selectedTreeNodes[i] == undefined) {

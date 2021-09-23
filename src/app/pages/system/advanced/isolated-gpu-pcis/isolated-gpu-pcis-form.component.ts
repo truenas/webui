@@ -6,6 +6,7 @@ import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -64,7 +65,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
 
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
-      const gpusConf = this.fieldSets.config('gpus');
+      const gpusConf: FormSelectConfig = this.fieldSets.config('gpus');
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
       }
@@ -79,7 +80,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
     gpusFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((gpusValue: string[]) => {
       const finalIsolatedPciIds = [...gpusValue];
 
-      const gpusConf = this.fieldSets.config('gpus');
+      const gpusConf: FormSelectConfig = this.fieldSets.config('gpus');
       if (finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.gpus) {

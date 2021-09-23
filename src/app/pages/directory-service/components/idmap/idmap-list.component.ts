@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, tap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
@@ -16,7 +15,7 @@ import { ActiveDirectoryComponent } from 'app/pages/directory-service/components
 import { IdmapRow } from 'app/pages/directory-service/components/idmap/idmap-row.interface';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import {
-  IdmapService, SystemGeneralService, ValidationService, WebSocketService,
+  IdmapService, WebSocketService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -59,18 +58,14 @@ export class IdmapListComponent implements EntityTableConfig {
 
   constructor(
     protected idmapService: IdmapService,
-    protected validationService: ValidationService,
     private ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
-    private dialog: DialogService,
-    protected router: Router,
     public mdDialog: MatDialog,
     protected dialogService: DialogService,
   ) { }
 
   resourceTransformIncomingRestData(data: Idmap[]): IdmapRow[] {
-    const transformed = { ...data } as IdmapRow[];
+    const transformed = [...data] as IdmapRow[];
     transformed.forEach((item) => {
       if (item.certificate) {
         item.cert_name = item.certificate.cert_name;
@@ -167,27 +162,10 @@ export class IdmapListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    const idmapFormComponent = new IdmapFormComponent(
-      this.idmapService,
-      this.validationService,
-      this.modalService,
-      this.dialog,
-      this.mdDialog,
-    );
-
-    this.modalService.open('slide-in-form', idmapFormComponent, id);
+    this.modalService.openInSlideIn(IdmapFormComponent, id);
   }
 
   showADForm(): void {
-    const formComponent = new ActiveDirectoryComponent(
-      this.router,
-      this.ws,
-      this.modalService,
-      this.mdDialog,
-      this.sysGeneralService,
-      this.dialog,
-    );
-
-    this.modalService.open('slide-in-form', formComponent);
+    this.modalService.openInSlideIn(ActiveDirectoryComponent);
   }
 }

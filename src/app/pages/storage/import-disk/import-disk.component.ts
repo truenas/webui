@@ -8,9 +8,10 @@ import * as _ from 'lodash';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/storage/import-disk/import-disk';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
-  FieldConfig,
+  FieldConfig, FormRadioConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -86,10 +87,10 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     },
   ];
 
-  volume: FieldConfig;
+  volume: FormSelectConfig;
   fs_type: FormControl;
-  private fs_type_list: FieldConfig;
-  msdosfs_locale: FieldConfig;
+  private fs_type_list: FormRadioConfig;
+  msdosfs_locale: FormSelectConfig;
   private entityForm: EntityFormComponent;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   custActions: FormCustomAction[];
@@ -111,7 +112,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.fieldConfig = entityForm.fieldConfig;
     this.volume = _.find(this.fieldConfig, { name: 'volume' });
-    this.fs_type_list = _.find(this.fieldConfig, { name: 'fs_type' });
+    this.fs_type_list = _.find(this.fieldConfig, { name: 'fs_type' }) as FormRadioConfig;
     this.msdosfs_locale = _.find(this.fieldConfig, { name: 'msdosfs_locale' });
     this.fs_type = entityForm.formGroup.controls['fs_type'] as FormControl;
 
@@ -175,7 +176,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
 
   customSubmit(payload: any): void {
     this.custActions = [];
-    const fs_options: any = {};
+    const fs_options: Record<string, unknown> = {};
     if (payload.fs_type === 'msdosfs' && payload.msdosfs_locale) {
       fs_options['locale'] = payload.msdosfs_locale;
     }
@@ -183,7 +184,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     this.dialogRef.componentInstance.setDescription(T('Importing Disk...'));
     this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options, payload.dst_path]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: any) => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: Job<any>) => {
       this.dialogRef.close();
       this.entityForm.success = true;
       this.job.showLogs(job_res, T('Disk Imported: Log Summary'), T('Close'));

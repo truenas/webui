@@ -153,12 +153,6 @@ export class CustomThemeManagerFormComponent implements EmbeddedFormConfig, OnIn
   }
 
   generateFieldConfig(): void {
-    const fc = [];
-    for (const i in this.fieldSets) {
-      for (const ii in this.fieldSets[i].config) {
-        fc.push(this.fieldSets[i].config[ii]);
-      }
-    }
     this.fieldConfig = this.customThemeFields;
   }
 }

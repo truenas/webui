@@ -4,7 +4,7 @@ import {
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from 'app/helptext/global-helptext';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormTextareaConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @Component({
@@ -15,7 +15,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
 export class FormTextareaComponent implements Field {
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef<HTMLInputElement>;
 
-  config: FieldConfig;
+  config: FormTextareaConfig;
   group: FormGroup;
   fieldShow: string;
   private hasPasteEvent = false;
@@ -49,10 +49,10 @@ export class FormTextareaComponent implements Field {
   }
 
   changeListener($event: Event): void {
-    this.readFile($event.target);
+    this.readFile($event.target as HTMLInputElement);
   }
 
-  readFile(inputValue: any): void {
+  readFile(inputValue: HTMLInputElement): void {
     const file: File = inputValue.files[0];
     const fReader: FileReader = new FileReader();
 
@@ -67,9 +67,9 @@ export class FormTextareaComponent implements Field {
     }
   }
 
-  contents(result: any): void {
+  contents(result: string | ArrayBuffer): void {
     if (this.config.fileType == 'binary') {
-      this.group.controls[this.config.name].setValue(btoa(result));
+      this.group.controls[this.config.name].setValue(btoa(result as string));
     } else {
       this.group.controls[this.config.name].setValue(result);
     }

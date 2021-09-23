@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
@@ -11,6 +9,7 @@ import { CloudSyncTask, CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.i
 import { Job } from 'app/interfaces/job.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import {
   EntityTableComponent,
 } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -80,15 +79,11 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   };
 
   constructor(
-    protected router: Router,
     protected ws: WebSocketService,
-    protected translateService: TranslateService,
+    protected translate: TranslateService,
     protected dialog: DialogService,
     protected job: JobService,
-    protected aroute: ActivatedRoute,
-    protected matDialog: MatDialog,
     protected modalService: ModalService,
-    protected cloudCredentialService: CloudCredentialService,
     protected loader: AppLoaderService,
     protected taskService: TaskService,
   ) {}
@@ -109,7 +104,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
       transformed.next_run = this.taskService.getTaskNextRun(transformed.cron_schedule);
 
       if (task.job === null) {
-        transformed.state = { state: JobState.Pending };
+        transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };
       } else {
         transformed.state = { state: task.job.state };
         this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: Job) => {
@@ -140,7 +135,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                   (jobId: number) => {
                     this.dialog.info(
                       T('Task Started'),
-                      T('Cloud sync <i>') + row.description + T('</i> has started.'),
+                      this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
                       '500px',
                       'info',
                       true,
@@ -177,7 +172,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                   () => {
                     this.dialog.info(
                       T('Task Stopped'),
-                      T('Cloud sync <i>') + row.description + T('</i> stopped.'),
+                      this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
                       '500px',
                       'info',
                       true,
@@ -210,7 +205,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                   (jobId: number) => {
                     this.dialog.info(
                       T('Task Started'),
-                      T('Cloud sync <i>') + row.description + T('</i> has started.'),
+                      this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
                       '500px',
                       'info',
                       true,
@@ -280,7 +275,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
             saveButtonText: T('Restore'),
             afterInit(entityDialog: EntityDialogComponent) {
               entityDialog.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
-                const paragraph = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
+                const paragraph: FormParagraphConfig = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
                 switch (mode) {
                   case TransferMode.Sync:
                     paragraph.paraText = helptext.transfer_mode_warning_sync;
@@ -359,21 +354,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   }
 
   doAdd(id?: number): void {
-    this.modalService.open(
-      'slide-in-form',
-      new CloudsyncFormComponent(
-        this.router,
-        this.aroute,
-        this.loader,
-        this.dialog,
-        this.matDialog,
-        this.ws,
-        this.cloudCredentialService,
-        this.job,
-        this.modalService,
-      ),
-      id,
-    );
+    this.modalService.openInSlideIn(CloudsyncFormComponent, id);
   }
 
   doEdit(id: number): void {

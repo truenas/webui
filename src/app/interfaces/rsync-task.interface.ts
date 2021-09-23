@@ -11,7 +11,7 @@ export interface RsyncTask {
   desc: string;
   direction: Direction;
   enabled: boolean;
-  extra: any[];
+  extra: string[];
   id: number;
   job: Job;
   locked: boolean;

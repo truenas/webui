@@ -9,32 +9,13 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import helptext from 'app/helptext/vm/devices/device-add-edit';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, NetworkService, VmService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
-
-interface DisplayDeviceAttributes {
-  bind: string;
-  password: string;
-  port: number;
-  password_configured: boolean;
-  resolution: string;
-  type: string;
-  wait: boolean;
-  web: boolean;
-}
-
-interface Device {
-  attributes: DisplayDeviceAttributes;
-  dtype: string;
-  id: number;
-  order: number;
-  vm: number;
-}
 
 @UntilDestroy()
 @Component({
@@ -49,7 +30,7 @@ export class DeviceEditComponent implements OnInit {
   vmname: string;
   fieldSets: any;
   isCustActionVisible = false;
-  protected ipAddress: FieldConfig;
+  protected ipAddress: FormSelectConfig;
   selectedType = VmDeviceType.Cdrom;
   formGroup: FormGroup;
   activeFormGroup: FormGroup;
@@ -196,8 +177,8 @@ export class DeviceEditComponent implements OnInit {
       inputType: 'number',
     },
   ];
-  protected nic_attach: FieldConfig;
-  protected nicType: FieldConfig;
+  protected nic_attach: FormSelectConfig;
+  protected nicType: FormSelectConfig;
 
   // rawfile
   rawfileFieldConfig: FieldConfig[] = [
@@ -277,7 +258,7 @@ export class DeviceEditComponent implements OnInit {
       inputType: 'number',
     },
   ];
-  protected pptdev: FieldConfig;
+  protected pptdev: FormSelectConfig;
 
   // Display
   displayFieldConfig: FieldConfig[] = [
@@ -371,7 +352,7 @@ export class DeviceEditComponent implements OnInit {
     });
 
     this.ws.call('vm.resolution_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      const resolution = _.find(this.displayFieldConfig, { name: 'resolution' });
+      const resolution: FormSelectConfig = _.find(this.displayFieldConfig, { name: 'resolution' });
       for (const key in res) {
         resolution.options.push({ label: key, value: res[key] });
       }
@@ -497,7 +478,7 @@ export class DeviceEditComponent implements OnInit {
           case VmDeviceType.Display:
             this.activeFormGroup = this.displayFormGroup;
             this.isCustActionVisible = false;
-            this.ws.call('vm.get_display_devices', [this.vmId]).pipe(untilDestroyed(this)).subscribe((devices: Device[]) => {
+            this.ws.call('vm.get_display_devices', [this.vmId]).pipe(untilDestroyed(this)).subscribe((devices) => {
               if (devices.length > 1) {
                 _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
               }
@@ -527,7 +508,8 @@ export class DeviceEditComponent implements OnInit {
   afterInit(): void {
     this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]], { extra: { properties: ['id'] } }]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
-        _.find(this.diskFieldConfig, { name: 'path' }).options.push(
+        const config: FormSelectConfig = _.find(this.diskFieldConfig, { name: 'path' });
+        config.options.push(
           {
             label: zvol.id, value: '/dev/zvol/' + zvol.id,
           },

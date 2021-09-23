@@ -4,12 +4,13 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/idmap';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -29,7 +30,7 @@ export class IdmapFormComponent implements FormConfiguration {
   queryCall: 'idmap.query' = 'idmap.query';
   addCall: 'idmap.create' = 'idmap.create';
   editCall: 'idmap.update' = 'idmap.update';
-  pk: any;
+  pk: number;
   queryKey = 'id';
   private getRow = new Subscription();
   rangeLowValidation = [
@@ -290,7 +291,7 @@ export class IdmapFormComponent implements FormConfiguration {
   constructor(protected idmapService: IdmapService, protected validationService: ValidationService,
     private modalService: ModalService,
     protected dialogService: DialogService, protected dialog: MatDialog) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
     });
@@ -315,7 +316,7 @@ export class IdmapFormComponent implements FormConfiguration {
     });
 
     this.idmapService.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
-      const config = this.fieldConfig.find((c) => c.name === 'certificate');
+      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'certificate');
       config.options.push({ label: '---', value: null });
       certificates.forEach((certificate) => {
         config.options.push({ label: certificate.name, value: certificate.id });
@@ -355,7 +356,7 @@ export class IdmapFormComponent implements FormConfiguration {
 
     this.idmapService.getBackendChoices().pipe(untilDestroyed(this)).subscribe((backendChoices) => {
       this.backendChoices = backendChoices;
-      const config = this.fieldConfig.find((c) => c.name === 'idmap_backend');
+      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'idmap_backend');
       for (const item in backendChoices) {
         config.options.push({ label: item, value: item });
       }
@@ -397,25 +398,25 @@ export class IdmapFormComponent implements FormConfiguration {
 
   afterSubmit(): void {
     this.modalService.refreshTable();
-    this.dialogService.confirm(helptext.idmap.clear_cache_dialog.title, helptext.idmap.clear_cache_dialog.message,
-      true)
-      .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        if (res) {
-          this.dialogRef = this.dialog.open(EntityJobComponent, {
-            data: { title: (helptext.idmap.clear_cache_dialog.job_title) }, disableClose: true,
-          });
-          this.dialogRef.componentInstance.setCall('idmap.clear_idmap_cache');
-          this.dialogRef.componentInstance.submit();
-          this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-            this.dialog.closeAll();
-            this.dialogService.info(helptext.idmap.clear_cache_dialog.success_title,
-              helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true);
-          });
-          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
-            this.dialog.closeAll();
-            new EntityUtils().handleWSError(this.entityForm, res);
-          });
-        }
+    this.dialogService.confirm({
+      title: helptext.idmap.clear_cache_dialog.title,
+      message: helptext.idmap.clear_cache_dialog.message,
+      hideCheckBox: true,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.dialogRef = this.dialog.open(EntityJobComponent, {
+        data: { title: (helptext.idmap.clear_cache_dialog.job_title) }, disableClose: true,
       });
+      this.dialogRef.componentInstance.setCall('idmap.clear_idmap_cache');
+      this.dialogRef.componentInstance.submit();
+      this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+        this.dialog.closeAll();
+        this.dialogService.info(helptext.idmap.clear_cache_dialog.success_title,
+          helptext.idmap.clear_cache_dialog.success_msg, '250px', '', true);
+      });
+      this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+        this.dialog.closeAll();
+        new EntityUtils().handleWSError(this.entityForm, res);
+      });
+    });
   }
 }

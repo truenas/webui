@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,10 +13,10 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { CoreEvent } from 'app/interfaces/events';
+import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -95,8 +96,9 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.core.register({
       observerClass: this,
       eventName: 'SysInfo',
-    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      _.find(this.fieldConfig, { name: 'version' }).paraText += evt.data.version;
+    }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
+      const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'version' });
+      config.paraText += evt.data.version;
     });
 
     this.core.emit({ name: 'SysInfoRequest', sender: this });
@@ -125,7 +127,8 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
           return;
         }
 
-        _.find(this.fieldConfig, { name: 'filelocation' }).options.push({
+        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'filelocation' });
+        config.options.push({
           label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
         });
       });
@@ -147,9 +150,11 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
 
     entityForm.formGroup.controls['filelocation'].valueChanges.pipe(untilDestroyed(this)).subscribe((filelocation: string) => {
       if (filelocation === ':temp:') {
-        _.find(this.fieldConfig, { name: 'filename' }).fileLocation = null;
+        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'filename' });
+        config.fileLocation = null;
       } else {
-        _.find(this.fieldConfig, { name: 'filename' }).fileLocation = filelocation;
+        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'filename' });
+        config.fileLocation = filelocation;
       }
     });
     this.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
@@ -165,7 +170,6 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((ures) => {
       this.dialogRef = this.dialog.open(EntityJobComponent, {
         data: { title: helptext.manual_update_action },
-        disableClose: true,
       });
       if (this.isHA) {
         this.dialogRef.componentInstance.disableProgressValue(true);
@@ -191,18 +195,25 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
           this.isUpdateRunning = false;
           this.systemService.updateDone(); // Send 'finished' signal to topbar
           this.router.navigate(['/']);
-          this.dialogService.confirm(helptext.ha_update.complete_title,
-            helptext.ha_update.complete_msg, true,
-            helptext.ha_update.complete_action, false, '', '', '', '', true).pipe(untilDestroyed(this)).subscribe(() => {
-          });
+          this.dialogService.confirm({
+            title: helptext.ha_update.complete_title,
+            message: helptext.ha_update.complete_msg,
+            hideCheckBox: true,
+            buttonMsg: helptext.ha_update.complete_action,
+            hideCancel: true,
+          }).pipe(untilDestroyed(this)).subscribe(() => {});
         }
       });
-      this.dialogRef.componentInstance.prefailure.pipe(untilDestroyed(this)).subscribe((prefailure: any) => {
-        this.dialogRef.close(false);
-        this.dialogService.errorReport(helptext.manual_update_error_dialog.message,
-          `${prefailure.status.toString()} ${prefailure.statusText}`);
-        this.save_button_enabled = true;
-      });
+      this.dialogRef.componentInstance.prefailure
+        .pipe(untilDestroyed(this))
+        .subscribe((prefailure: HttpErrorResponse) => {
+          this.dialogRef.close(false);
+          this.dialogService.errorReport(
+            helptext.manual_update_error_dialog.message,
+            `${prefailure.status.toString()} ${prefailure.statusText}`,
+          );
+          this.save_button_enabled = true;
+        });
       this.dialogRef.componentInstance.failure
         .pipe(take(1))
         .pipe(untilDestroyed(this)).subscribe((failure) => {
@@ -236,7 +247,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   }
 
   showRunningUpdate(jobId: number): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant(T('Update')) } });
     if (this.isHA) {
       this.dialogRef.componentInstance.disableProgressValue(true);
     }

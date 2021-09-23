@@ -14,8 +14,9 @@ import { DatasetType } from 'app/enums/dataset-type.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
-import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { EntityWizardAction, WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
@@ -50,14 +51,12 @@ export class ZvolWizardComponent implements WizardConfiguration {
   protected pk: any;
   protected path: string;
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
-  protected compression: any;
   advanced_field = ['volblocksize'];
   isBasicMode = true;
   protected isNew = true;
   protected isEntity = true;
   parent: string;
   data: any;
-  parent_data: any;
   volid: string;
   customFilter: any[] = [];
   protected entityWizard: EntityWizardComponent;
@@ -71,7 +70,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   protected origVolSize: number;
   protected origHuman: string;
 
-  custActions: any[] = [
+  custActions: EntityWizardAction[] = [
     {
       id: 'basic_mode',
       name: globalHelptext.basic_options,
@@ -265,7 +264,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
     },
   ];
 
-  isCustActionVisible(actionId: any, stepperIndex: number): boolean {
+  isCustActionVisible(actionId: string, stepperIndex: number): boolean {
     if (!(stepperIndex == 1)) {
       return false;
     }
@@ -319,10 +318,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
     if (!this.parent) return;
 
     const sparse = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sparse');
-    const sync = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sync');
-    const compression = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'compression');
-    const deduplication = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'deduplication');
-    const volblocksize = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize');
+    const sync: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sync');
+    const compression: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'compression');
+    const deduplication: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'deduplication');
+    const volblocksize: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize');
 
     this.isNew = true;
 
@@ -330,16 +329,16 @@ export class ZvolWizardComponent implements WizardConfiguration {
       const children = (pk_dataset[0].children);
       entityWizard.setDisabled('name', false, 1);
       if (children.length > 0) {
-        for (const i in children) {
-          this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
-        }
+        children.forEach((child) => {
+          this.namesInUse.push(/[^/]*$/.exec(child.name)[0]);
+        });
       }
       this.translate.get('Inherit').pipe(untilDestroyed(this)).subscribe((inheritTr) => {
         if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {
-          const sync_inherit = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
-          const compression_inherit = [{ label: `${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
-          const deduplication_inherit = [{ label: `${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
-          const volblocksize_inherit = [{ label: `${inheritTr}`, value: 'INHERIT' }];
+          const sync_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
+          const compression_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
+          const deduplication_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
+          const volblocksize_inherit: Option[] = [{ label: `${inheritTr}`, value: 'INHERIT' }];
 
           sync.options = sync_inherit.concat(sync.options);
           compression.options = compression_inherit.concat(compression.options);

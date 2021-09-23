@@ -17,7 +17,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
   styleUrls: ['./download-key-dialog.component.scss'],
   templateUrl: './download-key-dialog.component.html',
 })
-export class DownloadKeyModalDialog {
+export class DownloadKeyDialogComponent {
   new = false;
   volumeId: number;
   volumeName: string;
@@ -27,7 +27,7 @@ export class DownloadKeyModalDialog {
 
   constructor(
     protected translate: TranslateService,
-    public dialogRef: MatDialogRef<DownloadKeyModalDialog>,
+    public dialogRef: MatDialogRef<DownloadKeyDialogComponent>,
     private ws: WebSocketService,
     private storage: StorageService,
     private http: HttpClient,

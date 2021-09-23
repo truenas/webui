@@ -4,33 +4,19 @@ import {
 import { Subject } from 'rxjs';
 import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
 import { ViewController } from 'app/core/classes/view-controller';
-import { Display } from 'app/core/components/display/display.component';
+import { DisplayComponent } from 'app/core/components/display/display.component';
 import { CoreServiceInjector } from 'app/core/services/core-service-injector';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 
-export interface ViewConfig {
-  componentName: any;
-  componentData: any;
-  controller?: Subject<any>;
-}
-
 @Component({
   selector: 'viewcontroller',
-  template: `
-    <div
-    [fxLayout]="layoutContainer.layout"
-    [fxLayoutAlign]="layoutContainer.align"
-    [fxLayoutGap]="layoutContainer.gap"
-    >
-      <display style="display:none;" #display></display>
-    </div>
-  `,
+  templateUrl: './view-controller.component.html',
   styles: [':host {display:block;}'],
 })
 export class ViewControllerComponent extends ViewController implements OnDestroy {
   readonly componentName = ViewControllerComponent;
-  @ViewChild('display', { static: true }) display: Display;
+  @ViewChild('display', { static: true }) display: DisplayComponent;
   protected core: CoreService;
   controlEvents: Subject<CoreEvent> = new Subject();
 
