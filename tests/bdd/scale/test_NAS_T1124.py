@@ -66,7 +66,7 @@ def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_nam
     time.sleep(1)
     global smb_path
     smb_path = path
-    """Set Path to the ACL dataset "/mnt/system/my_acl_dataset"."""
+    """Set Path to the ACL dataset "/mnt/system/tank_acl_dataset"."""
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(path)
