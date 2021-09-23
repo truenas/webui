@@ -14,7 +14,9 @@ import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormListConfig, FormSelectConfig, FormInputConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { NetworkService, DialogService, WebSocketService } from 'app/services';
@@ -302,7 +304,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private lag_fieldset: FieldSet;
   private bridge_fieldset: FieldSet;
   private failover_fieldset: FieldSet;
-  private vlan_pint: FormSelectConfig;
+  private vlan_pint: FormSelectConfig | FormInputConfig;
   private lag_ports: FormSelectConfig;
   private lag_protocol: FormSelectConfig;
   private bridge_members: FormSelectConfig;
@@ -395,12 +397,17 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
   afterInit(entityForm: EntityFormComponent): void {
     if (entityForm.pk !== undefined) {
-      this.vlan_pint.type = 'select'; // Why was this set to input??
+      this.vlan_pint = _.find(this.fieldConfig, { name: 'vlan_parent_interface' }) as FormInputConfig;
+      this.vlan_pint.type = 'input';
+      this.vlan_pint.readonly = true;
+      this.vlan_pint.disabled = true;
+      this.vlan_pint.required = false;
       this.title = helptext.title_edit;
     } else {
       this.title = helptext.title_add;
+      this.vlan_pint = _.find(this.fieldConfig, { name: 'vlan_parent_interface' }) as FormSelectConfig;
     }
-    this.vlan_pint = _.find(this.fieldConfig, { name: 'vlan_parent_interface' }) as FormSelectConfig;
+
     this.bridge_members = _.find(this.fieldConfig, { name: 'bridge_members' }) as FormSelectConfig;
     this.lag_ports = _.find(this.fieldConfig, { name: 'lag_ports' }) as FormSelectConfig;
     this.lag_protocol = _.find(this.fieldConfig, { name: 'lag_protocol' }) as FormSelectConfig;
@@ -510,11 +517,16 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       this.type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: NetworkInterfaceType) => {
         this.setType(type);
       });
-      this.networkService.getVlanParentInterfaceChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
-        for (const key in choices) {
-          this.vlan_pint.options.push({ label: choices[key], value: key });
-        }
-      });
+
+      if (this.vlan_pint.type === 'select') {
+        this.networkService.getVlanParentInterfaceChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
+          const vlan_pint = this.vlan_pint as FormSelectConfig;
+          for (const key in choices) {
+            vlan_pint.options.push({ label: choices[key], value: key });
+          }
+        });
+      }
+
       this.networkService.getLaggPortsChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
         for (const key in choices) {
           this.lag_ports.options.push({ label: choices[key], value: key });
