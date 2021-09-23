@@ -19,9 +19,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1124.feature', 'SCALE UI: Create an smb share with the tank ACL dataset')
-def test_scale_ui_create_an_smb_share_with_the_tank_acl_dataset():
-    """SCALE UI: Create an smb share with the tank ACL dataset."""
+@scenario('features/NAS-T1124.feature', 'Create an smb share with the tank ACL dataset')
+def test_create_an_smb_share_with_the_tank_acl_dataset():
+    """Create an smb share with the tank ACL dataset."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
