@@ -84,36 +84,14 @@ def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_nam
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
 
 @then(parsers.parse('"{smbname}" should be added, Click on service and the Service page should open'))
 def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open(driver, smbname):
     """"{smbname}" should be added, Click on service and the Service page should open."""
-    #assert wait_on_element(driver, 5, '//div[contains(.,"SMB")]')
     assert wait_on_element(driver, 5, f'//div[contains(.,"mysmbshare")]')
     time.sleep(2)
-    #assert wait_on_element(driver, 7, '//button[@ix-auto="button__ENABLE SERVICE"]', 'clickable')
-    #driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
-    #time.sleep(2)
-    #assert wait_on_element(driver, 7, '//div[contains(text(),"The SMB service has been enabled.")]')
-    #driver.find_element_by_xpath('//span[contains(text(),"Close")]').click()
-
-
-
-@then('If the SMB serivce is not started start the service, and click on SMB Start Automatically checkbox')
-def if_the_smb_serivce_is_not_started_start_the_service_and_click_on_smb_start_automatically_checkbox(driver):
-    """If the SMB serivce is not started start the service, and click on SMB Start Automatically checkbox."""
-    time.sleep(1)
-    #assert wait_on_element(driver, 5, '//services')
-    # Scroll to SMB service
-    #element = driver.find_element_by_xpath('//div[contains(text(),"WebDAV")]')
-    #driver.execute_script("arguments[0].scrollIntoView();", element)
-    #time.sleep(1)
-    #driver.find_element_by_xpath('//div[contains(text(),"SMB")]')
-    #value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@id="slide-toggle__state_SMB"]', 'class', 'mat-checked')
-    #if not value_exist:
-    #    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="overlay__SMB_Running"]').click()
-    #time.sleep(2)
 
 
 @then(parsers.parse('Send a file to the share with nas_ip/"{mysmbshare}" and "{user}" and "{password}"'))

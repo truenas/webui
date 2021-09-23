@@ -63,7 +63,7 @@ def the_windows_sharessmb_page_should_open_click_add(driver):
 @then(parsers.parse('Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
 def set_path_to_the_acl_dataset_mnttanktank_acl_dataset_input_mytankshare_as_name_click_to_enable_input_my_tank_test_share_as_description_and_click_summit(driver, path, smbname, description):
     """Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit."""
-    time.sleep(1)
+    assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
     global smb_path
     smb_path = path
     """Set Path to the ACL dataset "/mnt/system/tank_acl_dataset"."""
@@ -84,7 +84,7 @@ def set_path_to_the_acl_dataset_mnttanktank_acl_dataset_input_mytankshare_as_nam
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
 @then(parsers.parse('"{smbname}" should be added, Click on service and the Service page should open'))
 def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open(driver, smbname):
