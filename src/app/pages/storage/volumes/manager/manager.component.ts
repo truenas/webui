@@ -205,15 +205,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }, 500);
       },
       parent: this,
-      afterInit(entityDialog: EntityDialogComponent) {
-        const copy_desc: FormParagraphConfig = _.find(this.fieldConfig, { name: 'copy_desc' });
-        const parent = entityDialog.parent;
+      afterInit: (entityDialog: EntityDialogComponent) => {
+        const copy_desc: FormParagraphConfig = _.find(entityDialog.fieldConfig, { name: 'copy_desc' });
         const setParatext = (vdevs: number): void => {
-          const used = parent.first_data_vdev_disknum * vdevs;
-          const remaining = parent.duplicable_disks.length - used;
-          const size = filesize(parent.first_data_vdev_disksize, { standard: 'iec' });
-          const type = parent.first_data_vdev_disktype;
-          const vdev_type = parent.first_data_vdev_type;
+          const used = this.first_data_vdev_disknum * vdevs;
+          const remaining = this.duplicable_disks.length - used;
+          const size = filesize(this.first_data_vdev_disksize, { standard: 'iec' });
+          const type = this.first_data_vdev_disktype;
+          const vdev_type = this.first_data_vdev_type;
           const paraText = 'Create ' + vdevs + ' new ' + vdev_type + ' data vdevs using ' + used
             + ' (' + size + ') ' + type + 's and leaving ' + remaining + ' of those drives unused.';
           copy_desc.paraText = paraText;
@@ -655,7 +654,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           );
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           dialogRef.close(false);
-          new EntityUtils().handleWSError(self, error, this.dialog);
+          new EntityUtils().handleWSError(this, error, this.dialog);
         });
         dialogRef.componentInstance.submit();
       });

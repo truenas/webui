@@ -17,6 +17,9 @@ export interface DialogFormConfiguration<P = any> {
   warning?: string;
   preInit?: (entityDialog: EntityDialogComponent<P>) => void;
   afterInit?: (entityDialog: EntityDialogComponent<P>) => void;
+  /**
+   * @deprecated Capture parent with an arrow function instead
+   */
   parent?: P;
   confirmCheckbox?: boolean;
   hideCancel?: boolean;

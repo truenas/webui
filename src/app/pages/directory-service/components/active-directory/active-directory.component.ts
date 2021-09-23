@@ -68,8 +68,6 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     {
       id: 'leave_domain',
       name: helptext.activedirectory_custactions_leave_domain,
-      // TODO: Search for untilDestroyed(self)
-      // TODO: Search for handleWSError(self
       function: () => {
         this.dialogservice.dialogForm(
           {

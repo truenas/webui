@@ -3,6 +3,7 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
@@ -160,6 +161,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     protected matDialog: MatDialog,
     protected localeService: LocaleService,
     protected modalService: ModalService,
+    protected translate: TranslateService,
   ) {}
 
   getZfsPoolScan(poolName: string): void {
@@ -366,10 +368,10 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           fieldConfig: this.replaceDiskFormFields,
           saveButtonText: helptext.replace_disk.saveButtonText,
           parent: this,
-          customSubmit(entityDialog: EntityDialogComponent) {
+          customSubmit: (entityDialog: EntityDialogComponent) => {
             delete entityDialog.formValue['passphrase2'];
 
-            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {
+            const dialogRef = this.matDialog.open(EntityJobComponent, {
               data: { title: helptext.replace_disk.title },
               disableClose: true,
             });
@@ -379,11 +381,11 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
             dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               dialogRef.close(true);
               entityDialog.dialogRef.close(true);
-              entityDialog.parent.getData();
-              entityDialog.parent.getUnusedDisk();
-              entityDialog.parent.dialogService.info(
+              this.getData();
+              this.getUnusedDisk();
+              this.dialogService.info(
                 helptext.replace_disk.title,
-                entityDialog.parent.translate.instant('Successfully replaced disk {disk}.', { disk: name }),
+                this.translate.instant('Successfully replaced disk {disk}.', { disk: name }),
                 '',
                 'info',
                 true,
@@ -396,7 +398,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               if (res.error.startsWith('[EINVAL]')) {
                 err = res.error;
               }
-              entityDialog.parent.dialogService.errorReport(helptext.replace_disk.err_title, err, res.exception);
+              this.dialogService.errorReport(helptext.replace_disk.err_title, err, res.exception);
             });
           },
         };
@@ -491,10 +493,10 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           fieldConfig: this.extendVdevFormFields,
           saveButtonText: helptext.extend_disk.saveButtonText,
           parent: this,
-          customSubmit(entityDialog: EntityDialogComponent) {
+          customSubmit: (entityDialog: EntityDialogComponent) => {
             delete entityDialog.formValue['passphrase2'];
 
-            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {
+            const dialogRef = this.matDialog.open(EntityJobComponent, {
               data: { title: helptext.extend_disk.title },
               disableClose: true,
             });
@@ -504,9 +506,9 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
             dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               dialogRef.close(true);
               entityDialog.dialogRef.close(true);
-              entityDialog.parent.getData();
-              entityDialog.parent.getUnusedDisk();
-              entityDialog.parent.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + '.', '', 'info', true);
+              this.getData();
+              this.getUnusedDisk();
+              this.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + '.', '', 'info', true);
             });
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();
@@ -515,7 +517,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               if (res.error.startsWith('[EINVAL]')) {
                 err = res.error;
               }
-              entityDialog.parent.dialogService.errorReport(helptext.extend_disk.err_title, err, res.exception);
+              this.dialogService.errorReport(helptext.extend_disk.err_title, err, res.exception);
             });
           },
         };

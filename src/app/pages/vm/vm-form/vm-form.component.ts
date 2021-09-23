@@ -340,7 +340,7 @@ export class VmFormComponent implements FormConfiguration {
         if (errors) {
           config.hasErrors = true;
           config.hasErrors = true;
-          this.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(self)).subscribe((warning) => {
+          this.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
             config.warnings = warning + ` ${this.maxVCPUs}.`;
           });
         } else {

@@ -357,10 +357,10 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             saveButtonText: T('Update Interval'),
             cancelButtonText: T('Close'),
             parent: this,
-            customSubmit(entityDialog: EntityDialogComponent) {
+            customSubmit: (entityDialog: EntityDialogComponent) => {
               const scrubIntervalValue = parseInt(entityDialog.formValue.new_scrub_interval);
               if (scrubIntervalValue > 0) {
-                localWS.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(entityDialog.parent)).subscribe(() => {
+                localWS.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(this)).subscribe(() => {
                   localDialog.closeAllDialogs();
                   localDialog.info(T('Scrub Interval Set'), T(`Scrub interval set to ${scrubIntervalValue} days`), '300px', 'info', true);
                 });

@@ -673,9 +673,9 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         },
       ],
       parent: this,
-      customSubmit(entityDialog: EntityDialogComponent) {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close();
-        entityDialog.parent.updateTC();
+        this.updateTC();
       },
     };
     this.dialogService.dialogForm(conf);
@@ -730,7 +730,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
                 },
                 (err) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(updateDialog.parent, err, updateDialog.parent.dialogService);
+                  new EntityUtils().handleWSError(this, err, this.dialogService);
                 },
               );
           });
@@ -766,7 +766,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           },
           (err) => {
             this.loader.close();
-            new EntityUtils().handleWSError(entityDialog.parent, err, entityDialog.parent.dialogService);
+            new EntityUtils().handleWSError(this, err, this.dialogService);
           },
         );
       },
