@@ -46,10 +46,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 def on_the_dashboard_click_storage_on_the_left_sidebar(driver):
     """on the Dashboard, click Storagek on the left sidebar.."""
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//span[contains(text(),"System Information")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
 

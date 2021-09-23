@@ -47,8 +47,8 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('on the Dashboard, click Network on the left sidebar.')
 def on_the_dashboard_click_network_on_the_left_sidebar(driver):
     """on the Dashboard, click Network on the left sidebar.."""
-    time.sleep(2)
-    assert wait_on_element(driver, 7, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//span[contains(text(),"System Information")]')
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Network"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Network"]').click()
 

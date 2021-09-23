@@ -47,6 +47,8 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard_click_on_sharing_then_windows_sharessmb(driver):
     """you should be on the dashboard, click on Sharing then Windows Shares(SMB)."""
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
+    assert wait_on_element(driver, 10, '//span[contains(text(),"System Information")]')
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
 
 
@@ -80,8 +82,7 @@ def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_nam
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Description"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
