@@ -163,7 +163,7 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   viewCatalog(): void {
-    this.updateTab.emit({ name: ApplicationUserEventName.SwitchTab, value: 0 });
+    this.updateTab.emit({ name: ApplicationUserEventName.SwitchTab, value: 1 });
   }
 
   showLoadStatus(type: EmptyType): void {
