@@ -42,10 +42,8 @@ export class JobService {
   }
 
   showLogs(job: Job, title?: string, cancelMsg?: string): void {
-    let dialog_title;
-    let cancelButtonMsg;
-    title ? dialog_title = title : dialog_title = T('Logs');
-    cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Close');
+    const dialog_title = title || T('Logs');
+    const cancelButtonMsg = cancelMsg || T('Close');
 
     if (job.error) {
       if (job.logs_path) {

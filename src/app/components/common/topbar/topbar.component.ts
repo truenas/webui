@@ -142,7 +142,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
         this.is_ha = is_ha;
-        this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
+        if (this.is_ha) {
+          window.localStorage.setItem('alias_ips', 'show');
+        } else {
+          window.localStorage.setItem('alias_ips', '0');
+        }
         this.getHAStatus();
       });
       this.sysName = 'TrueNAS ENTERPRISE';
@@ -645,7 +649,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showTCStatus(): void {
-    this.tcConnected ? this.openStatusDialog() : this.openSignupDialog();
+    if (this.tcConnected) {
+      this.openStatusDialog();
+    } else {
+      this.openSignupDialog();
+    }
   }
 
   openSignupDialog(): void {

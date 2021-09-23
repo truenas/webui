@@ -1081,9 +1081,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     const control: FieldConfig = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
     control['isHidden'] = isHidden;
     control.disabled = disabled;
-    disabled
-      ? this.entityWizard.formArray.get([stepIndex]).get(field).disable()
-      : this.entityWizard.formArray.get([stepIndex]).get(field).enable();
+    if (disabled) {
+      this.entityWizard.formArray.get([stepIndex]).get(field).disable();
+    } else {
+      this.entityWizard.formArray.get([stepIndex]).get(field).enable();
+    }
   }
 
   loadReplicationTask(task: any): void {

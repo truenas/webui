@@ -64,16 +64,23 @@ export class SupportComponent implements OnInit {
   }
 
   parseLicenseInfo(): void {
-    this.licenseInfo.features.length === 0 ? this.licenseInfo.featuresString = 'NONE'
-      : this.licenseInfo.featuresString = this.licenseInfo.features.join(', ');
+    if (this.licenseInfo.features.length === 0) {
+      this.licenseInfo.featuresString = 'NONE';
+    } else {
+      this.licenseInfo.featuresString = this.licenseInfo.features.join(', ');
+    }
     const expDateConverted = new Date(this.licenseInfo.contract_end.$value);
     this.licenseInfo.expiration_date = this.licenseInfo.contract_end.$value;
-    this.systemInfo.system_serial_ha
-      ? this.systemInfo.serial = this.systemInfo.system_serial + ' / ' + this.systemInfo.system_serial_ha
-      : this.systemInfo.serial = this.systemInfo.system_serial;
-    this.licenseInfo.addhw_detail.length === 0
-      ? this.licenseInfo.add_hardware = 'NONE'
-      : this.licenseInfo.add_hardware = this.licenseInfo.addhw_detail.join(', ');
+    if (this.systemInfo.system_serial_ha) {
+      this.systemInfo.serial = this.systemInfo.system_serial + ' / ' + this.systemInfo.system_serial_ha;
+    } else {
+      this.systemInfo.serial = this.systemInfo.system_serial;
+    }
+    if (this.licenseInfo.addhw_detail.length === 0) {
+      this.licenseInfo.add_hardware = 'NONE';
+    } else {
+      this.licenseInfo.add_hardware = this.licenseInfo.addhw_detail.join(', ');
+    }
     const now = new Date(this.systemInfo.datetime.$date);
     const then = expDateConverted;
     this.licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);

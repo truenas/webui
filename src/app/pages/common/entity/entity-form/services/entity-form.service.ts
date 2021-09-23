@@ -114,7 +114,11 @@ export class EntityFormService {
   ): Promise<ListdirChild[]> {
     const children: ListdirChild[] = [];
     let typeFilter: any;
-    explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', FileType.Directory]] : typeFilter = [];
+    if (explorerType && explorerType === 'directory') {
+      typeFilter = [['type', '=', FileType.Directory]];
+    } else {
+      typeFilter = [];
+    }
 
     return this.ws.call('filesystem.listdir', [node.data.name, typeFilter,
       { order_by: ['name'], limit: 1000 }]).toPromise().then((res) => {

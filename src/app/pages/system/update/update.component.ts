@@ -289,8 +289,6 @@ export class UpdateComponent implements OnInit {
   }
 
   toggleAutoCheck(): void {
-    // TODO: Likely a bug
-    this.autoCheck === !this.autoCheck;
     this.ws.call('update.set_auto_download', [this.autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
       if (this.autoCheck) {
         this.check();

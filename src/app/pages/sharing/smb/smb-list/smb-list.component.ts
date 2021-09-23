@@ -91,8 +91,7 @@ export class SMBListComponent implements EntityTableConfig {
   getActions(row: SmbShare): EntityTableAction[] {
     const rowName = row.path.replace('/mnt/', '');
     const poolName = rowName.split('/')[0];
-    let optionDisabled;
-    rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
+    const optionDisabled = !rowName.includes('/');
     return [
       {
         id: row.name,

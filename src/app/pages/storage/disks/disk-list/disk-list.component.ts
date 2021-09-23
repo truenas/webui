@@ -92,17 +92,23 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         this.diskbucket.diskToggleBucket(this.diskToggle);
 
         // If all items match in an array, this fills in the value in the form; otherwise, blank
-        this.hddStandby.every((val, i, arr) => val === arr[0])
-          ? this.diskbucket.hddStandby = this.hddStandby[0]
-          : this.diskbucket.hddStandby = undefined;
+        if (this.hddStandby.every((val, i, arr) => val === arr[0])) {
+          this.diskbucket.hddStandby = this.hddStandby[0];
+        } else {
+          this.diskbucket.hddStandby = undefined;
+        }
 
-        this.advPowerMgt.every((val, i, arr) => val === arr[0])
-          ? this.diskbucket.advPowerMgt = this.advPowerMgt[0]
-          : this.diskbucket.advPowerMgt = undefined;
+        if (this.advPowerMgt.every((val, i, arr) => val === arr[0])) {
+          this.diskbucket.advPowerMgt = this.advPowerMgt[0];
+        } else {
+          this.diskbucket.advPowerMgt = undefined;
+        }
 
-        this.SMARToptions.every((val, i, arr) => val === arr[0])
-          ? this.diskbucket.SMARToptions = this.SMARToptions[0]
-          : this.diskbucket.SMARToptions = undefined;
+        if (this.SMARToptions.every((val, i, arr) => val === arr[0])) {
+          this.diskbucket.SMARToptions = this.SMARToptions[0];
+        } else {
+          this.diskbucket.SMARToptions = undefined;
+        }
 
         this.router.navigate(['/', 'storage', 'disks', 'bulk-edit']);
       } else {

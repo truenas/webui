@@ -1745,29 +1745,39 @@ export class VolumesListTableConfig implements EntityTableConfig {
     this.datasetData.forEach((dataset) => {
       if (dataset.id === dataObj.id) {
         if (dataset.compression) {
-          dataset.compression.source !== 'INHERITED'
-            ? dataObj.compression = (dataset.compression.parsed)
-            : dataObj.compression = (inherits + ' (' + dataset.compression.parsed + ')');
+          if (dataset.compression.source !== 'INHERITED') {
+            dataObj.compression = (dataset.compression.parsed);
+          } else {
+            dataObj.compression = (inherits + ' (' + dataset.compression.parsed + ')');
+          }
         }
         if (dataset.compressratio) {
-          dataset.compressratio.source !== 'INHERITED'
-            ? dataObj.compressratio = (dataset.compressratio.parsed)
-            : dataObj.compressratio = (inherits + ' (' + dataset.compressratio.parsed + ')');
+          if (dataset.compressratio.source !== 'INHERITED') {
+            dataObj.compressratio = (dataset.compressratio.parsed);
+          } else {
+            dataObj.compressratio = (inherits + ' (' + dataset.compressratio.parsed + ')');
+          }
         }
         if (dataset.readonly) {
-          dataset.readonly.source !== 'INHERITED'
-            ? dataObj.readonly = (dataset.readonly.parsed)
-            : dataObj.readonly = (inherits + ' (' + dataset.readonly.parsed + ')');
+          if (dataset.readonly.source !== 'INHERITED') {
+            dataObj.readonly = (dataset.readonly.parsed);
+          } else {
+            dataObj.readonly = (inherits + ' (' + dataset.readonly.parsed + ')');
+          }
         }
         if (dataset.deduplication) {
-          dataset.deduplication.source !== 'INHERITED'
-            ? dataObj.dedup = (dataset.deduplication.parsed)
-            : dataObj.dedup = (inherits + ' (' + dataset.deduplication.parsed + ')');
+          if (dataset.deduplication.source !== 'INHERITED') {
+            dataObj.dedup = (dataset.deduplication.parsed);
+          } else {
+            dataObj.dedup = (inherits + ' (' + dataset.deduplication.parsed + ')');
+          }
         }
         if (dataset.comments) {
-          dataset.comments.source !== 'INHERITED'
-            ? dataObj.comments = (dataset.comments.parsed)
-            : dataObj.comments = ('');
+          if (dataset.comments.source !== 'INHERITED') {
+            dataObj.comments = (dataset.comments.parsed);
+          } else {
+            dataObj.comments = ('');
+          }
         }
       }
       // add name, available and used into the data object

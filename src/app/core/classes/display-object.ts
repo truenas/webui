@@ -90,13 +90,10 @@ export class DisplayObject {
     this.rawElement = el; // result of document.querySelector(...)
     this.element = styler(el, {});
     this.interactive = true;
-    this.pointerTracker;
-    this.focus;
     this.anchorXY = value({ x: 0, y: 0 }, this.target.set);
     this.anchorW = value({ width: (this.target as any).offsetWidth }, this.target.set);
     this.anchorH = value({ height: (this.target as any).offsetHeight }, this.target.set);
     this.anchored = false;
-    this.boundary; // Collision detection
     this.reservedTop = 0; // 38;// 36 + 2 to avoid panel shadow
     this.moveable = false;
     this.resizeable = false;
