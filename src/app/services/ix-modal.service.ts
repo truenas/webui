@@ -5,10 +5,9 @@ import { IxModalComponent } from 'app/pages/common/ix/components/ix-modal/ix-mod
 @Injectable()
 export class IxModalService {
   private modalComponent: IxModalComponent;
-  private modalClosed$ = new Subject();
+  private modalClosed$ = new Subject<unknown>();
 
   setModal(modal: IxModalComponent): void {
-    // add modal to array of active modals
     this.modalComponent = modal;
   }
 
@@ -24,7 +23,7 @@ export class IxModalService {
     this.modalComponent.closeModal();
   }
 
-  get onClose(): Subject<any> {
+  get onClose(): Subject<unknown> {
     return this.modalClosed$;
   }
 }
