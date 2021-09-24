@@ -165,7 +165,6 @@ export interface FormParagraphConfig<P = any> extends BaseFieldConfig<P> {
   paragraphIconSize?: string;
   paraText?: string;
   inputType?: string;
-  // type: 'paragraph';
 }
 
 export interface FormPermissionsConfig<P = any> extends BaseFieldConfig<P> {

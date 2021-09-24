@@ -29,7 +29,6 @@ export class FieldRelationService {
   getRelatedFormControls(config: FieldConfig,
     controlGroup: FormGroup): FormControl[] {
     const controls: FormControl[] = [];
-    // const model = this.getConfigType(config);
 
     config.relation.forEach((relGroup) => relGroup.when.forEach((rel) => {
       if (config.name === rel.name) {
