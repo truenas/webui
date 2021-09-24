@@ -63,12 +63,12 @@ export class ApiKeysComponent implements EntityTableConfig {
     ],
     method_ws: this.addCall,
     saveButtonText: helptext.formDialog.add_button,
-    customSubmit: this.doSubmit,
-    afterInit(entityFrom: EntityDialogComponent) {
-      const disableCheckbox = !this.parent.currItem;
+    customSubmit: (entityDialog) => this.doSubmit(entityDialog),
+    afterInit: (entityFrom: EntityDialogComponent) => {
+      const disableCheckbox = !this.currItem;
       entityFrom.setDisabled('reset', disableCheckbox, disableCheckbox);
-      if (this.parent.currItem) {
-        entityFrom.formGroup.controls['name'].setValue(this.parent.currItem.name);
+      if (this.currItem) {
+        entityFrom.formGroup.controls['name'].setValue(this.currItem.name);
       }
     },
     parent: this,
@@ -77,17 +77,6 @@ export class ApiKeysComponent implements EntityTableConfig {
   timeZone: string;
 
   custActions = [
-    {
-      id: 'add',
-      name: helptext.action_add,
-      function: () => {
-        this.apikeysFormConf.title = helptext.formDialog.add_title;
-        this.apikeysFormConf.saveButtonText = helptext.formDialog.add_button;
-        this.apikeysFormConf.method_ws = this.addCall;
-        this.currItem = undefined;
-        this.dialogService.dialogForm(this.apikeysFormConf);
-      },
-    },
     {
       id: 'docs',
       name: helptext.action_docs,
@@ -117,37 +106,43 @@ export class ApiKeysComponent implements EntityTableConfig {
     });
   }
 
-  doSubmit(entityDialogForm: EntityDialogComponent<this>): void {
-    const that = entityDialogForm.parent;
-    if (that.currItem) {
-      that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
+  doAdd(): void {
+    this.apikeysFormConf.title = helptext.formDialog.add_title;
+    this.apikeysFormConf.saveButtonText = helptext.formDialog.add_button;
+    this.apikeysFormConf.method_ws = this.addCall;
+    this.currItem = undefined;
+    this.dialogService.dialogForm(this.apikeysFormConf);
+  }
+
+  doSubmit(entityDialogForm: EntityDialogComponent<ApiKeysComponent>): void {
+    if (this.currItem) {
+      this.ws.call(this.editCall, [this.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           entityDialogForm.dialogRef.close(true);
           if (res.key) {
-            that.displayKey(res.key);
+            this.displayKey(res.key);
           }
-          that.entityList.getData();
+          this.entityList.getData();
         },
         (err: WebsocketError) => {
-          new EntityUtils().handleWSError(that, err, that.dialogService, that.apikeysFormConf.fieldConfig);
+          new EntityUtils().handleWSError(this, err, this.dialogService, this.apikeysFormConf.fieldConfig);
         },
       );
     } else {
-      that.ws.call(that.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(that)).subscribe(
+      this.ws.call(this.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           entityDialogForm.dialogRef.close(true);
-          that.displayKey(res.key);
-          that.entityList.getData();
+          this.displayKey(res.key);
+          this.entityList.getData();
         },
         (err: WebsocketError) => {
-          new EntityUtils().handleWSError(this, err, that.dialogService, that.apikeysFormConf.fieldConfig);
+          new EntityUtils().handleWSError(this, err, this.dialogService, this.apikeysFormConf.fieldConfig);
         },
       );
     }
   }
 
   displayKey(key: string): void {
-    const self = this;
     const dialogRef = this.dialog.open(ConfirmDialogComponent, { disableClose: true });
     dialogRef.componentInstance.title = helptext.apikeyCopyDialog.title;
     dialogRef.componentInstance.buttonMsg = helptext.apikeyCopyDialog.save_button;
@@ -158,7 +153,7 @@ export class ApiKeysComponent implements EntityTableConfig {
         ${helptext.apikeyCopyDialog.api_key_warning} <br><br>
         ${helptext.apikeyCopyDialog.api_key}:<br> ${key}`;
     dialogRef.componentInstance.customSubmit = () => {
-      self.clipboard.copy(key);
+      this.clipboard.copy(key);
     };
   }
 

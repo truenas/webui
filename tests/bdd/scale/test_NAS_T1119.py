@@ -126,6 +126,7 @@ def the_edit_acl_page_should_open_select_open_for_default_acl_option_select_grou
     assert wait_on_element(driver, 5, '//mat-selection-list//mat-option//span[contains(text(),"Full Control")]', 'clickable')
     driver.find_element_by_xpath('//mat-selection-list//mat-option//span[contains(text(),"Full Control")]').click()
 
+
 @then('click the Save button, which should be returned to the storage page, on the Edit ACL page, verify that the group name is "AD01\Administrator".')
 def click_the_save_button_which_should_be_returned_to_the_storage_page_on_the_edit_acl_page_verify_that_the_group_name_is_ad01administrator(driver):
     """click the Save button, which should be returned to the storage page, on the Edit ACL page, verify that the group name is "AD01\Administrator".."""

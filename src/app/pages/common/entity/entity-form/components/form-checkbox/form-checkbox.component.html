@@ -20,7 +20,9 @@
     [required]="config.required"
     (change)="onChangeCheckbox($event)"
     (click)="((config.readonly && preventClick($event)) || checkboxUpdate())"
-  ></mat-checkbox>
+  >
+    {{ config.placeholder | translate }}
+  </mat-checkbox>
 
   <mat-checkbox
     *ngIf="config.customEventMethod"

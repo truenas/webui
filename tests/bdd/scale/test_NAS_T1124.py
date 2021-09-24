@@ -20,9 +20,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1123.feature', 'Create an smb share with the system ACL dataset')
-def test_create_an_smb_share_with_the_system_acl_dataset():
-    """Create an smb share with the system ACL dataset."""
+@scenario('features/NAS-T1124.feature', 'Create an smb share with the tank ACL dataset')
+def test_create_an_smb_share_with_the_tank_acl_dataset():
+    """Create an smb share with the tank ACL dataset."""
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
@@ -58,16 +58,16 @@ def the_windows_sharessmb_page_should_open_click_add(driver):
     """The Windows Shares(SMB) page should open, Click Add."""
     assert wait_on_element(driver, 5, '//h1[contains(text(),"Sharing")]')
     assert wait_on_element(driver, 5, '//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]', 'clickable')
-    driver.find_element_by_xpath('//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]').click()   
+    driver.find_element_by_xpath('//mat-card[contains(.,"SMB")]//button[@ix-auto="button__-add"]').click()    
 
 
 @then(parsers.parse('Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
-def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_name_click_to_enable_input_my_smb_test_share_as_description_and_click_summit(driver, path, smbname, description):
+def set_path_to_the_acl_dataset_mnttanktank_acl_dataset_input_mytankshare_as_name_click_to_enable_input_my_tank_test_share_as_description_and_click_summit(driver, path, smbname, description):
     """Set Path to the ACL dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit."""
     assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
     global smb_path
     smb_path = path
-    """Set Path to the ACL dataset "/mnt/system/my_acl_dataset"."""
+    """Set Path to the ACL dataset "/mnt/system/tank_acl_dataset"."""
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(path)
@@ -87,19 +87,18 @@ def set_path_to_the_acl_dataset_mntsystemkmy_acl_dataset_input_mysmbshare_as_nam
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
 
-
 @then(parsers.parse('"{smbname}" should be added, Click on service and the Service page should open'))
 def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open(driver, smbname):
     """"{smbname}" should be added, Click on service and the Service page should open."""
-    assert wait_on_element(driver, 5, f'//div[contains(.,"mysmbshare")]')
+    assert wait_on_element(driver, 5, f'//div[contains(.,"mytankshare")]')
     time.sleep(2)
 
 
-@then(parsers.parse('Send a file to the share with nas_ip/"{mysmbshare}" and "{user}" and "{password}"'))
-def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd1234(driver, nas_ip, mysmbshare, user, password):
-    """Send a file to the share with nas_IP/"{mysmbshare}" and "{user}" and "{password}"."""
+@then(parsers.parse('Send a file to the share with nas_ip/"{mytankshare}" and "{user}" and "{password}"'))
+def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd1234(driver, nas_ip, mytankshare, user, password):
+    """Send a file to the share with nas_IP/"{mytankshare}" and "{user}" and "{password}"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{mysmbshare} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{mytankshare} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']
 
@@ -107,7 +106,7 @@ def send_a_file_to_the_share_with_nas_ipmysmbshare_and_administrator_and_abcd123
 @then('Verify that the is on nas_ip with root and password')
 def verify_that_the_is_on_nas_ip_with_root_and_password(driver, nas_ip, root_password):
     global results
-    cmd = 'ls -la /mnt/system/my_acl_dataset/'
+    cmd = 'ls -la /mnt/tank/tank_acl_dataset/'
     results = ssh_cmd(cmd, 'root', root_password, nas_ip)
     assert results['result'], results['output']
     assert 'testfile' in results['output'], results['output']

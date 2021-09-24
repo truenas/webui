@@ -948,13 +948,12 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   ipValidator(name: string): ValidatorFn {
-    const self = this;
-    return function validIPs(control: FormControl) {
-      const config = self.wizardConfig[2].fieldConfig.find((c) => c.name === name);
+    return (control: FormControl) => {
+      const config = this.wizardConfig[2].fieldConfig.find((c) => c.name === name);
       let counter = 0;
       if (control.value) {
         control.value.forEach((item: any) => {
-          if (!self.networkService.authNetworkValidator(item)) {
+          if (!this.networkService.authNetworkValidator(item)) {
             counter++;
           }
         });

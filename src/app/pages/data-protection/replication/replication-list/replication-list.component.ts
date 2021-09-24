@@ -147,7 +147,6 @@ export class ReplicationListComponent implements EntityTableConfig {
         label: T('Restore'),
         icon: 'restore',
         onClick: (row: ReplicationTaskUi) => {
-          const parent = this;
           const conf: DialogFormConfiguration = {
             title: helptext.replication_restore_dialog.title,
             fieldConfig: [
@@ -171,16 +170,16 @@ export class ReplicationListComponent implements EntityTableConfig {
               },
             ],
             saveButtonText: helptext.replication_restore_dialog.saveButton,
-            customSubmit(entityDialog: EntityDialogComponent) {
-              parent.loader.open();
-              parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
+            customSubmit: (entityDialog: EntityDialogComponent) => {
+              this.loader.open();
+              this.ws.call('replication.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
                 () => {
                   entityDialog.dialogRef.close(true);
-                  parent.entityList.getData();
+                  this.entityList.getData();
                 },
                 (err) => {
-                  parent.loader.close();
-                  new EntityUtils().handleWSError(entityDialog, err, parent.dialog);
+                  this.loader.close();
+                  new EntityUtils().handleWSError(entityDialog, err, this.dialog);
                 },
               );
             },

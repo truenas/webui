@@ -1134,10 +1134,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   labelForm(): void {
-    const self = this;
-
-    const obj = self.system.enclosures[self.selectedEnclosure.enclosureKey];
-    const currentLabel = obj.label !== obj.name ? obj.label : self.selectedEnclosure.model;
+    const obj = this.system.enclosures[this.selectedEnclosure.enclosureKey];
+    const currentLabel = obj.label !== obj.name ? obj.label : this.selectedEnclosure.model;
     const conf: DialogFormConfiguration = {
       title: T('Change Enclosure Label'),
       fieldConfig: [
@@ -1166,10 +1164,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         },
       ],
       saveButtonText: T('SAVE'),
-      customSubmit(entityDialog: EntityDialogComponent) {
-        self.pendingDialog = entityDialog;
+      customSubmit: (entityDialog: EntityDialogComponent) => {
+        this.pendingDialog = entityDialog;
         entityDialog.loader.open();
-        self.setEnclosureLabel(entityDialog.formValue.label);
+        this.setEnclosureLabel(entityDialog.formValue.label);
       },
     };
 

@@ -171,7 +171,6 @@ export class OpenvpnServerComponent implements FormConfiguration {
       id: 'client_config',
       name: helptext.server.buttons.download,
       function: () => {
-        const self = this;
         const conf: DialogFormConfiguration = {
           title: T('Select Client Certificate'),
           fieldConfig: [
@@ -183,20 +182,20 @@ export class OpenvpnServerComponent implements FormConfiguration {
             },
           ],
           saveButtonText: T('Save'),
-          customSubmit(entityDialog: EntityDialogComponent) {
-            self.ws.call('interface.websocket_local_ip').pipe(untilDestroyed(this)).subscribe((localip) => {
+          customSubmit: (entityDialog: EntityDialogComponent) => {
+            this.ws.call('interface.websocket_local_ip').pipe(untilDestroyed(this)).subscribe((localip) => {
               const value = entityDialog.formValue;
               entityDialog.dialogRef.close(true);
-              self.loader.open();
-              self.services.generateOpenServerClientConfig(value.client_certificate_id,
+              this.loader.open();
+              this.services.generateOpenServerClientConfig(value.client_certificate_id,
                 localip).pipe(untilDestroyed(this)).subscribe((key) => {
                 const filename = 'openVPNClientConfig.ovpn';
                 const blob = new Blob([key], { type: 'text/plain' });
-                self.storageService.downloadBlob(blob, filename);
-                self.loader.close();
+                this.storageService.downloadBlob(blob, filename);
+                this.loader.close();
               }, (err) => {
-                self.loader.close();
-                self.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted);
+                this.loader.close();
+                this.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted);
               });
             });
           },

@@ -279,7 +279,6 @@ export class ServiceNFSComponent implements FormConfiguration {
   }
 
   addSPN(): void {
-    const that = this;
     if (!this.hasNfsStatus && this.adHealth === DirectoryServiceState.Healthy) {
       this.dialog.confirm({
         title: helptext.add_principal_prompt.title,
@@ -308,7 +307,7 @@ export class ServiceNFSComponent implements FormConfiguration {
               },
             ],
             saveButtonText: helptext.add_principal_form.action,
-            customSubmit(entityDialog: EntityDialogComponent) {
+            customSubmit: (entityDialog: EntityDialogComponent) => {
               const value = entityDialog.formValue;
               const self = entityDialog;
               self.loader.open();
@@ -316,12 +315,12 @@ export class ServiceNFSComponent implements FormConfiguration {
                 .pipe(untilDestroyed(this)).subscribe(() => {
                   self.loader.close();
                   self.dialogRef.close(true);
-                  that.dialog.info(helptext.addSPN.success, helptext.addSPN.success_msg, '500px', 'info');
+                  this.dialog.info(helptext.addSPN.success, helptext.addSPN.success_msg, '500px', 'info');
                 },
                 (err: WebsocketError) => {
                   self.loader.close();
                   self.dialogRef.close(true);
-                  that.dialog.errorReport(helptext.add_principal_form.error_title,
+                  this.dialog.errorReport(helptext.add_principal_form.error_title,
                     err.reason, err.trace.formatted);
                 });
             },

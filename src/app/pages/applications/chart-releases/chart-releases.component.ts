@@ -87,7 +87,7 @@ export class ChartReleasesComponent implements OnInit {
     }],
     method_ws: 'chart.release.rollback',
     saveButtonText: helptext.charts.rollback_dialog.action,
-    customSubmit: this.doRollback,
+    customSubmit: (entityDialog) => this.doRollback(entityDialog),
     parent: this,
   };
 
@@ -110,8 +110,8 @@ export class ChartReleasesComponent implements OnInit {
       value: '/bin/bash',
     }],
     saveButtonText: helptext.podConsole.choosePod.action,
-    customSubmit: this.doPodSelect,
-    afterInit: this.afterShellDialogInit,
+    customSubmit: (entityDialog) => this.doPodSelect(entityDialog),
+    afterInit: (entityDialog) => this.afterShellDialogInit(entityDialog),
     parent: this,
   };
 
@@ -135,8 +135,8 @@ export class ChartReleasesComponent implements OnInit {
       required: true,
     }],
     saveButtonText: helptext.podConsole.choosePod.action,
-    customSubmit: this.doPodSelectForLogs,
-    afterInit: this.afterLogsDialogInit,
+    customSubmit: (entityDialog) => this.doPodSelectForLogs(entityDialog),
+    afterInit: (entityDialog) => this.afterLogsDialogInit(entityDialog),
     parent: this,
   };
 
@@ -336,26 +336,25 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   doRollback(entityDialog: EntityDialogComponent<this>): void {
-    const self = entityDialog.parent;
     const form = entityDialog.formGroup.controls;
     const payload = {
       item_version: form['item_version'].value,
       rollback_snapshot: form['rollback_snapshot'].value,
     };
-    self.dialogRef = self.mdDialog.open(EntityJobComponent, {
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: helptext.charts.rollback_dialog.job,
       },
     });
-    self.dialogRef.componentInstance.setCall('chart.release.rollback', [self.rollbackChartName, payload]);
-    self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe(() => {
-      self.refreshChartReleases();
-      self.dialogService.closeAllDialogs();
+    this.dialogRef.componentInstance.setCall('chart.release.rollback', [this.rollbackChartName, payload]);
+    this.dialogRef.componentInstance.submit();
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.refreshChartReleases();
+      this.dialogService.closeAllDialogs();
     });
-    self.dialogRef.componentInstance.failure.pipe(untilDestroyed(self)).subscribe((error) => {
-      self.dialogService.closeAllDialogs();
-      new EntityUtils().handleWSError(self, error, self.dialogService);
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      this.dialogService.closeAllDialogs();
+      new EntityUtils().handleWSError(this, error, this.dialogService);
     });
   }
 
@@ -580,27 +579,25 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   doPodSelect(entityDialog: EntityDialogComponent<this>): void {
-    const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
     const command = entityDialog.formGroup.controls['command'].value;
-    self.router.navigate(new Array('/apps/1/shell/').concat([self.selectedAppName, pod, command]));
-    self.dialogService.closeAllDialogs();
+    this.router.navigate(new Array('/apps/1/shell/').concat([this.selectedAppName, pod, command]));
+    this.dialogService.closeAllDialogs();
   }
 
   doPodSelectForLogs(entityDialog: EntityDialogComponent<this>): void {
-    const self = entityDialog.parent;
     const pod = entityDialog.formGroup.controls['pods'].value;
     const container = entityDialog.formGroup.controls['containers'].value;
     const tailLines = entityDialog.formGroup.controls['tail_lines'].value;
-    self.router.navigate(new Array('/apps/1/logs/').concat([self.selectedAppName, pod, container, tailLines]));
-    self.dialogService.closeAllDialogs();
+    this.router.navigate(new Array('/apps/1/logs/').concat([this.selectedAppName, pod, container, tailLines]));
+    this.dialogService.closeAllDialogs();
   }
 
   afterShellDialogInit(entityDialog: EntityDialogComponent<this>): void {
-    const self = entityDialog.parent;
-    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(self)).subscribe((value) => {
-      const containers = self.podDetails[value];
+    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      const containers = this.podDetails[value];
       const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
+
       containerFC.options = containers.map((item) => ({
         label: item,
         value: item,
@@ -610,9 +607,8 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   afterLogsDialogInit(entityDialog: EntityDialogComponent<this>): void {
-    const self = entityDialog.parent;
-    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(self)).subscribe((value) => {
-      const containers = self.podDetails[value];
+    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      const containers = this.podDetails[value];
       const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
       containerFC.options = containers.map((item) => ({
         label: item,

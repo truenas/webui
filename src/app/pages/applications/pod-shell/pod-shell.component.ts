@@ -109,27 +109,24 @@ export class PodShellComponent implements TerminalConfiguration {
         value: this.command,
       }],
       saveButtonText: helptext.podConsole.choosePod.action,
-      customSubmit: this.onChooseShell,
-      afterInit: this.afterShellDialogInit,
+      customSubmit: (entityDialog) => this.onChooseShell(entityDialog),
+      afterInit: (entityDialog) => this.afterShellDialogInit(entityDialog),
       parent: this,
     };
   }
 
   onChooseShell(entityDialog: EntityDialogComponent<PodShellComponent>): void {
-    const self = entityDialog.parent;
-    self.podName = entityDialog.formGroup.controls['pods'].value;
-    self.containerName = entityDialog.formGroup.controls['containers'].value;
-    self.command = entityDialog.formGroup.controls['command'].value;
+    this.podName = entityDialog.formGroup.controls['pods'].value;
+    this.containerName = entityDialog.formGroup.controls['containers'].value;
+    this.command = entityDialog.formGroup.controls['command'].value;
 
-    self.reconnectShell$.next();
-    self.dialogService.closeAllDialogs();
+    this.reconnectShell$.next();
+    this.dialogService.closeAllDialogs();
   }
 
   afterShellDialogInit(entityDialog: EntityDialogComponent<PodShellComponent>): void {
-    const self = entityDialog.parent;
-
-    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(self)).subscribe((value) => {
-      const containers = self.podDetails[value];
+    entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
+      const containers = this.podDetails[value];
       const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
       containerFC.options = containers.map((item) => ({
         label: item,

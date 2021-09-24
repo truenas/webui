@@ -673,19 +673,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         },
       ],
       parent: this,
-      customSubmit(entityDialog: EntityDialogComponent) {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close();
-        entityDialog.parent.updateTC();
+        this.updateTC();
       },
     };
     this.dialogService.dialogForm(conf);
   }
 
   updateTC(): void {
-    const self = this;
     let updateDialog: EntityDialogComponent;
     const conf: DialogFormConfiguration = {
-      title: self.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
+      title: this.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
       fieldConfig: [
         {
           type: 'input',
@@ -705,7 +704,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         id: 'deregister',
         name: helptext.tcDeregisterBtn,
         function: () => {
-          self.dialogService.generalDialog({
+          this.dialogService.generalDialog({
             title: helptext.tcDeregisterDialog.title,
             icon: helptext.tcDeregisterDialog.icon,
             message: helptext.tcDeregisterDialog.message,
@@ -715,59 +714,59 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
               return;
             }
 
-            self.loader.open();
-            self.ws.call(self.tc_updateCall, [{ api_key: null, enabled: false }])
+            this.loader.open();
+            this.ws.call(this.tc_updateCall, [{ api_key: null, enabled: false }])
               .pipe(untilDestroyed(this))
               .subscribe(
                 () => {
-                  self.loader.close();
+                  this.loader.close();
                   updateDialog.dialogRef.close();
-                  self.tcStatusDialogRef.close(true);
-                  self.dialogService.generalDialog({
+                  this.tcStatusDialogRef.close(true);
+                  this.dialogService.generalDialog({
                     title: helptext.deregisterInfoDialog.title,
                     message: helptext.deregisterInfoDialog.message,
                     hideCancel: true,
                   });
                 },
                 (err) => {
-                  self.loader.close();
-                  new EntityUtils().handleWSError(updateDialog.parent, err, updateDialog.parent.dialogService);
+                  this.loader.close();
+                  new EntityUtils().handleWSError(this, err, this.dialogService);
                 },
               );
           });
         },
       }],
-      isCustActionVisible(actionId: string) {
-        return !(actionId === 'deregister' && !self.tcConnected);
+      isCustActionVisible: (actionId: string) => {
+        return !(actionId === 'deregister' && !this.tcConnected);
       },
-      saveButtonText: self.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
+      saveButtonText: this.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
       parent: this,
-      afterInit(entityDialog: EntityDialogComponent) {
+      afterInit: (entityDialog: EntityDialogComponent) => {
         updateDialog = entityDialog;
         // load settings
-        if (self.tcConnected) {
-          Object.keys(self.tcStatus).forEach((key) => {
+        if (this.tcConnected) {
+          Object.keys(this.tcStatus).forEach((key) => {
             const ctrl = entityDialog.formGroup.controls[key];
             if (ctrl) {
-              ctrl.setValue(self.tcStatus[key as keyof TrueCommandConfig]);
+              ctrl.setValue(this.tcStatus[key as keyof TrueCommandConfig]);
             }
           });
         }
       },
-      customSubmit(entityDialog: EntityDialogComponent) {
-        self.loader.open();
-        self.ws.call(self.tc_updateCall, [entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
+      customSubmit: (entityDialog: EntityDialogComponent) => {
+        this.loader.open();
+        this.ws.call(this.tc_updateCall, [entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
           () => {
-            self.loader.close();
+            this.loader.close();
             entityDialog.dialogRef.close();
             // only show this for connecting TC
-            if (!self.tcConnected) {
-              self.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message, '500px', 'info');
+            if (!this.tcConnected) {
+              this.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message, '500px', 'info');
             }
           },
           (err) => {
-            self.loader.close();
-            new EntityUtils().handleWSError(entityDialog.parent, err, entityDialog.parent.dialogService);
+            this.loader.close();
+            new EntityUtils().handleWSError(this, err, this.dialogService);
           },
         );
       },

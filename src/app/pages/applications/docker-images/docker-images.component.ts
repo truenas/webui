@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { latestVersion } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
@@ -48,6 +49,7 @@ export class DockerImagesComponent implements EntityTableConfig {
   constructor(
     protected dialogService: DialogService,
     private modalService: ModalService,
+    private matDialog: MatDialog,
   ) {}
 
   chooseTag: DialogFormConfiguration = {
@@ -59,7 +61,7 @@ export class DockerImagesComponent implements EntityTableConfig {
       required: true,
     }],
     saveButtonText: helptext.dockerImages.chooseTag.action,
-    customSubmit: this.updateImage,
+    customSubmit: (entityDialog) => this.updateImage(entityDialog),
     parent: this,
   };
 
@@ -133,7 +135,6 @@ export class DockerImagesComponent implements EntityTableConfig {
   }
 
   updateImage(entityDialog: EntityDialogComponent): void {
-    const self = entityDialog.parent;
     const tag = entityDialog.formGroup.controls['tag'].value;
     const params = tag.split(':');
     const payload: [PullContainerImageParams] = [{
@@ -141,16 +142,16 @@ export class DockerImagesComponent implements EntityTableConfig {
       tag: params.length > 1 ? params[1] : latestVersion,
     }];
 
-    self.dialogRef = self.mdDialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
         title: helptext.dockerImages.pulling,
       },
     });
-    self.dialogRef.componentInstance.setCall('container.image.pull', payload);
-    self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      self.dialogService.closeAllDialogs();
-      self.modalService.refreshTable();
+    dialogRef.componentInstance.setCall('container.image.pull', payload);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.modalService.refreshTable();
     });
   }
 }
