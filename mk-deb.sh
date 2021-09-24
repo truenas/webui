@@ -5,7 +5,7 @@ if [ -z "$1" ] ; then
 	exit 1
 fi
 
-yarn install
+yarn install --frozen-lockfile
 tar cvzf node_files.tgz node_modules/
 rm -rf node_modules
 

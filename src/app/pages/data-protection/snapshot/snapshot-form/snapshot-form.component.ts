@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
+import { AbstractControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/data-protection/snapshot/snapshot-form';
@@ -7,7 +7,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { UnitType } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSelectConfig, UnitType } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, StorageService, TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -27,7 +27,7 @@ export class SnapshotFormComponent implements FormConfiguration {
   pk: number;
   protected dataset: string;
   protected dataset_disabled = false;
-  protected datasetFg: any;
+  protected datasetFg: AbstractControl;
   save_button_enabled = true;
   protected entityForm: EntityFormComponent;
   title: string;
@@ -137,8 +137,8 @@ export class SnapshotFormComponent implements FormConfiguration {
     protected storageService: StorageService,
     protected dialog: DialogService,
     protected modalService: ModalService) {
-    const begin_field = this.fieldSets.config('begin');
-    const end_field = this.fieldSets.config('end');
+    const begin_field = this.fieldSets.config('begin') as FormSelectConfig;
+    const end_field = this.fieldSets.config('end') as FormSelectConfig;
     const time_options = this.taskService.getTimeOptions();
     for (let i = 0; i < time_options.length; i++) {
       begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
@@ -146,13 +146,13 @@ export class SnapshotFormComponent implements FormConfiguration {
     }
   }
 
-  async afterInit(entityForm: EntityFormComponent): Promise<void> {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;
     this.title = this.isNew ? helptext.snapshot_task_add : helptext.snapshot_task_edit;
 
-    const datasetField = this.fieldSets.config('dataset');
+    const datasetField = this.fieldSets.config('dataset') as FormSelectConfig;
 
     this.storageService.getDatasetNameOptions().pipe(untilDestroyed(this)).subscribe(
       (options) => {
@@ -171,7 +171,7 @@ export class SnapshotFormComponent implements FormConfiguration {
 
     this.datasetFg = entityForm.formGroup.controls['dataset'];
 
-    this.datasetFg.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.datasetFg.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       if (this.dataset_disabled && this.dataset !== value) {
         this.save_button_enabled = true;
         datasetField.warnings = '';

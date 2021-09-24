@@ -4,11 +4,13 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { RsyncModuleMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/services/components/service-rsync';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { UserService, WebSocketService } from 'app/services';
 
@@ -23,7 +25,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
   route_success: string[] = ['services', 'rsync', 'rsync-module'];
   isEntity = true;
   formGroup: FormGroup;
-  pk: any;
+  pk: number;
   title = helptext.moduleFormTitle;
   addCall: 'rsyncmod.create' = 'rsyncmod.create';
   isNew: boolean;
@@ -135,10 +137,9 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  private rsyncmod_group: FieldConfig;
-  private rsyncmod_user: FieldConfig;
+  private rsyncmod_group: FormComboboxConfig;
+  private rsyncmod_user: FormComboboxConfig;
   protected entityForm: EntityFormComponent;
-  customFilter: any;
   constructor(protected ws: WebSocketService, protected router: Router,
     protected userService: UserService, protected route: ActivatedRoute) {
   }
@@ -149,14 +150,14 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
 
     const accessSet = _.find(this.fieldSets, { name: helptext.rsyncd_fieldset_access });
 
-    this.rsyncmod_user = accessSet.config.find((config) => config.name === 'user');
+    this.rsyncmod_user = accessSet.config.find((config) => config.name === 'user') as FormComboboxConfig;
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
       users.forEach((user) => {
         this.rsyncmod_user.options.push({ label: user.username, value: user.username });
       });
     });
 
-    this.rsyncmod_group = accessSet.config.find((config) => config.name === 'group');
+    this.rsyncmod_group = accessSet.config.find((config) => config.name === 'group') as FormComboboxConfig;
     this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
       groups.forEach((group) => {
         this.rsyncmod_group.options.push({ label: group.group, value: group.group });
@@ -164,7 +165,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     });
 
     if (this.isNew) {
-      entityForm.formGroup.controls['mode'].setValue('RO');
+      entityForm.formGroup.controls['mode'].setValue(RsyncModuleMode.ReadOnly);
     }
 
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
@@ -177,7 +178,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
         ]).pipe(untilDestroyed(this)).subscribe((res) => {
           for (const i in res[0]) {
             if (i !== 'id') {
-              entityForm.formGroup.controls[i].setValue(res[0][i]);
+              entityForm.formGroup.controls[i].setValue(res[0][i as keyof RsyncModule]);
             }
           }
         });
@@ -189,8 +190,8 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     }
   }
 
-  updateGroupSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+  updateGroupSearchOptions(value = '', parent: this): void {
+    parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });
@@ -199,8 +200,8 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     });
   }
 
-  updateUserSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+  updateUserSearchOptions(value = '', parent: this): void {
+    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -209,7 +210,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     });
   }
 
-  submitFunction(entityForm: any): Observable<any> {
-    return this.ws.call('rsyncmod.update', [this.pk, entityForm]);
+  submitFunction(formData: RsyncModuleCreate): Observable<RsyncModule> {
+    return this.ws.call('rsyncmod.update', [this.pk, formData]);
   }
 }

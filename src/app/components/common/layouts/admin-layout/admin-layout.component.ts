@@ -3,19 +3,20 @@ import {
 } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSidenav } from '@angular/material/sidenav';
+import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ConsolePanelModalDialog } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
-import { CoreService } from 'app/core/services/core.service';
+import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
 import { ProductType } from 'app/enums/product-type.enum';
-import { CoreEvent } from 'app/interfaces/events';
+import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
+import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
+import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
+import { SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { WebSocketService, SystemGeneralService } from 'app/services';
-import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
-import { ModalService } from 'app/services/modal.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
@@ -28,7 +29,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile: boolean;
   isSidenavOpen = true;
   isSidenavCollapsed = false;
-  sidenavMode = 'over';
+  sidenavMode: MatDrawerMode = 'over';
   isShowFooterConsole = false;
   isSidenotOpen = false;
   consoleMsg = '';
@@ -42,12 +43,12 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isOpen = false;
   notificPanelClosed = false;
   menuName: string;
-  subs: any[];
+  subs: SubMenuItem[];
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
   readonly ProductType = ProductType;
 
-  @ViewChild(MatSidenav, { static: false }) private sideNave: MatSidenav;
+  @ViewChild(MatSidenav, { static: false }) private sideNav: MatSidenav;
   @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
   freenasThemes: Theme[];
 
@@ -58,8 +59,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     public themeService: ThemeService,
     private media: MediaObserver,
     protected ws: WebSocketService,
-    public language: LanguageService,
-    public modalService: ModalService,
     public dialog: MatDialog,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
@@ -73,7 +72,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     // Close sidenav after route change in mobile
     router.events.pipe(untilDestroyed(this)).subscribe((routeChange) => {
       if (routeChange instanceof NavigationEnd && this.isMobile) {
-        this.sideNave.close();
+        this.sideNav.close();
       }
     });
     // Watches screen size and open/close sidenav
@@ -87,7 +86,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     core.register({
       observerClass: this,
       eventName: 'UserPreferencesChanged',
-    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
       this.retroLogo = evt.data.retroLogo ? evt.data.retroLogo : false;
     });
 
@@ -102,14 +101,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     core.register({
       observerClass: this,
       eventName: 'ForceSidenav',
-    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: ForceSidenavEvent) => {
       this.updateSidenav(evt.data);
     });
 
     core.register({
       observerClass: this,
       eventName: 'SidenavStatus',
-    }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: SidenavStatusEvent) => {
       this.isSidenavOpen = evt.data.isOpen;
       this.sidenavMode = evt.data.mode;
       this.isSidenavCollapsed = evt.data.isCollapsed;
@@ -135,6 +134,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       this.isSidenavOpen = false;
     }
     this.checkIfConsoleMsgShows();
+    this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.checkIfConsoleMsgShows();
+    });
 
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
 
@@ -145,7 +147,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.scrollToBottomOnFooterBar();
   }
 
-  updateSidenav(force?: string): void {
+  updateSidenav(force?: 'open' | 'close'): void {
     if (force) {
       this.isSidenavOpen = force == 'open';
       this.isSidenotOpen = force != 'open';
@@ -158,6 +160,13 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.isSidenavOpen = !this.isMobile;
     this.isSidenotOpen = false;
     this.sidenavMode = this.isMobile ? 'over' : 'side';
+    if (!this.isMobile) {
+      // TODO: This is hack to resolve issue described here: https://jira.ixsystems.com/browse/NAS-110404
+      setTimeout(() => {
+        this.sideNav.open();
+      });
+    }
+
     this.layoutService.isMenuCollapsed = false;
     this.cd.detectChanges();
   }
@@ -179,9 +188,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   checkIfConsoleMsgShows(): void {
-    this.sysGeneralService.getAdvancedConfig$.pipe(
+    this.sysGeneralService.getGeneralConfig$.pipe(
       untilDestroyed(this),
-    ).subscribe((res) => this.onShowConsoleFooterBar(res.consolemsg));
+    ).subscribe((res) => this.onShowConsoleFooterBar(res.ui_consolemsg));
   }
 
   getLogConsoleMsg(): void {
@@ -229,7 +238,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   onShowConsolePanel(): void {
-    const dialogRef = this.dialog.open(ConsolePanelModalDialog, {});
+    const dialogRef = this.dialog.open(ConsolePanelDialogComponent, {});
     const sub = dialogRef.componentInstance.onEventEmitter.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.componentInstance.consoleMsg = this.accumulateConsoleMsg('', 500);
     });
@@ -248,30 +257,19 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.isSidenotOpen = false;
   }
 
-  changeState($event: any): void {
-    if ($event.transfer) {
-      if (this.media.isActive('xs') || this.media.isActive('sm')) {
-        this.sideNave.close();
-      }
-    }
-  }
-
-  openModal(id: string): void {
-    this.modalService.open(id, {});
-  }
-
-  closeModal(id: string): void {
-    this.modalService.close(id);
-  }
-
   // For the slide-in menu
-  toggleMenu(menuInfo?: any): void {
+  toggleMenu(menuInfo?: [string, SubMenuItem[]]): void {
     if (this.isOpen && !menuInfo || this.isOpen && menuInfo[0] === this.menuName) {
       this.isOpen = false;
+      this.subs = [];
     } else if (menuInfo) {
       this.menuName = menuInfo[0];
       this.subs = menuInfo[1];
       this.isOpen = true;
     }
+  }
+
+  onMenuClosed(): void {
+    this.isOpen = false;
   }
 }

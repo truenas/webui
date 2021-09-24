@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -13,12 +14,11 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig, FormListConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import {
   DialogService, NetworkService, WebSocketService, UserService, ModalService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -267,10 +267,10 @@ export class NFSFormComponent implements FormConfiguration {
     },
   ];
 
-  private maproot_user: FieldConfig;
-  private maproot_group: FieldConfig;
-  private mapall_user: FieldConfig;
-  private mapall_group: FieldConfig;
+  private maproot_user: FormComboboxConfig;
+  private maproot_group: FormComboboxConfig;
+  private mapall_user: FormComboboxConfig;
+  private mapall_group: FormComboboxConfig;
 
   constructor(
     protected userService: UserService,
@@ -278,8 +278,10 @@ export class NFSFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     private dialog: DialogService,
     public networkService: NetworkService,
+    private translate: TranslateService,
   ) {
-    const pathsTemplate = this.fieldSets.config('paths').templateListField;
+    const paths = this.fieldSets.config('paths') as FormListConfig;
+    const pathsTemplate = paths.templateListField;
     if (this.productType.includes(ProductType.Scale)) {
       pathsTemplate.push({
         type: 'input',
@@ -322,9 +324,9 @@ export class NFSFormComponent implements FormConfiguration {
         for (let i = 0; i < items.length; i++) {
           users.push({ label: items[i].username, value: items[i].username });
         }
-        this.mapall_user = this.fieldSets.config('mapall_user');
+        this.mapall_user = this.fieldSets.config('mapall_user') as FormComboboxConfig;
         this.mapall_user.options = users;
-        this.maproot_user = this.fieldSets.config('maproot_user');
+        this.maproot_user = this.fieldSets.config('maproot_user') as FormComboboxConfig;
         this.maproot_user.options = users;
       });
 
@@ -341,9 +343,9 @@ export class NFSFormComponent implements FormConfiguration {
         for (let i = 0; i < groups.length; i++) {
           groupOptions.push({ label: groups[i].group, value: groups[i].group });
         }
-        this.mapall_group = this.fieldSets.config('mapall_group');
+        this.mapall_group = this.fieldSets.config('mapall_group') as FormComboboxConfig;
         this.mapall_group.options = groupOptions;
-        this.maproot_group = this.fieldSets.config('maproot_group');
+        this.maproot_group = this.fieldSets.config('maproot_group') as FormComboboxConfig;
         this.maproot_group.options = groupOptions;
       });
 
@@ -353,17 +355,19 @@ export class NFSFormComponent implements FormConfiguration {
       });
     }
 
-    entityForm.formGroup.controls['paths'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any[]) => {
-      const aliases = res.filter((p) => !!p.alias);
+    entityForm.formGroup.controls['paths'].valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((res: { alias: string; path: string }[]) => {
+        const aliases = res.filter((p) => !!p.alias);
 
-      if (aliases.length > 0 && aliases.length !== res.length) {
-        this.fieldSets.config('paths').hasErrors = true;
-        this.fieldSets.config('paths').errors = helptext_sharing_nfs.error_alias;
-      } else {
-        this.fieldSets.config('paths').hasErrors = false;
-        this.fieldSets.config('paths').errors = '';
-      }
-    });
+        if (aliases.length > 0 && aliases.length !== res.length) {
+          this.fieldSets.config('paths').hasErrors = true;
+          this.fieldSets.config('paths').errors = helptext_sharing_nfs.error_alias;
+        } else {
+          this.fieldSets.config('paths').hasErrors = false;
+          this.fieldSets.config('paths').errors = '';
+        }
+      });
   }
 
   isCustActionVisible(actionId: string): boolean {
@@ -439,13 +443,12 @@ export class NFSFormComponent implements FormConfiguration {
                         .pipe(untilDestroyed(this))
                         .subscribe(
                           () => {
-                            this.dialog
-                              .Info(
-                                T('NFS') + shared.dialog_started_title,
-                                T('The NFS') + shared.dialog_started_message,
-                                '250px',
-                                'info',
-                              )
+                            this.dialog.info(
+                              this.translate.instant('{service} Service', { service: 'NFS' }),
+                              this.translate.instant('The {service} service has been enabled.', { service: 'NFS' }),
+                              '250px',
+                              'info',
+                            )
                               .pipe(untilDestroyed(this))
                               .subscribe(() => {
                                 this.dialog.closeAllDialogs();
@@ -483,7 +486,8 @@ export class NFSFormComponent implements FormConfiguration {
         for (let i = 0; i < groups.length; i++) {
           groupOptions.push({ label: groups[i].group, value: groups[i].group });
         }
-        parent.fieldSets.config(field).searchOptions = groupOptions;
+        const config = parent.fieldSets.config(field) as FormComboboxConfig;
+        config.searchOptions = groupOptions;
       });
   }
 
@@ -504,19 +508,23 @@ export class NFSFormComponent implements FormConfiguration {
         for (let i = 0; i < items.length; i++) {
           users.push({ label: items[i].username, value: items[i].username });
         }
-        parent.fieldSets.config(field).searchOptions = users;
+        const config = parent.fieldSets.config(field) as FormComboboxConfig;
+        config.searchOptions = users;
       });
   }
 
-  loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, config: any): void {
+  loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, fieldConfig: FieldConfig): void {
     parent.userService
       .userQueryDSCache(searchText, length)
       .pipe(untilDestroyed(parent))
-      .subscribe((items: any) => {
+      .subscribe((items) => {
         const users: Option[] = [];
         for (let i = 0; i < items.length; i++) {
           users.push({ label: items[i].username, value: items[i].username });
         }
+
+        const config = fieldConfig as FormComboboxConfig;
+
         if (searchText == '') {
           config.options = config.options.concat(users);
         } else {
@@ -525,7 +533,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, config: any): void {
+  loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, fieldConfig: FieldConfig): void {
     parent.userService
       .groupQueryDSCache(searchText, false, length)
       .pipe(untilDestroyed(parent))
@@ -534,6 +542,9 @@ export class NFSFormComponent implements FormConfiguration {
         for (let i = 0; i < items.length; i++) {
           groups.push({ label: items[i].group, value: items[i].group });
         }
+
+        const config = fieldConfig as FormComboboxConfig;
+
         if (searchText == '') {
           config.options = config.options.concat(groups);
         } else {

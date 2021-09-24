@@ -1,63 +1,56 @@
 import {
-  OnInit, Component, ViewEncapsulation, Inject,
+  OnInit, Component, Inject, ViewChild,
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatExpansionPanel } from '@angular/material/expansion';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { forkJoin } from 'rxjs';
+import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
-import { ChartContainerImage } from 'app/interfaces/chart-release.interface';
+import { ChartContainerImage, ChartRelease } from 'app/interfaces/chart-release.interface';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
 
+@UntilDestroy()
 @Component({
   selector: 'chart-events-dialog',
   styleUrls: ['./chart-events-dialog.component.scss'],
   templateUrl: './chart-events-dialog.component.html',
-  encapsulation: ViewEncapsulation.None,
 })
-
-export class ChartEventsDialog implements OnInit {
-  catalogApp: any;
+export class ChartEventsDialogComponent implements OnInit {
+  @ViewChild('eventsPannel', { static: true }) eventsPannel: MatExpansionPanel;
+  catalogApp: ChartRelease;
   containerImages: { [key: string]: ChartContainerImage } = {};
   chartEvents: ChartReleaseEvent[] = [];
-  pods: any[] = [];
-  deployments: any[] = [];
-  statefulsets: any[] = [];
-
+  imagePlaceholder = appImagePlaceholder;
   helptext = helptext;
 
   constructor(
-    public dialogRef: MatDialogRef<ChartEventsDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<ChartEventsDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: ChartRelease,
     protected localeService: LocaleService,
     private loader: AppLoaderService,
-    private appService: ApplicationsService,
+    public appService: ApplicationsService,
   ) {
     this.catalogApp = data;
-    if (!this.catalogApp.used_ports) {
-      this.catalogApp.used_ports = helptext.chartEventDialog.noPorts;
-    }
   }
 
   ngOnInit(): void {
-    const chartQueryPromise = this.appService.getChartReleaseWithResources(this.catalogApp.name).toPromise();
-    const chartEventPromise = this.appService.getChartReleaseEvents(this.catalogApp.name).toPromise();
-
     this.loader.open();
-    Promise.all([chartQueryPromise, chartEventPromise]).then(
-      ([charts, events]) => {
-        this.loader.close();
-        if (charts) {
-          this.containerImages = charts[0].resources.container_images;
-          this.pods = charts[0].resources.pods;
-          this.deployments = charts[0].resources.deployments;
-          this.statefulsets = charts[0].resources.statefulsets;
-        }
-        if (events) {
-          this.chartEvents = events;
-        }
-      },
-    );
+    forkJoin([
+      this.appService.getChartReleaseWithResources(this.catalogApp.name),
+      this.appService.getChartReleaseEvents(this.catalogApp.name),
+    ]).pipe(untilDestroyed(this)).subscribe(([charts, events]) => {
+      this.loader.close();
+      if (charts) {
+        this.catalogApp = charts[0];
+      }
+      if (events) {
+        this.chartEvents = events;
+      }
+    });
   }
 
   // return the container image status
@@ -92,5 +85,14 @@ export class ChartEventsDialog implements OnInit {
     }
 
     return label;
+  }
+
+  refreshEvents(): void {
+    this.loader.open();
+    this.appService.getChartReleaseEvents(this.catalogApp.name).pipe(untilDestroyed(this)).subscribe((evt) => {
+      this.loader.close();
+      this.chartEvents = evt;
+      this.eventsPannel.open();
+    });
   }
 }

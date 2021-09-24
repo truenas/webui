@@ -1,18 +1,19 @@
 import {
-  Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked,
+  Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked, ElementRef,
 } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatCellDef } from '@angular/material/table/cell';
+import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { Observable, Subject } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
-import { WebSocketService } from 'app/services';
+import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { TableService } from './table.service';
 
-export interface AppTableAction {
+export interface AppTableAction<Row = any> {
   name: string;
   icon: string;
   matTooltip?: string;
-  onClick: (element: MatCellDef) => void;
+  onChanging?: boolean;
+  onClick: (row: Row) => void;
 }
 
 export interface AppTableHeaderAction {
@@ -20,15 +21,45 @@ export interface AppTableHeaderAction {
   onClick: () => void;
 }
 
-export interface AppTableHeaderExtraAction extends AppTableHeaderAction {}
+export interface AppTableColumn {
+  name?: string;
+  name1?: string;
+  name2?: string;
+  prop?: string;
+  prop1?: string;
+  prop2?: string;
+  checkbox?: boolean;
+  onChange?(data: any): void;
+  width?: string;
+  state?: any;
+  button?: boolean;
+  showLockedStatus?: boolean;
+  tooltip?: string;
+  iconTooltip?: string;
+  enableMatTooltip?: boolean;
+  hidden?: boolean;
+  hiddenIfEmpty?: boolean;
+  listview?: boolean;
+  getIcon?(element: any, prop: string): string;
+}
 
-export interface InputTableConf {
+export interface AppTableConfirmDeleteDialog {
+  buildTitle?(args: any): string;
+  buttonMsg?(args: any): string;
+  title?: string;
+  message?: string;
+  button?: string;
+  isMessageComplete?: boolean;
+  hideCheckbox?: boolean;
+}
+
+export interface AppTableConfig<P = any> {
   title?: string;
   titleHref?: string;
-  columns: any[];
-  queryCall: string;
+  columns: AppTableColumn[];
+  queryCall: keyof ApiDirectory;
   queryCallOption?: any;
-  deleteCall?: string;
+  deleteCall?: keyof ApiDirectory;
   deleteCallIsJob?: boolean;
   complex?: boolean;
   hideHeader?: boolean; // hide table header row
@@ -37,31 +68,34 @@ export interface InputTableConf {
     title: string;
     key_props: string[];
     id_prop?: string;
-    doubleConfirm?(item: any): any;
+    doubleConfirm?(item: any): Observable<boolean>;
   }; //
   tableComponent?: TableComponent;
   emptyEntityLarge?: boolean;
+  hideEntityEmpty?: boolean;
   alwaysHideViewMore?: boolean;
-  parent: any;
+  parent: P;
   tableActions?: AppTableHeaderAction[];
-  tableExtraActions?: AppTableHeaderExtraAction[];
+  tableExtraActions?: AppTableHeaderAction[];
+  confirmDeleteDialog?: AppTableConfirmDeleteDialog;
 
-  add?(): any; // add action function
+  add?(): void; // add action function
   afterGetData?(data: any): void;
-  afterDelete?(tableComponent: any): void;
-  edit?(any: any): any; // edit row
-  delete?(item: any, table: any): any; // customize delete row method
+  afterDelete?(): void;
+  edit?(any: any): void; // edit row
+  delete?(item: any, table: TableComponent): void; // customize delete row method
   dataSourceHelper?(any: any): any; // customise handle/modify dataSource
   getInOutInfo?(any: any): any; // get in out info if has state column
   getActions?: () => AppTableAction[]; // actions for each row
   isActionVisible?(actionId: string, entity: any): boolean; // determine if action is visible
   getDeleteCallParams?(row: any, id: any): any; // get delete Params
-  onButtonClick?(row: any): any;
+  onButtonClick?(row: any): void;
 
   expandable?: boolean; // field introduced by ExpandableTable, "fake" field
   afterGetDataExpandable?(data: any): void; // field introduced by ExpandableTable, "fake" field
 }
 
+@UntilDestroy()
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
@@ -69,36 +103,40 @@ export interface InputTableConf {
   providers: [TableService],
 })
 export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
-  @ViewChild('table') table: any;
+  @ViewChild('table') table: ElementRef<HTMLElement>;
 
-  _tableConf: InputTableConf;
+  _tableConf: AppTableConfig;
   title = '';
   titleHref: string;
   dataSource: any[];
   displayedDataSource: any[];
-  displayedColumns: any[];
+  displayedColumns: string[];
   hideHeader = false;
-  actions: any[];
+  actions: AppTableAction[];
   emptyConf: EmptyConfig;
   showViewMore = false;
   showCollapse = false;
+  limitRows: number;
+  entityEmptyLarge = false;
+  enableViewMore = false;
+  loaderOpen = false;
+  afterGetDataHook$ = new Subject();
 
-  protected idProp = 'id';
+  idProp = 'id';
 
   private TABLE_HEADER_HEIGHT = 48;
   private TABLE_ROW_HEIGHT = 48;
   private TABLE_MIN_ROWS = 5;
 
   private tableHeight: number;
-  private limitRows: number;
-  private entityEmptyLarge = false;
-  private enableViewMore = false;
 
-  get tableConf(): InputTableConf {
+  get tableConf(): AppTableConfig {
     return this._tableConf;
   }
 
-  @Input('conf') set tableConf(conf: InputTableConf) {
+  // TODO: tableConf can be renamed
+  // eslint-disable-next-line @angular-eslint/no-input-rename
+  @Input('conf') set tableConf(conf: AppTableConfig) {
     if (!this._tableConf) {
       this._tableConf = conf;
     } else {
@@ -107,7 +145,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
-  constructor(private ws: WebSocketService, private tableService: TableService, private matDialog: MatDialog) {}
+  constructor(public tableService: TableService) {}
 
   calculateLimitRows(): void {
     if (this.table) {
@@ -145,6 +183,10 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   ngOnInit(): void {
     this.populateTable();
+
+    this.afterGetDataHook$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.updateColumns();
+    });
   }
 
   populateTable(): void {
@@ -155,7 +197,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     this.entityEmptyLarge = this._tableConf.emptyEntityLarge;
     this.emptyConf = {
-      type: EmptyType.loading,
+      type: EmptyType.Loading,
       title: this.title,
       large: this.entityEmptyLarge,
     };
@@ -163,12 +205,8 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     if (this._tableConf.hideHeader) {
       this.hideHeader = this._tableConf.hideHeader;
     }
-    this.displayedColumns = this._tableConf.columns.map((col) => col.name);
 
-    if (this._tableConf.getActions || this._tableConf.deleteCall) {
-      this.displayedColumns.push('action'); // add action column to table
-      this.actions = this._tableConf.getActions ? this._tableConf.getActions() : []; // get all row actions
-    }
+    this.updateColumns();
     this.getData();
 
     this.idProp = this._tableConf.deleteMsg === undefined ? 'id' : this._tableConf.deleteMsg.id_prop || 'id';
@@ -177,6 +215,24 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   getData(): void {
     this.tableService.getData(this);
+  }
+
+  updateColumns(): void {
+    this.displayedColumns = this._tableConf.columns
+      .map((column) => {
+        if (this.dataSource && column?.hiddenIfEmpty && !column?.hidden) {
+          const hasSomeData = this.dataSource.some((row) => row[column.prop]?.toString().trim());
+          column.hidden = !hasSomeData;
+        }
+        return column;
+      })
+      .filter((column) => !column.hidden)
+      .map((column) => column.name);
+
+    if (this._tableConf.getActions || this._tableConf.deleteCall) {
+      this.displayedColumns.push('action'); // add action column to table
+      this.actions = this._tableConf.getActions ? this._tableConf.getActions() : []; // get all row actions
+    }
   }
 
   editRow(row: any): void {
@@ -238,21 +294,34 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.showCollapse = false;
   }
 
-  getButtonClass(state: JobState): string {
+  getButtonClass(row: any): string {
+    // Bring warnings to user's attention even if state is finished or successful.
+    if (row.warnings && row.warnings.length > 0) {
+      return 'fn-theme-orange';
+    }
+
+    const state: JobState = row.state;
+
     switch (state) {
-      case JobState.Pending: return 'fn-theme-orange';
-      case JobState.Running: return 'fn-theme-orange';
-      case JobState.Aborted: return 'fn-theme-orange';
-      case JobState.Finished: return 'fn-theme-green';
-      case JobState.Success: return 'fn-theme-green';
-      case JobState.Error: return 'fn-theme-red';
-      case JobState.Failed: return 'fn-theme-red';
-      case JobState.Hold: return 'fn-theme-yellow';
-      default: return 'fn-theme-primary';
+      case JobState.Pending:
+      case JobState.Running:
+      case JobState.Aborted:
+        return 'fn-theme-orange';
+      case JobState.Finished:
+      case JobState.Success:
+        return 'fn-theme-green';
+      case JobState.Error:
+      case JobState.Failed:
+        return 'fn-theme-red';
+      case JobState.Locked:
+      case JobState.Hold:
+        return 'fn-theme-yellow';
+      default:
+        return 'fn-theme-primary';
     }
   }
 
-  determineColumnType(column: any): string {
+  determineColumnType(column: AppTableColumn): string {
     if (column.listview) {
       return 'listview';
     }
@@ -268,8 +337,12 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       return 'state-icon';
     }
 
-    if (column.prop === 'state' && column['button'] === true) {
+    if (column.prop === 'state' && column.button === true) {
       return 'state-button';
+    }
+
+    if (['path', 'paths'].includes(column.prop) && column.showLockedStatus) {
+      return 'path-locked-status';
     }
 
     return 'textview';

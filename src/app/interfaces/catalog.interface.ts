@@ -1,3 +1,5 @@
+import { JobState } from 'app/enums/job-state.enum';
+import { ChartSchemaGroup, ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
 export interface Catalog {
@@ -21,6 +23,17 @@ export interface Catalog {
     [trainName: string]: CatalogTrain;
   };
   error: boolean;
+  cached: boolean;
+  caching_job: {
+    id: number;
+    abortable: boolean;
+    method: string;
+    progress: {
+      percent: number;
+      description: string;
+    };
+    state: JobState;
+  };
 }
 
 export type CatalogQueryParams = QueryParams<Catalog, {
@@ -28,8 +41,21 @@ export type CatalogQueryParams = QueryParams<Catalog, {
     item_details?: boolean;
     cache?: boolean;
     retrieve_versions?: boolean;
+    include_chart_schema?: boolean;
   };
 }>;
+
+export interface CatalogUpdate {
+  preferred_trains: string[];
+}
+
+export interface CatalogCreate {
+  label: string;
+  repository: string;
+  branch: string;
+  preferred_trains: string[];
+  force: boolean;
+}
 
 export interface CatalogTrain {
   [application: string]: CatalogApp;
@@ -47,6 +73,12 @@ export interface CatalogApp {
   latest_app_version: string;
   latest_human_version: string;
   versions: { [version: string]: CatalogAppVersion };
+  catalog?: {
+    id?: string;
+    label?: string;
+    train: string;
+  };
+  schema?: any;
 }
 
 export interface CatalogAppVersion {
@@ -59,10 +91,22 @@ export interface CatalogAppVersion {
   human_version: string;
   location: string;
   required_features: string[];
-  schema: any;
+  schema: {
+    groups: ChartSchemaGroup[];
+    questions: ChartSchemaNode[];
+    portals: {
+      web_portal: {
+        host: string[];
+        ports: string[];
+        protocols: string[];
+      };
+    };
+  };
   supported: boolean;
   values: any;
   version: string;
+  train?: string;
+  app?: string;
 }
 
 export interface ChartMetadata {
@@ -83,4 +127,22 @@ export interface ChartMetadataDependency {
   name: string;
   repository: string;
   version: string;
+}
+
+export interface CatalogItems {
+  [train: string]: CatalogTrain;
+}
+
+export interface CatalogItemsQueryParams {
+  cache?: boolean;
+  cache_only?: boolean;
+  retrieve_all_trains?: boolean;
+  retrieve_versions?: boolean;
+  trains?: string[];
+}
+
+export interface GetItemDetailsParams {
+  cache?: boolean;
+  catalog?: string;
+  train?: string;
 }

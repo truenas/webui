@@ -90,7 +90,8 @@ export class NotificationsComponent implements OnInit {
   }
 
   navigateTo(link: string[]): void {
-    this.notificPanel.close();
-    this.router.navigate(link);
+    this.notificPanel.close().then(() => {
+      this.router.navigate(link);
+    });
   }
 }

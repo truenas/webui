@@ -8,11 +8,13 @@ import { combineLatest, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
+import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormCheckboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -44,14 +46,12 @@ interface ZvolFormData {
 export class ZvolFormComponent implements FormConfiguration {
   pk: string;
   protected path: string;
-  protected compression: any;
   advanced_field = ['volblocksize'];
   isBasicMode = true;
   isNew = true;
   isEntity = true;
   parent: string;
   data: any;
-  parent_data: any;
   volid: string;
   customFilter: any[] = [];
   edit_data: any;
@@ -68,7 +68,7 @@ export class ZvolFormComponent implements FormConfiguration {
   protected encrypted_parent = false;
   protected inherit_encryption = true;
   protected passphrase_parent = false;
-  protected encryption_type = 'key';
+  protected encryption_type: 'key' | 'passphrase' = 'key';
   protected generate_key = true;
   protected encryption_algorithm: string;
 
@@ -213,9 +213,9 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_deduplication_placeholder,
         tooltip: helptext.zvol_deduplication_tooltip,
         options: [
-          { label: T('On'), value: 'ON' },
-          { label: T('Verify'), value: 'VERIFY' },
-          { label: T('Off'), value: 'OFF' },
+          { label: T('On'), value: DeduplicationSetting.On },
+          { label: T('Verify'), value: DeduplicationSetting.Verify },
+          { label: T('Off'), value: DeduplicationSetting.Off },
         ],
         validation: helptext.zvol_deduplication_validation,
         required: true,
@@ -437,9 +437,9 @@ export class ZvolFormComponent implements FormConfiguration {
       this.encryption_algorithm = pk_dataset[0].encryption_algorithm.value;
       const children = (pk_dataset[0].children);
       if (children.length > 0) {
-        for (const i in children) {
-          this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
-        }
+        children.forEach((child) => {
+          this.namesInUse.push(/[^/]*$/.exec(child.name)[0]);
+        });
       }
 
       let inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
@@ -463,7 +463,7 @@ export class ZvolFormComponent implements FormConfiguration {
           this.entityForm.setDisabled('encryption', true, true);
           this.entityForm.setDisabled('inherit_encryption', true, true);
         } else {
-          const encryption_algorithm_fc = _.find(this.fieldConfig, { name: 'algorithm' });
+          const encryption_algorithm_fc = _.find(this.fieldConfig, { name: 'algorithm' }) as FormSelectConfig;
           const encryption_algorithm_fg = this.entityForm.formGroup.controls['algorithm'];
           let parent_algorithm;
           if (this.encrypted_parent && pk_dataset[0].encryption_algorithm) {
@@ -488,7 +488,7 @@ export class ZvolFormComponent implements FormConfiguration {
           for (let i = 0; i < this.encryption_fields.length; i++) {
             this.entityForm.setDisabled(this.encryption_fields[i], true, true);
           }
-          inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: any) => {
+          inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: boolean) => {
             this.inherit_encryption = inherit;
             if (inherit) {
               for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -514,7 +514,7 @@ export class ZvolFormComponent implements FormConfiguration {
               }
             }
           });
-          encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: any) => {
+          encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: boolean) => {
             // if on an encrypted parent we should warn the user, otherwise just disable the fields
             if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
               this.dialogService.confirm({
@@ -554,7 +554,7 @@ export class ZvolFormComponent implements FormConfiguration {
               }
             }
           });
-          encryption_type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: any) => {
+          encryption_type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: 'key' | 'passphrase') => {
             this.encryption_type = type;
             const key = (type === 'key');
             this.entityForm.setDisabled('passphrase', key, key);
@@ -567,7 +567,7 @@ export class ZvolFormComponent implements FormConfiguration {
               this.entityForm.setDisabled('key', true, true);
             }
           });
-          this.entityForm.formGroup.controls['generate_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((generate_key: any) => {
+          this.entityForm.formGroup.controls['generate_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((generate_key: boolean) => {
             this.generate_key = generate_key;
             this.entityForm.setDisabled('key', generate_key, generate_key);
           });
@@ -576,7 +576,7 @@ export class ZvolFormComponent implements FormConfiguration {
         entityForm.setDisabled('name', true);
       }
 
-      this.entityForm.formGroup.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+      this.entityForm.formGroup.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
         const res_number = parseInt((this.reverseZvolBlockSizeMap as any)[res], 10);
         if (this.minimum_recommended_zvol_volblocksize) {
           const recommended_size_number = parseInt(
@@ -595,8 +595,8 @@ export class ZvolFormComponent implements FormConfiguration {
       });
 
       this.translate.get('Inherit').pipe(untilDestroyed(this)).subscribe((inheritTr) => {
-        const readonly_inherit = [{ label: `${inheritTr} (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT' }];
-        const readonly = _.find(this.fieldConfig, { name: 'readonly' });
+        const readonly_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT' }];
+        const readonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
         readonly.options = readonly_inherit.concat(readonly.options);
         let readonly_value;
         if (this.isNew) {
@@ -609,23 +609,23 @@ export class ZvolFormComponent implements FormConfiguration {
         }
         entityForm.formGroup.controls['readonly'].setValue(readonly_value);
 
-        const sync = _.find(this.fieldConfig, { name: 'sync' });
-        const sparse = _.find(this.fieldConfig, { name: 'sparse' });
-        const compression = _.find(this.fieldConfig, { name: 'compression' });
-        const deduplication = _.find(this.fieldConfig, { name: 'deduplication' });
-        const volblocksize = _.find(this.fieldConfig, { name: 'volblocksize' });
+        const sync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
+        const sparse = _.find(this.fieldConfig, { name: 'sparse' }) as FormCheckboxConfig;
+        const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
+        const deduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
+        const volblocksize = _.find(this.fieldConfig, { name: 'volblocksize' }) as FormSelectConfig;
 
         if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {
-          const sync_inherit = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
+          const sync_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
           sync.options = sync_inherit.concat(sync.options);
 
-          const compression_inherit = [{ label: `${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
+          const compression_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
           compression.options = compression_inherit.concat(compression.options);
 
-          const deduplication_inherit = [{ label: `${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
+          const deduplication_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
           deduplication.options = deduplication_inherit.concat(deduplication.options);
 
-          const volblocksize_inherit = [{ label: `${inheritTr}`, value: 'INHERIT' }];
+          const volblocksize_inherit: Option[] = [{ label: `${inheritTr}`, value: 'INHERIT' }];
           volblocksize.options = volblocksize_inherit.concat(volblocksize.options);
 
           entityForm.formGroup.controls['sync'].setValue('INHERIT');
@@ -649,12 +649,12 @@ export class ZvolFormComponent implements FormConfiguration {
             volblocksize.isHidden = true;
 
             this.customFilter = [[['id', '=', this.parent]]];
-            let sync_collection = [{ label: pk_dataset[0].sync.value, value: pk_dataset[0].sync.value }];
-            let compression_collection = [{
+            let sync_collection: Option[] = [{ label: pk_dataset[0].sync.value, value: pk_dataset[0].sync.value }];
+            let compression_collection: Option[] = [{
               label: pk_dataset[0].compression.value,
               value: pk_dataset[0].compression.value,
             }];
-            let deduplication_collection = [{
+            let deduplication_collection: Option[] = [{
               label: pk_dataset[0].deduplication.value,
               value: pk_dataset[0].deduplication.value,
             }];
@@ -717,7 +717,7 @@ export class ZvolFormComponent implements FormConfiguration {
     });
   }
 
-  blurVolsize(parent: any): void {
+  blurVolsize(parent: this): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
     }
@@ -838,7 +838,7 @@ export class ZvolFormComponent implements FormConfiguration {
         });
       } else {
         this.loader.close();
-        this.dialogService.Info(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg);
+        this.dialogService.info(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg);
         this.modalService.close('slide-in-form');
       }
     });

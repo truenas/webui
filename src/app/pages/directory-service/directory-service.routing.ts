@@ -1,13 +1,12 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ActiveDirectoryComponent } from 'app/pages/directory-service/active-directory/active-directory.component';
+import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
+import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list.component';
+import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
+import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
-import { KerberosKeytabsListComponent } from 'app/pages/directory-service/kerberos-keytabs/kerberos-keytabs-list.component';
-import { KerberosRealmsListComponent } from 'app/pages/directory-service/kerberos-realms/kerberos-realms-list.component';
-import { KerberosSettingsComponent } from 'app/pages/directory-service/kerberos-settings/kerberos-settings.component';
-import { IdmapListComponent } from './idmap/idmap-list.component';
-import { LdapComponent } from './ldap/ldap.component';
-import { NISComponent } from './nis/nis.component';
+import { IdmapListComponent } from './components/idmap/idmap-list.component';
+import { LdapComponent } from './components/ldap/ldap.component';
 
 export const routes: Routes = [{
   path: '',
@@ -24,10 +23,6 @@ export const routes: Routes = [{
       path: 'activedirectory',
       component: ActiveDirectoryComponent,
       data: { title: 'Active Directory', breadcrumb: 'Active Directory', icon: 'apps' },
-    }, {
-      path: 'nis',
-      component: NISComponent,
-      data: { title: 'NIS', breadcrumb: 'NIS', icon: 'library_books' },
     }, {
       path: 'idmap',
       component: IdmapListComponent,

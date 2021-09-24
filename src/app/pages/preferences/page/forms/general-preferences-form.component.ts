@@ -9,9 +9,13 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
-import { EntityFormEmbeddedComponent } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
+import { Option } from 'app/interfaces/option.interface';
+import {
+  EmbeddedFormConfig,
+  EntityFormEmbeddedComponent,
+} from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
@@ -34,7 +38,7 @@ interface UserPreferences {
   selector: 'general-preferences-form',
   template: '<entity-form-embedded *ngIf="preferences" #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>',
 })
-export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
+export class GeneralPreferencesFormComponent implements EmbeddedFormConfig, OnInit, OnDestroy {
   @ViewChild('embeddedForm', { static: false }) embeddedForm: EntityFormEmbeddedComponent;
   target: Subject<CoreEvent> = new Subject();
   isWaiting = false;
@@ -42,8 +46,8 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
   preferences: UserPreferences;
   saveSubmitText = T('Update Preferences');
   multiStateSubmit = true;
-  protected isEntity = true; // was true
-  private themeOptions: any[] = [];
+  isEntity = true; // was true
+  private themeOptions: Option[] = [];
   fieldConfig: FieldConfig[] = [];
   fieldSetDisplay = 'no-margins';// default | carousel | stepper
   fieldSets: FieldSet[] = [
@@ -205,15 +209,22 @@ export class GeneralPreferencesFormComponent implements OnInit, OnDestroy {
   }
 
   generateFieldConfig(): void {
-    for (const i in this.fieldSets) {
-      for (const ii in this.fieldSets[i].config) {
-        this.fieldConfig.push(this.fieldSets[i].config[ii]);
-      }
-    }
+    this.fieldSets.forEach((fieldSet) => {
+      fieldSet.config.forEach((config) => {
+        this.fieldConfig.push(config);
+      });
+    });
   }
 
   beforeSubmit(data: any): void {
-    data.tableDisplayedColumns ? data.tableDisplayedColumns = [] : delete (data.tableDisplayedColumns);
+    if (data.reset) {
+      localStorage.removeItem('turnOffWelcomeDialog');
+    }
+    if (data.tableDisplayedColumns) {
+      data.tableDisplayedColumns = [];
+    } else {
+      delete (data.tableDisplayedColumns);
+    }
   }
 
   updateValues(prefs: any): void {

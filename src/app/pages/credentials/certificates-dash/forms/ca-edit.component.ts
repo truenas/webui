@@ -3,13 +3,17 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -26,12 +30,12 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   queryCall: 'certificateauthority.query' = 'certificateauthority.query';
   editCall: 'certificateauthority.update' = 'certificateauthority.update';
   isEntity = true;
-  queryCallOption: any[];
+  queryCallOption: [QueryFilter<CertificateAuthority>];
   private getRow = new Subscription();
   private rowNum: any;
   title: string;
   private incomingData: CertificateAuthority;
-  private unsignedCAs: any[] = [];
+  private unsignedCAs: Option[] = [];
 
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
@@ -232,7 +236,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     }],
     method_ws: 'certificateauthority.ca_sign_csr',
     saveButtonText: helptext_system_ca.sign.sign,
-    customSubmit: this.doSignCSR,
+    customSubmit: (entityDialog) => this.doSignCSR(entityDialog),
     parent: this,
   };
 
@@ -259,16 +263,22 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
       'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'signed_certificates', 'lifetime',
     ];
     fields.forEach((field) => {
-      const paragraph = _.find(this.fieldConfig, { name: field });
-      this.incomingData[field] || this.incomingData[field] === false
-        ? paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---';
+      const paragraph: FormParagraphConfig = _.find(this.fieldConfig, { name: field });
+      if (this.incomingData[field] || this.incomingData[field] === false) {
+        paragraph.paraText += this.incomingData[field];
+      } else {
+        paragraph.paraText += '---';
+      }
     });
-    _.find(this.fieldConfig, { name: 'san' }).paraText += this.incomingData.san.join(',');
-    const issuer = _.find(this.fieldConfig, { name: 'issuer' });
+    const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'san' });
+    config.paraText += this.incomingData.san.join(',');
+    const issuer: FormParagraphConfig = _.find(this.fieldConfig, { name: 'issuer' });
     if (_.isObject(this.incomingData.issuer)) {
       issuer.paraText += (this.incomingData.issuer as any).name;
+    } else if (this.incomingData.issuer) {
+      issuer.paraText += this.incomingData.issuer;
     } else {
-      this.incomingData.issuer ? issuer.paraText += this.incomingData.issuer : issuer.paraText += '---';
+      issuer.paraText += '---';
     }
   }
 
@@ -277,30 +287,33 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   }
 
   doSignCSR(entityDialog: EntityDialogComponent<this>): void {
-    const self = entityDialog.parent;
     const payload = {
-      ca_id: self.rowNum,
+      ca_id: this.rowNum,
       csr_cert_id: entityDialog.formGroup.controls.csr_cert_id.value,
       name: entityDialog.formGroup.controls.name.value,
     };
     entityDialog.loader.open();
     entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).pipe(untilDestroyed(this)).subscribe(() => {
       entityDialog.loader.close();
-      self.dialog.closeAllDialogs();
-      self.modalService.refreshTable();
-    }, (err: any) => {
+      this.dialog.closeAllDialogs();
+      this.modalService.refreshTable();
+    }, (err: WebsocketError) => {
       entityDialog.loader.close();
-      self.dialog.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
+      this.dialog.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     });
   }
 
   viewCertificate(): void {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.certificate, true,
-      helptext_system_certificates.viewDialog.download, false, '',
-      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.certificate, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.exportCertificate();
-      }
+    this.dialog.confirm({
+      title: this.incomingData.name,
+      message: this.incomingData.certificate,
+      hideCheckBox: true,
+      buttonMsg: helptext_system_certificates.viewDialog.download,
+      cancelMsg: helptext_system_certificates.viewDialog.close,
+      textToCopy: this.incomingData.certificate,
+      keyTextArea: true,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.exportCertificate();
     });
   }
 
@@ -326,12 +339,16 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   }
 
   viewKey(): void {
-    this.dialog.confirm(this.incomingData.name, this.incomingData.privatekey, true,
-      helptext_system_certificates.viewDialog.download, false, '',
-      '', '', '', false, helptext_system_certificates.viewDialog.close, false, this.incomingData.privatekey, true).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.exportKey();
-      }
+    this.dialog.confirm({
+      title: this.incomingData.name,
+      message: this.incomingData.privatekey,
+      hideCheckBox: true,
+      buttonMsg: helptext_system_certificates.viewDialog.download,
+      cancelMsg: helptext_system_certificates.viewDialog.close,
+      textToCopy: this.incomingData.privatekey,
+      keyTextArea: true,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.exportKey();
     });
   }
 

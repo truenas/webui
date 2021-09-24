@@ -1,8 +1,21 @@
 import * as _ from 'lodash';
+import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import {
+  FieldConfig,
+  FormCheckboxConfig,
+  FormDictConfig,
+  FormExplorerConfig,
+  FormInputConfig,
+  FormIpWithNetmaskConfig,
+  FormListConfig,
+  FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { Relation } from './entity-form/models/field-relation.interface';
+import { DialogService } from 'app/services';
+import { Relation, RelationGroup } from './entity-form/models/field-relation.interface';
 
 export const NULL_VALUE = 'null_value';
 
@@ -61,27 +74,31 @@ export class EntityUtils {
     }
   }
 
-  handleWSError(entity: any, res: any, dialogService?: any, targetFieldConfig?: any): void {
+  handleWSError(
+    entity: any,
+    res: WebsocketError | Job,
+    dialogService?: DialogService,
+    targetFieldConfig?: FieldConfig[],
+  ): void {
     let dialog;
     if (dialogService) {
       dialog = dialogService;
     } else if (entity) {
       dialog = entity.dialog;
     }
-    if (res.exc_info && res.exc_info.extra) {
-      res.extra = res.exc_info.extra;
+    if ('exc_info' in res && res.exc_info && res.exc_info.extra) {
+      (res as any).extra = res.exc_info.extra;
     }
 
-    if (res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
+    if ('extra' in res && res.extra && (targetFieldConfig || entity.fieldConfig || entity.wizardConfig)) {
       let scroll = false;
-      if (res.extra.excerpt) {
+      if ((res.extra as any).excerpt) {
         this.errorReport(res, dialog);
       }
       for (let i = 0; i < res.extra.length; i++) {
-        let field = res.extra[i][0].split('.');
+        const field = res.extra[i][0].split('.')[1];
         const error = res.extra[i][1];
 
-        field = field[1];
         let fc = _.find(entity.fieldConfig, { name: field })
           || (entity.getErrorField ? entity.getErrorField(field) : undefined);
         let stepIndex;
@@ -126,10 +143,10 @@ export class EntityUtils {
     }
   }
 
-  errorReport(res: any, dialog: any): void {
-    if (res.trace && res.trace.formatted && dialog) {
+  errorReport(res: WebsocketError | Job, dialog: DialogService): void {
+    if ('trace' in res && res.trace.formatted && dialog) {
       dialog.errorReport(res.trace.class, res.reason, res.trace.formatted);
-    } else if (res.state && res.error && res.exception && dialog) {
+    } else if ('state' in res && res.error && res.exception && dialog) {
       dialog.errorReport(res.state, res.error, res.exception);
     } else {
       // if it can't print the error at least put it on the console.
@@ -137,7 +154,7 @@ export class EntityUtils {
     }
   }
 
-  isObject = function (a: unknown): a is Record<string, unknown> {
+  isObject = (a: unknown): a is Record<string, unknown> => {
     return (!!a) && (a.constructor === Object);
   };
 
@@ -160,11 +177,10 @@ export class EntityUtils {
     return ndata;
   }
 
-  bool(v: any): boolean {
-    return v === 'false' || v === 'null' || v === 'NaN' || v === 'undefined'
-      || v === '0'
+  bool(value: unknown): boolean {
+    return value === 'false' || value === 'null' || value === 'NaN' || value === 'undefined' || value === '0'
       ? false
-      : !!v;
+      : !!value;
   }
 
   array1DToLabelValuePair(arr: (string | number)[]): Option[] {
@@ -220,13 +236,12 @@ export class EntityUtils {
     return result;
   }
 
-  changeNull2String(value: any): any {
-    let result = value;
+  changeNull2String<T>(value: T): T | typeof NULL_VALUE {
     if (value === null) {
-      result = NULL_VALUE;
+      return NULL_VALUE;
     }
 
-    return result;
+    return value;
   }
 
   changeNullString2Null(data: any): any {
@@ -251,7 +266,7 @@ export class EntityUtils {
     return result;
   }
 
-  createRelations(relations: Relation[]): { action: string; when: { name: string; operator: string; value: any }[] }[] {
+  createRelations(relations: Relation[]): RelationGroup[] {
     const result = relations.map((relation) => {
       const relationFieldName = relation.fieldName;
 
@@ -268,7 +283,7 @@ export class EntityUtils {
     return result;
   }
 
-  parseSchemaFieldConfig(schemaConfig: any): FieldConfig[] {
+  parseSchemaFieldConfig(schemaConfig: ChartSchemaNode): FieldConfig[] {
     let results: FieldConfig[] = [];
 
     if (schemaConfig.schema.hidden) {
@@ -277,17 +292,26 @@ export class EntityUtils {
 
     const name = schemaConfig.variable;
 
-    const fieldConfig: any = {
-      required: schemaConfig.schema.required,
-      value: schemaConfig.schema.default,
-      tooltip: schemaConfig.description,
-      placeholder: schemaConfig.label,
+    let fieldConfig: FieldConfig = {
       name,
-    };
+    } as FieldConfig;
+
+    if (schemaConfig.schema.required !== undefined) {
+      fieldConfig.required = schemaConfig.schema.required;
+    }
+    if (schemaConfig.schema.default !== undefined) {
+      fieldConfig.value = schemaConfig.schema.default;
+    }
+    if (schemaConfig.description !== undefined) {
+      fieldConfig.tooltip = schemaConfig.description;
+    }
+    if (schemaConfig.label !== undefined) {
+      fieldConfig.placeholder = schemaConfig.label;
+    }
 
     let relations: Relation[] = null;
     if (schemaConfig.schema.show_if) {
-      relations = (schemaConfig.schema.show_if as any[]).map((item) => ({
+      relations = schemaConfig.schema.show_if.map((item) => ({
         fieldName: item[0],
         operatorName: item[1],
         operatorValue: item[2],
@@ -299,95 +323,109 @@ export class EntityUtils {
     }
 
     if (schemaConfig.schema.enum) {
-      fieldConfig['type'] = 'select';
-      fieldConfig['options'] = (schemaConfig.schema.enum as any[]).map((option) => ({
+      const selectConfig = fieldConfig as FormSelectConfig;
+      selectConfig['type'] = 'select';
+      selectConfig['enableTextWrapForOptions'] = true;
+      selectConfig['options'] = schemaConfig.schema.enum.map((option) => ({
         value: option.value,
         label: option.description,
       }));
     } else if (schemaConfig.schema.type == 'string') {
-      fieldConfig['type'] = 'input';
+      const inputConfig = fieldConfig as FormInputConfig;
+      inputConfig['type'] = 'input';
       if (schemaConfig.schema.private) {
-        fieldConfig['inputType'] = 'password';
-        fieldConfig['togglePw'] = true;
+        inputConfig['inputType'] = 'password';
+        inputConfig['togglePw'] = true;
       }
 
       if (schemaConfig.schema.min_length !== undefined) {
-        fieldConfig['min'] = schemaConfig.schema.min_length;
+        inputConfig['min'] = schemaConfig.schema.min_length;
       }
 
       if (schemaConfig.schema.max_length !== undefined) {
-        fieldConfig['max'] = schemaConfig.schema.max_length;
+        inputConfig['max'] = schemaConfig.schema.max_length;
       }
     } else if (schemaConfig.schema.type == 'int') {
-      fieldConfig['type'] = 'input';
-      fieldConfig['inputType'] = 'number';
+      const inputConfig = fieldConfig as FormInputConfig;
+      inputConfig['type'] = 'input';
+      inputConfig['inputType'] = 'number';
       if (schemaConfig.schema.min !== undefined) {
-        fieldConfig['min'] = schemaConfig.schema.min;
+        inputConfig['min'] = schemaConfig.schema.min;
       }
 
       if (schemaConfig.schema.max !== undefined) {
-        fieldConfig['max'] = schemaConfig.schema.max;
+        inputConfig['max'] = schemaConfig.schema.max;
       }
     } else if (schemaConfig.schema.type == 'boolean') {
-      fieldConfig['type'] = 'checkbox';
+      const checkboxConfig = fieldConfig as FormCheckboxConfig;
+      checkboxConfig['type'] = 'checkbox';
     } else if (schemaConfig.schema.type == 'ipaddr') {
-      fieldConfig['type'] = 'ipwithnetmask';
       if (!schemaConfig.schema.cidr) {
-        fieldConfig['type'] = 'input';
+        const ipInputConfig = fieldConfig as FormInputConfig;
+        ipInputConfig['type'] = 'input';
+      } else {
+        const ipConfig = fieldConfig as FormIpWithNetmaskConfig;
+        ipConfig['type'] = 'ipwithnetmask';
       }
     } else if (schemaConfig.schema.type == 'hostpath') {
-      fieldConfig['type'] = 'explorer';
-      fieldConfig['explorerType'] = 'file';
-      fieldConfig['initial'] = '/mnt';
+      const conf = { ...fieldConfig } as FormExplorerConfig;
+      conf['type'] = 'explorer';
+      conf['initial'] = '/mnt';
+      conf['explorerType'] = 'file';
+      fieldConfig = conf;
     } else if (schemaConfig.schema.type == 'path') {
-      fieldConfig['type'] = 'input';
+      const inputConfig = fieldConfig as FormInputConfig;
+      inputConfig['type'] = 'input';
     } else if (schemaConfig.schema.type == 'list') {
-      fieldConfig['type'] = 'list';
-      fieldConfig['label'] = `Configure ${schemaConfig.label}`;
-      fieldConfig['width'] = '100%';
-      fieldConfig['listFields'] = [];
+      const listConfig = fieldConfig as FormListConfig;
+      listConfig['type'] = 'list';
+      listConfig['label'] = `Configure ${schemaConfig.label}`;
+      listConfig['width'] = '100%';
+      listConfig['listFields'] = [];
 
-      let listFields: any[] = [];
-      (schemaConfig.schema.items as any[]).forEach((item) => {
+      let listFields: FieldConfig[] = [];
+      schemaConfig.schema.items.forEach((item) => {
         const fields = this.parseSchemaFieldConfig(item);
         listFields = listFields.concat(fields);
       });
 
-      fieldConfig['templateListField'] = listFields;
+      listConfig['templateListField'] = listFields;
     } else if (schemaConfig.schema.type == 'dict') {
-      fieldConfig['type'] = 'dict';
-      fieldConfig['label'] = schemaConfig.label;
-      fieldConfig['width'] = '100%';
+      const dictConfig = fieldConfig as FormDictConfig;
+      dictConfig['type'] = 'dict';
+      dictConfig['label'] = schemaConfig.label;
+      dictConfig['width'] = '100%';
 
       if (schemaConfig.schema.attrs.length > 0) {
         if (relations) {
-          fieldConfig['relation'] = this.createRelations(relations);
+          dictConfig['relation'] = this.createRelations(relations);
         }
 
-        let subFields: any[] = [];
-        (schemaConfig.schema.attrs as any[]).forEach((dictConfig) => {
+        let subFields: FieldConfig[] = [];
+        schemaConfig.schema.attrs.forEach((dictConfig) => {
           const fields = this.parseSchemaFieldConfig(dictConfig);
           subFields = subFields.concat(fields);
         });
-        fieldConfig['subFields'] = subFields;
+        dictConfig['subFields'] = subFields;
       }
     }
 
     if (fieldConfig) {
       if (fieldConfig['type']) {
-        if (relations) {
+        if (fieldConfig && relations) {
           fieldConfig['relation'] = this.createRelations(relations);
         }
 
         results.push(fieldConfig);
 
         if (schemaConfig.schema.subquestions) {
-          (schemaConfig.schema.subquestions as any[]).forEach((subquestion) => {
+          schemaConfig.schema.subquestions.forEach((subquestion) => {
             const subResults = this.parseSchemaFieldConfig(subquestion);
 
             if (schemaConfig.schema.show_subquestions_if !== undefined) {
               subResults.forEach((subFieldConfig) => {
                 subFieldConfig['isHidden'] = true;
+
                 subFieldConfig['relation'] = [{
                   action: RelationAction.Show,
                   when: [{
@@ -432,29 +470,32 @@ export class EntityUtils {
     return result;
   }
 
-  remapAppConfigData(data: any, fieldConfigs: FieldConfig[]): any {
-    let result: any;
-    if (data === undefined || data === null || data === '') {
+  remapOneConfigData(data: any, fieldConfig: FieldConfig): any {
+    let result;
+    if (!fieldConfig || data === undefined || data === null || data === '') {
       result = data;
-    } else if (typeof data === 'object') {
-      result = {};
-      Object.keys(data).forEach((key) => {
-        const value = data[key];
-        let newValue: any = {};
-        if (Array.isArray(value)) {
-          const name = this.findKeyOfList(fieldConfigs, key);
-          newValue = value.map((item) => {
-            const remapedValue = this.remapAppConfigData(item, fieldConfigs);
-            if (name) {
-              return { [name]: remapedValue };
-            }
-            return remapedValue;
-          });
-        } else {
-          newValue = this.remapAppConfigData(value, fieldConfigs);
+    } else if (Array.isArray(data)) {
+      result = [];
+      data.forEach((item) => {
+        const listConfig = fieldConfig as FormListConfig;
+        let value = item;
+        const subFieldConfig = listConfig.templateListField[0];
+        if (subFieldConfig.type === 'dict') {
+          value = this.remapOneConfigData(item, subFieldConfig);
         }
-        result[key] = newValue;
+        result.push({
+          [subFieldConfig.name]: value,
+        });
       });
+    } else if (typeof data === 'object') {
+      result = {} as any;
+      for (const key in data) {
+        const dictConfig = fieldConfig as FormDictConfig;
+        const subValue = data[key];
+        const subFieldConfig = dictConfig.subFields.find((fg) => fg.name === key);
+        const newValue = this.remapOneConfigData(subValue, subFieldConfig);
+        result[key] = newValue;
+      }
     } else {
       result = data;
     }
@@ -462,29 +503,26 @@ export class EntityUtils {
     return result;
   }
 
-  findKeyOfList(fieldConfigs: FieldConfig[], key: string): string {
-    if (!fieldConfigs) {
-      return null;
+  remapAppConfigData(data: any, fieldConfigs: FieldConfig[]): any {
+    const result = {} as any;
+    for (const key in data) {
+      const value = data[key];
+      const fieldConfig = fieldConfigs.find((fg) => fg.name === key);
+      const newValue = this.remapOneConfigData(value, fieldConfig);
+      result[key] = newValue;
     }
-    for (let i = 0; i < fieldConfigs.length; i++) {
-      const fieldConfig = fieldConfigs[i];
+    return result;
+  }
 
-      if (fieldConfig.type == 'list') {
-        if (fieldConfig.name == key) {
-          return fieldConfig.templateListField[0].name;
-        }
-        const result = this.findKeyOfList(fieldConfig.templateListField, key);
-        if (result) {
-          return result;
-        }
-      } else if (fieldConfig.type == 'dict') {
-        const result = this.findKeyOfList(fieldConfig.subFields, key);
-        if (result) {
-          return result;
-        }
-      }
-    }
+  snakeToPascal(str: string): string {
+    return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+  }
 
-    return null;
+  snakeToHuman(str: string): string {
+    return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  }
+
+  getCleanMethod(str: string): string {
+    return 'clean' + this.snakeToPascal(str);
   }
 }

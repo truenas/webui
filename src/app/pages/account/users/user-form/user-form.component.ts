@@ -1,16 +1,16 @@
 import { Component } from '@angular/core';
 import { AbstractControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/account/user-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { User } from 'app/interfaces/user.interface';
+import { User, UserUpdate } from 'app/interfaces/user.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import {
@@ -28,7 +28,7 @@ export class UserFormComponent implements FormConfiguration {
   queryCall: 'user.query' = 'user.query';
   addCall: 'user.create' = 'user.create';
   editCall: 'user.update' = 'user.update';
-  pk: string;
+  pk: number;
   queryKey = 'id';
   isEntity = true;
   isNew: boolean;
@@ -54,7 +54,7 @@ export class UserFormComponent implements FormConfiguration {
           required: true,
           validation: helptext.user_form_full_name_validation,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.fullNameBlur,
           parent: this,
         },
         {
@@ -70,7 +70,7 @@ export class UserFormComponent implements FormConfiguration {
             forbiddenValues(this.namesInUse),
           ],
           blurStatus: true,
-          blurEvent: this.blurEvent2,
+          blurEvent: this.userNameBlur,
           parent: this,
         },
         {
@@ -283,7 +283,7 @@ export class UserFormComponent implements FormConfiguration {
       name: 'divider',
       divider: true,
     },
-  ]);
+  ] as FieldSet<this>[]);
 
   custActions = [
     {
@@ -300,18 +300,19 @@ export class UserFormComponent implements FormConfiguration {
   ];
 
   private shells: Option[];
-  private shell: FieldConfig;
-  private group: FieldConfig;
-  private groups: FieldConfig;
+  private shell: FormSelectConfig;
+  private group: FormSelectConfig;
+  private groups: FormSelectConfig;
   private password_disabled: AbstractControl;
 
-  constructor(protected router: Router,
+  constructor(
     protected ws: WebSocketService,
     protected storageService: StorageService,
     public loader: AppLoaderService,
     private userService: UserService,
     protected validationService: ValidationService,
-    private modalService: ModalService) {
+    private modalService: ModalService,
+  ) {
     this.ws.call('user.query').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.namesInUse.push(...res.map((user) => user.username));
@@ -388,8 +389,8 @@ export class UserFormComponent implements FormConfiguration {
     /* list groups */
     this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
       this.loader.callDone.emit(status);
-      this.group = this.fieldSets.config('group');
-      this.groups = this.fieldSets.config('groups');
+      this.group = this.fieldSets.config('group') as FormSelectConfig;
+      this.groups = this.fieldSets.config('groups') as FormSelectConfig;
       for (let i = 0; i < groups.length; i++) {
         this.group.options.push({ label: groups[i].group, value: groups[i].id });
         this.groups.options.push({ label: groups[i].group, value: groups[i].id });
@@ -397,8 +398,8 @@ export class UserFormComponent implements FormConfiguration {
     });
 
     /* list users */
-    const filter: QueryFilter<User> = ['id', '=', parseInt(this.pk, 10)];
-    this.ws.call('user.query', [[filter]]).pipe(untilDestroyed(this)).subscribe(async (res) => {
+    const filter: QueryFilter<User> = ['id', '=', this.pk];
+    this.ws.call('user.query', [[filter]]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.length !== 0 && res[0].home !== '/nonexistent') {
         this.storageService.filesystemStat(res[0].home).pipe(untilDestroyed(this)).subscribe((stat) => {
           entityForm.formGroup.controls['home_mode'].setValue(stat.mode.toString(8).substring(2, 5));
@@ -454,9 +455,9 @@ export class UserFormComponent implements FormConfiguration {
           entityForm.formGroup.controls['uid'].setValue(next_uid);
         });
       }
-      this.userService.shellChoices(parseInt(this.pk, 10)).then((choices) => {
+      this.userService.shellChoices(this.pk).then((choices) => {
         this.shells = choices;
-        this.shell = this.fieldSets.config('shell');
+        this.shell = this.fieldSets.config('shell') as FormSelectConfig;
         this.shell.options = this.shells;
 
         if (entityForm.isNew && Array.isArray(this.shells) && this.shells.length > 0) {
@@ -469,7 +470,7 @@ export class UserFormComponent implements FormConfiguration {
     }
   }
 
-  clean_uid(value: any): any {
+  cleanUid(value: any): any {
     delete value['password_conf'];
     if (value['uid'] === null) {
       delete value['uid'];
@@ -506,12 +507,12 @@ export class UserFormComponent implements FormConfiguration {
     }
   }
 
-  submitFunction(entityForm: any): Observable<any> {
+  submitFunction(entityForm: UserUpdate & { password_conf: string }): Observable<number> {
     delete entityForm['password_conf'];
     return this.ws.call('user.update', [this.pk, entityForm]);
   }
 
-  blurEvent(parent: any): void {
+  fullNameBlur(parent: this): void {
     if (parent.entityForm && parent.entityForm.isNew) {
       let username: string;
       const fullname = parent.entityForm.formGroup.controls.full_name.value.split(/[\s,]+/);
@@ -530,7 +531,7 @@ export class UserFormComponent implements FormConfiguration {
     }
   }
 
-  blurEvent2(parent: { fieldSets: FieldSets; entityForm: EntityFormComponent }): void {
+  userNameBlur(parent: this): void {
     if (parent.entityForm) {
       const username = parent.entityForm.formGroup.controls.username.value;
       parent.fieldSets.config('username').warnings = username.length > 8 ? helptext.user_form_blur_event2_warning : null;

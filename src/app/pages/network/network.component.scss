@@ -1,4 +1,3 @@
-/* content padding top 14px bottom 15px*/
 div.dashboard {
   height: calc(100vh - 175px);
 }
@@ -14,11 +13,6 @@ div.content {
 div.right-column div.left-column {
   height: inherit;
 }
-/* div.title {
-    display: flex;
-    margin: 0px 24px;
-    color: var(--fg2);
-} */
 
 mat-card > mat-card-actions.interface-pending-actions,
 div.disabled-notice {

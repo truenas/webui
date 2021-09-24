@@ -3,7 +3,7 @@ import {
 } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild,
+  AfterViewChecked, Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
 } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -20,15 +20,17 @@ import {
 import {
   catchError, filter, switchMap, take, tap,
 } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { JobState } from 'app/enums/job-state.enum';
-import { CoreEvent } from 'app/interfaces/events';
+import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
+import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
+import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import {
   EntityTableAction,
-  EntityTableColumn,
-  EntityTableConfig, EntityTableConfigConfig,
+  EntityTableColumn, EntityTableColumnProp,
+  EntityTableConfig, EntityTableConfigConfig, EntityTableConfirmDialog,
 } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, JobService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -39,7 +41,6 @@ import { T } from 'app/translate-marker';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';
-import { EntityTableAddActionsComponent } from './entity-table-add-actions.component';
 
 export interface Command {
   command: string; // Use '|' or '--pipe' to use the output of previous command as input
@@ -61,11 +62,11 @@ export interface Command {
     ]),
   ],
 })
-export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, OnDestroy {
+export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked, OnDestroy {
   @Input() title = '';
   @Input() conf: EntityTableConfig;
 
-  @ViewChild('newEntityTable', { static: false }) entitytable: any;
+  @ViewChild('newEntityTable', { static: false }) entitytable: TemplateRef<void>;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
@@ -78,7 +79,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   displayedColumns: string[] = [];
   firstUse = true;
   emptyTableConf: EmptyConfig = {
-    type: EmptyType.loading,
+    type: EmptyType.Loading,
     large: true,
     title: this.title,
   };
@@ -119,10 +120,10 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   colMaxWidths: { name: string; maxWidth: number }[] = [];
 
   expandedRows = document.querySelectorAll('.expanded-row').length;
-  expandedElement: any | null = null;
+  expandedElement: Row | null = null;
 
   dataSource: MatTableDataSource<any>;
-  rows: any[] = [];
+  rows: Row[] = [];
   currentRows: any[] = []; // Rows applying filter
   getFunction: Observable<any>;
   config: EntityTableConfigConfig = {
@@ -135,11 +136,11 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   cardHeaderReady = false;
   showActions = true;
   hasActions = true;
-  sortKey: string;
+  sortKey: keyof Row;
   filterValue = ''; // the filter string filled in search input.
   readonly EntityJobState = JobState;
   // Global Actions in Page Title
-  protected actionsConfig: any;
+  protected actionsConfig: GlobalActionConfig;
   loaderOpen = false;
   protected toDeleteRow: Row;
   private interval: Interval;
@@ -174,6 +175,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   };
 
   isAllSelected = false;
+  globalActionsInit = false;
 
   constructor(
     protected core: CoreService,
@@ -188,7 +190,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     protected matDialog: MatDialog,
     public modalService: ModalService,
   ) {
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
       this.multiActionsIconsOnly = evt.data.preferIconsOnly;
     });
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
@@ -260,8 +262,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     }
 
     this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props)
-      ? this.conf.config.deleteMsg.key_props[0]
-      : this.conf.columns[0].prop;
+      ? this.conf.config.deleteMsg.key_props[0] as keyof Row
+      : this.conf.columns[0].prop as keyof Row;
     setTimeout(async () => {
       if (this.conf.prerequisite) {
         await this.conf.prerequisite().then(
@@ -318,15 +320,15 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
       const preferredCols = this.prefService.preferences.tableDisplayedColumns;
       // Turn off preferred cols for snapshots to allow for two diffferent column sets to be displayed
       if (preferredCols.length > 0 && this.title !== 'Snapshots') {
-        preferredCols.forEach((i: any) => {
+        preferredCols.forEach((column) => {
           // If preferred columns have been set for THIS table...
-          if (i.title === this.title) {
+          if (column.title === this.title) {
             this.firstUse = false;
-            this.conf.columns = i.cols.filter((col: any) =>
+            this.conf.columns = column.cols.filter((col) =>
               // Remove columns if they are already present in always displayed columns
               !this.alwaysDisplayedCols.find((item) => item.prop === col.prop));
             // Remove columns from display and preferred cols if they don't exist in the table
-            const notFound: any[] = [];
+            const notFound: EntityTableColumnProp[] = [];
             this.conf.columns.forEach((col) => {
               const found = this.filterColumns.find((o) => o.prop === col.prop);
               if (!found) {
@@ -366,11 +368,12 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     setTimeout(() => { this.setShowSpinner(); }, 500);
   }
 
-  ngAfterViewInit(): void {
+  ngAfterViewChecked(): void {
     // If actionsConfig was disabled, don't show the default toolbar. like the Table is in a Tab.
-    if (!this.conf.disableActionsConfig) {
+    if (!this.conf.disableActionsConfig && !this.globalActionsInit) {
       // Setup Actions in Page Title Component
       this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
+      this.globalActionsInit = true;
     }
   }
 
@@ -389,10 +392,10 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
       this.isTableEmpty = true;
       this.configureEmptyTable(
         this.dataSource.filter
-          ? EmptyType.no_search_results
+          ? EmptyType.NoSearchResults
           : this.firstUse
-            ? EmptyType.first_use
-            : EmptyType.no_page_data,
+            ? EmptyType.FirstUse
+            : EmptyType.NoPageData,
       );
     }
 
@@ -411,15 +414,15 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     let message = '';
     let messagePreset = false;
     switch (emptyType) {
-      case EmptyType.loading:
+      case EmptyType.Loading:
         this.emptyTableConf = {
-          type: EmptyType.loading,
+          type: EmptyType.Loading,
           large: true,
           title: this.title,
         };
         break;
 
-      case EmptyType.no_search_results:
+      case EmptyType.NoSearchResults:
         title = T('No Search Results.');
         message = T('Your query didn\'t return any results. Please try again.');
         if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.no_search_results) {
@@ -427,14 +430,14 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
           message = this.conf.emptyTableConfigMessages.no_search_results.message;
         }
         this.emptyTableConf = {
-          type: EmptyType.no_search_results,
+          type: EmptyType.NoSearchResults,
           large: true,
           title,
           message,
         };
         break;
 
-      case EmptyType.errors:
+      case EmptyType.Errors:
         title = T('Something went wrong');
         message = T('The system returned the following error - ');
         if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.errors) {
@@ -445,28 +448,30 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
           title,
           message: message + error,
           large: true,
-          type: EmptyType.errors,
+          type: EmptyType.Errors,
         };
         break;
 
-      case EmptyType.first_use:
+      case EmptyType.FirstUse:
         messagePreset = false;
-        title = T('No ') + this.title;
-        message = T('It seems you haven\'t setup any ') + this.title + T(' yet.');
+        title = this.translate.instant('No {item}', { item: this.title });
+        message = this.translate.instant("It seems you haven't setup any {item} yet.", { item: this.title });
         if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.first_use) {
           title = this.conf.emptyTableConfigMessages.first_use.title;
           message = this.conf.emptyTableConfigMessages.first_use.message;
           messagePreset = true;
         }
         this.emptyTableConf = {
-          type: EmptyType.first_use,
+          type: EmptyType.FirstUse,
           large: true,
           title,
           message,
         };
         if (!this.conf.noAdd) {
           if (!messagePreset) {
-            this.emptyTableConf['message'] += T(' Please click the button below to add ') + this.title + T('.');
+            this.emptyTableConf['message'] += this.translate.instant(' Please click the button below to add {item}.', {
+              item: this.title,
+            });
           }
           let buttonText = T('Add ') + this.title;
           if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
@@ -479,25 +484,27 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
         }
         break;
 
-      case EmptyType.no_page_data:
+      case EmptyType.NoPageData:
       default:
         messagePreset = false;
-        title = T('No ') + this.title;
-        message = T('The system could not retrieve any ') + this.title + T(' from the database.');
+        title = this.translate.instant('No {item}', { item: this.title });
+        message = this.translate.instant('The system could not retrieve any {item} from the database.', { item: this.title });
         if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.no_page_data) {
           title = this.conf.emptyTableConfigMessages.no_page_data.title;
           message = this.conf.emptyTableConfigMessages.no_page_data.message;
           messagePreset = true;
         }
         this.emptyTableConf = {
-          type: EmptyType.no_page_data,
+          type: EmptyType.NoPageData,
           large: true,
           title,
           message,
         };
         if (!this.conf.noAdd) {
           if (!messagePreset) {
-            this.emptyTableConf['message'] += T(' Please click the button below to add ') + this.title + T('.');
+            this.emptyTableConf['message'] += this.translate.instant(' Please click the button below to add {item}.', {
+              item: this.title,
+            });
           }
           let buttonText = T('Add ') + this.title;
           if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
@@ -533,14 +540,13 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   getData(): void {
     const sort: string[] = [];
 
-    for (const i in this.config.sorting.columns) {
-      const col = this.config.sorting.columns[i];
+    this.config.sorting.columns.forEach((col) => {
       if (col.sort === 'asc') {
         sort.push(col.name);
       } else if (col.sort === 'desc') {
         sort.push('-' + col.name);
       }
-    }
+    });
 
     const options: any = { limit: 0 };
     if (sort.length > 0) {
@@ -586,7 +592,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
       },
       (res: any) => {
         this.isTableEmpty = true;
-        this.configureEmptyTable(EmptyType.errors, res);
+        this.configureEmptyTable(EmptyType.Errors, res);
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
@@ -657,7 +663,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
-      this.configureEmptyTable(this.firstUse ? EmptyType.first_use : EmptyType.no_page_data);
+      this.configureEmptyTable(this.firstUse ? EmptyType.FirstUse : EmptyType.NoPageData);
     }
 
     for (let i = 0; i < this.currentRows.length; i++) {
@@ -690,7 +696,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   isTableOverflow(): boolean {
     let hasHorizontalScrollbar = false;
     if (this.entitytable) {
-      const parentNode = this.entitytable._elementRef.nativeElement.parentNode;
+      // TODO: Replacing with elementRef breaks things
+      const parentNode = (this.entitytable as any)._elementRef.nativeElement.parentNode;
       hasHorizontalScrollbar = parentNode.scrollWidth > parentNode.clientWidth;
     }
     return hasHorizontalScrollbar;
@@ -737,7 +744,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
 
       const newRows = [];
       for (let i = 0; i < this.rows.length; i++) {
-        const index = _.findIndex(rows, { id: this.rows[i].id });
+        const index = _.findIndex(rows, { id: (this.rows[i] as any).id });
         if (index < 0) {
           continue;
         }
@@ -794,15 +801,14 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     } else {
       this.router.navigate(new Array('/').concat(this.conf.route_add));
     }
-    // this.modalService.open('slide-in-form', this.conf.addComponent);
   }
 
-  doEdit(id: string): void {
+  doEdit(id: string | number): void {
     if (this.conf.doEdit) {
       this.conf.doEdit(id, this);
     } else {
       this.router.navigate(
-        new Array('/').concat(this.conf.route_edit).concat(id),
+        new Array('/').concat(this.conf.route_edit).concat(id as any),
       );
     }
   }
@@ -829,7 +835,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     return deleteMsg;
   }
 
-  doDelete(item: any, action?: any): void {
+  doDelete(item: any, action?: string): void {
     const deleteMsg = this.conf.confirmDeleteDialog && this.conf.confirmDeleteDialog.isMessageComplete
       ? ''
       : this.getDeleteMessage(item, action);
@@ -903,7 +909,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     } else {
       id = item.id;
     }
-    let dialog: any = {};
+    let dialog: EntityTableConfirmDialog = {};
     if (this.conf.confirmDeleteDialog) {
       dialog = this.conf.confirmDeleteDialog;
     }
@@ -1005,7 +1011,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
                     }
                   }
                   if (message === '') {
-                    this.dialogService.Info(T('Items deleted'), '', '300px', 'info', true);
+                    this.dialogService.info(T('Items deleted'), '', '300px', 'info', true);
                   } else {
                     message = '<ul>' + message + '</ul>';
                     this.dialogService.errorReport(T('Items Delete Failed'), message);
@@ -1026,7 +1032,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
   }
 
   // Next section operates the checkboxes to show/hide columns
-  toggle(col: any): void {
+  toggle(col: EntityTableColumn): void {
     const isChecked = this.isChecked(col);
     this.anythingClicked = true;
 
@@ -1046,9 +1052,9 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
 
     const preferredCols = this.prefService.preferences.tableDisplayedColumns;
     if (preferredCols.length > 0) {
-      preferredCols.forEach((i: any) => {
-        if (i.title === this.title) {
-          preferredCols.splice(preferredCols.indexOf(i), 1);
+      preferredCols.forEach((column) => {
+        if (column.title === this.title) {
+          preferredCols.splice(preferredCols.indexOf(column), 1);
         }
       });
     }
@@ -1069,7 +1075,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     }
   }
 
-  isChecked(col: any): boolean {
+  isChecked(col: EntityTableColumn): boolean {
     return this.conf.columns.find((c) => c.name === col.name) !== undefined;
   }
 
@@ -1098,29 +1104,33 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     this.multiActionsIconsOnly = !this.multiActionsIconsOnly;
   }
 
-  getButtonClass(state: JobState): string {
-    switch (state) {
-      case JobState.Pending: return 'fn-theme-orange';
-      case JobState.Running: return 'fn-theme-orange';
-      case JobState.Aborted: return 'fn-theme-orange';
-      case JobState.Finished: return 'fn-theme-green';
-      case JobState.Success: return 'fn-theme-green';
-      case JobState.Error: return 'fn-theme-red';
-      case JobState.Failed: return 'fn-theme-red';
-      case JobState.Hold: return 'fn-theme-yellow';
-      default: return 'fn-theme-primary';
-    }
-  }
+  getButtonClass(row: any): string {
+    // Bring warnings to user's attention even if state is finished or successful.
+    if (row.warnings && row.warnings.length > 0) return 'fn-theme-orange';
 
-  stateClickable(value: any, colConfig: any): boolean {
-    if (colConfig.infoStates) {
-      return _.indexOf(colConfig.infoStates, value) < 0;
+    const state: JobState = row.state;
+
+    switch (state) {
+      case JobState.Pending:
+      case JobState.Running:
+      case JobState.Aborted:
+        return 'fn-theme-orange';
+      case JobState.Finished:
+      case JobState.Success:
+        return 'fn-theme-green';
+      case JobState.Error:
+      case JobState.Failed:
+        return 'fn-theme-red';
+      case JobState.Locked:
+      case JobState.Hold:
+        return 'fn-theme-yellow';
+      default:
+        return 'fn-theme-primary';
     }
-    return value !== JobState.Pending;
   }
 
   runningStateButton(jobid: number): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Task is running') }, disableClose: false });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Task is running') } });
     dialogRef.componentInstance.jobId = jobid;
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
@@ -1178,7 +1188,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
 
   isInteractive(column: string): boolean {
     const item = this.currentColumns.find((obj) => obj.prop === column);
-    return (item?.checkbox || item?.toggle || item?.button);
+    return (item?.checkbox || item?.toggle || item?.button || item?.showLockedStatus);
   }
 
   doRowClick(element: Row): void {
@@ -1187,5 +1197,9 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, O
     } else {
       this.expandedElement = this.expandedElement === element ? null : element;
     }
+  }
+
+  isBasicColumnTemplate(column: string): boolean {
+    return !['expandedDetail', 'action', 'multiselect', 'expansion-chevrons'].includes(column) && !this.isInteractive(column);
   }
 }

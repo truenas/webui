@@ -9,6 +9,7 @@ import { AngularSvgIconModule, SvgIconRegistryService } from 'angular-svg-icon';
 import { ChartistModule } from 'ng-chartist';
 import { MaterialModule } from 'app/app-material.module';
 import { PageTitleComponent } from 'app/components/common/page-title/page-title.component';
+import { SecondaryMenuComponent } from 'app/components/common/secondary-menu/secondary-menu.component';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
@@ -47,7 +48,11 @@ import { TopbarComponent } from './topbar/topbar.component';
     TopbarComponent,
     NavigationComponent,
     ModalComponent,
-    NotificationsComponent, CustomizerComponent, BreadcrumbComponent, PageTitleComponent,
+    NotificationsComponent,
+    CustomizerComponent,
+    BreadcrumbComponent,
+    PageTitleComponent,
+    SecondaryMenuComponent,
   ],
   providers: [ThemeService, DialogService, LanguageService, LocaleService, SvgIconRegistryService],
   exports: [PageTitleComponent, ViewControllerComponent],

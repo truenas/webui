@@ -9,3 +9,13 @@ export interface TwoFactorConfig {
   };
   window: number;
 }
+
+export interface TwoFactorConfigUpdate {
+  enabled: boolean;
+  interval?: number;
+  otp_digits?: number;
+  services?: {
+    ssh: boolean;
+  };
+  window?: number;
+}

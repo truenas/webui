@@ -1,0 +1,1777 @@
+@use '~@angular/material' as mat;
+@import '../../../../node_modules/@angular/material/theming';
+@include mat.core();
+@import '../scss-imports/cssvars';
+
+// mandatory stuff for theming
+$freenas-primary: mat.define-palette($md-primary);
+$freenas-accent: mat.define-palette($md-accent);
+
+// include the custom theme components into a theme object
+$freenas-theme: mat.define-light-theme($freenas-primary, $freenas-accent);
+
+$primary-dark: darken(map-get($md-primary, 500), 8%);
+
+// Bring theme colors to various ripple effects
+@mixin mat-ripple-theme($theme) {
+  .mat-checkbox .mat-ripple-element,
+  .mat-radio-button .mat-ripple-element {
+    @include variable(background, --accent, $accent, !important);
+  }
+
+  .mat-button.mat-primary .mat-ripple-element,
+  .mat-icon-button.mat-primary .mat-ripple-element,
+  .mat-tab-label .mat-ripple-element {
+    @include variable(background, --primary, $primary, !important);
+  }
+
+  .mat-button.mat-accent .mat-ripple-element,
+  .mat-icon-button.mat-accent .mat-ripple-element,
+  .mat-slide-toggle .mat-ripple-element {
+    @include variable(background, --primary, $primary, !important);
+  }
+
+  .mat-button .mat-ripple-element,
+  .mat-raised-button .mat-ripple-element {
+    background: rgba(0, 0, 0, 0.12);
+  }
+}
+
+// include the custom theme object into the angular material theme
+.ix-blue {
+  @include mat.all-component-themes($freenas-theme);
+
+  // UI SHELL
+  .mat-sidenav-container {
+    height: 100vh;
+  }
+
+  topbar .mat-toolbar-multiple-rows {
+    min-height: unset;
+  }
+
+  .mat-sidenav {
+    min-width: 240px;
+  }
+
+  // END UI SHELL
+
+  img.fn-img {
+    margin: 10%;
+    width: 80%;
+  }
+
+  .mat-bg-primary,
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
+  .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
+  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
+  .fileupload-drop-zone.dz-file-over,
+  .toolbar-avatar.online > .status-dot,
+  .cal-open-day-events,
+  div.hopscotch-bubble {
+    background: map-get($md-primary, 500) !important;
+    color: #fff !important;
+  }
+
+  .mat-color-primary,
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open .sub-menu .mat-list-item.selected a {
+    color: map-get($md-primary, 500) !important;
+  }
+
+  .sidebar-panel .mat-nav-list .mat-list-item {
+    color: rgba(0, 0, 0, 0.94);
+  }
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open > .mat-list-item-content > .sub-menu {
+    @include variable(border-left, --primary, $primary, !important);
+  }
+
+  .breadcrumb-bar {
+    /*@include variable(background, --bg2, $bg2, !important);*/
+    @include variable(color, --fg1, $fg1, !important);
+  }
+  /* Hopscotch Tour */
+  div.hopscotch-bubble {
+    @include variable(border-color, --primary, $primary);
+    border-color: $primary-dark;
+  }
+  /* up arrow  */
+  div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow-border {
+    @include variable(border-bottom-color, --primary, $primary);
+    border-bottom: 17px solid $primary-dark;
+  }
+
+  div.hopscotch-bubble .hopscotch-bubble-arrow-container.up .hopscotch-bubble-arrow {
+    @include variable(border-bottom-color, --primary, $primary);
+    border-bottom: 17px solid map-get($md-primary, 500);
+    top: -16px;
+  }
+  /* right arrow */
+  div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow-border {
+    @include variable(border-left-color, --primary, $primary);
+    border-left: 17px solid $primary-dark;
+  }
+
+  div.hopscotch-bubble .hopscotch-bubble-arrow-container.right .hopscotch-bubble-arrow {
+    @include variable(border-left-color, --primary, $primary);
+    border-left: 17px solid map-get($md-primary, 500);
+    left: -1px;
+  }
+  /* bottom arrow */
+  div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow-border {
+    @include variable(border-top-color, --primary, $primary);
+    border-top: 17px solid $primary-dark;
+  }
+
+  div.hopscotch-bubble .hopscotch-bubble-arrow-container.down .hopscotch-bubble-arrow {
+    @include variable(border-top-color, --primary, $primary);
+    border-top: 17px solid map-get($md-primary, 500);
+    top: -18px;
+  }
+  /* Left Arrow */
+  div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow-border {
+    @include variable(border-right-color, --primary, $primary);
+    border-right: 17px solid $primary-dark;
+  }
+
+  div.hopscotch-bubble .hopscotch-bubble-arrow-container.left .hopscotch-bubble-arrow {
+    @include variable(border-right-color, --primary, $primary);
+    border-right: 17px solid map-get($md-primary, 500);
+    left: 1px;
+  }
+
+  .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
+    background-color: var(--primary);
+  }
+
+  .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
+    background-color: var(--primary);
+  }
+
+  .mat-bg-accent,
+  div.hopscotch-bubble .hopscotch-bubble-number,
+  div.hopscotch-bubble .hopscotch-nav-button.next:hover,
+  div.hopscotch-bubble .hopscotch-nav-button.next {
+    background-color: map-get($md-accent, 500);
+    color: black;
+  }
+
+  .mat-bg-warn {
+    @include variable(background-color, --red, $red);
+    color: white;
+  }
+
+  .mat-color-accent {
+    @include variable(color, --accent, $accent);
+  }
+
+  .mat-color-warn {
+    @include variable(color, --warn, $warn);
+  }
+
+  .mat-sidenav-container {
+    @include variable(background, --bg1, $bg1);
+  }
+
+  /////////////////// Typography (egret overrides)
+
+  html,
+  body {
+    font-size: 13px;
+    /* Experimental thin fonts */
+    font-weight: 250;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-weight: 600;
+  }
+
+  h4 {
+    font-size: 15px;
+  }
+
+  /////////////////// SpecSelectors: Selectors not originally in ix-blue theme
+  .mat-tab-label,
+  .mat-tab-link {
+    @include variable(color, --fg1, $fg1);
+  }
+
+  .mat-menu-item .mat-icon:not([color]),
+  .mat-menu-item .theme-picker-swatch .mat-icon:not([color]),
+  .mat-menu-item-submenu-trigger::after {
+    @include variable(color, --fg1, $fg1);
+  }
+
+  .mat-toolbar,
+  .mat-raised-button {
+    @include variable(color, --fg1, $fg1);
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .mat-bg-primary,
+  .mat-raised-button.mat-primary,
+  .mat-fab.mat-primary,
+  .mat-mini-fab.mat-primary,
+  .sidebar-panel.mat-sidenav .sidebar-list-item.open md-icon:not(.menu-caret),
+  .chats-wrap .conversations-hold .single-conversation.me .conversation-msg,
+  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
+  .fileupload-drop-zone.dz-file-over,
+  .toolbar-avatar.online > .status-dot,
+  .cal-open-day-events,
+  .mat-step-header .mat-step-icon,
+  div.hopscotch-bubble {
+    @include variable(background, --primary, $primary, !important);
+    @include variable(color, --primary-txt, $primary-txt, !important);
+
+  }
+
+  .ngx-datatable.material {
+    background: none;
+  }
+
+  .datatable-header,
+  .datatable-footer {
+    @include variable(border-top-color, --bg1, $bg1, !important);
+    border-top-style: solid;
+    border-top-width: 1px;
+  }
+
+  .datatable-header,
+  .datatable-footer {
+    @include variable(background, --bg2, $bg2, !important);
+    background-color: rgba(0, 0, 0, 0.75);
+  }
+
+
+  .mat-bg-accent,
+  .mat-raised-button.mat-accent,
+  .mat-fab.mat-accent,
+  .mat-mini-fab.mat-accent,
+  div.hopscotch-bubble .hopscotch-bubble-number,
+  div.hopscotch-bubble .hopscotch-nav-button.next:hover,
+  div.hopscotch-bubble .hopscotch-nav-button.next,
+  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a,
+  .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background,
+  .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+    @include variable(background, --accent, $accent, !important);
+    @include variable(color, #000, #000, !important);
+    background-color: map-get($md-accent, 500);
+    color: black;
+  }
+
+  .mat-drawer,
+  .sidebar-panel.mat-sidenav .navigation-hold#scroll-area,
+  .mat-card,
+  .mat-paginator,
+  .mat-select-content,
+  .mat-select-panel,
+  .mat-select-panel-done-animating,
+  .mat-expansion-panel,
+  .mat-dialog-container,
+  .mat-stepper-horizontal,
+  .mat-stepper-vertical,
+  .dx-treelist-container {
+    @include variable(background, --bg2, $bg2);
+    @include variable(color, --fg2, $fg2);
+  }
+
+  .mat-button-toggle-checked {
+    @include variable(color, --fg2, $fg2);
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .mat-card .mat-divider {
+    @include variable(background, --alt-fg1, $alt-fg1);
+    opacity: 0.15;
+  }
+
+
+  .sidebar-panel .mat-nav-list .mat-list-item,
+  .app-user .app-user-name,
+  .text-muted,
+  .mat-expansion-panel-header-title,
+  .mat-expansion-panel-header-description,
+
+  .mat-list .mat-list-item,
+  .mat-menu-panel button,
+  .mat-menu-panel a,
+  .mat-paginator-navigation-next,
+  .mat-paginator-navigation-previous,
+
+  .mat-nav-list .mat-list-item,
+  .mat-form-field-label,
+  .mat-selection-list .mat-list-item,
+  .mat-option,
+  .mat-select-arrow,
+  .mat-select-value {
+    @include variable(color, --fg2, $fg2, !important);
+  }
+
+  .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow,
+  .mat-select-disabled .mat-select-value {
+    @include variable(color, --fg2, $fg2);
+    cursor: not-allowed;
+    opacity: 0.38;
+  }
+
+  .mat-form-field.mat-focused.mat-primary .mat-select-arrow {
+    @include variable(color, --primary, $primary, !important);
+  }
+
+  .mat-checkbox-disabled .mat-checkbox-label {
+    @include variable(color, --grey, #4d4d4d);
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .mat-checkbox-disabled .mat-checkbox-frame,
+  .mat-checkbox-disabled .mat-checkbox-inner-container {
+    opacity: 0.7;
+  }
+
+  .menu-toggle {
+    .mat-icon {
+      position: relative;
+      right: -10px;
+      vertical-align: middle;
+    }
+  }
+
+  .mat-menu-panel,
+  .mat-option.mat-active,
+  .mat-nav-list a {
+    @include variable(background, --bg2, $bg2);
+    @include variable(color, --fg2, $fg2, !important);
+  }
+
+  .mat-form-field-underline {
+    @include variable(background-color, --fg2, $fg2, !important);
+    opacity: 0.35;
+  }
+
+  .mat-warn .mat-form-field-underline {
+    opacity: 0.85;
+  }
+
+  .mat-form-field.mat-focused .mat-form-field-ripple {
+    @include variable(background-color, --primary, $primary, !important);
+  }
+
+  #test-alert {
+    @include variable(color, --fg2, $fg2);
+  }
+
+  .mat-form-field.mat-focused.mat-primary {
+    @include variable(color, --fg2, $fg2, !important);
+  }
+
+  .mat-form-field-invalid .mat-form-field-label {
+    color: #f44336 !important;
+  }
+
+  .mat-form-field-disabled .mat-form-field-label {
+    opacity: 0.38;
+  }
+
+  .mat-button:disabled {
+    opacity: 0.38;
+  }
+
+  .mat-form-field-ripple {
+    @include variable(background-color, --primary, $primary);
+  }
+
+  .mat-input-element {
+    @include variable(caret-color, --fg2, $fg2, !important);
+  }
+
+  .mat-input-element:disabled {
+    @include variable(color, --fg2, $fg2);
+    opacity: 0.38;
+  }
+
+  .mat-calendar-table-header,
+  .mat-calendar-table,
+  .mat-calendar-body-cell-content,
+  .mat-calendar-body-label {
+    @include variable(color, --fg2, $fg2);
+  }
+
+  .mat-calendar-table-header,
+  .mat-calendar-body-cell,
+  .mat-calendar-body-cell-content {
+    cursor: default;
+  }
+
+  .mat-raised-button.mat-primary[disabled],
+  .mat-raised-button.mat-accent[disabled],
+  .mat-raised-button.mat-warn[disabled],
+  .mat-raised-button[disabled][disabled],
+  .mat-fab.mat-primary[disabled],
+  .mat-fab.mat-accent[disabled],
+  .mat-fab.mat-warn[disabled],
+  .mat-fab[disabled][disabled],
+  .mat-mini-fab.mat-primary[disabled],
+  .mat-mini-fab.mat-accent[disabled],
+  .mat-mini-fab.mat-warn[disabled],
+  .mat-mini-fab[disabled][disabled] {
+    @include variable(background-color, #999, #999);
+    opacity: 0.38;
+  }
+
+  .egret-swatch,
+  .mat-checkbox-frame,
+  .mat-radio-outer-circle {
+    @include variable(border-color, --primary, $primary);
+    // border-color: gray;
+  }
+
+  .headerCheckBox .mat-checkbox-frame,
+  .ngx-datatable .datatable-body .mat-checkbox-frame {
+    @include variable(border-color, --alt-fg1, $alt-fg1, !important);
+  }
+
+  .mat-expansion-indicator::after,
+  button.card-close,
+  .mat-pseudo-checkbox {
+    @include variable(color, --fg1, $fg1);
+  }
+
+  .toggle-children {
+    filter: invert(50%);
+    left: 4px;
+    top: 5px;
+  }
+
+  .mat-menu-item[disabled] {
+    @include variable(color, --primary-txt, $primary-txt);
+    opacity: 0.38;
+  }
+
+  .spacer {
+    flex: 1 1 auto;
+  }
+
+  // System wide hover effects
+  .mat-select-panel .mat-option:focus,
+  .mat-select-panel .mat-option.mat-selected:not(.mat-option-multiple) {
+    @include variable(background, --primary, $primary, !important);
+    @include variable(color, --primary-txt, $primary-txt, !important);
+  }
+
+  .mat-menu-content button.mat-menu-item:hover,
+  .mat-menu-content button.mat-menu-item:hover .mat-icon:not(.theme-picker-swatch-icon),
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover,
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-buttons,
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .plugin-icons,
+  .mat-menu-content button.mat-menu-item:focus,
+  .mat-menu-content button.mat-menu-item:focus .mat-icon:not(.theme-picker-swatch-icon),
+  .ngx-datatable .datatable-body .datatable-row-wrapper:focus {
+    background-color: var(--hover-bg);
+  }
+
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-checkbox .mat-checkbox-frame {
+    @include variable(border-color, --primary-txt, $primary-txt, !important);
+  }
+
+  .ngx-datatable .datatable-body .datatable-row-wrapper:hover .mat-slide-toggle:not(.mat-checked) .mat-slide-toggle-bar {
+    @include variable(background, --bg1, $bg1, !important);
+  }
+
+  // Treelists in storage/volumes
+  .mat-expansion-panel-header {
+    //background-color:rgba(0,0,0,0.1);
+  }
+
+  .mat-expansion-panel-body {
+    position: relative;
+  }
+
+  .dx-treelist-container {
+    background: transparent;
+  }
+
+  .dx-treelist-headers {
+    border-bottom: none;
+  }
+
+  .dx-treelist-rowsview {
+    border: 0;
+  }
+
+  .dx-treelist .dx-column-lines> td {
+    border-left: solid 1px rgba(128, 128, 128, 0.1);
+    border-right: none;
+  }
+
+  .dx-treelist .dx-row-lines > td {
+    border-color: rgba(128, 128, 128, 0.1);
+  }
+
+  tr.dx-row:nth-child(odd) {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  // END Treelist styles
+
+  //Entity Module Overrides
+
+  app-members .form-card.mat-card,
+  entity-task .form-card.mat-card,
+  device-edit .form-card.mat-card,
+  entity-form .form-card.mat-card {
+    margin: 0 auto;
+    max-width: 960px;
+  }
+
+  .mat-card-actions .mat-button {
+    margin-left: 1px !important;
+    margin-right: 3px !important;
+  }
+
+  .form-card.mat-card {
+    font-size: 12px;
+  }
+
+  .fieldset-label {
+    margin-bottom: 16px;
+    min-width: 100%;
+  }
+
+  .combo-box-menu.mat-menu-panel {
+    max-height: 256px;
+  }
+
+  .mat-checkbox {
+    margin: 4px;
+  }
+
+  .form-line .mat-checkbox {
+    margin-left: 0;
+  }
+
+  .ngx-datatable .mat-checkbox-inner-container {
+    margin-left: 4px;
+  }
+
+  .mat-checkbox-inner-container {
+    height: 16px;
+    overflow: visible;
+    width: 16px;
+  }
+
+  .mat-checkbox-ripple {
+    left: -17px;
+    top: -17px;
+  }
+  /////////////////// END SpecSelectors
+
+  .mat-dialog-container {
+    max-width: 800px;
+  }
+
+  .mat-dialog-title {
+    .warning-icon {
+      color: #ffc107;
+      font-size: 35px;
+      margin-right: 10px;
+      position: relative;
+      top: 8px;
+    }
+  }
+
+  .mat-dialog-content {
+    overflow: hidden;
+    padding-bottom: -3px;
+
+    .more-info {
+      margin-bottom: 4px;
+    }
+
+    .more-info .mat-icon {
+      cursor: pointer;
+      margin: 0 4px 12px;
+      position: relative;
+      top: 7px;
+    }
+
+    .info-panel {
+      border: 0;
+      max-height: 100px;
+      overflow: hidden;
+      padding: 0;
+      transition: max-height 0.5s linear;
+
+      &.open {
+        margin-bottom: 24px;
+        max-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
+        padding: 2px;
+      }
+
+      .textarea {
+        background: var(--contrast-darker);
+        border: 1px solid var(--lines);
+        color: var(--fg2);
+        height: 100%;
+        min-height: 100px;
+        overflow: auto;
+        padding: 1rem;
+      }
+    }
+
+    .backtrace-panel {
+      border: 0;
+      max-height: 0;
+      overflow: hidden;
+      padding: 0;
+      transition: max-height 0.25s linear;
+
+      &.open {
+        margin-bottom: 24px;
+        max-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
+        padding: 2px;
+      }
+
+      .textarea {
+        background: var(--contrast-darker);
+        border: 1px solid var(--lines);
+        color: var(--fg2);
+        height: calc(100%);
+        min-height: 100px;
+        overflow: auto;
+        padding: 1rem;
+      }
+    }
+  }
+
+  // To move tooltips up when they appear too low on viewport
+  #raised-tooltip {
+    top: -90px;
+  }
+
+  // To fix alignment issues w/checkboxes on Create Pool page
+  .headerCheckBox {
+    left: 16px;
+    margin-top: 7px;
+    position: relative;
+  }
+
+  // For Detach Pools functions on volumes-list.component.ts
+  #pool_detach_warning,
+  #pool_processes {
+    margin-bottom: 15px;
+  }
+
+  app-volumeimport-wizard #key tooltip {
+    position: relative;
+    top: -4px;
+  }
+
+  downloadkey-dialog .red-warning-button {
+    margin-right: 7px;
+  }
+  // ------------------------
+
+  // For some items on VM Wizard Hard Disks page
+  #disk_radio {
+    max-width: 220px;
+  }
+  // ---------------
+
+  // Vertically align header-footer items on datatables
+  .datatable-header-cell {
+    position: relative;
+  }
+
+  // Put header labels directly over cells
+  .datatable-header-cell-label {
+    margin-left: 7px;
+    position: relative;
+    text-align: center;
+    top: 7px;
+  }
+
+  // Resizes loader dialog which appears on update, wipe disk, etc.
+  .entity-job-dialog {
+    max-height: 300px;
+    max-width: 500px;
+    min-width: 200px;
+  }
+
+  // Fix bug where ngx-datatable rows get stuck at original window width
+  .datatable-scroll {
+    min-width: 100%;
+  }
+
+  // Style the ix logo with the primary theme color
+  .ix-logo {
+    @include variable(fill, --primary, $primary);
+  }
+
+  // Color the small lock icon with theme colors
+  .app-user-name .icon-xs {
+    @include variable(color, --fg2, $fg2, !important);
+  }
+
+  .mat-spinner circle {
+    @include variable(stroke, --primary, $primary, !important);
+  }
+
+  // Add a visual effect when any sidenav menu item is clicked
+  .highlight {
+    opacity: 0.5;
+  }
+
+  // Add rule for entity wizards to make text light on dark themes
+  .mat-step-header .mat-step-label.mat-step-label-active {
+    @include variable(color, --fg2, $fg2);
+    opacity: 1;
+  }
+
+  .mat-step-header .mat-step-label {
+    @include variable(color, --fg2, $fg2);
+    opacity: 0.38;
+  }
+
+  // Style file trees to be highlighted with a theme color
+  .node-content-wrapper:hover,
+  .node-content-wrapper-focused {
+    background-color: var(--bg2);
+  }
+
+  // Give vdev and dual-list arrow buttons theme colors
+  .vdev-action-btn,
+  .dual-list-action-btn {
+    @include variable(background, --bg1, $bg1);
+  }
+
+  .vdev-action-btn .arrow,
+  .dual-list-action-btn .arrow {
+    @include variable(color, --primary, $primary);
+    font-size: 36px;
+    height: 36px;
+    width: 36px;
+  }
+
+  app-dual-listbox .chosen .mat-list-item-content {
+    color: white;
+  }
+
+  .vdev-action-btn:disabled {
+    opacity: 0.38;
+  }
+
+  #vdev__close-button {
+    color: var(--primary) !important;
+  }
+
+  // style nav chevrons on datatable pager w/regard to theme
+  .mat-button-wrapper .mat-paginator-decrement,
+  .mat-button-wrapper .mat-paginator-increment {
+    @include variable(border-color, --fg1, $fg1);
+  }
+
+  .mat-icon-button:disabled .mat-button-wrapper .mat-paginator-decrement,
+  .mat-icon-button:disabled .mat-button-wrapper .mat-paginator-increment {
+    @include variable(border-color, --fg1, $fg1);
+    opacity: 0.38;
+  }
+
+  // style to make sure all radio buttons catch the theme color
+  .mat-radio-button.mat-accent .mat-radio-inner-circle {
+    @include variable(background-color, --primary, $primary, !important);
+  }
+
+  .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+    @include variable(border-color, --primary, $primary, !important);
+  }
+
+  // Fix icon color in notification area
+  .info-icon {
+    @include variable(color, --primary, $primary, !important);
+  }
+
+  .mat-spinner circle {
+    @include variable(stroke, --primary, $primary, !important);
+  }
+
+  // Align button and tooltip on Add Replication form
+  #repl_remote_hostkey button {
+    left: 17px;
+  }
+
+  #repl_remote_hostkey .tooltip {
+    left: 145px;
+    top: -55px;
+  }
+
+  // Theme color for slider (Shell page and elsewhere)
+  .mat-slider {
+    @include variable(color, --accent, $accent, !important);
+  }
+
+  .mat-slider-track-fill,
+  .mat-slider-thumb {
+    @include variable(background-color, --accent, $accent, !important);
+  }
+
+  // Fix a layout problem on Sharing/ISCSI page with ink-bar under active link...
+  iscsi .mat-tab-label-active,
+  reportsdashboard .mat-tab-label-active {
+    @include variable(border-color, --primary, $primary);
+    border-bottom: 2px solid;
+  }
+
+  //...by hiding ink bar, replacing it with a bottom border, above.
+  iscsi .mat-ink-bar,
+  reportsdashboard .mat-ink-bar {
+    opacity: 0;
+  }
+
+  // Properly align buttons on Dir Services / Idmap
+  #idmap-actions {
+    margin-left: 0;
+  }
+
+  // Adjustment of highlight over page number on pager in footer
+  .ngx-datatable .datatable-footer .datatable-pager .pager .pages.active a {
+    padding-top: 1px;
+  }
+
+  // Background visually links the items in the form-explorer
+  .form-ex-flex-container {
+    @include variable(background, --bg1, $bg1);
+  }
+
+
+
+  // Align buttons on UI Prefs form
+  .prefs-form .mat-card-actions {
+    padding-left: 10px;
+    text-align: left !important;
+  }
+
+  // Keeps buttons on UI prefs form from overflowing page
+  @media (max-width:450px) {
+    .prefs-form button {
+      display: block;
+      margin-bottom: 10px !important;
+    }
+  }
+
+  // Helper styles for red,blue,green,cyan,orange,magenta,violet,yellow
+  // The --color-txt css vars are generated by theme service
+  .fn-theme-primary {
+    @include variable(background-color, --primary, $primary);
+    @include variable(color, --primary-txt, $primary-txt);
+  }
+
+  .fn-theme-tooltip {
+    @import '~ngx-popperjs/scss/theme';
+    @include ngx-popperjs-theme(var(--primary), var(--primary-txt), 400px, 20001);
+  }
+
+  .fn-theme-red {
+    @include variable(background-color, --red, $red);
+    @include variable(color, --red-txt, $red-txt);
+  }
+
+  .fn-theme-blue {
+    @include variable(background-color, --blue, $blue);
+    @include variable(color, --blue-txt, $blue-txt);
+  }
+
+  .fn-theme-grey {
+    @include variable(background-color, --grey, #4d4d4d);
+    @include variable(color, --grey, #4d4d4d);
+  }
+
+  .fn-theme-green {
+    @include variable(background-color, --green, $green);
+    @include variable(color, --green-txt, $green-txt);
+  }
+
+  .fn-theme-cyan {
+    @include variable(background-color, --cyan, $cyan);
+    @include variable(color, --cyan-txt, $cyan-txt);
+  }
+
+  .fn-theme-orange {
+    @include variable(background-color, --orange, $orange);
+    @include variable(color, --orange-txt, $orange-txt);
+  }
+
+  .fn-theme-magenta {
+    @include variable(background-color, --magenta, $magenta);
+    @include variable(color, --magenta-txt, $magenta-txt);
+  }
+
+  .fn-theme-violet {
+    @include variable(background-color, --violet, $violet);
+    @include variable(color, --violet-txt, $violet-txt);
+  }
+
+  .fn-theme-yellow {
+    @include variable(background-color, --yellow, $yellow);
+    @include variable(color, --yellow-txt, $yellow-txt);
+  }
+
+  .fn-theme-contrast-darker {
+    background-color: var(--contrast-darker);
+    color: var(--fg2);
+  }
+
+  .fn-theme-contrast-lighter {
+    background-color: var(--contrast-lighter);
+    color: var(--fg2);
+  }
+
+  // Fixes color on Reports page tabs
+  #dashboardcontainerdiv .mat-ink-bar {
+    @include variable(background-color, --primary, $primary);
+  }
+
+  .mat-button {
+    @include variable(font-family, --font-family-body, $font-family-body, !important);
+    background: var(--btn-default-bg);
+    font-weight: bold !important;
+    text-transform: capitalize !important;
+  }
+
+  .mat-stroked-button {
+    background-color: transparent !important;
+    border: 1px solid currentColor !important;
+    border-radius: 25px;
+    line-height: 28px;
+
+    &.fn-theme-primary {
+      @include variable(color, --primary, $primary);
+    }
+
+    &.fn-theme-grey {
+      @include variable(color, --grey, #4d4d4d);
+    }
+
+    &.fn-theme-red {
+      @include variable(color, --red, $red);
+    }
+
+    &.fn-theme-blue {
+      @include variable(color, --blue, $blue);
+    }
+
+    &.fn-theme-green {
+      @include variable(color, --green, $green);
+    }
+
+    &.fn-theme-cyan {
+      @include variable(color, --cyan, $cyan);
+    }
+
+    &.fn-theme-orange {
+      @include variable(color, --orange, $orange);
+    }
+
+    &.fn-theme-magenta {
+      @include variable(color, --magenta, $magenta);
+    }
+
+    &.fn-theme-violet {
+      @include variable(color, --violet, $violet);
+    }
+
+    &.fn-theme-yellow {
+      @include variable(color, --yellow, $yellow);
+    }
+  }
+
+  .mat-button[color='default'] {
+    @include variable(color, --fg2, $fg2, !important);
+  }
+
+  // Gets checkboxes in SMART tests to pick up theme color
+  .mat-checkbox-checked .mat-checkbox-background,
+  .mat-primary .mat-pseudo-checkbox-checked,
+  .mat-primary .mat-pseudo-checkbox-indeterminate,
+  .mat-primary.mat-checkbox-indeterminate .mat-checkbox-background {
+    @include variable(background, --primary, $primary, !important);
+    border: none;
+  }
+
+  .mat-checkbox .mat-checkbox-background {
+    @include variable(border-color, --primary, $primary, !important);
+    border: solid 2px;
+  }
+
+  .mat-checkbox.mat-checkbox-disabled,
+  .mat-checkbox.mat-checkbox-checked.mat-checkbox-disabled {
+    cursor: not-allowed;
+  }
+
+  .mat-checkbox.mat-checkbox-disabled .mat-checkbox-background,
+  .mat-checkbox.mat-checkbox-checked.mat-checkbox-disabled .mat-checkbox-background {
+    @include variable(background, --grey, #4d4d4d, !important);
+    @include variable(border-color, --grey, #4d4d4d, !important);
+    border: solid 2px;
+  }
+
+  .form-selection-list {
+    .mat-pseudo-checkbox {
+      @include variable(border-color, --primary, $primary, !important);
+      border: solid 2px;
+      opacity: 0.75;
+
+      &::after {
+        border-bottom: 1.35px solid currentColor;
+        border-left: 1.35px solid currentColor;
+      }
+    }
+
+    .mat-list-text {
+      opacity: 0.75;
+    }
+  }
+
+  // for multi-selection only
+  .mat-option-pseudo-checkbox.mat-pseudo-checkbox {
+    display: none;
+  }
+
+  // Bring tooltips to the front in dialogs
+  .mat-dialog-container,
+  .mat-dialog-content {
+    overflow: visible !important;
+  }
+
+  // Fix for overscrolling problem with sidenav
+  .sidebar-panel.mat-sidenav .navigation-hold {
+    position: static !important;
+  }
+
+  .mat-drawer {
+    overflow-y: hidden !important;
+  }
+
+  app-admin-layout .not-alerts .mat-drawer-inner-container {
+    overflow: visible !important;
+  }
+
+  // Bring theme colors to rollover effect for standard primary buttons
+  .mat-button.mat-primary .mat-button-focus-overlay {
+    @include variable(background-color, --primary, $primary);
+    opacity: 0.12;
+  }
+
+  // Bring theme colors to rollover effect for standard accent buttons
+  .mat-button.mat-accent .mat-button-focus-overlay {
+    @include variable(background-color, --accent, $accent);
+    opacity: 0.12;
+  }
+
+  // Bring theme color to tab underline on Theme Preview
+  #theme-preview .mat-ink-bar {
+    @include variable(background-color, --primary, $primary !important);
+  }
+
+  // Bring theme color to small icon buttons
+  .mat-icon-button.mat-primary {
+    @include variable(color, --primary, $primary !important);
+  }
+
+  .mat-icon-button.mat-accent {
+    @include variable(color, --accent, $accent !important);
+  }
+
+  // Make room for checkbox ripple effect in datatables
+  .datatable-header-cell .mat-checkbox,
+  .datatable-body-cell .mat-checkbox {
+    margin-left: 5px;
+  }
+
+  .ngx-datatable .datatable-header .datatable-header-cell .sort-btn {
+    vertical-align: -8px;
+  }
+
+  // Adjustments to checkboxes and header labels on unique tables
+  services .datatable-body-cell .mat-checkbox {
+    bottom: 7px !important;
+  }
+
+  services .datatable-header-cell-label {
+    margin-left: 15px;
+  }
+
+
+  .red-warning-button {
+    @include variable(background-color, --red, $red !important);
+    color: white;
+  }
+
+  .mat-progress-bar-fill::after {
+    @include variable(background-color, --primary, $primary);
+  }
+
+  .mat-progress-bar-buffer {
+    @include variable(background-color, --primary, $primary);
+    opacity: 0.5;
+  }
+
+  .mat-progress-bar .mat-progress-bar-background {
+    //opacity:0.1;
+    display: none;
+  }
+
+  .mat-tab-nav-bar,
+  .mat-tab-header {
+    border-bottom: 1px solid var(--lines);
+  }
+
+  app-entity-dialog .has-pwtoggle {
+    background: rgba(0, 0, 0, 0) !important;
+    padding: 0 0 10px !important;
+    width: 385px !important;
+
+    mat-form-field {
+      width: 79% !important;
+    }
+  }
+
+  #secret_key2 {
+    margin-bottom: 5px;
+  }
+
+  .toggle_pw {
+    @include variable(display, --toggle_pw_display_prop, $toggle-pw-display-prop);
+  }
+
+  datatable-selection > .empty-row {
+    color: var(--alt-fg1);
+  }
+
+  #show_Warning {
+    @include variable(display, --enableWarning, $enable-warning);
+  }
+
+  #update-info {
+    color: var(--accent);
+  }
+
+  .services-table .service-toggle-running {
+    @include variable(fill, --accent, $accent);
+  }
+
+  .mat-simple-snackbar-action {
+    color: var(--accent);
+  }
+
+  input[type=number] {
+    appearance: textfield !important;
+  }
+
+  input[type=number]::-webkit-inner-spin-button {
+    appearance: none;
+  }
+
+  .mat-autocomplete-panel {
+    background: var(--bg2) !important;
+  }
+
+  .mat-autocomplete-panel .mat-option:hover {
+    background-color: var(--primary) !important;
+  }
+
+  .mat-autocomplete-panel .mat-option-text {
+    color: var(--fg2) !important;
+  }
+
+  .ui-treetable tr:nth-child(even) {
+    //background-color:rgba(23,23,23,0.1);
+  }
+
+  .ui-treetable tr:hover {
+    //@include variable(background, --primary, $primary, !important);
+    //@include variable(color, --primary-txt, $primary-txt);
+  }
+
+  .ui-treetable-thead {
+    text-align: left;
+    vertical-align: top;
+  }
+
+  app-volumes-list .ui-treetable-resizable .ui-treetable-tfoot>tr>td,
+  .ui-treetable-resizable .ui-treetable-tbody>tr>td {
+    max-width: 300px;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+
+  app-volumes-list td[id^='tbody__comments_'] {
+    min-width: 200px;
+    text-overflow: unset;
+    white-space: normal !important;
+  }
+
+  .ngx-datatable .datatable-header .datatable-header-cell .resize-handle {
+    @include variable(border-color, --primary-txt, $primary-txt);
+    border-right: 1px solid !important;
+    opacity: 0.25;
+    visibility: visible !important;
+  }
+
+  .datatable-header-inner {
+    height: 52px;
+  }
+
+  #idmap-err {
+    @include variable(color, --red, $red);
+    left: 26px;
+    position: absolute;
+    top: 100px;
+  }
+
+  #em_pwmessage {
+    margin: 10px 0;
+  }
+
+  .rightside-content-hold {
+    overflow-y: auto;
+  }
+
+  app-networksummary .mat-list .mat-subheader {
+    @include variable(color, --fg2, $fg2);
+  }
+
+  .xterm-viewport {
+    overflow-y: auto;
+  }
+
+  .xterm-rows > div {
+    height: 15px !important;
+  }
+
+  app-select-dialog .mat-select-placeholder,
+  app-ipmi .mat-select-placeholder {
+    @include variable(color, --fg2, $fg2);
+  }
+
+  app-acmedns-form {
+    h4 {
+      font-size: 20px;
+    }
+
+    .fieldset:first-of-type {
+      padding-left: 5px;
+    }
+
+    .fieldset:nth-of-type(2) {
+      padding-left: 30px;
+      padding-top: 38px;
+    }
+
+    p .material-icons {
+      font-size: 36px;
+      margin-left: -4px;
+      margin-right: 10px;
+      position: relative;
+      top: 10px;
+    }
+
+    #select_auth,
+    #auth_attributes {
+      font-size: 140%;
+    }
+  }
+
+  #acme_directory_uri mat-form-field {
+    width: 50%;
+  }
+
+  app-certificate-acme-add #authenticators {
+    position: relative;
+    top: -18px;
+  }
+
+  entity-form form-combobox mat-form-field {
+    min-width: 180px;
+    width: 50%;
+  }
+
+  app-service-netdata form-paragraph {
+    font-size: larger;
+    font-weight: 700;
+    margin-bottom: 7px;
+  }
+
+  mat-radio-group .radio-option-tooltip {
+    left: 5px;
+    position: relative;
+  }
+
+  .tooltiptext samp {
+    background: rgba(255, 255, 255, 0.25);
+  }
+
+  .node-content-wrapper {
+    margin-left: 2px;
+    padding-left: 3px;
+  }
+
+  tree-node-content mat-icon {
+    vertical-align: top;
+  }
+
+  tree-node-content span {
+    line-height: 25px;
+    padding-left: 3px;
+    vertical-align: top;
+  }
+
+  .mat-card {
+    border-radius: 6px;
+  }
+
+
+  // Scrollbars need separate rules for firefox and webkit
+
+  app-entity-dialog #pool_processes p,
+  confirm-dialog .warning-box {
+    background-color: rgb(223, 223, 223);
+    color: rgb(19, 19, 19);
+    max-height: 170px;
+    overflow-y: auto;
+    padding: 3px;
+    width: 100%;
+  }
+
+  confirm-dialog pre,
+  error-dialog pre {
+    background: rgba(0, 0, 0, 0.096);
+    overflow-x: auto;
+    padding: 5px;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+  }
+
+  .fieldset-container {
+    .disabled-select .mat-select-arrow {
+      opacity: 0.38;
+    }
+
+    entity-form-list .form-list .form-list-item > div.form-line {
+      display: block;
+    }
+
+    #failover_address,
+    #failover_virtual_address {
+      width: 85%;
+    }
+
+  }
+
+  app-interfaces-form {
+    entity-form-list .form-list .form-list-item > div.form-line {
+      display: none;
+    }
+
+    entity-form-list .form-list .form-list-item > div.form-line:first-child {
+      display: block;
+    }
+  }
+
+  app-createpassphrase-form #changekey-instructions,
+  app-createpassphrase-form #createkey-instructions,
+  app-addkey-form #addkey-instructions,
+  app-volumeunlock-form #rekey-instructions,
+  app-ssh-keypairs-form #key_instructions {
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+  }
+
+  app-createpassphrase-form,
+  app-addkey-form {
+    #cust_button_Cancel {
+      background-color: var(--accent);
+      color: black !important;
+    }
+  }
+
+  #recovery_key span {
+    margin-right: 5px;
+  }
+
+  iscsi .mat-tab-links {
+    flex-wrap: wrap;
+  }
+
+  general-preferences-form #enableWarning tooltip {
+    left: 370px;
+    position: absolute;
+  }
+
+  general-preferences-form #userTheme {
+    width: 400px;
+  }
+
+  app-interfaces-list #timeout-field {
+    text-align: center;
+    width: 50px;
+  }
+
+  // Reset Encryption form
+  #encrypt-headline p {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 0.7rem;
+
+    i {
+      margin-right: 5px;
+      position: relative;
+      top: 3px;
+    }
+  }
+
+  #encryptionkey-passphrase-instructions p,
+  #set_recoverykey-instructions p {
+    font-size: 0.9rem;
+    margin-top: 1rem;
+  }
+
+  #encryptionkey-passphrase {
+    max-width: 640px;
+  }
+
+  // end of reset encryption form
+
+  confirm-dialog div.message-content p {
+    margin-bottom: 10px;
+  }
+
+  app-eula p {
+    margin-bottom: 15px;
+  }
+
+  app-dataset-acl {
+    #apply_user,
+    #apply_group {
+      margin-bottom: 20px;
+      margin-top: -13px;
+    }
+
+    .error-div {
+      margin-top: -12px;
+      min-height: 24px;
+    }
+  }
+
+  .styled-list-for-dialogs {
+    list-style: disc inside;
+    padding-left: 15px;
+  }
+
+  app-general {
+    #language_sort,
+    #language_sort_radiogroup {
+      display: inline-flex;
+    }
+
+    mat-radio-button {
+      margin-left: 10px;
+    }
+  }
+
+  app-active-directory #successfully_updated {
+    position: relative;
+    top: 12px;
+  }
+
+  mat-error a {
+    text-decoration: underline;
+  }
+
+  .mat-select-panel {
+    max-height: 60vh !important;
+  }
+
+  tree-viewport {
+    max-height: 300px;
+    overflow: auto;
+  }
+
+  app-general .form-select-spinner {
+    position: absolute;
+    right: 45%;
+    top: -20px;
+  }
+
+  app-two-factor {
+    #instructions,
+    #enabled_status {
+      font-size: 115%;
+    }
+
+    #enabled_status {
+      margin-bottom: 8px;
+    }
+
+    button {
+      margin-top: 8px !important;
+    }
+  }
+
+  qr-dialog {
+    text-align: center;
+
+    #qr-dialog-buttons {
+      flex-direction: row-reverse;
+    }
+  }
+
+  custom-theme {
+    .mat-card-actions {
+      margin-left: 7px;
+      margin-top: 48px;
+    }
+
+    #preview-card {
+      min-width: 400px;
+    }
+
+    .mat-card-content {
+      max-height: 600px !important;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+  }
+
+  .chip-warn {
+    background-color: var(--red) !important;
+    color: white !important;
+
+    mat-icon {
+      color: white !important;
+      opacity: 0.8 !important;
+    }
+  }
+
+  app-disk-form #hddstandby_force {
+    position: relative;
+    top: 14px;
+  }
+
+  .entity-table-cell-error {
+    color: var(--red) !important;
+  }
+
+  mat-hint {
+    color: var(--yellow) !important;
+    font-size: 0.7rem;
+  }
+
+  #cust_button_continue_with_afp {
+    background: var(--bg1);
+  }
+
+  openvpn-client-edit .buttons,
+  openvpn-server-edit .buttons {
+    margin-top: 1rem;
+  }
+
+  /// Slide-in menu ///////////////////////////////
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item {
+    border-bottom: 1px solid var(--lines);
+    border-left: 6px solid rgba(0, 0, 0, 0);
+    width: calc(100% - 6px);
+  }
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item:hover {
+    border-left: 6px solid rgba(0, 0, 0, 0.045);
+  }
+
+  .sidenav-link:hover,
+  .slide-in-nav-item:hover,
+  .mat-button.mat-default:hover {
+    background: var(--hover-bg) !important;
+  }
+
+  .sidebar-panel.mat-sidenav .sidebar-list-item.highlighted {
+    background-color: var(--bg2);
+    border-left: 6px solid var(--primary);
+
+    .mat-list-item-content > a {
+      background-color: var(--bg2);
+
+      mat-icon {
+        color: var(--primary);
+      }
+    }
+  }
+
+  .slidein-nav {
+    background-color: var(--contrast-darker);
+    height: 100vh;
+    left: -239px;
+    position: absolute;
+    top: 48px;
+    transition: 200ms;
+    width: 239px;
+    z-index: 4;
+  }
+
+  .slidein-open {
+    left: 0 !important;
+    transition: 200ms;
+  }
+
+  .overlay {
+    background-color: rgba(0, 0, 0, 0.6);
+    display: none;
+    height: 100vh;
+    position: absolute;
+    transition: 200ms;
+    width: 100vw;
+    z-index: 3;
+  }
+
+  .isdark {
+    display: block;
+  }
+
+  .slidein-nav .mat-list {
+    padding: 0;
+  }
+
+  .slidein-nav .mat-list-item {
+    border-bottom: solid 1px var(--lines);
+  }
+
+  // End slide-in menu ////////////////
+
+  app-dataset-acl {
+    @media screen and (max-width: 599px) {
+      button[id='cust_button_Select an ACL Preset'] {
+        left: unset;
+        right: 30px;
+        top: 250px;
+      }
+    }
+  }
+
+  // Remove card depth effect from slide in forms
+  .slidein-entity-form mat-card {
+    box-shadow: none !important;
+  }
+
+  // Remove indentation for form elements on vertical stepper
+  .jw-modal-body entity-wizard {
+    mat-card {
+      margin: 18px 0;
+      padding: 0;
+    }
+  }
+
+  app-support .links-wrapper {
+    margin-bottom: 1rem;
+  }
+
+  app-support .links {
+    margin-bottom: 5px;
+
+    a {
+      color: var(--primary);
+      text-decoration: underline;
+    }
+  }
+
+  .native-link {
+    color: var(--primary);
+    text-decoration: underline;
+  }
+
+  /*.sys-image {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+
+      div {
+      display: flex;
+      justify-content: center;
+      }
+    }*/
+
+
+  // Special class added for certificate display forms for long SANs and DNs
+  .break-all {
+    word-break: break-all;
+  }
+
+  .lowerme {
+    margin-top: 32px !important;
+  }
+
+  .complex-table-data {
+    font-size: 85%;
+    margin-bottom: 5px;
+    margin-top: 5px;
+  }
+
+  .key-textarea {
+    height: 280px;
+    resize: none;
+    width: 540px;
+  }
+
+  button.menu-toggle {
+    .mat-button-wrapper {
+      align-items: center;
+      display: inline-flex;
+    }
+
+    .mat-icon {
+      position: relative;
+      right: -10px;
+    }
+  }
+
+  .topbar-panel {
+    .mat-dialog-container {
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      padding-bottom: 8px;
+      padding-top: 8px;
+    }
+
+    .mat-dialog-content {
+      overflow: auto !important;
+    }
+
+    .mat-dialog-actions {
+      padding-bottom: 24px;
+    }
+  }
+
+  // Disabled form fields
+  .form-element.form-combobox .mat-form-field[disabled],
+  .form-element.form-combobox .mat-menu-trigger[disabled]
+  .form-element.form-ip-netmask .mat-form-field[disabled],
+  .form-element .mat-form-field-wrapper[disabled],
+  .form-element input[type=email][disabled],
+  .form-element input[type=number][disabled],
+  .form-element input[type=password][disabled],
+  .form-element input[type=text][disabled],
+  .form-element select[disabled],
+  .form-element textarea[disabled] {
+    opacity: 0.38;
+  }
+
+} // end of ix theme

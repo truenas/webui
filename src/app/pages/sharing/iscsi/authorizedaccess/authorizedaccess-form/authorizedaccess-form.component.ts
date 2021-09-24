@@ -5,6 +5,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { matchOtherValidator, doesNotEqualValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
@@ -24,7 +26,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
   // protected resource_name: string = 'services/iscsi/authcredential';
   route_success: string[] = ['sharing', 'iscsi', 'auth'];
   isEntity = true;
-  customFilter: any[] = [[['id', '=']]];
+  customFilter: [[Partial<QueryFilter<IscsiAuthAccess>>]] = [[['id', '=']]];
 
   fieldSets: FieldSet[] = [
     {
@@ -117,7 +119,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     },
   ];
 
-  pk: any;
+  pk: string;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected loader: AppLoaderService,
     protected ws: WebSocketService) {}

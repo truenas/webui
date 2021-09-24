@@ -1,15 +1,17 @@
 .empty-page {
   color: var(--fg2);
-  margin: 32px auto;
+  margin: auto;
   max-width: 300px;
 
   .icon-div {
     text-align: center;
 
     .mat-icon {
+      align-items: center;
       color: var(--fg2);
+      display: inline-flex;
       font-size: 50px;
-      height: auto;
+      height: 50px;
       opacity: 0.1;
       width: auto;
 
@@ -35,9 +37,10 @@
   &.large {
     .icon-div {
       .mat-icon {
+        align-items: center;
+        display: inline-flex;
         font-size: 150px;
-        height: auto;
-        margin-top: -50px;
+        height: 150px;
         width: auto;
 
         &.logo {
@@ -62,3 +65,19 @@
     width: 100%;
   }
 }
+
+.empty-page.compact {
+  margin: 0;
+}
+
+.empty-page.errors {
+  .icon-div {
+    margin: 16px;
+  }
+
+  .icon-div .mat-icon {
+    color: var(--red);
+    opacity: 1;
+  }
+}
+

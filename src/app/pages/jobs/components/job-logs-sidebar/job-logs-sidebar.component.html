@@ -1,0 +1,28 @@
+<mat-card class="card mat-elevation-z0">
+  <div class="sidebar-sticky">
+    <div class="sidebar-header">
+      <div class="sidebar-title">{{ 'Logs/Errors' | translate }}</div>
+
+      <span class="action" [attr.title]="'Close' | translate" (click)="onCloseClicked()">
+        <mat-icon>cancel</mat-icon>
+      </span>
+    </div>
+
+    <div class="logs-information">
+      <div class="list-item">
+        <h4>{{ 'Log Path' | translate }}</h4>
+        <div>{{ job.logs_path ? job.logs_path : '–' }}</div>
+      </div>
+
+      <div class="list-item">
+        <h4>{{ 'Log Excerpt' | translate }}</h4>
+        <div class="text-formatted">{{ job.logs_excerpt ? job.logs_excerpt : ('No logs are available' | translate) }}</div>
+      </div>
+
+      <div class="list-item">
+        <h4>{{ 'Error' | translate }}</h4>
+        <div class="text-formatted">{{ job.error ? job.error : ('No errors' | translate) }}</div>
+      </div>
+    </div>
+  </div>
+</mat-card>

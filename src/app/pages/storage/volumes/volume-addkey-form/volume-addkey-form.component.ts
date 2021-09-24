@@ -12,7 +12,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
-  FieldConfig,
+  FieldConfig, FormParagraphConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, StorageService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -78,7 +78,7 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
           if (res) {
             this.encryptionService.deleteRecoveryKey(this.pk, this.admin_pw, this.poolName, this.route_return);
           } else {
-            this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+            this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');
           }
         });
       },
@@ -95,7 +95,8 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
 
   resourceTransformIncomingRestData(data: Pool): Pool {
     this.poolName = data.name;
-    _.find(this.fieldConfig, { name: 'encrypt-headline' }).paraText += ` <em>${this.poolName}</em>`;
+    const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'encrypt-headline' });
+    config.paraText += ` <em>${this.poolName}</em>`;
     return data;
   }
 
@@ -123,7 +124,7 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
     entityForm.formGroup.controls['password'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.admin_pw = res;
       const btn = <HTMLInputElement> document.getElementById('cust_button_Invalidate Existing Key');
-      this.admin_pw !== '' ? btn.disabled = false : btn.disabled = true;
+      btn.disabled = this.admin_pw === '';
     });
   }
 
@@ -132,7 +133,7 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
       if (res) {
         this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_return);
       } else {
-        this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+        this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');
       }
     });
   }

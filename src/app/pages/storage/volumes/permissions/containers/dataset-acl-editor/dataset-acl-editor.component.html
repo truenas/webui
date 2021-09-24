@@ -1,0 +1,111 @@
+<mat-card class="card card-square">
+  <mat-spinner
+    *ngIf="isLoading; else loaded"
+    [diameter]="40"
+    class="spinner"
+  ></mat-spinner>
+
+  <ng-template #loaded>
+    <mat-card-header class="header">
+      <mat-card-title class="header-title">{{ 'ACL Editor' | translate }}</mat-card-title>
+
+      <div class="dataset-path">
+        <label class="header-label">{{ 'Dataset' | translate }}:</label>
+        <div>{{ fullDatasetPath }}</div>
+      </div>
+
+      <div class="ownership-row">
+        <div class="control">
+          <label class="header-label">{{ 'Owner' | translate }}:</label>
+          <div dynamicField [config]="ownerFieldConfig" [group]="ownerFormGroup"></div>
+        </div>
+
+        <div class="control">
+          <label class="header-label">{{ 'Owner Group' | translate }}:</label>
+          <div dynamicField [config]="ownerGroupFieldConfig" [group]="ownerFormGroup"></div>
+        </div>
+      </div>
+    </mat-card-header>
+
+    <div class="content">
+      <div class="columns">
+        <div class="column-left">
+          <app-acl-editor-list
+            [acl]="acl"
+            [selectedAceIndex]="selectedAceIndex"
+            [acesWithError]="acesWithError"
+            [owner]="ownerFormGroup.get('owner').value"
+            [ownerGroup]="ownerFormGroup.get('ownerGroup').value"
+          ></app-acl-editor-list>
+
+          <div class="controls-container">
+            <div class="controls">
+              <div class="checkboxes">
+                <div dynamicField [config]="recursiveFieldConfig" [group]="saveParameters"></div>
+                <div
+                  *ngIf="saveParameters.get('recursive').value"
+                  dynamicField
+                  [config]="traverseFieldConfig"
+                  [group]="saveParameters"
+                ></div>
+              </div>
+
+              <div class="control-buttons">
+                <button mat-button class="action" (click)="onAddItemPressed()">
+                  {{ 'Add Item' | translate }}
+                </button>
+
+                <a
+                  *ngIf="acl.trivial; else stripButton"
+                  mat-button
+                  class="action"
+                  [routerLink]="['/', 'storage', 'permissions', datasetPath]"
+                >
+                  {{ 'Permissions Editor' | translate }}
+                </a>
+                <ng-template #stripButton>
+                  <button mat-button color="warn" class="action" (click)="onStripAclPressed()">
+                    {{ 'Strip ACL' | translate }}
+                  </button>
+                </ng-template>
+              </div>
+
+              <div class="control-buttons">
+                <button
+                  mat-button
+                  class="action"
+                  (click)="onUsePresetPressed()"
+                >
+                  {{ 'Use ACL Preset' | translate }}
+                </button>
+              </div>
+
+              <div class="control-buttons">
+                <button
+                  mat-button
+                  color="primary"
+                  class="action"
+                  [disabled]="acesWithError.length > 0 || !acl.acl.length"
+                  (click)="onSavePressed()"
+                >
+                  {{ 'Save Access Control List' | translate }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="column-right">
+          <ng-container *ngIf="acl.acl[selectedAceIndex] as selectedAce">
+            <app-edit-nfs-ace
+              *ngIf="isNfsAcl; else posixAcl"
+              [ace]="selectedAce"
+            ></app-edit-nfs-ace>
+            <ng-template #posixAcl>
+              <app-edit-posix-ace [ace]="selectedAce"></app-edit-posix-ace>
+            </ng-template>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</mat-card>

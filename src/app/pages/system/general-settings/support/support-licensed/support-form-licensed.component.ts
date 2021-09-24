@@ -6,7 +6,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { NewTicketResponse } from 'app/interfaces/support.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -38,7 +41,6 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           name: 'name',
           placeholder: helptext.name.placeholder,
           tooltip: helptext.name.tooltip,
-          tooltipPosition: 'below',
           required: true,
           validation: helptext.name.validation,
         },
@@ -47,7 +49,6 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           name: 'email',
           placeholder: helptext.email.placeholder,
           tooltip: helptext.email.tooltip,
-          tooltipPosition: 'above',
           required: true,
           validation: helptext.email.validation,
         },
@@ -56,7 +57,6 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           name: 'cc',
           placeholder: helptext.cc.placeholder,
           tooltip: helptext.cc.tooltip,
-          tooltipPosition: 'above',
           validation: [this.emailListValidator('cc')],
         },
         {
@@ -64,7 +64,6 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           name: 'phone',
           placeholder: helptext.phone.placeholder,
           tooltip: helptext.phone.tooltip,
-          tooltipPosition: 'above',
           required: true,
           validation: helptext.phone.validation,
         },
@@ -73,7 +72,6 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           name: 'TNCategory',
           placeholder: helptext.type.placeholder,
           tooltip: helptext.type.tooltip,
-          tooltipPosition: 'above',
           options: [
             { label: 'Bug', value: 'BUG' },
             { label: 'Hardware', value: 'HARDWARE' },
@@ -87,7 +85,6 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           name: 'environment',
           placeholder: helptext.environment.placeholder,
           tooltip: helptext.environment.tooltip,
-          tooltipPosition: 'above',
           options: [
             { label: 'Production', value: 'production' },
             { label: 'Staging', value: 'staging' },
@@ -110,7 +107,6 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           name: 'criticality',
           placeholder: helptext.criticality.placeholder,
           tooltip: helptext.criticality.tooltip,
-          tooltipPosition: 'left',
           options: [
             { label: 'Inquiry', value: 'inquiry' },
             { label: 'Loss of Functionality', value: 'loss_functionality' },
@@ -124,7 +120,6 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           name: 'title',
           placeholder: helptext.title.placeholder,
           tooltip: helptext.title.tooltip,
-          tooltipPosition: 'left',
           required: true,
           validation: helptext.title.validation,
         },
@@ -133,7 +128,6 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           name: 'body',
           placeholder: helptext.body.placeholder,
           tooltip: helptext.body.tooltip,
-          tooltipPosition: 'left',
           required: true,
           validation: helptext.body.validation,
           textAreaRows: 8,
@@ -143,14 +137,12 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           name: 'attach_debug',
           placeholder: helptext.attach_debug.placeholder,
           tooltip: helptext.attach_debug.tooltip,
-          tooltipPosition: 'left',
         },
         {
           type: 'upload',
           name: 'screenshot',
           placeholder: helptext.screenshot.placeholder,
           tooltip: helptext.screenshot.tooltip,
-          tooltipPosition: 'left',
           fileLocation: '',
           updater: this.updater,
           parent: this,
@@ -189,9 +181,8 @@ export class SupportFormLicensedComponent implements FormConfiguration {
   }
 
   emailListValidator(name: string): ValidatorFn {
-    const self = this;
-    return function validEmails(control: FormControl) {
-      const config = self.fieldConfig.find((c) => c.name === name);
+    return (control: FormControl) => {
+      const config = this.fieldConfig.find((c) => c.name === name);
       if (control.value) {
         let counter = 0;
         const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -239,11 +230,11 @@ export class SupportFormLicensedComponent implements FormConfiguration {
   }
 
   openDialog(payload: any): void {
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Ticket', CloseOnClickOutside: true } });
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Ticket', closeOnClickOutside: true } });
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<NewTicketResponse>) => {
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }
@@ -259,7 +250,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.resetForm();
           });
-          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
@@ -269,12 +260,12 @@ export class SupportFormLicensedComponent implements FormConfiguration {
         this.resetForm();
       }
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
 
-  updater(file: any, parent: any): void {
+  updater(file: FormUploadComponent, parent: this): void {
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });

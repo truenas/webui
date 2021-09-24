@@ -6,8 +6,10 @@ import * as _ from 'lodash';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import helptext from 'app/helptext/system/alert-service';
-import { AlertServiceCreate } from 'app/interfaces/alert-service.interface';
+import { AlertService, AlertServiceCreate } from 'app/interfaces/alert-service.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -27,7 +29,7 @@ import { T } from 'app/translate-marker';
 export class AlertServiceComponent implements FormConfiguration {
   addCall: 'alertservice.create' = 'alertservice.create';
   queryCall: 'alertservice.query' = 'alertservice.query';
-  queryCallOption: any[] = [['id', '=']];
+  queryCallOption: [Partial<QueryFilter<AlertService>>] = [['id', '=']];
   editCall: 'alertservice.update' = 'alertservice.update';
   testCall: 'alertservice.test' = 'alertservice.test';
   route_success: string[] = ['system', 'alertservice'];
@@ -685,12 +687,12 @@ export class AlertServiceComponent implements FormConfiguration {
           (wasAlertSent) => {
             this.loader.close();
             if (wasAlertSent) {
-              this.dialogService.Info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
+              this.dialogService.info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
             } else {
-              this.dialogService.Info(T('Failed'), T('Failed sending test alert!'));
+              this.dialogService.info(T('Failed'), T('Failed sending test alert!'));
             }
           },
-          (err: any) => {
+          (err: WebsocketError) => {
             this.loader.close();
             new EntityUtils().handleWSError(this, err, this.dialogService);
           },
@@ -745,7 +747,7 @@ export class AlertServiceComponent implements FormConfiguration {
       return chatId;
     });
     if (wrongChatIds.length > 0) {
-      this.dialogService.Info(T('Failed'), T('The following Telegram chat ID(s) must be numbers!') + '\n\n' + wrongChatIds.join(', '));
+      this.dialogService.info(T('Failed'), T('The following Telegram chat ID(s) must be numbers!') + '\n\n' + wrongChatIds.join(', '));
       throw new Error('Telegram-chat_ids must be an array of integer');
     }
     // Avoid duplicated chat IDs
@@ -754,19 +756,21 @@ export class AlertServiceComponent implements FormConfiguration {
 
   generatePayload(data: any): AlertServiceCreate {
     const payload: AlertServiceCreate = {
-      attributes: { chat_ids: null, v3_authprotocol: null, v3_privprotocol: null },
+      attributes: {},
       enabled: data.enabled,
       level: data.level,
       name: data.name,
       type: data.type,
     };
+    if (data['Telegram-chat_ids']) {
+      data['Telegram-chat_ids'] = this.generateTelegramChatIdsPayload(data, 'Telegram-chat_ids');
+    }
+    data['SNMPTrap-v3_authprotocol'] = data['SNMPTrap-v3_authprotocol'] === '' ? null : data['SNMPTrap-v3_authprotocol'];
+    data['SNMPTrap-v3_privprotocol'] = data['SNMPTrap-v3_privprotocol'] === '' ? null : data['SNMPTrap-v3_privprotocol'];
     for (const i in data) {
-      if (data[i] === '' && (i === 'SNMPTrap-v3_authprotocol' || i === 'SNMPTrap-v3_privprotocol')) {
-        data[i] = null;
-      } else if (data[i] && i == 'Telegram-chat_ids') {
-        data[i] = this.generateTelegramChatIdsPayload(data, i);
+      if (i.split('-').length > 1) {
+        payload['attributes'][i.split('-')[1]] = data[i];
       }
-      payload['attributes'][i.split('-')[1]] = data[i];
     }
     return payload;
   }
@@ -782,7 +786,7 @@ export class AlertServiceComponent implements FormConfiguration {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
-        (err: any) => {
+        (err: WebsocketError) => {
           this.loader.close();
           new EntityUtils().handleWSError(this, err, this.dialogService);
         },
@@ -793,7 +797,7 @@ export class AlertServiceComponent implements FormConfiguration {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
-        (err: any) => {
+        (err: WebsocketError) => {
           this.loader.close();
           new EntityUtils().handleWSError(this, err, this.dialogService);
         },

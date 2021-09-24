@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { IscsiExtent } from 'app/interfaces/iscsi.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -20,7 +22,7 @@ export class ExtentListComponent implements EntityTableConfig {
   protected entityTable: EntityTableComponent;
   queryCall: 'iscsi.extent.query' = 'iscsi.extent.query';
   route_add: string[] = ['sharing', 'iscsi', 'extent', 'add'];
-  protected route_add_tooltip = 'Add Extent';
+  route_add_tooltip = 'Add Extent';
   route_edit: string[] = ['sharing', 'iscsi', 'extent', 'edit'];
   wsDelete: 'iscsi.extent.delete' = 'iscsi.extent.delete';
 
@@ -62,19 +64,18 @@ export class ExtentListComponent implements EntityTableConfig {
       id: 'edit',
       icon: 'edit',
       label: T('Edit'),
-      onClick: (rowinner: any) => { this.entityTable.doEdit(rowinner.id); },
+      onClick: (rowinner: IscsiExtent) => { this.entityTable.doEdit(rowinner.id); },
     }, {
       name: 'delete',
       id: 'delete',
       icon: 'delete',
       label: T('Delete'),
-      onClick: (rowinner: any) => { this.doDelete(rowinner); },
+      onClick: (rowinner: IscsiExtent) => { this.doDelete(rowinner); },
     }] as EntityTableAction[];
   }
 
-  doDelete(row: any): void {
+  doDelete(row: IscsiExtent): void {
     const id = row.id;
-    const self = this;
     const entityTable = this.entityTable;
     const isFile = row.type === 'FILE';
     const deleteMsg = entityTable.getDeleteMessage(row);
@@ -101,17 +102,17 @@ export class ExtentListComponent implements EntityTableConfig {
         },
       ],
       saveButtonText: T('Delete'),
-      customSubmit(entityDialog: EntityDialogComponent) {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         const value = entityDialog.formValue;
         entityTable.loader.open();
         entityTable.loaderOpen = true;
-        entityTable.ws.call(self.wsDelete, [id, value.remove, value.force]).pipe(untilDestroyed(this)).subscribe(
+        entityTable.ws.call(this.wsDelete, [id, value.remove, value.force]).pipe(untilDestroyed(this)).subscribe(
           () => {
             entityDialog.dialogRef.close(true);
             entityTable.getData();
             entityTable.excuteDeletion = true;
           },
-          (err: any) => {
+          (err: WebsocketError) => {
             entityTable.loader.close();
             new EntityUtils().handleWSError(entityTable, err, entityTable.dialogService);
           },

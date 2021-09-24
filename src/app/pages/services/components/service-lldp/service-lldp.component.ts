@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/services/components/service-lldp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService, ServicesService } from 'app/services';
 
@@ -65,7 +65,7 @@ export class ServiceLLDPComponent implements FormConfiguration {
     this.services.getLLDPCountries().pipe(untilDestroyed(this)).subscribe((res) => {
       const countries = this.fieldSets
         .find((set) => set.name === 'General Options')
-        .config.find((config) => config.name === 'country');
+        .config.find((config) => config.name === 'country') as FormComboboxConfig;
       for (const country in res) {
         countries.options.push({ label: `${country} (${res[country]})`, value: `${country}` });
       }
@@ -73,9 +73,8 @@ export class ServiceLLDPComponent implements FormConfiguration {
   }
 
   countryValidator(code: string): ValidatorFn {
-    const self = this;
-    return function validCode(control: FormControl) {
-      const config = self.fieldConfig.find((c) => c.name === code);
+    return (control: FormControl) => {
+      const config = this.fieldConfig.find((c) => c.name === code);
       if (control.value || control.value === '') {
         const errors = (!(control.value).match(/^[A-Z]{2}$/) && !(control.value === ''))
           ? { validCode: true }

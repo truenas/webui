@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { UpgradeSummary } from 'app/interfaces/application.interface';
 import { Catalog, CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartReleaseEvent } from 'app/interfaces/chart-release-event.interface';
@@ -23,8 +24,8 @@ export class ApplicationsService {
     return this.ws.call('kubernetes.config');
   }
 
-  getKubernetesServiceStarted(): Observable<any> {
-    return this.ws.call('service.started', ['kubernetes']);
+  getKubernetesServiceStarted(): Observable<boolean> {
+    return this.ws.call('service.started', [ServiceName.Kubernetes]);
   }
 
   getAllCatalogItems(): Observable<Catalog[]> {
@@ -39,10 +40,6 @@ export class ApplicationsService {
     return this.ws.call('kubernetes.bindip_choices');
   }
 
-  getCatItems(label: string): Observable<any> {
-    return this.ws.call('catalog.items', [label]);
-  }
-
   getChartReleases(name?: string): Observable<ChartRelease[]> {
     const secondOption = { extra: { history: true } };
 
@@ -54,10 +51,6 @@ export class ApplicationsService {
 
   getChartReleaseNames(): Observable<{ name: string }[]> {
     return this.ws.call('chart.release.query', [[], { select: ['name'] }]);
-  }
-
-  setReplicaCount(name: string, count: number): Observable<any> {
-    return this.ws.call('chart.release.scale', [name, { replica_count: count }]);
   }
 
   getPodConsoleChoices(name: string): Observable<Record<string, string[]>> {
@@ -89,7 +82,19 @@ export class ApplicationsService {
     return this.ws.call('container.update', [{ enable_image_updates }]);
   }
 
-  getUpgradeSummary(name: string): Observable<UpgradeSummary> {
-    return this.ws.call('chart.release.upgrade_summary', [name]);
+  getUpgradeSummary(name: string, version?: string): Observable<UpgradeSummary> {
+    const payload: [name: string, params?: { item_version: string }] = [name];
+    if (version) {
+      payload.push({ item_version: version });
+    }
+    return this.ws.call('chart.release.upgrade_summary', payload);
+  }
+
+  getPorts(chart: ChartRelease): string {
+    const ports: string[] = [];
+    chart.used_ports.forEach((item) => {
+      ports.push(`${item.port}\\${item.protocol}`);
+    });
+    return ports.join(', ');
   }
 }

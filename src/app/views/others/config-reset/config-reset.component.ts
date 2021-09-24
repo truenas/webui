@@ -56,19 +56,19 @@ export class ConfigResetComponent implements OnInit {
   }
 
   resetConfigSubmit(): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Resetting. Please wait...' }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Resetting. Please wait...') }, disableClose: true });
     this.dialogRef.componentInstance.setCall('config.reset', [{ reboot: true }]);
     this.dialogRef.componentInstance.setDescription(T('Resetting system configuration to default settings. The system will restart.'));
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close();
-      this.ws.prepare_shutdown();
+      this.ws.prepareShutdown();
       this.loader.open();
       setTimeout(() => {
         this.isWSConnected();
       }, 15000);
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       this.dialogRef.close();
       this.dialogService.errorReport(res.error, res.state, res.exception);
     });

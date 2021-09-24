@@ -22,7 +22,7 @@ export class TunableListComponent implements EntityTableConfig {
   route_edit: string[] = ['system', 'tunable', 'edit'];
   protected route_success: string[] = ['system', 'tunable'];
   route_add: string[] = ['system', 'tunable', 'add'];
-  protected route_add_tooltip = T('Add Tunable');
+  route_add_tooltip = T('Add Tunable');
 
   protected route_edit_scale: string[] = ['system', 'sysctl', 'edit'];
   protected route_success_scale: string[] = ['system', 'advanced'];

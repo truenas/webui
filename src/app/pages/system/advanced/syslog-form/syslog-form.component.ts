@@ -149,7 +149,7 @@ export class SyslogFormComponent implements FormConfiguration {
           if (job.exc_info && job.exc_info.extra) {
             (job as any).extra = job.exc_info.extra;
           }
-          new EntityUtils().handleWSError(this, job);
+          new EntityUtils().handleWSError(this, job as any);
         }
         if (job.state === JobState.Success) {
           this.loader.close();

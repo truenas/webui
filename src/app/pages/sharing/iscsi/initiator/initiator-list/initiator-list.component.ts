@@ -16,7 +16,7 @@ export class InitiatorListComponent implements EntityTableConfig {
   route_edit: string[] = ['sharing', 'iscsi', 'initiators', 'edit'];
   wsDelete: 'iscsi.initiator.delete' = 'iscsi.initiator.delete';
 
-  protected route_add_tooltip = 'Add Initiator';
+  route_add_tooltip = 'Add Initiator';
 
   columns = [
     {

@@ -7,7 +7,7 @@ import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -93,8 +93,7 @@ export class TargetFormComponent implements FormConfiguration {
               options: [],
               required: true,
               validation: helptext_sharing_iscsi.target_form_validators_portal,
-              class: 'inline',
-              width: '50%',
+              width: '100%',
             },
             {
               type: 'select',
@@ -103,14 +102,14 @@ export class TargetFormComponent implements FormConfiguration {
               tooltip: helptext_sharing_iscsi.target_form_tooltip_initiator,
               value: null,
               options: [],
-              class: 'inline',
-              width: '50%',
+              width: '100%',
             },
             {
               type: 'select',
               name: 'authmethod',
               placeholder: helptext_sharing_iscsi.target_form_placeholder_authmethod,
               tooltip: helptext_sharing_iscsi.target_form_tooltip_authmethod,
+              width: '100%',
               value: 'NONE',
               options: [
                 {
@@ -126,8 +125,6 @@ export class TargetFormComponent implements FormConfiguration {
                   value: 'CHAP_MUTUAL',
                 },
               ],
-              class: 'inline',
-              width: '50%',
             },
             {
               type: 'select',
@@ -135,9 +132,8 @@ export class TargetFormComponent implements FormConfiguration {
               placeholder: helptext_sharing_iscsi.target_form_placeholder_auth,
               tooltip: helptext_sharing_iscsi.target_form_tooltip_auth,
               value: null,
+              width: '100%',
               options: [],
-              class: 'inline',
-              width: '50%',
             },
           ],
           listFields: [],
@@ -147,7 +143,7 @@ export class TargetFormComponent implements FormConfiguration {
   ];
   fieldConfig: FieldConfig[];
   title = T('Add ISCSI Target');
-  pk: any;
+  pk: number;
   protected entityForm: EntityFormComponent;
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -156,7 +152,7 @@ export class TargetFormComponent implements FormConfiguration {
     public translate: TranslateService,
     protected ws: WebSocketService,
     private modalService: ModalService) {
-    this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: string) => {
+    this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.customFilter = [[['id', '=', rowId]]];
       this.pk = rowId;
     });
@@ -172,9 +168,10 @@ export class TargetFormComponent implements FormConfiguration {
 
   async prerequisite(): Promise<boolean> {
     const targetGroupFieldset = _.find(this.fieldSets, { class: 'group' });
-    const portalGroupField = _.find(targetGroupFieldset.config, { name: 'groups' }).templateListField[0];
-    const initiatorGroupField = _.find(targetGroupFieldset.config, { name: 'groups' }).templateListField[1];
-    const authGroupField = _.find(targetGroupFieldset.config, { name: 'groups' }).templateListField[3];
+    const targetGroupFieldConfig = _.find(targetGroupFieldset.config, { name: 'groups' }) as FormListConfig;
+    const portalGroupField = targetGroupFieldConfig.templateListField[0] as FormSelectConfig;
+    const initiatorGroupField = targetGroupFieldConfig.templateListField[1] as FormSelectConfig;
+    const authGroupField = targetGroupFieldConfig.templateListField[3] as FormSelectConfig;
     const promise1 = new Promise((resolve) => {
       this.iscsiService.listPortals().toPromise().then(
         (portals) => {
@@ -216,7 +213,7 @@ export class TargetFormComponent implements FormConfiguration {
           const tags = _.uniq(accessRecords.map((item) => item.tag));
           authGroupField.options.push({ label: 'None', value: null });
           for (const tag of tags) {
-            authGroupField.options.push({ label: tag, value: tag });
+            authGroupField.options.push({ label: String(tag), value: tag });
           }
           resolve(true);
         },
@@ -226,7 +223,7 @@ export class TargetFormComponent implements FormConfiguration {
       );
     });
 
-    return await Promise.all([promise1, promise2, promise3]).then(
+    return Promise.all([promise1, promise2, promise3]).then(
       () => true,
     );
   }

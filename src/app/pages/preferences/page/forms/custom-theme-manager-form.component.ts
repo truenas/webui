@@ -4,8 +4,9 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { EmbeddedFormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
@@ -21,7 +22,7 @@ import { T } from 'app/translate-marker';
     </ng-container>
   `,
 })
-export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
+export class CustomThemeManagerFormComponent implements EmbeddedFormConfig, OnInit, OnDestroy {
   /*
    //Preferences Object Structure
    platform:string; // FreeNAS || TrueNAS
@@ -40,10 +41,8 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
   target: Subject<CoreEvent> = new Subject();
   values: boolean[] = [];
   saveSubmitText = T('Delete Selected');
-  protected isEntity = true; // was true
-  private colorOptions: any[] = [];
-  private customThemeOptions: any[] = [];
-  private customThemeFields: any[] = [];
+  isEntity = true;
+  private customThemeFields: FieldConfig[] = [];
   fieldConfig: FieldConfig[] = [];
   fieldSetDisplay = 'no-margins';// default | carousel | stepper
   fieldSets: FieldSet[] = [
@@ -141,7 +140,7 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
 
     for (let i = 0; i < this.themeService.customThemes.length; i++) {
       const theme = this.themeService.customThemes[i];
-      const field = {
+      const field: FieldConfig = {
         type: 'checkbox',
         name: theme.name,
         width: '200px',
@@ -154,12 +153,6 @@ export class CustomThemeManagerFormComponent implements OnInit, OnDestroy {
   }
 
   generateFieldConfig(): void {
-    const fc = [];
-    for (const i in this.fieldSets) {
-      for (const ii in this.fieldSets[i].config) {
-        fc.push(this.fieldSets[i].config[ii]);
-      }
-    }
     this.fieldConfig = this.customThemeFields;
   }
 }

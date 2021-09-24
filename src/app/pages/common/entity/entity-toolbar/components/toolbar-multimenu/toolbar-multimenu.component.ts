@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 import { ControlConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.interface';
 
@@ -12,12 +12,12 @@ import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.i
   styleUrls: ['toolbar-multimenu.component.scss'],
   templateUrl: 'toolbar-multimenu.component.html',
 })
-export class ToolbarMultimenuComponent extends iXAbstractObject implements OnInit {
+export class ToolbarMultimenuComponent extends IxAbstractObject implements OnInit {
   @Input() config?: ControlConfig;
-  @Input() controller: Subject<any>;
+  @Input() controller: Subject<Control>;
   allSelected = false;
   values: any[] = [];
-  private selectStates: boolean [] = [];
+  selectStates: boolean [] = [];
   constructor(public translate: TranslateService) {
     super();
   }

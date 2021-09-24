@@ -1,31 +1,33 @@
 <div id="{{config.name}}" class="dynamic-field form-input form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-pwtoggle]="config.togglePw" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']">
-      
-        <div *ngIf="config.placeholder" class="label-container">
-          <label class="label input-text">
-            {{config.placeholder | translate}}
-            <span *ngIf="config.required">*</span>
-          </label>
-	  <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>
-        </div>
 
-	<!-- need to prevent browser autofill :/ -->
-	<input name = "DummyUsername" type="text" style="display:none;">
-	<input name = "DummyPassword" type="password" style="display:none;">
+  <div *ngIf="config.placeholder" class="label-container">
+    <label class="label input-text">
+      {{config.placeholder | translate}}
+      <span *ngIf="config.required">*</span>
+    </label>
+    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+  </div>
 
-        <div class="full-width" [ngClass]="{'has_toggle_pw': config.togglePw}" *ngIf="config.inputType != 'file' else elseBlock">
-		<mat-spinner
+  <!-- need to prevent browser autofill :/ -->
+  <input name="DummyUsername" type="text" style="display:none;">
+  <input name="DummyPassword" type="password" style="display:none;">
+
+  <div class="full-width" [ngClass]="{'has_toggle_pw': config.togglePw}" *ngIf="config.inputType != 'file' else elseBlock">
+    <mat-spinner
 			diameter='30'
 			class="form-input-spinner"
 			id="{{config.name}}_form-input-spinner"
 			*ngIf="config.isLoading">
-		</mat-spinner>
-		<div *ngIf="config.maskValue">
-			<p>{{'Enter' | translate}} <strong>{{config.maskValue}}</strong> {{'below to confirm.' | translate}}</p>
-			<p [ngStyle]="{'position': 'relative', 'top':'15px', 'opacity': '.38'}">{{config.maskValue}}</p>
-		</div>
-		<div class="input-container">
-			<span *ngIf="config.searchable" class="searchable"><mat-icon>search</mat-icon></span>
-			<input [ngStyle]="{'padding-left': config.searchable ? '2rem' : '', 'padding-right': shouldShowResetInput() ? '2rem': ''}" [type]="config.inputType ? config.inputType : 'text'"
+    </mat-spinner>
+    <div *ngIf="config.maskValue">
+      <p>{{'Enter' | translate}} <strong>{{config.maskValue}}</strong> {{'below to confirm.' | translate}}</p>
+      <p [ngStyle]="{'position': 'relative', 'top':'15px', 'opacity': '.38'}">{{config.maskValue}}</p>
+    </div>
+    <div class="input-container">
+      <span *ngIf="config.searchable" class="searchable"><mat-icon>search</mat-icon></span>
+      <input
+        [ngStyle]="{'padding-left': config.searchable ? '2rem' : '', 'padding-right': shouldShowResetInput() ? '2rem': ''}"
+        [type]="config.inputType ? config.inputType : 'text'"
 				[attr.value]="config.value"
 				[formControlName]="config.name"
 				[readonly]="config.readonly"
@@ -37,31 +39,33 @@
 				ix-auto
 				ix-auto-type="input"
 				ix-auto-identifier="{{config.placeholder}}"
-				[id]="config.name"
 				(change)="valueChange()"
 				(paste)="onPaste($event)"
 				(input)="onInput()">
-				<span *ngIf="shouldShowResetInput()" class="reset-input">
-					<mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-				</span>
-		</div>
-  	<button mat-icon-button type="button" *ngIf="config.togglePw" class="toggle_pw" (click)="togglePW()"
+      <span *ngIf="shouldShowResetInput()" class="reset-input">
+        <mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+      </span>
+    </div>
+    <button
+      *ngIf="config.togglePw"
+      mat-icon-button type="button"
+      class="toggle_pw"
+      (click)="togglePW()"
   		ix-auto
   		ix-auto-type="button"
   		ix-auto-identifier="{{config.name}}_toggle-pw">
-  		<i class="material-icons" matTooltip="Hide" *ngIf="showPassword">visibility</i>
-          <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
-  	</button>
-
-	</div>
-	<ng-template #elseBlock>
-		<span [style.margin-right.px]="10">{{config.placeholder | translate}}</span>
-		<input type="file" id="fileInput" (change)="changeListener($event)"/>
-	</ng-template>
-	<div class="margin-for-error">
-		<form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
-		<mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
-		<mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
-		<mat-hint *ngIf="config.hint"><div [innerHTML]="config.hint | translate"></div></mat-hint>
-	</div>
+      <i class="material-icons" matTooltip="Hide" *ngIf="showPassword">visibility</i>
+      <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
+    </button>
+  </div>
+  <ng-template #elseBlock>
+    <span [style.margin-right.px]="10">{{config.placeholder | translate}}</span>
+    <input type="file" id="fileInput" (change)="changeListener($event)"/>
+  </ng-template>
+  <div class="margin-for-error">
+    <form-errors [control]="group.controls[config.name]" [config]="config"></form-errors>
+    <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
+    <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
+    <mat-hint *ngIf="config.hint"><div [innerHTML]="config.hint | translate"></div></mat-hint>
+  </div>
 </div>

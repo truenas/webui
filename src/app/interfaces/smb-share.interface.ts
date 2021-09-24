@@ -1,3 +1,5 @@
+import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
+
 export interface SmbShare {
   aapl_name_mangling: boolean;
   abe: boolean;
@@ -26,3 +28,33 @@ export interface SmbShare {
   timemachine: boolean;
   vuid: string;
 }
+
+export interface SmbPreset {
+  verbose_name: string;
+  params: Partial<SmbShare>;
+}
+
+export interface SmbPresets {
+  [name: string]: SmbPreset;
+}
+
+export interface SmbSharesec {
+  id: number;
+  share_acl: SmbSharesecAce[];
+  share_name: string;
+}
+
+export interface SmbSharesecAce {
+  ae_perm: SmbSharesecPermission;
+  ae_type: SmbSharesecType;
+  ae_who_name: {
+    domain: string;
+    name: string;
+    sidtype: string;
+  };
+  ae_who_sid: string;
+}
+
+export type SmbShareUpdate = {
+  timemachine_quota?: number;
+} & Partial<Omit<SmbShare, 'id' | 'locked' | 'vuid'>>;

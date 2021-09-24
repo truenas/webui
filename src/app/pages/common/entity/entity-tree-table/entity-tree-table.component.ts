@@ -6,8 +6,8 @@ import { MatTable } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'primeng/api';
-import { CoreService } from 'app/core/services/core.service';
-import { CoreEvent } from 'app/interfaces/events';
+import { CoreService } from 'app/core/services/core-service/core.service';
+import { TreeTableGlobalFilterEvent } from 'app/interfaces/events/tree-table-global-filter-event.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { EntityUtils } from '../utils';
 import { EntityTreeTable } from './entity-tree-table.model';
@@ -26,7 +26,7 @@ interface FilterValue {
   providers: [EntityTreeTableService],
 })
 export class EntityTreeTableComponent implements OnInit, AfterViewInit {
-  @ViewChild(MatTable, { static: false }) table: any;
+  @ViewChild(MatTable, { static: false }) table: MatTable<any>;
   _conf: EntityTreeTable;
   @Input()
   set conf(conf: EntityTreeTable) {
@@ -49,8 +49,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
 
   // Table Props
   displayedColumns: string[];
-  treeDataSource: any;
-  tableDataSource: any[];
+  treeDataSource: TreeNode[];
+  tableDataSource: TreeNode[];
 
   constructor(private ws: WebSocketService,
     private treeTableService: EntityTreeTableService,
@@ -120,7 +120,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this.core.register({ observerClass: this, eventName: 'TreeTableGlobalFilter' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'TreeTableGlobalFilter' }).pipe(untilDestroyed(this)).subscribe((evt: TreeTableGlobalFilterEvent) => {
       const value = evt.data.value ? evt.data.value : '';
       this.filterNodes(evt.data.column, value);
     });
@@ -143,13 +143,13 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     );
   }
 
-  clickAction(): any {
+  clickAction(): null {
     return null;
   }
 
-  expandNode(rootNode: any): void {
+  expandNode(rootNode: TreeNode): void {
     const value = rootNode.expanded ? rootNode.expanded = false : true;
-    this.treeDataSource = this.treeTableService.editNode('expanded', value, rootNode.indexPath, this.treeDataSource);
+    this.treeDataSource = this.treeTableService.editNode('expanded', value, (rootNode as any).indexPath, this.treeDataSource);
 
     if (this.filter.value.length > 0) {
       this.tableDataSource = this.treeTableService.filteredTable(
@@ -162,7 +162,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     this.table.renderRows();
   }
 
-  filterNodes(key: string, value: any): void {
+  filterNodes(key: string, value: string): void {
     if (value.length > 0) {
       this.tableDataSource = this.treeTableService.filteredTable(key, value, this.treeDataSource);
     } else {
@@ -201,7 +201,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   isTableOverflow(): boolean {
     let hasHorizontalScrollbar = false;
     if (this.table) {
-      const parentNode = this.table._elementRef.nativeElement.parentNode;
+      const parentNode = (this.table as any)._elementRef.nativeElement.parentNode;
       hasHorizontalScrollbar = parentNode.parentNode.scrollWidth > parentNode.parentNode.clientWidth;
     }
     return hasHorizontalScrollbar;

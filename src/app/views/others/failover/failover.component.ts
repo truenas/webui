@@ -47,7 +47,7 @@ export class FailoverComponent implements OnInit {
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
 
     this.dialog.closeAll();
-    this.ws.call('failover.force_master', {}).pipe(untilDestroyed(this)).subscribe(
+    this.ws.call('failover.force_master').pipe(untilDestroyed(this)).subscribe(
       (res) => { // error on reboot
         this.dialogService.errorReport(res.error, res.reason, res.trace.formatted)
           .pipe(untilDestroyed(this))
@@ -56,7 +56,7 @@ export class FailoverComponent implements OnInit {
           });
       },
       () => { // show reboot screen
-        this.ws.prepare_shutdown();
+        this.ws.prepareShutdown();
         this.loader.open();
         setTimeout(() => {
           this.isWSConnected();

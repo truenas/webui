@@ -3,38 +3,19 @@ import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import helptext from 'app/helptext/vm/devices/device-add-edit';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, NetworkService, VmService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { T } from 'app/translate-marker';
-
-interface DisplayDeviceAttributes {
-  bind: string;
-  password: string;
-  port: number;
-  password_configured: boolean;
-  resolution: string;
-  type: string;
-  wait: boolean;
-  web: boolean;
-}
-
-interface Device {
-  attributes: DisplayDeviceAttributes;
-  dtype: string;
-  id: number;
-  order: number;
-  vm: number;
-}
 
 @UntilDestroy()
 @Component({
@@ -44,12 +25,12 @@ interface Device {
 })
 export class DeviceEditComponent implements OnInit {
   protected updateCall: 'vm.device.update' = 'vm.device.update';
-  protected route_success: string[];
+  route_success: string[];
   deviceid: number;
-  vmname: any;
+  vmname: string;
   fieldSets: any;
   isCustActionVisible = false;
-  protected ipAddress: FieldConfig;
+  protected ipAddress: FormSelectConfig;
   selectedType = VmDeviceType.Cdrom;
   formGroup: FormGroup;
   activeFormGroup: FormGroup;
@@ -62,7 +43,7 @@ export class DeviceEditComponent implements OnInit {
   rootpwd: FieldConfig;
   vminfo: any;
   vmId: number;
-  boot: any;
+  boot: FieldConfig;
   error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 
@@ -196,8 +177,8 @@ export class DeviceEditComponent implements OnInit {
       inputType: 'number',
     },
   ];
-  protected nic_attach: FieldConfig;
-  protected nicType: FieldConfig;
+  protected nic_attach: FormSelectConfig;
+  protected nicType: FormSelectConfig;
 
   // rawfile
   rawfileFieldConfig: FieldConfig[] = [
@@ -277,7 +258,7 @@ export class DeviceEditComponent implements OnInit {
       inputType: 'number',
     },
   ];
-  protected pptdev: FieldConfig;
+  protected pptdev: FormSelectConfig;
 
   // Display
   displayFieldConfig: FieldConfig[] = [
@@ -363,7 +344,7 @@ export class DeviceEditComponent implements OnInit {
     // Display
     this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
-        this.ipAddress = _.find(this.displayFieldConfig, { name: 'bind' });
+        this.ipAddress = _.find(this.displayFieldConfig, { name: 'bind' }) as FormSelectConfig;
         Object.keys(res).forEach((address) => {
           this.ipAddress.options.push({ label: address, value: address });
         });
@@ -371,7 +352,7 @@ export class DeviceEditComponent implements OnInit {
     });
 
     this.ws.call('vm.resolution_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      const resolution = _.find(this.displayFieldConfig, { name: 'resolution' });
+      const resolution = _.find(this.displayFieldConfig, { name: 'resolution' }) as FormSelectConfig;
       for (const key in res) {
         resolution.options.push({ label: key, value: res[key] });
       }
@@ -379,21 +360,21 @@ export class DeviceEditComponent implements OnInit {
 
     // nic
     this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.nic_attach = _.find(this.nicFieldConfig, { name: 'nic_attach' });
+      this.nic_attach = _.find(this.nicFieldConfig, { name: 'nic_attach' }) as FormSelectConfig;
       this.nic_attach.options = Object.keys(res || {}).map((nicId) => ({
         label: nicId,
         value: nicId,
       }));
     });
 
-    this.nicType = _.find(this.nicFieldConfig, { name: 'type' });
+    this.nicType = _.find(this.nicFieldConfig, { name: 'type' }) as FormSelectConfig;
     this.vmService.getNICTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 
     // pci
     this.ws.call('vm.device.passthrough_device_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.pptdev = _.find(this.pciFieldConfig, { name: 'pptdev' });
+      this.pptdev = _.find(this.pciFieldConfig, { name: 'pptdev' }) as FormSelectConfig;
       this.pptdev.options = Object.keys(res || {}).map((pptdevId) => ({
         label: pptdevId,
         value: pptdevId,
@@ -410,7 +391,7 @@ export class DeviceEditComponent implements OnInit {
     }
   }
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
     this.preInit();
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.deviceid = parseInt(params['pk'], 10);
@@ -451,7 +432,7 @@ export class DeviceEditComponent implements OnInit {
     this.displayFormGroup = this.entityFormService.createFormGroup(this.displayFieldConfig);
 
     this.activeFormGroup = this.cdromFormGroup;
-    await this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]])
+    this.ws.call('vm.device.query', [[['id', '=', this.deviceid]]])
       .pipe(untilDestroyed(this))
       .subscribe((device) => {
         if (
@@ -497,7 +478,7 @@ export class DeviceEditComponent implements OnInit {
           case VmDeviceType.Display:
             this.activeFormGroup = this.displayFormGroup;
             this.isCustActionVisible = false;
-            this.ws.call('vm.get_display_devices', [this.vmId]).pipe(untilDestroyed(this)).subscribe((devices: Device[]) => {
+            this.ws.call('vm.get_display_devices', [this.vmId]).pipe(untilDestroyed(this)).subscribe((devices) => {
               if (devices.length > 1) {
                 _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
               }
@@ -527,7 +508,8 @@ export class DeviceEditComponent implements OnInit {
   afterInit(): void {
     this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]], { extra: { properties: ['id'] } }]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
-        _.find(this.diskFieldConfig, { name: 'path' }).options.push(
+        const config = _.find(this.diskFieldConfig, { name: 'path' }) as FormSelectConfig;
+        config.options.push(
           {
             label: zvol.id, value: '/dev/zvol/' + zvol.id,
           },

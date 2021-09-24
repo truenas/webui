@@ -104,11 +104,6 @@ export const rootRouterConfig: Routes = [{
     data: { title: 'Reporting', breadcrumb: 'Reporting' },
   },
   {
-    path: 'systemprocesses',
-    loadChildren: () => import('./pages/system-processes/system-processes.module').then((module) => module.SystemProcessesModule),
-    data: { title: 'System Processes', breadcrumb: 'System Processes' },
-  },
-  {
     path: 'shell',
     loadChildren: () => import('./pages/shell/shell.module').then((module) => module.ShellModule),
     data: { title: 'Shell', breadcrumb: 'Shell' },
@@ -137,6 +132,11 @@ export const rootRouterConfig: Routes = [{
     path: 'credentials',
     loadChildren: () => import('./pages/credentials/credentials.module').then((module) => module.CredentialsModule),
     data: { title: 'Credentials', breadcrumb: 'Credentials' },
+  },
+  {
+    path: 'jobs',
+    loadChildren: () => import('./pages/jobs/jobs.module').then((module) => module.JobsModule),
+    data: { title: 'Jobs', breadcrumb: 'Jobs' },
   },
   ],
 },

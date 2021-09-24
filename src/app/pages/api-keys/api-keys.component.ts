@@ -4,14 +4,16 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import { ConfirmDialog } from '../common/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityUtils } from '../common/entity/utils';
+import { ApiKeysRow } from './api-keys-row.interface';
 
 @UntilDestroy()
 @Component({
@@ -23,11 +25,11 @@ export class ApiKeysComponent implements EntityTableConfig {
   title = helptext.title;
   queryCall: 'api_key.query' = 'api_key.query';
   wsDelete: 'api_key.delete' = 'api_key.delete';
-  protected route_add_tooltip = helptext.route_add_tooltip;
+  route_add_tooltip = helptext.route_add_tooltip;
   addCall: 'api_key.create' = 'api_key.create';
   editCall: 'api_key.update' = 'api_key.update';
 
-  currItem: any;
+  currItem: ApiKeysRow;
   entityList: EntityTableComponent;
 
   columns = [
@@ -61,12 +63,12 @@ export class ApiKeysComponent implements EntityTableConfig {
     ],
     method_ws: this.addCall,
     saveButtonText: helptext.formDialog.add_button,
-    customSubmit: this.doSubmit,
-    afterInit(entityFrom: EntityDialogComponent) {
-      const disableCheckbox = !this.parent.currItem;
+    customSubmit: (entityDialog) => this.doSubmit(entityDialog),
+    afterInit: (entityFrom: EntityDialogComponent) => {
+      const disableCheckbox = !this.currItem;
       entityFrom.setDisabled('reset', disableCheckbox, disableCheckbox);
-      if (this.parent.currItem) {
-        entityFrom.formGroup.controls['name'].setValue(this.parent.currItem.name);
+      if (this.currItem) {
+        entityFrom.formGroup.controls['name'].setValue(this.currItem.name);
       }
     },
     parent: this,
@@ -75,17 +77,6 @@ export class ApiKeysComponent implements EntityTableConfig {
   timeZone: string;
 
   custActions = [
-    {
-      id: 'add',
-      name: helptext.action_add,
-      function: () => {
-        this.apikeysFormConf.title = helptext.formDialog.add_title;
-        this.apikeysFormConf.saveButtonText = helptext.formDialog.add_button;
-        this.apikeysFormConf.method_ws = this.addCall;
-        this.currItem = undefined;
-        this.dialogService.dialogForm(this.apikeysFormConf);
-      },
-    },
     {
       id: 'docs',
       name: helptext.action_docs,
@@ -106,47 +97,53 @@ export class ApiKeysComponent implements EntityTableConfig {
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
   }
-  resourceTransformIncomingRestData(data: ApiKey[]): any[] {
+  resourceTransformIncomingRestData(data: ApiKey[]): ApiKeysRow[] {
     return data.map((item) => {
       return {
         ...item,
-        created_time: this.localeService.formatDateTime(item.created_at.$date as any),
+        created_time: this.localeService.formatDateTime(item.created_at.$date),
       };
     });
   }
 
-  doSubmit(entityDialogForm: EntityDialogComponent<this>): void {
-    const that = entityDialogForm.parent;
-    if (that.currItem) {
-      that.ws.call(that.editCall, [that.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
-        (res: any) => {
+  doAdd(): void {
+    this.apikeysFormConf.title = helptext.formDialog.add_title;
+    this.apikeysFormConf.saveButtonText = helptext.formDialog.add_button;
+    this.apikeysFormConf.method_ws = this.addCall;
+    this.currItem = undefined;
+    this.dialogService.dialogForm(this.apikeysFormConf);
+  }
+
+  doSubmit(entityDialogForm: EntityDialogComponent<ApiKeysComponent>): void {
+    if (this.currItem) {
+      this.ws.call(this.editCall, [this.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
+        (res) => {
           entityDialogForm.dialogRef.close(true);
           if (res.key) {
-            that.displayKey(res.key);
+            this.displayKey(res.key);
           }
-          that.entityList.getData();
+          this.entityList.getData();
         },
-        (err: any) => {
-          new EntityUtils().handleWSError(that, err, that.apikeysFormConf.fieldConfig);
+        (err: WebsocketError) => {
+          new EntityUtils().handleWSError(this, err, this.dialogService, this.apikeysFormConf.fieldConfig);
         },
       );
     } else {
-      that.ws.call(that.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
-        (res: any) => {
+      this.ws.call(this.addCall, [entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
+        (res) => {
           entityDialogForm.dialogRef.close(true);
-          that.displayKey(res.key);
-          that.entityList.getData();
+          this.displayKey(res.key);
+          this.entityList.getData();
         },
-        (err: any) => {
-          new EntityUtils().handleWSError(this, err, that.dialogService, that.apikeysFormConf.fieldConfig);
+        (err: WebsocketError) => {
+          new EntityUtils().handleWSError(this, err, this.dialogService, this.apikeysFormConf.fieldConfig);
         },
       );
     }
   }
 
   displayKey(key: string): void {
-    const self = this;
-    const dialogRef = this.dialog.open(ConfirmDialog, { disableClose: true });
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, { disableClose: true });
     dialogRef.componentInstance.title = helptext.apikeyCopyDialog.title;
     dialogRef.componentInstance.buttonMsg = helptext.apikeyCopyDialog.save_button;
     dialogRef.componentInstance.cancelMsg = helptext.apikeyCopyDialog.close_button;
@@ -155,18 +152,18 @@ export class ApiKeysComponent implements EntityTableConfig {
     dialogRef.componentInstance.message = `
         ${helptext.apikeyCopyDialog.api_key_warning} <br><br>
         ${helptext.apikeyCopyDialog.api_key}:<br> ${key}`;
-    dialogRef.componentInstance.customSumbit = function () {
-      self.clipboard.copy(key);
+    dialogRef.componentInstance.customSubmit = () => {
+      this.clipboard.copy(key);
     };
   }
 
-  getActions(): EntityTableAction[] {
+  getActions(): EntityTableAction<ApiKeysRow>[] {
     return [{
       name: helptext.action_edit,
       id: 'edit',
       icon: 'edit',
       label: 'Edit',
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: ApiKeysRow) => {
         this.apikeysFormConf.title = helptext.formDialog.edit_title;
         this.apikeysFormConf.saveButtonText = helptext.formDialog.edit_button;
         this.apikeysFormConf.method_ws = this.editCall;
@@ -178,7 +175,7 @@ export class ApiKeysComponent implements EntityTableConfig {
       id: 'delete',
       icon: 'delete',
       label: 'Delete',
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: ApiKeysRow) => {
         this.entityList.doDelete(rowinner);
       },
     }] as EntityTableAction[];

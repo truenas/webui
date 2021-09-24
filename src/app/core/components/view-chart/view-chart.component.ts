@@ -2,7 +2,11 @@ import {
   Component, AfterViewInit, Input, SimpleChanges, OnChanges,
 } from '@angular/core';
 import { UUID } from 'angular2-uuid';
-import { LegendOptions, TooltipOptions } from 'app/core/components/view-chart/view-chart.component.types';
+import {
+  ChartConfiguration,
+  LegendOptions,
+  TooltipOptions,
+} from 'app/core/components/view-chart/view-chart.component.types';
 import { ViewComponent } from 'app/core/components/view/view.component';
 
 export interface ChartData {
@@ -83,7 +87,7 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
     },
   };
 
-  protected chartConfig: any;// ChartConfiguration;
+  chartConfig: ChartConfiguration;
 
   constructor() {
     super();
@@ -176,7 +180,7 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
     return -1;
   }
 
-  makeConfig(): any {
+  makeConfig(): ChartConfiguration {
     this.chartConfig = {
       bindto: '#' + this.chartId,
       data: {
@@ -202,7 +206,7 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
     return this.chartConfig;
   }
 
-  focus(item: any): void {
+  focus(item: Legend): void {
     if (item.visible) {
       this.chart.hide(item.name);
     } else {

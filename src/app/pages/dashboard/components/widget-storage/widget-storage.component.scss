@@ -1,0 +1,135 @@
+.widget {
+  height: 400px;
+  width: 600px;
+}
+
+.widget mat-card-content {
+  width: 100%;
+}
+
+.controls {
+  color: var(--fg2);
+  position: absolute;
+  right: 16px;
+  top: 0;
+}
+
+mat-grid-tile {
+  background-color: var(--bg1);
+  border-radius: 2px;
+  opacity: 0.7;
+
+  ul {
+    margin: 0;
+    padding-left: 0;
+  }
+
+  .tile {
+    padding-left: 15px;
+
+    .tile-header-button {
+      position: absolute;
+      right: 0;
+      top: 0;
+    }
+
+    .tile-header-title {
+      align-items: center;
+      display: flex;
+      font-size: 27px;
+      height: 48px;
+      min-height: 48px;
+      overflow: hidden;
+      text-align: left;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      white-space: nowrap;
+      width: calc(100% - 40px);
+    }
+
+    &.rows-3 {
+      .tile-header-title {
+        height: 38px;
+        min-height: 38px;
+      }
+
+      .tile-content {
+        padding-bottom: 0;
+      }
+    }
+
+    &.rows-2-2 {
+      .tile-header-title {
+        height: 48px;
+        min-height: 48px;
+      }
+
+      .tile-content {
+        padding-bottom: 13px;
+      }
+    }
+
+    .tile-content {
+      font-size: 12px;
+      padding-bottom: 10px;
+
+      .divider {
+        background-color: var(--lines);
+        height: 75%;
+        margin-right: 12px;
+        width: 1px;
+      }
+
+      li {
+        line-height: 20px;
+        overflow: hidden;
+        white-space: nowrap;
+
+        .label {
+          margin-right: 6px;
+        }
+      }
+    }
+
+    span.icon {
+      height: 10px;
+      text-align: left;
+      width: 17px;
+
+      &.error {
+        color: var(--red);
+      }
+
+      &.warn {
+        color: var(--orange);
+      }
+
+      &.safe {
+        color: var(--green);
+      }
+
+      .mat-icon {
+        font-size: 18px;
+        top: 0;
+        width: 14px;
+
+        &.mdi-set {
+          font-size: 14px;
+          margin-top: -2px;
+        }
+      }
+    }
+  }
+
+  .create-new {
+    font-size: 24px;
+    opacity: 0.7;
+
+    .mat-icon.mdi-set {
+      font-size: 48px;
+      height: 48px;
+      line-height: 48px;
+      width: 48px;
+    }
+  }
+}

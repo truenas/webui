@@ -13,13 +13,11 @@ export interface WizardConfiguration {
   saveSubmitText?: string;
   advanced_field?: string[];
   isBasicMode?: boolean;
+  showSpinner?: boolean;
+  isAutoSummary?: boolean;
   route_cancel?: string[];
   route_success?: string[];
-  custActions?: {
-    id: string;
-    name: string;
-    function: () => void;
-  }[];
+  custActions?: EntityWizardAction[];
 
   customNext?: (stepper: MatStepper) => void;
   isCustActionVisible?: (actionId: string, stepperIndex: number) => boolean;
@@ -28,4 +26,10 @@ export interface WizardConfiguration {
   beforeSubmit?: (value: any) => any;
   customSubmit?: (value: any) => void;
   customCancel?: () => void;
+}
+
+export interface EntityWizardAction {
+  id: string;
+  name: string;
+  function: () => void;
 }

@@ -44,10 +44,9 @@ are submitted only when this box is set.'),
   dataset_permissions_dialog_warning_message: T('Changing dataset permission mode can severely\
  affect existing permissions, particularly when going from Windows to Unix permissions.'),
 
-  heading_dataset_path: T('Dataset Path'),
   heading_owner: T('Owner'),
   heading_access: T('Access'),
   heading_advanced: T('Advanced'),
 
-  acl_manager_button: T('Use ACL Manager'),
+  acl_manager_button: T('Set ACL'),
 };

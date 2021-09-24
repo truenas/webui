@@ -1,0 +1,14 @@
+<mat-card class="card card-square">
+  <mat-card-header class="header">
+    <mat-card-title>{{ 'Unix Permissions Editor' | translate }}</mat-card-title>
+
+    <div class="dataset-path">
+      <div class="dataset-path-label">{{ 'Dataset' | translate }}:</div>
+      <div>{{ datasetPath }}</div>
+    </div>
+  </mat-card-header>
+
+  <mat-card-content>
+    <entity-form [conf]="this" class="form"></entity-form>
+  </mat-card-content>
+</mat-card>

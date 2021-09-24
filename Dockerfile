@@ -2,7 +2,7 @@
 from node:buster as uibuilder
 COPY ./ /src-ui
 WORKDIR /src-ui
-RUN yarn install
+RUN yarn install --frozen-lockfile
 RUN yarn build:prod:aot
 
 #Download base image debian buster

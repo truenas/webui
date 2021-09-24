@@ -15,7 +15,6 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class CatalogAddFormComponent implements FormConfiguration {
   queryCall: 'catalog.query' = 'catalog.query';
-  customFilter: any[];
   addCall: 'catalog.create' = 'catalog.create';
   isCreateJob = true;
   isEntity = true;
@@ -73,7 +72,7 @@ export class CatalogAddFormComponent implements FormConfiguration {
   ) {}
 
   afterModalFormClosed(): void {
-    this.dialogService.Info(helptext.catalogForm.dialog.title, helptext.catalogForm.dialog.message, '500px', 'info', true);
+    this.dialogService.info(helptext.catalogForm.dialog.title, helptext.catalogForm.dialog.message, '500px', 'info', true);
     this.modalService.refreshTable();
   }
 }

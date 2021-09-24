@@ -1,4 +1,7 @@
-<div fxLayout="column" fxLayoutAlign="center center" fxFlex class="empty-page" [ngClass]="{'large': conf.large}">
+<div fxLayout="column" fxLayoutAlign="center center" fxFlex class="empty-page {{conf.type}}" 
+  [class.large]="conf.large" 
+  [class.compact]="conf.compact">
+  
   <div *ngIf="!isLoading()" fxLayout="column" fxLayoutAlign="center center" fxFlex class="icon-div">
     <mat-icon fontSet="mdi-set" fontIcon="mdi-{{getIcon()}}"></mat-icon>
   </div>
@@ -7,7 +10,11 @@
   </div>
   <div *ngIf="!isLoading()">
     <h3 class="empty-title">{{ conf.title }}</h3>
-    <p *ngIf="conf.message" class="empty-message">{{ conf.message }}</p>
-    <button *ngIf="conf.button" class="empty-action" mat-button (click)="doAction()">{{conf.button.label | translate}}</button>
+
+    <!-- Messages -->
+    <p *ngIf="conf.message && !conf.compact" class="empty-message">{{ conf.message }}</p>
+
+    <button *ngIf="conf.button && !conf.compact" class="empty-action" mat-button (click)="doAction()">{{conf.button.label | translate}}</button>
   </div>
+
 </div>

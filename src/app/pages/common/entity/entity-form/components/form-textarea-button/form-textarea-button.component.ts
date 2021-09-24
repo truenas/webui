@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormTextareaButtonConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @Component({
@@ -12,7 +12,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
 export class FormTextareaButtonComponent implements Field {
-  config: FieldConfig;
+  config: FormTextareaButtonConfig;
   group: FormGroup;
   fieldShow: string;
 

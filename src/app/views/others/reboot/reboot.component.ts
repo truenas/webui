@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -16,18 +17,24 @@ import { LocaleService } from 'app/services/locale.service';
   styleUrls: ['./reboot.component.scss'],
 })
 export class RebootComponent implements OnInit {
-  product_type: ProductType;
+  productType: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
   readonly ProductType = ProductType;
 
-  constructor(protected ws: WebSocketService, protected router: Router,
-    protected loader: AppLoaderService, public translate: TranslateService,
-    protected dialogService: DialogService, protected dialog: MatDialog,
-    private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
-    this.ws = ws;
+  constructor(
+    protected ws: WebSocketService,
+    protected router: Router,
+    protected loader: AppLoaderService,
+    public translate: TranslateService,
+    protected dialogService: DialogService,
+    protected dialog: MatDialog,
+    private sysGeneralService: SystemGeneralService,
+    private localeService: LocaleService,
+    private location: Location,
+  ) {
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.product_type = res as ProductType;
+      this.productType = res as ProductType;
     });
   }
 
@@ -44,10 +51,13 @@ export class RebootComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.product_type = window.localStorage.getItem('product_type') as ProductType;
+    this.productType = window.localStorage.getItem('product_type') as ProductType;
+
+    // Replace URL so that we don't reboot again if page is refreshed.
+    this.location.replaceState('/session/signin');
 
     this.dialog.closeAll();
-    this.ws.call('system.reboot', {}).pipe(untilDestroyed(this)).subscribe(
+    this.ws.call('system.reboot').pipe(untilDestroyed(this)).subscribe(
       () => {
       },
       (res) => { // error on reboot
@@ -58,11 +68,11 @@ export class RebootComponent implements OnInit {
           });
       },
       () => { // show reboot screen
-        this.ws.prepare_shutdown();
+        this.ws.prepareShutdown();
         this.loader.open();
         setTimeout(() => {
           this.isWSConnected();
-        }, 1000);
+        }, 3000);
       },
     );
   }

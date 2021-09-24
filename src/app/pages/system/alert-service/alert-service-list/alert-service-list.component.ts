@@ -14,7 +14,7 @@ import { WebSocketService, DialogService } from 'app/services';
 })
 export class AlertServiceListComponent implements EntityTableConfig<AlertService> {
   title = 'Alert Services';
-  protected route_add_tooltip = 'Add Alert Service';
+  route_add_tooltip = 'Add Alert Service';
   queryCall: 'alertservice.query' = 'alertservice.query';
   wsDelete: 'alertservice.delete' = 'alertservice.delete';
   protected route_success: string[] = ['system', 'alertservice'];

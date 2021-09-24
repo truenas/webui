@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
@@ -18,7 +18,7 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot', 'status'];
   isEntity = true;
   addCall: 'boot.replace' = 'boot.replace';
-  pk: any;
+  pk: string;
   isNew = true;
 
   protected entityForm: EntityFormComponent;
@@ -32,7 +32,7 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
     },
 
   ];
-  protected diskChoice: FieldConfig;
+  protected diskChoice: FormSelectConfig;
 
   constructor(
     protected router: Router,
@@ -49,7 +49,7 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
-    this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
+    this.diskChoice = _.find(this.fieldConfig, { name: 'dev' }) as FormSelectConfig;
     this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((item) => {
         this.diskChoice.options.push({ label: item.name, value: item.name });
@@ -58,7 +58,7 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
     entityForm.submitFunction = this.submitFunction;
   }
 
-  submitFunction(entityForm: any): Observable<any> {
+  submitFunction(entityForm: { dev: string }): Observable<void> {
     const payload = this.pk.substring(5, this.pk.length);
     return this.ws.call('boot.replace', [payload, entityForm.dev]);
   }

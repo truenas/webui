@@ -3,8 +3,11 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { forkJoin } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   AppLoaderService, DialogService, IscsiService, WebSocketService,
@@ -24,7 +27,7 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
   queryCall: 'iscsi.targetextent.query' = 'iscsi.targetextent.query';
   wsDelete: 'iscsi.targetextent.delete' = 'iscsi.targetextent.delete';
   route_add: string[] = ['sharing', 'iscsi', 'associatedtarget', 'add'];
-  protected route_add_tooltip = 'Add Target/Extent';
+  route_add_tooltip = 'Add Target/Extent';
   route_edit: string[] = ['sharing', 'iscsi', 'associatedtarget', 'edit'];
 
   columns = [
@@ -78,42 +81,44 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
     });
   }
 
-  getActions(row: any): any[] {
+  getActions(row: IscsiTargetExtent): EntityTableAction[] {
     return [{
       id: row.target,
       name: 'edit',
       icon: 'edit',
       label: T('Edit'),
-      onClick: (rowinner: any) => { this.entityList.doEdit(rowinner.id); },
+      onClick: (rowinner: IscsiTargetExtent) => { this.entityList.doEdit(rowinner.id); },
     }, {
       id: row.target,
       name: 'delete',
       icon: 'delete',
       label: T('Delete'),
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: IscsiTargetExtent) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
           (res) => {
             let warningMsg = '';
             for (let i = 0; i < res.length; i++) {
-              if (res[i].target.split(':')[1] == rowinner.target) {
+              if (res[i].target.split(':')[1] == (rowinner.target as any)) {
                 warningMsg = '<font color="red">' + T('Warning: iSCSI Target is already in use.</font><br>');
               }
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((dialres: boolean) => {
-              if (dialres) {
-                this.loader.open();
-                this.entityList.loaderOpen = true;
-                this.ws.call(this.wsDelete, [rowinner.id, true]).pipe(untilDestroyed(this)).subscribe(
-                  () => { this.entityList.getData(); },
-                  (resinner: any) => {
-                    new EntityUtils().handleError(this, resinner);
-                    this.loader.close();
-                  },
-                );
-              }
+            this.dialogService.confirm({
+              title: T('Delete'),
+              message: deleteMsg,
+              buttonMsg: T('Delete'),
+            }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.loader.open();
+              this.entityList.loaderOpen = true;
+              this.ws.call(this.wsDelete, [rowinner.id, true]).pipe(untilDestroyed(this)).subscribe(
+                () => { this.entityList.getData(); },
+                (resinner: WebsocketError) => {
+                  new EntityUtils().handleError(this, resinner);
+                  this.loader.close();
+                },
+              );
             });
           },
         );

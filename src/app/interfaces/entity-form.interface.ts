@@ -1,6 +1,7 @@
 import { Subject } from 'rxjs';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -28,6 +29,7 @@ export interface FormConfiguration {
   route_usebaseUrl?: boolean;
   route_cancel?: string[];
   route_success?: string[];
+  // TODO: Broken
   route_delete?: string[];
   custom_edit_query?: string;
   custom_add_query?: string;
@@ -62,7 +64,7 @@ export interface FormConfiguration {
   preHandler?: (data: any[], formArray: any) => any[];
   responseOnSubmit?: (value: any) => void;
   clean?: (data: any) => any;
-  errorReport?: (res: any) => void;
+  errorReport?: (res: WebsocketError) => void;
   resourceTransformIncomingRestData?: (data: any) => any;
   preInit?: (entityForm: EntityFormComponent) => void;
   afterInit?: (entityForm: EntityFormComponent) => void;
@@ -76,6 +78,8 @@ export interface FormConfiguration {
   customSubmit?: (value: any) => void;
   closeModalForm?(): Promise<boolean>;
   afterModalFormClosed?(): void; // function will called once the modal form closed
+  isCustActionVisible?: (action: string) => boolean;
+  isCustActionDisabled?: (action: string) => boolean;
 }
 
 export interface FormCustomAction {

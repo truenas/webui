@@ -1,6 +1,7 @@
 import {
   Component, DoCheck, IterableDiffer, IterableDiffers,
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -8,7 +9,7 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormChipConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
   DialogService, StorageService, WebSocketService, AppLoaderService, UserService,
@@ -24,19 +25,19 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
   entityForm: EntityFormComponent;
   pk: string;
   route_success: string[];
-  searchedEntries: any[] = [];
-  entryField: FieldConfig;
+  searchedEntries: string[] = [];
+  entryField: FormChipConfig;
   isNew = true;
   private dq: string;
   private oq: string;
-  private selectedEntriesField: FieldConfig;
-  private selectedEntriesValue: any;
-  private entryErrs: any;
+  private selectedEntriesField: FormSelectConfig;
+  private selectedEntriesValue: FormControl;
+  private entryErrs: HTMLCollectionOf<Element>;
   private entryErrBool = false;
   save_button_enabled = false;
   private differ: IterableDiffer<unknown>;
   fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [
+  fieldSets: FieldSet<this>[] = [
     {
       name: helptext.groups.quota_title,
       label: true,
@@ -48,7 +49,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
           placeholder: helptext.groups.data_quota.placeholder,
           tooltip: `${helptext.groups.data_quota.tooltip} bytes.`,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.dataQuotaBlur,
           parent: this,
         },
         {
@@ -106,11 +107,11 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
   }
 
   preInit(): void {
-    const paramMap: any = (<any> this.aroute.params).getValue();
+    const paramMap = this.aroute.snapshot.params;
     this.pk = paramMap.pk;
   }
 
-  async validateEntry(value: any): Promise<void> {
+  async validateEntry(value: string): Promise<void> {
     const validEntry = await this.userService.getGroupObject(value);
     if (!validEntry) {
       const chips = document.getElementsByTagName('mat-chip');
@@ -143,11 +144,11 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
-    this.route_success = ['storage', 'pools', 'group-quotas', this.pk];
-    this.selectedEntriesField = _.find(this.fieldConfig, { name: 'system_entries' });
-    this.selectedEntriesValue = this.entityForm.formGroup.controls['system_entries'];
+    this.route_success = ['storage', 'group-quotas', this.pk];
+    this.selectedEntriesField = _.find(this.fieldConfig, { name: 'system_entries' }) as FormSelectConfig;
+    this.selectedEntriesValue = this.entityForm.formGroup.controls['system_entries'] as FormControl;
     this.entryField = _.find(this.fieldSets.find((set) => set.name === helptext.groups.group_title).config,
-      { name: 'searched_entries' });
+      { name: 'searched_entries' }) as FormChipConfig;
 
     this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
       groups.forEach((group) => {
@@ -155,13 +156,13 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
       });
     });
 
-    this.entityForm.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
-      this.dq = res;
+    this.entityForm.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((quota: string) => {
+      this.dq = quota;
       this.allowSubmit();
     });
 
-    this.entityForm.formGroup.controls['obj_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
-      this.oq = res;
+    this.entityForm.formGroup.controls['obj_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((quota: string) => {
+      this.oq = quota;
       this.allowSubmit();
     });
 
@@ -169,13 +170,13 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
       this.allowSubmit();
     });
 
-    this.entityForm.formGroup.controls['searched_entries'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityForm.formGroup.controls['searched_entries'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string[]) => {
       if (value) {
         this.validateEntry(value[value.length - 1]);
       }
     });
 
-    entityEdit.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    entityEdit.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       const formField = _.find(this.fieldConfig, { name: 'data_quota' });
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
       formField['hasErrors'] = false;
@@ -187,19 +188,19 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
     });
   }
 
-  blurEvent(parent: any): void {
+  dataQuotaBlur(parent: this): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'data_quota');
     }
   }
 
-  transformValue(parent: any, fieldname: string): void {
+  transformValue(parent: this, fieldname: string): void {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
     parent.storageService.humanReadable = '';
   }
 
-  updateSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+  updateSearchOptions(value = '', parent: this): void {
+    parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < groups.length; i++) {
         groupOptions.push({ label: groups[i].group, value: groups[i].group });

@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
-import { MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/volumes/download-key';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   WebSocketService,
-  StorageService,
+  StorageService, DialogService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
@@ -17,26 +17,26 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
   styleUrls: ['./download-key-dialog.component.scss'],
   templateUrl: './download-key-dialog.component.html',
 })
-export class DownloadKeyModalDialog {
+export class DownloadKeyDialogComponent {
   new = false;
-  volumeId: any;
-  volumeName: any;
+  volumeId: number;
+  volumeName: string;
   fileName: string;
   isDownloaded = false;
   help = helptext;
 
   constructor(
     protected translate: TranslateService,
-    public dialogRef: MatDialogRef<DownloadKeyModalDialog>,
+    public dialogRef: MatDialogRef<DownloadKeyDialogComponent>,
     private ws: WebSocketService,
     private storage: StorageService,
     private http: HttpClient,
-    public dialog: MatDialog,
+    public dialog: DialogService,
     private loader: AppLoaderService,
   ) { }
 
   downloadKey(): void {
-    const payload = [this.volumeId];
+    const payload: any[] = [this.volumeId];
     if (this.fileName !== undefined) {
       payload.push(this.fileName);
     }

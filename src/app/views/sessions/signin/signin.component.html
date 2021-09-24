@@ -40,8 +40,8 @@
                     <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:4px;">lock</mat-icon>&nbsp;&nbsp;</span>
                     <input type="password" name="password" required matInput [(ngModel)]="signinData.password" #password="ngModel" placeholder="{{'Password' | translate}}" value="">
                     <mat-error *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)">
-                        <span *ngIf="!failed">{{"Please enter your password" | translate}}</span>
-                        <span *ngIf="failed">{{"Please enter your password again" | translate}}</span>
+                      <span *ngIf="!failed">{{"Please enter your password" | translate}}</span>
+                      <span *ngIf="failed">{{"Please enter your password again" | translate}}</span>
                     </mat-error>
                   </mat-form-field>
                 </div>
@@ -99,24 +99,26 @@
               </div>
             </div>
 
-            <span *ngIf="product_type === ProductType.Enterprise && failover_status != 'SINGLE'"><div class="ha-status">
-              <div class="ha-status-txt">
-                <p>{{ha_status_text}}</p>
-                <span *ngIf="show_reasons"><p *ngFor='let reason of ha_disabled_reasons'>
-                  {{reason_text[reason] | translate}}
-                </p></span>
-                <span *ngIf="ha_info_ready">
-                  <p>{{failover_statuses[failover_status]}}</p>
-                  <span *ngIf="failover_ips.length > 0">
-                    <p>Active IP Addresses: {{failover_ips.join(", ")}}</p>
+            <span *ngIf="product_type === ProductType.Enterprise && failover_status != FailoverStatus.Single">
+              <div class="ha-status">
+                <div class="ha-status-txt">
+                  <p>{{ha_status_text}}</p>
+                  <span *ngIf="show_reasons"><p *ngFor='let reason of ha_disabled_reasons'>
+                    {{reason_text[disabledReason(reason)] | translate}}
+                    </p></span>
+                  <span *ngIf="ha_info_ready">
+                    <p>{{failover_statuses[failover_status]}}</p>
+                    <span *ngIf="failover_ips.length > 0">
+                      <p>Active IP Addresses: {{failover_ips.join(", ")}}</p>
+                    </span>
                   </span>
-                </span>
+                </div>
               </div>
-            </div></span>
+            </span>
 
             <div class="truecommand" *ngIf="tc_ip" (click)="gotoTC()">
-                <img id="truecommand-logo" src="assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg">
-                <span class="truecommand-txt">TrueCommand IP: {{tc_ip}}</span>
+              <img id="truecommand-logo" src="assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg">
+              <span class="truecommand-txt">TrueCommand IP: {{tc_ip}}</span>
             </div>
 
             <div class="copyright-line">
@@ -129,9 +131,8 @@
           <div *ngIf="product">
             <div class="fake-icon">?</div>
             <p *ngIf="!ha_status">
-              {{"Connecting to " | translate}} {{product}}
-              {{"... Make sure the " | translate}} {{product}}
-              {{" system is powered on and connected to the network." | translate}}
+              {{ 'Connecting to {product}' | translate: { product } }}
+              {{ '... Make sure the {product} system is powered on and connected to the network.' | translate: { product } }}
             </p>
             <p *ngIf="ha_status">
               {{"Waiting for Active TrueNAS controller to come up..." | translate}}

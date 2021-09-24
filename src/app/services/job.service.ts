@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, Observer } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
@@ -41,10 +42,8 @@ export class JobService {
   }
 
   showLogs(job: Job, title?: string, cancelMsg?: string): void {
-    let dialog_title;
-    let cancelButtonMsg;
-    title ? dialog_title = title : dialog_title = T('Logs');
-    cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Close');
+    const dialog_title = title || T('Logs');
+    const cancelButtonMsg = cancelMsg || T('Close');
 
     if (job.error) {
       if (job.logs_path) {
@@ -56,33 +55,35 @@ export class JobService {
       const log = job && job.logs_excerpt ? job.logs_excerpt : null;
 
       if (!log) {
-        this.dialog.Info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
+        this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
       } else {
         const target_job = job;
-        this.dialog.confirm(dialog_title, `<pre>${log}</pre>`, true, T('Download Logs'),
-          false, '', '', '', '', false, cancelButtonMsg, true).pipe(untilDestroyed(this)).subscribe(
-          (dialog_res: boolean) => {
-            if (dialog_res) {
-              this.ws.call('core.download', ['filesystem.get', [target_job.logs_path], target_job.id + '.log']).pipe(untilDestroyed(this)).subscribe(
-                (snack_res) => {
-                  const url = snack_res[1];
-                  const mimetype = 'text/plain';
-                  this.storage.streamDownloadFile(this.http, url, target_job.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe(
-                    (file) => {
-                      this.storage.downloadBlob(file, target_job.id + '.log');
-                    },
-                    (err) => {
-                      new EntityUtils().handleWSError(this, err);
-                    },
-                  );
+        this.dialog.confirm({
+          title: dialog_title,
+          message: `<pre>${log}</pre>`,
+          hideCheckBox: true,
+          buttonMsg: T('Download Logs'),
+          cancelMsg: cancelButtonMsg,
+          disableClose: true,
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          this.ws.call('core.download', ['filesystem.get', [target_job.logs_path], target_job.id + '.log']).pipe(untilDestroyed(this)).subscribe(
+            (snack_res) => {
+              const url = snack_res[1];
+              const mimetype = 'text/plain';
+              this.storage.streamDownloadFile(this.http, url, target_job.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe(
+                (file) => {
+                  this.storage.downloadBlob(file, target_job.id + '.log');
                 },
-                (snack_res) => {
-                  new EntityUtils().handleWSError(this, snack_res);
+                (err) => {
+                  new EntityUtils().handleWSError(this, err);
                 },
               );
-            }
-          },
-        );
+            },
+            (snack_res) => {
+              new EntityUtils().handleWSError(this, snack_res);
+            },
+          );
+        });
       }
     }
   }

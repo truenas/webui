@@ -3,9 +3,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/system/cron-form';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { UserService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -17,21 +19,19 @@ import { ModalService } from 'app/services/modal.service';
   styleUrls: ['cron-form.component.scss'],
   providers: [UserService],
 })
-export class CronFormComponent {
-  protected title: string;
-  protected queryCall = 'cronjob.query';
-  protected queryKey = 'id';
-  protected editCall = 'cronjob.update';
-  protected addCall = 'cronjob.create';
-  protected pk: any;
-  protected data: any;
-  protected user_field: FieldConfig;
+export class CronFormComponent implements FormConfiguration {
+  title: string;
+  queryCall: 'cronjob.query' = 'cronjob.query';
+  queryKey = 'id';
+  editCall: 'cronjob.update' = 'cronjob.update';
+  addCall: 'cronjob.create' = 'cronjob.create';
+  pk: number;
+  protected user_field: FormComboboxConfig;
   protected isOneColumnForm = true;
-  protected isEntity = true;
+  isEntity = true;
 
   isNew = false;
   entityForm: EntityFormComponent;
-  formGroup: any;
   error: string;
   fieldConfig: FieldConfig[] = [];
   fieldSetDisplay = 'no-margins';
@@ -110,8 +110,8 @@ export class CronFormComponent {
 
   constructor(protected userService: UserService, protected modalService: ModalService) {}
 
-  updateUserSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+  updateUserSearchOptions(value = '', parent: this): void {
+    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       const users: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         users.push({ label: items[i].username, value: items[i].username });
@@ -127,7 +127,7 @@ export class CronFormComponent {
     this.title = entityForm.isNew ? helptext.cron_job_add : helptext.cron_job_edit;
 
     // Setup user field options
-    this.user_field = _.find(this.fieldSets[0].config, { name: 'user' });
+    this.user_field = _.find(this.fieldSets[0].config, { name: 'user' }) as FormComboboxConfig;
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
       for (let i = 0; i < items.length; i++) {
         this.user_field.options.push({
@@ -138,7 +138,7 @@ export class CronFormComponent {
     });
   }
 
-  resourceTransformIncomingRestData(data: Cronjob): any {
+  resourceTransformIncomingRestData(data: Cronjob): Cronjob & { cron_picker: string } {
     const schedule = data['schedule'];
     return {
       ...data,
@@ -146,10 +146,10 @@ export class CronFormComponent {
     };
   }
 
-  beforeSubmit(value: any): void {
+  beforeSubmit(value: { cron_picker: string; schedule?: Schedule }): void {
     const spl = value.cron_picker.split(' ');
     delete value.cron_picker;
-    const schedule: any = {};
+    const schedule: Schedule = {};
     schedule['minute'] = spl[0];
     schedule['hour'] = spl[1];
     schedule['dom'] = spl[2];

@@ -2,6 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import * as _ from 'lodash';
 import { Subject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
@@ -22,10 +23,10 @@ export class SystemGeneralService {
   refreshSysGeneral$ = new Subject();
 
   // Prevent repetitive api calls in a short time when data is already available
-  generalConfigInfo: any;
-  getGeneralConfig$ = new Observable<any>((observer) => {
+  generalConfigInfo: SystemGeneralConfig | { waiting: true };
+  getGeneralConfig$ = new Observable<SystemGeneralConfig>((observer) => {
     if (!this.ws.loggedIn) {
-      return observer.next({});
+      return observer.next({} as SystemGeneralConfig);
     }
     if ((!this.generalConfigInfo || _.isEmpty(this.generalConfigInfo))) {
       // Since the api call can be made many times before the first response comes back,
@@ -38,20 +39,20 @@ export class SystemGeneralService {
     } else {
       // Check every ten ms to see if the object is ready, then stop checking and send the obj
       const wait = setInterval(() => {
-        if (this.generalConfigInfo && !this.generalConfigInfo.waiting) {
+        if (this.generalConfigInfo && !(this.generalConfigInfo as { waiting?: true }).waiting) {
           clearInterval(wait);
-          observer.next(this.generalConfigInfo);
+          observer.next(this.generalConfigInfo as SystemGeneralConfig);
         }
       }, 10);
     }
     // After a pause, set object to empty so calls can be made
     setTimeout(() => {
-      this.generalConfigInfo = {};
+      this.generalConfigInfo = {} as SystemGeneralConfig;
     }, 2000);
   });
 
-  advancedConfigInfo: any;
-  getAdvancedConfig$ = new Observable<any>((observer) => {
+  advancedConfigInfo: AdvancedConfig | { waiting: true };
+  getAdvancedConfig$ = new Observable<AdvancedConfig>((observer) => {
     if ((!this.advancedConfigInfo || _.isEmpty(this.advancedConfigInfo))) {
       this.advancedConfigInfo = { waiting: true };
       this.ws.call('system.advanced.config').subscribe((advancedConfig) => {
@@ -60,14 +61,14 @@ export class SystemGeneralService {
       });
     } else {
       const wait = setInterval(() => {
-        if (this.advancedConfigInfo && !this.advancedConfigInfo.waiting) {
+        if (this.advancedConfigInfo && !(this.advancedConfigInfo as { waiting: true }).waiting) {
           clearInterval(wait);
-          observer.next(this.advancedConfigInfo);
+          observer.next(this.advancedConfigInfo as AdvancedConfig);
         }
       }, 10);
     }
     setTimeout(() => {
-      this.advancedConfigInfo = {};
+      this.advancedConfigInfo = {} as AdvancedConfig;
     }, 2000);
   });
 
@@ -94,7 +95,7 @@ export class SystemGeneralService {
 
   constructor(protected ws: WebSocketService) {}
 
-  getCA(): Observable<any[]> {
+  getCA(): Observable<CertificateAuthority[]> {
     return this.ws.call(this.caList, []);
   }
 
@@ -110,12 +111,8 @@ export class SystemGeneralService {
     return this.ws.call(this.caList, [[['privatekey', '!=', null]]]);
   }
 
-  getCertificateCountryChoices(): Observable<any> {
+  getCertificateCountryChoices(): Observable<Choices> {
     return this.ws.call('certificate.country_choices');
-  }
-
-  getIPChoices(): Observable<any> {
-    return this.ws.call('notifier.choices', ['IPChoices', [true, false]]);
   }
 
   getSysInfo(): Observable<SystemInfo> {
@@ -156,6 +153,22 @@ export class SystemGeneralService {
     return this.ws.call('system.general.language_choices');
   }
 
+  languageOptions(sortLanguagesByName: boolean): Observable<Option[]> {
+    return this.languageChoices().pipe(map((languageList: Choices): Option[] => {
+      let options = Object.keys(languageList || {}).map((key) => ({
+        label: sortLanguagesByName
+          ? `${languageList[key]} (${key})`
+          : `${key} (${languageList[key]})`,
+        value: key,
+      }));
+      options = _.sortBy(
+        options,
+        sortLanguagesByName ? 'label' : 'value',
+      );
+      return options;
+    }));
+  }
+
   timezoneChoices(): Observable<Option[]> {
     return this.ws.call('system.general.timezone_choices').pipe(
       map((response) =>
@@ -166,7 +179,7 @@ export class SystemGeneralService {
     );
   }
 
-  refreshDirServicesCache(): Observable<any> {
+  refreshDirServicesCache(): Observable<void> {
     return this.ws.call('directoryservices.cache_refresh');
   }
 
@@ -182,7 +195,7 @@ export class SystemGeneralService {
     this.refreshSysGeneral$.next();
   }
 
-  checkRootPW(password: string): Observable<any> {
+  checkRootPW(password: string): Observable<boolean> {
     return this.ws.call('auth.check_user', ['root', password]);
   }
 }

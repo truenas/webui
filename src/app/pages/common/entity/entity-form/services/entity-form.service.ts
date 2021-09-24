@@ -6,10 +6,21 @@ import {
   FormControl,
   FormGroup,
 } from '@angular/forms';
+import { TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
+import { DatasetType } from 'app/enums/dataset-type.enum';
+import { FileType } from 'app/enums/file-type.enum';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';
-import { FieldConfig, UnitType, InputUnitConfig } from '../models/field-config.interface';
+import {
+  FieldConfig,
+  UnitType,
+  InputUnitConfig,
+  FormArrayConfig,
+  FormListConfig,
+  FormDictConfig,
+} from '../models/field-config.interface';
 
 @Injectable()
 export class EntityFormService {
@@ -44,7 +55,10 @@ export class EntityFormService {
         if (formControl) {
           formGroup[controls[i].name] = formControl;
         }
-        controls[i].relation = Array.isArray(controls[i].relation) ? controls[i].relation : [];
+
+        if (controls[i]) {
+          controls[i].relation = Array.isArray(controls[i].relation) ? controls[i].relation : [];
+        }
       }
     }
 
@@ -53,24 +67,28 @@ export class EntityFormService {
 
   createFormControl(fieldConfig: FieldConfig): AbstractControl {
     let formControl: AbstractControl;
+    const arrayConfig: FormArrayConfig = fieldConfig as FormArrayConfig;
+    const listConfig: FormListConfig = fieldConfig as FormListConfig;
+    const dictConfig: FormDictConfig = fieldConfig as FormDictConfig;
 
     if (fieldConfig) {
-      if (fieldConfig.formarray) {
-        if (fieldConfig.initialCount == null) {
-          fieldConfig.initialCount = 1;
+      if (arrayConfig.formarray) {
+        if (arrayConfig.initialCount == null) {
+          arrayConfig.initialCount = 1;
         }
-        formControl = this.createFormArray(fieldConfig.formarray, fieldConfig.initialCount);
-      } else if (fieldConfig.listFields) {
+        formControl = this.createFormArray(arrayConfig.formarray, arrayConfig.initialCount);
+      } else if (listConfig.listFields) {
         formControl = this.formBuilder.array([]);
-        fieldConfig.listFields.forEach((listField) => {
+        listConfig.listFields.forEach((listField) => {
           (formControl as FormArray).push(this.createFormGroup(listField));
         });
-      } else if (fieldConfig.subFields) {
-        formControl = this.createFormGroup(fieldConfig.subFields);
+      } else if (dictConfig.subFields) {
+        formControl = this.createFormGroup(dictConfig.subFields);
       } else if (fieldConfig.type != 'label') {
         formControl = new FormControl(
           { value: fieldConfig.value, disabled: fieldConfig.disabled },
-          fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation, fieldConfig.asyncValidation,
+          fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation,
+          fieldConfig.asyncValidation,
         );
       }
     }
@@ -98,30 +116,34 @@ export class EntityFormService {
   }
 
   getFilesystemListdirChildren(
-    node: any,
+    node: TreeNode,
     explorerType?: string,
     hideDirs?: string,
     showHiddenFiles = false,
-  ): Promise<any[]> {
-    const children: any[] = [];
+  ): Promise<ListdirChild[]> {
+    const children: ListdirChild[] = [];
     let typeFilter: any;
-    explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', 'DIRECTORY']] : typeFilter = [];
+    if (explorerType && explorerType === 'directory') {
+      typeFilter = [['type', '=', FileType.Directory]];
+    } else {
+      typeFilter = [];
+    }
 
     return this.ws.call('filesystem.listdir', [node.data.name, typeFilter,
       { order_by: ['name'], limit: 1000 }]).toPromise().then((res) => {
       res = _.sortBy(res, (o) => o.name.toLowerCase());
 
       for (let i = 0; i < res.length; i++) {
-        const child: any = {};
+        const child = {} as ListdirChild;
         if (!showHiddenFiles) {
           if (res[i].hasOwnProperty('name') && !res[i].name.startsWith('.')) {
-            if (res[i].type === 'SYMLINK') {
+            if (res[i].type === FileType.Symlink) {
               continue;
             }
             if (res[i].name !== hideDirs) {
               child['name'] = res[i].path;
               child['acl'] = res[i].acl;
-              if (res[i].type === 'DIRECTORY') {
+              if (res[i].type === FileType.Directory) {
                 child['hasChildren'] = true;
               }
               child['subTitle'] = res[i].name;
@@ -129,12 +151,12 @@ export class EntityFormService {
             }
           }
         } else if (res[i].hasOwnProperty('name')) {
-          if (res[i].type === 'SYMLINK') {
+          if (res[i].type === FileType.Symlink) {
             continue;
           }
           if (res[i].name !== hideDirs) {
             child['name'] = res[i].path;
-            if (res[i].type === 'DIRECTORY') {
+            if (res[i].type === FileType.Directory) {
               child['hasChildren'] = true;
             }
             child['subTitle'] = res[i].name;
@@ -160,17 +182,17 @@ export class EntityFormService {
     }); */
   }
 
-  getPoolDatasets(param: any[] = []): Promise<any[]> {
-    const nodes: any[] = [];
+  getPoolDatasets(param: [DatasetType[]?] = []): Promise<ListdirChild[]> {
+    const nodes: ListdirChild[] = [];
     return this.ws.call('pool.filesystem_choices', param).toPromise().then((res) => {
       for (let i = 0; i < res.length; i++) {
         const pathArr = res[i].split('/');
         if (pathArr.length === 1) {
-          const node = {
+          const node: ListdirChild = {
             name: res[i],
             subTitle: pathArr[0],
             hasChildren: false,
-            children: [] as any,
+            children: [],
           };
           nodes.push(node);
         } else {
@@ -179,11 +201,11 @@ export class EntityFormService {
           while (_.find(parent.children, { subTitle: pathArr[j] })) {
             parent = _.find(parent.children, { subTitle: pathArr[j++] });
           }
-          const node = {
+          const node: ListdirChild = {
             name: res[i],
             subTitle: pathArr[j],
             hasChildren: false,
-            children: [] as any,
+            children: [],
           };
           parent.children.push(node);
           parent.hasChildren = true;
@@ -193,14 +215,14 @@ export class EntityFormService {
     });
   }
 
-  clearFormError(fieldConfig: any[]): void {
+  clearFormError(fieldConfig: FieldConfig[]): void {
     for (let f = 0; f < fieldConfig.length; f++) {
       fieldConfig[f]['errors'] = '';
       fieldConfig[f]['hasErrors'] = false;
     }
   }
 
-  phraseInputData(value: any, config: InputUnitConfig): any {
+  phraseInputData(value: any, config: InputUnitConfig): string | number {
     if (!value) {
       return value;
     }

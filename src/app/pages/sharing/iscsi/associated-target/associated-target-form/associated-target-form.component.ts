@@ -4,8 +4,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { IscsiService, WebSocketService } from 'app/services';
@@ -23,7 +25,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
   editCall: 'iscsi.targetextent.update' = 'iscsi.targetextent.update';
   route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
   isEntity = true;
-  customFilter: any[] = [[['id', '=']]];
+  customFilter: [[Partial<QueryFilter<IscsiTargetExtent>>]] = [[['id', '=']]];
 
   fieldSets: FieldSet[] = [
     {
@@ -67,9 +69,9 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
 
-  protected target_control: FieldConfig;
-  protected extent_control: FieldConfig;
-  pk: any;
+  protected target_control: FormSelectConfig;
+  protected extent_control: FormSelectConfig;
+  pk: string;
   protected entityForm: EntityFormComponent;
 
   constructor(protected router: Router, protected iscsiService: IscsiService, protected aroute: ActivatedRoute,
@@ -88,7 +90,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    this.target_control = _.find(this.fieldConfig, { name: 'target' });
+    this.target_control = _.find(this.fieldConfig, { name: 'target' }) as FormSelectConfig;
     this.target_control.options.push({ label: '----------', value: '' });
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       for (let i = 0; i < targets.length; i++) {
@@ -96,7 +98,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
       }
     });
 
-    this.extent_control = _.find(this.fieldConfig, { name: 'extent' });
+    this.extent_control = _.find(this.fieldConfig, { name: 'extent' }) as FormSelectConfig;
     this.extent_control.options.push({ label: '----------', value: '' });
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       for (let i = 0; i < extents.length; i++) {

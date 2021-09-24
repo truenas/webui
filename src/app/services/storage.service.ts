@@ -6,7 +6,9 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { Choices } from 'app/interfaces/choices.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { WebSocketService } from './ws.service';
 
@@ -55,11 +57,10 @@ export class StorageService {
     document.body.appendChild(dlink);
     dlink.download = filename;
     dlink.href = window.URL.createObjectURL(blob);
-    dlink.onclick = function () {
+    dlink.onclick = () => {
       // revokeObjectURL needs a delay to work properly
-      const that: any = this;
       setTimeout(() => {
-        window.URL.revokeObjectURL(that.href);
+        window.URL.revokeObjectURL((this as any).href);
       }, 1500);
     };
 
@@ -80,7 +81,7 @@ export class StorageService {
   }
 
   // Handles sorting for entity tables and some other ngx datatables
-  tableSorter(arr: any[], key: string, asc: SortDirection): any[] {
+  tableSorter<T>(arr: T[], key: keyof T, asc: SortDirection): T[] {
     const tempArr: any[] = [];
     let sorter: any;
     const myCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -191,7 +192,11 @@ export class StorageService {
     // Rejoins the sorted keys with the rest of the row data
     let v: number;
     // ascending or decending
-    asc === 'asc' ? (v = 1) : (v = -1);
+    if (asc === 'asc') {
+      (v = 1);
+    } else {
+      (v = -1);
+    }
     arr.sort((a, b) => {
       const A = a[key];
       const B = b[key];
@@ -235,9 +240,9 @@ export class StorageService {
     }
   }
 
-  poolUnlockServiceChoices(id: string): Observable<{ label: string; value: string }[]> {
+  poolUnlockServiceOptions(id: string): Observable<Option[]> {
     return this.ws.call('pool.unlock_services_restart_choices', [id]).pipe(
-      map((response: { [serviceId: string]: string }) =>
+      map((response: Choices) =>
         Object.keys(response || {}).map((serviceId) => ({
           label: response[serviceId],
           value: serviceId,
@@ -245,10 +250,10 @@ export class StorageService {
     );
   }
 
-  getDatasetNameOptions(): Observable<{ label: string; value: string }[]> {
+  getDatasetNameOptions(): Observable<Option[]> {
     return this.ws
       .call('pool.filesystem_choices')
-      .pipe(map((response) => response.map((value: any) => ({ label: value, value }))));
+      .pipe(map((response) => response.map((value) => ({ label: value, value }))));
   }
 
   /**
@@ -384,22 +389,28 @@ export class StorageService {
   }
 
   // Converts a number from bytes to the most natural human readable format
-  convertBytestoHumanReadable(bytes: number, decimalPlaces?: number, min_units?: string, hideBytes?: boolean): string {
+  convertBytestoHumanReadable(
+    rawBytes: number | string,
+    decimalPlaces?: number,
+    minUnits?: string,
+    hideBytes?: boolean,
+  ): string {
     let i = -1;
-    let dec;
     let units;
-    decimalPlaces !== undefined ? dec = decimalPlaces : dec = 2;
+    let bytes = Number(rawBytes);
+
+    const dec = decimalPlaces !== undefined ? decimalPlaces : 2;
     if (bytes >= 1024) {
       do {
         bytes = bytes / 1024;
         i++;
       } while (bytes >= 1024 && i < 4);
       units = this.IECUnits[i];
-    } else if (min_units) {
-      units = min_units;
+    } else if (minUnits) {
+      units = minUnits;
     } else {
       units = hideBytes ? '' : 'bytes';
     }
-    return `${Math.max(bytes, 0.1).toFixed(dec)} ${units}`;
+    return `${bytes.toFixed(dec)} ${units}`;
   }
 }

@@ -178,11 +178,9 @@ export class DiskFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  protected disk_hddstandby: any;
-  protected disk_advpowermgmt: any;
   title: string;
 
-  rowid: any;
+  rowid: string;
 
   constructor(
     private _router: Router,
@@ -191,8 +189,8 @@ export class DiskFormComponent implements FormConfiguration {
   ) {
   }
 
-  resourceTransformIncomingRestData(data: Disk): any {
-    const transformed: any = { ...data };
+  resourceTransformIncomingRestData(data: Disk): Disk {
+    const transformed = { ...data };
     delete transformed.passwd;
     return transformed;
   }
@@ -210,7 +208,7 @@ export class DiskFormComponent implements FormConfiguration {
   }
 
   afterInit(entityEdit: EntityFormComponent): void {
-    entityEdit.formGroup.controls['hddstandby'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    entityEdit.formGroup.controls['hddstandby'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: DiskStandby) => {
       if (value === DiskStandby.AlwaysOn) {
         entityEdit.formGroup.controls['hddstandby_force'].setValue(false);
       }

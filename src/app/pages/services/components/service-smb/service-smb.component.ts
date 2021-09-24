@@ -10,8 +10,9 @@ import helptext from 'app/helptext/services/components/service-smb';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
   IdmapService, ServicesService, UserService, WebSocketService,
@@ -28,17 +29,15 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 export class ServiceSMBComponent implements FormConfiguration {
   queryCall: 'smb.config' = 'smb.config';
   route_success: string[] = ['services'];
-  formGroup: any;
   error: string;
-  query_call = 'directoryservice.idmap_';
   protected idmap_type = 'tdb';
   protected targetDS = '5';
   isBasicMode = true;
 
-  private cifs_srv_bindip: FieldConfig;
-  private cifs_srv_guest: FieldConfig;
-  private cifs_srv_unixcharset: FieldConfig;
-  private cifs_srv_admin_group: FieldConfig;
+  private cifs_srv_bindip: FormSelectConfig;
+  private cifs_srv_guest: FormSelectConfig;
+  private cifs_srv_unixcharset: FormSelectConfig;
+  private cifs_srv_admin_group: FormComboboxConfig;
   entityEdit: EntityFormComponent;
   private validBindIps: Choices;
   title = helptext.formTitle;
@@ -282,7 +281,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     const otherSet = _.find(this.fieldSets, { name: helptext.cifs_srv_fieldset_other });
     const otherColTwoSet = _.find(this.fieldSets, { name: 'otherColTwo' });
 
-    this.cifs_srv_unixcharset = otherSet.config.find((config) => config.name === 'unixcharset');
+    this.cifs_srv_unixcharset = otherSet.config.find((config) => config.name === 'unixcharset') as FormSelectConfig;
     this.ws.call('smb.unixcharset_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       const values = Object.values(res);
       for (let i = 0; i < values.length; i++) {
@@ -292,7 +291,7 @@ export class ServiceSMBComponent implements FormConfiguration {
 
     this.servicesService.getSmbBindIPChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.validBindIps = res;
-      this.cifs_srv_bindip = otherColTwoSet.config.find((config) => config.name === 'bindip');
+      this.cifs_srv_bindip = otherColTwoSet.config.find((config) => config.name === 'bindip') as FormSelectConfig;
       for (const key in res) {
         if (res.hasOwnProperty(key)) {
           this.cifs_srv_bindip.options.push({ label: res[key], value: res[key] });
@@ -301,7 +300,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     });
 
     this.ws.call('user.query').pipe(untilDestroyed(this)).subscribe((users) => {
-      this.cifs_srv_guest = otherColTwoSet.config.find((config) => config.name === 'guest');
+      this.cifs_srv_guest = otherColTwoSet.config.find((config) => config.name === 'guest') as FormSelectConfig;
       users.forEach((user) => {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });
@@ -312,7 +311,7 @@ export class ServiceSMBComponent implements FormConfiguration {
       groups.forEach((item) => {
         groupOptions.push({ label: item.group, value: item.group });
       });
-      this.cifs_srv_admin_group = otherSet.config.find((config) => config.name === 'admin_group');
+      this.cifs_srv_admin_group = otherSet.config.find((config) => config.name === 'admin_group') as FormComboboxConfig;
       groupOptions.forEach((group) => {
         this.cifs_srv_admin_group.options.push({ label: group.label, value: group.value });
       });
@@ -332,7 +331,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     protected dialog: MatDialog,
   ) {}
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: SmbConfig): SmbConfig {
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
       return this.compareBindIps(data);
@@ -340,13 +339,13 @@ export class ServiceSMBComponent implements FormConfiguration {
     return data;
   }
 
-  compareBindIps(data: any): any {
+  compareBindIps(data: SmbConfig): SmbConfig {
     // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
     data.bindip = data.bindip ? data.bindip : [];
     if (this.validBindIps && Object.keys(this.validBindIps).length !== 0) {
-      data.bindip.forEach((ip: any) => {
+      data.bindip.forEach((ip) => {
         if (!Object.values(this.validBindIps).includes(ip)) {
-          data.bindip.splice(data.bindip[ip], 1);
+          data.bindip.splice((data.bindip as any)[ip], 1);
         }
       });
     } else {
@@ -359,8 +358,8 @@ export class ServiceSMBComponent implements FormConfiguration {
     entityEdit.submitFunction = (body) => this.ws.call('smb.update', [body]);
   }
 
-  updateGroupSearchOptions(value = '', parent: any): void {
-    (parent.userService as UserService).groupQueryDSCache(value, true).pipe(untilDestroyed(this)).subscribe((items) => {
+  updateGroupSearchOptions(value = '', parent: this): void {
+    parent.userService.groupQueryDSCache(value, true).pipe(untilDestroyed(this)).subscribe((items) => {
       const groupOptions: Option[] = [];
       for (let i = 0; i < items.length; i++) {
         groupOptions.push({ label: items[i].group, value: items[i].group });

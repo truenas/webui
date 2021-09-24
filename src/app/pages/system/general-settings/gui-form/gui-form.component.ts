@@ -5,14 +5,15 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { AdminLayoutComponent } from 'app/components/common/layouts/admin-layout/admin-layout.component';
+import { filter, map, take } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
+import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -57,7 +58,7 @@ export class GuiFormComponent implements FormConfiguration {
           tooltip: helptext.stg_guiaddress.tooltip,
           required: true,
           options: [],
-          validation: [this.IPValidator('ui_address', '0.0.0.0')],
+          validation: [this.ipValidator('ui_address', '0.0.0.0')],
         },
         {
           type: 'select',
@@ -67,7 +68,7 @@ export class GuiFormComponent implements FormConfiguration {
           tooltip: helptext.stg_guiv6address.tooltip,
           required: true,
           options: [],
-          validation: [this.IPValidator('ui_v6address', '::')],
+          validation: [this.ipValidator('ui_v6address', '::')],
         },
         {
           type: 'input',
@@ -127,7 +128,7 @@ export class GuiFormComponent implements FormConfiguration {
     },
   ];
 
-  private ui_certificate: FieldConfig;
+  private ui_certificate: FormSelectConfig;
   private addresses: string[];
   private v6addresses: string[];
   private http_port: number;
@@ -148,17 +149,22 @@ export class GuiFormComponent implements FormConfiguration {
     protected storage: StorageService,
     private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
-    private adminLayout: AdminLayoutComponent,
-  ) {
-    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.configData = res;
-    });
+  ) {}
+
+  prerequisite(): Promise<boolean> {
+    return this.sysGeneralService.getGeneralConfig$.pipe(
+      map((configData) => {
+        this.configData = configData;
+        return true;
+      }),
+      take(1),
+      untilDestroyed(this),
+    ).toPromise();
   }
 
-  IPValidator(name: 'ui_address' | 'ui_v6address', wildcard: string): ValidatorFn {
-    const self = this;
-    return function validIPs(control: FormControl) {
-      const config = self.fieldSets
+  ipValidator(name: 'ui_address' | 'ui_v6address', wildcard: string): ValidatorFn {
+    return (control: FormControl) => {
+      const config = this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_gui)
         .config.find((c) => c.name === name);
 
@@ -183,7 +189,6 @@ export class GuiFormComponent implements FormConfiguration {
     this.https_port = this.configData.ui_httpsport;
     this.redirect = this.configData.ui_httpsredirect;
     if (this.configData.ui_certificate && this.configData.ui_certificate.id) {
-      (this.configData['ui_certificate'] as any) = this.configData.ui_certificate.id.toString();
       this.guicertificate = this.configData.ui_certificate.id.toString();
     }
     this.addresses = this.configData['ui_address'];
@@ -207,7 +212,7 @@ export class GuiFormComponent implements FormConfiguration {
 
     this.ui_certificate = this.fieldSets
       .find((set) => set.name === helptext.stg_fieldset_gui)
-      .config.find((config) => config.name === 'ui_certificate');
+      .config.find((config) => config.name === 'ui_certificate') as FormSelectConfig;
 
     this.ws.call('system.general.ui_certificate_choices')
       .pipe(untilDestroyed(this))
@@ -216,12 +221,12 @@ export class GuiFormComponent implements FormConfiguration {
         for (const id in res) {
           this.ui_certificate.options.push({ label: res[id], value: id });
         }
-        entityEdit.formGroup.controls['ui_certificate'].setValue(this.configData.ui_certificate);
+        entityEdit.formGroup.controls['ui_certificate'].setValue(this.configData.ui_certificate.id.toString());
       });
 
     const httpsprotocolsField = this.fieldSets
       .find((set) => set.name === helptext.stg_fieldset_gui)
-      .config.find((config) => config.name === 'ui_httpsprotocols');
+      .config.find((config) => config.name === 'ui_httpsprotocols') as FormSelectConfig;
 
     this.ws.call('system.general.ui_httpsprotocols_choices').pipe(untilDestroyed(this)).subscribe(
       (res) => {
@@ -236,18 +241,20 @@ export class GuiFormComponent implements FormConfiguration {
     this.sysGeneralService
       .ipChoicesv4()
       .pipe(untilDestroyed(this)).subscribe((ips) => {
-        this.fieldSets
+        const config = this.fieldSets
           .find((set) => set.name === helptext.stg_fieldset_gui)
-          .config.find((config) => config.name === 'ui_address').options = ips;
+          .config.find((config) => config.name === 'ui_address') as FormSelectConfig;
+        config.options = ips;
         entityEdit.formGroup.controls['ui_address'].setValue(this.configData.ui_address);
       });
 
     this.sysGeneralService
       .ipChoicesv6()
       .pipe(untilDestroyed(this)).subscribe((v6Ips) => {
-        this.fieldSets
+        const config = this.fieldSets
           .find((set) => set.name === helptext.stg_fieldset_gui)
-          .config.find((config) => config.name === 'ui_v6address').options = v6Ips;
+          .config.find((config) => config.name === 'ui_v6address') as FormSelectConfig;
+        config.options = v6Ips;
         entityEdit.formGroup.controls['ui_v6address'].setValue(this.configData.ui_v6address);
       });
 
@@ -279,42 +286,44 @@ export class GuiFormComponent implements FormConfiguration {
            && this.addresses.every((val, index) => val === new_addresses[index]))
         || !(this.v6addresses.length === new_v6addresses.length
            && this.v6addresses.every((val, index) => val === new_v6addresses[index]))) {
-      this.dialog.confirm(helptext.dialog_confirm_title, helptext.dialog_confirm_title)
-        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            let href = window.location.href;
-            const hostname = window.location.hostname;
-            let port = window.location.port;
-            const protocol = window.location.protocol;
+      this.dialog.confirm({
+        title: helptext.dialog_confirm_title,
+        message: helptext.dialog_confirm_title,
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        let href = window.location.href;
+        const hostname = window.location.hostname;
+        let port = window.location.port;
+        const protocol = window.location.protocol;
 
-            if (new_http_port !== this.http_port && protocol == 'http:') {
-              port = new_http_port;
-            } else if (new_https_port !== this.https_port && protocol == 'https:') {
-              port = new_https_port;
-            }
+        if (new_http_port !== this.http_port && protocol == 'http:') {
+          port = new_http_port;
+        } else if (new_https_port !== this.https_port && protocol == 'https:') {
+          port = new_https_port;
+        }
 
-            href = protocol + '//' + hostname + ':' + port + window.location.pathname;
+        href = protocol + '//' + hostname + ':' + port + window.location.pathname;
 
-            this.loader.open();
-            this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
-            this.ws.call('service.restart', [ServiceName.Http]).pipe(untilDestroyed(this)).subscribe(() => {
-            }, (res: any) => {
-              this.loader.close();
-              this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);
-            });
+        this.loader.open();
+        this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
+        this.ws.call('service.restart', [ServiceName.Http]).pipe(untilDestroyed(this)).subscribe(
+          () => {},
+          (res: WebsocketError) => {
+            this.loader.close();
+            this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);
+          },
+        );
 
-            this.ws.reconnect(protocol, hostname + ':' + port);
-            setTimeout(() => {
-              this.reconnect(href);
-            }, 1000);
-          }
-        });
+        this.ws.reconnect(protocol, hostname + ':' + port);
+        setTimeout(() => {
+          this.reconnect(href);
+        }, 1000);
+      });
     }
     this.language.setLanguage(value.language);
     this.modalService.refreshTable();
   }
 
-  customSubmit(body: any): Subscription {
+  customSubmit(body: SystemGeneralConfigUpdate): Subscription {
     this.loader.open();
     return this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
@@ -322,7 +331,6 @@ export class GuiFormComponent implements FormConfiguration {
       this.sysGeneralService.refreshSysGeneral();
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
-      this.adminLayout.onShowConsoleFooterBar(body['ui_consolemsg']);
       this.afterSubmit(body);
     }, (res) => {
       this.loader.close();

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import cronstrue from 'cronstrue';
 import * as _ from 'lodash';
-import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableAction, EntityTableColumn } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityTableComponent } from '../entity-table.component';
 
 @Component({
@@ -13,9 +13,9 @@ import { EntityTableComponent } from '../entity-table.component';
 })
 export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
   @Input() config: any;
-  @Input() parent: EntityTableComponent & { conf: any };
+  @Input() parent: EntityTableComponent;
 
-  columns: any[] = [];
+  columns: EntityTableColumn[] = [];
   actions: EntityTableAction[] = [];
 
   ngOnInit(): void {
@@ -38,7 +38,7 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
 
   buildColumns(): void {
     this.columns = this.parent.allColumns.filter((col) => {
-      return !this.parent.conf.columns.some((c: any) => c.prop === col.prop);
+      return !this.parent.conf.columns.some((column) => column.prop === col.prop);
     });
   }
 

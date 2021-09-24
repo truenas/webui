@@ -1,0 +1,415 @@
+import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { ComponentStore } from '@ngrx/component-store';
+import { TranslateService } from '@ngx-translate/core';
+import { omit } from 'lodash';
+import * as _ from 'lodash';
+import {
+  EMPTY, forkJoin, Observable, of,
+} from 'rxjs';
+import {
+  catchError, filter, map, switchMap, takeUntil, tap, withLatestFrom,
+} from 'rxjs/operators';
+import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
+import { NfsAclTag } from 'app/enums/nfs-acl.enum';
+import { PosixAclTag } from 'app/enums/posix-acl.enum';
+import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
+import {
+  Acl, NfsAclItem, PosixAclItem, SetAcl,
+} from 'app/interfaces/acl.interface';
+import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import {
+  AclSaveFormParams,
+  DatasetAclEditorState,
+} from 'app/pages/storage/volumes/permissions/interfaces/dataset-acl-editor-state.interface';
+import { newNfsAce, newPosixAce } from 'app/pages/storage/volumes/permissions/utils/new-ace.utils';
+import {
+  DialogService, StorageService, UserService, WebSocketService,
+} from 'app/services';
+
+const initialState: DatasetAclEditorState = {
+  isLoading: false,
+  isSaving: false,
+  mountpoint: null,
+  acl: null,
+  stat: null,
+  selectedAceIndex: 0,
+  acesWithError: [],
+};
+
+@Injectable()
+export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState> {
+  constructor(
+    private ws: WebSocketService,
+    private dialog: DialogService,
+    private matDialog: MatDialog,
+    private translate: TranslateService,
+    private router: Router,
+    private storageService: StorageService,
+    private userService: UserService,
+  ) {
+    super(initialState);
+  }
+
+  readonly loadAcl = this.effect((mountpoints$: Observable<string>) => {
+    return mountpoints$.pipe(
+      tap((mountpoint) => {
+        this.setState({
+          ...initialState,
+          mountpoint,
+          isLoading: true,
+        });
+      }),
+      switchMap((mountpoint) => {
+        return forkJoin([
+          this.ws.call('filesystem.getacl', [mountpoint, true, true]),
+          this.ws.call('filesystem.stat', [mountpoint]),
+        ]).pipe(
+          tap(([acl, stat]) => {
+            this.patchState({
+              acl,
+              stat,
+              isLoading: false,
+            });
+          }),
+          catchError((error) => {
+            new EntityUtils().errorReport(error, this.dialog);
+
+            this.patchState({
+              isLoading: false,
+            });
+
+            return EMPTY;
+          }),
+        );
+      }),
+    );
+  });
+
+  readonly removeAce = this.updater((state: DatasetAclEditorState, indexToRemove: number) => {
+    let selectedAceIndex = state.selectedAceIndex;
+
+    if (selectedAceIndex >= indexToRemove) {
+      selectedAceIndex = Math.max(0, selectedAceIndex - 1);
+    }
+
+    const newAcesWithError = _.without(state.acesWithError, indexToRemove).map((aceWithErrorIndex) => {
+      if (aceWithErrorIndex <= indexToRemove) {
+        return aceWithErrorIndex;
+      }
+
+      return aceWithErrorIndex - 1;
+    });
+
+    return {
+      ...state,
+      selectedAceIndex,
+      acl: {
+        ...state.acl,
+        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).filter((_, index) => index !== indexToRemove),
+      },
+      acesWithError: newAcesWithError,
+    } as DatasetAclEditorState;
+  });
+
+  readonly addAce = this.updater((state) => {
+    const newAce = state.acl.acltype === AclType.Nfs4
+      ? { ...newNfsAce } as NfsAclItem
+      : { ...newPosixAce } as PosixAclItem;
+
+    return {
+      ...state,
+      acl: {
+        ...state.acl,
+        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).concat(newAce),
+      },
+      selectedAceIndex: state.acl.acl.length,
+    } as DatasetAclEditorState;
+  });
+
+  readonly selectAce = this.updater((state: DatasetAclEditorState, index: number) => {
+    return {
+      ...state,
+      selectedAceIndex: index,
+    };
+  });
+
+  readonly updateSelectedAce = this.updater((
+    state: DatasetAclEditorState, updatedAce: NfsAclItem | PosixAclItem,
+  ) => {
+    const updatedAces = (state.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace, index) => {
+      if (index !== state.selectedAceIndex) {
+        return ace;
+      }
+
+      return {
+        ...ace,
+        ...updatedAce,
+      };
+    });
+
+    return {
+      ...state,
+      acl: {
+        ...state.acl,
+        acl: updatedAces,
+      } as Acl,
+    };
+  });
+
+  readonly updateSelectedAceValidation = this.updater((state: DatasetAclEditorState, isValid: boolean) => {
+    return {
+      ...state,
+      acesWithError: isValid
+        ? _.without(state.acesWithError, state.selectedAceIndex)
+        : _.union(state.acesWithError, [state.selectedAceIndex]),
+    };
+  });
+
+  readonly stripAcl = this.effect((trigger$: Observable<void>) => {
+    return trigger$.pipe(
+      tap(() => {
+        const conf: DialogFormConfiguration = {
+          title: helptext.stripACL_dialog.title,
+          message: helptext.stripACL_dialog.message,
+          fieldConfig: [
+            {
+              type: 'checkbox',
+              name: 'traverse',
+              placeholder: helptext.stripACL_dialog.traverse_checkbox,
+            },
+          ],
+          saveButtonText: helptext.dataset_acl_stripacl_placeholder,
+          customSubmit: (entityDialog: EntityDialogComponent) => {
+            entityDialog.dialogRef.close();
+
+            const dialogRef = this.matDialog.open(EntityJobComponent, {
+              data: {
+                title: this.translate.instant('Stripping ACLs'),
+              },
+            });
+            dialogRef.componentInstance.setDescription(this.translate.instant('Stripping ACLs...'));
+
+            dialogRef.componentInstance.setCall('filesystem.setacl', [{
+              path: this.get().mountpoint,
+              dacl: [],
+              options: {
+                recursive: true,
+                traverse: Boolean(entityDialog.formValue.traverse),
+                stripacl: true,
+              },
+            }]);
+            dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
+              dialogRef.close();
+              this.router.navigate(['/storage']);
+            });
+            dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((err) => {
+              dialogRef.close();
+              new EntityUtils().errorReport(err, this.dialog);
+            });
+            dialogRef.componentInstance.submit();
+          },
+        };
+        this.dialog.dialogFormWide(conf);
+      }),
+    );
+  });
+
+  readonly saveAcl = this.effect((saveParams$: Observable<AclSaveFormParams>) => {
+    return saveParams$.pipe(
+      // Warn user about risks when changing top level dataset
+      switchMap(() => {
+        if (this.storageService.isDatasetTopLevel(this.get().mountpoint.replace('mnt/', ''))) {
+          return this.dialog.confirm({
+            title: helptext.dataset_acl_dialog_warning,
+            message: helptext.dataset_acl_toplevel_dialog_message,
+          });
+        }
+
+        return of(true);
+      }),
+      filter(Boolean),
+
+      // Prepare request
+      withLatestFrom(saveParams$),
+      switchMap(([_, saveParams]) => this.prepareSetAcl(this.get(), saveParams)),
+
+      // Save
+      tap((setAcl: SetAcl) => {
+        const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: helptext.save_dialog.title } });
+        dialogRef.componentInstance.setDescription(helptext.save_dialog.message);
+
+        dialogRef.componentInstance.setCall('filesystem.setacl', [setAcl]);
+        dialogRef.componentInstance.success.pipe(takeUntil(this.destroy$)).subscribe(() => {
+          dialogRef.close();
+          this.router.navigate(['/storage']);
+        });
+        dialogRef.componentInstance.failure.pipe(takeUntil(this.destroy$)).subscribe((err) => {
+          dialogRef.close();
+          new EntityUtils().errorReport(err, this.dialog);
+        });
+        dialogRef.componentInstance.submit();
+      }),
+    );
+  });
+
+  usePreset = this.effect((preset$: Observable<DefaultAclType>) => {
+    return preset$.pipe(
+      tap(() => {
+        this.patchState({
+          isLoading: true,
+        });
+      }),
+      switchMap((preset) => {
+        return this.ws.call('filesystem.get_default_acl', [preset]).pipe(
+          map((aclItems) => {
+            const state = this.get();
+            // TODO: Working around backend https://jira.ixsystems.com/browse/NAS-111464
+            const newAclItems = (aclItems as (NfsAclItem | PosixAclItem)[]).map((ace) => {
+              let who = '';
+              if ([NfsAclTag.Owner, PosixAclTag.UserObject].includes(ace.tag)) {
+                who = state.stat.user;
+              } else if ([NfsAclTag.Group, PosixAclTag.GroupObject].includes(ace.tag)) {
+                who = state.stat.group;
+              }
+
+              return {
+                ...ace,
+                who,
+              };
+            });
+
+            this.patchState({
+              ...state,
+              acl: {
+                ...state.acl,
+                acl: newAclItems,
+              } as Acl,
+              isLoading: false,
+              acesWithError: [],
+              selectedAceIndex: 0,
+            });
+          }),
+          catchError((error) => {
+            new EntityUtils().errorReport(error, this.dialog);
+
+            this.patchState({
+              isLoading: false,
+            });
+
+            return EMPTY;
+          }),
+        );
+      }),
+    );
+  });
+
+  /**
+   * Validates and converts user and group names to ids
+   * and prepares an SetACl object.
+   * TODO: Validation does not belong here and should be handled by form control.
+   * TODO: Converting should not be necessary, id should be coming from form control.
+   */
+  private prepareSetAcl(editorState: DatasetAclEditorState, options: AclSaveFormParams): Observable<SetAcl> {
+    const markAceAsHavingErrors = (aceIndex: number): void => {
+      this.patchState((state) => ({
+        ...state,
+        acesWithError: _.union(state.acesWithError, [aceIndex]),
+      }));
+    };
+
+    // Load ids for all user and group who's
+    const userWhoToIds = new Map<string, number>();
+    const groupWhoToIds = new Map<string, number>();
+    const requests: Observable<unknown>[] = [];
+
+    (editorState.acl.acl as (NfsAclItem | PosixAclItem)[]).forEach((ace, index) => {
+      if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
+        requests.push(
+          this.userService.getUserByName(ace.who).pipe(
+            tap((user) => userWhoToIds.set(ace.who, user.pw_uid)),
+            catchError((error) => {
+              new EntityUtils().errorReport(error, this.dialog);
+              markAceAsHavingErrors(index);
+              return EMPTY;
+            }),
+          ),
+        );
+
+        return;
+      }
+
+      if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag)) {
+        requests.push(
+          this.userService.getGroupByName(ace.who).pipe(
+            tap((group) => groupWhoToIds.set(ace.who, group.gr_gid)),
+            catchError((error) => {
+              new EntityUtils().errorReport(error, this.dialog);
+              markAceAsHavingErrors(index);
+              return EMPTY;
+            }),
+          ),
+        );
+      }
+    });
+
+    requests.push(
+      this.userService.getUserByName(options.owner).pipe(
+        tap((user) => userWhoToIds.set(options.owner, user.pw_uid)),
+        catchError((error) => {
+          new EntityUtils().errorReport(error, this.dialog);
+          return EMPTY;
+        }),
+      ),
+    );
+
+    requests.push(
+      this.userService.getGroupByName(options.ownerGroup).pipe(
+        tap((group) => groupWhoToIds.set(options.ownerGroup, group.gr_gid)),
+        catchError((error) => {
+          new EntityUtils().errorReport(error, this.dialog);
+          return EMPTY;
+        }),
+      ),
+    );
+
+    return forkJoin(requests).pipe(
+      withLatestFrom(this.state$),
+      filter(([_, currentState]) => currentState.acesWithError.length === 0),
+      map(([_, currentState]) => {
+        const convertedAces = (currentState.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace) => {
+          const aceAttributes = omit(ace, ['who']);
+          if ([NfsAclTag.User, PosixAclTag.User].includes(ace.tag)) {
+            const id = userWhoToIds.has(ace.who) ? userWhoToIds.get(ace.who) : -1;
+            return { ...aceAttributes, id };
+          }
+          if ([NfsAclTag.UserGroup, PosixAclTag.Group].includes(ace.tag)) {
+            const id = groupWhoToIds.has(ace.who) ? groupWhoToIds.get(ace.who) : -1;
+            return { ...aceAttributes, id };
+          }
+
+          return {
+            ...aceAttributes,
+            id: -1, // -1 is effectively null for middleware
+          };
+        });
+
+        return {
+          options: {
+            recursive: options.recursive,
+            traverse: options.traverse,
+          },
+          uid: userWhoToIds.has(options.owner) ? userWhoToIds.get(options.owner) : null,
+          gid: groupWhoToIds.has(options.ownerGroup) ? groupWhoToIds.get(options.ownerGroup) : null,
+          acltype: editorState.acl.acltype,
+          path: editorState.mountpoint,
+          dacl: convertedAces as NfsAclItem[] | PosixAclItem[],
+        } as SetAcl;
+      }),
+    );
+  }
+}

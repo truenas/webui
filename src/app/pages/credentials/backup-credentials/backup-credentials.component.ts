@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
+import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import { AppTableAction } from 'app/pages/common/entity/table/table.component';
+import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
+import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import {
   WebSocketService, KeychainCredentialService, AppLoaderService,
   DialogService, ReplicationService, StorageService, CloudCredentialService,
@@ -21,7 +23,7 @@ import { SshKeypairsFormComponent } from './forms/ssh-keypairs-form.component';
   providers: [KeychainCredentialService, ReplicationService, CloudCredentialService],
 })
 export class BackupCredentialsComponent implements OnInit {
-  cards: any;
+  cards: { name: string; tableConf: AppTableConfig }[];
 
   // Components included in this dashboard
   protected sshConnections: SshConnectionsFormComponent;
@@ -56,7 +58,6 @@ export class BackupCredentialsComponent implements OnInit {
     this.cards = [
       {
         name: 'cloudCredentials',
-        flex: 40,
         tableConf: {
           title: 'Cloud Credentials',
           queryCall: 'cloudsync.credentials.query',
@@ -71,14 +72,13 @@ export class BackupCredentialsComponent implements OnInit {
           add() {
             this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials);
           },
-          edit(row: any) {
+          edit(row: CloudsyncCredential) {
             this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials, row.id);
           },
           dataSourceHelper: this.cloudCredentialsDataSourceHelper.bind(this),
         },
       }, {
         name: 'sshConnections',
-        flex: 30,
         tableConf: {
           title: 'SSH Connections',
           queryCall: 'keychaincredential.query',
@@ -93,13 +93,12 @@ export class BackupCredentialsComponent implements OnInit {
           add() {
             this.parent.modalService.open('slide-in-form', this.parent.sshConnections);
           },
-          edit(row: any) {
+          edit(row: KeychainCredential) {
             this.parent.modalService.open('slide-in-form', this.parent.sshConnections, row.id);
           },
         },
       }, {
         name: 'sshKeypairs',
-        flex: 30,
         tableConf: {
           title: 'SSH Keypairs',
           queryCall: 'keychaincredential.query',
@@ -115,7 +114,7 @@ export class BackupCredentialsComponent implements OnInit {
           add() {
             this.parent.modalService.open('slide-in-form', this.parent.sshKeypairs);
           },
-          edit(row: any) {
+          edit(row: KeychainCredential) {
             this.parent.modalService.open('slide-in-form', this.parent.sshKeypairs, row.id);
           },
         },
@@ -123,7 +122,7 @@ export class BackupCredentialsComponent implements OnInit {
     ];
   }
 
-  cloudCredentialsDataSourceHelper(res: any[]): any[] {
+  cloudCredentialsDataSourceHelper(res: CloudsyncCredential[]): CloudsyncCredential[] {
     return res.map((item) => {
       if (this.providers) {
         const credentialProvider = this.providers.find((provider) => provider.name == item.provider);
@@ -135,24 +134,24 @@ export class BackupCredentialsComponent implements OnInit {
     });
   }
 
-  sshConnectionsDataSourceHelper(res: any[]): any[] {
+  sshConnectionsDataSourceHelper(res: KeychainCredential[]): KeychainCredential[] {
     return res.filter((item) => item.type === KeychainCredentialType.SshCredentials);
   }
 
-  sshKeyPairsDataSourceHelper(res: any[]): any[] {
+  sshKeyPairsDataSourceHelper(res: KeychainCredential[]): KeychainCredential[] {
     return res.filter((item) => item.type === KeychainCredentialType.SshKeyPair);
   }
 
-  sshKeyPairActions(): AppTableAction[] {
+  sshKeyPairActions(): AppTableAction<KeychainCredential>[] {
     return [{
       icon: 'save_alt',
       name: 'download',
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: KeychainCredential) => {
         const name = rowinner.name;
         for (const keyType in rowinner.attributes) {
-          const key = rowinner.attributes[keyType];
+          const key = rowinner.attributes[keyType as keyof KeychainCredential['attributes']];
           const filename = name + '_' + keyType + '_rsa';
-          const blob = new Blob([key], { type: 'text/plain' });
+          const blob = new Blob([key as any], { type: 'text/plain' });
           this.storage.downloadBlob(blob, filename);
         }
         event.stopPropagation();

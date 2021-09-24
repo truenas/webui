@@ -43,7 +43,7 @@ export class ContextMenuComponent extends MatMenuTrigger {
   @HostBinding('style.left') private _x: string;
   @HostBinding('style.top') private _y: string;
 
-  open({ x, y }: MouseEvent, data?: any): boolean {
+  open({ x, y }: MouseEvent, data?: unknown): boolean {
     /* Pass along the context data to support lazily-rendered content */
     if (data) {
       this.menuData = data;

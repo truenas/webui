@@ -1,5 +1,5 @@
 import { MissingTranslationHandler, MissingTranslationHandlerParams } from '@ngx-translate/core';
-import * as MessageFormat from 'messageformat';
+import MessageFormat from 'messageformat';
 
 /**
  * Messages in ICU format only get compiled when they are loaded from json file.

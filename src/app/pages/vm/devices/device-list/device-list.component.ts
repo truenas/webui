@@ -3,6 +3,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import {
@@ -27,12 +30,12 @@ export class DeviceListComponent implements EntityTableConfig {
   route_add: string[];
   route_edit: string[];
   protected route_delete: string[];
-  protected pk: any;
+  protected pk: string;
   vm: string;
   private entityList: EntityTableComponent;
   wsDelete: 'datastore.delete' = 'datastore.delete';
   queryCall: 'vm.device.query' = 'vm.device.query';
-  queryCallOption: any[] = [[['vm', '=']]];
+  queryCallOption: [[Partial<QueryFilter<VmDevice>>]] = [[['vm', '=']]];
   protected loaderOpen = false;
   columns = [
     { name: T('Device ID'), prop: 'id', always_display: true },
@@ -48,7 +51,7 @@ export class DeviceListComponent implements EntityTableConfig {
 
   globalConfig = {
     id: 'config',
-    tooltip: T('Close (return to VM list'),
+    tooltip: T('Close (return to VM list)'),
     icon: 'highlight_off',
     onClick: () => {
       this.router.navigate(new Array('').concat(['vm']));
@@ -65,21 +68,20 @@ export class DeviceListComponent implements EntityTableConfig {
     private translate: TranslateService,
   ) {}
 
-  isActionVisible(actionId: string, row: any): boolean {
-    return !(actionId === 'delete' && row.id === true);
+  isActionVisible(actionId: string, row: VmDevice): boolean {
+    return !(actionId === 'delete' && (row as any).id === true);
   }
 
-  getActions(row: any): EntityTableAction[] {
-    const self = this;
+  getActions(row: VmDevice): EntityTableAction<VmDevice>[] {
     const actions = [];
     actions.push({
       id: row.id,
       name: 'edit',
       icon: 'edit',
       label: T('Edit'),
-      onClick: (edit_row: any) => {
+      onClick: (edit_row: VmDevice) => {
         this.router.navigate(new Array('').concat(
-          ['vm', this.pk, 'devices', this.vm, 'edit', edit_row.id, edit_row.dtype],
+          ['vm', this.pk, 'devices', this.vm, 'edit', String(edit_row.id), edit_row.dtype],
         ));
       },
     });
@@ -88,7 +90,7 @@ export class DeviceListComponent implements EntityTableConfig {
       name: 'delete',
       icon: 'delete',
       label: T('Delete'),
-      onClick: (delete_row: any) => {
+      onClick: (delete_row: VmDevice) => {
         this.deviceDelete(delete_row);
       },
     });
@@ -97,8 +99,8 @@ export class DeviceListComponent implements EntityTableConfig {
       name: 'reorder',
       icon: 'reorder',
       label: T('Change Device Order'),
-      onClick: (row1: any) => {
-        self.translate.get('Change order for ').pipe(untilDestroyed(this)).subscribe((orderMsg) => {
+      onClick: (row1: VmDevice) => {
+        this.translate.get('Change order for ').pipe(untilDestroyed(this)).subscribe((orderMsg) => {
           const conf: DialogFormConfiguration = {
             title: T('Change Device Order'),
             message: orderMsg + `<b>${row1.dtype} ${row1.id}</b>`,
@@ -112,23 +114,23 @@ export class DeviceListComponent implements EntityTableConfig {
             preInit(entityDialog: EntityDialogComponent) {
               _.find(entityDialog.fieldConfig, { name: 'order' })['value'] = row1.order;
             },
-            customSubmit(entityDialog: EntityDialogComponent) {
+            customSubmit: (entityDialog: EntityDialogComponent) => {
               const value = entityDialog.formValue;
-              self.loader.open();
-              self.ws.call('vm.device.update', [row1.id, { order: value.order }]).pipe(untilDestroyed(this)).subscribe(() => {
+              this.loader.open();
+              this.ws.call('vm.device.update', [row1.id, { order: value.order }]).pipe(untilDestroyed(this)).subscribe(() => {
                 entityDialog.dialogRef.close(true);
-                self.loader.close();
-                this.parent.entityList.getData();
+                this.loader.close();
+                this.entityList.getData();
               }, () => {
-                self.loader.close();
+                this.loader.close();
               }, () => {
                 entityDialog.dialogRef.close(true);
-                self.loader.close();
-                this.parent.entityList.getData();
+                this.loader.close();
+                this.entityList.getData();
               });
             },
           };
-          self.dialogService.dialogForm(conf);
+          this.dialogService.dialogForm(conf);
         });
       },
     });
@@ -137,38 +139,40 @@ export class DeviceListComponent implements EntityTableConfig {
       name: 'details',
       icon: 'list',
       label: T('Details'),
-      onClick: (device: any) => {
-        self.translate.get('Change order for ').pipe(untilDestroyed(this)).subscribe((detailMsg) => {
+      onClick: (device: VmDevice) => {
+        this.translate.get('Change order for ').pipe(untilDestroyed(this)).subscribe((detailMsg) => {
           let details = '';
-          for (const attribute in device.attributes) {
-            details = `${attribute}: ${device.attributes[attribute]} \n` + details;
-          }
-          this.dialogService.Info(detailMsg + `${row.dtype} ${row.id}`, details, '500px', 'info');
+          Object.entries(device.attributes).forEach(([attribute, attributeValue]) => {
+            details = `${attribute}: ${attributeValue} \n` + details;
+          });
+          this.dialogService.info(detailMsg + `${row.dtype} ${row.id}`, details, '500px', 'info');
         });
       },
     });
     return actions as EntityTableAction[];
   }
 
-  deviceDelete(row: any): void {
+  deviceDelete(row: VmDevice): void {
     this.translate.get('Delete').pipe(untilDestroyed(this)).subscribe((msg) => {
-      this.dialogService.confirm(T('Delete'), `${msg} <b>${row.dtype} ${row.id}</b>`,
-        true, T('Delete Device')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-        if (res) {
-          this.loader.open();
-          this.loaderOpen = true;
-          if (this.wsDelete) {
-            this.ws.call(this.wsDelete, ['vm.device', row.id]).pipe(untilDestroyed(this)).subscribe(
-              () => {
-                this.entityList.getData();
-                this.loader.close();
-              },
-              (resinner) => {
-                new EntityUtils().handleError(this, resinner);
-                this.loader.close();
-              },
-            );
-          }
+      this.dialogService.confirm({
+        title: T('Delete'),
+        message: `${msg} <b>${row.dtype} ${row.id}</b>`,
+        hideCheckBox: true,
+        buttonMsg: T('Delete Device'),
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.loader.open();
+        this.loaderOpen = true;
+        if (this.wsDelete) {
+          this.ws.call(this.wsDelete, ['vm.device', row.id]).pipe(untilDestroyed(this)).subscribe(
+            () => {
+              this.entityList.getData();
+              this.loader.close();
+            },
+            (resinner) => {
+              new EntityUtils().handleError(this, resinner);
+              this.loader.close();
+            },
+          );
         }
       });
     });

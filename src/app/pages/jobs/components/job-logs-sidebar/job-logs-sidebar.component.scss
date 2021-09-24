@@ -1,0 +1,55 @@
+:host .spinner {
+  margin: 30px auto;
+}
+
+.card {
+  border-bottom: 1px solid var(--lines);
+  border-left: 1px solid var(--lines);
+  border-radius: 0;
+  border-right: 0;
+  border-top: 0;
+  height: 100%;
+  margin: 0;
+}
+
+.sidebar-header {
+  align-items: center;
+  border-bottom: 1px solid var(--lines);
+  display: flex;
+  min-height: 57px;
+  padding: 11px 10px 7px 12px;
+
+  .action {
+    cursor: pointer;
+    margin-left: 10px;
+  }
+}
+
+.sidebar-title {
+  font-size: 1rem;
+  font-weight: bold;
+  margin-right: auto;
+}
+
+.logs-information {
+  .list-item {
+    border-bottom: 1px solid var(--lines);
+    display: flex;
+    flex-direction: column;
+    padding: 15px 12px;
+
+    h4 {
+      margin-bottom: 8px;
+    }
+  }
+}
+
+.sidebar-sticky {
+  position: sticky;
+  top: -16px; // compensation for extra space
+}
+
+
+.text-formatted {
+  white-space: pre-line;
+}

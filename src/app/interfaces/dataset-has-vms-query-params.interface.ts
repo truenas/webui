@@ -1,4 +1,4 @@
 export type DatasetHasVmsQueryParams = [
-  /* dataset */ string,
-  /* recursive */ boolean,
+  dataset: string,
+  recursive: boolean,
 ];

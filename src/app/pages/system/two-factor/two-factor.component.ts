@@ -2,10 +2,12 @@ import { Component, Inject } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/2fa';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormParagraphConfig, FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
 
@@ -21,8 +23,8 @@ export class TwoFactorComponent implements FormConfiguration {
   qrInfo: string;
   private secret: string;
   title = helptext.two_factor.formTitle;
-  private digitsOnLoad: string;
-  private intervalOnLoad: string;
+  private digitsOnLoad: number;
+  private intervalOnLoad: number;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -134,22 +136,23 @@ export class TwoFactorComponent implements FormConfiguration {
       id: 'enable_action',
       name: helptext.two_factor.enable_button,
       function: () => {
-        this.dialog.confirm(helptext.two_factor.confirm_dialog.title,
-          helptext.two_factor.confirm_dialog.message, true,
-          helptext.two_factor.confirm_dialog.btn).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.loader.open();
-            this.ws.call('auth.twofactor.update', [{ enabled: true }]).pipe(untilDestroyed(this)).subscribe(() => {
-              this.loader.close();
-              this.TwoFactorEnabled = true;
-              this.updateEnabledStatus();
-              this.updateSecretAndUri();
-            }, (err) => {
-              this.loader.close();
-              this.dialog.errorReport(helptext.two_factor.error,
-                err.reason, err.trace.formatted);
-            });
-          }
+        this.dialog.confirm({
+          title: helptext.two_factor.confirm_dialog.title,
+          message: helptext.two_factor.confirm_dialog.message,
+          hideCheckBox: true,
+          buttonMsg: helptext.two_factor.confirm_dialog.btn,
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          this.loader.open();
+          this.ws.call('auth.twofactor.update', [{ enabled: true }]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.loader.close();
+            this.TwoFactorEnabled = true;
+            this.updateEnabledStatus();
+            this.updateSecretAndUri();
+          }, (err) => {
+            this.loader.close();
+            this.dialog.errorReport(helptext.two_factor.error,
+              err.reason, err.trace.formatted);
+          });
         });
       },
     },
@@ -188,14 +191,16 @@ export class TwoFactorComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     protected mdDialog: MatDialog) { }
 
-  resourceTransformIncomingRestData(data: any): any {
-    data.ssh = data.services.ssh;
+  resourceTransformIncomingRestData(data: TwoFactorConfig): any {
     this.secret = data.secret;
     this.TwoFactorEnabled = data.enabled;
     this.digitsOnLoad = data.otp_digits;
     this.intervalOnLoad = data.interval;
     this.updateEnabledStatus();
-    return data;
+    return {
+      ...data,
+      ssh: data.services.ssh,
+    };
   }
 
   isCustActionVisible(actionId: string): boolean {
@@ -219,7 +224,7 @@ export class TwoFactorComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.getURI();
-    const intervalValue = _.find(this.fieldConfig, { name: 'interval' });
+    const intervalValue: FormInputConfig = _.find(this.fieldConfig, { name: 'interval' }) as FormInputConfig;
     entityEdit.formGroup.controls['interval'].valueChanges.pipe(untilDestroyed(this)).subscribe((val: string) => {
       if (parseInt(val) !== 30) {
         intervalValue.hint = helptext.two_factor.interval.hint;
@@ -240,25 +245,28 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   updateEnabledStatus(): void {
-    const enabled = _.find(this.fieldConfig, { name: 'enabled_status' });
-    this.TwoFactorEnabled
-      ? enabled.paraText = helptext.two_factor.enabled_status_true
-      : enabled.paraText = helptext.two_factor.enabled_status_false;
+    const enabled: FormParagraphConfig = _.find(this.fieldConfig, { name: 'enabled_status' });
+    if (this.TwoFactorEnabled) {
+      enabled.paraText = helptext.two_factor.enabled_status_true;
+    } else {
+      enabled.paraText = helptext.two_factor.enabled_status_false;
+    }
   }
 
   customSubmit(data: any): void {
     if (data.otp_digits === this.digitsOnLoad && data.interval === this.intervalOnLoad) {
       this.doSubmit(data);
     } else {
-      this.dialog.confirm(helptext.two_factor.submitDialog.title,
-        helptext.two_factor.submitDialog.message, true, helptext.two_factor.submitDialog.btn)
-        .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.intervalOnLoad = data.interval;
-            this.digitsOnLoad = data.otp_digits;
-            this.doSubmit(data, true);
-          }
-        });
+      this.dialog.confirm({
+        title: helptext.two_factor.submitDialog.title,
+        message: helptext.two_factor.submitDialog.message,
+        hideCheckBox: true,
+        buttonMsg: helptext.two_factor.submitDialog.btn,
+      }).pipe(untilDestroyed(this)).subscribe(() => {
+        this.intervalOnLoad = data.interval;
+        this.digitsOnLoad = data.otp_digits;
+        this.doSubmit(data, true);
+      });
     }
   }
 
@@ -266,7 +274,7 @@ export class TwoFactorComponent implements FormConfiguration {
     data.enabled = this.TwoFactorEnabled;
     data.services = { ssh: data.ssh };
     const extras = ['instructions', 'enabled_status', 'secret', 'uri', 'ssh'];
-    extras.map((extra) => {
+    extras.forEach((extra) => {
       delete data[extra];
     });
     this.loader.open();
@@ -283,28 +291,29 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   openQRDialog(): void {
-    this.mdDialog.open(QRDialog, {
+    this.mdDialog.open(QrDialogComponent, {
       width: '300px',
       data: { qrInfo: this.qrInfo },
     });
   }
 
   renewSecret(): void {
-    this.dialog.confirm(helptext.two_factor.renewSecret.title,
-      helptext.two_factor.renewSecret.message, true,
-      helptext.two_factor.renewSecret.btn).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        this.loader.open();
-        this.ws.call('auth.twofactor.renew_secret').pipe(untilDestroyed(this)).subscribe(() => {
-          this.loader.close();
-          this.updateSecretAndUri();
-        },
-        (err) => {
-          this.loader.close();
-          this.dialog.errorReport(helptext.two_factor.error,
-            err.reason, err.trace.formatted);
-        });
-      }
+    this.dialog.confirm({
+      title: helptext.two_factor.renewSecret.title,
+      message: helptext.two_factor.renewSecret.message,
+      hideCheckBox: true,
+      buttonMsg: helptext.two_factor.renewSecret.btn,
+    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.loader.open();
+      this.ws.call('auth.twofactor.renew_secret').pipe(untilDestroyed(this)).subscribe(() => {
+        this.loader.close();
+        this.updateSecretAndUri();
+      },
+      (err) => {
+        this.loader.close();
+        this.dialog.errorReport(helptext.two_factor.error,
+          err.reason, err.trace.formatted);
+      });
     });
   }
 
@@ -326,9 +335,9 @@ export class TwoFactorComponent implements FormConfiguration {
   selector: 'qr-dialog',
   templateUrl: 'qr-dialog.html',
 })
-export class QRDialog {
+export class QrDialogComponent {
   constructor(
-    public dialogRef: MatDialogRef<QRDialog>,
+    public dialogRef: MatDialogRef<QrDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
   ) {}
 

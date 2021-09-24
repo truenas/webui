@@ -9,6 +9,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import * as filesize from 'filesize';
 import helptext from 'app/helptext/storage/volumes/manager/vdev';
+import { ManagerDisk } from 'app/pages/storage/volumes/manager/manager-disk.interface';
+import { ManagerComponent } from 'app/pages/storage/volumes/manager/manager.component';
 import { StorageService } from 'app/services/storage.service';
 
 @Component({
@@ -17,15 +19,15 @@ import { StorageService } from 'app/services/storage.service';
   styleUrls: ['vdev.component.scss'],
 })
 export class VdevComponent implements OnInit {
-  @Input() index: any;
+  @Input() index: number;
   @Input() group: string;
-  @Input() manager: any;
+  @Input() manager: ManagerComponent;
   @Input() initial_values: any = {};
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   type: string;
   removable = true;
-  disks: any[] = [];
-  selected: any[] = [];
+  disks: ManagerDisk[] = [];
+  selected: ManagerDisk[] = [];
   id: number;
   size: string;
   rawSize = 0;
@@ -33,8 +35,6 @@ export class VdevComponent implements OnInit {
   error: string;
   diskSizeErrorMsg = helptext.vdev_diskSizeErrorMsg;
   vdev_type_tooltip = helptext.vdev_type_tooltip;
-  vdev_size_error = helptext.vdev_size_error;
-  vdev_size_error_2 = helptext.vdev_size_error_2;
   vdev_disks_error: boolean;
   vdev_disks_size_error: boolean;
   vdev_type_disabled = false;
@@ -85,7 +85,7 @@ export class VdevComponent implements OnInit {
     return 'Vdev ' + (this.index + 1) + ': ' + this.type.charAt(0).toUpperCase() + this.type.slice(1);
   }
 
-  addDisk(disk: any): void {
+  addDisk(disk: ManagerDisk): void {
     this.disks.push(disk);
     this.disks = [...this.disks];
     this.guessVdevType();
@@ -93,7 +93,7 @@ export class VdevComponent implements OnInit {
     this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
   }
 
-  removeDisk(disk: any): void {
+  removeDisk(disk: ManagerDisk): void {
     this.disks.splice(this.disks.indexOf(disk), 1);
     this.disks = [...this.disks];
     this.guessVdevType();
@@ -134,7 +134,7 @@ export class VdevComponent implements OnInit {
     const swapsize = this.manager.swapondrive * 1024 * 1024 * 1024;
     this.vdev_disks_size_error = false;
     for (let i = 0; i < this.disks.length; i++) {
-      const size = parseInt(this.disks[i].real_capacity, 10) - swapsize;
+      const size = this.disks[i].real_capacity - swapsize;
       stripeSize += size;
       if (i === 0) {
         smallestdisk = size;
@@ -150,7 +150,10 @@ export class VdevComponent implements OnInit {
     }
     if (this.group === 'data') {
       if (this.disks.length > 0 && this.disks.length < this.mindisks[this.type]) {
-        this.error = this.vdev_size_error + this.mindisks[this.type] + this.vdev_size_error_2;
+        this.error = this.translate.instant(
+          'This type of VDEV requires at least {n, plural, one {# disk} other {# disks}}.',
+          { n: this.mindisks[this.type] },
+        );
         this.vdev_disks_error = true;
       } else {
         this.vdev_disks_error = false;
@@ -198,7 +201,7 @@ export class VdevComponent implements OnInit {
     this.manager.selected = [];
   }
 
-  getDisks(): any[] {
+  getDisks(): ManagerDisk[] {
     return this.disks;
   }
 

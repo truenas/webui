@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 
 export interface ProcessTask {
   responseEvent: string;
@@ -8,14 +8,14 @@ export interface ProcessTask {
 }
 
 @Injectable()
-export class Thread extends iXAbstractObject {
+export class Thread extends IxAbstractObject {
   thread: Worker;
   protected ready: boolean;
   protected maxThreads: number;
   threadPriority = 0.0; // between 0.0 and 1.0 (1.0 being highest);
 
-  private _onmessage: any;
-  set onmessage(value: any) {
+  private _onmessage: (event: MessageEvent) => void;
+  set onmessage(value: (event: MessageEvent) => void) {
     this._onmessage = value;
   }
 
@@ -28,7 +28,7 @@ export class Thread extends iXAbstractObject {
 
   // The functions that can be executed by thread.
   // For more info: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Functions_and_classes_available_to_workers
-  operations: any;
+  operations: () => void;
 
   constructor() {
     super();
@@ -117,12 +117,8 @@ export class Thread extends iXAbstractObject {
     this.thread.postMessage(e);
   }
 
-  /* onmessage(fn){
-    this._onmessage = fn;
-  } */
-
-  sort = function (data: any[], compareFunction?: any): any[] { // Just like JS sort but now we can run in a worker
-    const result = compareFunction ? data.sort(compareFunction) : data.sort();
-    return result;
+  // Just like JS sort but now we can run in a worker
+  sort = <T>(data: T[], compareFunction?: (a: T, b: T) => number): T[] => {
+    return compareFunction ? data.sort(compareFunction) : data.sort();
   };
 }

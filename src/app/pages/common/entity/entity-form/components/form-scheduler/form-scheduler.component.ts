@@ -11,7 +11,7 @@ import * as parser from 'cron-parser';
 import * as dateFns from 'date-fns';
 import * as dateFnsTz from 'date-fns-tz';
 import globalHelptext from 'app/helptext/global-helptext';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSchedulerConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SystemGeneralService } from 'app/services';
@@ -33,7 +33,7 @@ interface CronPreset {
 })
 export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, AfterViewChecked {
   // Basic form-select props
-  config: FieldConfig;
+  config: FormSchedulerConfig;
   group: FormGroup;
   fieldShow: string;
   disablePrevious: boolean;
@@ -51,10 +51,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   isOpen = false;
   formControl = new FormControl();
-  private _currentValue: string;
-  get currentValue(): any {
-    return this.group.controls[this.config.name].value;
-  }
 
   private _minutes = '0';
   private _hours = '*';
@@ -380,7 +376,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
   }
 
-  private setCalendar(direction: 'next' | 'previous'): void {
+  setCalendar(direction: 'next' | 'previous'): void {
     let newDate;
     if (direction == 'next') {
       newDate = dateFns.addMonths(this.minDate, 1);
@@ -678,8 +674,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
     // Assume a list and process it
     const list = rule.split(',');
-    for (const i in list) {
-      switch (list[i]) {
+    list.forEach((month) => {
+      switch (month) {
         case 'jan':
           this._jan = true;
           break;
@@ -717,7 +713,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
           this._dec = true;
           break;
       }
-    }
+    });
   }
 
   updateDaysOfWeekFields(rule: string): void {
@@ -736,8 +732,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
     // Assume a list and process it
     const list = rule.split(',');
-    for (const i in list) {
-      switch (list[i]) {
+    list.forEach((weekday) => {
+      switch (weekday) {
         case 'sun':
           this._sun = true;
           break;
@@ -760,10 +756,10 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
           this._sat = true;
           break;
       }
-    }
+    });
   }
 
-  updateCronTab(preset?: any): void {
+  updateCronTab(preset?: string): void {
     this.crontab = '';
     if (!preset) {
       const result = this.minutes + ' ' + this.hours + ' ' + this.days + ' ' + this._months + ' ' + this._daysOfWeek;

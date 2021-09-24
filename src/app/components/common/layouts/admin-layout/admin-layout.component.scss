@@ -1,3 +1,5 @@
+@import 'cssvars';
+
 .notification-sidenav {
   max-width: 30%;
   min-width: 350px;
@@ -89,4 +91,27 @@
 
 jw-modal {
   display: block;
+}
+
+.slidein-nav {
+  z-index: 100;
+
+  &.slidein-nav-sm {
+    @media #{$media-gt-sm} {
+      display: none;
+    }
+  }
+
+  &.slidein-nav-md {
+    display: block;
+
+    @media #{$media-lt-md} {
+      display: none;
+    }
+  }
+}
+
+#scroll-area {
+  max-height: 100vh;
+  overflow: auto;
 }

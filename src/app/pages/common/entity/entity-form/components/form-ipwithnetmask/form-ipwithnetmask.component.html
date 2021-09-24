@@ -6,71 +6,74 @@
 	[class.has-pwtoggle]="config.togglePw"
 	[class.has-tooltip]="config.tooltip"
 	*ngIf="!config['isHidden']"
-        fxLayout="row wrap"
+  fxLayout="row wrap"
 	fxLayoutAlign="start center"
-        ix-auto ix-auto-type="array" 
-        ix-auto-identifier="{{config.placeholder}}">
+  ix-auto ix-auto-type="array"
+  ix-auto-identifier="{{config.placeholder}}"
+>
+  <div class="label-container" fxFlex="100" fxLayoutAlign="start center" style="max-height:27px;">
+    <label class="label input-text">{{config.placeholder | translate}}</label>
+    <span *ngIf="config.required">*</span>
+    <tooltip fxFlex="48px" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
+  </div>
+  <div fxFlex="100" fxLayout="row" fxLayoutGap="3px">
+    <mat-form-field fxFlex="calc(100% - 72px - 16px)" style="display:none">
+      <input
+        matInput
+        [type]="config.inputType ? config.inputType : 'text'"
+        [placeholder]="config.placeholder"
+        [attr.value]="config.value"
+        [formControlName]="config.name"
+      >
+    </mat-form-field>
+    <mat-form-field fxFlex="calc(100% - 72px - 16px)">
+      <input
+        matInput
+        [placeholder]="config.placeholder | translate"
+        [(ngModel)]="address"
+        [ngModelOptions]="{standalone: true}"
+        [readonly]="config.readonly"
+        [required]="config.required"
+        (blur)="setAddress($event)"
+        [pattern]="network.ipv4_or_ipv6_cidr_optional"
+        ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"
+      >
+    </mat-form-field>
+    <div fxFlex="80px" fxLayout="row" fxLayoutAlign="space-between center">
+      <div fxFlex style="text-align: center; padding: 0 8px;">/</div>
+      <mat-form-field fxFlex="64px" *ngIf="!config.netmaskPreset">
+        <mat-select
+          disableOptionCentering
+          [value]="netmask"
+          [placeholder]="'Netmask' | translate"
+          (selectionChange)="setNetmask($event)"
+          ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"
+        >
+          <mat-option *ngFor="let option of netmaskOptions" [value]="option.value"
+            ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
+            {{option.label}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
-        <div class="label-container" fxFlex="100" fxLayoutAlign="start center" style="max-height:27px;">
-          <label class="label input-text">{{config.placeholder | translate}}</label>
-          <span *ngIf="config.required">*</span>
-	  <tooltip fxFlex="48px" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>
-        </div>
-        <div fxFlex="100" fxLayout="row" fxLayoutGap="3px">
-      	  <mat-form-field fxFlex="calc(100% - 72px - 16px)" style="display:none">
-      		<input matInput [type]="config.inputType ? config.inputType : 'text'"
-      			[placeholder]="config.placeholder"
-      			[attr.value]="config.value"
-      			[formControlName]="config.name"
-      		>
-      	  </mat-form-field>
-      	  <mat-form-field fxFlex="calc(100% - 72px - 16px)">
-      		<input matInput
-      			[placeholder]="config.placeholder | translate"
-      			[(ngModel)]="address"
-      			[ngModelOptions]="{standalone: true}"
-      			[readonly]="config.readonly"
-      			[required]="config.required"
-      			(blur)="setAddress($event)"
-      			[pattern]="network.ipv4_or_ipv6_cidr_optional"
-      			ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"
-      			>
-      	  </mat-form-field>
-          <div fxFlex="80px" fxLayout="row" fxLayoutAlign="space-between center">
-      	    <div fxFlex style="text-align: center; padding: 0 8px;">/</div>
-            <mat-form-field fxFlex="64px" *ngIf="!config.netmaskPreset" >
-      	      <mat-select 
-                disableOptionCentering
-      		[value]="netmask"
-      		[placeholder]="Netmask | translate"
-      		(selectionChange)="setNetmask($event)"
-      		ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"
-      		>
-      		<mat-option *ngFor="let option of netmaskOptions" [value]="option.value"
-      			ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
-      			{{option.label}}
-      		</mat-option>
-      	      </mat-select>
-      	    </mat-form-field>
+      <mat-form-field fxFlex="72px" *ngIf="config.netmaskPreset" >
+        <mat-select
+          disableOptionCentering
+          class="disabled-select"
+          [value]="config.netmaskPreset"
+          disabled
+          ix-auto ix-auto-type="select" ix-auto-identifier="{{config.placeholder}}"
+        >
+          <mat-option [value]="config.netmaskPreset">
+            {{config.netmaskPreset}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
 
-            <mat-form-field fxFlex="72px" *ngIf="config.netmaskPreset" >
-      	      <mat-select 
-                disableOptionCentering
-      		class="disabled-select"
-      		[value]="config.netmaskPreset"
-      		disabled
-      		ix-auto ix-auto-type="select" ix-auto-identifier="{{config.placeholder}}"
-      		>
-      		<mat-option [value]="config.netmaskPreset">
-      			{{config.netmaskPreset}}
-      		</mat-option>
-      	    </mat-select>
-      	  </mat-form-field>
-        </div>
-      </div>
-
-	<div class="margin-for-error">
-		<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
-		<mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
-	</div>
+  <div class="margin-for-error">
+    <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+    <mat-error *ngIf="config.warnings">{{config.warnings | translate}}</mat-error>
+  </div>
 </div>

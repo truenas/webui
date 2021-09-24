@@ -2,11 +2,16 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { NewTicketType } from 'app/enums/new-ticket-type.enum';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { CreateNewTicket, NewTicketResponse } from 'app/interfaces/support.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
 import { ModalService } from 'app/services/modal.service';
@@ -21,8 +26,8 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
   password: any;
   username: any;
-  category: any;
-  screenshot: any;
+  category: FormSelectConfig;
+  screenshot: FieldConfig;
   password_fc: FieldConfig;
   username_fc: FieldConfig;
   subs: any[];
@@ -32,7 +37,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   protected isOneColumnForm = true;
 
   fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [
+  fieldSets: FieldSet<this>[] = [
     {
       name: 'column1',
       label: false,
@@ -47,11 +52,10 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           name: 'username',
           placeholder: helptext.username.placeholder,
           tooltip: helptext.username.tooltip,
-          tooltipPosition: 'below',
           required: true,
           validation: helptext.username.validation,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.usernameOrPasswordBlur,
           parent: this,
           value: '',
         },
@@ -61,11 +65,10 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           inputType: 'password',
           placeholder: helptext.password.placeholder,
           tooltip: helptext.password.tooltip,
-          tooltipPosition: 'above',
           required: true,
           validation: helptext.password.validation,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.usernameOrPasswordBlur,
           parent: this,
           togglePw: true,
           value: '',
@@ -75,19 +78,17 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           name: 'type',
           placeholder: helptext.type.placeholder,
           tooltip: helptext.type.tooltip,
-          tooltipPosition: 'above',
           options: [
-            { label: T('Bug'), value: 'BUG' },
-            { label: T('Feature'), value: 'FEATURE' },
+            { label: T('Bug'), value: NewTicketType.Bug },
+            { label: T('Feature'), value: NewTicketType.Feature },
           ],
-          value: 'BUG',
+          value: NewTicketType.Bug,
         },
         {
           type: 'select',
           name: 'category',
           placeholder: helptext.category.placeholder,
           tooltip: helptext.category.tooltip,
-          tooltipPosition: 'above',
           required: true,
           validation: helptext.category.validation,
           options: [],
@@ -99,7 +100,6 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           name: 'attach_debug',
           placeholder: helptext.attach_debug.placeholder,
           tooltip: helptext.attach_debug.tooltip,
-          tooltipPosition: 'above',
           value: false,
         },
         {
@@ -107,7 +107,6 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           name: 'title',
           placeholder: helptext.title.placeholder,
           tooltip: helptext.title.tooltip,
-          tooltipPosition: 'above',
           required: true,
           validation: helptext.title.validation,
         },
@@ -116,7 +115,6 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           name: 'body',
           placeholder: helptext.body.placeholder,
           tooltip: helptext.body.tooltip,
-          tooltipPosition: 'above',
           required: true,
           validation: helptext.body.validation,
           textAreaRows: 8,
@@ -126,7 +124,6 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           name: 'screenshot',
           placeholder: helptext.screenshot.placeholder,
           tooltip: helptext.screenshot.tooltip,
-          tooltipPosition: 'above',
           fileLocation: '',
           updater: this.updater,
           parent: this,
@@ -145,10 +142,10 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     this.entityEdit = entityEdit;
   }
 
-  blurEvent(parent: any): void {
+  usernameOrPasswordBlur(parent: this): void {
     this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
     this.username_fc = _.find(parent.fieldConfig, { name: 'username' });
-    this.category = _.find(parent.fieldConfig, { name: 'category' });
+    this.category = _.find(parent.fieldConfig, { name: 'category' }) as FormSelectConfig;
     if (parent.entityEdit) {
       this.username = parent.entityEdit.formGroup.controls['username'].value;
       this.password = parent.entityEdit.formGroup.controls['password'].value;
@@ -162,7 +159,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
       }
       if (this.category.options.length === 0 && this.username !== '' && this.password !== '') {
         this.category.isLoading = true;
-        parent.ws.call('support.fetch_categories', [this.username, this.password]).pipe(untilDestroyed(this)).subscribe((res: string[]) => {
+        parent.ws.call('support.fetch_categories', [this.username, this.password]).pipe(untilDestroyed(this)).subscribe((res) => {
           this.category.isLoading = false;
           parent.entityEdit.setDisabled('category', false);
           const options = [];
@@ -172,7 +169,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
             }
             this.category.options = _.sortBy(options, ['label']);
           }
-        }, (error: any) => {
+        }, (error: WebsocketError) => {
           if (error.reason[0] === '[') {
             while (error.reason[0] !== ' ') {
               error.reason = error.reason.slice(1);
@@ -188,7 +185,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   }
 
   customSubmit(entityEdit: any): void {
-    const payload: any = {};
+    const payload = {} as CreateNewTicket;
     payload['username'] = entityEdit.username;
     payload['password'] = entityEdit.password;
     payload['category'] = entityEdit.category;
@@ -201,12 +198,12 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     this.openDialog(payload);
   }
 
-  openDialog(payload: any): void {
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Ticket'), CloseOnClickOutside: true } });
+  openDialog(payload: CreateNewTicket): void {
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Ticket'), closeOnClickOutside: true } });
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<NewTicketResponse>) => {
       if (res.result) {
         url = `<a href="${res.result.url}" target="_blank" style="text-decoration:underline;">${res.result.url}</a>`;
       }
@@ -224,7 +221,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.resetForm();
           });
-          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+          dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
             dialogRef.componentInstance.setDescription(res.error);
           });
         });
@@ -234,19 +231,19 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
         this.resetForm();
       }
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
 
   resetForm(): void {
     this.entityEdit.formGroup.reset();
-    this.entityEdit.formGroup.controls['type'].setValue('BUG');
+    this.entityEdit.formGroup.controls['type'].setValue(NewTicketType.Bug);
     this.subs = [];
     this.modalService.close('slide-in-form');
   }
 
-  updater(file: any, parent: any): void {
+  updater(file: FormUploadComponent, parent: this): void {
     parent.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
     this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });

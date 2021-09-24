@@ -72,9 +72,8 @@ export interface CertificateAuthorityUpdate {
   digest_algorithm: CertificateDigestAlgorithm;
   san: string[];
   cert_extensions: CertificateExtensions;
+  revoked?: boolean;
 }
-
-export interface CertificateAuthorityCreate extends CertificateAuthorityUpdate {}
 
 export interface CertificateAuthority {
   CA_type_existing: boolean;

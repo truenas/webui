@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
-import { Validators, FormArray, FormGroup } from '@angular/forms';
-import {
-  UntilDestroy, untilDestroyed,
-} from '@ngneat/until-destroy';
+import { FormArray, FormGroup, Validators } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { ITreeOptions, TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';
@@ -15,17 +15,25 @@ import { NetcatMode } from 'app/enums/netcat-mode.enum';
 import { ReplicationEncryptionKeyFormat } from 'app/enums/replication-encryption-key-format.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ScheduleMethod } from 'app/enums/schedule-method.enum';
+import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication-wizard';
 import sshConnectionsHelptex from 'app/helptext/system/ssh-connections';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { CountManualSnapshotsParams } from 'app/interfaces/count-manual-snapshots.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { Option } from 'app/interfaces/option.interface';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
+import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig,
+  FormExplorerConfig,
+  FormParagraphConfig,
+  FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
@@ -57,6 +65,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   summaryTitle = T('Replication Summary');
   pk: number;
   saveSubmitText = T('START REPLICATION');
+  hideCancel = true;
 
   protected entityWizard: EntityWizardComponent;
   custActions = [{
@@ -149,7 +158,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                 useVirtualScroll: false,
                 useCheckbox: true,
                 useTriState: false,
-              },
+              } as ITreeOptions,
               required: true,
               validation: [Validators.required],
               relation: [{
@@ -213,25 +222,35 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               }],
             },
             {
+              type: 'radio',
+              name: 'schema_or_regex',
+              placeholder: helptext.name_schema_or_regex_placeholder_push,
+              options: [
+                { label: helptext.naming_schema_placeholder, value: SnapshotNamingOption.NamingSchema },
+                { label: helptext.name_regex_placeholder, value: SnapshotNamingOption.NameRegex },
+              ],
+              value: SnapshotNamingOption.NamingSchema,
+            },
+            {
               type: 'input',
               name: 'naming_schema',
               placeholder: helptext.naming_schema_placeholder,
               tooltip: helptext.naming_schema_tooltip,
               value: this.defaultNamingSchema,
-              relation: [{
-                action: RelationAction.Show,
-                connective: RelationConnection.Or,
-                when: [{
-                  name: 'custom_snapshots',
-                  value: true,
-                }, {
-                  name: 'source_datasets_from',
-                  value: DatasetSource.Remote,
-                }],
-              }],
               parent: this,
               blurStatus: true,
-              blurEvent: (parent: any) => {
+              blurEvent: (parent: this) => {
+                parent.getSnapshots();
+              },
+            },
+            {
+              type: 'input',
+              name: 'name_regex',
+              placeholder: helptext.name_regex_placeholder,
+              tooltip: helptext.name_regex_tooltip,
+              parent: this,
+              isHidden: true,
+              blurEvent: (parent: this) => {
                 parent.getSnapshots();
               },
             },
@@ -758,18 +777,24 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     replication: 'replication.delete',
   };
 
-  protected snapshotsCountField: FieldConfig;
-  private existSnapshotTasks: any[] = [];
+  protected snapshotsCountField: FormParagraphConfig;
+  private existSnapshotTasks: number[] = [];
   private eligibleSnapshots = 0;
   protected preload_fieldSet: FieldSet;
   protected source_fieldSet: FieldSet;
   protected target_fieldSet: FieldSet;
 
-  constructor(private keychainCredentialService: KeychainCredentialService,
-    private loader: AppLoaderService, private dialogService: DialogService,
-    private ws: WebSocketService, private replicationService: ReplicationService,
-    private datePipe: DatePipe, private entityFormService: EntityFormService,
-    private modalService: ModalService) {
+  constructor(
+    private keychainCredentialService: KeychainCredentialService,
+    private loader: AppLoaderService,
+    private dialogService: DialogService,
+    private ws: WebSocketService,
+    private replicationService: ReplicationService,
+    private datePipe: DatePipe,
+    private entityFormService: EntityFormService,
+    private modalService: ModalService,
+    private translate: TranslateService,
+  ) {
     this.ws.call('replication.query').pipe(untilDestroyed(this)).subscribe((res) => {
       this.namesInUse.push(...res.map((replication) => replication.name));
     });
@@ -797,10 +822,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     this.step0Init();
     this.step1Init();
+    this.toggleNamingSchemaOrRegex();
   }
 
   step0Init(): void {
-    const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' });
+    const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
     this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
       (res: ReplicationTask[]) => {
         for (const task of res) {
@@ -819,28 +845,32 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       },
     );
 
-    const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' });
+    const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' }) as FormSelectConfig;
     this.keychainCredentialService.getSSHKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
-      for (const i in keyPairs) {
-        (privateKeyField.options as Option[]).push({ label: keyPairs[i].name, value: String(keyPairs[i].id) });
-      }
+      privateKeyField.options = keyPairs.map((keypair) => ({
+        label: keypair.name,
+        value: String(keypair.id),
+      }));
     });
 
-    const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' });
-    const ssh_credentials_target_field = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' });
+    const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+    const ssh_credentials_target_field = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
     this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
-      for (const i in connections) {
-        ssh_credentials_source_field.options.push({ label: connections[i].name, value: connections[i].id });
-        ssh_credentials_target_field.options.push({ label: connections[i].name, value: connections[i].id });
-      }
+      connections.forEach((connection) => {
+        ssh_credentials_source_field.options.push({ label: connection.name, value: connection.id });
+        ssh_credentials_target_field.options.push({ label: connection.name, value: connection.id });
+      });
       ssh_credentials_source_field.options.push({ label: T('Create New'), value: 'NEW' });
       ssh_credentials_target_field.options.push({ label: T('Create New'), value: 'NEW' });
     });
 
-    this.entityWizard.formArray.get([0]).get('exist_replication').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([0]).get('exist_replication').valueChanges.pipe(untilDestroyed(this)).subscribe((value: ReplicationTask) => {
       if (value !== null) {
         this.loadOrClearReplicationTask(value);
       }
+    });
+    this.entityWizard.formArray.get([0]).get('schema_or_regex').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.toggleNamingSchemaOrRegex();
     });
     this.entityWizard.formArray.get([0]).get('source_datasets').valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       this.genTaskName();
@@ -857,6 +887,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       this.entityWizard.formArray.get([0]).get(datasetFrom).valueChanges
         .pipe(untilDestroyed(this))
         .subscribe((value: any) => {
+          this.toggleNamingSchemaOrRegex();
           if (value === DatasetSource.Remote) {
             if (datasetFrom === 'source_datasets_from') {
               this.entityWizard.formArray.get([0]).get('target_dataset_from').setValue(DatasetSource.Local);
@@ -870,6 +901,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             }
             this.setDisable(datasetName, false, false, 0);
           }
+          const direction = value === DatasetSource.Remote ? Direction.Pull : Direction.Push;
+          _.find(this.wizardConfig[0].fieldConfig, { name: 'schema_or_regex' }).placeholder = helptext[
+            (direction === Direction.Pull ? 'name_schema_or_regex_placeholder_pull' : 'name_schema_or_regex_placeholder_push')
+          ];
         });
 
       this.entityWizard.formArray.get([0]).get(credentialName).valueChanges
@@ -880,10 +915,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             this.setDisable(datasetName, false, false, 0);
           } else {
             const fieldConfig = i === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
-            const explorerComponent = _.find(
+            const explorerConfig = _.find(
               fieldConfig,
               { name: datasetName },
-            ).customTemplateStringOptions.explorerComponent;
+            ) as FormExplorerConfig;
+            const explorerComponent = explorerConfig.customTemplateStringOptions.explorerComponent;
             if (explorerComponent) {
               explorerComponent.nodes = [{
                 mountpoint: explorerComponent.config.initial,
@@ -897,15 +933,16 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         });
     }
 
-    this.entityWizard.formArray.get([0]).get('recursive').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-      const explorerComponent = _.find(this.source_fieldSet.config, { name: 'source_datasets' }).customTemplateStringOptions;
+    this.entityWizard.formArray.get([0]).get('recursive').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
+      const explorerConfig = _.find(this.source_fieldSet.config, { name: 'source_datasets' }) as FormExplorerConfig;
+      const explorerComponent = explorerConfig.customTemplateStringOptions;
       if (explorerComponent) {
         explorerComponent.useTriState = value;
       }
     });
 
-    this.entityWizard.formArray.get([0]).get('custom_snapshots').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
-      this.setDisable('naming_schema', !value, !value, 0);
+    this.entityWizard.formArray.get([0]).get('custom_snapshots').valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
+      this.toggleNamingSchemaOrRegex();
       if (!value) {
         this.getSnapshots();
       }
@@ -921,8 +958,25 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     this.selectedReplicationTask = task;
   }
 
+  setSchemaOrRegexForObject(
+    data: any,
+    schemaOrRegex: SnapshotNamingOption,
+    schema: string = null,
+    regex: string = null,
+  ): any {
+    if (schemaOrRegex === SnapshotNamingOption.NamingSchema) {
+      data.naming_schema = schema ? [schema] : [this.defaultNamingSchema];
+      delete data.name_regex;
+    } else {
+      data.name_regex = regex;
+      delete data.naming_schema;
+      delete data.also_include_naming_schema;
+    }
+    return data;
+  }
+
   step1Init(): void {
-    this.entityWizard.formArray.get([1]).get('retention_policy').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.entityWizard.formArray.get([1]).get('retention_policy').valueChanges.pipe(untilDestroyed(this)).subscribe((value: RetentionPolicy) => {
       const disable = value === RetentionPolicy.Source;
       if (disable) {
         this.entityWizard.formArray.get([1]).get('lifetime_value').disable();
@@ -934,7 +988,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     });
   }
 
-  getSourceChildren(node: any): Promise<any> {
+  getSourceChildren(node: TreeNode): Promise<ListdirChild[]> {
     const fromLocal = this.entityWizard.formArray.get([0]).get('source_datasets_from').value === DatasetSource.Local;
     const sshCredentials = this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value;
 
@@ -945,22 +999,41 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
     if (sshCredentials === 'NEW') {
       return new Promise((resolve) => {
-        resolve(this.entityWizard.formArray.get([0]).get('ssh_credentials_source').setErrors({}));
+        resolve(this.entityWizard.formArray.get([0]).get('ssh_credentials_source').setErrors({}) as any);
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
+      this.replicationService.getRemoteDataset(TransportMode.SSH, sshCredentials, this).then(
         (res) => {
+          const sourceDatasetsFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
+          const prevErrors = sourceDatasetsFormControl.errors;
+          delete prevErrors.failedToLoadChildren;
+          if (Object.keys(prevErrors).length) {
+            sourceDatasetsFormControl.setErrors({ ...prevErrors });
+          } else {
+            sourceDatasetsFormControl.setErrors(null);
+          }
+          const sourceDatasetsFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'source_datasets' });
+          sourceDatasetsFieldConfig.warnings = null;
+
           resolve(res);
         },
         () => {
           node.collapse();
+          const sourceDatasetsFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
+          const prevErrors = sourceDatasetsFormControl.errors;
+          sourceDatasetsFormControl.setErrors({
+            ...prevErrors,
+            failedToLoadChildren: true,
+          });
+          const sourceDatasetsFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'source_datasets' });
+          sourceDatasetsFieldConfig.warnings = T('Failed to load datasets');
         },
       );
     });
   }
 
-  getTargetChildren(node: any): Promise<any> {
+  getTargetChildren(node: TreeNode): Promise<ListdirChild[]> {
     const fromLocal = this.entityWizard.formArray.get([0]).get('target_dataset_from').value === DatasetSource.Local;
     const sshCredentials = this.entityWizard.formArray.get([0]).get('ssh_credentials_target').value;
     if (fromLocal) {
@@ -970,16 +1043,35 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
     if (sshCredentials === 'NEW') {
       return new Promise((resolve) => {
-        resolve(this.entityWizard.formArray.get([0]).get('ssh_credentials_target').setErrors({}));
+        resolve(this.entityWizard.formArray.get([0]).get('ssh_credentials_target').setErrors({}) as any);
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset('SSH', sshCredentials, this).then(
+      this.replicationService.getRemoteDataset(TransportMode.SSH, sshCredentials, this).then(
         (res) => {
+          const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('target_dataset');
+          const prevErrors = targetDatasetFormControl.errors;
+          delete prevErrors.failedToLoadChildren;
+          if (Object.keys(prevErrors).length) {
+            targetDatasetFormControl.setErrors({ ...prevErrors });
+          } else {
+            targetDatasetFormControl.setErrors(null);
+          }
+          const targetDatasetFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'target_dataset' });
+          targetDatasetFieldConfig.warnings = null;
+
           resolve(res);
         },
         () => {
           node.collapse();
+          const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('target_dataset');
+          const prevErrors = targetDatasetFormControl.errors;
+          targetDatasetFormControl.setErrors({
+            ...prevErrors,
+            failedToLoadChildren: true,
+          });
+          const targetDatasetFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'target_dataset' });
+          targetDatasetFieldConfig.warnings = T('Failed to load datasets');
         },
       );
     });
@@ -989,9 +1081,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     const control: FieldConfig = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
     control['isHidden'] = isHidden;
     control.disabled = disabled;
-    disabled
-      ? this.entityWizard.formArray.get([stepIndex]).get(field).disable()
-      : this.entityWizard.formArray.get([stepIndex]).get(field).enable();
+    if (disabled) {
+      this.entityWizard.formArray.get([stepIndex]).get(field).disable();
+    } else {
+      this.entityWizard.formArray.get([stepIndex]).get(field).enable();
+    }
   }
 
   loadReplicationTask(task: any): void {
@@ -1115,7 +1209,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     if (item === 'periodic_snapshot_tasks') {
       this.existSnapshotTasks = [];
-      const snapshotPromises: any[] = [];
+      const snapshotPromises: Promise<any>[] = [];
       for (const dataset of data['source_datasets']) {
         payload = {
           dataset,
@@ -1126,15 +1220,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           naming_schema: data['naming_schema'] ? data['naming_schema'] : this.defaultNamingSchema,
           enabled: true,
         };
-        await this.isSnapshotTaskExist(payload).then(
-          (res: any[]) => {
-            if (res.length === 0) {
-              snapshotPromises.push(this.ws.call((this.createCalls as any)[item], [payload]).toPromise());
-            } else {
-              this.existSnapshotTasks.push(...res.map((task) => task.id));
-            }
-          },
-        );
+        await this.isSnapshotTaskExist(payload).then((res) => {
+          if (res.length === 0) {
+            snapshotPromises.push(this.ws.call((this.createCalls as any)[item], [payload]).toPromise());
+          } else {
+            this.existSnapshotTasks.push(...res.map((task) => task.id));
+          }
+        });
       }
       return Promise.all(snapshotPromises);
     }
@@ -1179,16 +1271,18 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         payload['auto'] = true;
         if (payload['direction'] === Direction.Pull) {
           payload['schedule'] = this.parsePickerTime(data['schedule_picker']);
-          payload['naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema]; // default?
+          payload = this.setSchemaOrRegexForObject(payload, data['schema_or_regex'], data['naming_schema'], data['name_regex']);
         } else {
           payload['periodic_snapshot_tasks'] = data['periodic_snapshot_tasks'];
         }
       } else {
         payload['auto'] = false;
         if (payload['direction'] === Direction.Pull) {
-          payload['naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
-        } else {
+          payload = this.setSchemaOrRegexForObject(payload, data['schema_or_regex'], data['naming_schema'], data['name_regex']);
+        } else if (data['schema_or_regex'] === SnapshotNamingOption.NamingSchema) {
           payload['also_include_naming_schema'] = data['naming_schema'] ? [data['naming_schema']] : [this.defaultNamingSchema];
+        } else {
+          payload.name_regex = data['name_regex'];
         }
       }
 
@@ -1280,7 +1374,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     if (value['schedule_method'] === ScheduleMethod.Once && createdItems['replication'] != undefined) {
       await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
         () => {
-          this.dialogService.Info(T('Task started'), T('Replication <i>') + value['name'] + T('</i> has started.'), '500px', 'info', true);
+          this.dialogService.info(
+            T('Task started'),
+            this.translate.instant('Replication <i>{name}</i> has started.', { name: value['name'] }),
+            '500px',
+            'info',
+            true,
+          );
         },
       );
     }
@@ -1303,42 +1403,40 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   createSSHConnection(activedField: string): void {
-    const self = this;
-
     const conf: DialogFormConfiguration = {
       title: T('Create SSH Connection'),
       fieldConfig: this.dialogFieldConfig,
       saveButtonText: T('Create SSH Connection'),
-      async customSubmit(entityDialog: EntityDialogComponent) {
+      customSubmit: async (entityDialog: EntityDialogComponent) => {
         const value = entityDialog.formValue;
         let prerequisite = true;
-        self.entityWizard.loader.open();
+        this.entityWizard.loader.open();
 
         if (value['private_key'] == 'NEW') {
-          await self.replicationService.genSSHKeypair().then(
+          await this.replicationService.genSSHKeypair().then(
             (keyPair) => {
               value['sshkeypair'] = keyPair;
             },
             (err) => {
               prerequisite = false;
-              new EntityUtils().handleWSError(self, err, self.dialogService);
+              new EntityUtils().handleWSError(this, err, this.dialogService);
             },
           );
         }
         if (value['setup_method'] == 'manual') {
-          await self.getRemoteHostKey(value).then(
+          await this.getRemoteHostKey(value).then(
             (res) => {
               value['remote_host_key'] = res;
             },
             (err) => {
               prerequisite = false;
-              new EntityUtils().handleWSError(self, err, self.dialogService);
+              new EntityUtils().handleWSError(this, err, this.dialogService);
             },
           );
         }
 
         if (!prerequisite) {
-          self.entityWizard.loader.close();
+          this.entityWizard.loader.close();
           return;
         }
         const createdItems: any = {
@@ -1348,31 +1446,31 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         let hasError = false;
         for (const item in createdItems) {
           if (!((item === 'private_key' && value['private_key'] !== 'NEW'))) {
-            await self.doCreate(value, item).then(
+            await this.doCreate(value, item).then(
               (res) => {
                 value[item] = res.id;
                 createdItems[item] = res.id;
                 if (item === 'private_key') {
-                  const privateKeyField = _.find(self.dialogFieldConfig, { name: 'private_key' });
+                  const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' }) as FormSelectConfig;
                   privateKeyField.options.push({ label: res.name + ' (New Created)', value: res.id });
                 }
                 if (item === 'ssh_credentials') {
-                  const ssh_credentials_source_field = _.find(self.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' });
-                  const ssh_credentials_target_field = _.find(self.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' });
+                  const ssh_credentials_source_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+                  const ssh_credentials_target_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
                   ssh_credentials_source_field.options.push({ label: res.name + ' (New Created)', value: res.id });
                   ssh_credentials_target_field.options.push({ label: res.name + ' (New Created)', value: res.id });
-                  self.entityWizard.formArray.get([0]).get([activedField]).setValue(res.id);
+                  this.entityWizard.formArray.get([0]).get([activedField]).setValue(res.id);
                 }
               },
               (err) => {
                 hasError = true;
-                self.rollBack(createdItems);
-                new EntityUtils().handleWSError(self, err, self.dialogService, self.dialogFieldConfig);
+                this.rollBack(createdItems);
+                new EntityUtils().handleWSError(this, err, this.dialogService, this.dialogFieldConfig);
               },
             );
           }
         }
-        self.entityWizard.loader.close();
+        this.entityWizard.loader.close();
         if (!hasError) {
           entityDialog.dialogRef.close(true);
         }
@@ -1381,7 +1479,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     this.dialogService.dialogForm(conf, true);
   }
 
-  getRemoteHostKey(value: any): Promise<any> {
+  getRemoteHostKey(value: any): Promise<string> {
     const payload = {
       host: value['host'],
       port: value['port'],
@@ -1409,17 +1507,28 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     if (this.entityWizard.formArray.get([0]).get('ssh_credentials_target').value) {
       transport = TransportMode.Local;
     }
-    const payload = [
-      this.entityWizard.formArray.get([0]).get('source_datasets').value || [],
-      (this.entityWizard.formArray.get([0]).get('naming_schema').enabled && this.entityWizard.formArray.get([0]).get('naming_schema').value)
-        ? this.entityWizard.formArray.get([0]).get('naming_schema').value.split(' ')
-        : [this.defaultNamingSchema],
-      transport,
-      transport === TransportMode.Local ? null : this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value,
-    ];
+    const namingSchemaFormControl = this.entityWizard.formArray.get([0]).get('naming_schema');
+    const namingSchema = namingSchemaFormControl.enabled && namingSchemaFormControl.value
+      ? namingSchemaFormControl.value.split(' ') : [this.defaultNamingSchema];
 
-    if (payload[0].length > 0) {
-      this.ws.call('replication.count_eligible_manual_snapshots', payload).pipe(untilDestroyed(this)).subscribe(
+    const schemaOrRegexFormControl = this.entityWizard.formArray.get([0]).get('schema_or_regex');
+
+    const nameRegexFormControl = this.entityWizard.formArray.get([0]).get('name_regex');
+
+    const payload: CountManualSnapshotsParams[] = [{
+      datasets: this.entityWizard.formArray.get([0]).get('source_datasets').value || [],
+      transport,
+      ssh_credentials: transport === TransportMode.Local ? null : this.entityWizard.formArray.get([0]).get('ssh_credentials_source').value,
+    }];
+
+    if (schemaOrRegexFormControl.value === SnapshotNamingOption.NamingSchema) {
+      payload[0].naming_schema = namingSchema;
+    } else {
+      payload[0].name_regex = nameRegexFormControl.value;
+    }
+
+    if (payload[0].datasets.length > 0) {
+      this.ws.call('replication.count_eligible_manual_snapshots', [payload[0]]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.eligibleSnapshots = res.eligible;
           const isPush = this.entityWizard.formArray.get([0]).get('source_datasets_from').value === DatasetSource.Local;
@@ -1446,7 +1555,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
-  async isSnapshotTaskExist(payload: any): Promise<any> {
+  async isSnapshotTaskExist(payload: any): Promise<PeriodicSnapshotTask[]> {
     return this.ws.call('pool.snapshottask.query', [[
       ['dataset', '=', payload['dataset']],
       ['schedule.minute', '=', payload['schedule']['minute']],
@@ -1456,5 +1565,30 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       ['schedule.dow', '=', payload['schedule']['dow']],
       ['naming_schema', '=', payload['naming_schema'] ? payload['naming_schema'] : this.defaultNamingSchema],
     ]]).toPromise();
+  }
+
+  toggleNamingSchemaOrRegex(): void {
+    const customSnapshotsValue = this.entityWizard.formArray.get([0]).get('custom_snapshots').value;
+    const sourceDatasetsFromValue = this.entityWizard.formArray.get([0]).get('source_datasets_from').value;
+    const schemaOrRegexFormControl = this.entityWizard.formArray.get([0]).get('schema_or_regex');
+
+    if (customSnapshotsValue || sourceDatasetsFromValue === DatasetSource.Remote) {
+      if (schemaOrRegexFormControl.disabled) {
+        this.setDisable('schema_or_regex', false, false, 0);
+      }
+      if (schemaOrRegexFormControl.value === SnapshotNamingOption.NamingSchema) {
+        this.setDisable('naming_schema', false, false, 0);
+        this.setDisable('name_regex', true, true, 0);
+      } else {
+        this.setDisable('naming_schema', true, true, 0);
+        this.setDisable('name_regex', false, false, 0);
+      }
+    } else {
+      this.setDisable('naming_schema', true, true, 0);
+      if (!schemaOrRegexFormControl.disabled) {
+        this.setDisable('schema_or_regex', true, true, 0);
+      }
+      this.setDisable('name_regex', true, true, 0);
+    }
   }
 }

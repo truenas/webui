@@ -11,7 +11,7 @@ import helptext from 'app/helptext/services/components/service-s3';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
   DialogService, SystemGeneralService, WebSocketService,
@@ -29,7 +29,7 @@ export class ServiceS3Component implements FormConfiguration {
   queryCall: 's3.config' = 's3.config';
   updateCall = 's3.update';
   route_success: string[] = ['services'];
-  private certificate: FieldConfig;
+  private certificate: FormSelectConfig;
   private initial_path: string;
   private warned = false;
   private validBindIps: string[] = [];
@@ -125,7 +125,7 @@ export class ServiceS3Component implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     this.storage_path = entityForm.formGroup.controls['storage_path'];
-    this.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       if (res && res != this.initial_path && !this.warned) {
         this.dialog
           .confirm({
@@ -143,7 +143,7 @@ export class ServiceS3Component implements FormConfiguration {
       }
     });
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.certificate = _.find(this.fieldConfig, { name: 'certificate' });
+      this.certificate = _.find(this.fieldConfig, { name: 'certificate' }) as FormSelectConfig;
       if (res.length > 0) {
         res.forEach((item) => {
           this.certificate.options.push({ label: item.name, value: item.id });
@@ -163,7 +163,9 @@ export class ServiceS3Component implements FormConfiguration {
         choices.forEach((ip) => {
           this.validBindIps.push(ip.value);
         });
-        _.find(this.fieldConfig, { name: 'bindip' }).options = choices;
+
+        const config = _.find(this.fieldConfig, { name: 'bindip' }) as FormSelectConfig;
+        config.options = choices;
       });
     entityForm.submitFunction = this.submitFunction;
   }
@@ -175,7 +177,6 @@ export class ServiceS3Component implements FormConfiguration {
     if (data.storage_path) {
       this.initial_path = data.storage_path;
     }
-    delete data['secret_key'];
 
     // If validIps is slow to load, skip check on load (It's still done on save)
     if (this.validBindIps.length > 0) {

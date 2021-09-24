@@ -13,6 +13,6 @@ export class KeychainCredentialService {
   }
 
   getSSHConnections(): Observable<KeychainCredential[]> {
-    return this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshCredentials]]]) as Observable<KeychainCredential[]>;
+    return this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshCredentials]]]);
   }
 }

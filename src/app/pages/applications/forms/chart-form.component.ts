@@ -4,12 +4,12 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { chartsTrain, latestVersion } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
+import { CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormDictConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -24,8 +24,7 @@ import { ApplicationsService } from '../applications.service';
 })
 export class ChartFormComponent implements FormConfiguration {
   queryCall: 'chart.release.query' = 'chart.release.query';
-  queryCallOption: any[];
-  customFilter: any[];
+  customFilter: CatalogQueryParams;
   addCall: 'chart.release.create' = 'chart.release.create';
   editCall: 'chart.release.update' = 'chart.release.update';
   isEntity = true;
@@ -55,7 +54,7 @@ export class ChartFormComponent implements FormConfiguration {
       colspan: 2,
     },
   ];
-  private catalogApp: any;
+  private catalogApp: ChartRelease;
   private entityUtils = new EntityUtils();
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
@@ -72,13 +71,13 @@ export class ChartFormComponent implements FormConfiguration {
     this.title = title;
   }
 
-  parseSchema(catalogApp: any): FieldSet[] {
+  parseSchema(catalogApp: ChartRelease): FieldSet[] {
     let fieldSets: FieldSet[] = [];
     try {
       this.catalogApp = catalogApp;
       this.title = this.catalogApp.name;
 
-      this.catalogApp.schema.groups.forEach((group: any) => {
+      this.catalogApp.chart_schema.schema.groups.forEach((group) => {
         fieldSets.push({
           name: group.name,
           label: true,
@@ -86,12 +85,12 @@ export class ChartFormComponent implements FormConfiguration {
           colspan: 2,
         });
       });
-      this.catalogApp.schema.questions.forEach((question: any) => {
+      this.catalogApp.chart_schema.schema.questions.forEach((question) => {
         const fieldSet = fieldSets.find((fieldSet) => fieldSet.name == question.group);
         if (fieldSet) {
           const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
 
-          const imageConfig = _.find(fieldConfigs, { name: 'image' });
+          const imageConfig = _.find(fieldConfigs, { name: 'image' }) as FormDictConfig;
           if (imageConfig) {
             const repositoryConfig = _.find(imageConfig.subFields, { name: 'repository' });
             if (repositoryConfig) {
@@ -113,18 +112,9 @@ export class ChartFormComponent implements FormConfiguration {
   }
 
   resourceTransformIncomingRestData(data: ChartRelease): any {
-    const chartSchema = {
-      name: data.chart_metadata.name,
-      catalog: {
-        id: null as any,
-        label: data.catalog,
-      },
-      schema: data.chart_schema.schema,
-    };
-
     this.name = data.name;
 
-    const extraFieldSets = this.parseSchema(chartSchema);
+    const extraFieldSets = this.parseSchema(data);
     let fieldConfigs: FieldConfig[] = [];
     extraFieldSets.forEach((fieldSet) => {
       fieldConfigs = fieldConfigs.concat(fieldSet.config);
@@ -132,7 +122,7 @@ export class ChartFormComponent implements FormConfiguration {
     const configData = new EntityUtils().remapAppConfigData(data.config, fieldConfigs);
 
     configData['release_name'] = data.name;
-    configData['extra_fieldsets'] = this.parseSchema(chartSchema);
+    configData['extra_fieldsets'] = extraFieldSets;
 
     return configData;
   }
@@ -141,28 +131,15 @@ export class ChartFormComponent implements FormConfiguration {
     data = new EntityUtils().remapAppSubmitData(data);
     const payload = [];
     payload.push({
-      catalog: this.catalogApp.catalog.id,
-      item: this.catalogApp.name,
-      release_name: data.release_name,
-      train: chartsTrain,
-      version: latestVersion,
       values: data,
     });
 
-    if (this.rowName) {
-      delete payload[0].catalog;
-      delete payload[0].item;
-      delete payload[0].release_name;
-      delete payload[0].train;
-      delete payload[0].version;
-      payload.unshift(this.name);
-    }
+    payload.unshift(this.name);
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
-        title: helptext.installing,
+        title: helptext.updating,
       },
-      disableClose: true,
     });
     this.dialogRef.componentInstance.setCall(this.editCall, payload);
     this.dialogRef.componentInstance.submit();

@@ -24,7 +24,7 @@ export interface NotificationAlert {
 @UntilDestroy()
 @Injectable()
 export class NotificationsService {
-  private subject$ = new Subject<any>();
+  private subject$ = new Subject<NotificationAlert[]>();
   private notifications: NotificationAlert[] = [];
   private locale = 'en-US';
   private timeZone = 'UTC';
@@ -69,7 +69,7 @@ export class NotificationsService {
     });
   }
 
-  getNotifications(): Observable<any> {
+  getNotifications(): Observable<NotificationAlert[]> {
     return this.subject$.asObservable();
   }
 
@@ -122,7 +122,7 @@ export class NotificationsService {
   private addNotification(alert: Alert): NotificationAlert {
     const id: string = alert.id;
     const dismissed: boolean = alert.dismissed;
-    const message: string = <string>alert.formatted;
+    const message: string = alert.formatted;
     const level: AlertLevel = alert.level;
     const date: Date = new Date(alert.datetime.$date);
     const dateStr = date.toUTCString();

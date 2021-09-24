@@ -4,7 +4,7 @@ import {
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from 'app/helptext/global-helptext';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 
@@ -15,7 +15,7 @@ import { EntityFormService } from 'app/pages/common/entity/entity-form/services/
 })
 export class FormInputComponent implements Field {
   @ViewChild('fileInput', { static: true }) fileInput: HTMLInputElement;
-  config: FieldConfig;
+  config: FormInputConfig;
   group: FormGroup;
   fieldShow: string;
   fileString: string | ArrayBuffer;
@@ -27,10 +27,10 @@ export class FormInputComponent implements Field {
   }
 
   changeListener($event: Event): void {
-    this.readFile($event.target);
+    this.readFile($event.target as HTMLInputElement);
   }
 
-  readFile(inputValue: any): void {
+  readFile(inputValue: HTMLInputElement): void {
     const file: File = inputValue.files[0];
     const fReader: FileReader = new FileReader();
 
@@ -45,9 +45,9 @@ export class FormInputComponent implements Field {
     }
   }
 
-  contents(result: any): void {
+  contents(result: string | ArrayBuffer): void {
     if (this.config.fileType == 'binary') {
-      this.group.controls[this.config.name].setValue(btoa(result));
+      this.group.controls[this.config.name].setValue(btoa(result as string));
     } else {
       this.group.controls[this.config.name].setValue(result);
     }
@@ -70,7 +70,7 @@ export class FormInputComponent implements Field {
         this.group.controls[this.config.name].value,
         this.config.inputUnit,
       );
-      if (isNaN(phrasedValue)) {
+      if (isNaN(phrasedValue as number)) {
         this.group.controls[this.config.name].setErrors({
           manualValidateError: true,
           manualValidateErrorMsg: globalHelptext.invalidInputValueWithUnit,
@@ -105,7 +105,7 @@ export class FormInputComponent implements Field {
   }
 
   shouldShowResetInput(): boolean {
-    return this.hasValue() && !this.config.readonly && !this.config.togglePw && this.config.inputType !== 'password';
+    return this.hasValue() && !this.config.readonly && !this.config.togglePw && this.config.inputType !== 'password' && !this.config.disabled;
   }
 
   resetInput(): void {

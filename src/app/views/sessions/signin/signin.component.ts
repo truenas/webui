@@ -14,13 +14,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { ApiService } from 'app/core/services/api.service';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
+import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
-import { CoreEvent } from 'app/interfaces/events';
+import { ThemeChangedEvent } from 'app/interfaces/events/theme-events.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
@@ -40,7 +41,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild(MatButton, { static: false }) submitButton: MatButton;
   @ViewChild('username', { read: ElementRef }) usernameInput: ElementRef<HTMLElement>;
 
-  private failed = false;
+  failed = false;
   product_type: ProductType;
   logo_ready = false;
   product = productText.product;
@@ -66,25 +67,26 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   };
   setPasswordFormGroup: FormGroup;
   has_root_password = true;
-  failover_status = '';
+  failover_status: FailoverStatus;
   failover_statuses = {
-    SINGLE: '',
-    MASTER: T(`Active ${globalHelptext.Ctrlr}.`),
-    BACKUP: T(`Standby ${globalHelptext.Ctrlr}.`),
-    ELECTING: T(`Electing ${globalHelptext.Ctrlr}.`),
-    IMPORTING: T('Importing pools.'),
-    ERROR: T('Failover is in an error state.'),
+    [FailoverStatus.Single]: '',
+    [FailoverStatus.Master]: T(`Active ${globalHelptext.Ctrlr}.`),
+    [FailoverStatus.Backup]: T(`Standby ${globalHelptext.Ctrlr}.`),
+    [FailoverStatus.Electing]: T(`Electing ${globalHelptext.Ctrlr}.`),
+    [FailoverStatus.Importing]: T('Importing pools.'),
+    [FailoverStatus.Error]: T('Failover is in an error state.'),
   };
   failover_ips: string[] = [];
   ha_disabled_reasons: FailoverDisabledReason[] = [];
   show_reasons = false;
-  reason_text = {};
+  reason_text = helptext.ha_disabled_reasons;
   ha_status_text = T('Checking HA status');
   ha_status = false;
   tc_ip: string;
   protected tc_url: string;
 
   readonly ProductType = ProductType;
+  readonly FailoverStatus = FailoverStatus;
 
   constructor(private ws: WebSocketService, private router: Router,
     private snackBar: MatSnackBar, public translate: TranslateService,
@@ -106,7 +108,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         this.tc_url = res.truecommand_url;
       }
     });
-    this.reason_text = helptext.ha_disabled_reasons;
   }
 
   checkSystemType(): void {
@@ -147,7 +148,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
       if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded == true) {
         this.redirect();
       }
@@ -190,6 +191,10 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  disabledReason(reason: FailoverDisabledReason): FailoverDisabledReason {
+    return reason;
+  }
+
   loginToken(): void {
     let middleware_token;
     if ((window as any)['MIDDLEWARE_TOKEN']) {
@@ -201,7 +206,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     if (middleware_token) {
-      this.ws.login_token(middleware_token)
+      this.ws.loginToken(middleware_token)
         .pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result);
         });
@@ -218,7 +223,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
         this.ws.redirectUrl = sessionStorage.currentUrl;
       }
 
-      this.ws.login_token(this.ws.token)
+      this.ws.loginToken(this.ws.token)
         .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
     }
   }
@@ -236,8 +241,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   canLogin(): boolean {
     if (this.logo_ready && this.connected
-       && (this.failover_status === 'SINGLE'
-        || this.failover_status === 'MASTER'
+       && (this.failover_status === FailoverStatus.Single
+        || this.failover_status === FailoverStatus.Master
         || this.product_type === ProductType.Core)) {
       if (!this.didSetFocus && this.usernameInput) {
         setTimeout(() => {
@@ -259,7 +264,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe((res) => {
         this.failover_status = res;
         this.ha_info_ready = true;
-        if (res !== 'SINGLE') {
+        if (res !== FailoverStatus.Single) {
           this.ws.call('failover.get_ips').pipe(untilDestroyed(this)).subscribe((ips) => {
             this.failover_ips = ips;
           }, (err) => {
@@ -386,8 +391,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     this.signinData.otp = '';
     let message = '';
     if (this.ws.token === null) {
-      this.isTwoFactor ? message = T('Username, Password, or 2FA Code is incorrect.')
-        : message = T('Username or Password is incorrect.');
+      if (this.isTwoFactor) {
+        message = T('Username, Password, or 2FA Code is incorrect.');
+      } else {
+        message = T('Username or Password is incorrect.');
+      }
     } else {
       message = T('Token expired, please log back in.');
       this.ws.token = null;
@@ -400,12 +408,13 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onGoToLegacy(): void {
-    this.dialogService.confirm(T('Warning'),
-      globalHelptext.legacyUIWarning,
-      true, T('Continue to Legacy UI')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-      if (res) {
-        window.location.href = '/legacy/';
-      }
+    this.dialogService.confirm({
+      title: T('Warning'),
+      message: globalHelptext.legacyUIWarning,
+      hideCheckBox: true,
+      buttonMsg: T('Continue to Legacy UI'),
+    }).pipe(untilDestroyed(this)).subscribe(() => {
+      window.location.href = '/legacy/';
     });
   }
 

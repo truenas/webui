@@ -20,9 +20,9 @@ export class WebSocketService {
   private authStatus$: Subject<boolean>;
   onCloseSubject$: Subject<boolean>;
   onOpenSubject$: Subject<boolean>;
-  pendingCalls: any;
+  pendingCalls: Map<string, any>;
   pendingSubs: any = {};
-  pendingMessages: any[] = [];
+  pendingMessages: unknown[] = [];
   socket: WebSocket;
   connected = false;
   loggedIn = false;
@@ -46,7 +46,7 @@ export class WebSocketService {
     this.connect();
   }
 
-  get authStatus(): Observable<any> {
+  get authStatus(): Observable<boolean> {
     return this.authStatus$.asObservable();
   }
 
@@ -163,7 +163,7 @@ export class WebSocketService {
     }
   }
 
-  send(payload: any): void {
+  send(payload: unknown): void {
     if (this.socket.readyState == WebSocket.OPEN) {
       this.socket.send(JSON.stringify(payload));
     } else {
@@ -246,9 +246,8 @@ export class WebSocketService {
         this.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
           if (event.id == job_id) {
             observer.next(event.fields);
-            if (event.fields.state === JobState.Success || event.fields.state == JobState.Failed) {
-              observer.complete();
-            }
+            if (event.fields.state === JobState.Success) observer.complete();
+            if (event.fields.state === JobState.Failed) observer.error(event.fields);
           }
         });
       });
@@ -256,7 +255,7 @@ export class WebSocketService {
     return source;
   }
 
-  login(username: string, password: string, otp_token?: string): Observable<any> {
+  login(username: string, password: string, otp_token?: string): Observable<boolean> {
     const params: LoginParams = otp_token
       ? [username, password, otp_token]
       : [username, password];
@@ -289,7 +288,7 @@ export class WebSocketService {
     observer.complete();
   }
 
-  login_token(token: string): Observable<boolean> {
+  loginToken(token: string): Observable<boolean> {
     return Observable.create((observer: Observer<boolean>) => {
       if (token) {
         this.call('auth.token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
@@ -304,7 +303,7 @@ export class WebSocketService {
     this.token = null;
   }
 
-  prepare_shutdown(): void {
+  prepareShutdown(): void {
     this.shuttingdown = true;
     this.clearCredentials();
   }

@@ -100,3 +100,30 @@ export interface ReportingConfig {
   graphite_separateinstances: boolean;
   id: number;
 }
+
+export type ReportingConfigUpdate = Omit<ReportingConfig, 'id'>;
+
+export type ReportingQueryParams = [
+  [ReportingParams],
+  { start: number; end: number },
+];
+
+export interface ReportingParams {
+  name: string;
+  identifier: string;
+}
+
+export interface ReportingData {
+  end: number;
+  identifier: string;
+  legend: string[];
+  name: string;
+  start: number;
+  step: number;
+  data: number[][];
+  aggregations: {
+    min: number[];
+    mean: number[];
+    max: number[];
+  };
+}

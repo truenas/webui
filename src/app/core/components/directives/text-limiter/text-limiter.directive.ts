@@ -1,16 +1,18 @@
 import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import {
-  Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef,
+  Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef, OnChanges,
 } from '@angular/core';
 import { TextLimiterTooltipComponent } from './text-limiter-tooltip/text-limiter-tooltip.component';
 
 @Directive({
   selector: '[textLimiter]',
 })
-export class TextLimiterDirective implements AfterViewInit {
+export class TextLimiterDirective implements AfterViewInit, OnChanges {
   @Input() popup = true;
   @Input() threshold: number;
+  @Input() content = '';
+
   private defaultThreshold = 10;
   private overlayRef: OverlayRef;
 
@@ -20,7 +22,7 @@ export class TextLimiterDirective implements AfterViewInit {
   @HostListener('mouseenter')
   show(): void {
     if (!this.popup) return;
-    if (this.text !== this.rawText) {
+    if (this.text !== this.content) {
       // Create tooltip portal
       const tooltipPortal = new ComponentPortal(TextLimiterTooltipComponent);
 
@@ -28,7 +30,7 @@ export class TextLimiterDirective implements AfterViewInit {
       const tooltipRef: ComponentRef<TextLimiterTooltipComponent> = this.overlayRef.attach(tooltipPortal);
 
       // Pass content to tooltip component instance
-      tooltipRef.instance.text = this.rawText;
+      tooltipRef.instance.text = this.content;
     }
   }
 
@@ -44,10 +46,12 @@ export class TextLimiterDirective implements AfterViewInit {
     private overlay: Overlay,
   ) {}
 
+  ngOnChanges(): void {
+    this.applyTruncate();
+  }
+
   ngAfterViewInit(): void {
-    this.rawText = this.el.nativeElement.innerText;
-    this.text = this.truncate(this.rawText);
-    this.el.nativeElement.innerText = this.text;
+    this.applyTruncate();
     this.overlayRef = this.overlay.create({});
 
     const positionStrategy = this.overlayPositionBuilder
@@ -73,5 +77,10 @@ export class TextLimiterDirective implements AfterViewInit {
       return truncated + '...';
     }
     return str;
+  }
+
+  applyTruncate(): void {
+    this.text = this.truncate(this.content);
+    this.el.nativeElement.innerText = this.text;
   }
 }

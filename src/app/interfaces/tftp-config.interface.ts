@@ -8,3 +8,5 @@ export interface TftpConfig {
   umask: string;
   username: string;
 }
+
+export type TftpConfigUpdate = Omit<TftpConfig, 'id'>;

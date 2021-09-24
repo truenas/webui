@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DeviceType } from 'app/enums/device-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { GpuDevice } from 'app/interfaces/gpu-device.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -21,7 +23,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
   queryCall: 'system.advanced.config' = 'system.advanced.config';
   updateCall: 'system.advanced.update' = 'system.advanced.update';
   isOneColumnForm = true;
-  gpus: GpuDevice[];
+  gpus: Device[];
   private isolatedGpuPciIds: string[];
   private advancedConfig: AdvancedConfig;
 
@@ -61,9 +63,9 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     const gpusFormControl = this.entityForm.formGroup.controls['gpus'];
 
-    this.ws.call('device.get_info', ['GPU']).pipe(untilDestroyed(this)).subscribe((gpus) => {
+    this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
-      const gpusConf = this.fieldSets.config('gpus');
+      const gpusConf = this.fieldSets.config('gpus') as FormSelectConfig;
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
       }
@@ -78,7 +80,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
     gpusFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((gpusValue: string[]) => {
       const finalIsolatedPciIds = [...gpusValue];
 
-      const gpusConf = this.fieldSets.config('gpus');
+      const gpusConf = this.fieldSets.config('gpus') as FormSelectConfig;
       if (finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.gpus) {
@@ -86,8 +88,12 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
             prevSelectedGpus.push(gpu);
           }
         }
-        const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
-        gpusConf.warnings = 'At least 1 GPU is required by the host for it’s functions.<p>Currently following GPU(s) have been isolated:<ol>' + listItems + '</ol></p><p>With your selection, no GPU is available for the host to consume.</p>';
+        if (prevSelectedGpus.length > 0) {
+          const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
+          gpusConf.warnings = 'At least 1 GPU is required by the host for it’s functions.<p>Currently following GPU(s) have been isolated:<ol>' + listItems + '</ol></p><p>With your selection, no GPU is available for the host to consume.</p>';
+        } else {
+          gpusConf.warnings = 'At least 1 GPU is required by the host for it’s functions. With your selection, no GPU is available for the host to consume.';
+        }
         gpusFormControl.setErrors({ maxPCIIds: true });
       } else {
         gpusConf.warnings = null;

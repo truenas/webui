@@ -1,20 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { latestVersion } from 'app/constants/catalog.constants';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/apps/apps';
-import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
+import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
-import { WebSocketService } from 'app/services/ws.service';
 import { PullImageFormComponent } from '../forms/pull-image-form.component';
 
 @UntilDestroy()
@@ -22,7 +20,7 @@ import { PullImageFormComponent } from '../forms/pull-image-form.component';
   selector: 'app-docker-images',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class DockerImagesComponent implements EntityTableConfig, OnInit {
+export class DockerImagesComponent implements EntityTableConfig {
   title = 'Docker Images';
 
   protected entityList: EntityTableComponent;
@@ -30,7 +28,6 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
   queryCall: 'container.image.query' = 'container.image.query';
   wsDelete: 'container.image.delete' = 'container.image.delete';
   disableActionsConfig = true;
-  addComponent: PullImageFormComponent;
 
   columns = [
     { name: helptext.dockerImages.columns.id, prop: 'id', always_display: true },
@@ -49,11 +46,11 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
   };
 
   filterString = '';
-  constructor(private mdDialog: MatDialog,
-    protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected ws: WebSocketService, protected prefService: PreferencesService,
-    private modalService: ModalService) {
-  }
+  constructor(
+    protected dialogService: DialogService,
+    private modalService: ModalService,
+    private matDialog: MatDialog,
+  ) {}
 
   chooseTag: DialogFormConfiguration = {
     title: helptext.dockerImages.chooseTag.title,
@@ -64,21 +61,9 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
       required: true,
     }],
     saveButtonText: helptext.dockerImages.chooseTag.action,
-    customSubmit: this.updateImage,
+    customSubmit: (entityDialog) => this.updateImage(entityDialog),
     parent: this,
   };
-
-  ngOnInit(): void {
-    this.refreshUserForm();
-
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshUserForm();
-    });
-  }
-
-  refreshUserForm(): void {
-    this.addComponent = new PullImageFormComponent(this.mdDialog, this.dialogService, this.modalService);
-  }
 
   refresh(): void {
     this.entityList.getData();
@@ -89,7 +74,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
     this.entityList = entityList;
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: ContainerImage): EntityTableAction[] {
     const actions = [];
     actions.push({
       id: row.id,
@@ -97,7 +82,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
       label: helptext.dockerImages.menu.update,
       name: 'update',
       disabled: !row.update_available,
-      onClick: (row: any) => {
+      onClick: (row: ContainerImage) => {
         this.onClickUpdateImage(row);
       },
     }, {
@@ -105,7 +90,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
       icon: 'delete',
       label: helptext.dockerImages.menu.delete,
       name: 'delete',
-      onClick: (row: any) => {
+      onClick: (row: ContainerImage) => {
         this.entityList.doDelete(row);
       },
     });
@@ -113,8 +98,8 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
     return actions as EntityTableAction[];
   }
 
-  resourceTransformIncomingRestData(d: any[]): any[] {
-    const data: any[] = [];
+  resourceTransformIncomingRestData(d: ContainerImage[]): ContainerImage[] {
+    const data: ContainerImage[] = [];
     d.forEach((row) => {
       if (!row.system_image) {
         row.state = row.update_available ? helptext.dockerImages.updateAvailable : '';
@@ -125,7 +110,7 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
   }
 
   doAdd(): void {
-    this.modalService.open('slide-in-form', this.addComponent);
+    this.modalService.openInSlideIn(PullImageFormComponent);
   }
 
   onToolbarAction(evt: CoreEvent): void {
@@ -137,9 +122,10 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
     }
   }
 
-  onClickUpdateImage(row: any): void {
+  onClickUpdateImage(row: ContainerImage): void {
     if (row.repo_tags.length > 0) {
-      this.chooseTag.fieldConfig[0].options = row.repo_tags.map((item: any) => ({
+      const config = this.chooseTag.fieldConfig[0] as FormSelectConfig;
+      config.options = row.repo_tags.map((item) => ({
         label: item,
         value: item,
       }));
@@ -149,7 +135,6 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
   }
 
   updateImage(entityDialog: EntityDialogComponent): void {
-    const self = entityDialog.parent;
     const tag = entityDialog.formGroup.controls['tag'].value;
     const params = tag.split(':');
     const payload: [PullContainerImageParams] = [{
@@ -157,17 +142,16 @@ export class DockerImagesComponent implements EntityTableConfig, OnInit {
       tag: params.length > 1 ? params[1] : latestVersion,
     }];
 
-    self.dialogRef = self.mdDialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
         title: helptext.dockerImages.pulling,
       },
-      disableClose: true,
     });
-    self.dialogRef.componentInstance.setCall('container.image.pull', payload);
-    self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      self.dialogService.closeAllDialogs();
-      self.modalService.refreshTable();
+    dialogRef.componentInstance.setCall('container.image.pull', payload);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.modalService.refreshTable();
     });
   }
 }

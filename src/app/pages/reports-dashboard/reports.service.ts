@@ -1,6 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
 /*
@@ -14,17 +16,26 @@ export interface Command {
   options?: any[]; // Function parameters
 }
 
+export enum ReportingDatabaseError {
+  FailedExport = 22,
+  InvalidTimestamp = 206,
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ReportsService implements OnDestroy {
   private reportsUtils: Worker;
 
-  constructor(private ws: WebSocketService, private core: CoreService) {
-    this.reportsUtils = new Worker('./reports-utils.worker', { type: 'module' });
+  constructor(
+    private ws: WebSocketService,
+    protected http: HttpClient,
+    private core: CoreService,
+  ) {
+    this.reportsUtils = new Worker(new URL('./reports-utils.worker', import.meta.url), { type: 'module' });
 
-    core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
-      ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((raw_res) => {
+    this.core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
+      this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((raw_res) => {
         let res;
 
         // If requested, we truncate trailing null values
@@ -59,9 +70,10 @@ export class ReportsService implements OnDestroy {
 
           this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: repl, sender: evt.sender.chartId });
         } else {
-          // this.core.emit({name:"ReportData-" + evt.sender.chartId, data: res[0], sender:this});
           this.reportsUtils.postMessage({ name: 'ProcessCommandsAsReportData', data: commands, sender: evt.sender.chartId });
         }
+      }, (err: WebsocketError) => {
+        this.reportsUtils.postMessage({ name: 'FetchingError', data: err, sender: evt.sender.chartId });
       });
     });
 
@@ -89,12 +101,12 @@ export class ReportsService implements OnDestroy {
     this.reportsUtils.postMessage({ name: 'ProcessCommands', data: pipeLine, sender: 'chartID' });
   }
 
-  truncateData(data: any): any {
+  truncateData(data: number[][]): number[][] {
     let finished = false;
     let index = data.length - 1;
     do {
       // True only when all the values are null
-      const isEmpty = !data[index].reduce((acc: any, v: any) => {
+      const isEmpty = !data[index].reduce((acc, v) => {
         // Treat zero as a value
         const value = v !== null ? 1 : v;
         return acc + value;
@@ -109,5 +121,22 @@ export class ReportsService implements OnDestroy {
     } while (!finished && data.length > 0);
 
     return data;
+  }
+
+  async getServerTime(): Promise<Date> {
+    let date;
+    const options = {
+      observe: 'response' as const,
+      responseType: 'text' as const,
+    };
+    await this.http.get(window.location.origin.toString(), options).toPromise().then((resp) => {
+      const serverTime = resp.headers.get('Date');
+      const seconds = new Date(serverTime).getTime();
+      const secondsToTrim = 60;
+      const trimmed = new Date(seconds - (secondsToTrim * 1000));
+      date = trimmed;
+    });
+
+    return date;
   }
 }

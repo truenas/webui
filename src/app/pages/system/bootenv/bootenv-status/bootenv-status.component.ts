@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TreeNode } from 'primeng/api';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { EntityTreeTable } from 'app/pages/common/entity/entity-tree-table/entity-tree-table.model';
@@ -12,13 +13,13 @@ import { WebSocketService } from 'app/services/ws.service';
 import { T } from 'app/translate-marker';
 
 interface PoolDiskInfo {
-  name: any;
-  read: any;
-  write: any;
-  checksum: any;
-  status: any;
+  name: string;
+  read: number;
+  write: number;
+  checksum: number;
+  status: string;
   actions?: any;
-  path?: any;
+  path?: string;
 }
 
 @UntilDestroy()
@@ -30,7 +31,14 @@ export class BootStatusListComponent implements OnInit {
   title = 'Boot Pool Status';
   protected queryCall: 'boot.get_state' = 'boot.get_state';
   protected pk: number;
-  poolScan: any;
+  poolScan: {
+    function: string;
+    state: string;
+    errors: string;
+    start_time: ApiTimestamp;
+    pause: boolean;
+  };
+
   oneDisk = false;
   expandRows: number[] = [1];
   treeTableConfig: EntityTreeTable = {
@@ -76,7 +84,7 @@ export class BootStatusListComponent implements OnInit {
     });
   }
 
-  detach(disk: any): void {
+  detach(disk: string): void {
     disk = disk.substring(5, disk.length);
     this.loader.open();
     this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe(
@@ -85,7 +93,7 @@ export class BootStatusListComponent implements OnInit {
         this.router.navigate(
           new Array('').concat('system', 'boot'),
         );
-        this.dialog.Info(T('Device detached '), T(`<i>${disk}</i> has been detached.`), '300px', 'info', true);
+        this.dialog.info(T('Device detached '), T(`<i>${disk}</i> has been detached.`), '300px', 'info', true);
       },
       (res) => {
         this.loader.close();
@@ -94,7 +102,7 @@ export class BootStatusListComponent implements OnInit {
     );
   }
 
-  parseData(data: VDev | BootPoolState, category?: string, boot_pool_data?: VDev): any {
+  parseData(data: VDev | BootPoolState, category?: string, boot_pool_data?: VDev): PoolDiskInfo {
     let stats = {
       read_errors: 0,
       write_errors: 0,
@@ -197,7 +205,7 @@ export class BootStatusListComponent implements OnInit {
   dataHandler(pool: BootPoolState): void {
     this.treeTableConfig.tableData = [];
     const node: TreeNode = {};
-    node.data = this.parseData(pool as any);
+    node.data = this.parseData(pool);
     node.expanded = true;
     node.children = [];
 
@@ -211,7 +219,7 @@ export class BootStatusListComponent implements OnInit {
     this.treeTableConfig = config;
   }
 
-  getReadableDate(data: any): Date {
+  getReadableDate(data: ApiTimestamp): Date {
     if (data != null) {
       return new Date(data.$date);
     }

@@ -32,3 +32,15 @@ export interface ChartReleaseEventObject {
   resource_version: string;
   uid: string;
 }
+
+export interface ChartScaleResult {
+  before_scale: number;
+  after_scale: number;
+}
+
+export interface ChartRollbackParams {
+  force_rollback?: boolean;
+  recreate_resources?: boolean;
+  rollback_snapshot?: boolean;
+  item_version: string;
+}

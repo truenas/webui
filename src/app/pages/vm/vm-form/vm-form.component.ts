@@ -1,24 +1,30 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
+import { DeviceType } from 'app/enums/device-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { VmDeviceType, VmTime } from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { GpuDevice } from 'app/interfaces/gpu-device.interface';
+import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
+import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import {
-  FieldConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  WebSocketService, StorageService, VmService, AppLoaderService, DialogService, SystemGeneralService,
+  AppLoaderService,
+  DialogService,
+  StorageService,
+  SystemGeneralService,
+  VmService,
+  WebSocketService,
 } from 'app/services';
 import { T } from 'app/translate-marker';
 
@@ -36,18 +42,18 @@ export class VmFormComponent implements FormConfiguration {
   route_success: string[] = ['vm'];
   protected entityForm: EntityFormComponent;
   save_button_enabled: boolean;
-  private rawVmData: any;
+  private rawVmData: VirtualMachine;
   vcpus: number;
   cores: number;
   threads: number;
-  private gpus: GpuDevice[];
+  private gpus: Device[];
   private isolatedGpuPciIds: string[];
   private maxVCPUs: number;
   private productType = window.localStorage.getItem('product_type') as ProductType;
   queryCallOption: any[] = [];
 
   fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [
+  fieldSets: FieldSet<this>[] = [
     {
       name: helptext.vm_settings_title,
       class: 'vm_settings',
@@ -160,7 +166,7 @@ export class VmFormComponent implements FormConfiguration {
           placeholder: `${helptext.memory_placeholder} ${globalHelptext.human_readable.suggestion_label}`,
           tooltip: helptext.memory_tooltip,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.memoryBlur,
           parent: this,
         },
 
@@ -186,17 +192,24 @@ export class VmFormComponent implements FormConfiguration {
           value: false,
         },
         {
+          type: 'checkbox',
+          name: 'ensure_display_device',
+          placeholder: T('Ensure Display Device'),
+          tooltip: T('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
+          value: true,
+        },
+        {
           type: 'select',
           placeholder: T("GPU's"),
           name: 'gpus',
           multiple: true,
           options: [],
-          required: true,
+          required: false,
         },
       ],
     },
   ];
-  private bootloader: FieldConfig;
+  private bootloader: FormSelectConfig;
 
   constructor(
     protected router: Router,
@@ -226,14 +239,14 @@ export class VmFormComponent implements FormConfiguration {
   }
 
   afterInit(entityForm: EntityFormComponent): void {
-    this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' });
+    this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' }) as FormSelectConfig;
     this.vmService.getBootloaderOptions().pipe(untilDestroyed(this)).subscribe((options) => {
       for (const option in options) {
         this.bootloader.options.push({ label: options[option], value: option });
       }
     });
 
-    entityForm.formGroup.controls['memory'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    entityForm.formGroup.controls['memory'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string | number) => {
       const mem = _.find(this.fieldConfig, { name: 'memory' });
       if (typeof (value) === 'number') {
         value = value.toString();
@@ -259,7 +272,7 @@ export class VmFormComponent implements FormConfiguration {
 
     if (this.productType.includes(ProductType.Scale)) {
       _.find(this.fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
-      const cpuModel = _.find(this.fieldConfig, { name: 'cpu_model' });
+      const cpuModel = _.find(this.fieldConfig, { name: 'cpu_model' }) as FormSelectConfig;
       cpuModel.isHidden = false;
 
       this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
@@ -285,8 +298,8 @@ export class VmFormComponent implements FormConfiguration {
           finalIsolatedPciIds.push(gpuValue);
         }
       }
-      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
-      if (finalIsolatedPciIds.length >= gpusConf.options.length) {
+      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' }) as FormSelectConfig;
+      if (finalIsolatedPciIds.length && finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.gpus) {
           if (this.isolatedGpuPciIds.findIndex((igpi) => igpi === gpu.addr.pci_slot) >= 0) {
@@ -303,7 +316,7 @@ export class VmFormComponent implements FormConfiguration {
     });
   }
 
-  blurEvent(parent: any): void {
+  memoryBlur(parent: this): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['memory'].setValue(parent.storageService.humanReadable);
       const valString = (parent.entityForm.formGroup.controls['memory'].value);
@@ -317,19 +330,18 @@ export class VmFormComponent implements FormConfiguration {
   }
 
   cpuValidator(name: string): any {
-    const self = this;
-    return function validCPU() {
-      const config = self.fieldConfig.find((c) => c.name === name);
+    return () => {
+      const config = this.fieldConfig.find((c) => c.name === name);
       setTimeout(() => {
-        const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
+        const errors = this.vcpus * this.cores * this.threads > this.maxVCPUs
           ? { validCPU: true }
           : null;
 
         if (errors) {
           config.hasErrors = true;
           config.hasErrors = true;
-          self.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
-            config.warnings = warning + ` ${self.maxVCPUs}.`;
+          this.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
+            config.warnings = warning + ` ${this.maxVCPUs}.`;
           });
         } else {
           config.hasErrors = false;
@@ -340,15 +352,15 @@ export class VmFormComponent implements FormConfiguration {
     };
   }
 
-  resourceTransformIncomingRestData(vmRes: any): any {
+  resourceTransformIncomingRestData(vmRes: VirtualMachine): any {
     this.rawVmData = vmRes;
-    vmRes['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
-    this.ws.call('device.get_info', ['GPU']).pipe(untilDestroyed(this)).subscribe((gpus: GpuDevice[]) => {
+    (vmRes as any)['memory'] = this.storageService.convertBytestoHumanReadable(vmRes['memory'] * 1048576, 0);
+    this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
-      const vmPciSlots: string[] = vmRes.devices
-        .filter((device: any) => device.dtype === VmDeviceType.Pci)
-        .map((pciDevice: any) => pciDevice.attributes.pptdev);
-      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
+      const vmPciSlots = (vmRes.devices
+        .filter((device) => device.dtype === VmDeviceType.Pci) as VmPciPassthroughDevice[])
+        .map((pciDevice) => pciDevice.attributes.pptdev);
+      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' }) as FormSelectConfig;
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
       }
@@ -377,8 +389,10 @@ export class VmFormComponent implements FormConfiguration {
     const pciDevicesToCreate = [];
     const vmPciDeviceIdsToRemove = [];
 
-    const prevVmPciDevices = this.rawVmData.devices.filter((device: any) => device.dtype === VmDeviceType.Pci);
-    const prevVmPciSlots: string[] = prevVmPciDevices.map((pciDevice: any) => pciDevice.attributes.pptdev);
+    const prevVmPciDevices = this.rawVmData.devices.filter((device) => {
+      return device.dtype === VmDeviceType.Pci;
+    }) as VmPciPassthroughDevice[];
+    const prevVmPciSlots: string[] = prevVmPciDevices.map((pciDevice) => pciDevice.attributes.pptdev);
     const prevGpus = this.gpus.filter((gpu) => {
       for (const gpuPciDevice of gpu.devices) {
         if (!prevVmPciSlots.includes(gpuPciDevice.vm_pci_slot)) {
@@ -420,15 +434,15 @@ export class VmFormComponent implements FormConfiguration {
       }
       if (!found) {
         const prevVmGpuPciDevicesPciSlots = prevGpu.devices.map((prevGpuPciDevice) => prevGpuPciDevice.vm_pci_slot);
-        const vmPciDevices = prevVmPciDevices.filter((prevVmPciDevice: any) => {
+        const vmPciDevices = prevVmPciDevices.filter((prevVmPciDevice) => {
           return prevVmGpuPciDevicesPciSlots.includes(prevVmPciDevice.attributes.pptdev);
         });
-        const vmPciDeviceIds = vmPciDevices.map((prevVmPciDevice: any) => prevVmPciDevice.id);
+        const vmPciDeviceIds = vmPciDevices.map((prevVmPciDevice) => prevVmPciDevice.id);
         vmPciDeviceIdsToRemove.push(...vmPciDeviceIds);
       }
     }
 
-    const observables: Observable<any>[] = [];
+    const observables: Observable<unknown>[] = [];
     if (updatedVmData.gpus) {
       const finalIsolatedPciIds = [...this.isolatedGpuPciIds];
       for (const gpuValue of updatedVmData.gpus) {

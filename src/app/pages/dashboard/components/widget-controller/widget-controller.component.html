@@ -1,0 +1,38 @@
+<div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
+  <div class="card-container  front">
+    <mat-card class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+      <mat-card-content>
+
+        <mat-toolbar-row >
+          <h3 class="mat-card-title-text"><div class="card-title-text">{{title | translate}}</div></h3>
+          <div *ngIf="actionsConfig" class="controls">
+            <entity-toolbar [conf]="actionsConfig"></entity-toolbar>
+          </div>
+        </mat-toolbar-row>
+
+        <div *ngIf="screenType == 'Mobile' || 'Desktop'" fxLayout="column" class="mobile" >
+          <div *ngIf="renderedWidgets.length == 0 && emptyConfig" fxFlex="65" class="bottom empty">
+            <entity-empty [conf]="emptyConfig"></entity-empty>
+          </div>
+
+          <div *ngIf="renderedWidgets.length > 0" fxFlex="65" class="bottom">
+            <div class="list-subheader">  <span class="capitalize">Widgets ({{dashState.length}} items)</span></div>
+            <mat-list>
+              <ng-container *ngFor="let widget of dashState;">
+                <mat-list-item class="widget-launcher clickable" (click)="launchWidget(widget)" *ngIf="widget.rendered" >
+                  <span class="label">{{widget.name}}
+                    <span *ngIf="widget.identifier && nameFromIdentifier(widget.identifier).length > 0;">: </span>
+                  </span>
+                  &nbsp;&nbsp;
+                  <span *ngIf="widget.identifier && nameFromIdentifier(widget.identifier).length > 0;">{{nameFromIdentifier(widget.identifier) }}</span>
+                  <mat-icon class="next-slide">chevron_right</mat-icon>
+                </mat-list-item>
+              </ng-container>
+            </mat-list>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+  </div>
+</div>

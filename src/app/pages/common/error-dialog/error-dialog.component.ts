@@ -13,41 +13,40 @@ import { EntityUtils } from '../entity/utils';
   templateUrl: './error-dialog.component.html',
   styleUrls: ['./error-dialog.component.scss'],
 })
-export class ErrorDialog {
+export class ErrorDialogComponent {
   title: string;
   message: string;
   backtrace: string;
   isCloseMoreInfo = true;
   logs: any;
 
-  constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService,
-    private ws: WebSocketService, public http: HttpClient, public storage: StorageService) {}
+  constructor(
+    public dialogRef: MatDialogRef<ErrorDialogComponent>,
+    public translate: TranslateService,
+    private ws: WebSocketService,
+    public http: HttpClient,
+    public storage: StorageService,
+  ) {}
 
   toggleOpen(): void {
     const dialogs = document.getElementsByClassName('mat-dialog-container');
     const dialog = dialogs[dialogs.length - 1];
-    const messageWrapper = (<HTMLElement>dialog.querySelector('#err-message-wrapper'));
-    const title = (<HTMLElement>dialog.querySelector('#err-title'));
-    const content = (<HTMLElement>dialog.querySelector('#err-md-content'));
-    const btPanel = (<HTMLElement>dialog.querySelector('#err-bt-panel'));
-    const txtarea = (<HTMLElement>dialog.querySelector('#err-bt-text'));
+    const messageWrapper: HTMLElement = dialog.querySelector('#err-message-wrapper');
+    const title: HTMLElement = dialog.querySelector('#err-title');
+    const content: HTMLElement = dialog.querySelector('#err-md-content');
+    const btPanel: HTMLElement = dialog.querySelector('#err-bt-panel');
+    const txtarea: HTMLElement = dialog.querySelector('#err-bt-text');
 
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {
-      dialog.setAttribute('style', 'width : 800px; height: 600px');
+      dialog.setAttribute('style', 'width : 800px; max-height: 80vh;');
       let errMsgHeight = messageWrapper.offsetHeight - 21;
       if (errMsgHeight > 63) {
         errMsgHeight = 63;
       }
-      const tracebackHeight = (400 - errMsgHeight).toString() + 'px';
       title.setAttribute('style', 'height: 40px; overflow: hidden');
-      content.setAttribute('style', 'height: 450px');
       messageWrapper.setAttribute('style', 'max-height: 63px; overflow: auto');
-      btPanel.setAttribute('style', 'width: 750px; max-height: 400px');
-      btPanel.style.height = tracebackHeight;
-      setTimeout(() => {
-        txtarea.style.height = tracebackHeight;
-      }, 215);
+      btPanel.setAttribute('style', 'width: 750px; height: calc(80vh - 240px)');
     } else {
       dialog.removeAttribute('style');
       title.removeAttribute('style');

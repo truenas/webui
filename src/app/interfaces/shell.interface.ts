@@ -4,7 +4,7 @@ export interface ShellConnectedEvent {
 }
 
 export type ResizeShellRequest = [
-  /* connectionId */ string,
-  /* cols */ number,
-  /* rows */ number,
+  connectionId: string,
+  cols: number,
+  rows: number,
 ];

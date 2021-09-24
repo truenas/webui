@@ -1,13 +1,17 @@
-<ul [class.wizard-ul]="!isRoot" *ngIf="value && isAutoSummary()">
-  <li *ngFor="let fieldConfig of fieldConfigs;">
-    <div *ngIf="fieldConfig.type == 'dict'; else notDict">
-      <label>{{fieldConfig.placeholder | translate}}: </label>
-      <wizard-summary [fieldConfigs]="fieldConfig.subFields" [value]="value[fieldConfig.name]" [isRoot]="false"></wizard-summary>
-    </div>
-    <ng-template #notDict>
-      <div *ngIf="isVisible(fieldConfig)">{{fieldConfig.placeholder | translate}}: {{getValue(fieldConfig)}}</div>
-    </ng-template>
-  </li>
+<ul [class.wizard-ul]="!isRoot" *ngIf="value && isAutoSummary() && fieldConfigs.length > 0">
+  <ng-container *ngFor="let fieldConfig of fieldConfigs;">
+    <li *ngIf="isVisible(fieldConfig)">
+      <div *ngIf="fieldConfig.type == 'dict'; else notDict">
+        <ng-container *ngIf="value[fieldConfig.name]">
+          <label>{{fieldConfig.placeholder | translate}}:</label>
+          <wizard-summary [fieldConfigs]="fieldConfig.subFields" [value]="value[fieldConfig.name]" [isRoot]="false"></wizard-summary>
+        </ng-container>
+      </div>
+      <ng-template #notDict>
+        <div>{{fieldConfig.placeholder | translate}}: {{getValue(fieldConfig)}}</div>
+      </ng-template>
+    </li>
+  </ng-container>
 </ul>
 <div *ngIf="!isAutoSummary()">
   <ul >

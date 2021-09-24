@@ -12,13 +12,18 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { ReplicationEncryptionKeyFormat } from 'app/enums/replication-encryption-key-format.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
+import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FormExplorerConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -45,12 +50,12 @@ export class ReplicationFormComponent implements FormConfiguration {
     content: '',
   };
   queryCall: 'replication.query' = 'replication.query';
-  queryCallOption: any[] = [];
+  queryCallOption: [QueryFilter<ReplicationTask>];
   addCall: 'replication.create' = 'replication.create';
   editCall: 'replication.update' = 'replication.update';
   isEntity = true;
   protected entityForm: EntityFormComponent;
-  protected queryRes: any;
+  protected queryRes: ReplicationTask;
   title: string;
   pk: number;
   protected retentionPolicyChoice = [
@@ -371,7 +376,7 @@ export class ReplicationFormComponent implements FormConfiguration {
             },
           ],
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.speedLimitBlur,
           parent: this,
         },
         {
@@ -646,41 +651,38 @@ export class ReplicationFormComponent implements FormConfiguration {
           value: '23:59',
         },
         {
+          type: 'radio',
+          name: 'schema_or_regex',
+          placeholder: helptext.name_schema_or_regex_placeholder_push,
+          options: [
+            { label: helptext.naming_schema_placeholder, value: SnapshotNamingOption.NamingSchema },
+            { label: helptext.name_regex_placeholder, value: SnapshotNamingOption.NameRegex },
+          ],
+          value: SnapshotNamingOption.NamingSchema,
+        },
+        {
           type: 'chip',
           name: 'naming_schema',
           placeholder: helptext.naming_schema_placeholder,
           tooltip: helptext.naming_schema_tooltip,
-          relation: [
-            {
-              action: RelationAction.Hide,
-              when: [
-                {
-                  name: 'direction',
-                  value: Direction.Push,
-                },
-              ],
-            },
-          ],
         },
         {
           type: 'chip',
           name: 'also_include_naming_schema',
           placeholder: helptext.also_include_naming_schema_placeholder,
           tooltip: helptext.also_include_naming_schema_tooltip,
-          relation: [
-            {
-              action: RelationAction.Hide,
-              when: [
-                {
-                  name: 'direction',
-                  value: Direction.Pull,
-                },
-              ],
-            },
-          ],
           blurStatus: true,
-          blurEvent: this.blurEventNamingSchema,
+          blurEvent: this.blurEventCountSnapshots,
           parent: this,
+        },
+        {
+          type: 'input',
+          name: 'name_regex',
+          placeholder: helptext.name_regex_placeholder,
+          tooltip: helptext.name_regex_tooltip,
+          parent: this,
+          blurEvent: this.blurEventCountSnapshots,
+          isHidden: true,
         },
         {
           type: 'checkbox',
@@ -1103,32 +1105,30 @@ export class ReplicationFormComponent implements FormConfiguration {
     this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: number) => {
       this.queryCallOption = [['id', '=', id]];
     });
-    const sshCredentialsField = this.fieldSets.config('ssh_credentials');
+    const sshCredentialsField = this.fieldSets.config('ssh_credentials') as FormSelectConfig;
     this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
-      for (const i in connections) {
-        sshCredentialsField.options.push({
-          label: connections[i].name,
-          value: connections[i].id,
-        });
-      }
+      sshCredentialsField.options = connections.map((connection) => ({
+        label: connection.name,
+        value: connection.id,
+      }));
     });
-    const periodicSnapshotTasksField = this.fieldSets.config('periodic_snapshot_tasks');
-    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      for (const i in res) {
-        const label = `${res[i].dataset} - ${res[i].naming_schema} - ${res[i].lifetime_value} ${
-          res[i].lifetime_unit
-        } (S) - ${res[i].enabled ? 'Enabled' : 'Disabled'}`;
+    const periodicSnapshotTasksField = this.fieldSets.config('periodic_snapshot_tasks') as FormSelectConfig;
+    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((tasks) => {
+      tasks.forEach((task) => {
+        const label = `${task.dataset} - ${task.naming_schema} - ${task.lifetime_value} ${
+          task.lifetime_unit
+        } (S) - ${task.enabled ? 'Enabled' : 'Disabled'}`;
         periodicSnapshotTasksField.options.push({
           label,
-          value: res[i].id,
+          value: task.id,
         });
-      }
+      });
     });
 
-    const scheduleBeginField = this.fieldSets.config('schedule_begin');
-    const restrictScheduleBeginField = this.fieldSets.config('restrict_schedule_begin');
-    const scheduleEndField = this.fieldSets.config('schedule_end');
-    const restrictScheduleEndField = this.fieldSets.config('restrict_schedule_end');
+    const scheduleBeginField = this.fieldSets.config('schedule_begin') as FormSelectConfig;
+    const restrictScheduleBeginField = this.fieldSets.config('restrict_schedule_begin') as FormSelectConfig;
+    const scheduleEndField = this.fieldSets.config('schedule_end') as FormSelectConfig;
+    const restrictScheduleEndField = this.fieldSets.config('restrict_schedule_end') as FormSelectConfig;
     const time_options = this.taskService.getTimeOptions();
 
     for (let i = 0; i < time_options.length; i++) {
@@ -1145,17 +1145,26 @@ export class ReplicationFormComponent implements FormConfiguration {
 
   countEligibleManualSnapshots(): void {
     const namingSchema = this.entityForm.formGroup.controls['also_include_naming_schema'].value;
-    if (typeof namingSchema !== 'string' && namingSchema.length === 0) {
+    const nameRegex = this.entityForm.formGroup.controls['name_regex'].value;
+    if ((typeof namingSchema !== 'string' && namingSchema.length === 0) && (typeof nameRegex !== 'string' && nameRegex.length === 0)) {
       return;
     }
 
+    const datasets = this.entityForm.formGroup.controls['target_dataset_PUSH'].value;
+    const payload: any = {
+      datasets: (Array.isArray(datasets) ? datasets : [datasets]) || [],
+      transport: this.entityForm.formGroup.controls['transport'].value,
+      ssh_credentials: this.entityForm.formGroup.controls['ssh_credentials'].value,
+    };
+
+    if (this.entityForm.formGroup.get('schema_or_regex').value === SnapshotNamingOption.NamingSchema) {
+      payload.naming_schema = namingSchema;
+    } else {
+      payload.name_regex = nameRegex;
+    }
+
     this.ws
-      .call('replication.count_eligible_manual_snapshots', [
-        this.entityForm.formGroup.controls['target_dataset_PUSH'].value,
-        this.entityForm.formGroup.controls['also_include_naming_schema'].value,
-        this.entityForm.formGroup.controls['transport'].value,
-        this.entityForm.formGroup.controls['ssh_credentials'].value,
-      ])
+      .call('replication.count_eligible_manual_snapshots', [payload])
       .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.form_message.type = res.eligible === 0 ? 'warning' : 'info';
@@ -1170,7 +1179,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       );
   }
 
-  async afterInit(entityForm: EntityFormComponent): Promise<void> {
+  afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.pk = entityForm.pk;
     this.isNew = entityForm.isNew;
@@ -1190,31 +1199,36 @@ export class ReplicationFormComponent implements FormConfiguration {
       if (
         entityForm.formGroup.controls['direction'].value === Direction.Push
         && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-        && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+        && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
       ) {
         this.countEligibleManualSnapshots();
       } else {
         this.form_message.content = '';
       }
+    });
+    this.entityForm.formGroup.controls['schema_or_regex'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      this.toggleNamingSchemaOrRegex();
     });
     entityForm.formGroup.controls['direction'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (
         res === Direction.Push
         && entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-        && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+        && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
       ) {
         this.countEligibleManualSnapshots();
       } else {
         this.form_message.content = '';
       }
+      this.fieldSets.config('schema_or_regex').placeholder = helptext[(res === Direction.Push ? 'name_schema_or_regex_placeholder_push' : 'name_schema_or_regex_placeholder_pull')];
+      this.toggleNamingSchemaOrRegex();
     });
 
-    const retentionPolicyField = this.fieldSets.config('retention_policy');
+    const retentionPolicyField = this.fieldSets.config('retention_policy') as FormSelectConfig;
     entityForm.formGroup.controls['transport'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (
         res !== TransportMode.Local
         && entityForm.formGroup.controls['direction'].value === Direction.Push
-        && entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+        && (entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || entityForm.formGroup.controls['name_regex'].value !== undefined)
       ) {
         this.countEligibleManualSnapshots();
       } else {
@@ -1262,7 +1276,8 @@ export class ReplicationFormComponent implements FormConfiguration {
 
     entityForm.formGroup.controls['ssh_credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
-        const explorerComponent = this.fieldSets.config(item).customTemplateStringOptions.explorerComponent;
+        const explorerConfig = this.fieldSets.config(item) as FormExplorerConfig;
+        const explorerComponent = explorerConfig.customTemplateStringOptions.explorerComponent;
         if (explorerComponent) {
           explorerComponent.nodes = [
             {
@@ -1301,6 +1316,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       entityForm.formGroup.controls['properties_override'].setErrors(null);
     });
     entityForm.formGroup.controls['auto'].setValue(entityForm.formGroup.controls['auto'].value);
+    this.toggleNamingSchemaOrRegex();
   }
 
   resourceTransformIncomingRestData(wsResponse: any): any {
@@ -1363,6 +1379,12 @@ export class ReplicationFormComponent implements FormConfiguration {
       wsResponse.encryption_key_passphrase = wsResponse.encryption_key;
     }
 
+    if (wsResponse.name_regex) {
+      this.entityForm.formGroup.get('schema_or_regex').setValue(SnapshotNamingOption.NameRegex);
+    } else {
+      this.entityForm.formGroup.get('schema_or_regex').setValue(SnapshotNamingOption.NamingSchema);
+    }
+
     return wsResponse;
   }
 
@@ -1384,6 +1406,13 @@ export class ReplicationFormComponent implements FormConfiguration {
   }
 
   beforeSubmit(data: any): void {
+    if (data['schema_or_regex'] === SnapshotNamingOption.NameRegex) {
+      delete data['naming_schema'];
+      delete data['also_include_naming_schema'];
+    } else {
+      delete data['name_regex'];
+    }
+    delete data['schema_or_regex'];
     if (data['replicate']) {
       data['recursive'] = true;
       data['properties'] = true;
@@ -1497,7 +1526,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
             data[prop] = false;
           } else {
-            data[prop] = Array.isArray(this.queryRes[prop]) ? [] : null;
+            data[prop] = Array.isArray(this.queryRes[prop as keyof ReplicationTask]) ? [] : null;
           }
         }
         if (prop === 'schedule' && data[prop] === false) {
@@ -1507,7 +1536,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
   }
 
-  getChildren(): Promise<Promise<any>> {
+  getChildren(): Promise<Promise<ListdirChild[]>> {
     for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
       this.fieldSets.config(item).hasErrors = false;
     }
@@ -1528,18 +1557,18 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
   }
 
-  blurEvent(parent: any): void {
+  speedLimitBlur(parent: this): void {
     if (parent.entityForm) {
       parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable);
     }
   }
 
-  blurEventNamingSchema(parent: any): void {
+  blurEventCountSnapshots(parent: this): void {
     if (
       parent.entityForm
       && parent.entityForm.formGroup.controls['direction'].value === Direction.Push
       && parent.entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-      && parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+      && (parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || parent.entityForm.formGroup.controls['name_regex'].value !== undefined)
     ) {
       parent.countEligibleManualSnapshots();
     } else {
@@ -1549,5 +1578,27 @@ export class ReplicationFormComponent implements FormConfiguration {
 
   isCustActionVisible(actionId: string): boolean {
     return actionId === 'wizard_add' && this.pk === undefined;
+  }
+
+  toggleNamingSchemaOrRegex(): void {
+    const directionValue = this.entityForm.formGroup.controls['direction'].value;
+    const schemaOrRegexValue = this.entityForm.formGroup.controls['schema_or_regex'].value;
+    if (schemaOrRegexValue === SnapshotNamingOption.NamingSchema) {
+      this.entityForm.setDisabled('name_regex', true, true);
+      if (directionValue === Direction.Push) {
+        this.entityForm.setDisabled('naming_schema', true, true);
+      } else {
+        this.entityForm.setDisabled('naming_schema', false, false);
+      }
+      if (directionValue === Direction.Pull) {
+        this.entityForm.setDisabled('also_include_naming_schema', true, true);
+      } else {
+        this.entityForm.setDisabled('also_include_naming_schema', false, false);
+      }
+    } else {
+      this.entityForm.setDisabled('name_regex', false, false);
+      this.entityForm.setDisabled('naming_schema', true, true);
+      this.entityForm.setDisabled('also_include_naming_schema', true, true);
+    }
   }
 }

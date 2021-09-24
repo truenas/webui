@@ -12,7 +12,7 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
   title = 'VMware Snapshots';
   queryCall: 'vmware.query' = 'vmware.query';
   route_add: string[] = ['storage', 'vmware-snapshots', 'add'];
-  protected route_add_tooltip = 'Add VMware Snapshot';
+  route_add_tooltip = 'Add VMware Snapshot';
   protected entityList: EntityTableComponent;
   wsDelete: 'vmware.delete' = 'vmware.delete';
 

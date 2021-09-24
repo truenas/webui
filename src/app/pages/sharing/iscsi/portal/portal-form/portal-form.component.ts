@@ -8,12 +8,22 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { selectedOptionValidator } from 'app/pages/common/entity/entity-form/validators/invalid-option-selected';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { IscsiService, WebSocketService, AppLoaderService } from 'app/services';
+
+interface PortalListen {
+  ip: string[];
+  port: string;
+}
+
+interface PortalAddress {
+  ip: string;
+  port: string;
+}
 
 @UntilDestroy()
 @Component({
@@ -129,10 +139,10 @@ export class PortalFormComponent implements FormConfiguration {
   ];
 
   fieldConfig: FieldConfig[];
-  pk: any;
-  protected authgroup_field: FieldConfig;
+  pk: number;
+  protected authgroup_field: FormSelectConfig;
   protected entityForm: EntityFormComponent;
-  protected ip: any;
+  protected ip: PortalAddress[];
 
   constructor(protected router: Router,
     protected iscsiService: IscsiService,
@@ -142,14 +152,15 @@ export class PortalFormComponent implements FormConfiguration {
 
   prerequisite(): Promise<boolean> {
     return new Promise(async (resolve) => {
-      const listenIpField = _.find(this.fieldSets[2].config, { name: 'listen' }).templateListField[0];
+      const listenIpFieldConfig = _.find(this.fieldSets[2].config, { name: 'listen' }) as FormListConfig;
+      const listenIpField = listenIpFieldConfig.templateListField[0] as FormSelectConfig;
       await this.iscsiService.getIpChoices().toPromise().then((ips) => {
         for (const ip in ips) {
           listenIpField.options.push({ label: ips[ip], value: ip });
         }
-        const listenListFields = _.find(this.fieldSets[2].config, { name: 'listen' }).listFields;
+        const listenListFields = listenIpFieldConfig.listFields;
         for (const listenField of listenListFields) {
-          const ipField = _.find(listenField, { name: 'ip' });
+          const ipField = _.find(listenField, { name: 'ip' }) as FormSelectConfig;
           ipField.options = listenIpField.options;
         }
         resolve(true);
@@ -167,11 +178,11 @@ export class PortalFormComponent implements FormConfiguration {
       }
     });
     const authgroupFieldset = _.find(this.fieldSets, { class: 'authgroup' });
-    this.authgroup_field = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' });
+    this.authgroup_field = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' }) as FormSelectConfig;
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       for (let i = 0; i < accessRecords.length; i++) {
         if (_.find(this.authgroup_field.options, { value: accessRecords[i].tag }) == undefined) {
-          this.authgroup_field.options.push({ label: accessRecords[i].tag, value: accessRecords[i].tag });
+          this.authgroup_field.options.push({ label: String(accessRecords[i].tag), value: accessRecords[i].tag });
         }
       }
     });
@@ -181,7 +192,7 @@ export class PortalFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    entityForm.formGroup.controls['listen'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['listen'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: PortalListen[]) => {
       this.genPortalAddress(res);
     });
   }
@@ -200,12 +211,12 @@ export class PortalFormComponent implements FormConfiguration {
     );
   }
 
-  genPortalAddress(data: any): void {
-    let ips: any[] = [];
+  genPortalAddress(data: PortalListen[]): void {
+    let ips: PortalAddress[] = [];
     for (let i = 0; i < data.length; i++) {
       if (data[i]['ip']) {
         const samePortIps = data[i]['ip'].reduce(
-          (fullIps: any[], currip: any) => fullIps.concat({ ip: currip, port: data[i]['port'] }),
+          (fullIps: PortalAddress[], currip: string) => fullIps.concat({ ip: currip, port: data[i]['port'] }),
           [],
         );
         ips = ips.concat(samePortIps);

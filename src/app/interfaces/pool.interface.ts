@@ -1,3 +1,4 @@
+import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
@@ -17,7 +18,7 @@ export interface Pool {
   path: string;
   scan: PoolScan;
   status: PoolStatus;
-  status_detail: any;
+  status_detail: string;
   topology: PoolTopology;
 }
 
@@ -38,10 +39,26 @@ export interface PoolScan {
   bytes_to_process: number;
   end_time: ApiTimestamp;
   errors: number;
-  function: 'SCRUB'; // TODO: Unknown what other values are
-  pause: any;
+  function: PoolScanFunction;
+  pause: string;
   percentage: number;
   start_time: ApiTimestamp;
   state: PoolScanState;
   total_secs_left: number;
+}
+
+export interface CreatePool {
+  encryption: boolean;
+  encryption_options?: {
+    generate_key: boolean;
+    algorithm: string;
+    passphrase?: string;
+    key?: string;
+  };
+  name: string;
+  topology: {
+    [key in PoolTopologyCategory]: { type: string; disks: string[] }[];
+  };
+  checksum?: string;
+  deduplication?: string;
 }

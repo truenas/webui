@@ -27,7 +27,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
 
   title: string;
   warning: string;
-  fieldConfig: FieldConfig[] ;
+  fieldConfig: FieldConfig[];
   formGroup: FormGroup;
   saveButtonText: string;
   cancelButtonText = 'Cancel';
@@ -36,6 +36,9 @@ export class EntityDialogComponent<P = any> implements OnInit {
   error: string;
   formValue: any;
   showPassword = false;
+  /**
+   * @deprecated Capture parent with an arrow function instead
+   */
   parent: P;
   submitEnabled = true;
   instructions: string;
@@ -79,17 +82,16 @@ export class EntityDialogComponent<P = any> implements OnInit {
     }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-    for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
+    this.fieldConfig.forEach((config) => {
       if (config.relation.length > 0) {
         this.fieldRelationService.setRelation(config, this.formGroup);
       }
-    }
+    });
 
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
-    this.instructions = T(`Enter <strong>${(this.conf as any)['name']}</strong> below to confirm.`);
+    this.instructions = T(`Enter <strong>${this.conf.name}</strong> below to confirm.`);
   }
 
   submit(): void {

@@ -6,20 +6,24 @@ import {
   Router, ActivatedRoute,
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject, BehaviorSubject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { ReportingGraphsEvent } from 'app/interfaces/events/reporting-graphs-event.interface';
+import {
+  UserPreferencesChangedEvent, UserPreferencesEvent,
+  UserPreferencesReadyEvent,
+} from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { MultipathDisk } from 'app/pages/reports-dashboard/multipath-disk.interface';
 import {
   SystemGeneralService,
   WebSocketService,
 } from 'app/services';
-import { DialogService } from 'app/services/dialog.service';
 import { ErdService } from 'app/services/erd.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
@@ -44,11 +48,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   @ViewChild('container', { static: true }) container: ElementRef;
   scrollContainer: HTMLElement;
   scrolledIndex = 0;
-  isFooterConsoleOpen: boolean;
 
   retroLogo: string;
 
-  multipathTitles: any = {};
+  multipathTitles: { [disk: string]: string } = {};
   diskReports: Report[];
   otherReports: Report[];
   activeReports: Report[] = [];
@@ -70,67 +73,57 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   values: any[] = [];
   toolbarConfig: ToolbarConfig;
   protected isEntity = true;
-  diskDevices: any[] = [];
-  diskMetrics: any[] = [];
-  categoryDevices: any[] = [];
-  categoryMetrics: any[] = [];
+  diskDevices: Option[] = [];
+  diskMetrics: Option[] = [];
   saveSubmitText = T('Generate Reports');
   actionButtonsAlign = 'left';
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[];
   diskReportConfigReady = false;
   actionsConfig: any;
-  formComponent: ReportsConfigComponent;
 
   constructor(
     private erdService: ErdService,
-    public translate: TranslateService,
     public modalService: ModalService,
-    public dialogService: DialogService,
     private router: Router,
     private core: CoreService,
     private route: ActivatedRoute,
     protected ws: WebSocketService,
-    private sysGeneralService: SystemGeneralService,
   ) {}
 
   ngOnInit(): void {
     this.scrollContainer = document.querySelector('.rightside-content-hold ');// this.container.nativeElement;
     this.scrollContainer.style.overflow = 'hidden';
 
-    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
-      }
-    });
-
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferences' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesEvent) => {
       this.retroLogo = evt.data.retroLogo ? '1' : '0';
     });
 
     this.core.emit({ name: 'UserPreferencesRequest' });
 
-    this.core.register({ observerClass: this, eventName: 'ReportingGraphs' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ReportingGraphs' }).pipe(untilDestroyed(this)).subscribe((evt: ReportingGraphsEvent) => {
       if (evt.data) {
-        const allReports: any[] = evt.data.map((report: any) => {
+        const allReports: any[] = evt.data.map((report) => {
           const list = [];
-          if (report.identifiers) {
-            for (let i = 0; i < report.identifiers.length; i++) {
+          if ((report as any).identifiers) {
+            for (let i = 0; i < (report as any).identifiers.length; i++) {
               list.push(true);
             }
           } else {
             list.push(true);
           }
-          report.isRendered = list;
-          return report;
+          return {
+            ...report,
+            isRendered: list,
+          };
         });
 
         this.diskReports = allReports.filter((report) => report.name.startsWith('disk'));
@@ -147,10 +140,16 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   diskQueries(): void {
-    this.ws.call('multipath.query').pipe(untilDestroyed(this)).subscribe((multipath_res: any[]) => {
-      let multipathDisks: any[] = [];
+    this.ws.call('multipath.query').pipe(untilDestroyed(this)).subscribe((multipath_res) => {
+      let multipathDisks: MultipathDisk[] = [];
       multipath_res.forEach((m) => {
-        const children = m.children.map((child: any) => ({ disk: m.name.replace('multipath/', ''), name: child.name, status: child.status }));
+        const children = m.children.map((child) => {
+          return {
+            disk: m.name.replace('multipath/', ''),
+            name: child.name,
+            status: child.status,
+          };
+        });
         multipathDisks = multipathDisks.concat(children);
       });
 
@@ -270,7 +269,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
           condition = (report.name == 'interface');
           break;
         case 'NFS':
-          condition = (report.name == 'nfsstat');
+          condition = (report.name == 'nfsstat' || report.name == 'nfsstatbytes');
           break;
         case 'Partition':
           condition = (report.name == 'df');
@@ -350,7 +349,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
           options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
           customTriggerValue: 'Select Disks',
           value: this.diskDevices?.length && selectedDisks
-            ? this.diskDevices.filter((device) => selectedDisks.includes(device.value)) : null,
+            ? this.diskDevices.filter((device) => selectedDisks.includes(device.value as string))
+            : null,
         },
         {
           type: 'multiselect',
@@ -420,11 +420,11 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   generateFieldConfig(): void {
-    for (const i in this.fieldSets) {
-      for (const ii in this.fieldSets[i].config) {
-        this.fieldConfig.push(this.fieldSets[i].config[ii]);
-      }
-    }
+    this.fieldSets.forEach((fieldSet) => {
+      fieldSet.config.forEach((config) => {
+        this.fieldConfig.push(config);
+      });
+    });
     this.diskReportConfigReady = true;
   }
 
@@ -472,14 +472,14 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.visibleReports = visible;
   }
 
-  parseDisks(disks: Disk[], multipathDisks: any[]): void {
+  parseDisks(disks: Disk[], multipathDisks: MultipathDisk[]): void {
     const uniqueNames = disks
       .filter((disk) => !disk.devname.includes('multipath'))
       .map((disk) => disk.devname);
 
     const activeDisks = multipathDisks.filter((disk) => disk.status == 'ACTIVE');
 
-    const multipathTitles: any = {};
+    const multipathTitles: { [disk: string]: string } = {};
 
     const multipathNames = activeDisks.map((disk) => {
       const label = disk.disk; // disk.name + ' (multipath : ' + disk.disk  + ')';
@@ -492,30 +492,19 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     this.multipathTitles = multipathTitles;
 
-    // uniqueNames = uniqueNames.concat(multipathNames);
-
     const diskDevices = uniqueNames.map((devname) => {
       const spl = devname.split(' ');
-      const obj = { label: devname, value: spl[0] };
-      return obj;
+      return { label: devname, value: spl[0] };
     });
 
     this.diskDevices = diskDevices.concat(multipathNames);
   }
 
   showConfigForm(): void {
-    if (this.formComponent) {
-      delete this.formComponent;
-    }
-    this.generateFormComponent();
-    this.modalService.open('slide-in-form', this.formComponent);
-  }
-
-  generateFormComponent(): void {
-    this.formComponent = new ReportsConfigComponent(this.ws, this.dialogService);
-    this.formComponent.title = T('Reports Configuration');
-    this.formComponent.isOneColumnForm = true;
-    this.formComponent.afterModalFormSaved = () => {
+    const formComponent = this.modalService.openInSlideIn(ReportsConfigComponent);
+    formComponent.title = T('Reports Configuration');
+    formComponent.isOneColumnForm = true;
+    formComponent.afterModalFormSaved = () => {
       this.modalService.close('slide-in-form');
     };
   }

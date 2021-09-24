@@ -8,9 +8,10 @@ import * as _ from 'lodash';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { WebSocketService, DialogService } from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +22,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot', 'status'];
   isEntity = true;
   addCall: 'boot.attach' = 'boot.attach';
-  pk: any;
+  pk: string;
   isNew = true;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
 
@@ -43,7 +44,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
     },
 
   ];
-  protected diskChoice: FieldConfig;
+  protected diskChoice: FormSelectConfig;
 
   constructor(
     protected router: Router,
@@ -62,7 +63,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
-    this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
+    this.diskChoice = _.find(this.fieldConfig, { name: 'dev' }) as FormSelectConfig;
     this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((item) => {
         const disk_name = item.name;
@@ -73,16 +74,14 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(entityForm: any): void {
-    const payload: any = {};
-    payload['expand'] = entityForm.expand;
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Attach Device' }, disableClose: true });
+  customSubmit(entityForm: { dev: string; expand: boolean }): void {
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Attach Device') }, disableClose: true });
     this.dialogRef.componentInstance.setDescription('Attaching Device...');
-    this.dialogRef.componentInstance.setCall('boot.attach', [entityForm.dev, payload]);
+    this.dialogRef.componentInstance.setCall('boot.attach', [entityForm.dev, { expand: entityForm.expand }]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close(true);
-      this.dialogService.Info(helptext_system_bootenv.attach_dialog.title,
+      this.dialogService.info(helptext_system_bootenv.attach_dialog.title,
         `<i>${entityForm.dev}</i> ${helptext_system_bootenv.attach_dialog.message}`, '300px', 'info', true)
         .pipe(untilDestroyed(this)).subscribe(() => {
           this.router.navigate(
@@ -90,7 +89,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
           );
         });
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       this.dialogRef.componentInstance.setDescription(res.error);
     });
   }

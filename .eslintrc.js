@@ -19,7 +19,9 @@ module.exports = {
       },
       "extends": [
         "airbnb-typescript/base",
-        "plugin:@angular-eslint/recommended"
+        "plugin:@angular-eslint/recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
       ],
       "plugins": [
         "rxjs",
@@ -31,6 +33,11 @@ module.exports = {
         "prefer-template": "off",
 
         // Consciously altered from Airbnb
+        "class-methods-use-this": "off",
+        "import/prefer-default-export": "off",
+        "no-continue": "off",
+        "prefer-destructuring": "off",
+        "operator-assignment": "off",
         "no-return-assign": "off",
         "no-empty": ["error", { "allowEmptyCatch": true }],
         "arrow-body-style": "off",
@@ -66,19 +73,35 @@ module.exports = {
           "tsx": "never"
         }],
 
+        // TODO: Partially implemented
+        '@typescript-eslint/naming-convention': [
+          'error',
+          {
+            selector: 'typeLike',
+            format: ['PascalCase'],
+          },
+          {
+            selector: 'enumMember',
+            format: ['PascalCase'],
+          },
+          {
+            selector: 'function',
+            format: ['camelCase'],
+          },
+          {
+            selector: ['classMethod', 'objectLiteralMethod', 'typeMethod'],
+            format: ['camelCase'],
+          },
+        ],
+
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
         "no-underscore-dangle": "off",
-        "@typescript-eslint/naming-convention": "off",
-        "class-methods-use-this": "off",
         "eqeqeq": "off",
-        "import/prefer-default-export": "off",
         "consistent-return": "off",
         "no-plusplus": "off",
         "no-restricted-syntax": "off",
         "guard-for-in": "off",
         "no-param-reassign": "off",
-        "@typescript-eslint/no-unused-expressions": "off",
-        "prefer-destructuring": "off",
         "radix": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
@@ -89,29 +112,32 @@ module.exports = {
         "no-case-declarations": "off",
         "no-multi-str": "off",
         "max-classes-per-file": "off",
-        "array-callback-return": "off",
         "@typescript-eslint/no-use-before-define": "off",
-        "func-names": "off",
-        "vars-on-top": "off",
         "no-useless-escape": "off",
         "no-cond-assign": "off",
         "no-mixed-operators": "off",
         "default-case": "off",
         "no-prototype-builtins": "off",
         "prefer-promise-reject-errors": "off",
-        "operator-assignment": "off",
-        "no-continue": "off",
         "import/no-cycle": "off",
-        "no-multi-assign": "off",
         "no-self-assign": "off",
         "no-async-promise-executor": "off",
         "no-bitwise": "off",
-        "import/no-mutable-exports": "off",
         "@typescript-eslint/member-ordering": "off",
+        "@typescript-eslint/no-unsafe-assignment": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-unsafe-return": "off",
+        "@typescript-eslint/no-unsafe-call": "off",
+        "@typescript-eslint/no-unsafe-member-access": "off",
+        "@typescript-eslint/restrict-plus-operands": "off",
+        "@typescript-eslint/unbound-method": "off",
+        "@typescript-eslint/restrict-template-expressions": "off",
+        "@typescript-eslint/no-floating-promises": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "@typescript-eslint/prefer-regexp-exec": "off",
+        "@typescript-eslint/no-misused-promises": "off",
 
         // Other temporary disables
-        "@angular-eslint/component-class-suffix": "off",
-        "@angular-eslint/no-input-rename": "off",
         "@typescript-eslint/dot-notation": "off",
 
         // Other overwrites
@@ -127,6 +153,7 @@ module.exports = {
         "@typescript-eslint/type-annotation-spacing": "error",
         "@typescript-eslint/ban-ts-comment": "error",
         "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
+        "@angular-eslint/use-component-view-encapsulation": ["error"],
         "@typescript-eslint/no-unused-vars": "off",
         "unused-imports/no-unused-imports": "error",
         "unused-imports/no-unused-vars": ["error", {
@@ -136,6 +163,9 @@ module.exports = {
         }],
         "@typescript-eslint/ban-types": ["error"],
         "unicorn/filename-case": ["error", { case: "kebabCase"}],
+        "@angular-eslint/component-max-inline-declarations": ["error"],
+        "@angular-eslint/contextual-decorator": ["error"],
+        "@angular-eslint/contextual-lifecycle": ["error"],
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {

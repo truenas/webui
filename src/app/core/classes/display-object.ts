@@ -6,10 +6,13 @@ import {
   value,
   transform,
 } from 'popmotion';
+import { PointerProps } from 'popmotion/lib/input/pointer/types';
+import { ValueReaction } from 'popmotion/lib/reactions/value';
 import { ColdSubscription } from 'popmotion/src/action/types';
+import { ValueMap } from 'popmotion/src/reactions/value';
 import { Subject } from 'rxjs';
 import { Styler } from 'stylefire/lib/styler/types';
-import { CoreService } from '../services/core.service';
+import { CoreService } from '../services/core-service/core.service';
 
 const transformMap = transform.transformMap;
 
@@ -43,7 +46,7 @@ export class DisplayObject {
   private _interactive: boolean;
   private _moveable: boolean;
   private _resizeable: boolean;
-  target: any;
+  target: Styler;
   rawTarget: HTMLElement;
   private pointerTracker: ColdSubscription;
   private focus: ColdSubscription;
@@ -59,9 +62,9 @@ export class DisplayObject {
   private _width: number; // ?
   private _height: number; // ?
 
-  private anchorXY: any;
-  private anchorW: any;
-  private anchorH: any;
+  private anchorXY: ValueReaction;
+  private anchorW: ValueReaction;
+  private anchorH: ValueReaction;
   private boundary: number;
   private reservedTop = 38;// 36 + 2 to avoid panel shadow
   private broadcastInputPosition = false;
@@ -75,7 +78,7 @@ export class DisplayObject {
   inputStream$: Subject<any>;
   elevateOnSelect: boolean;
 
-  constructor(el: Element, manager: any, messageBus: CoreService, moveHandle?: Element) {
+  constructor(el: Element, messageBus: CoreService, moveHandle?: Element) {
     if (moveHandle) {
       this.moveHandle = moveHandle;
     }
@@ -87,13 +90,10 @@ export class DisplayObject {
     this.rawElement = el; // result of document.querySelector(...)
     this.element = styler(el, {});
     this.interactive = true;
-    this.pointerTracker;
-    this.focus;
     this.anchorXY = value({ x: 0, y: 0 }, this.target.set);
-    this.anchorW = value({ width: this.target.offsetWidth }, this.target.set);
-    this.anchorH = value({ height: this.target.offsetHeight }, this.target.set);
+    this.anchorW = value({ width: (this.target as any).offsetWidth }, this.target.set);
+    this.anchorH = value({ height: (this.target as any).offsetHeight }, this.target.set);
     this.anchored = false;
-    this.boundary; // Collision detection
     this.reservedTop = 0; // 38;// 36 + 2 to avoid panel shadow
     this.moveable = false;
     this.resizeable = false;
@@ -262,8 +262,8 @@ export class DisplayObject {
     this.rawTarget.classList.add('drag');
 
     // Start Positions
-    const startX = this.anchorXY.get().x;
-    const startY = this.anchorXY.get().y;
+    const startX = (this.anchorXY.get() as any).x;
+    const startY = (this.anchorXY.get() as any).y;
 
     // RESERVED SPACE
     if (!this.boundary && this.reservedTop != 0) {
@@ -278,7 +278,7 @@ export class DisplayObject {
       this.inputStream$.next(v);
       return v;
     };
-    this.pointerTracker = pointer(this.anchorXY.get()).pipe(stream, transformMap({
+    this.pointerTracker = pointer(this.anchorXY.get() as PointerProps).pipe(stream, transformMap({
       y: (v: any) => this.limit(this.constrainY ? startY : v, '<', this.boundary),
       x: (v: any) => {
         // this.messageBus.emit({name:"Drag", sender:this}) // <-- this was too slow for high frequency stream
@@ -288,7 +288,7 @@ export class DisplayObject {
       },
       preventDefault: () => true,
     })).start(this.anchorXY);
-    if (this.anchored) { this.focus = pointer(this.anchorXY.get()).start(this.unfocus); }
+    if (this.anchored) { this.focus = pointer(this.anchorXY.get() as PointerProps).start(this.unfocus); }
 
     // Only listen for events that trigger stop() once movement has started
     if (this.constrainX || this.constrainY) {
@@ -347,7 +347,7 @@ export class DisplayObject {
     this.stop('drag');
   }
 
-  unfocus(value: any): void {
+  unfocus(value: { x: number; y: number }): void {
     let blurValue = value.y / 5 * -1;
     if (blurValue < 10) {
       blurValue = 0;
@@ -363,7 +363,7 @@ export class DisplayObject {
 
   elevate(set: boolean): void {
     // let zIndex: number = this.hasFocus ? 50 : 1;
-    const elevatedProps: any = {
+    const elevatedProps: ValueMap = {
       'z-index': 50,
     };
 
@@ -372,7 +372,7 @@ export class DisplayObject {
       elevatedProps.scaleY = 1.05;
     }
 
-    const resetProps: any = {
+    const resetProps: ValueMap = {
       'z-index': this.hasFocus ? 50 : 1,
     };
 
@@ -409,7 +409,7 @@ export class DisplayObject {
     const startY = this.target.get('y');
     const startX = this.target.get('x');
 
-    this.pointerTracker = pointer(this.anchorXY.get()).pipe(transformMap({
+    this.pointerTracker = pointer(this.anchorXY.get() as PointerProps).pipe(transformMap({
       y: (v: number) => {
         element.set({ height: startH + (startY - v) });
         this.target.set({ y: v });
@@ -426,7 +426,7 @@ export class DisplayObject {
     const startY = this.target.get('y');
     const startX = this.target.get('x');
 
-    this.pointerTracker = pointer(this.anchorXY.get()).pipe(transformMap({
+    this.pointerTracker = pointer(this.anchorXY.get() as PointerProps).pipe(transformMap({
       y: (v: number) => {
         const diff = v - startY;
         element.set({ height: startH + diff });
@@ -445,7 +445,7 @@ export class DisplayObject {
     const startX = this.target.get('x');
     const startY = this.target.get('y');
 
-    this.pointerTracker = pointer(this.anchorXY.get()).pipe(transformMap({
+    this.pointerTracker = pointer(this.anchorXY.get() as PointerProps).pipe(transformMap({
       x: (v: number) => {
         // setting transform-origin left has no effect
         // width changes anchoring element to center
@@ -466,7 +466,7 @@ export class DisplayObject {
     const startX = this.target.get('x');
     const startY = this.target.get('y');
 
-    this.pointerTracker = pointer(this.anchorXY.get()).pipe(transformMap({
+    this.pointerTracker = pointer(this.anchorXY.get() as PointerProps).pipe(transformMap({
       x: (v: number) => {
         const diff = v - startX;
         // setting transform-origin left has no effect

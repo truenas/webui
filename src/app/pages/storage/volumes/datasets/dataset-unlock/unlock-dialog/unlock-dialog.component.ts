@@ -4,6 +4,8 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
+import { DatasetUnlockComponent } from 'app/pages/storage/volumes/datasets/dataset-unlock/dataset-unlock.component';
+import { DialogService } from 'app/services';
 
 @Component({
   selector: 'app-unlock-dialog',
@@ -26,24 +28,27 @@ export class UnlockDialogComponent {
   hideCancel = false;
   final = false;
   data = {};
-  parent: any;
+  parent: DatasetUnlockComponent;
 
   @Output() switchSelectionEmitter = new EventEmitter<any>();
 
-  constructor(public dialogRef: MatDialogRef < UnlockDialogComponent >, protected translate: TranslateService) {
-  }
+  constructor(
+    public dialogRef: MatDialogRef<UnlockDialogComponent>,
+    protected translate: TranslateService,
+    private dialogService: DialogService,
+  ) {}
 
   submit(): void {
     this.dialogRef.close(true);
     this.parent.dialogOpen = false;
     if (this.final) {
-      this.parent.go_back();
+      this.parent.goBack();
     } else {
       this.parent.unlockSubmit(this.data);
     }
   }
 
-  show_final_results(): void {
+  showFinalResults(): void {
     this.final = true;
     this.errors_message = helptext.unlock_result_dialog.errors_message;
     this.unlock_message = helptext.unlock_result_dialog.unlock_message;
@@ -55,8 +60,8 @@ export class UnlockDialogComponent {
   }
 
   showError(dataset: any): void {
-    if (this.parent.dialogService && dataset.unlock_error) {
-      this.parent.dialogService.Info(
+    if (this.dialogService && dataset.unlock_error) {
+      this.dialogService.info(
         helptext.unlock_dataset_dialog.error_dialog_title + dataset.name,
         dataset.unlock_error,
       );

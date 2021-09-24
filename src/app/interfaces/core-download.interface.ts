@@ -1,10 +1,11 @@
 export type CoreDownloadQuery = [
-  /* method */ string,
-  /* arguments */ unknown,
-  /* filename */ string,
+  method: string,
+  arguments: unknown,
+  filename: string,
+  buffered?: boolean,
 ];
 
 export type CoreDownloadResponse = [
-  /* jobId */ number,
-  /* url */ string,
+  jobId: number,
+  url: string,
 ];

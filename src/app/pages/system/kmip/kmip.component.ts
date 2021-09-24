@@ -3,8 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_kmip } from 'app/helptext/system/kmip';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -16,9 +18,9 @@ import { SystemGeneralService, DialogService, WebSocketService } from 'app/servi
   templateUrl: './kmip.component.html',
   styleUrls: ['./kmip.component.scss'],
 })
-export class KmipComponent {
-  protected queryCall: 'kmip.config' = 'kmip.config';
-  protected editCall: 'kmip.update' = 'kmip.update';
+export class KmipComponent implements FormConfiguration {
+  queryCall: 'kmip.config' = 'kmip.config';
+  editCall: 'kmip.update' = 'kmip.update';
   isEntity = false;
 
   entityForm: EntityFormComponent;
@@ -160,9 +162,9 @@ export class KmipComponent {
   }
 
   preInit(): void {
-    const certificateFieldset = _.find(this.fieldSets, { class: 'certificate' });
-    const certificateField = _.find(certificateFieldset.config, { name: 'certificate' });
-    const certificateAuthorityField = _.find(certificateFieldset.config, { name: 'certificate_authority' });
+    const certificateFieldset: FieldSet = _.find(this.fieldSets, { class: 'certificate' });
+    const certificateField = _.find(certificateFieldset.config, { name: 'certificate' }) as FormSelectConfig;
+    const certificateAuthorityField = _.find(certificateFieldset.config, { name: 'certificate_authority' }) as FormSelectConfig;
 
     this.systemGeneralService.getCA().pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
@@ -181,7 +183,7 @@ export class KmipComponent {
     this.fieldConfig = entityForm.fieldConfig;
   }
 
-  customSubmit(data: any): void {
+  customSubmit(data: KmipConfigUpdate): void {
     if (data['server'] === null) {
       data['server'] = '';
     }
@@ -196,10 +198,10 @@ export class KmipComponent {
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       dialogRef.close(true);
       if (err.exc_info && err.exc_info.extra) {
-        err.extra = err.exc_info.extra;
+        (err as any).extra = err.exc_info.extra;
       }
       new EntityUtils().handleWSError(this, err, this.dialogService);
     });
@@ -208,7 +210,7 @@ export class KmipComponent {
   syncKeys(): void {
     this.ws.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe(
       () => {
-        this.dialogService.Info(helptext_system_kmip.syncInfoDialog.title, helptext_system_kmip.syncInfoDialog.info, '500px', 'info', true);
+        this.dialogService.info(helptext_system_kmip.syncInfoDialog.title, helptext_system_kmip.syncInfoDialog.info, '500px', 'info', true);
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -219,7 +221,7 @@ export class KmipComponent {
   clearSyncKeys(): void {
     this.ws.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe(
       () => {
-        this.dialogService.Info(helptext_system_kmip.clearSyncKeyInfoDialog.title, helptext_system_kmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);
+        this.dialogService.info(helptext_system_kmip.clearSyncKeyInfoDialog.title, helptext_system_kmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialogService);

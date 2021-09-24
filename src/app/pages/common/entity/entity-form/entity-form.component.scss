@@ -1,3 +1,5 @@
+@import 'cssvars';
+
 /*.mat-card{
   max-width:960px;
   margin:0 auto;
@@ -165,4 +167,19 @@ span.form-message.warning {
   .mat-card {
     padding: 16px !important;
   }
+}
+
+@media #{$media-lt-sm} {
+  .entity-form .form-line:last-child {
+    margin-right: 0;
+  }
+
+  .fieldset-label:empty {
+    display: none;
+  }
+
+  .fieldset {
+    padding-bottom: 0;
+  }
+
 }

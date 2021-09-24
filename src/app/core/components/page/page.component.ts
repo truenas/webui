@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CoreServiceInjector } from 'app/core/services/core-service-injector';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 
 @Component({
   selector: 'page',

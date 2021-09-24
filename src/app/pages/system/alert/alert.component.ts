@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import helptext from 'app/helptext/system/alert-settings';
@@ -16,6 +16,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AlertDefaults } from 'app/pages/system/alert/alert-defaults.interface';
 import { DialogService, WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
@@ -52,7 +53,7 @@ export class AlertConfigComponent implements OnInit {
   ];
   formGroup: FormGroup;
   isReady = false;
-  protected defaults: any[] = [];
+  protected defaults: AlertDefaults[] = [];
 
   selectedIndex = 0;
 
@@ -152,7 +153,7 @@ export class AlertConfigComponent implements OnInit {
               for (const j in res.classes[k]) {
                 const prop = k + '_' + j;
                 if (this.formGroup.controls[prop]) {
-                  this.formGroup.controls[prop].setValue(res.classes[k][j]);
+                  this.formGroup.controls[prop].setValue((res.classes as any)[k][j]);
                 } else {
                   console.error('Missing prop: ' + prop); // some properties don't exist between both calls?
                 }
@@ -218,7 +219,7 @@ export class AlertConfigComponent implements OnInit {
       const alertClass = keyValues[0];
       const classKey = keyValues[1];
       const def = _.find(this.defaults, { id: alertClass });
-      if (def[classKey].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
+      if (def[classKey as keyof AlertDefaults].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
         // do not submit defaults in the payload
         if (!payload.classes[alertClass]) {
           payload.classes[alertClass] = {};
@@ -232,7 +233,7 @@ export class AlertConfigComponent implements OnInit {
     this.ws
       .call(this.editCall, [payload])
       .pipe(untilDestroyed(this)).subscribe(
-        () => this.dialog.Info(T('Settings saved'), '', '300px', 'info', true),
+        () => this.dialog.info(T('Settings saved'), '', '300px', 'info', true),
         (error) => new EntityUtils().handleWSError(this, error, this.dialog),
       )
       .add(() => this.loader.close());

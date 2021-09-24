@@ -5,7 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from 'app/app-material.module';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { NetworkService } from 'app/services';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';

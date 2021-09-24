@@ -11,16 +11,16 @@ import { Interval } from 'app/interfaces/timeout.interface';
   styleUrls: ['./console-panel-dialog.component.scss'],
   templateUrl: './console-panel-dialog.component.html',
 })
-export class ConsolePanelModalDialog implements OnInit {
-  refreshMsg = 'Check to stop refresh';
+export class ConsolePanelDialogComponent implements OnInit {
+  refreshMsg = this.translate.instant('Check to stop refresh');
   intervalPing: Interval;
-  consoleMsg = 'Loading...';
+  consoleMsg = this.translate.instant('Loading...');
   @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
   onEventEmitter = new EventEmitter();
 
   constructor(
     protected translate: TranslateService,
-    public dialogRef: MatDialogRef<ConsolePanelModalDialog>,
+    public dialogRef: MatDialogRef<ConsolePanelDialogComponent>,
   ) { }
 
   ngOnInit(): void {
@@ -61,10 +61,10 @@ export class ConsolePanelModalDialog implements OnInit {
   onStopRefresh(data: MatCheckboxChange): void {
     if (data.checked) {
       clearInterval(this.intervalPing);
-      this.refreshMsg = 'Uncheck to restart refresh';
+      this.refreshMsg = this.translate.instant('Uncheck to restart refresh');
     } else {
       this.getLogConsoleMsg();
-      this.refreshMsg = 'Check to stop refresh';
+      this.refreshMsg = this.translate.instant('Check to stop refresh');
     }
   }
 }

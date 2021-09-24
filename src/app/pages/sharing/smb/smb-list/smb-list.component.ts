@@ -10,9 +10,7 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
-import {
-  AppLoaderService, DialogService, SystemGeneralService, WebSocketService,
-} from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
@@ -27,7 +25,7 @@ export class SMBListComponent implements EntityTableConfig {
   updateCall: 'sharing.smb.update' = 'sharing.smb.update';
   wsDelete: 'sharing.smb.delete' = 'sharing.smb.delete';
   route_add: string[] = ['sharing', 'smb', 'add'];
-  protected route_add_tooltip = 'Add Windows (SMB) Share';
+  route_add_tooltip = 'Add Windows (SMB) Share';
   protected route_delete: string[] = ['sharing', 'smb', 'delete'];
   private entityList: EntityTableComponent;
   productType = window.localStorage.getItem('product_type') as ProductType;
@@ -45,7 +43,7 @@ export class SMBListComponent implements EntityTableConfig {
 
   columns = [
     { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
-    { name: helptext_sharing_smb.column_path, prop: 'path' },
+    { name: helptext_sharing_smb.column_path, prop: 'path', showLockedStatus: true },
     { name: helptext_sharing_smb.column_comment, prop: 'comment' },
     { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
   ];
@@ -72,8 +70,6 @@ export class SMBListComponent implements EntityTableConfig {
     private dialog: DialogService,
     private translate: TranslateService,
     private modalService: ModalService,
-    private loader: AppLoaderService,
-    private sysGeneralService: SystemGeneralService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -85,7 +81,7 @@ export class SMBListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    this.modalService.open('slide-in-form', new SMBFormComponent(this.router, this.ws, this.dialog, this.loader, this.sysGeneralService, this.modalService), id);
+    this.modalService.openInSlideIn(SMBFormComponent, id);
   }
 
   doEdit(id: number): void {
@@ -95,22 +91,21 @@ export class SMBListComponent implements EntityTableConfig {
   getActions(row: SmbShare): EntityTableAction[] {
     const rowName = row.path.replace('/mnt/', '');
     const poolName = rowName.split('/')[0];
-    let optionDisabled;
-    rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
-    const rows = [
+    const optionDisabled = !rowName.includes('/');
+    return [
       {
         id: row.name,
         icon: 'edit',
         name: 'edit',
         label: T('Edit'),
-        onClick: (row: any) => this.entityList.doEdit(row.id),
+        onClick: (row: SmbShare) => this.entityList.doEdit(row.id),
       },
       {
         id: row.name,
         icon: 'security',
         name: 'share_acl',
         label: helptext_sharing_smb.action_share_acl,
-        onClick: (row: any) => {
+        onClick: (row: SmbShare) => {
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
               if (res) {
@@ -119,9 +114,9 @@ export class SMBListComponent implements EntityTableConfig {
                 // A home share has a name (homes) set; row.name works for other shares
                 const searchName = row.home ? 'homes' : row.name;
                 this.ws.call('smb.sharesec.query', [[['share_name', '=', searchName]]]).pipe(untilDestroyed(this)).subscribe(
-                  (res: any) => {
+                  (res) => {
                     this.router.navigate(
-                      ['/'].concat(['sharing', 'smb', 'acl', res[0].id]),
+                      ['/'].concat(['sharing', 'smb', 'acl', String(res[0].id)]),
                     );
                   },
                 );
@@ -137,7 +132,7 @@ export class SMBListComponent implements EntityTableConfig {
         disabled: optionDisabled,
         matTooltip: vol_helptext.acl_edit_msg,
         label: helptext_sharing_smb.action_edit_acl,
-        onClick: (row: any) => {
+        onClick: (row: SmbShare) => {
           const datasetId = rowName;
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
@@ -164,15 +159,9 @@ export class SMBListComponent implements EntityTableConfig {
         icon: 'delete',
         name: 'delete',
         label: T('Delete'),
-        onClick: (row: any) => this.entityList.doDelete(row),
+        onClick: (row: SmbShare) => this.entityList.doDelete(row),
       },
     ] as EntityTableAction[];
-    // Temporary: Drop from menu if SCALE
-    if (this.productType.includes(ProductType.Scale)) {
-      const shareAclRow = rows.find((row: any) => row.name === 'share_acl');
-      rows.splice(rows.indexOf(shareAclRow), 1);
-    }
-    return rows;
   }
 
   lockedPathDialog(path: string): void {
@@ -185,9 +174,6 @@ export class SMBListComponent implements EntityTableConfig {
     this.ws.call(this.updateCall, [row.id, { enabled: row.enabled }]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         row.enabled = res.enabled;
-        if (!res) {
-          row.enabled = !row.enabled;
-        }
       },
       (err) => {
         row.enabled = !row.enabled;

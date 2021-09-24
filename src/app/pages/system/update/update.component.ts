@@ -6,11 +6,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -53,7 +54,7 @@ export class UpdateComponent implements OnInit {
   trainDescriptionOnPageLoad: string;
   fullTrainList: { [name: string]: SystemUpdateTrain };
   isUpdateRunning = false;
-  updateMethod = 'update.update';
+  updateMethod: ApiMethod = 'update.update';
   is_ha = false;
   product_type: ProductType;
   ds: any;
@@ -72,6 +73,7 @@ export class UpdateComponent implements OnInit {
                                   <i>APPLY PENDING UPDATE</i> to install \
                                   the downloaded update.');
   train_version: string = null;
+  updateTitle = this.translate.instant(T('Update'));
 
   protected saveConfigFieldConf: FieldConfig[] = [
     {
@@ -92,7 +94,7 @@ export class UpdateComponent implements OnInit {
     method_ws: 'core.download',
     saveButtonText: T('SAVE CONFIGURATION'),
     cancelButtonText: T('NO'),
-    customSubmit: this.saveConfigSubmit,
+    customSubmit: (entityDialog) => this.saveConfigSubmit(entityDialog),
     parent: this,
   };
 
@@ -101,12 +103,21 @@ export class UpdateComponent implements OnInit {
   readonly ProductType = ProductType;
   readonly SystemUpdateStatus = SystemUpdateStatus;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected ws: WebSocketService, protected dialog: MatDialog, public sysGenService: SystemGeneralService,
-    protected loader: AppLoaderService, protected dialogService: DialogService, public translate: TranslateService,
-    protected storage: StorageService, protected http: HttpClient, public core: CoreService) {
-    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected dialog: MatDialog,
+    public sysGenService: SystemGeneralService,
+    protected loader: AppLoaderService,
+    protected dialogService: DialogService,
+    public translate: TranslateService,
+    protected storage: StorageService,
+    protected http: HttpClient,
+    public core: CoreService,
+  ) {
+    this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((isUpdating: string) => {
+      this.isUpdateRunning = isUpdating === 'true';
     });
   }
 
@@ -220,13 +231,17 @@ export class UpdateComponent implements OnInit {
   }
 
   applyFailoverUpgrade(): void {
-    this.dialogService.confirm(T('Finish Upgrade?'), T(''), true, T('Continue')).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+    this.dialogService.confirm({
+      title: this.translate.instant(T('Finish Upgrade?')),
+      message: '',
+      hideCheckBox: true,
+      buttonMsg: T('Continue'),
+    }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
-        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') }, disableClose: false });
+        this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
         this.dialogRef.componentInstance.setCall('failover.upgrade_finish');
         this.dialogRef.componentInstance.submit();
-        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((success: any) => {
-          console.info('success', success);
+        this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
           this.failover_upgrade_pending = false;
           this.dialogRef.close(false);
         });
@@ -250,7 +265,10 @@ export class UpdateComponent implements OnInit {
       warning = T('Changing to a nightly train is one-way. Changing back to a stable train is not supported! ');
     }
 
-    this.dialogService.confirm(T('Switch Train'), warning + T('Switch update trains?')).pipe(untilDestroyed(this)).subscribe((train_res: boolean) => {
+    this.dialogService.confirm({
+      title: this.translate.instant(T('Switch Train')),
+      message: this.translate.instant(warning + T('Switch update trains?')),
+    }).pipe(untilDestroyed(this)).subscribe((train_res: boolean) => {
       if (train_res) {
         this.train = event;
         this.setTrainDescription();
@@ -271,8 +289,6 @@ export class UpdateComponent implements OnInit {
   }
 
   toggleAutoCheck(): void {
-    // TODO: Likely a bug
-    this.autoCheck === !this.autoCheck;
     this.ws.call('update.set_auto_download', [this.autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
       if (this.autoCheck) {
         this.check();
@@ -382,7 +398,7 @@ export class UpdateComponent implements OnInit {
 
   // Shows an update in progress as a job dialog on the update page
   showRunningUpdate(jobId: number): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
     if (this.is_ha) {
       this.dialogRef.componentInstance.disableProgressValue(true);
     }
@@ -391,7 +407,7 @@ export class UpdateComponent implements OnInit {
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.router.navigate(['/others/reboot']);
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       new EntityUtils().handleWSError(this, err, this.dialogService);
     });
   }
@@ -414,7 +430,7 @@ export class UpdateComponent implements OnInit {
     );
   }
 
-  ApplyPendingUpdate(): void {
+  applyPendingUpdate(): void {
     this.updateType = 'applyPending';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -424,7 +440,7 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  ManualUpdate(): void {
+  manualUpdate(): void {
     this.updateType = 'manual';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -489,7 +505,7 @@ export class UpdateComponent implements OnInit {
             }
           });
         } else if (update.status === SystemUpdateStatus.Unavailable) {
-          this.dialogService.Info(T('Check Now'), T('No updates available.'));
+          this.dialogService.info(T('Check Now'), T('No updates available.'));
         }
       },
       (err) => {
@@ -516,25 +532,30 @@ export class UpdateComponent implements OnInit {
       confirmMsg = helptext.ha_confirm_msg;
     }
 
-    this.ds = this.dialogService.confirm(
-      T('Download Update'), downloadMsg, true, T('Download'), true,
-      confirmMsg,
-      this.updateMethod, [{ reboot: false }],
-    );
+    this.ds = this.dialogService.confirm({
+      title: this.translate.instant(T('Download Update')),
+      message: this.translate.instant(downloadMsg),
+      hideCheckBox: true,
+      buttonMsg: this.translate.instant(T('Download')),
+      secondaryCheckBox: true,
+      secondaryCheckBoxMsg: this.translate.instant(confirmMsg),
+      method: this.updateMethod,
+      data: [{ reboot: false }],
+    });
 
     this.ds.componentInstance.isSubmitEnabled = true;
     this.ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status: any) => {
       if (status) {
         if (!this.ds.componentInstance.data[0].reboot) {
-          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Update') }, disableClose: false });
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
           this.dialogRef.componentInstance.setCall('update.download');
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogRef.close(false);
-            this.dialogService.Info(T('Updates successfully downloaded'), '', '450px', 'info', true);
+            this.dialogService.info(T('Updates successfully downloaded'), '', '450px', 'info', true);
             this.pendingupdates();
           });
-          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
             new EntityUtils().handleWSError(this, err, this.dialogService);
           });
         } else {
@@ -546,7 +567,7 @@ export class UpdateComponent implements OnInit {
 
   update(): void {
     this.sysGenService.updateRunningNoticeSent.emit();
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: 'Update' }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
     if (!this.is_ha) {
       this.dialogRef.componentInstance.setCall('update.update', [{ reboot: true }]);
       this.dialogRef.componentInstance.submit();
@@ -564,12 +585,15 @@ export class UpdateComponent implements OnInit {
           this.isUpdateRunning = false;
           this.sysGenService.updateDone(); // Send 'finished' signal to topbar
           this.router.navigate(['/']);
-          this.dialogService.confirm(helptext.ha_update.complete_title,
-            helptext.ha_update.complete_msg, true,
-            helptext.ha_update.complete_action, false, '', '', '', '', true).pipe(untilDestroyed(this)).subscribe(() => {
-          });
+          this.dialogService.confirm({
+            title: helptext.ha_update.complete_title,
+            message: helptext.ha_update.complete_msg,
+            hideCheckBox: true,
+            buttonMsg: helptext.ha_update.complete_action,
+            hideCancel: true,
+          }).pipe(untilDestroyed(this)).subscribe();
         });
-        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err: any) => {
+        this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
           new EntityUtils().handleWSError(this, err, this.dialogService);
         });
       });
@@ -580,8 +604,8 @@ export class UpdateComponent implements OnInit {
   saveConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
     let fileName = '';
     let mimetype: string;
-    if (entityDialog.parent.sysInfo) {
-      const hostname = entityDialog.parent.sysInfo.hostname.split('.')[0];
+    if (this.sysInfo) {
+      const hostname = this.sysInfo.hostname.split('.')[0];
       const date = entityDialog.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
       fileName = hostname + '-' + date;
       if (entityDialog.formValue['secretseed']) {
@@ -595,34 +619,36 @@ export class UpdateComponent implements OnInit {
 
     entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
       .pipe(untilDestroyed(this)).subscribe(
-        (succ: any) => {
+        (succ) => {
           const url = succ[1];
-          entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
+          this.storage.streamDownloadFile(this.http, url, fileName, mimetype)
             .pipe(untilDestroyed(this)).subscribe((file: Blob) => {
               entityDialog.dialogRef.close();
-              entityDialog.parent.storage.downloadBlob(file, fileName);
-              entityDialog.parent.continueUpdate();
+              this.storage.downloadBlob(file, fileName);
+              this.continueUpdate();
             }, () => {
               entityDialog.dialogRef.close();
-              (entityDialog.parent.dialogService as DialogService).confirm({
-                title: helptext.save_config_err.title,
-                message: helptext.save_config_err.message,
-                buttonMsg: helptext.save_config_err.button_text,
+              this.dialogService.confirm({
+                title: this.translate.instant(helptext.save_config_err.title),
+                message: this.translate.instant(helptext.save_config_err.message),
+                buttonMsg: this.translate.instant(helptext.save_config_err.button_text),
               }).pipe(
                 filter(Boolean),
                 untilDestroyed(this),
               ).subscribe(() => {
-                entityDialog.parent.continueUpdate();
+                this.continueUpdate();
               });
             });
           entityDialog.dialogRef.close();
         },
         () => {
-          entityDialog.parent.dialogService.confirm(helptext.save_config_err.title, helptext.save_config_err.message,
-            false, helptext.save_config_err.button_text).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-            if (res) {
-              entityDialog.parent.continueUpdate();
-            }
+          this.dialogService.confirm({
+            title: this.translate.instant(helptext.save_config_err.title),
+            message: this.translate.instant(helptext.save_config_err.message),
+            hideCheckBox: false,
+            buttonMsg: this.translate.instant(helptext.save_config_err.button_text),
+          }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+            this.continueUpdate();
           });
         },
       );
@@ -636,14 +662,13 @@ export class UpdateComponent implements OnInit {
         break;
       case 'applyPending':
         const message = this.isHA
-          ? 'The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?'
-          : 'The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?';
-        this.dialogService.confirm(
-          T('Apply Pending Updates'), T(message),
-        ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (res) {
-            this.update();
-          }
+          ? this.translate.instant('The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?')
+          : this.translate.instant('The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?');
+        this.dialogService.confirm({
+          title: this.translate.instant(T('Apply Pending Updates')),
+          message: this.translate.instant(T(message)),
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          this.update();
         });
         break;
       case 'standard':

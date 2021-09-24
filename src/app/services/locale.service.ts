@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { UserPreferencesReadyEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { T } from 'app/translate-marker';
 import { SystemGeneralService } from '.';
@@ -37,7 +38,7 @@ export class LocaleService {
   getPrefs(): void {
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
     this.core.register({ observerClass: this, eventName: 'UserPreferencesReady' })
-      .pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+      .pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesReadyEvent) => {
         if (this.isWaiting) {
           this.target.next({ name: 'SubmitComplete', sender: this });
           this.isWaiting = false;
@@ -112,7 +113,7 @@ export class LocaleService {
     return format(date, formatStr);
   }
 
-  saveDateTimeFormat(dateFormat: any, timeFormat: any): void {
+  saveDateTimeFormat(dateFormat: string, timeFormat: string): void {
     this.dateFormat = this.formatDateTimeToDateFns(dateFormat);
     this.timeFormat = this.formatDateTimeToDateFns(timeFormat);
     this.storeDateTimeFormat(this.dateFormat, this.timeFormat);
@@ -164,8 +165,11 @@ export class LocaleService {
     const tempStr = `${this.dateFormat} ${ngTimeFormat}`;
     let dateStr = '';
     for (let i = 0; i < tempStr.length; i++) {
-      tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H' ? dateStr += tempStr[i]
-        : dateStr += tempStr[i].toLowerCase();
+      if (tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H') {
+        dateStr += tempStr[i];
+      } else {
+        dateStr += tempStr[i].toLowerCase();
+      }
     }
     return dateStr;
   }

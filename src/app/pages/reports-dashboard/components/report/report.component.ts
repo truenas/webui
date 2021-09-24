@@ -13,12 +13,17 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, sub } from 'date-fns';
-import { WidgetComponent } from 'app/core/components/widgets/widget/widget.component';
+import { filter, take } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
+import { ReportingData } from 'app/interfaces/reporting.interface';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
-import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { WebSocketService, SystemGeneralService } from 'app/services/';
+import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { Theme } from 'app/services/theme/theme.service';
 import { T } from 'app/translate-marker';
@@ -49,18 +54,7 @@ export interface Report {
   isRendered?: boolean[];
   stacked: boolean;
   stacked_show_total: boolean;
-}
-
-export interface ReportData {
-  identifier?: string;
-  // units?: string;
-  start: number;
-  end: number;
-  aggregations: any;
-  legend: string[];
-  name: string;
-  step: number;
-  data: number[][];
+  errorConf?: EmptyConfig;
 }
 
 @UntilDestroy()
@@ -76,10 +70,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   @Input() report: Report;
   @Input() multipathTitle?: string;
   @Input() identifier?: string;
-  @Input() retroLogo?: string;
+  // TODO: Make boolean
+  @Input() retroLogo?: string | number;
   @ViewChild(LineChartComponent, { static: false }) lineChart: LineChartComponent;
 
-  data: ReportData;
+  data: ReportingData;
   ready = false;
   product_type = window.localStorage['product_type'] as ProductType;
   private delay = 1000; // delayed report render time
@@ -95,8 +90,8 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     return this.identifier ? trimmed.replace(/{identifier}/, this.identifier) : this.report.title;
   }
 
-  get aggregationKeys(): any {
-    return Object.keys(this.data.aggregations);
+  get aggregationKeys(): (keyof ReportingData['aggregations'])[] {
+    return Object.keys(this.data.aggregations) as (keyof ReportingData['aggregations'])[];
   }
 
   legendData: any = {};
@@ -156,21 +151,28 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     return this.localeService.formatDateTime(new Date(this.currentEndDate), this.timezone);
   }
 
-  formatTime(stamp: any): string {
+  formatTime(stamp: string): string {
     const parsed = Date.parse(stamp);
     const result = this.localeService.formatDateTimeWithNoTz(new Date(parsed));
     return result.toLowerCase() !== 'invalid date' ? result : null;
   }
 
-  constructor(public router: Router,
+  constructor(
+    public router: Router,
     public translate: TranslateService,
-    private rs: ReportsService,
+    private reportsService: ReportsService,
     private ws: WebSocketService,
-    protected localeService: LocaleService, private sysGeneralService: SystemGeneralService) {
+    protected localeService: LocaleService,
+    private sysGeneralService: SystemGeneralService,
+    private dialog: DialogService,
+  ) {
     super(translate);
 
-    this.core.register({ observerClass: this, eventName: 'ReportData-' + this.chartId }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ReportData-' + this.chartId }).pipe(
+      untilDestroyed(this),
+    ).subscribe((evt: CoreEvent) => {
       this.data = evt.data;
+      this.handleError(evt);
     });
 
     this.core.register({ observerClass: this, eventName: 'LegendEvent-' + this.chartId }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -179,11 +181,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
       this.legendData = clone;
     });
 
-    this.core.register({ observerClass: this, eventName: 'ThemeData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeData' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeDataEvent) => {
       this.chartColors = this.processThemeColors(evt.data);
     });
 
-    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
       this.chartColors = this.processThemeColors(evt.data);
     });
 
@@ -198,10 +200,10 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.core.unregister({ observerClass: this });
   }
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
     this.stepForwardDisabled = true;
     const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = this.convertTimespan(zoom.timespan);
+    const rrdOptions = await this.convertTimespan(zoom.timespan);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
   }
@@ -221,33 +223,33 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     }
   }
 
-  private setupData(changes: SimpleChanges): void {
+  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
+  aggregationKey(key: keyof ReportingData['aggregations']): keyof ReportingData['aggregations'] {
+    return key;
+  }
+
+  private async setupData(changes: SimpleChanges): Promise<void> {
     const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = this.convertTimespan(zoom.timespan);
+    const rrdOptions = await this.convertTimespan(zoom.timespan);
     const identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
     this.fetchReportData(rrdOptions, changes.report.currentValue, identifier);
   }
 
   private processThemeColors(theme: Theme): string[] {
-    // this.theme = theme;
-    const colors: string[] = [];
-    theme.accentColors.map((color) => {
-      colors.push((theme as any)[color]);
-    });
-    return colors;
+    return theme.accentColors.map((color) => (theme as any)[color]);
   }
 
   setChartInteractive(value: boolean): void {
     this.isActive = value;
   }
 
-  timeZoomIn(): void {
+  async timeZoomIn(): Promise<void> {
     // more detail
     const max = 4;
     if (this.timeZoomIndex == max) { return; }
     this.timeZoomIndex += 1;
     const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = this.convertTimespan(zoom.timespan);
+    const rrdOptions = await this.convertTimespan(zoom.timespan);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
@@ -255,13 +257,13 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
-  timeZoomOut(): void {
+  async timeZoomOut(): Promise<void> {
     // less detail
     const min = Number(0);
     if (this.timeZoomIndex == min) { return; }
     this.timeZoomIndex -= 1;
     const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = this.convertTimespan(zoom.timespan);
+    const rrdOptions = await this.convertTimespan(zoom.timespan);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
@@ -269,9 +271,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
-  stepBack(): void {
+  async stepBack(): Promise<void> {
     const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = this.convertTimespan(zoom.timespan, 'backward', this.currentStartDate);
+    const rrdOptions = await this.convertTimespan(zoom.timespan, 'backward', this.currentStartDate);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
@@ -279,35 +281,23 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.fetchReportData(rrdOptions, this.report, identifier);
   }
 
-  stepForward(): void {
+  async stepForward(): Promise<void> {
     const zoom = this.zoomLevels[this.timeZoomIndex];
 
-    const rrdOptions = this.convertTimespan(zoom.timespan, 'forward', this.currentEndDate);
+    const rrdOptions = await this.convertTimespan(zoom.timespan, 'forward', this.currentEndDate);
     this.currentStartDate = rrdOptions.start;
     this.currentEndDate = rrdOptions.end;
 
     const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
     this.fetchReportData(rrdOptions, this.report, identifier);
-  }
-
-  getServerTime(): Date {
-    const xmlHttp = new XMLHttpRequest();
-    xmlHttp.open('HEAD', window.location.origin.toString(), false);
-    xmlHttp.setRequestHeader('Content-Type', 'text/html');
-    xmlHttp.send('');
-    const serverTime = xmlHttp.getResponseHeader('Date');
-    const seconds = new Date(serverTime).getTime();
-    const secondsToTrim = 60;
-    const trimmed = new Date(seconds - (secondsToTrim * 1000));
-    return trimmed;
   }
 
   // Convert timespan to start/end options for RRDTool
-  convertTimespan(timespan: any, direction = 'backward', currentDate?: number): TimeData {
+  async convertTimespan(timespan: string, direction = 'backward', currentDate?: number): Promise<TimeData> {
     let durationUnit: keyof Duration;
     let value: number;
 
-    const now = this.getServerTime();
+    const now = await this.reportsService.getServerTime();
 
     let startDate: Date;
     let endDate: Date;
@@ -374,7 +364,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     };
   }
 
-  fetchReportData(rrdOptions: any, report: Report, identifier?: string): void {
+  fetchReportData(rrdOptions: TimeData, report: Report, identifier?: string): void {
     // Report options
     const params = identifier ? { name: report.name, identifier } : { name: report.name };
 
@@ -386,7 +376,10 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.core.emit({
       name: 'ReportDataRequest',
       data: {
-        report, params, timeFrame, truncate: this.stepForwardDisabled,
+        report,
+        params,
+        timeFrame,
+        truncate: this.stepForwardDisabled,
       },
       sender: this,
     });
@@ -399,6 +392,40 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
       if (form.value[i]) {
         filtered.push(i);
       }
+    }
+  }
+
+  handleError(evt: CoreEvent): void {
+    if (evt.data?.name === 'FetchingError'
+      && [
+        ReportingDatabaseError.FailedExport,
+        ReportingDatabaseError.InvalidTimestamp,
+      ].includes(evt.data?.data?.error)
+    ) {
+      const err = evt.data.data;
+      this.report.errorConf = {
+        type: EmptyType.Errors,
+        large: false,
+        compact: false,
+        title: this.translate.instant('The reporting database is broken'),
+        button: {
+          label: this.translate.instant('Fix database'),
+          action: () => {
+            const errorMessage = err.reason ? err.reason.replace('[EINVALIDRRDTIMESTAMP] ', '') : null;
+            const helpMessage = this.translate.instant('You can clear reporting database and start data collection immediately.');
+            const message = errorMessage ? `${errorMessage}<br>${helpMessage}` : helpMessage;
+            this.dialog.confirm({
+              title: this.translate.instant('The reporting database is broken'),
+              message,
+              buttonMsg: this.translate.instant('Clear'),
+            }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe(() => {
+                window.location.reload();
+              });
+            });
+          },
+        },
+      };
     }
   }
 }

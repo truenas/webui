@@ -2,7 +2,7 @@ import {
   Component, OnInit,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { BaseFieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @Component({
@@ -11,7 +11,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   styleUrls: ['./form-colorpicker.component.scss'],
 })
 export class FormColorpickerComponent implements Field, OnInit {
-  config: FieldConfig;
+  config: BaseFieldConfig;
   group: FormGroup;
   fieldShow: string;
   picker = false;
@@ -37,11 +37,15 @@ export class FormColorpickerComponent implements Field, OnInit {
     this.config.value = this.group.value[this.config.name];
   }
 
-  cpListener(evt: string, data: any): void {
+  cpListener(evt: string, data: string): void {
     this.group.value[this.config.name] = data;
   }
 
-  inputListener(evt: string, data: any): void {
+  inputListener(evt: string, data: {
+    input: string;
+    value: string | number;
+    color: string;
+  }): void {
     this.group.value[this.config.name] = data;
   }
 

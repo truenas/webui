@@ -1,12 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
+import { IscsiTarget } from 'app/interfaces/iscsi.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { AppLoaderService, ModalService, WebSocketService } from 'app/services';
+import { ModalService } from 'app/services';
 import { IscsiService } from 'app/services/iscsi.service';
 import { T } from 'app/translate-marker';
 
@@ -19,13 +20,13 @@ import { T } from 'app/translate-marker';
   providers: [IscsiService],
 })
 export class TargetListComponent implements EntityTableConfig, OnInit {
-  @Input('fcEnabled') fcEnabled: boolean;
+  @Input() fcEnabled: boolean;
 
   tableTitle = 'Targets';
   queryCall: 'iscsi.target.query' = 'iscsi.target.query';
   wsDelete: 'iscsi.target.delete' = 'iscsi.target.delete';
   route_add: string[] = ['sharing', 'iscsi', 'target', 'add'];
-  protected route_add_tooltip = 'Add Target';
+  route_add_tooltip = 'Add Target';
   route_edit: string[] = ['sharing', 'iscsi', 'target', 'edit'];
 
   columns = [
@@ -52,11 +53,6 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   constructor(
     private iscsiService: IscsiService,
     private modalService: ModalService,
-    private router: Router,
-    private aroute: ActivatedRoute,
-    private loader: AppLoaderService,
-    private translate: TranslateService,
-    private ws: WebSocketService,
   ) {}
 
   ngOnInit(): void {
@@ -73,19 +69,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   }
 
   doAdd(rowId: string = null): void {
-    this.modalService.open(
-      'slide-in-form',
-      new TargetFormComponent(
-        this.router,
-        this.aroute,
-        this.iscsiService,
-        this.loader,
-        this.translate,
-        this.ws,
-        this.modalService,
-      ),
-      rowId,
-    );
+    this.modalService.openInSlideIn(TargetFormComponent, rowId);
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
@@ -95,23 +79,23 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
     this.doAdd(id);
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: IscsiTarget): EntityTableAction<IscsiTarget>[] {
     return [{
       id: row.name,
       icon: 'edit',
       name: 'edit',
       label: T('Edit'),
-      onClick: (rowinner: any) => { this.entityList.doEdit(rowinner.id); },
+      onClick: (rowinner: IscsiTarget) => { this.entityList.doEdit(rowinner.id); },
     }, {
       id: row.name,
       icon: 'delete',
       name: 'delete',
       label: T('Delete'),
-      onClick: (rowinner: any) => {
+      onClick: (rowinner: IscsiTarget) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
           (res) => {
-            const payload = [rowinner.id];
+            const payload: [id: number, force?: boolean] = [rowinner.id];
             let warningMsg = '';
             for (let i = 0; i < res.length; i++) {
               if (res[i].target.split(':')[1] == rowinner.name) {
@@ -122,18 +106,20 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
             }
             deleteMsg = warningMsg + deleteMsg;
 
-            this.entityList.dialogService.confirm(T('Delete'), deleteMsg, false, T('Delete')).pipe(untilDestroyed(this)).subscribe((dialres: boolean) => {
-              if (dialres) {
-                this.entityList.loader.open();
-                this.entityList.loaderOpen = true;
-                this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe(
-                  () => { this.entityList.getData(); },
-                  (resinner: any) => {
-                    new EntityUtils().handleWSError(this, resinner, this.entityList.dialogService);
-                    this.entityList.loader.close();
-                  },
-                );
-              }
+            this.entityList.dialogService.confirm({
+              title: T('Delete'),
+              message: deleteMsg,
+              buttonMsg: T('Delete'),
+            }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.entityList.loader.open();
+              this.entityList.loaderOpen = true;
+              this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe(
+                () => { this.entityList.getData(); },
+                (resinner: WebsocketError) => {
+                  new EntityUtils().handleWSError(this, resinner, this.entityList.dialogService);
+                  this.entityList.loader.close();
+                },
+              );
             });
           },
         );

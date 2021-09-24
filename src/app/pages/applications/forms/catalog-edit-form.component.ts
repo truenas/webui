@@ -2,10 +2,11 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/apps/apps';
-import { Catalog } from 'app/interfaces/catalog.interface';
+import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
 
@@ -17,7 +18,7 @@ import { ModalService } from 'app/services/modal.service';
 export class CatalogEditFormComponent implements FormConfiguration {
   queryCall: 'catalog.query' = 'catalog.query';
   editCall: 'catalog.update' = 'catalog.update';
-  customFilter: any[];
+  customFilter: CatalogQueryParams;
   isEntity = true;
   isEditJob = false;
   entityForm: EntityFormComponent;
@@ -58,7 +59,7 @@ export class CatalogEditFormComponent implements FormConfiguration {
     this.modalService.refreshTable();
   }
 
-  resourceTransformIncomingRestData(data: Catalog): any {
+  resourceTransformIncomingRestData(data: Catalog): Catalog {
     const transformed = { ...data };
     const trains = Object.keys(data.trains);
 
@@ -66,7 +67,8 @@ export class CatalogEditFormComponent implements FormConfiguration {
       label: train,
       value: train,
     }));
-    this.fieldSets.config('preferred_trains').options = trainOptions;
+    const config = this.fieldSets.config('preferred_trains') as FormSelectConfig;
+    config.options = trainOptions;
     return transformed;
   }
 }

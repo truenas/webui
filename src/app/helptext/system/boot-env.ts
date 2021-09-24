@@ -34,6 +34,7 @@ export const helptext_system_bootenv = {
   list_dialog_scrub_action: T('Start Scrub'),
 
   rename_name_placeholder: T('Name'),
+  rename_fieldset_name: T('Rename this Boot Environment'),
 
   replace_name_placeholder: T('Member Disk'),
 

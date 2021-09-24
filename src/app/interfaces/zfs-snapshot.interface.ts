@@ -14,3 +14,19 @@ export interface ZfsSnapshot {
   snapshot_name: string;
   type: string; // "SNAPSHOT"
 }
+
+export interface CloneZfsSnapshot {
+  snapshot: boolean;
+  dataset_dst: string;
+  dataset_properties: Record<string, unknown>;
+}
+
+export type ZfsRollbackParams = [
+  id: string,
+  params: {
+    recursive: boolean;
+    recursive_clones: boolean;
+    force: boolean;
+    recursive_rollback: boolean;
+  },
+];

@@ -13,7 +13,7 @@ export interface ActiveDirectoryConfig {
   kerberos_realm: {
     id: string;
   };
-  netbiosalias: unknown[];
+  netbiosalias: string[];
   netbiosname: string;
   nss_info: unknown;
   restrict_pam: boolean;
@@ -21,4 +21,9 @@ export interface ActiveDirectoryConfig {
   timeout: number;
   use_default_domain: boolean;
   verbose_logging: boolean;
+}
+
+export interface LeaveActiveDirectory {
+  username: string;
+  password: string;
 }

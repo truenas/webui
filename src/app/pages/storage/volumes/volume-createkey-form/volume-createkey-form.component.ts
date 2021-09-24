@@ -12,7 +12,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import {
-  FieldConfig,
+  FieldConfig, FormParagraphConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -85,7 +85,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
           if (res) {
             this.encryptionService.openEncryptDialog(this.pk, this.route_return, this.poolName);
           } else {
-            this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+            this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');
           }
         });
       },
@@ -102,7 +102,8 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
 
   resourceTransformIncomingRestData(data: Pool): Pool {
     this.poolName = data.name;
-    _.find(this.fieldConfig, { name: 'encrypt-headline' }).paraText += ` <em>${this.poolName}</em>`;
+    const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'encrypt-headline' });
+    config.paraText += ` <em>${this.poolName}</em>`;
     return data;
   }
 
@@ -129,7 +130,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
     entityForm.formGroup.controls['adminpw'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.admin_pw = res;
       const btn = <HTMLInputElement> document.getElementById('cust_button_Download Encryption Key');
-      this.admin_pw !== '' ? btn.disabled = false : btn.disabled = true;
+      btn.disabled = this.admin_pw === '';
     });
   }
 
@@ -139,7 +140,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
         this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,
           value.name, this.route_return, false, true, 'created for');
       } else {
-        this.dialogService.Info('Error', 'The administrator password is incorrect.', '340px');
+        this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');
       }
     });
   }

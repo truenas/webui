@@ -12,3 +12,18 @@ export interface InitShutdownScript {
   type: InitShutdownScriptType;
   when: InitShutdownScriptWhen;
 }
+
+export interface CreateInitShutdownScript {
+  command?: string;
+  script?: string;
+  comment: string;
+  enabled: boolean;
+  timeout: number;
+  type: InitShutdownScriptType;
+  when: InitShutdownScriptWhen;
+}
+
+export type UpdateInitShutdownScriptParams = [
+  id: number,
+  params: CreateInitShutdownScript,
+];

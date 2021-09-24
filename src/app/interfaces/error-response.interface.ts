@@ -13,9 +13,9 @@ export interface ErrorResponse {
 }
 
 export type ApiValidationError = [
-  /* attribute */ string,
-  /* message */ string,
-  /* code */ number,
+  attribute: string,
+  message: string,
+  code: number,
 ];
 
 export interface ErrorFrame {

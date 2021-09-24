@@ -36,7 +36,7 @@ export function matchOtherValidator(otherControlName: string): ValidatorFn {
 }
 
 export function doesNotEqualValidator(otherControlName: string): ValidatorFn {
-  return function (control: FormControl) {
+  return (control: FormControl) => {
     if (!control.parent) {
       return null;
     }

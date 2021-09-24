@@ -3,8 +3,13 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
-import { ApplicationsService } from 'app/pages/applications/applications.service';
+import { Catalog, CatalogAppVersion, CatalogItems } from 'app/interfaces/catalog.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
 
@@ -13,47 +18,58 @@ import { LocaleService } from 'app/services/locale.service';
   selector: 'manage-catalog-summary-dialog',
   styleUrls: ['./manage-catalog-summary-dialog.component.scss'],
   templateUrl: './manage-catalog-summary-dialog.component.html',
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
-export class ManageCatalogSummaryDialog implements OnInit {
-  catalog: any;
+export class ManageCatalogSummaryDialogComponent implements OnInit {
+  catalog: Catalog;
   statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
   trainOptions: string[] = ['All'];
   helptext = helptext;
   selectedStatus: string = this.statusOptions[0];
   selectedTrain: string = this.trainOptions[0];
-  filteredItems: any[] = [];
-  catalogItems: any[] = [];
+  filteredItems: CatalogAppVersion[] = [];
+  catalogItems: CatalogAppVersion[] = [];
 
   constructor(
-    public dialogRef: MatDialogRef<ManageCatalogSummaryDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<EntityJobComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: Catalog,
     protected localeService: LocaleService,
+    private ws: WebSocketService,
     private loader: AppLoaderService,
-    private appService: ApplicationsService,
+    protected dialogService: DialogService,
   ) {
     this.catalog = data;
   }
 
   ngOnInit(): void {
-    this.appService.getCatItems(this.catalog.label).pipe(untilDestroyed(this)).subscribe((evt) => {
-      this.catalogItems = [];
-      this.trainOptions = ['All'];
-      Object.keys(evt).forEach((trainKey) => {
-        const train = evt[trainKey];
-        this.trainOptions.push(trainKey);
-        Object.keys(train).forEach((appKey) => {
-          const app = train[appKey];
-          Object.keys(app.versions).forEach((versionKey) => {
-            const version = app.versions[versionKey];
-            version['train'] = trainKey;
-            version['app'] = appKey;
-            this.catalogItems.push(version);
+    this.loader.open();
+    this.ws.job('catalog.items', [this.catalog.label, { retrieve_versions: true }]).pipe(untilDestroyed(this)).subscribe((res: Job<CatalogItems>) => {
+      if (res.state === JobState.Success) {
+        this.loader.close();
+        const result = res.result;
+        this.catalogItems = [];
+        this.trainOptions = ['All'];
+        if (result) {
+          Object.keys(result).forEach((trainKey) => {
+            const train = result[trainKey];
+            this.trainOptions.push(trainKey);
+            Object.keys(train).forEach((appKey) => {
+              const app = train[appKey];
+              Object.keys(app.versions).forEach((versionKey) => {
+                const version = app.versions[versionKey];
+                version['train'] = trainKey;
+                version['app'] = appKey;
+                this.catalogItems.push(version);
+              });
+            });
           });
-        });
-      });
-
-      this.filteredItems = this.catalogItems;
+          this.filteredItems = this.catalogItems;
+        }
+      }
+    }, (err) => {
+      this.loader.close();
+      new EntityUtils().handleWSError(this, err, this.dialogService);
     });
   }
 
@@ -76,7 +92,7 @@ export class ManageCatalogSummaryDialog implements OnInit {
     });
   }
 
-  versionStatusLabel(item: any): string {
+  versionStatusLabel(item: CatalogAppVersion): string {
     let label = '';
     if (this.selectedStatus == this.statusOptions[0]) {
       if (item.healthy) {

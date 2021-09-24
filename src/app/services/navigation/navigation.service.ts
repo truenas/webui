@@ -1,21 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { MenuItem } from 'app/interfaces/menu-item.interface';
 import { T } from 'app/translate-marker';
-
-interface IMenuItem {
-  type: string; // Possible values: link/slideOut/icon/separator/extLink
-  name?: string; // Used as display text for item and title for separator type
-  state?: string; // Router state
-  icon?: string; // Item icon name
-  tooltip?: string; // Tooltip text
-  disabled?: boolean; // If true, item will not be appeared in sidenav.
-  sub?: IChildItem[]; // Dropdown items
-}
-interface IChildItem {
-  name: string; // Display text
-  state: string; // Router state
-  disabled?: boolean; // If true, item will not be appeared in sidenav.
-}
 
 @Injectable()
 export class NavigationService {
@@ -29,7 +15,7 @@ export class NavigationService {
     { menu: 'system', sub: 'viewenclosure' },
   ];
 
-  defaultMenu: IMenuItem[] = [{
+  defaultMenu: MenuItem[] = [{
     name: T('Dashboard'),
     type: 'link',
     tooltip: T('Dashboard'),
@@ -125,7 +111,7 @@ export class NavigationService {
   // This title will appear if any icon type item is present in menu.
   iconTypeMenuTitle = 'Frequently Accessed';
   // sets defaultMenu as default;
-  menuItems$ = new BehaviorSubject<IMenuItem[]>(this.defaultMenu);
+  menuItems$ = new BehaviorSubject<MenuItem[]>(this.defaultMenu);
 
   publishNavigationChange(): void {
     this.menuItems$.next(this.defaultMenu);

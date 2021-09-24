@@ -74,8 +74,8 @@ def the_pool_manager_appears_enter_the_system_for_pool_name(driver):
 def click_sdc_checkbox_press_the_right_arrow_under_data_vdevs(driver):
     """click sdc checkbox, press the right arrow under Data VDevs."""
     time.sleep(2)
-    assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__disks-sdc"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__disks-sdc"]').click()
+    assert wait_on_element(driver, 7, '//datatable-body[contains(.,"sd")]//mat-checkbox[1]', 'clickable')
+    driver.find_element_by_xpath('//datatable-body[contains(.,"sd")]//mat-checkbox[1]').click()
     time.sleep(2)
     assert wait_on_element(driver, 5, '//button[@id="vdev__add-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
@@ -120,8 +120,8 @@ def navigate_to_system_setting_and_click_advanced_to_open_the_advanced_page_shou
     """navigate to System Setting and click Advanced to open the Advanced page should open."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Advanced"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Advanced"]').click()
+    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]', 'clickable')
+    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Advanced"]').click()
 
 
 @then('click on System Dataset Configure button and close the popup')

@@ -16,7 +16,7 @@ export class InitshutdownListComponent implements EntityTableConfig {
   queryCall: 'initshutdownscript.query' = 'initshutdownscript.query';
   wsDelete: 'initshutdownscript.delete' = 'initshutdownscript.delete';
   route_add: string[] = ['tasks', 'initshutdown', 'add'];
-  protected route_add_tooltip = 'Add Init/Shutdown Scripts';
+  route_add_tooltip = 'Add Init/Shutdown Scripts';
   route_edit: string[] = ['tasks', 'initshutdown', 'edit'];
   protected entityList: EntityTableComponent;
 
@@ -52,7 +52,7 @@ export class InitshutdownListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    this.modalService.open('slide-in-form', new InitshutdownFormComponent(this.modalService), id);
+    this.modalService.openInSlideIn(InitshutdownFormComponent, id);
   }
 
   doEdit(id: number): void {

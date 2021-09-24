@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { filter } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/user-list';
+import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
 import { UserListRow } from 'app/pages/account/users/user-list/user-list-row.interface';
@@ -14,7 +16,7 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  DialogService, StorageService, ValidationService, UserService,
+  DialogService, UserService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
@@ -28,10 +30,10 @@ import { UserFormComponent } from '../user-form/user-form.component';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [UserService],
 })
-export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit {
+export class UserListComponent implements EntityTableConfig<UserListRow> {
   title = 'Users';
   route_add: string[] = ['account', 'users', 'add'];
-  protected route_add_tooltip = 'Add User';
+  route_add_tooltip = 'Add User';
   route_edit: string[] = ['account', 'users', 'edit'];
 
   protected entityList: EntityTableComponent;
@@ -48,8 +50,6 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
       this.toggleBuiltins();
     },
   };
-
-  addComponent: UserFormComponent;
 
   columns = [
     {
@@ -102,21 +102,7 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
   constructor(private router: Router,
     protected dialogService: DialogService, protected loader: AppLoaderService,
     protected ws: WebSocketService, protected prefService: PreferencesService,
-    private translate: TranslateService, private modalService: ModalService,
-    private storageService: StorageService, private userService: UserService,
-    private validationService: ValidationService) {
-  }
-
-  ngOnInit(): void {
-    this.refreshUserForm();
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshUserForm();
-    });
-  }
-
-  refreshUserForm(): void {
-    this.addComponent = new UserFormComponent(this.router, this.ws, this.storageService, this.loader,
-      this.userService, this.validationService, this.modalService);
+    private translate: TranslateService, private modalService: ModalService) {
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -140,7 +126,7 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
       label: helptext.user_list_actions_edit_label,
       name: helptext.user_list_actions_edit_id,
       onClick: (users_edit) => {
-        this.modalService.open('slide-in-form', this.addComponent, users_edit.id);
+        this.modalService.openInSlideIn(UserFormComponent, users_edit.id);
       },
     });
     if (row.builtin !== true) {
@@ -150,15 +136,14 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
         name: 'delete',
         label: helptext.user_list_actions_delete_label,
         onClick: (users_edit) => {
-          const self = this;
           const conf: DialogFormConfiguration = {
             title: helptext.deleteDialog.title,
             message: helptext.deleteDialog.message + `<i>${users_edit.username}</i>?`,
             fieldConfig: [],
             confirmCheckbox: true,
             saveButtonText: helptext.deleteDialog.saveButtonText,
-            preInit() {
-              if (self.ableToDeleteGroup(users_edit.id)) {
+            preInit: () => {
+              if (this.ableToDeleteGroup(users_edit.id)) {
                 conf.fieldConfig.push({
                   type: 'checkbox',
                   name: 'delete_group',
@@ -167,18 +152,18 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
                 });
               }
             },
-            customSubmit(entityDialog: EntityDialogComponent) {
+            customSubmit: (entityDialog: EntityDialogComponent) => {
               entityDialog.dialogRef.close(true);
-              self.loader.open();
-              self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue])
+              this.loader.open();
+              this.ws.call(this.wsDelete, [users_edit.id, entityDialog.formValue])
                 .pipe(untilDestroyed(this))
                 .subscribe(() => {
-                  self.entityList.getData();
-                  self.loader.close();
+                  this.entityList.getData();
+                  this.loader.close();
                 },
                 (err) => {
-                  new EntityUtils().handleWSError(self, err, self.dialogService);
-                  self.loader.close();
+                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                  this.loader.close();
                 });
             },
           };
@@ -232,24 +217,24 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
   }
 
   toggleBuiltins(): void {
-    const toggleAction = this.prefService.preferences.hide_builtin_users
-      ? helptext.builtins_dialog.show
-      : helptext.builtins_dialog.hide;
+    let dialogOptions: ConfirmOptions;
+    if (this.prefService.preferences.hide_builtin_users) {
+      dialogOptions = {
+        title: this.translate.instant('Show Built-in Users'),
+        message: this.translate.instant('Show built-in users (default setting is <i>hidden</i>).'),
+        hideCheckBox: true,
+        buttonMsg: this.translate.instant('Show'),
+      };
+    } else {
+      dialogOptions = {
+        title: this.translate.instant('Hide Built-in Users'),
+        message: this.translate.instant('Hide built-in users (default setting is <i>hidden</i>).'),
+        hideCheckBox: true,
+        buttonMsg: this.translate.instant('Hide'),
+      };
+    }
 
-    const action = this.translate.instant(toggleAction);
-    const title = this.translate.instant(helptext.builtins_dialog.title);
-    const message = this.translate.instant(helptext.builtins_dialog.message);
-
-    this.dialogService.confirm({
-      title: action + title,
-      message: action + message,
-      hideCheckBox: true,
-      buttonMsg: action,
-    }).pipe(untilDestroyed(this)).subscribe((result) => {
-      if (!result) {
-        return;
-      }
-
+    this.dialogService.confirm(dialogOptions).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
       this.prefService.savePreferences();
       this.entityList.getData();
@@ -269,6 +254,6 @@ export class UserListComponent implements EntityTableConfig<UserListRow>, OnInit
   }
 
   doAdd(): void {
-    this.modalService.open('slide-in-form', this.addComponent);
+    this.modalService.openInSlideIn(UserFormComponent);
   }
 }

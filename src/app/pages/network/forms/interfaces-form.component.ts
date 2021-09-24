@@ -2,17 +2,22 @@ import { Component, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import * as ipRegex from 'ip-regex';
 import isCidr from 'is-cidr';
 import * as _ from 'lodash';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
-import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
+import {
+  LACPDURate, LinkAggregationProtocol, NetworkInterfaceAliasType, NetworkInterfaceType, XmitHashPolicy,
+} from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormListConfig, FormSelectConfig, FormInputConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { NetworkService, DialogService, WebSocketService } from 'app/services';
@@ -35,6 +40,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   protected failoverPlaceholder: string;
   saveSubmitText = helptext.int_save_button;
   protected offload_warned = false;
+  protected isOneColumnForm = true;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -113,6 +119,24 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           disabled: true,
           validation: helptext.lagg_protocol_validation,
           value: 'NONE',
+        },
+        {
+          type: 'select',
+          name: 'xmit_hash_policy',
+          placeholder: helptext.xmit_hash_policy_placeholder,
+          options: [],
+          required: true,
+          isHidden: true,
+          disabled: true,
+        },
+        {
+          type: 'select',
+          name: 'lacpdu_rate',
+          placeholder: helptext.lacpdu_rate_placeholder,
+          options: [],
+          required: true,
+          isHidden: true,
+          disabled: true,
         },
         {
           type: 'select',
@@ -220,12 +244,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           validation: helptext.mtu_validation,
           value: 1500,
         },
-        {
-          type: 'input',
-          name: 'options',
-          placeholder: helptext.int_options_placeholder,
-          tooltip: helptext.int_options_tooltip,
-        },
       ],
       colspan: 2,
     },
@@ -287,17 +305,17 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private lag_fieldset: FieldSet;
   private bridge_fieldset: FieldSet;
   private failover_fieldset: FieldSet;
-  private vlan_pint: FieldConfig;
-  private lag_ports: FieldConfig;
-  private lag_protocol: FieldConfig;
-  private bridge_members: FieldConfig;
+  private vlan_pint: FormSelectConfig | FormInputConfig;
+  private lag_ports: FormSelectConfig;
+  private lag_protocol: FormSelectConfig;
+  private bridge_members: FormSelectConfig;
   private type: FieldConfig;
   private type_fg: FormControl;
   private entityForm: EntityFormComponent;
-  //
-  protected ipListControl: FieldConfig;
-  protected failover_group: FieldConfig;
-  protected failover_vhid: FieldConfig;
+
+  protected ipListControl: FormListConfig;
+  protected failover_group: FormSelectConfig;
+  protected failover_vhid: FormSelectConfig;
 
   save_button_enabled: boolean;
 
@@ -309,7 +327,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   };
 
   title: string;
-  afterModalFormClosed: any;
+  afterModalFormClosed: () => void;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected networkService: NetworkService, protected dialog: DialogService,
@@ -327,7 +345,24 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     for (let i = 0; i < this.lagg_fields.length; i++) {
       this.entityForm.setDisabled(this.lagg_fields[i], !is_lagg, !is_lagg);
     }
-    for (let i = 0; i < this.vlan_fields.length; i++) {
+    const lagProtocol = this.entityForm.formGroup.get('lag_protocol')?.value;
+    if (lagProtocol) {
+      if (lagProtocol === LinkAggregationProtocol.Lacp) {
+        this.entityForm.setDisabled('xmit_hash_policy', !is_lagg, !is_lagg);
+        this.entityForm.setDisabled('lacpdu_rate', !is_lagg, !is_lagg);
+      } else if (lagProtocol === LinkAggregationProtocol.LoadBalance) {
+        this.entityForm.setDisabled('xmit_hash_policy', !is_lagg, !is_lagg);
+        this.entityForm.setDisabled('lacpdu_rate', true, true);
+      } else {
+        this.entityForm.setDisabled('lacpdu_rate', true, true);
+        this.entityForm.setDisabled('xmit_hash_policy', true, true);
+      }
+    } else {
+      this.entityForm.setDisabled('lacpdu_rate', true, true);
+      this.entityForm.setDisabled('xmit_hash_policy', true, true);
+    }
+
+    for (let i = 0; i < this.bridge_fields.length; i++) {
       this.entityForm.setDisabled(this.bridge_fields[i], !is_bridge, !is_bridge);
     }
     this.vlan_fieldset.label = is_vlan;
@@ -341,30 +376,52 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     this.lag_fieldset = _.find(this.fieldSets, { class: 'lag_settings' });
     this.bridge_fieldset = _.find(this.fieldSets, { class: 'bridge_settings' });
     this.failover_fieldset = _.find(this.fieldSets, { class: 'failover_settings' });
-    this.vlan_pint = _.find(this.vlan_fieldset.config, { name: 'vlan_parent_interface' });
+    this.vlan_pint = _.find(this.vlan_fieldset.config, { name: 'vlan_parent_interface' }) as FormSelectConfig;
+    this.ws.call('interface.xmit_hash_policy_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
+      const xmitHashPolicyFieldConfig = _.find(this.fieldConfig, { name: 'xmit_hash_policy' }) as FormSelectConfig;
+      xmitHashPolicyFieldConfig.options = [];
+      for (const key in choices) {
+        xmitHashPolicyFieldConfig.options.push({ label: key, value: key });
+      }
+      this.entityForm.formGroup.get('xmit_hash_policy').setValue(XmitHashPolicy.Layer2Plus3);
+    });
+
+    this.ws.call('interface.lacpdu_rate_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
+      const lacpduRateFieldConfig = _.find(this.fieldConfig, { name: 'lacpdu_rate' }) as FormSelectConfig;
+      lacpduRateFieldConfig.options = [];
+      for (const key in choices) {
+        lacpduRateFieldConfig.options.push({ label: key, value: key });
+      }
+      this.entityForm.formGroup.get('lacpdu_rate').setValue(LACPDURate.Slow);
+    });
   }
 
   afterInit(entityForm: EntityFormComponent): void {
     if (entityForm.pk !== undefined) {
+      this.vlan_pint = _.find(this.fieldConfig, { name: 'vlan_parent_interface' }) as FormInputConfig;
       this.vlan_pint.type = 'input';
+      this.vlan_pint.readonly = true;
+      this.vlan_pint.disabled = true;
+      this.vlan_pint.required = false;
       this.title = helptext.title_edit;
     } else {
       this.title = helptext.title_add;
+      this.vlan_pint = _.find(this.fieldConfig, { name: 'vlan_parent_interface' }) as FormSelectConfig;
     }
-    this.vlan_pint = _.find(this.fieldConfig, { name: 'vlan_parent_interface' });
-    this.bridge_members = _.find(this.fieldConfig, { name: 'bridge_members' });
-    this.lag_ports = _.find(this.fieldConfig, { name: 'lag_ports' });
-    this.lag_protocol = _.find(this.fieldConfig, { name: 'lag_protocol' });
+
+    this.bridge_members = _.find(this.fieldConfig, { name: 'bridge_members' }) as FormSelectConfig;
+    this.lag_ports = _.find(this.fieldConfig, { name: 'lag_ports' }) as FormSelectConfig;
+    this.lag_protocol = _.find(this.fieldConfig, { name: 'lag_protocol' }) as FormSelectConfig;
     this.type = _.find(this.fieldConfig, { name: 'type' });
-    this.ipListControl = _.find(this.fieldConfig, { name: 'aliases' });
-    this.failover_group = _.find(this.fieldConfig, { name: 'failover_group' });
-    this.failover_vhid = _.find(this.fieldConfig, { name: 'failover_vhid' });
+    this.ipListControl = _.find(this.fieldConfig, { name: 'aliases' }) as FormListConfig;
+    this.failover_group = _.find(this.fieldConfig, { name: 'failover_group' }) as FormSelectConfig;
+    this.failover_vhid = _.find(this.fieldConfig, { name: 'failover_vhid' }) as FormSelectConfig;
     for (let i = 1; i <= 32; i++) {
-      this.failover_group.options.push({ label: i, value: i });
+      this.failover_group.options.push({ label: String(i), value: i });
     }
 
     for (let i = 1; i <= 255; i++) {
-      this.failover_vhid.options.push({ label: i, value: i });
+      this.failover_vhid.options.push({ label: String(i), value: i });
     }
 
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
@@ -394,7 +451,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
     this.aliases_fc = _.find(this.fieldConfig, { name: 'aliases' });
 
-    entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['disable_offload_capabilities'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res && !this.offload_warned) {
         this.dialog.confirm({
           title: helptext.disable_offload_capabilities_warning_title,
@@ -461,11 +518,16 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       this.type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: NetworkInterfaceType) => {
         this.setType(type);
       });
-      this.networkService.getVlanParentInterfaceChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
-        for (const key in choices) {
-          this.vlan_pint.options.push({ label: choices[key], value: key });
-        }
-      });
+
+      if (this.vlan_pint.type === 'select') {
+        this.networkService.getVlanParentInterfaceChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
+          const vlan_pint = this.vlan_pint as FormSelectConfig;
+          for (const key in choices) {
+            vlan_pint.options.push({ label: choices[key], value: key });
+          }
+        });
+      }
+
       this.networkService.getLaggPortsChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
         for (const key in choices) {
           this.lag_ports.options.push({ label: choices[key], value: key });
@@ -485,6 +547,19 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       entityForm.setDisabled('name', true);
       entityForm.setDisabled('type', true, true);
     }
+
+    this.entityForm.formGroup.get('lag_protocol').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
+      if (value === LinkAggregationProtocol.Lacp) {
+        this.entityForm.setDisabled('xmit_hash_policy', false, false);
+        this.entityForm.setDisabled('lacpdu_rate', false, false);
+      } else if (value === LinkAggregationProtocol.LoadBalance) {
+        this.entityForm.setDisabled('xmit_hash_policy', false, false);
+        this.entityForm.setDisabled('lacpdu_rate', true, true);
+      } else {
+        this.entityForm.setDisabled('lacpdu_rate', true, true);
+        this.entityForm.setDisabled('xmit_hash_policy', true, true);
+      }
+    });
   }
 
   clean(data: any): any {
@@ -501,6 +576,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         if (strings[0]) {
           aliases.push({
             address: strings[0],
+            type: ipRegex.v6().test(strings[0]) ? NetworkInterfaceAliasType.Inet6 : NetworkInterfaceAliasType.Inet,
             netmask: parseInt(strings[1], 10),
           });
         }

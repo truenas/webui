@@ -18,12 +18,21 @@ import { BootEnvService, WebSocketService } from 'app/services';
 export class BootEnvironmentCreateComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot'];
   addCall: 'bootenv.create' = 'bootenv.create';
-  pk: any;
+  pk: string;
   isNew = false;
   isEntity = true;
   protected entityForm: EntityFormComponent;
 
-  fieldConfig: FieldConfig[];
+  fieldConfig: FieldConfig[] = [
+    {
+      type: 'input',
+      name: 'name',
+      placeholder: helptext_system_bootenv.create_name_placeholder,
+      tooltip: helptext_system_bootenv.create_name_tooltip,
+      validation: [regexValidator(this.bootEnvService.bootenv_name_regex)],
+      required: true,
+    },
+  ];
 
   constructor(
     protected router: Router,
@@ -35,27 +44,12 @@ export class BootEnvironmentCreateComponent implements FormConfiguration {
   preInit(entityForm: EntityFormComponent): void {
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
-      this.fieldConfig = [
-        {
-          type: 'input',
-          name: 'name',
-          placeholder: helptext_system_bootenv.create_name_placeholder,
-          tooltip: helptext_system_bootenv.create_name_tooltip,
-          validation: [regexValidator(this.bootEnvService.bootenv_name_regex)],
-          required: true,
-        },
-      ];
     });
     this.entityForm = entityForm;
-  }
-
-  afterInit(entityForm: EntityFormComponent): void {
     entityForm.submitFunction = this.submitFunction;
   }
 
-  submitFunction(entityForm: any): Observable<any> {
-    const payload: any = {};
-    payload['name'] = entityForm.name;
-    return this.ws.call('bootenv.create', [payload]);
+  submitFunction(entityForm: { name: string }): Observable<string> {
+    return this.ws.call('bootenv.create', [entityForm]);
   }
 }

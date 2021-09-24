@@ -3,10 +3,11 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
+import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import {
   EntityAction,
   EntityRowDetails,
-} from 'app/pages/common/entity/entity-table/entity-row-details.interface';
+} from 'app/pages/common/entity/entity-table/entity-row-details/entity-row-details.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { WebSocketService, StorageService, SystemGeneralService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
@@ -44,8 +45,8 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
             name: this.config.name,
             creation: this.localeService.formatDateTime(response[0].properties.creation.parsed.$date, this.timezone),
           })),
-        )
-        .pipe(untilDestroyed(this)).subscribe((snapshot) => {
+          untilDestroyed(this),
+        ).subscribe((snapshot: ZfsSnapshot['properties'] & { name: string; creation: string }) => {
           this.details = [
             {
               label: 'Date created',
@@ -53,11 +54,11 @@ export class SnapshotDetailsComponent implements EntityRowDetails<{ name: string
             },
             {
               label: 'Used',
-              value: this.storageService.convertBytestoHumanReadable((snapshot as any).used.rawvalue),
+              value: this.storageService.convertBytestoHumanReadable(snapshot.used.rawvalue),
             },
             {
               label: 'Referenced',
-              value: this.storageService.convertBytestoHumanReadable((snapshot as any).referenced.rawvalue),
+              value: this.storageService.convertBytestoHumanReadable(snapshot.referenced.rawvalue),
             },
           ];
         });

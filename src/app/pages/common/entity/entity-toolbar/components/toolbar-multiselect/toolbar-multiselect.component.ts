@@ -4,7 +4,7 @@ import {
 import { MatSelect } from '@angular/material/select';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 import { ControlConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.interface';
 
@@ -12,13 +12,13 @@ import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.i
   selector: 'toolbar-multiselect',
   templateUrl: './toolbar-multiselect.component.html',
 })
-export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnInit {
+export class ToolbarMultiSelectComponent extends IxAbstractObject implements OnInit {
   @ViewChild('selectTrigger') mySel: MatSelect;
   @Input() config?: ControlConfig;
-  @Input() controller: Subject<any>;
+  @Input() controller: Subject<Control>;
   allSelected: boolean = null;
   values: any[] = [];
-  private selectStates: boolean [] = [];
+  selectStates: boolean [] = [];
 
   constructor(public translate: TranslateService) {
     super();
@@ -86,9 +86,5 @@ export class ToolbarMultiSelectComponent extends iXAbstractObject implements OnI
   }
 
   onChangeOption(): void {
-  }
-
-  compareValues(x: any, y: any): boolean {
-    return x == y;
   }
 }

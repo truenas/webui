@@ -35,7 +35,17 @@ export default {
   ssh_credentials_placeholder: T('SSH Connection'),
   ssh_credentials_tooltip: T('Choose a connection that has been saved in \
  <b>System > SSH Connections</b>.'),
+  name_schema_or_regex_placeholder_push: T('Also include snapshots with the name'),
+  name_schema_or_regex_placeholder_pull: T('Include snapshots with the name'),
 
+  naming_schema_placeholder: T('Matching naming schema'),
+  naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
+ replicated. Enter the name and \
+ <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a> \
+ <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> strings that \
+ match the snapshots to include in the replication. Separate entries by \
+ pressing <code>Enter</code>. The number of snapshots matching the \
+ patterns are shown.'),
   netcat_active_side_placeholder: T('Netcat Active Side'),
   netcat_active_side_tooltip: T('Establishing a connection requires \
  that one of the connection systems has open TCP ports. Choose which \
@@ -108,8 +118,9 @@ export default {
 
   replicate_placeholder: T('Full Filesystem Replication'),
   replicate_tooltip: T('Completely replicate the selected dataset. The target \
-dataset will have all of the properties, snapshots, child datasets, and clones \
-from the source dataset.'),
+dataset will have all of the source dataset\'s properties, child datasets, \
+clones and snapshots that match the specified naming schema. Set \
+Snapshot Name Regular Expression to .* to replicate all snapshots.'),
 
   periodic_snapshot_tasks_placeholder: T('Periodic Snapshot Tasks'),
   periodic_snapshot_tasks_tooltip: T('Snapshot schedule for this \
@@ -119,14 +130,12 @@ from the source dataset.'),
  as the chosen periodic snapshot task. Selecting a periodic snapshot \
  schedule removes the <b>Schedule</b> field.'),
 
-  naming_schema_placeholder: T('Naming Schema'),
-  naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
- replicated. Enter the name and \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" \
- target="_blank">strftime(3)</a> <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, \
- <i>&percnt;H</i>, and <i>&percnt;M</i> strings that match the snapshots to include in \
- the replication. Separate entries by pressing <code>Enter</code>.'),
-
+  name_regex_placeholder: T('Matching regular expression'),
+  name_regex_tooltip: T('Using this option will replicate all snapshots \
+which names match specified regular expression. The \
+performance on the systems with large number of snapshots \
+will be lower, as snapshots metadata needs to be read in order \
+to determine snapshots creation order.'),
   also_include_naming_schema_placeholder: T('Also Include Naming Schema'),
   also_include_naming_schema_tooltip: T('Pattern of naming custom \
  snapshots to include in the replication with the periodic snapshot \

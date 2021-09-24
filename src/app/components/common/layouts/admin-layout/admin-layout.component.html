@@ -1,6 +1,6 @@
 <mat-sidenav-container class="app-side-nav-container" fxLayout="row" ngClass.xs="xs" ngClass.sm="sm" ngClass.md="md" ngClass.lg="lg" ngClass.xl="xl">
   <!-- Main side navigation -->
-  <mat-sidenav fxFlex="sidenavWidth" #sidenav [opened]="isSidenavOpen" [mode]="sidenavMode" class="sidebar-panel not-alerts" >
+  <mat-sidenav fxFlex="sidenavWidth" #sidenav [opened]="isSidenavOpen" [mode]="sidenavMode" (closedStart)="onMenuClosed()" class="sidebar-panel not-alerts">
     <div id="scroll-area" class="navigation-hold" fxLayout="column">
       <div *ngFor="let theme of freenasThemes">
         <div *ngIf="theme.name == currentTheme" ix-auto ix-auto-type="button" ix-auto-identifier="logo">
@@ -16,7 +16,9 @@
             <a routerLink="/dashboard" class="logo">
               <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_core_logomark_color' : 'truenas_core_logomark'" alt="TrueNAS Core logo" class="app-logo"></mat-icon>
             </a>
-            <a routerLink="/dashboard" class="logo-text"><mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_core_logotype_color' : 'truenas_core_logotype'" alt="TrueNAS Core" class="app-logo-text"></mat-icon></a>
+            <a routerLink="/dashboard" class="logo-text">
+              <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_core_logotype_color' : 'truenas_core_logotype'" alt="TrueNAS Core" class="app-logo-text"></mat-icon>
+            </a>
           </div>
 
           <!-- TrueNAS Enterprise -->
@@ -24,7 +26,9 @@
             <a routerLink="/dashboard" class="logo">
               <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_enterprise_logomark_color' : 'truenas_enterprise_logomark'" alt="TrueNAS Core logo" class="app-logo"></mat-icon>
             </a>
-            <a routerLink="/dashboard" class="logo-text"><mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_enterprise_logotype_color' : 'truenas_enterprise_logotype'" alt="TrueNAS Core" class="app-logo-text"></mat-icon></a>
+            <a routerLink="/dashboard" class="logo-text">
+              <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_enterprise_logotype_color' : 'truenas_enterprise_logotype'" alt="TrueNAS Core" class="app-logo-text"></mat-icon>
+            </a>
           </div>
 
           <!-- TrueNAS Scale -->
@@ -32,50 +36,48 @@
             <a routerLink="/dashboard" class="logo">
               <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_scale_logomark_color' : 'truenas_scale_logomark'" alt="TrueNAS Core logo" class="app-logo"></mat-icon>
             </a>
-            <a routerLink="/dashboard" class="logo-text"><mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_scale_logotype_color' : 'truenas_scale_logotype'" alt="TrueNAS Core" class="app-logo-text"></mat-icon>
+            <a routerLink="/dashboard" class="logo-text">
+              <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_scale_logotype_color' : 'truenas_scale_logotype'" alt="TrueNAS Core" class="app-logo-text"></mat-icon>
             </a>
           </div>
-
         </div>
-
       </div>
 
-      <navigation (stateChange)="changeState($event)" (menuToggled)="toggleMenu($event)" (menuClosed)="toggleMenu()"></navigation>
-      <div class="sidenav-copyright-txt" *ngIf="!isSidenavCollapsed">
-        <div class="hostname-label" *ngIf="hostname" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
+      <navigation (menuToggled)="toggleMenu($event)" (menuClosed)="toggleMenu()"></navigation>
+
+      <div class="slidein-nav slidein-nav-sm" [class.slidein-open]="isOpen">
+        <app-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></app-secondary-menu>
+      </div>
+
+      <div *ngIf="!isSidenavCollapsed" class="sidenav-copyright-txt">
+        <div *ngIf="hostname" class="hostname-label" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
         <div>TrueNAS {{product_type}}®</div>
         <div>
           © {{copyrightYear}} - <a href="http://www.ixsystems.com"
               target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
         </div>
       </div>
-      <div class="sidenav-copyright-icon" *ngIf="isSidenavCollapsed"
+      <div
+        *ngIf="isSidenavCollapsed"
+        class="sidenav-copyright-icon"
         matTooltip="TrueNAS {{product_type}}® © {{copyrightYear}} by iXsystems Inc."
-        matTooltipPosition="right">
+        matTooltipPosition="right"
+      >
         <mat-icon>copyright</mat-icon>
       </div>
     </div>
   </mat-sidenav>
+
   <mat-sidenav-content fxFlex="calc(100% - {{sidenavWidth}})" class="fn-maincontent" [style.margin-left]="sidenavWidth">
     <!-- Top Bar -->
     <!-- Template reference variables of Left sidebar and Right notification is supplied -->
     <!-- Listens language change event -->
     <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel"></topbar>
 
-    <!-- Slide-in menu and overlay -->
-    <div class="slidein-nav" [ngClass]="{'slidein-open' : isOpen}">
-      <mat-list class="" role="list">
-        <ng-container *ngFor="let subItem of subs; let j = index">
-          <mat-list-item *ngIf="!subItem.disabled" routerLinkActive="selected" (click)="toggleMenu()"
-          class="sidebar-list-item slide-in-nav-item" role="listitem"
-            ix-auto ix-auto-type="option" ix-auto-identifier="{{subItem.name}}">
-            <a [routerLink]="['/', menuName, subItem.state]" id="{{i}}-{{j}}" *ngIf="!subItem.disabled" class="slidein-nav-link">{{subItem.name | translate}}</a>
-        </mat-list-item>
-        </ng-container>
-      </mat-list>
+    <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpen">
+      <app-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></app-secondary-menu>
     </div>
-    <div class="overlay" [ngClass]="{'isdark' : isOpen}" (click)="toggleMenu()"></div>
-    <!-- end slide-in -->
+    <div class="overlay" [class.isdark]="isOpen" (click)="toggleMenu()"></div>
 
     <!-- App content -->
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
@@ -86,7 +88,7 @@
       <pre #footerBarScroll class="message" (click)="onShowConsolePanel()">{{consoleMsg}}</pre>
     </div>
   </mat-sidenav-content>
-  <!-- Notificaation bar -->
+  <!-- Notification bar -->
   <mat-sidenav #notificationPanel mode="over" class="" align="end" (open)="onOpenNotify()" (close)="onCloseNotify()" class="notification-sidenav" position="end">
     <div class="navigation-hold" fxLayout="column">
       <app-notifications [notificPanel]="notificationPanel"></app-notifications>

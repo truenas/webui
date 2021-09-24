@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormPermissionsConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
@@ -16,19 +16,19 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   templateUrl: './form-permissions.component.html',
 })
 export class FormPermissionsComponent implements Field, OnInit {
-  config: FieldConfig;
+  config: FormPermissionsConfig;
   group: FormGroup;
   fieldShow: string;
 
-  private ownerRead = false;
-  private ownerWrite = false;
-  private ownerExec = false;
-  private groupRead = false;
-  private groupWrite = false;
-  private groupExec = false;
-  private otherRead = false;
-  private otherWrite = false;
-  private otherExec = false;
+  ownerRead = false;
+  ownerWrite = false;
+  ownerExec = false;
+  groupRead = false;
+  groupWrite = false;
+  groupExec = false;
+  otherRead = false;
+  otherWrite = false;
+  otherExec = false;
 
   private owner = 0;
   private grp = 0;
@@ -146,7 +146,7 @@ export class FormPermissionsComponent implements Field, OnInit {
 
   ngOnInit(): void {
     this.control = this.group.controls[this.config.name];
-    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((data: any) => {
+    this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((data: string) => {
       if (this.value != data) {
         this.setValue(data);
         this.refreshPermissions();

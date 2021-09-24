@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { UserService } from 'app/services/user.service';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
 import { EntityModule } from '../common/entity/entity.module';
@@ -22,7 +23,7 @@ import { DynamicListComponent } from './iscsi/initiator/initiator-form/dynamic-l
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { InitiatorListComponent } from './iscsi/initiator/initiator-list/initiator-list.component';
 import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
-import { ISCSI } from './iscsi/iscsi.component';
+import { IscsiComponent } from './iscsi/iscsi.component';
 import { PortalFormComponent } from './iscsi/portal/portal-form/portal-form.component';
 import { PortalListComponent } from './iscsi/portal/portal-list/portal-list.component';
 import { TargetFormComponent } from './iscsi/target/target-form/target-form.component';
@@ -47,6 +48,7 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     TranslateModule,
     FlexLayoutModule,
     CommonDirectivesModule,
+    TooltipModule,
   ],
   declarations: [
     NFSListComponent,
@@ -57,7 +59,7 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     SMBListComponent,
     SMBFormComponent,
     SMBAclComponent,
-    ISCSI,
+    IscsiComponent,
     IscsiWizardComponent,
     GlobalconfigurationComponent,
     PortalListComponent,

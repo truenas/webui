@@ -1,15 +1,15 @@
 <mat-card class="form-card">
   <div class="mat-content">
-    <form (ngSubmit)="onSubmit($event)" *ngIf="formGroup" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
+    <form (ngSubmit)="onSubmit()" *ngIf="formGroup" [formGroup]="formGroup" class="form-wrap" #entityForm="ngForm">
       <div class="fieldset-container fieldset-display-default" *ngIf="fieldSets">
         <ng-container *ngFor="let fieldSet of fieldSets.list(); let i = index">
           <div [ngClass]="fieldSet.class" *ngIf="i==selectedIndex" [style.margin-bottom.px]="12" class="fieldset divider-{{fieldSet.divider}}" fxFlex="100%" fxFlex.gt-xs="calc({{fieldSet.width}} - 16px)">
             <h4 *ngIf="fieldSet.label" class="fieldset-label">{{fieldSet.name}}</h4>
             <div fxLayout="row wrap" fxLayoutAlign="start start" fxFlex="100%">
               <div *ngFor="let field of fieldSet.config; let ii = index" fxFlex.gt-sm="50" fxFlex.xs="100" fxFlex.gt-xs="calc({{field.width}} - 16px)" [ngClass]="field.class == 'inline' ? 'form-inline' : 'form-line'" id="{{fieldSet.name}}-{{ii}}">
-                <div id="form_field_{{field.name}}" dynamicField [config]="field"  [group]="formGroup" [fieldShow]="show"></div>
+                <div id="form_field_{{field.name}}" dynamicField [config]="field"  [group]="formGroup" [fieldShow]="'show'"></div>
               </div>
-            </div>            
+            </div>
           </div>
         </ng-container>
       </div>

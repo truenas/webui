@@ -1,23 +1,39 @@
-<div id="{{config.name}}" class="dynamic-field form-input colorpicker" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
-        ix-auto ix-auto-type="colorpicker" ix-auto-identifier="{{config.placeholder}}">
-        <div (click)="togglePicker()" class="color-swatch" [style.background-color]="colorProxy"></div>
-	<mat-form-field class="full-width">
-                <input matInput
-		      [placeholder]="config.placeholder"
-                      [(value)]="colorProxy"
-                      (input)="colorProxy=$event.target.value">
+<div
+  *ngIf="!config['isHidden']"
+  [id]="config.name"
+  class="dynamic-field form-input colorpicker"
+  [formGroup]="group"
+  [ngClass]="fieldShow"
+  [class.has-tooltip]="config.tooltip"
+  ix-auto ix-auto-type="colorpicker" ix-auto-identifier="{{config.placeholder}}"
+>
+  <div (click)="togglePicker()" class="color-swatch" [style.background-color]="colorProxy"></div>
+  <mat-form-field class="full-width">
+    <input
+      matInput
+      [placeholder]="config.placeholder"
+      [(value)]="colorProxy"
+      (input)="colorProxy=$event.target.value"
+    >
 
-		<input matInput (cpInputChange)="inputListener('cpInputChange', $event)" (colorPickerChange)="cpListener('cpInputChange' , $event)"
-                  style="opacity:0; position:absolute;"
-                        [(colorPicker)]="colorProxy"
-                        [cpToggle]="picker"
-                        cpOutputFormat="hex"
-                        cpPosition="bottom"
-                        cpWidth="180px"
-                        [cpAlphaChannel]="disabled"
-                        [cpPositionRelativeToArrow]="true"
-                        [formControlName]="config.name">
-                </mat-form-field>
-	<tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>
-	<mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
+    <input
+      matInput
+      (cpInputChange)="inputListener('cpInputChange', $event)"
+      (colorPickerChange)="cpListener('cpInputChange' , $event)"
+      style="opacity:0; position:absolute;"
+      [(colorPicker)]="colorProxy"
+      [cpToggle]="picker"
+      cpOutputFormat="hex"
+      cpPosition="bottom"
+      cpWidth="180px"
+      [cpPositionRelativeToArrow]="true"
+      [formControlName]="config.name"
+    >
+  </mat-form-field>
+  <tooltip
+    *ngIf="config.tooltip"
+    [header]="config.placeholder"
+    [message]="config.tooltip"
+  ></tooltip>
+  <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 </div>

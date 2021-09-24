@@ -1,0 +1,23 @@
+.header {
+  align-items: baseline;
+}
+
+.card {
+  margin: 0 auto;
+  max-width: 850px;
+}
+
+.dataset-path {
+  display: flex;
+  margin-left: 10%;
+
+  .dataset-path-label {
+    font-weight: 500;
+    margin-right: 6px;
+  }
+}
+
+.form {
+  display: block;
+  padding: 5px 10px;
+}

@@ -1,5 +1,6 @@
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
@@ -33,17 +34,6 @@ export interface VDevStats {
   physical_ashift: number;
 }
 
-// As returned by enclosure.query
-export interface Enclosure {
-  controller: boolean;
-  elements: any[]; // Requires types for nested properties
-  id: string;
-  label: string;
-  model: string;
-  name: string;
-  number: number;
-}
-
 // As returned by disk.query
 export interface EnclosureSlot {
   number: number;
@@ -67,6 +57,7 @@ export interface Disk {
   multipath_name: string;
   name: string;
   number: number;
+  passwd?: string;
   pool: string;
   rotationrate: number;
   serial: string;
@@ -179,3 +170,8 @@ export interface ZfsProperties {
   written: ZfsProperty<string>;
   xattr: ZfsProperty<string>;
 }
+
+export type DiskWipeParams = [
+  disk: string,
+  method: DiskWipeMethod,
+];

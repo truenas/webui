@@ -1,12 +1,15 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { Subscription } from 'rxjs';
+import { map, take } from 'rxjs/operators';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -25,7 +28,7 @@ import { ModalService } from 'app/services/modal.service';
 export class LocalizationFormComponent implements FormConfiguration {
   protected updateCall = 'system.general.update';
   sortLanguagesByName = true;
-  languageList: any = [];
+  languageList: Choices;
   languageKey: string;
   title = helptext.localeTitle;
   protected isOneColumnForm = true;
@@ -88,10 +91,17 @@ export class LocalizationFormComponent implements FormConfiguration {
     private sysGeneralService: SystemGeneralService,
     public localeService: LocaleService,
     private modalService: ModalService,
-  ) {
-    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.configData = res;
-    });
+  ) {}
+
+  prerequisite(): Promise<boolean> {
+    return this.sysGeneralService.getGeneralConfig$.pipe(
+      map((configData) => {
+        this.configData = configData;
+        return true;
+      }),
+      take(1),
+      untilDestroyed(this),
+    ).toPromise();
   }
 
   afterInit(entityEdit: EntityFormComponent): void {
@@ -100,17 +110,19 @@ export class LocalizationFormComponent implements FormConfiguration {
     this.makeLanguageList();
 
     this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapChoices) => {
-      this.fieldSets
+      const config = this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
-        .config.find((config) => config.name === 'kbdmap').options = mapChoices;
+        .config.find((config: FormSelectConfig) => config.name === 'kbdmap') as FormSelectConfig;
+      config.options = mapChoices;
       this.entityForm.formGroup.controls['kbdmap'].setValue(this.configData.kbdmap);
     });
 
     this.sysGeneralService.timezoneChoices().pipe(untilDestroyed(this)).subscribe((tzChoices) => {
-      tzChoices = _.sortBy(tzChoices, [function (o) { return o.label.toLowerCase(); }]);
-      this.fieldSets
+      tzChoices = _.sortBy(tzChoices, [(o) => o.label.toLowerCase()]);
+      const config = this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
-        .config.find((config) => config.name === 'timezone').options = tzChoices;
+        .config.find((config) => config.name === 'timezone') as FormComboboxConfig;
+      config.options = tzChoices;
       this.entityForm.formGroup.controls['timezone'].setValue(this.configData.timezone);
     });
 
@@ -119,7 +131,7 @@ export class LocalizationFormComponent implements FormConfiguration {
       this.getDateTimeFormats();
     });
 
-    entityEdit.formGroup.controls['language'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityEdit.formGroup.controls['language'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.languageKey = this.getKeyByValue(this.languageList, res);
       if (this.languageList[res]) {
         entityEdit.formGroup.controls['language'].setValue(`${this.languageList[res]}`);
@@ -129,21 +141,27 @@ export class LocalizationFormComponent implements FormConfiguration {
 
   setTimeOptions(tz: string): void {
     const timeOptions = this.localeService.getTimeFormatOptions(tz);
-    this.fieldSets
+    const timeConfig = this.fieldSets
       .find((set) => set.name === helptext.stg_fieldset_loc)
-      .config.find((config) => config.name === 'time_format').options = timeOptions;
+      .config.find((config) => config.name === 'time_format') as FormSelectConfig;
+    timeConfig.options = timeOptions;
 
     const dateOptions = this.localeService.getDateFormatOptions(tz);
-    this.fieldSets
+    const dateConfig = this.fieldSets
       .find((set) => set.name === helptext.stg_fieldset_loc)
-      .config.find((config) => config.name === 'date_format').options = dateOptions;
+      .config.find((config) => config.name === 'date_format') as FormSelectConfig;
+    dateConfig.options = dateOptions;
   }
 
   getDateTimeFormats(): void {
     this.entityForm.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
-    _.find(this.fieldConfig, { name: 'date_format' })['isLoading'] = false;
+
+    const dateFormatConfig = _.find(this.fieldConfig, { name: 'date_format' }) as FormSelectConfig;
+    dateFormatConfig.isLoading = false;
+
     this.entityForm.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
-    _.find(this.fieldConfig, { name: 'time_format' })['isLoading'] = false;
+    const timeFormatConfig = _.find(this.fieldConfig, { name: 'time_format' }) as FormSelectConfig;
+    timeFormatConfig.isLoading = false;
   }
 
   makeLanguageList(): void {
@@ -155,12 +173,13 @@ export class LocalizationFormComponent implements FormConfiguration {
           : `${key} (${this.languageList[key]})`,
         value: key,
       }));
-      this.fieldSets
+      const config = this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_loc)
-        .config.find((config) => config.name === 'language').options = _.sortBy(
-          options,
-          this.sortLanguagesByName ? 'label' : 'value',
-        );
+        .config.find((config) => config.name === 'language') as FormComboboxConfig;
+      config.options = _.sortBy(
+        options,
+        this.sortLanguagesByName ? 'label' : 'value',
+      );
       this.entityForm.formGroup.controls['language'].setValue(this.configData.language);
     });
   }
@@ -174,7 +193,7 @@ export class LocalizationFormComponent implements FormConfiguration {
     this.language.setLanguage(value.language);
   }
 
-  customSubmit(body: any): any {
+  customSubmit(body: any): Subscription {
     this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
     delete body.date_format;
     delete body.time_format;

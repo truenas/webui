@@ -11,9 +11,6 @@ export default {
 
   ldap_custactions_advanced_id: 'advanced_mode',
 
-  ldap_custactions_edit_imap_id: 'edit_idmap',
-  ldap_custactions_edit_imap_name: T('Edit Idmap'),
-
   ldap_custactions_clearcache_id: 'ds_clearcache',
   ldap_custactions_clearcache_name: T('Rebuild Directory Service Cache'),
   ldap_custactions_clearcache_dialog_title: T('LDAP'),

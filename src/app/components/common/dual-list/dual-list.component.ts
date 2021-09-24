@@ -9,23 +9,24 @@ import { difference, ListSelection, ListSelectionImpl } from './models';
   styleUrls: ['./dual-list.component.scss'],
   templateUrl: 'dual-list.component.html',
 })
-export class DualListboxComponent implements OnInit {
-  @Input() key = 'id';
-  @Input() items: any[];
-  @Input('selectedItems') _selectedItems: any[];
-  @Output() selectedItemsChange = new EventEmitter<any[]>();
+export class DualListboxComponent<T extends { id: string | number }> implements OnInit {
+  @Input() key: keyof T = 'id';
+  @Input() items: T[];
+  // eslint-disable-next-line @angular-eslint/no-input-rename
+  @Input('selectedItems') _selectedItems: T[];
+  @Output() selectedItemsChange = new EventEmitter<T[]>();
 
   @Input() minHeight = '200px';
   @Input() maxHeight = '300px';
   @Input() title1: string;
   @Input() title2: string;
 
-  @ContentChild('templateItem', { static: true }) templateItem: TemplateRef<any>;
-  @ContentChild('templateArrowLeft', { static: true }) templateArrowLeft: TemplateRef<any>;
-  @ContentChild('templateArrowRight', { static: true }) templateArrowRight: TemplateRef<any>;
+  @ContentChild('templateItem', { static: true }) templateItem: TemplateRef<void>;
+  @ContentChild('templateArrowLeft', { static: true }) templateArrowLeft: TemplateRef<void>;
+  @ContentChild('templateArrowRight', { static: true }) templateArrowRight: TemplateRef<void>;
 
-  availableItems: ListSelection;
-  selectedItems: ListSelection;
+  availableItems: ListSelection<T>;
+  selectedItems: ListSelection<T>;
   dragging = false;
 
   ngOnInit(): void {
@@ -60,8 +61,10 @@ export class DualListboxComponent implements OnInit {
       if (document.querySelector('#counter')) {
         document.querySelector('#counter').remove();
       }
+    } else if (event.previousContainer.id === 'cdk-drop-list-0') {
+      this.select();
     } else {
-      event.previousContainer.id === 'cdk-drop-list-0' ? this.select() : this.return();
+      this.return();
     }
     this.dragging = false;
   }
@@ -84,9 +87,11 @@ export class DualListboxComponent implements OnInit {
   }
 }
 
-const transfer = (from: ListSelection, to: ListSelection): { from: ListSelection; to: ListSelection } => ({
-  from: new ListSelectionImpl(
-    from.totalItems.filter((x) => !from.isSelected(x)),
-  ),
-  to: new ListSelectionImpl([...from.selectedItems, ...to.totalItems]),
-});
+const transfer = <T>(from: ListSelection<T>, to: ListSelection<T>): {
+  from: ListSelection<T>; to: ListSelection<T>;
+} => ({
+    from: new ListSelectionImpl(
+      from.totalItems.filter((x) => !from.isSelected(x)),
+    ),
+    to: new ListSelectionImpl([...from.selectedItems, ...to.totalItems]),
+  });

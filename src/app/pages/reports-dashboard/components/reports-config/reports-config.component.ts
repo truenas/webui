@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/reporting';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { ReportingConfig } from 'app/interfaces/reporting.interface';
+import { ReportingConfig, ReportingConfigUpdate } from 'app/interfaces/reporting.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -16,7 +17,6 @@ import { DialogService, WebSocketService } from 'app/services';
   styleUrls: ['reports-config.component.scss'],
 })
 export class ReportsConfigComponent implements FormConfiguration {
-  job: any = {};
   queryCall: 'reporting.config' = 'reporting.config';
   title: string;
   isOneColumnForm: boolean;
@@ -86,7 +86,7 @@ export class ReportsConfigComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ]);
 
-  afterModalFormSaved?(): any;
+  afterModalFormSaved?: () => void;
 
   constructor(
     private ws: WebSocketService,
@@ -106,21 +106,24 @@ export class ReportsConfigComponent implements FormConfiguration {
   }
 
   customSubmit(body: any): void {
-    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints
-      || body.cpu_in_percentage !== this.isCpuCheckboxChecked) {
-      this.dialog.confirm(helptext.dialog.title, helptext.dialog.message, false,
-        helptext.dialog.action).pipe(untilDestroyed(this)).subscribe((res: any) => {
-        if (res) {
-          body.confirm_rrd_destroy = true;
-          this.doSubmit(body);
-        }
+    if (body.graph_age !== this.graphAge || body.graph_points !== this.graphPoints) {
+      this.dialog.confirm({
+        title: helptext.dialog.title,
+        message: helptext.dialog.message,
+        buttonMsg: helptext.dialog.action,
+      }).pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      ).subscribe(() => {
+        body.confirm_rrd_destroy = true;
+        this.doSubmit(body);
       });
     } else {
       this.doSubmit(body);
     }
   }
 
-  doSubmit(body: any): Subscription {
+  doSubmit(body: ReportingConfigUpdate): Subscription {
     this.graphAge = body.graph_age;
     this.graphPoints = body.graph_points;
     this.isCpuCheckboxChecked = body.cpu_in_percentage;

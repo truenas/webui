@@ -57,8 +57,9 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Services"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
+    time.sleep(1)
+    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
+    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
 
 
 @then('on the service page, press on configure(pencil) SSH')

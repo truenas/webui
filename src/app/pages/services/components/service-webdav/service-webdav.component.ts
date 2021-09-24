@@ -10,7 +10,7 @@ import helptext from 'app/helptext/services/components/service-webdav';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { SystemGeneralService, WebSocketService, ValidationService } from 'app/services';
 
@@ -88,7 +88,7 @@ export class ServiceWebdavComponent implements FormConfiguration {
   private webdav_protocol: FormControl;
   private webdav_tcpport: FieldConfig;
   private webdav_tcpportssl: FieldConfig;
-  private webdav_certssl: FieldConfig;
+  private webdav_certssl: FormSelectConfig;
   private webdav_htauth: FormControl;
   private webdav_password: FieldConfig;
   private webdav_password2: FieldConfig;
@@ -127,16 +127,16 @@ export class ServiceWebdavComponent implements FormConfiguration {
     this.handleAuth(this.webdav_htauth.value);
     this.webdav_protocol.valueChanges
       .pipe(untilDestroyed(this))
-      .subscribe((value: any) => {
+      .subscribe((value: string) => {
         this.handleProtocol(value);
       });
     this.webdav_htauth.valueChanges
       .pipe(untilDestroyed(this))
-      .subscribe((value: any) => {
+      .subscribe((value: string) => {
         this.handleAuth(value);
       });
 
-    this.webdav_certssl = _.find(this.fieldConfig, { name: 'certssl' });
+    this.webdav_certssl = _.find(this.fieldConfig, { name: 'certssl' }) as FormSelectConfig;
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.length > 0) {
         res.forEach((item) => {
@@ -148,7 +148,7 @@ export class ServiceWebdavComponent implements FormConfiguration {
     });
   }
 
-  handleProtocol(value: any): void {
+  handleProtocol(value: string): void {
     if (value === 'HTTP') {
       this.webdav_tcpport['isHidden'] = false;
       this.webdav_tcpportssl['isHidden'] = true;
@@ -164,7 +164,7 @@ export class ServiceWebdavComponent implements FormConfiguration {
     }
   }
 
-  handleAuth(value: any): void {
+  handleAuth(value: string): void {
     if (value === 'NONE') {
       this.entityForm.setDisabled('password', true, true);
       this.entityForm.setDisabled('password2', true, true);

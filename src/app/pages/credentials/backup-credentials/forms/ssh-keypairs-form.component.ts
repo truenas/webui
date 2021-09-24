@@ -7,6 +7,7 @@ import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum'
 import helptext from 'app/helptext/system/ssh-keypairs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -24,13 +25,13 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class SshKeypairsFormComponent implements FormConfiguration {
   queryCall: 'keychaincredential.query' = 'keychaincredential.query';
-  queryCallOption: any[];
+  queryCallOption: [QueryFilter<KeychainCredential>];
   addCall: 'keychaincredential.create' = 'keychaincredential.create';
   editCall: 'keychaincredential.update' = 'keychaincredential.update';
   isEntity = true;
   protected entityForm: EntityFormComponent;
   protected isOneColumnForm = true;
-  private rowNum: any;
+  private rowNum: number;
   title = helptext.formTitle;
   private getRow = new Subscription();
 
@@ -112,7 +113,7 @@ export class SshKeypairsFormComponent implements FormConfiguration {
 
   constructor(private aroute: ActivatedRoute, private ws: WebSocketService, private loader: AppLoaderService,
     private dialogService: DialogService, private storage: StorageService, private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.rowNum = rowId;
       this.getRow.unsubscribe();
     });
@@ -152,7 +153,7 @@ export class SshKeypairsFormComponent implements FormConfiguration {
     });
   }
 
-  downloadKey(key_type: any): void {
+  downloadKey(key_type: 'private_key' | 'public_key'): void {
     const name = this.entityForm.formGroup.controls['name'].value;
     const key = this.entityForm.formGroup.controls[key_type].value;
     const filename = name + '_' + key_type + '_rsa';

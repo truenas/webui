@@ -9,9 +9,11 @@ import { helptext_system_cloudcredentials as helptext } from 'app/helptext/syste
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
@@ -104,6 +106,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           placeholder: helptext.client_secret.placeholder,
           tooltip: helptext.client_secret.tooltip,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
         }],
     },
     { name: 'divider', divider: true },
@@ -193,6 +197,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.key_b2.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -211,6 +217,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_box.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -229,6 +237,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_dropbox.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -353,6 +363,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_google_drive.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -388,6 +400,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_google_photos.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -424,6 +438,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_hubic.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -496,6 +512,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.key_azureblob.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -514,6 +532,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_onedrive.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -617,6 +637,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           placeholder: helptext.key_openstack_swift.placeholder,
           tooltip: helptext.key_openstack_swift.tooltip,
           required: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -685,6 +707,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_pcloud.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -908,6 +932,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           tooltip: helptext.token_yandex.tooltip,
           required: true,
           isHidden: true,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -1037,6 +1063,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           name: 'auth_token-OPENSTACK_SWIFT',
           placeholder: helptext.auth_token_openstack_swift.placeholder,
           tooltip: helptext.auth_token_openstack_swift.tooltip,
+          inputType: 'password',
+          togglePw: true,
           relation: [
             {
               action: RelationAction.Show,
@@ -1202,7 +1230,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   fieldConfig: FieldConfig[];
 
   protected providers: CloudsyncProvider[];
-  protected providerField: FieldConfig;
+  protected providerField: FormSelectConfig;
   protected entityForm: EntityFormComponent;
 
   custActions = [
@@ -1264,22 +1292,22 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         this.rowNum = row;
       });
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
-    this.providerField = _.find(basicFieldset.config, { name: 'provider' });
+    this.providerField = _.find(basicFieldset.config, { name: 'provider' }) as FormSelectConfig;
     this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe(
       (providers) => {
         this.providers = providers;
-        for (const i in providers) {
+        providers.forEach((provider) => {
           this.providerField.options.push(
             {
-              label: providers[i].title,
-              value: providers[i].name,
+              label: provider.title,
+              value: provider.name,
             },
           );
-        }
+        });
       },
     );
     const authenticationFieldset = _.find(this.fieldSets, { class: 'authentication' });
-    const privateKeySFTPField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' });
+    const privateKeySFTPField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' }) as FormSelectConfig;
     this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]).pipe(untilDestroyed(this)).subscribe(
       (credentials) => {
         for (let i = 0; i < credentials.length; i++) {
@@ -1310,7 +1338,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     }
   }
 
-  setFieldRequired(name: string, required: boolean, entityform: any): void {
+  setFieldRequired(name: string, required: boolean, entityform: EntityFormComponent): void {
     const field = _.find(this.fieldConfig, { name });
     const controller = entityform.formGroup.controls[name];
     if (field.required !== required) {
@@ -1347,13 +1375,13 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       entityForm.formGroup.controls['preview-GOOGLE_CLOUD_STORAGE'].setValue(value);
     });
     // Allow blank values for pass and key_file fields (but at least one should be non-blank)
-    entityForm.formGroup.controls['pass-SFTP'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['pass-SFTP'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       if (res !== undefined) {
         const required = res === '';
         this.setFieldRequired('private_key-SFTP', required, entityForm);
       }
     });
-    entityForm.formGroup.controls['private_key-SFTP'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['private_key-SFTP'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | string) => {
       if (res !== undefined) {
         const required = res === '';
         this.setFieldRequired('pass-SFTP', required, entityForm);
@@ -1376,7 +1404,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     const tenantCtrl = entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'];
     const tenantIdCtrl = entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'];
     entityForm.formGroup.controls['auth_version-OPENSTACK_SWIFT'].valueChanges.pipe(untilDestroyed(this)).subscribe(
-      (res: any) => {
+      (res: number) => {
         if (res === 1) {
           this.setFieldRequired('tenant-OPENSTACK_SWIFT', false, entityForm);
           this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', false, entityForm);
@@ -1410,7 +1438,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       (res) => {
         this.entityForm.loader.close();
         if (res.valid) {
-          this.dialog.Info(T('Valid'), T('The Credential is valid.'), '500px', 'info');
+          this.dialog.info(T('Valid'), T('The Credential is valid.'), '500px', 'info');
         } else {
           this.dialog.errorReport('Error', res.excerpt, res.error);
         }
@@ -1425,14 +1453,15 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   logInToProvider(): void {
     window.open(this.oauthURL + '?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
     const controls = this.entityForm.formGroup.controls;
-    const selectedProvider = this.selectedProvider;
     const dialogService = this.dialog;
     const getOnedriveList = this.getOnedriveList.bind(this);
 
-    window.addEventListener('message', doAuth, false);
+    const method = (message: OauthMessage): void => doAuth(message, this.selectedProvider);
 
-    function doAuth(message: any): void {
-      if (message.data.oauth_portal) {
+    window.addEventListener('message', method, false);
+
+    function doAuth(message: OauthMessage, selectedProvider: string): void {
+      if ('oauth_portal' in message.data) {
         if (message.data.error) {
           dialogService.errorReport(T('Error'), message.data.error);
         } else {
@@ -1449,8 +1478,9 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         if (selectedProvider === 'ONEDRIVE') {
           getOnedriveList(message.data);
         }
+
+        window.removeEventListener('message', method);
       }
-      window.removeEventListener('message', doAuth);
     }
   }
 
@@ -1465,7 +1495,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
           (sshKey) => {
             this.keyID = sshKey.id;
-            const privateKeySFTPField = _.find(this.fieldConfig, { name: 'private_key-SFTP' });
+            const privateKeySFTPField = _.find(this.fieldConfig, { name: 'private_key-SFTP' }) as FormSelectConfig;
             privateKeySFTPField.options.push({ label: payload.name, value: this.keyID });
             this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
             if (submitting) {
@@ -1510,7 +1540,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         this.modalService.close('slide-in-form');
         this.modalService.refreshTable();
       },
-      (err: any) => {
+      (err: WebsocketError) => {
         this.entityForm.loader.close();
         this.modalService.refreshTable();
         if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
@@ -1562,7 +1592,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       return;
     }
     data = data.result;
-    const drivesConfig = _.find(this.fieldConfig, { name: 'drives-ONEDRIVE' });
+    const drivesConfig = _.find(this.fieldConfig, { name: 'drives-ONEDRIVE' }) as FormSelectConfig;
     this.entityForm.setDisabled('drives-ONEDRIVE', false, false);
     this.ws.call('cloudsync.onedrive_list_drives', [{
       client_id: data.client_id,

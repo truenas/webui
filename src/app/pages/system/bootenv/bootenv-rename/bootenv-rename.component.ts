@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { BootEnvService, WebSocketService } from 'app/services';
 
@@ -18,24 +18,17 @@ import { BootEnvService, WebSocketService } from 'app/services';
 export class BootEnvironmentRenameComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot'];
   editCall: 'bootenv.update' = 'bootenv.update';
-  pk: any;
+  pk: string;
   isNew = false;
   isEntity = true;
   protected entityForm: EntityFormComponent;
 
-  fieldConfig: FieldConfig[];
-
-  constructor(
-    protected router: Router,
-    protected route: ActivatedRoute,
-    protected ws: WebSocketService,
-    protected bootEnvService: BootEnvService,
-  ) {}
-
-  preInit(entityForm: EntityFormComponent): void {
-    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.pk = params['pk'];
-      this.fieldConfig = [
+  fieldSets: FieldSet[] = [
+    {
+      name: helptext_system_bootenv.rename_fieldset_name,
+      class: 'bootenv-rename',
+      label: false,
+      config: [
         {
           type: 'input',
           name: 'name',
@@ -44,18 +37,28 @@ export class BootEnvironmentRenameComponent implements FormConfiguration {
           validation: [regexValidator(this.bootEnvService.bootenv_name_regex)],
           required: true,
         },
-      ];
-    });
-    this.entityForm = entityForm;
-  }
+      ],
+    },
+  ];
+
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected ws: WebSocketService,
+    protected bootEnvService: BootEnvService,
+  ) {}
 
   afterInit(entityForm: EntityFormComponent): void {
+    this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
+      this.pk = params['pk'];
+      entityForm.formGroup.get('name').setValue(this.pk);
+    });
+    this.entityForm = entityForm;
+
     entityForm.submitFunction = this.submitFunction;
   }
 
-  submitFunction(entityForm: any): Observable<any> {
-    const payload: any = {};
-    payload['name'] = entityForm.name;
-    return this.ws.call('bootenv.update', [this.pk, payload]);
+  submitFunction(entityForm: { name: string }): Observable<string> {
+    return this.ws.call('bootenv.update', [this.pk, entityForm]);
   }
 }

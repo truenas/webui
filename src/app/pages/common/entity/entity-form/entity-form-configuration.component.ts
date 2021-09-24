@@ -23,7 +23,7 @@ export class EntityFormConfigurationComponent implements FormConfiguration {
   private entityEdit: EntityFormComponent;
 
   title = '';
-  afterModalFormClosed: any;
+  afterModalFormClosed: () => void;
   formType: string;
 
   _isOneColumnForm = false;
@@ -36,14 +36,11 @@ export class EntityFormConfigurationComponent implements FormConfiguration {
   }
 
   // EntityForm
-  customSubmit?: any;
-  queryCall?: any;
-  protected updateCall?: any;
+  customSubmit?: (value: any) => void;
   isEntity = true;
 
   // EntityFormEmbedded (This is for when your form doesn't submit to backend like view configs etc.)
   target: Subject<CoreEvent>;
-  data: any;
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;

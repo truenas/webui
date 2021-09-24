@@ -6,8 +6,9 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { CommonUtils } from 'app/core/classes/common-utils';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/apps/apps';
+import { ApplicationUserEvent, ApplicationUserEventName } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -24,11 +25,12 @@ import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.compo
   selector: 'app-applications',
   templateUrl: './applications.component.html',
   styleUrls: ['./applications.component.scss'],
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 export class ApplicationsComponent implements OnInit, AfterViewInit {
-  @ViewChild(CatalogComponent, { static: false }) private catalogTab: CatalogComponent;
   @ViewChild(ChartReleasesComponent, { static: false }) private chartTab: ChartReleasesComponent;
+  @ViewChild(CatalogComponent, { static: false }) private catalogTab: CatalogComponent;
   @ViewChild(ManageCatalogsComponent, { static: false }) private manageCatalogTab: ManageCatalogsComponent;
   @ViewChild(DockerImagesComponent, { static: false }) private dockerImagesTab: DockerImagesComponent;
   selectedIndex = 0;
@@ -55,18 +57,12 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     this.setupToolbar();
 
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshTab(true);
+      this.refreshTab();
     });
   }
 
   ngAfterViewInit(): void {
-    // If the route parameter "tabIndex" is 1, switch tab to "Installed applications".
-    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (params['tabIndex'] == 1) {
-        this.selectedIndex = 1;
-        this.refreshTab();
-      }
-    });
+    this.refreshTab();
   }
 
   setupToolbar(): void {
@@ -76,12 +72,8 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
         this.filterString = evt.data.filter;
       }
 
-      if (evt.data.event_control == 'catalogs') {
-        this.selectedCatalogOptions = evt.data.catalogs;
-      }
-
-      this.catalogTab.onToolbarAction(evt);
       this.chartTab.onToolbarAction(evt);
+      this.catalogTab.onToolbarAction(evt);
       this.manageCatalogTab.onToolbarAction(evt);
       this.dockerImagesTab.onToolbarAction(evt);
     });
@@ -115,6 +107,26 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     // TODO: Error prone if index is changed
     switch (this.selectedIndex) {
       case 0:
+        search.placeholder = helptext.installedPlaceholder;
+        const bulk = {
+          name: 'bulk',
+          label: helptext.bulkActions.title,
+          type: 'menu',
+          options: helptext.bulkActions.options,
+        };
+        if (this.isSelectedAll) {
+          bulk.options[0].label = helptext.bulkActions.unSelectAll;
+        } else {
+          bulk.options[0].label = helptext.bulkActions.selectAll;
+        }
+        bulk.options.forEach((option) => {
+          if (option.value != 'select_all') {
+            option.disabled = !this.isSelectedOneMore;
+          }
+        });
+        this.toolbarConfig.controls.push(bulk);
+        break;
+      case 1:
         search.placeholder = helptext.availablePlaceholder;
         this.toolbarConfig.controls.push({
           name: 'refresh_all',
@@ -134,26 +146,6 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
           value: this.selectedCatalogOptions,
           customTriggerValue: helptext.catalogs,
         });
-        break;
-      case 1:
-        search.placeholder = helptext.installedPlaceholder;
-        const bulk = {
-          name: 'bulk',
-          label: helptext.bulkActions.title,
-          type: 'menu',
-          options: helptext.bulkActions.options,
-        };
-        if (this.isSelectedAll) {
-          bulk.options[0].label = helptext.bulkActions.unSelectAll;
-        } else {
-          bulk.options[0].label = helptext.bulkActions.selectAll;
-        }
-        bulk.options.forEach((option) => {
-          if (option.value != 'select_all') {
-            option.disabled = !this.isSelectedOneMore;
-          }
-        });
-        this.toolbarConfig.controls.push(bulk);
         break;
       case 2:
         search.placeholder = helptext.catalogPlaceholder;
@@ -219,15 +211,15 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     this.toolbarConfig.target.next({ name: 'UpdateControls', data: this.toolbarConfig.controls });
   }
 
-  updateTab(evt: any): void {
-    if (evt.name == 'SwitchTab') {
-      this.selectedIndex = evt.value;
-    } else if (evt.name == 'UpdateToolbar') {
-      this.isSelectedOneMore = evt.value;
+  updateTab(evt: ApplicationUserEvent): void {
+    if (evt.name == ApplicationUserEventName.SwitchTab) {
+      this.selectedIndex = evt.value as number;
+    } else if (evt.name == ApplicationUserEventName.UpdateToolbar) {
+      this.isSelectedOneMore = evt.value as boolean;
       this.isSelectedAll = evt.isSelectedAll;
       this.updateToolbar();
-    } else if (evt.name == 'catalogToolbarChanged') {
-      this.isSelectedPool = evt.value;
+    } else if (evt.name == ApplicationUserEventName.CatalogToolbarChanged) {
+      this.isSelectedPool = evt.value as boolean;
       this.catalogOptions = evt.catalogNames.map((catalogName: string) => ({
         label: this.utils.capitalizeFirstLetter(catalogName),
         value: catalogName,
@@ -238,17 +230,12 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  refreshTab(switchToAppTab = false): void {
+  refreshTab(): void {
     this.updateToolbar();
     if (this.selectedIndex == 0) {
-      if (switchToAppTab) {
-        this.selectedIndex = 1;
-        this.chartTab.refreshChartReleases();
-      } else {
-        this.catalogTab.loadCatalogs();
-      }
-    } else if (this.selectedIndex == 1) {
       this.chartTab.refreshChartReleases();
+    } else if (this.selectedIndex == 1) {
+      this.catalogTab.loadCatalogs();
     } else if (this.selectedIndex == 2) {
       this.manageCatalogTab.refresh();
     } else if (this.selectedIndex == 3) {

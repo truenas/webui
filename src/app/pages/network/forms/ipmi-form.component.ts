@@ -6,7 +6,9 @@ import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/ipmi/ipmi';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -23,7 +25,7 @@ import { T } from 'app/translate-marker';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class IPMIFromComponent implements FormConfiguration {
-  title = 'IMPI';
+  title = T('IPMI');
   queryCall: 'ipmi.query' = 'ipmi.query';
 
   protected entityEdit: EntityFormComponent;
@@ -32,16 +34,7 @@ export class IPMIFromComponent implements FormConfiguration {
   currentControllerLabel: string;
   failoverControllerLabel: string;
   managementIP: string;
-  options: Option[] = [
-    { label: 'Indefinitely', value: 'force' },
-    { label: '15 seconds', value: 15 },
-    { label: '30 seconds', value: 30 },
-    { label: '1 minute', value: 60 },
-    { label: '2 minute', value: 120 },
-    { label: '3 minute', value: 180 },
-    { label: '4 minute', value: 240 },
-    { label: 'Turn OFF', value: 0 },
-  ];
+  options: Option[] = helptext.ipmiOptions;
   custActions = [
     {
       id: 'ipmi_identify',
@@ -158,7 +151,7 @@ export class IPMIFromComponent implements FormConfiguration {
     }];
 
   queryKey = 'id';
-  channelValue: any;
+  channelValue: number;
   isEntity = true;
 
   constructor(
@@ -219,26 +212,26 @@ export class IPMIFromComponent implements FormConfiguration {
     this.channelValue = entityEdit.pk;
     this.entityEdit = entityEdit;
 
-    entityEdit.formGroup.controls['password'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: any) => {
+    entityEdit.formGroup.controls['password'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'password' }));
     });
 
-    entityEdit.formGroup.controls['ipaddress'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: any) => {
+    entityEdit.formGroup.controls['ipaddress'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'ipaddress' }));
       const ipValue = entityEdit.formGroup.controls['ipaddress'].value;
       const btn = <HTMLInputElement>document.getElementById('cust_button_Manage');
-      status === 'INVALID' || ipValue === '0.0.0.0' ? btn.disabled = true : btn.disabled = false;
+      btn.disabled = (status === 'INVALID' || ipValue === '0.0.0.0');
     });
 
-    entityEdit.formGroup.controls['ipaddress'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    entityEdit.formGroup.controls['ipaddress'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       this.managementIP = value;
     });
 
-    entityEdit.formGroup.controls['netmask'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: any) => {
+    entityEdit.formGroup.controls['netmask'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'netmask' }));
     });
 
-    entityEdit.formGroup.controls['gateway'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: any) => {
+    entityEdit.formGroup.controls['gateway'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'gateway' }));
     });
 
@@ -249,11 +242,11 @@ export class IPMIFromComponent implements FormConfiguration {
     }
   }
 
-  setErrorStatus(status: any, field: FieldConfig): void {
-    status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
+  setErrorStatus(status: string, field: FieldConfig): void {
+    field.hasErrors = (status === 'INVALID');
   }
 
-  customSubmit(payload: any): Subscription {
+  customSubmit(payload: IpmiUpdate): Subscription {
     let call$ = this.ws.call('ipmi.update', [this.channelValue, payload]);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       call$ = this.ws.call('failover.call_remote', ['ipmi.update', [this.channelValue, payload]]);
@@ -262,14 +255,14 @@ export class IPMIFromComponent implements FormConfiguration {
     this.loader.open();
     return call$.pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
-      this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true);
+      this.dialog.info(T('Settings saved.'), '', '300px', 'info', true);
     }, (res) => {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityEdit, res);
     });
   }
 
-  loadData(filter: any[] = []): void {
+  loadData(filter: QueryParams<Ipmi> = []): void {
     let query$ = this.ws.call(this.queryCall, filter);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       query$ = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);

@@ -2,11 +2,14 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { CoreEvent } from 'app/interfaces/events';
+import { AuthenticatedEvent } from 'app/interfaces/events/authenticated-event.interface';
+import { ChangeThemePreferenceEvent } from 'app/interfaces/events/theme-events.interface';
 import { UserDataEvent } from 'app/interfaces/events/user-data-event.interface';
+import { UserPreferencesRequestEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 import { ApiService } from './api.service';
-import { CoreService } from './core.service';
+import { CoreService } from './core-service/core.service';
 
 interface PropertyReport {
   middlewareProperties: string[];
@@ -54,14 +57,14 @@ export class PreferencesService {
   ) {
     this.preferences = this.defaultPreferences;
 
-    this.core.register({ observerClass: this, eventName: 'Authenticated', sender: this.api }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'Authenticated', sender: this.api }).pipe(untilDestroyed(this)).subscribe((evt: AuthenticatedEvent) => {
       // evt.data: boolean represents authentication status
       if (evt.data) {
         this.core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });
       }
     });
 
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesRequest' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesRequest' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesRequestEvent) => {
       // Ignore requests until we have UserData
       if (!this.startupComplete) { return; }
 
@@ -89,7 +92,7 @@ export class PreferencesService {
       }
     });
 
-    this.core.register({ observerClass: this, eventName: 'ChangeThemePreference', sender: this.themeService }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ChangeThemePreference', sender: this.themeService }).pipe(untilDestroyed(this)).subscribe((evt: ChangeThemePreferenceEvent) => {
       this.preferences.userTheme = evt.data;
       this.core.emit({ name: 'UserDataUpdate', data: this.preferences });
     });

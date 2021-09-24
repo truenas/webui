@@ -9,8 +9,11 @@ import { Observable } from 'rxjs';
 import global_helptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/services/components/service-ftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
   DialogService, SystemGeneralService, WebSocketService, StorageService,
@@ -34,7 +37,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   protected rootlogin_fg: FormControl;
   protected warned = false;
   protected rootlogin: boolean;
-  fieldConfig: any;
+  fieldConfig: FieldConfig[];
   title = helptext.formTitle;
 
   protected bwFields = ['localuserbw', 'localuserdlbw', 'anonuserbw', 'anonuserdlbw'];
@@ -272,7 +275,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           required: true,
           validation: helptext.userbw_validation,
           blurStatus: true,
-          blurEvent: this.blurEvent,
+          blurEvent: this.localUserBwBlur,
           parent: this,
         },
         {
@@ -283,7 +286,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           required: true,
           validation: helptext.userbw_validation,
           blurStatus: true,
-          blurEvent: this.blurEvent2,
+          blurEvent: this.localUserDlbwBlur,
           parent: this,
         },
         {
@@ -294,7 +297,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           required: true,
           validation: helptext.userbw_validation,
           blurStatus: true,
-          blurEvent: this.blurEvent3,
+          blurEvent: this.anonUserBwBlur,
           parent: this,
         },
         {
@@ -305,7 +308,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           required: true,
           validation: helptext.userbw_validation,
           blurStatus: true,
-          blurEvent: this.blurEvent4,
+          blurEvent: this.anonUserDlbwBlur,
           parent: this,
         },
       ],
@@ -371,7 +374,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
       ],
     },
     { name: 'divider', divider: true },
-  ]);
+  ] as FieldSet<this>[]);
 
   advanced_field = this.fieldSets.advancedFields;
 
@@ -419,7 +422,8 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   ngOnInit(): void {
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.length > 0) {
-        this.fieldSets.config('ssltls_certificate').options = res.map((cert) => ({ label: cert.name, value: cert.id }));
+        const config = this.fieldSets.config('ssltls_certificate') as FormSelectConfig;
+        config.options = res.map((cert) => ({ label: cert.name, value: cert.id }));
       }
     });
   }
@@ -428,7 +432,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     this.entityForm = entityEdit;
     entityEdit.submitFunction = this.submitFunction;
     this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'] as FormControl;
-    this.rootlogin_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.rootlogin_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res && !this.warned && !this.rootlogin) {
         this.dialog.confirm({
           title: helptext.rootlogin_dialog_title,
@@ -512,35 +516,35 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     data['dirmask'] = dirmask;
   }
 
-  submitFunction(body: any): Observable<any> {
+  submitFunction(body: FtpConfigUpdate): Observable<FtpConfig> {
     return this.ws.call('ftp.update', [body]);
   }
 
-  blurEvent(parent: any): void {
+  localUserBwBlur(parent: this): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'localuserbw');
     }
   }
 
-  blurEvent2(parent: any): void {
+  localUserDlbwBlur(parent: this): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'localuserdlbw');
     }
   }
 
-  blurEvent3(parent: any): void {
+  anonUserBwBlur(parent: this): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'anonuserbw');
     }
   }
 
-  blurEvent4(parent: any): void {
+  anonUserDlbwBlur(parent: this): void {
     if (parent.entityForm && parent.storageService.humanReadable) {
       parent.transformValue(parent, 'anonuserdlbw');
     }
   }
 
-  transformValue(parent: any, fieldname: string): void {
+  transformValue(parent: this, fieldname: string): void {
     parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
     // Clear humanReadable value to keep from accidentally setting it elsewhere
     parent.storageService.humanReadable = '';

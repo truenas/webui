@@ -1,13 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
-import { CoreService } from 'app/core/services/core.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/about';
-import { AppLoaderService } from 'app/services';
-import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 
 export interface DialogData {
@@ -20,7 +15,7 @@ export interface DialogData {
   styleUrls: ['./about-dialog.component.scss'],
   templateUrl: './about-dialog.component.html',
 })
-export class AboutModalDialog {
+export class AboutDialogComponent {
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   product_type: ProductType;
   extraMsg: boolean;
@@ -30,13 +25,9 @@ export class AboutModalDialog {
   readonly ProductType = ProductType;
 
   constructor(
-    public dialogRef: MatDialogRef<AboutModalDialog>,
+    public dialogRef: MatDialogRef<AboutDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
-    protected loader: AppLoaderService,
-    protected http: HttpClient, protected dialogService: DialogService,
-    protected translate: TranslateService,
-    protected core: CoreService,
-    private prefServices: PreferencesService,
+    private core: CoreService,
     private localeService: LocaleService,
   ) {
     this.extraMsg = data.extraMsg;
@@ -44,6 +35,7 @@ export class AboutModalDialog {
   }
 
   turnOffWelcomeDialog(): void {
+    localStorage.setItem('turnOffWelcomeDialog', 'true');
     this.core.emit({ name: 'ChangePreference', data: { key: 'showWelcomeDialog', value: false }, sender: this });
   }
 }

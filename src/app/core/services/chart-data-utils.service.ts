@@ -2,13 +2,7 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Thread } from 'app/core/classes/thread';
 import { CoreEvent } from 'app/interfaces/events';
-import { CoreService } from './core.service';
-
-export interface ProcessTask {
-  responseEvent: string;
-  operation: string;
-  data: any[];
-}
+import { CoreService } from './core-service/core.service';
 
 @UntilDestroy()
 @Injectable()

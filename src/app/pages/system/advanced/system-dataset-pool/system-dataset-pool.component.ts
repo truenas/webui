@@ -9,6 +9,7 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService, WebSocketService, AppLoaderService, SystemGeneralService,
@@ -66,7 +67,7 @@ export class SystemDatasetPoolComponent implements FormConfiguration {
       .call('systemdataset.pool_choices')
       .pipe(untilDestroyed(this))
       .subscribe((poolChoices) => {
-        const poolField = this.fieldSets.config(poolFieldName);
+        const poolField = this.fieldSets.config(poolFieldName) as FormSelectConfig;
         poolField.options = Object.entries(poolChoices)
           .map(([label, value]) => ({ label, value }));
       });

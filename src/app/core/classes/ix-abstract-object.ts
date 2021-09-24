@@ -1,6 +1,6 @@
 import { UUID } from 'angular2-uuid';
 
-export abstract class iXAbstractObject {
+export abstract class IxAbstractObject {
   readonly id: string;
 
   constructor() {

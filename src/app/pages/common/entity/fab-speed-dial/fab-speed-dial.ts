@@ -22,11 +22,9 @@ const Z_INDEX_ITEM = 23;
 
 @Component({
   selector: 'smd-fab-trigger',
-  template: `
-        <ng-content select="[mat-fab], [mat-fab]"></ng-content>
-    `,
+  template: '<ng-content select="[mat-fab], [mat-fab]"></ng-content>',
 })
-export class SmdFabSpeedDialTrigger {
+export class SmdFabSpeedDialTriggerComponent {
   /**
      * Whether this trigger should spin (360dg) while opening the speed dial
      */
@@ -37,7 +35,7 @@ export class SmdFabSpeedDialTrigger {
   }
 
   @HostListener('click', ['$event'])
-  _onClick(event: MouseEvent): void {
+  onClick(event: MouseEvent): void {
     if (!this._parent.fixed) {
       this._parent.toggle();
       event.stopPropagation();
@@ -52,7 +50,7 @@ export class SmdFabSpeedDialTrigger {
         <ng-content select="[md-mini-fab], [mat-mini-fab]"></ng-content>
     `,
 })
-export class SmdFabSpeedDialActions implements AfterContentInit {
+export class SmdFabSpeedDialActionsComponent implements AfterContentInit {
   @ContentChildren(MatButton) _buttons: QueryList<MatButton>;
 
   constructor(
@@ -131,13 +129,9 @@ export class SmdFabSpeedDialActions implements AfterContentInit {
 
 @Component({
   selector: 'smd-fab-speed-dial',
-  template: `
-        <div class="smd-fab-speed-dial-container">
-            <ng-content select="smd-fab-trigger"></ng-content>
-            <ng-content select="smd-fab-actions"></ng-content>
-        </div>
-    `,
+  templateUrl: './fab-speed-dial.html',
   styleUrls: ['fab-speed-dial.scss'],
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 export class SmdFabSpeedDialComponent implements AfterContentInit {
@@ -181,8 +175,8 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
     const previousDir = this._direction;
     this._direction = direction;
     if (previousDir != this.direction) {
-      this._setElementClass(previousDir);
-      this._setElementClass(this.direction);
+      this.setElementClass(previousDir);
+      this.setElementClass(this.direction);
 
       if (this.isInitialized) {
         this.setActionsVisibility();
@@ -201,8 +195,8 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
     const previousAnimationMode = this._animationMode;
     this._animationMode = animationMode;
     if (previousAnimationMode != this._animationMode) {
-      this._setElementClass(previousAnimationMode);
-      this._setElementClass(this.animationMode);
+      this.setElementClass(previousAnimationMode);
+      this.setElementClass(this.animationMode);
 
       if (this.isInitialized) {
         // To start another detect lifecycle and force the "close" on the action buttons
@@ -213,7 +207,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
 
   @Output() openChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
-  @ContentChild(SmdFabSpeedDialActions, { static: true }) _childActions: SmdFabSpeedDialActions;
+  @ContentChild(SmdFabSpeedDialActionsComponent, { static: true }) _childActions: SmdFabSpeedDialActionsComponent;
 
   constructor(private elementRef: ElementRef, private renderer: Renderer2) {
   }
@@ -221,8 +215,8 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
   ngAfterContentInit(): void {
     this.isInitialized = true;
     this.setActionsVisibility();
-    this._setElementClass(this.direction);
-    this._setElementClass(this.animationMode);
+    this.setElementClass(this.direction);
+    this.setElementClass(this.animationMode);
   }
 
   /**
@@ -233,7 +227,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
   }
 
   @HostListener('click')
-  _onClick(): void {
+  onClick(): void {
     if (!this.fixed && this.open) {
       this.open = false;
     }
@@ -247,7 +241,7 @@ export class SmdFabSpeedDialComponent implements AfterContentInit {
     }
   }
 
-  private _setElementClass(elemClass: string): void {
+  private setElementClass(elemClass: string): void {
     this.renderer.addClass(this.elementRef.nativeElement, `smd-${elemClass}`);
   }
 }

@@ -8,7 +8,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -132,7 +132,7 @@ export class ConsoleFormComponent implements FormConfiguration {
     this.entityForm = entityEdit;
 
     this.ws.call('system.advanced.serial_port_choices').pipe(untilDestroyed(this)).subscribe((serialPorts) => {
-      const serialport = this.fieldSets.config('serialport');
+      const serialport = this.fieldSets.config('serialport') as FormSelectConfig;
       serialport.options = [];
 
       for (const k in serialPorts) {

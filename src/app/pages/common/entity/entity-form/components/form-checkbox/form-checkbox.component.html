@@ -1,18 +1,47 @@
 <div id="{{config.name}}" class="dynamic-field form-checkbox form-element" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']" [class.expanded-height]="config.expandedHeight">
 
-	<mat-checkbox color="primary" *ngIf="!config.updater && !config.customEventMethod" [formControlName]="config.name" (click)="(config.readonly && preventClick($event))" [required]="config.required" ix-auto ix-auto-type="checkbox" (change)="onChangeCheckbox($event)" ix-auto-identifier="{{config.placeholder}}">
-		{{ config.placeholder | translate }}
-	</mat-checkbox>
+  <mat-checkbox
+    *ngIf="!config.updater && !config.customEventMethod"
+    color="primary"
+    [formControlName]="config.name"
+    [required]="config.required"
+    ix-auto ix-auto-type="checkbox" ix-auto-identifier="{{config.placeholder}}"
+    (click)="(config.readonly && preventClick($event))"
+    (change)="onChangeCheckbox($event)"
+  >
+    {{ config.placeholder | translate }}
+  </mat-checkbox>
 
-	<mat-checkbox color="primary" *ngIf="config.updater" class="updater" [formControlName]="config.name" (change)="onChangeCheckbox($event)" [required]="config.required" (click)="((config.readonly && preventClick($event)) || checkboxUpdate())">
-	</mat-checkbox>
+  <mat-checkbox
+    *ngIf="config.updater"
+    color="primary"
+    class="updater"
+    [formControlName]="config.name"
+    [required]="config.required"
+    (change)="onChangeCheckbox($event)"
+    (click)="((config.readonly && preventClick($event)) || checkboxUpdate())"
+  >
+    {{ config.placeholder | translate }}
+  </mat-checkbox>
 
-	<mat-checkbox color="primary" *ngIf="config.customEventMethod" class="custom-handler" [formControlName]="config.name" (change)="onChangeCheckbox($event)" [required]="config.required" (click)="( preventClick($event) && config.customEventMethod())">
-		{{ config.placeholder | translate }}
-	</mat-checkbox>
+  <mat-checkbox
+    *ngIf="config.customEventMethod"
+    color="primary"
+    class="custom-handler"
+    [formControlName]="config.name"
+    [required]="config.required"
+    (change)="onChangeCheckbox($event)"
+    (click)="( preventClick($event) && config.customEventMethod())"
+  >
+    {{ config.placeholder | translate }}
+  </mat-checkbox>
 
-        <span *ngIf="config.required">*</span>
-        <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip" [position]="config.tooltipPosition ? config.tooltipPosition : null"></tooltip>
-	<mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
-	<mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
+  <span *ngIf="config.required">*</span>
+  <tooltip
+    *ngIf="config.tooltip"
+    [header]="config.placeholder"
+    [message]="config.tooltip"
+  ></tooltip>
+  <mat-error *ngIf="config['hasErrors']"><div [innerHTML]="config['errors']"></div></mat-error>
+  <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
 </div>

@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { MatSliderChange } from '@angular/material/slider/slider';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { iXAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 
 export interface ToolbarSliderConfig {
   value: number;
@@ -18,7 +18,7 @@ export interface ToolbarSliderConfig {
   styleUrls: ['toolbar-slider.component.scss'],
   templateUrl: './toolbar-slider.component.html',
 })
-export class ToolbarSliderComponent extends iXAbstractObject {
+export class ToolbarSliderComponent extends IxAbstractObject {
   @Input() config?: ToolbarSliderConfig;
   @Input() controller: Subject<{ name: string; value: number }>;
   constructor(public translate: TranslateService) {

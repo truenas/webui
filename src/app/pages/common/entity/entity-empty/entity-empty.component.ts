@@ -4,21 +4,22 @@ import { TranslateService } from '@ngx-translate/core';
 import { WebSocketService } from 'app/services/ws.service';
 
 export enum EmptyType {
-  loading = 'duration',
-  first_use = 'first_use',
-  no_page_data = 'no_page_data',
-  errors = 'errors',
-  no_search_results = 'no_search_results',
+  Loading = 'duration',
+  FirstUse = 'first_use',
+  NoPageData = 'no_page_data',
+  Errors = 'errors',
+  NoSearchResults = 'no_search_results',
 }
 export interface EmptyConfig {
-  type: EmptyType;
+  type?: EmptyType;
   large: boolean;
+  compact?: boolean;
   title: string;
   message?: string;
   icon?: string;
   button?: {
     label: string;
-    action(): any;
+    action: () => void;
   };
 }
 @Component({
@@ -28,7 +29,7 @@ export interface EmptyConfig {
 })
 
 export class EntityEmptyComponent {
-  @Input('conf') conf: any;
+  @Input() conf: EmptyConfig;
 
   constructor(
     protected ws: WebSocketService,
@@ -46,7 +47,7 @@ export class EntityEmptyComponent {
   }
 
   isLoading(): boolean {
-    return this.conf.type == EmptyType.loading;
+    return this.conf.type == EmptyType.Loading;
   }
 
   getIcon(): string {
@@ -55,19 +56,19 @@ export class EntityEmptyComponent {
       icon = this.conf.icon;
     } else {
       switch (this.conf.type) {
-        case EmptyType.loading:
+        case EmptyType.Loading:
           icon = 'logo';
           break;
-        case EmptyType.first_use:
+        case EmptyType.FirstUse:
           icon = 'rocket';
           break;
-        case EmptyType.no_page_data:
+        case EmptyType.NoPageData:
           icon = 'format-list-text';
           break;
-        case EmptyType.errors:
+        case EmptyType.Errors:
           icon = 'alert-octagon';
           break;
-        case EmptyType.no_search_results:
+        case EmptyType.NoSearchResults:
           icon = 'magnify-scan';
           break;
       }

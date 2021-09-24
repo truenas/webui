@@ -3,8 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
+import { ixChartApp } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
+import { CatalogApp } from 'app/interfaces/catalog.interface';
+import { ChartReleaseCreate } from 'app/interfaces/chart-release.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -29,7 +32,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   private title: string;
   private dialogRef: MatDialogRef<EntityJobComponent>;
   wizardConfig: Wizard[] = [];
-  private catalogApp: any;
+  private catalogApp: CatalogApp;
   private entityWizard: EntityWizardComponent;
   private destroy$ = new Subject();
   private selectedVersionKey: string;
@@ -43,7 +46,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
     this.title = title;
   }
 
-  setCatalogApp(catalogApp: any): void {
+  setCatalogApp(catalogApp: CatalogApp): void {
     this.catalogApp = catalogApp;
     this.parseSchema();
   }
@@ -51,7 +54,12 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   parseSchema(): void {
     try {
       this.title = this.catalogApp.name;
-      const versionKeys: any[] = [];
+      let hideVersion = false;
+      if (this.catalogApp.name == ixChartApp) {
+        this.title = helptext.launch;
+        hideVersion = true;
+      }
+      const versionKeys: string[] = [];
       Object.keys(this.catalogApp.versions).forEach((versionKey) => {
         if (this.catalogApp.versions[versionKey].healthy) {
           versionKeys.push(versionKey);
@@ -86,18 +94,19 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
           options: versionOptions,
           value: this.selectedVersionKey,
           required: true,
+          isHidden: hideVersion,
         }],
       });
 
-      selectedVersion.schema.groups.forEach((group: any) => {
+      selectedVersion.schema.groups.forEach((group) => {
         this.wizardConfig.push({
           label: group.name,
           fieldConfig: [],
         });
       });
 
-      selectedVersion.schema.questions.forEach((question: any) => {
-        const wizard = this.wizardConfig.find((wizard: any) => wizard.label == question.group);
+      selectedVersion.schema.questions.forEach((question) => {
+        const wizard = this.wizardConfig.find((wizard) => wizard.label == question.group);
         if (wizard) {
           const wizardFieldConfigs = new EntityUtils().parseSchemaFieldConfig(question);
           wizard.fieldConfig = wizard.fieldConfig.concat(wizardFieldConfigs);
@@ -107,7 +116,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
       this.wizardConfig = this.wizardConfig.filter((wizard) => wizard.fieldConfig.length > 0);
       if (this.entityWizard) {
         this.entityWizard.resetFields();
-        this.entityWizard.formArray.get([0]).get('version').valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+        this.entityWizard.formArray.get([0]).get('version').valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
           this.selectedVersionKey = value;
           this.parseSchema();
         });
@@ -128,35 +137,30 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   }
 
   customSubmit(data: any): void {
-    const apiCall = this.addCall;
     delete data.version;
 
     data = new EntityUtils().remapAppSubmitData(data);
-    const payload = [];
-    payload.push({
+
+    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
+      data: {
+        title: helptext.installing,
+      },
+    });
+    this.dialogRef.componentInstance.setCall(this.addCall, [{
       catalog: this.catalogApp.catalog.id,
       item: this.catalogApp.name,
       release_name: data.release_name,
       train: this.catalogApp.catalog.train,
       version: this.selectedVersionKey,
       values: data,
-    });
-
-    this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-      data: {
-        title: (
-          helptext.installing),
-      },
-      disableClose: true,
-    });
-    this.dialogRef.componentInstance.setCall(apiCall, payload);
+    } as ChartReleaseCreate]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
       this.modalService.close('slide-in-form');
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.exc_info && res.exc_info.extra) {
         new EntityUtils().handleWSError(this, res);
       } else {

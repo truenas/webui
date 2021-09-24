@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import {
   EntityTableAction,
@@ -29,7 +30,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   wsDelete: 'cronjob.delete' = 'cronjob.delete';
   queryCall: 'cronjob.query' = 'cronjob.query';
   route_add: string[] = ['tasks', 'cron', 'add'];
-  protected route_add_tooltip = 'Add Cron Job';
+  route_add_tooltip = 'Add Cron Job';
   route_edit: string[] = ['tasks', 'cron', 'edit'];
   entityList: EntityTableComponent;
 
@@ -83,7 +84,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   }
 
   doAdd(id?: number): void {
-    this.modalService.open('slide-in-form', new CronFormComponent(this.userService, this.modalService), id);
+    this.modalService.openInSlideIn(CronFormComponent, id);
   }
 
   doEdit(id: number): void {
@@ -99,7 +100,11 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
         icon: 'play_arrow',
         onClick: (row: CronjobRow) =>
           this.dialog
-            .confirm(T('Run Now'), T('Run this job now?'), true)
+            .confirm({
+              title: T('Run Now'),
+              message: T('Run this job now?'),
+              hideCheckBox: true,
+            })
             .pipe(
               filter((run) => !!run),
               switchMap(() => this.ws.call('cronjob.run', [row.id])),
@@ -109,7 +114,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
                 const message = row.enabled == true
                   ? T('This job is scheduled to run again ' + row.next_run + '.')
                   : T('This job will not run again until it is enabled.');
-                this.dialog.Info(
+                this.dialog.info(
                   T('Job ' + row.description + ' Completed Successfully'),
                   message,
                   '500px',
@@ -117,7 +122,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
                   true,
                 );
               },
-              (err: any) => new EntityUtils().handleError(this, err),
+              (err: WebsocketError) => new EntityUtils().handleError(this, err),
             ),
       },
       {

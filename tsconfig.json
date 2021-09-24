@@ -8,6 +8,7 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "noImplicitAny": true,
+    "noImplicitThis": true,
     "module": "es2020",
     "target": "es2015",
     "allowSyntheticDefaultImports": true,
@@ -20,6 +21,8 @@
   },
   "angularCompilerOptions": {
     "enableIvy": true,
-    "allowEmptyCodegenFiles": true
+    "allowEmptyCodegenFiles": true,
+    "strictInjectionParameters": true,
+    "fullTemplateTypeCheck": true
   }
 }

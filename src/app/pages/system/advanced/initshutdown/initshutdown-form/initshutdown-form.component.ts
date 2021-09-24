@@ -6,6 +6,8 @@ import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import helptext from 'app/helptext/system/init-shutdown';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -21,12 +23,12 @@ export class InitshutdownFormComponent implements FormConfiguration {
   queryCall: 'initshutdownscript.query' = 'initshutdownscript.query';
   addCall: 'initshutdownscript.create' = 'initshutdownscript.create';
   editCall: 'initshutdownscript.update' = 'initshutdownscript.update';
-  customFilter: any[] = [];
+  customFilter: QueryParams<InitShutdownScript> = [];
   protected entityForm: EntityFormComponent;
   isEntity = true;
   protected isOneColumnForm = true;
   protected type_control: FormControl;
-  pk: any;
+  pk: number;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -133,15 +135,15 @@ export class InitshutdownFormComponent implements FormConfiguration {
     this.pk = entityForm.pk;
     this.title = entityForm.isNew ? helptext.ini_add : helptext.ini_edit;
     this.type_control = entityForm.formGroup.controls['type'] as FormControl;
-    this.type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: InitShutdownScriptType) => {
       this.formUpdate(value);
     });
 
-    this.type_control.setValue('COMMAND');
+    this.type_control.setValue(InitShutdownScriptType.Command);
   }
 
-  formUpdate(type: any): void {
-    const isCommand = type == 'COMMAND';
+  formUpdate(type: InitShutdownScriptType): void {
+    const isCommand = type == InitShutdownScriptType.Command;
 
     this.entityForm.setDisabled('script', isCommand, isCommand);
     this.entityForm.setDisabled('command', !isCommand, !isCommand);

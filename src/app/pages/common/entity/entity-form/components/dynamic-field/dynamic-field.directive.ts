@@ -8,6 +8,7 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { FormSelectionListComponent } from 'app/pages/common/entity/entity-form/components/form-selection-list/form-selection-list.component';
 import { FormTextareaButtonComponent } from 'app/pages/common/entity/entity-form/components/form-textarea-button/form-textarea-button.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
@@ -49,6 +50,7 @@ const components = {
   upload: FormUploadComponent,
   explorer: FormExplorerComponent,
   radio: FormRadioComponent,
+  selectionlist: FormSelectionListComponent,
   slider: FormSliderComponent,
   togglebutton: FormToggleButtonComponent,
   task: FormTaskComponent,

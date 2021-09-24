@@ -41,3 +41,21 @@ mat-selection-list {
   height: auto;
   width: auto;
 }
+
+mat-option.text-wrap,
+.mat-menu-item.text-wrap {
+  height: unset !important;
+  line-height: inherit !important;
+  padding-bottom: 4px;
+  padding-top: 4px;
+  text-overflow: initial !important;
+  white-space: normal !important;
+}
+
+mat-option.text-wrap {
+  min-height: 48px;
+}
+
+.mat-menu-item.text-wrap {
+  min-height: 36px;
+}

@@ -1,6 +1,6 @@
 export interface NfsConfig {
   allow_nonroot: boolean;
-  bindip: any[];
+  bindip: string[];
   id: number;
   mountd_log: boolean;
   mountd_port: string;
@@ -15,4 +15,11 @@ export interface NfsConfig {
   v4_krb: boolean;
   v4_krb_enabled: boolean;
   v4_v3owner: boolean;
+}
+
+export type NfsConfigUpdate = Omit<NfsConfig, 'id' | 'v4_krb_enabled'>;
+
+export interface AddNfsPrincipal {
+  username: string;
+  password: string;
 }

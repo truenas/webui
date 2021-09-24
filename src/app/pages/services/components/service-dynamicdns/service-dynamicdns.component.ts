@@ -3,10 +3,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-dynamic-dns';
+import { DynamicDnsConfig } from 'app/interfaces/dynamic-dns.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, ValidationService } from 'app/services';
 
 @UntilDestroy()
@@ -121,7 +122,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ]);
 
-  protected provider: FieldConfig;
+  protected provider: FormSelectConfig;
 
   constructor(
     protected router: Router,
@@ -151,7 +152,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     });
     entityForm.submitFunction = this.submitFunction;
 
-    entityForm.formGroup.controls['provider'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['provider'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       if (res === 'custom') {
         this.hideField('custom_ddns_server', false, entityForm);
         this.hideField('custom_ddns_path', false, entityForm);
@@ -168,7 +169,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     return value;
   }
 
-  submitFunction(entityForm: any): Observable<any> {
+  submitFunction(entityForm: any): Observable<DynamicDnsConfig> {
     if (entityForm.domain.length === 0) {
       entityForm.domain = [];
     }
@@ -179,7 +180,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    this.provider = this.fieldSets.config('provider');
+    this.provider = this.fieldSets.config('provider') as FormSelectConfig;
     this.ws.call('dyndns.provider_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       for (const key in res) {
         this.provider.options.push({ label: res[key], value: key });

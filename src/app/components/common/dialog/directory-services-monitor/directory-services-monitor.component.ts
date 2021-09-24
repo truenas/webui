@@ -4,11 +4,12 @@ import {
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { WebSocketService } from 'app/services';
 
 interface DirectoryServicesMonitorRow {
   name: string;
-  state: string;
+  state: DirectoryServiceState;
   id: string;
 }
 
@@ -31,6 +32,8 @@ export class DirectoryServicesMonitorComponent implements OnInit {
   dataSource: DirectoryServicesMonitorRow[] = [];
   showSpinner = false;
 
+  readonly DirectoryServiceState = DirectoryServiceState;
+
   constructor(private ws: WebSocketService, private router: Router) {}
 
   ngOnInit(): void {
@@ -44,7 +47,6 @@ export class DirectoryServicesMonitorComponent implements OnInit {
       this.showSpinner = false;
       tempArray.push({ name: 'Active Directory', state: res.activedirectory, id: 'activedirectory' });
       tempArray.push({ name: 'LDAP', state: res.ldap, id: 'ldap' });
-      tempArray.push({ name: 'NIS', state: res.nis, id: 'nis' });
       this.dataSource = tempArray;
     });
   }

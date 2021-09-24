@@ -13,7 +13,7 @@ import {
   DialogService, SystemGeneralService, WebSocketService,
 } from '../../../../services';
 import { EntityFormComponent } from '../../../common/entity/entity-form/entity-form.component';
-import { FieldConfig } from '../../../common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from '../../../common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from '../../../common/entity/utils';
 
@@ -57,7 +57,6 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
         placeholder: helptext.snapshot_add_name_placeholder,
         tooltip: helptext.snapshot_add_name_tooltip,
         options: [],
-        validation: this.nameValidator,
         errors: T('Name or Naming Schema is required. Only one field can be used at a time.'),
         blurStatus: true,
         blurEvent: this.updateNameValidity.bind(this),
@@ -96,7 +95,8 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
 
       rows.forEach((dataItem) => {
         if (typeof (dataItem.name) !== 'undefined' && dataItem.name.length > 0) {
-          this.fieldConfig[0].options.push({
+          const config = this.fieldConfig[0] as FormSelectConfig;
+          config.options.push({
             label: dataItem.name,
             value: dataItem.name,
           });
@@ -107,11 +107,12 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     });
 
     this.ws
-      .call('replication.list_naming_schemas', [])
+      .call('replication.list_naming_schemas')
       .pipe(map(new EntityUtils().array1DToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe(
         (options) => {
-          this.fieldConfig.find((config) => config.name === 'naming_schema').options = [
+          const config = this.fieldConfig.find((config) => config.name === 'naming_schema') as FormSelectConfig;
+          config.options = [
             { label: '---', value: undefined },
             ...options,
           ];

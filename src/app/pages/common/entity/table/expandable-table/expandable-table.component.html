@@ -1,11 +1,11 @@
 <mat-card #appTable class="expanded-table-container">
   <mat-expansion-panel class="expanded-table mat-elevation-z0" [ngClass]="{'expanded-height': isExpanded && tableConf.detailsHref}" hideToggle [disabled]="disabled"
-    [expanded]="expandableTableState === ExpandatbleTableState.Expanded" (opened)="isExpanded = true" (closed)="isExpanded = false">
-    <mat-expansion-panel-header [class.has-extra-actions]="tableConf?.tableExtraActions">
+    [expanded]="expandableTableState === ExpandableTableState.Expanded" (opened)="isExpanded = true" (closed)="isExpanded = false">
+    <mat-expansion-panel-header>
       <mat-panel-title>
         <h5 class="title" *ngIf="title">
           <ng-container *ngIf="titleHref; else plainTitle">
-            <a [routerLink]="titleHref">{{ title }}</a>
+            <a [routerLink]="titleHref">{{ title }} <mat-icon class="title-icon">open_in_new</mat-icon></a>
           </ng-container>
           <ng-template #plainTitle>{{ title }}</ng-template>
         </h5>
@@ -24,21 +24,11 @@
             ix-auto ix-auto-type="button" ix-auto-identifier="{{tableConf.name}}-add"
           >{{ 'Add' | translate }}</button>
 
-          <ng-container *ngIf="tableConf?.tableExtraActions">
-            <button mat-icon-button [matMenuTriggerFor]="rowActions" aria-label="Table Actions of Expandable Table">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-
-            <mat-menu #rowActions="matMenu">
-              <button mat-menu-item *ngFor="let action of tableConf.tableExtraActions" (click)="action.onClick()">
-                {{action.label}}
-              </button>
-            </mat-menu>
-          </ng-container>
+          <ng-content select="[headerCustomActions]"></ng-content>
         </div>
       </mat-panel-description>
     </mat-expansion-panel-header>
-    <app-table  [conf]="tableConf"></app-table>
+    <app-table [conf]="tableConf"></app-table>
   </mat-expansion-panel>
   <div id="actions-row" [ngClass]="{'actions-row': isExpanded && tableConf.detailsHref}" *ngIf="isExpanded && tableConf.detailsHref">
     <div>

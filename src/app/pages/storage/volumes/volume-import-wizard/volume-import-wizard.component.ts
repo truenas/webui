@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatStepper } from '@angular/material/stepper';
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
@@ -8,7 +9,8 @@ import * as _ from 'lodash';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
+import { FormInputConfig, FormSelectConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
@@ -158,7 +160,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   },
   ];
 
-  updater(file: any, parent: any): void {
+  updater(file: FormUploadComponent, parent: this): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
       parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
@@ -170,13 +172,13 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
 
   protected isNew = true;
   protected encrypted: FormGroup;
-  protected devices: FieldConfig;
+  protected devices: FormSelectConfig;
   protected devices_fg: FormGroup;
-  protected key: FieldConfig;
+  protected key: FormUploadConfig;
   protected key_fg: FormGroup;
-  protected passphrase: FieldConfig;
+  protected passphrase: FormInputConfig;
   protected passphrase_fg: FormGroup;
-  protected guid: FieldConfig;
+  protected guid: FormSelectConfig;
   protected pool: any;
   hideCancel = true;
 
@@ -190,8 +192,8 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   ) {
   }
 
-  customNext(stepper: any): void {
-    if (stepper._selectedIndex === (this.importIndex - 1)) {
+  customNext(stepper: MatStepper): void {
+    if (stepper.selectedIndex === (this.importIndex - 1)) {
       if (this.encrypted && this.encrypted.value) {
         this.decryptDisks(stepper);
       } else {
@@ -203,13 +205,13 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     }
   }
 
-  decryptDisks(stepper: any): void {
+  decryptDisks(stepper: MatStepper): void {
     if (this.devices_fg.status === 'INVALID') {
-      this.dialogService.Info(T('Disk Selection Required'), T('Select one or more disks to decrypt.'));
+      this.dialogService.info(T('Disk Selection Required'), T('Select one or more disks to decrypt.'));
       return;
     }
     if (!this.subs) {
-      this.dialogService.Info(T('Encryption Key Required'), T('Select a key before decrypting the disks.'));
+      this.dialogService.info(T('Encryption Key Required'), T('Select a key before decrypting the disks.'));
     }
     const formData: FormData = new FormData();
     const params = [this.devices_fg.value];
@@ -232,7 +234,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       this.getImportableDisks();
       stepper.next();
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.close(false);
       this.dialogService.errorReport(T('Error decrypting disks'), res.error, res.exception);
     });
@@ -244,7 +246,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       { data: { title: helptext.find_pools_title }, disableClose: true },
     );
     dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
-    dialogRef.componentInstance.setCall('pool.import_find', []);
+    dialogRef.componentInstance.setCall('pool.import_find');
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (res && res.result) {
@@ -256,7 +258,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       }
       dialogRef.close(false);
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       new EntityUtils().handleWSError(this.entityWizard, res, this.dialogService);
       dialogRef.close(false);
     });
@@ -282,11 +284,11 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
 
     if (!this.productType.includes(ProductType.Scale)) {
       this.encrypted = (< FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
-      this.devices = _.find(this.wizardConfig[1].fieldConfig, { name: 'devices' });
+      this.devices = _.find(this.wizardConfig[1].fieldConfig, { name: 'devices' }) as FormSelectConfig;
       this.devices_fg = (< FormGroup > entityWizard.formArray.get([1]).get('devices'));
-      this.key = _.find(this.wizardConfig[1].fieldConfig, { name: 'key' });
+      this.key = _.find(this.wizardConfig[1].fieldConfig, { name: 'key' }) as FormUploadConfig;
       this.key_fg = (< FormGroup > entityWizard.formArray.get([1]).get('key'));
-      this.passphrase = _.find(this.wizardConfig[1].fieldConfig, { name: 'passphrase' });
+      this.passphrase = _.find(this.wizardConfig[1].fieldConfig, { name: 'passphrase' }) as FormInputConfig;
       this.passphrase_fg = (< FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
 
       this.ws.call('disk.get_encrypted', [{ unused: true }]).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -296,7 +298,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       });
     }
 
-    this.guid = _.find(this.wizardConfig[this.importIndex].fieldConfig, { name: 'guid' });
+    this.guid = _.find(this.wizardConfig[this.importIndex].fieldConfig, { name: 'guid' }) as FormSelectConfig;
     (< FormGroup > entityWizard.formArray.get([this.importIndex]).get('guid'))
       .valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         const pool = _.find(this.guid.options, { value: res });
@@ -333,7 +335,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
         this.modalService.close('slide-in-form');
         this.modalService.refreshTable();
       });
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
         dialogRef.close(false);
         this.errorReport(res);
       });
@@ -351,7 +353,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
           console.error('Something went wrong. No pool found!');
         }
       });
-      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: any) => {
+      dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
         dialogRef.close(false);
         this.errorReport(res);
       });

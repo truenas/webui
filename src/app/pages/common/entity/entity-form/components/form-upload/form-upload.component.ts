@@ -6,7 +6,7 @@ import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription, Observer } from 'rxjs';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { T } from 'app/translate-marker';
@@ -19,7 +19,7 @@ import { T } from 'app/translate-marker';
 })
 export class FormUploadComponent {
   @ViewChild('fileInput', { static: false }) fileInput: ElementRef<HTMLInputElement>;
-  config: FieldConfig;
+  config: FormUploadConfig;
   group: FormGroup;
   fieldShow: string;
   busy: Subscription[] = [];
@@ -28,8 +28,8 @@ export class FormUploadComponent {
   jobId: number;
   fileBrowser = true;
   apiEndPoint = '/_upload?auth_token=' + this.ws.token;
-  fileList: any;
-  fbrowser: any;
+  fileList: FileList;
+  fbrowser: HTMLInputElement;
 
   constructor(
     protected ws: WebSocketService, protected http: HttpClient, private loader: AppLoaderService,
@@ -38,7 +38,7 @@ export class FormUploadComponent {
 
   fileBtnClick(): void {
     this.fileInput.nativeElement.click();
-    this.fbrowser = document.getElementById('fb');
+    this.fbrowser = document.getElementById('fb') as HTMLInputElement;
     this.fbrowser.onchange = () => {
       this.fileList = this.fileInput.nativeElement.files;
     };
@@ -72,7 +72,7 @@ export class FormUploadComponent {
           if (event.statusText === 'OK') {
             this.newMessage(location + '/' + fileBrowser.files[0].name);
             this.loader.close();
-            this.dialog.Info(T('File upload complete'), '', '300px', 'info', true);
+            this.dialog.info(T('File upload complete'), '', '300px', 'info', true);
           }
         }
       }, (error) => {
@@ -80,11 +80,11 @@ export class FormUploadComponent {
         this.dialog.errorReport(T('Error'), error.statusText, error.message);
       });
     } else {
-      this.dialog.Info(T('Please make sure to select a file'), '', '300px', 'info', true);
+      this.dialog.info(T('Please make sure to select a file'), '', '300px', 'info', true);
     }
   }
 
-  newMessage(message: any): void {
+  newMessage(message: string): void {
     if (this.config.message) {
       this.config.message.newMessage(message);
     }

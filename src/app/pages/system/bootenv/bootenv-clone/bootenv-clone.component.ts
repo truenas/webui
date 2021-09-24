@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
@@ -22,7 +23,29 @@ export class BootEnvironmentCloneComponent implements FormConfiguration {
   isEntity = true;
 
   fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [];
+  fieldSets: FieldSet[] = [
+    {
+      name: helptext_system_bootenv.clone_fieldset,
+      class: 'clone',
+      label: true,
+      config: [
+        {
+          type: 'input',
+          name: 'name',
+          placeholder: helptext_system_bootenv.clone_name_placeholder,
+          tooltip: helptext_system_bootenv.clone_name_tooltip,
+          validation: [regexValidator(this.bootEnvService.bootenv_name_regex)],
+          required: true,
+        },
+        {
+          type: 'input',
+          name: 'source',
+          placeholder: helptext_system_bootenv.clone_source_placeholder,
+          tooltip: helptext_system_bootenv.clone_source_tooltip,
+          readonly: true,
+        },
+      ],
+    }];
 
   constructor(
     protected router: Router,
@@ -31,33 +54,10 @@ export class BootEnvironmentCloneComponent implements FormConfiguration {
     protected bootEnvService: BootEnvService,
   ) {}
 
-  preInit(): void {
+  afterInit(entityForm: EntityFormComponent): void {
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
-      this.fieldSets = [
-        {
-          name: helptext_system_bootenv.clone_fieldset,
-          class: 'clone',
-          label: true,
-          config: [
-            {
-              type: 'input',
-              name: 'name',
-              placeholder: helptext_system_bootenv.clone_name_placeholder,
-              tooltip: helptext_system_bootenv.clone_name_tooltip,
-              validation: [regexValidator(this.bootEnvService.bootenv_name_regex)],
-              required: true,
-            },
-            {
-              type: 'input',
-              name: 'source',
-              placeholder: helptext_system_bootenv.clone_source_placeholder,
-              tooltip: helptext_system_bootenv.clone_source_tooltip,
-              value: this.pk,
-              readonly: true,
-            },
-          ],
-        }];
+      entityForm.formGroup.get('source').setValue(this.pk);
     });
   }
 }

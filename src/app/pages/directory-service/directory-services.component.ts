@@ -1,86 +1,114 @@
-import { DatePipe } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { Router, ActivatedRoute } from '@angular/router';
+import { CdkAccordionItem } from '@angular/cdk/accordion';
+import { Component, OnInit, Type } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { forkJoin, of, combineLatest } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
+import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/dashboard';
 import idmapHelptext from 'app/helptext/directory-service/idmap';
-import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { InputTableConf } from 'app/pages/common/entity/table/table.component';
-import { ActiveDirectoryComponent } from 'app/pages/directory-service/active-directory/active-directory.component';
-import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/kerberos-keytabs/kerberos-keytabs-form.component';
-import { KerberosRealmsFormComponent } from 'app/pages/directory-service/kerberos-realms/kerberos-realms-form.component';
-import { KerberosSettingsComponent } from 'app/pages/directory-service/kerberos-settings/kerberos-settings.component';
+import { Idmap } from 'app/interfaces/idmap.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { AppTableConfig } from 'app/pages/common/entity/table/table.component';
+import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
+import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form.component';
+import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-form.component';
+import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
+import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import {
-  WebSocketService,
-  SystemGeneralService,
-  ValidationService,
-  DialogService,
-  IdmapService,
-  UserService,
+  DialogService, IdmapService, WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
-import { EmptyConfig } from '../common/entity/entity-empty/entity-empty.component';
-import { IdmapFormComponent } from './idmap/idmap-form.component';
-import { LdapComponent } from './ldap/ldap.component';
+import { IdmapFormComponent } from './components/idmap/idmap-form.component';
+import { LdapComponent } from './components/ldap/ldap.component';
+
+enum DirectoryServicesCardId {
+  ActiveDirectory = 'active-directory',
+  Ldap = 'ldap',
+  Idmap = 'idmap',
+  KerberosSettings = 'kerberos-settings',
+  KerberosRealms = 'kerberos-realms',
+  KerberosKeytab = 'kerberos-keytab',
+}
+
+type DataCard = { id: DirectoryServicesCardId; title: string; items: Option[] };
 
 @UntilDestroy()
 @Component({
   selector: 'directoryservices',
   templateUrl: './directory-services.component.html',
-  providers: [DatePipe, UserService],
+  styleUrls: ['./directory-services.component.scss'],
 })
 export class DirectoryServicesComponent implements OnInit {
-  dataCards: any[] = [];
-  tableCards: any[] = [];
+  isActiveDirectoryEnabled = false;
+  isLdapEnabled = false;
 
-  // Components included in this dashboard
-  protected ldapFormComponent: LdapComponent;
-  protected activeDirectoryFormComponent: ActiveDirectoryComponent;
-  protected idmapFormComponent: IdmapFormComponent;
-  protected kerberosSettingFormComponent: KerberosSettingsComponent;
-  protected kerberosRealmsFormComponent: KerberosRealmsFormComponent;
-  protected kerberosKeytabsFormComponent: KerberosKeytabsFormComponent;
+  activeDirectoryDataCard: DataCard;
+  ldapDataCard: DataCard;
+  kerberosSettingsDataCard: DataCard;
 
-  emptyPageConf: EmptyConfig = {
-    type: EmptyType.no_page_data,
-    title: T('No sysctls configured'),
-    large: false,
-    message: T('To configure sysctls, click the "Add" button.'),
-  };
-
-  idmapTableConf: InputTableConf = {
+  idmapTableConf: AppTableConfig<this> = {
     title: helptext.idmap.title,
     titleHref: '/directoryservice/idmap',
     queryCall: 'idmap.query',
-    deleteCall: 'idmap.delete',
-    deleteMsg: {
-      title: helptext.idmap.title,
-      key_props: ['name'],
-    },
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      {
-        name: T('Name'), prop: 'name', always_display: true, minWidth: 250,
-      },
-      { name: T('Backend'), prop: 'idmap_backend', maxWidth: 100 },
+      { name: T('Name'), prop: 'name' },
+      { name: T('Backend'), prop: 'idmap_backend' },
       { name: T('DNS Domain Name'), prop: 'dns_domain_name' },
       { name: T('Range Low'), prop: 'range_low' },
       { name: T('Range High'), prop: 'range_high' },
       { name: T('Certificate'), prop: 'cert_name' },
+
     ],
     add() {
-      this.parent.doAdd('idmap');
+      this.parent.onCardButtonPressed(DirectoryServicesCardId.Idmap);
     },
-    edit(row) {
-      this.parent.doAdd('idmap', row.id);
+    edit(row: Idmap) {
+      this.parent.onCardButtonPressed(DirectoryServicesCardId.Idmap, row.id);
     },
+    getActions: () => {
+      return [
+        {
+          id: 'delete',
+          label: T('Delete'),
+          name: 'delete',
+          icon: 'delete',
+          onClick: (row: Idmap) => {
+            this.dialog.confirm({
+              title: this.translate.instant('Delete'),
+              message: this.translate.instant('Are you sure you want to delete this idmap?'),
+            }).pipe(
+              filter(Boolean),
+              switchMap(() => {
+                this.loader.open();
+                return this.ws.call('idmap.delete', [row.id]);
+              }),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.loader.close();
+              this.refreshTables();
+            });
+          },
+        },
+      ];
+    },
+    isActionVisible(actionId: string, row: Idmap) {
+      if (actionId === 'delete' && requiredIdmapDomains.includes(row.name)) {
+        return false;
+      }
+
+      return true;
+    },
+
   };
 
-  kerberosRealmsTableConf: InputTableConf = {
+  kerberosRealmsTableConf: AppTableConfig<this> = {
     title: helptext.kerberosRealms.title,
     titleHref: '/directoryservice/kerberosrealms',
     queryCall: 'kerberos.realm.query',
@@ -92,20 +120,20 @@ export class DirectoryServicesComponent implements OnInit {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      { name: T('Realm'), prop: 'realm', always_display: true },
+      { name: T('Realm'), prop: 'realm' },
       { name: T('KDC'), prop: 'kdc' },
       { name: T('Admin Server'), prop: 'admin_server' },
       { name: T('Password Server'), prop: 'kpasswd_server' },
     ],
     add() {
-      this.parent.doAdd('kerberos_realms');
+      this.parent.onCardButtonPressed(DirectoryServicesCardId.KerberosRealms);
     },
     edit(row) {
-      this.parent.doAdd('kerberos_realms', row.id);
+      this.parent.onCardButtonPressed(DirectoryServicesCardId.KerberosRealms, row.id);
     },
   };
 
-  kerberosKeytabTableConf: InputTableConf = {
+  kerberosKeytabTableConf: AppTableConfig<this> = {
     title: helptext.kerberosKeytab.title,
     titleHref: '/directoryservice/kerberoskeytabs',
     queryCall: 'kerberos.keytab.query',
@@ -117,231 +145,215 @@ export class DirectoryServicesComponent implements OnInit {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      { name: 'Name', prop: 'name', always_display: true },
+      { name: 'Name', prop: 'name' },
     ],
     add() {
-      this.parent.doAdd('kerberos_keytab');
+      this.parent.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab);
     },
     edit(row) {
-      this.parent.doAdd('kerberos_keytab', row.id);
+      this.parent.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab, row.id);
     },
   };
 
+  readonly noDirectoryServicesConfig: EmptyConfig = {
+    title: this.translate.instant('Active Directory and LDAP are disabled.'),
+    message: this.translate.instant('Only one can be active at a time'),
+    large: true,
+    icon: 'account-box',
+  };
+
+  readonly DirectoryServicesCardId = DirectoryServicesCardId;
+
   constructor(
     private ws: WebSocketService,
-    protected idmapService: IdmapService,
-    protected validationService: ValidationService,
-    protected route: ActivatedRoute,
-    private sysGeneralService: SystemGeneralService,
+    private idmapService: IdmapService,
     private modalService: ModalService,
     private dialog: DialogService,
     private loader: AppLoaderService,
-    private router: Router,
-    public mdDialog: MatDialog,
-    public datePipe: DatePipe,
-    protected userService: UserService,
-  ) { }
+    private translate: TranslateService,
+  ) {
+  }
 
   ngOnInit(): void {
-    this.tableCards = [
-      {
-        id: 'idmap',
-        title: helptext.idmap.title,
-        tableConf: this.idmapTableConf,
-      },
-      {
-        id: 'kerberos_realms',
-        title: helptext.kerberosRealms.title,
-        tableConf: this.kerberosRealmsTableConf,
-      },
-      {
-        id: 'kerberos_keytab',
-        title: helptext.kerberosKeytab.title,
-        tableConf: this.kerberosKeytabTableConf,
-      },
-    ];
-
-    this.getDataCardData();
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshTables();
-    });
-
-    this.refreshForms();
+    this.refreshCards();
+    combineLatest([
+      this.modalService.onClose$,
+      this.modalService.refreshTable$,
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.refreshCards();
+      });
   }
 
-  getDataCardData(): void {
-    const activeDirectoryPromise = this.ws.call('activedirectory.config').toPromise();
-    const ldapPromise = this.ws.call('ldap.config').toPromise();
-    const kerberosSettingsPromise = this.ws.call('kerberos.config').toPromise();
-
+  refreshCards(): void {
     this.loader.open();
-    Promise.all([activeDirectoryPromise, ldapPromise, kerberosSettingsPromise]).then(
-      (res) => {
+    forkJoin([
+      this.ws.call('directoryservices.get_state'),
+      this.ws.call('activedirectory.config'),
+      this.ws.call('ldap.config'),
+      this.ws.call('kerberos.config'),
+    ])
+      .pipe(untilDestroyed(this))
+      .subscribe(([servicesState, activeDirectoryConfig, ldapConfig, kerberosSettings]) => {
         this.loader.close();
 
-        let activeDirectoryDomainName = null;
-        let activeDirectoryDomainAccountName = null;
-        if (res[0]) {
-          activeDirectoryDomainName = res[0].domainname;
-          activeDirectoryDomainAccountName = res[0].bindname;
+        this.isActiveDirectoryEnabled = servicesState.activedirectory !== DirectoryServiceState.Disabled;
+        this.isLdapEnabled = servicesState.ldap !== DirectoryServiceState.Disabled;
+
+        this.activeDirectoryDataCard = {
+          title: helptext.activeDirectory.title,
+          id: DirectoryServicesCardId.ActiveDirectory,
+          items: [
+            {
+              label: helptext.activeDirectory.status,
+              value: servicesState.activedirectory,
+            },
+            {
+              label: helptext.activeDirectory.domainName,
+              value: activeDirectoryConfig?.domainname || null,
+            },
+            {
+              label: helptext.activeDirectory.domainAccountName,
+              value: activeDirectoryConfig?.bindname || null,
+            },
+          ],
+        };
+        this.ldapDataCard = {
+          title: helptext.ldap.title,
+          id: DirectoryServicesCardId.Ldap,
+          items: [
+            {
+              label: helptext.ldap.status,
+              value: servicesState.ldap,
+            },
+            {
+              label: helptext.ldap.hostname,
+              value: ldapConfig ? ldapConfig.hostname.join(',') : null,
+            },
+            {
+              label: helptext.ldap.baseDN,
+              value: ldapConfig?.basedn || null,
+            },
+            {
+              label: helptext.ldap.bindDN,
+              value: ldapConfig?.binddn || null,
+            },
+          ],
+        };
+        this.kerberosSettingsDataCard = {
+          id: DirectoryServicesCardId.KerberosSettings,
+          title: helptext.kerberosSettings.title,
+          items: [
+            {
+              label: helptext.kerberosSettings.appdefaults,
+              value: kerberosSettings?.appdefaults_aux || null,
+            },
+            {
+              label: helptext.kerberosSettings.libdefaults,
+              value: kerberosSettings?.libdefaults_aux || null,
+            },
+          ],
+        };
+
+        if (this.isLdapEnabled) {
+          this.idmapTableConf.queryCallOption = [[['name', '=', IdmapName.DsTypeLdap]]];
+        } else if (this.isActiveDirectoryEnabled) {
+          this.idmapTableConf.queryCallOption = [[['name', '!=', IdmapName.DsTypeLdap]]];
+        } else {
+          this.idmapTableConf.queryCallOption = undefined;
         }
 
-        let ldapHostname = null;
-        let ldapBaseDN = null;
-        let ldapBindDN = null;
-
-        if (res[1]) {
-          ldapHostname = res[1].hostname.join(',');
-          ldapBaseDN = res[1].basedn;
-          ldapBindDN = res[1].binddn;
-        }
-
-        let kerberosSettingsAppdefaults = null;
-        let kerberosSettingsLibdefaults = null;
-
-        if (res[2]) {
-          kerberosSettingsAppdefaults = res[2].appdefaults_aux;
-          kerberosSettingsLibdefaults = res[2].libdefaults_aux;
-        }
-
-        this.dataCards = [
-          {
-            title: helptext.activeDirectory.title,
-            id: 'activedirectory',
-            items: [
-              {
-                label: helptext.activeDirectory.domainName,
-                value: activeDirectoryDomainName,
-              },
-              {
-                label: helptext.activeDirectory.domainAccountName,
-                value: activeDirectoryDomainAccountName,
-              },
-            ],
-          },
-          {
-            title: helptext.ldap.title,
-            id: 'ldap',
-            items: [
-              {
-                label: helptext.ldap.hostname,
-                value: ldapHostname,
-              },
-              {
-                label: helptext.ldap.baseDN,
-                value: ldapBaseDN,
-              },
-              {
-                label: helptext.ldap.bindDN,
-                value: ldapBindDN,
-              },
-            ],
-          },
-          {
-            id: 'kerberos_settings',
-            title: helptext.kerberosSettings.title,
-            items: [
-              {
-                label: helptext.kerberosSettings.appdefaults,
-                value: kerberosSettingsAppdefaults,
-              },
-              {
-                label: helptext.kerberosSettings.libdefaults,
-                value: kerberosSettingsLibdefaults,
-              },
-            ],
-          },
-        ];
-      },
-    );
+        this.refreshTables();
+      });
   }
 
-  doAdd(name: string, id?: number): void {
-    let addComponent: ActiveDirectoryComponent
+  onAdvancedSettingsOpened(expansionPanel: CdkAccordionItem): void {
+    // Immediately show additional setting, so that user knows what they are.
+    expansionPanel.open();
+    this.dialog.confirm({
+      title: helptext.advancedEdit.title,
+      hideCheckBox: true,
+      message: helptext.advancedEdit.message,
+    })
+      .pipe(filter((confirmed) => !confirmed), untilDestroyed(this))
+      .subscribe(() => {
+        // Hide settings back, if user cancels.
+        expansionPanel.close();
+      });
+  }
+
+  onCardButtonPressed(name: DirectoryServicesCardId, id?: number): void {
+    let component: Type<ActiveDirectoryComponent
     | IdmapFormComponent
     | LdapComponent
     | KerberosRealmsFormComponent
     | KerberosSettingsComponent
-    | KerberosKeytabsFormComponent;
+    | KerberosKeytabsFormComponent
+    >;
+
     switch (name) {
-      case 'activedirectory':
-        addComponent = this.activeDirectoryFormComponent;
+      case DirectoryServicesCardId.ActiveDirectory:
+        component = ActiveDirectoryComponent;
         break;
-      case 'ldap':
-        addComponent = this.ldapFormComponent;
+      case DirectoryServicesCardId.Ldap:
+        component = LdapComponent;
         break;
-      case 'idmap':
-        addComponent = this.idmapFormComponent;
+      case DirectoryServicesCardId.Idmap:
+        component = IdmapFormComponent;
         break;
-      case 'kerberos_realms':
-        addComponent = this.kerberosRealmsFormComponent;
+      case DirectoryServicesCardId.KerberosRealms:
+        component = KerberosRealmsFormComponent;
         break;
-      case 'kerberos_settings':
-        addComponent = this.kerberosSettingFormComponent;
+      case DirectoryServicesCardId.KerberosSettings:
+        component = KerberosSettingsComponent;
         break;
-      case 'kerberos_keytab':
-        addComponent = this.kerberosKeytabsFormComponent;
+      case DirectoryServicesCardId.KerberosKeytab:
+        component = KerberosKeytabsFormComponent;
         break;
       default:
         break;
     }
 
-    if (name == 'idmap' && !id) {
-      this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
-        if (adConfig.enable) {
-          this.modalService.open('slide-in-form', addComponent, id);
-        } else {
-          this.dialog.confirm(idmapHelptext.idmap.enable_ad_dialog.title, idmapHelptext.idmap.enable_ad_dialog.message,
-            true, idmapHelptext.idmap.enable_ad_dialog.button).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-            if (res) {
-              addComponent = this.activeDirectoryFormComponent;
-              this.modalService.open('slide-in-form', addComponent, id);
-            }
-          });
+    of(true).pipe(
+      switchMap(() => {
+        if (name == DirectoryServicesCardId.Idmap && !id) {
+          return this.idmapService.getADStatus().pipe(
+            switchMap((adConfig) => {
+              if (!adConfig.enable) {
+                component = ActiveDirectoryComponent;
+                return this.dialog.confirm({
+                  title: idmapHelptext.idmap.enable_ad_dialog.title,
+                  message: idmapHelptext.idmap.enable_ad_dialog.message,
+                  hideCheckBox: true,
+                  buttonMsg: idmapHelptext.idmap.enable_ad_dialog.button,
+                });
+              }
+
+              return of(true);
+            }),
+          );
         }
-      });
-    } else {
-      this.modalService.open('slide-in-form', addComponent, id);
-    }
+
+        return of(true);
+      }),
+      filter(Boolean),
+      untilDestroyed(this),
+    ).subscribe(() => this.modalService.openInSlideIn(component, id));
   }
 
   refreshTables(): void {
-    this.getDataCardData();
-    this.tableCards.forEach((card) => {
-      if (card.tableConf?.tableComponent) {
-        card.tableConf.tableComponent.getData();
+    [this.kerberosRealmsTableConf, this.idmapTableConf, this.kerberosKeytabTableConf].forEach((config) => {
+      if (config?.tableComponent) {
+        config.tableComponent.getData();
       }
     });
   }
 
-  refreshForms(): void {
-    this.activeDirectoryFormComponent = new ActiveDirectoryComponent(
-      this.router,
-      this.ws,
-      this.modalService,
-      this.mdDialog,
-      this.sysGeneralService,
-      this.dialog,
-    );
-
-    this.ldapFormComponent = new LdapComponent(
-      this.router,
-      this.ws,
-      this.modalService,
-      this.dialog,
-      this.sysGeneralService,
-    );
-
-    this.idmapFormComponent = new IdmapFormComponent(
-      this.idmapService,
-      this.validationService,
-      this.modalService,
-      this.dialog,
-      this.mdDialog,
-    );
-
-    this.kerberosSettingFormComponent = new KerberosSettingsComponent();
-    this.kerberosRealmsFormComponent = new KerberosRealmsFormComponent(this.modalService);
-    this.kerberosKeytabsFormComponent = new KerberosKeytabsFormComponent(this.modalService);
+  /**
+   * All this does is provide correct typing in ng-template
+   */
+  typeCard(card: DataCard): DataCard {
+    return card;
   }
 }

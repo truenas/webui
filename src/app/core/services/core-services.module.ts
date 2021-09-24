@@ -3,13 +3,12 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { AnimationService } from 'app/core/services/animation.service';
 import { ApiService } from 'app/core/services/api.service';
 import { ChartDataUtilsService } from 'app/core/services/chart-data-utils.service';
-import { CoreService } from 'app/core/services/core.service';
+import { CoreService } from 'app/core/services/core-service/core.service';
 import { DiskStateService } from 'app/core/services/disk-state/disk-state.service';
 import { DiskTemperatureService } from 'app/core/services/disk-temperature.service';
 import { InteractionManagerService } from 'app/core/services/interaction-manager.service';
 import { LayoutService } from 'app/core/services/layout.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { StatsService } from 'app/core/services/stats.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -31,7 +30,6 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [
     CoreService,
     ApiService,
-    StatsService,
     DiskStateService,
     DiskTemperatureService,
     AnimationService,
@@ -53,7 +51,6 @@ export class CoreServices {
         CoreService,
         ApiService,
         DiskStateService,
-        StatsService,
         DiskTemperatureService,
         AnimationService,
         InteractionManagerService,

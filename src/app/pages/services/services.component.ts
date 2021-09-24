@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { filter, switchMap } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { IscsiService, SystemGeneralService, WebSocketService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
@@ -23,21 +25,28 @@ interface ServiceRow extends Service {
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
   providers: [IscsiService],
 })
-export class Services implements EntityTableConfig, OnInit {
-  title = 'Services';
+export class ServicesComponent implements EntityTableConfig, OnInit {
+  title = T('Services');
   isFooterConsoleOpen: boolean;
   queryCall: 'service.query' = 'service.query';
   queryCallOption: QueryParams<Service> = [[], { order_by: ['service'] }];
   rowIdentifier = 'name';
-  protected inlineActions = true;
+  entityList: EntityTableComponent;
+  inlineActions = true;
 
   columns = [
-    { name: 'Name', prop: 'name', always_display: true },
+    { name: T('Name'), prop: 'name', always_display: true },
     {
-      name: 'Running', prop: 'state', toggle: true, always_display: true,
+      name: T('Running'),
+      prop: 'state',
+      toggle: true,
+      always_display: true,
     },
     {
-      name: 'Start Automatically', prop: 'enable', checkbox: true, always_display: true,
+      name: T('Start Automatically'),
+      prop: 'enable',
+      checkbox: true,
+      always_display: true,
     },
   ];
 
@@ -45,23 +54,22 @@ export class Services implements EntityTableConfig, OnInit {
     paging: false,
     sorting: { columns: this.columns },
   };
-  services: any[];
+  hiddenServices: ServiceName[] = [ServiceName.Gluster, ServiceName.Afp];
 
   showSpinner = true;
 
   constructor(
     protected ws: WebSocketService,
     protected router: Router,
+    private translate: TranslateService,
     private dialog: DialogService,
     private iscsiService: IscsiService,
     private sysGeneralService: SystemGeneralService,
   ) {}
 
   resourceTransformIncomingRestData(services: Service[]): ServiceRow[] {
-    const hidden = [ServiceName.Gluster, ServiceName.Afp];
-
     return services
-      .filter((service) => !hidden.includes(service.service))
+      .filter((service) => !this.hiddenServices.includes(service.service))
       .map((service) => ({
         ...service,
         name: this.getServiceName(service),
@@ -75,6 +83,31 @@ export class Services implements EntityTableConfig, OnInit {
         this.isFooterConsoleOpen = res.consolemsg;
       }
     });
+  }
+
+  afterInit(entityList: EntityTableComponent): void {
+    this.entityList = entityList;
+    this.subscribeToServiceUpdates();
+  }
+
+  subscribeToServiceUpdates(): void {
+    this.ws
+      .subscribe('service.query')
+      .pipe(
+        map((event) => event.fields),
+        filter((service) => !this.hiddenServices.includes(service.service)),
+        untilDestroyed(this),
+      )
+      .subscribe((incomingService: Service) => {
+        const service = this.entityList.rows.find((service) => service.service === incomingService.service);
+        service.onChanging = true;
+
+        setTimeout(() => {
+          service.state = incomingService.state;
+          service.enable = incomingService.enable;
+          service.onChanging = false;
+        }, 300);
+      });
   }
 
   getActions(parentRow: ServiceRow): EntityTableAction[] {
@@ -115,26 +148,22 @@ export class Services implements EntityTableConfig, OnInit {
             const msg = sessions.length == 0 ? '' : T('<font color="red"> There are ') + sessions.length
               + T(' active iSCSI connections.</font><br>Stop the ' + serviceName + ' service and close these connections?');
 
-            return this.dialog.confirm(
-              T('Alert'),
-              msg == '' ? T('Stop ') + serviceName + '?' : msg,
-              true,
-              T('Stop'),
-            );
+            return this.dialog.confirm({
+              title: T('Alert'),
+              message: msg == '' ? this.translate.instant('Stop {serviceName}?', { serviceName }) : msg,
+              hideCheckBox: true,
+              buttonMsg: T('Stop'),
+            });
           }),
           filter(Boolean),
         ).pipe(untilDestroyed(this)).subscribe(() => this.updateService(rpc, service));
       } else {
-        this.dialog.confirm(
-          T('Alert'),
-          T('Stop ') + serviceName + '?',
-          true,
-          T('Stop'),
-        ).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-          if (!res) {
-            return;
-          }
-
+        this.dialog.confirm({
+          title: T('Alert'),
+          message: this.translate.instant('Stop {serviceName}?', { serviceName }),
+          hideCheckBox: true,
+          buttonMsg: T('Stop'),
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
           this.updateService(rpc, service);
         });
       }
@@ -149,29 +178,29 @@ export class Services implements EntityTableConfig, OnInit {
     this.ws.call(rpc, [service.service]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
-          this.dialog.Info(
+          this.dialog.info(
             T('Service failed to stop'),
-            serviceName + ' ' + T('service failed to stop.'),
+            this.translate.instant('{service} service failed to stop.', { service: serviceName }),
           );
         }
         service.state = ServiceStatus.Running;
         service.onChanging = false;
       } else {
         if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
-          this.dialog.Info(
+          this.dialog.info(
             T('Service failed to start'),
-            serviceName + ' ' + T('service failed to start.'),
+            this.translate.instant('{service} service failed to start.', { service: serviceName }),
           );
         }
         service.state = ServiceStatus.Stopped;
         service.onChanging = false;
       }
     }, (res) => {
-      let message = T('Error starting service ');
+      let message = this.translate.instant('Error starting service {service}.', { service: serviceName });
       if (rpc === 'service.stop') {
-        message = T('Error stopping service ');
+        message = this.translate.instant('Error stopping service {service}.', { service: serviceName });
       }
-      this.dialog.errorReport(message + serviceName, res.message, res.stack);
+      this.dialog.errorReport(message, res.message, res.stack);
       service.onChanging = false;
     });
   }
@@ -179,25 +208,26 @@ export class Services implements EntityTableConfig, OnInit {
   enableToggle(service: ServiceRow): void {
     this.ws
       .call('service.update', [service.id, { enable: service.enable }])
-      .pipe(untilDestroyed(this)).subscribe((res) => {
+      .pipe(untilDestroyed(this))
+      .subscribe((res) => {
         if (!res) {
-          return;
+          // Middleware should return the service id
+          throw new Error('Method service.update failed. No response from server');
         }
-
-        service.enable = !service.enable;
       });
   }
 
   editService(service: ServiceName): void {
-    if (service === ServiceName.Iscsi) {
-      // iscsi target global config route
-      const route = ['sharing', 'iscsi'];
-      this.router.navigate(new Array('').concat(route));
-    } else if (service === ServiceName.Cifs) {
-      this.router.navigate(new Array('').concat(['services', 'smb']));
-    } else {
-      // Determines the route path
-      this.router.navigate(new Array('').concat(['services', service]));
+    switch (service) {
+      case ServiceName.Iscsi:
+        this.router.navigate(['/', 'sharing', 'iscsi']);
+        break;
+      case ServiceName.Cifs:
+        this.router.navigate(['/', 'services', 'smb']);
+        break;
+      default:
+        this.router.navigate(['/', 'services', service]);
+        break;
     }
   }
 

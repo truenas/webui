@@ -3,26 +3,27 @@ import {
 } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import helptext from 'app/helptext/apps/apps';
-import { CatalogAppVersion } from 'app/interfaces/catalog.interface';
+import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
 import { LocaleService } from 'app/services/locale.service';
 
 @Component({
   selector: 'catalog-summary-dialog',
   styleUrls: ['./catalog-summary-dialog.component.scss'],
   templateUrl: './catalog-summary-dialog.component.html',
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation
   encapsulation: ViewEncapsulation.None,
 })
 
-export class CatalogSummaryDialog implements OnInit {
-  catalogApp: any;
+export class CatalogSummaryDialogComponent implements OnInit {
+  catalogApp: CatalogApp;
   statusOptions: string[] = ['All', 'Healthy', 'Unhealthy'];
   helptext = helptext;
   selectedStatus: string = this.statusOptions[0];
   filteredVersions: { [version: string]: CatalogAppVersion };
 
   constructor(
-    public dialogRef: MatDialogRef<CatalogSummaryDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<CatalogSummaryDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: CatalogApp,
     protected localeService: LocaleService,
   ) {
     this.catalogApp = data;

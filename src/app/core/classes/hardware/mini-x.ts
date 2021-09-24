@@ -22,7 +22,7 @@ export class MINIX extends Chassis {
     this.front.vertical = false;
     this.front.disabledOpacity = 0.5;
     this.front.chassisOpacity = 0.65;
-    this.front.totalDriveTrays = 7; // 5 x 3.5 && 2x 2.5"
+    this.front.totalDriveTrays = 7;
     this.front.autoPosition = false;
 
     this.front.events.subscribe((evt: CoreEvent) => {
@@ -35,27 +35,29 @@ export class MINIX extends Chassis {
   onLoaded(): void {
     // Scale the Chassis
     const chassis = this.front.container.getChildAt(0);
-    const scale = 0.95; // 0.9;
-    // const backY = 20; // 100
+    const scale = 0.95;
 
     // Scale the 2.5"
-    const scaleDT = (673 / 960) * 1.1;//* 0.9;
+    const scaleDT = (673 / 960) * 1.1;
 
     // We must hardcode the coordinates because
     // the parent container's dimensions are not constant
-    chassis.setTransform(0, 0, scale, scale); // x, y, scaleX, scaleY
+    chassis.setTransform(0, 0, scale, scale);
 
     // Place the drives
     this.front.driveTrayObjects.forEach((dt, index) => {
       let offsetY = -50;
       // HDD
       if (index < 5) {
-        // x, y, scaleX, scaleY
-        dt.container.setTransform(118, offsetY + dt.container.y + (index * dt.container.height * 1.14), 1.14, 1.1);
+        dt.container.setTransform(
+          118,
+          offsetY + dt.container.y + (index * dt.container.height * 1.14),
+          1.14,
+          1.1,
+        );
       } else {
         offsetY += 180;
         // SSD
-        // dt.container.setTransform(0, 121 - backY, 0.73, 0.73);
         dt.container.setTransform(
           155,
           offsetY + dt.container.y + (index * dt.container.height * scaleDT),

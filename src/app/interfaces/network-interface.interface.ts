@@ -1,5 +1,6 @@
 import {
   LinkAggregationProtocol,
+  LinkState,
   NetworkInterfaceAliasType,
   NetworkInterfaceFlags,
   NetworkInterfaceType,
@@ -33,6 +34,7 @@ export interface PhysicalNetworkInterface extends BaseNetworkInterface {
 
 export interface BridgeNetworkInterface extends BaseNetworkInterface {
   type: NetworkInterfaceType.Bridge;
+  bridge_members?: string[];
 }
 
 export interface VlanNetworkInterface extends BaseNetworkInterface {
@@ -47,6 +49,8 @@ export interface LinkAggregationNetworkInterface extends BaseNetworkInterface {
   lag_ports: string[];
   lag_protocol: LinkAggregationProtocol;
   disable_offload_capabilities: boolean;
+  lacpdu_rate: string;
+  xmit_hash_policy: string;
 }
 
 export type NetworkInterface =
@@ -71,7 +75,7 @@ export interface NetworkInterfaceState {
   description: string;
   flags: NetworkInterfaceFlags[];
   link_address: string;
-  link_state: string; // Probably a enum: LINK_STATE_UP
+  link_state: LinkState;
   media_options: unknown;
   media_subtype: string;
   media_type: string;
@@ -94,4 +98,10 @@ export interface CarpConfig {
   address: string;
   advbase: number;
   state: string; // Enum? "MASTER"
+}
+
+export interface ServiceRestartedOnNetworkSync {
+  type: string;
+  service: string;
+  ips: string[];
 }

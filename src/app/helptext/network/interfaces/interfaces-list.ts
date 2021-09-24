@@ -26,8 +26,7 @@ export default {
 
   services_restarted: {
     title: T('Attention'),
-    message_a: T('These IP Addresses were removed:'),
-    message_b: T('The listed services will be changed to listen on 0.0.0.0:'),
+    message: T('These IP Addresses were removed: {uniqueIPs}. The listed services will be changed to listen on 0.0.0.0: {affectedServices}'),
     button: T('Continue'),
   },
 

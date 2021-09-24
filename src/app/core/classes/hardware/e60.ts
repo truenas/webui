@@ -1,3 +1,4 @@
+import { Container, Transform } from 'pixi.js';
 import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
 
@@ -14,25 +15,34 @@ export class E60 extends Chassis {
     this.front.totalDriveTrays = 60;
     this.front.rows = 12;
     this.front.columns = 5;
+
+    // Scale
+    this.front.driveTrays.scale.y = 1.15;
+
+    // Offsets
+    this.front.driveTraysOffsetX = -20;
+    this.front.driveTraysOffsetY = -40;
+
+    this.front.layout = {
+      generatePosition: (
+        displayObject: Container,
+        index: number,
+        offsetX: number,
+        offsetY: number,
+      ) => {
+        const mod = index % this.front.rows;
+        const nextPositionX = Math.floor(index / this.front.rows) * (displayObject.width + this.front.gapX) + offsetX;
+        const nextPositionY = mod * (displayObject.height + this.front.gapY) + offsetY;
+
+        const iomGap = mod > 5 ? 25 : 0;
+
+        return { x: nextPositionX, y: nextPositionY + iomGap };
+      },
+    };
   }
-
-  /* isBelowModules(index): boolean{
-    return index > 5;
-  }
-
-  generatePosition(displayObject, index): Position{
-    let gapX = 8;// was 16
-      let gapY = 6;
-    let mod = index % this.rows;
-
-    let nextPositionX = Math.floor(index / this.rows) * (displayObject.width + gapX);
-    let nextPositionY = mod * (displayObject.height + gapY);
-
-    return {x: nextPositionX, y: this.isBelowModules(mod) ? nextPositionY + displayObject.height : nextPositionY }
-  } */
 
   generatePerspectiveOffset(): void {
-    this.front.driveTrays.transform.position.x = 32;
-    this.front.driveTrays.transform.position.y = 32;
+    (this.front.driveTrays.transform as Transform).position.x = 32;
+    (this.front.driveTrays.transform as Transform).position.y = 32;
   }
 }

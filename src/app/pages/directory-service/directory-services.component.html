@@ -1,36 +1,84 @@
-<div
-  class="wrapper"
-  gdGap="8px"
-  gdRows="fit-content(30vh)"
-  gdColumns="50% 50%"
-  gdColumns.lt-lg="50% 50%"
-  gdColumns.lt-md="auto"
-  gdAreas="activedirectory-card ldap-card | idmap-card kerberos_settings-card| kerberos_realms-card kerberos_keytab-card"
-  gdAreas.lt-lg="activedirectory-card ldap-card | idmap-card kerberos_settings-card| kerberos_realms-card kerberos_keytab-card"
-  gdAreas.lt-md="activedirectory-card | ldap-card | idmap-card | kerberos_settings-card | kerberos_realms-card | kerberos_keytab-card"
->
-  <ng-container *ngFor="let card of dataCards;">
-    <mat-card [gdArea]="card.id + '-card'">
-      <mat-toolbar-row>
-        <h3>{{ card.title | translate }}</h3>
-        <div class="actions action-icon">
-          <button mat-button color="default" (click)="doAdd(card.id)">
-            {{ 'Settings' | translate }}
-          </button>
-        </div>
-      </mat-toolbar-row>
+<ng-container [ngSwitch]="true">
+  <div *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" class="everything-disabled">
+    <entity-empty [conf]="noDirectoryServicesConfig"></entity-empty>
+    <div class="actions">
+      <button mat-button (click)="onCardButtonPressed(DirectoryServicesCardId.ActiveDirectory)">
+        {{ 'Configure Active Directory' | translate }}
+      </button>
+      <button mat-button (click)="onCardButtonPressed(DirectoryServicesCardId.Ldap)">
+        {{ 'Configure LDAP' | translate }}
+      </button>
+    </div>
+  </div>
 
+  <div *ngSwitchCase="isActiveDirectoryEnabled" class="services">
+    <ng-container *ngTemplateOutlet="dataCard; context: { card: activeDirectoryDataCard }"></ng-container>
+    <mat-card>
+      <mat-toolbar-row><h3>{{ 'LDAP' | translate }}</h3></mat-toolbar-row>
       <mat-card-content>
-        <mat-list>
-          <mat-list-item *ngFor="let item of card.items" class="card-list-item">
-            <span class="label">{{ item.label | translate }}:</span>
-            <span class="value">{{ item.value || ('None' | translate) }}</span>
-          </mat-list-item>
-        </mat-list>
+        <div class="disabled-message">
+          <p>{{ 'LDAP is disabled.' | translate }}</p>
+          <p>{{ 'To enable disable Active Directory first.' | translate }}</p>
+        </div>
       </mat-card-content>
     </mat-card>
-  </ng-container>
-  <ng-container *ngFor="let card of tableCards; index as i">
-    <app-table [conf]="card.tableConf" [gdArea]="card.id + '-card'"></app-table>
-  </ng-container>
-</div>
+  </div>
+
+  <div *ngSwitchCase="isLdapEnabled" class="services">
+    <mat-card>
+      <mat-toolbar-row><h3>{{ 'Active Directory' | translate }}</h3></mat-toolbar-row>
+      <mat-card-content>
+        <div class="disabled-message">
+          <p>{{ 'Active Directory is disabled.' | translate }}</p>
+          <p>{{ 'To enable disable LDAP first.' | translate }}</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <ng-container *ngTemplateOutlet="dataCard; context: { card: ldapDataCard }"></ng-container>
+  </div>
+</ng-container>
+
+<cdk-accordion-item
+  class="advanced-settings"
+  [class.expanded]="expansionPanel.expanded"
+  #expansionPanel="cdkAccordionItem"
+>
+  <h3 class="header">
+    {{ 'Advanced Settings' | translate }}
+
+    <button
+      *ngIf="!expansionPanel.expanded"
+      mat-button
+      (click)="onAdvancedSettingsOpened(expansionPanel)"
+    >{{ 'Show' | translate }}</button>
+  </h3>
+
+  <div class="advanced-settings-cards">
+    <app-table [conf]="idmapTableConf"></app-table>
+    <ng-container *ngTemplateOutlet="dataCard; context: { card: kerberosSettingsDataCard }"></ng-container>
+    <app-table [conf]="kerberosRealmsTableConf"></app-table>
+    <app-table [conf]="kerberosKeytabTableConf"></app-table>
+  </div>
+</cdk-accordion-item>
+
+<ng-template #dataCard let-card="card">
+  <mat-card *ngIf="typeCard(card) as card">
+    <mat-toolbar-row>
+      <h3>{{ card.title | translate }}</h3>
+      <div class="actions action-icon">
+        <button mat-button color="default" (click)="onCardButtonPressed(card.id)">
+          {{ 'Settings' | translate }}
+        </button>
+      </div>
+    </mat-toolbar-row>
+
+    <mat-card-content>
+      <mat-list>
+        <mat-list-item *ngFor="let item of card.items" class="card-list-item">
+          <span class="label">{{ item.label | translate }}:</span>
+          <span class="value">{{ item.value || ('None' | translate) }}</span>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+</ng-template>

@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/group-list';
+import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -23,12 +25,12 @@ import { GroupFormComponent } from '../group-form/group-form.component';
   selector: 'app-group-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
+export class GroupListComponent implements EntityTableConfig<Group> {
   title = 'Groups';
   queryCall: 'group.query' = 'group.query';
   wsDelete: 'group.delete' = 'group.delete';
   route_add = ['account', 'groups', 'add'];
-  protected route_add_tooltip = T('Add Group');
+  route_add_tooltip = T('Add Group');
   route_edit: string[] = ['account', 'groups', 'edit'];
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
@@ -39,7 +41,6 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
       this.toggleBuiltins();
     },
   };
-  addComponent: GroupFormComponent;
 
   columns = [
     { name: 'Group', prop: 'group', always_display: true },
@@ -58,21 +59,15 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
     },
   };
 
-  constructor(private _router: Router, protected dialogService: DialogService,
-    protected loader: AppLoaderService, protected ws: WebSocketService,
-    protected prefService: PreferencesService, private translate: TranslateService,
-    protected aroute: ActivatedRoute, private modalService: ModalService) {}
-
-  ngOnInit(): void {
-    this.refreshGroupForm();
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshGroupForm();
-    });
-  }
-
-  refreshGroupForm(): void {
-    this.addComponent = new GroupFormComponent(this._router, this.ws, this.modalService);
-  }
+  constructor(
+    private _router: Router,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    protected ws: WebSocketService,
+    protected prefService: PreferencesService,
+    private translate: TranslateService,
+    private modalService: ModalService,
+  ) {}
 
   resourceTransformIncomingRestData(data: Group[]): Group[] {
     // Default setting is to hide builtin groups
@@ -128,7 +123,7 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
         label: helptext.group_list_actions_label_edit,
         name: helptext.group_list_actions_id_edit,
         onClick: (members_edit: Group) => {
-          this.modalService.open('slide-in-form', this.addComponent, members_edit.id);
+          this.modalService.openInSlideIn(GroupFormComponent, members_edit.id);
         },
       });
       actions.push({
@@ -137,9 +132,8 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
         name: 'delete',
         label: helptext.group_list_actions_label_delete,
         onClick: (members_delete: Group) => {
-          const self = this;
           this.loader.open();
-          self.ws.call('user.query', [[['group.id', '=', members_delete.id]]]).pipe(untilDestroyed(this)).subscribe(
+          this.ws.call('user.query', [[['group.id', '=', members_delete.id]]]).pipe(untilDestroyed(this)).subscribe(
             (usersInGroup) => {
               this.loader.close();
 
@@ -149,18 +143,21 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
                 fieldConfig: [],
                 confirmCheckbox: true,
                 saveButtonText: helptext.deleteDialog.saveButtonText,
-                preInit() {
+                preInit: () => {
                   if (!usersInGroup.length) {
                     return;
                   }
                   conf.fieldConfig.push({
                     type: 'checkbox',
                     name: 'delete_users',
-                    placeholder: T(`Delete ${usersInGroup.length} user(s) with this primary group?`),
+                    placeholder: this.translate.instant(
+                      'Delete {n, plural, one {# user} other {# users}} with this primary group?',
+                      { n: usersInGroup.length },
+                    ),
                     value: false,
                     onChange: (valueChangeData: { event: MatCheckboxChange }) => {
                       if (valueChangeData.event.checked) {
-                        self.dialogService.Info('Following users will be deleted', usersInGroup.map((user, index) => {
+                        this.dialogService.info('Following users will be deleted', usersInGroup.map((user, index) => {
                           if (user.full_name && user.full_name.length) {
                             return (index + 1) + '. ' + user.username + ' (' + user.full_name + ')';
                           }
@@ -170,25 +167,25 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
                     },
                   });
                 },
-                customSubmit(entityDialog: EntityDialogComponent) {
+                customSubmit: (entityDialog: EntityDialogComponent) => {
                   entityDialog.dialogRef.close(true);
-                  self.loader.open();
-                  self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue])
+                  this.loader.open();
+                  this.ws.call(this.wsDelete, [members_delete.id, entityDialog.formValue])
                     .pipe(untilDestroyed(this))
                     .subscribe(() => {
-                      self.entityList.getData();
-                      self.loader.close();
+                      this.entityList.getData();
+                      this.loader.close();
                     },
                     (err) => {
-                      new EntityUtils().handleWSError(self, err, self.dialogService);
-                      self.loader.close();
+                      new EntityUtils().handleWSError(this, err, this.dialogService);
+                      this.loader.close();
                     });
                 },
               };
               this.dialogService.dialogForm(conf);
             }, (err) => {
               this.loader.close();
-              new EntityUtils().handleWSError(self, err, self.dialogService);
+              new EntityUtils().handleWSError(this, err, this.dialogService);
             },
           );
         },
@@ -199,34 +196,43 @@ export class GroupListComponent implements EntityTableConfig<Group>, OnInit {
   }
 
   toggleBuiltins(): void {
-    const show = this.prefService.preferences.hide_builtin_groups
-      ? helptext.builtins_dialog.show
-      : helptext.builtins_dialog.hide;
-    this.translate.get(show).pipe(untilDestroyed(this)).subscribe((action: string) => {
-      this.translate.get(helptext.builtins_dialog.title).pipe(untilDestroyed(this)).subscribe((title: string) => {
-        this.translate.get(helptext.builtins_dialog.message).pipe(untilDestroyed(this)).subscribe((message: string) => {
-          this.dialogService.confirm(action + title,
-            action + message, true, action)
-            .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
-              if (res) {
-                this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
-                this.prefService.savePreferences();
-                this.entityList.getData();
-              }
-            });
-        });
-      });
+    let dialogOptions: ConfirmOptions;
+    if (this.prefService.preferences.hide_builtin_groups) {
+      dialogOptions = {
+        title: this.translate.instant('Show Built-in Groups'),
+        message: this.translate.instant('Show built-in groups (default setting is <i>hidden</i>).'),
+        hideCheckBox: true,
+        buttonMsg: this.translate.instant('Show'),
+      };
+    } else {
+      dialogOptions = {
+        title: this.translate.instant('Hide Built-in Groups'),
+        message: this.translate.instant('Hide built-in groups (default setting is <i>hidden</i>).'),
+        hideCheckBox: true,
+        buttonMsg: this.translate.instant('Hide'),
+      };
+    }
+
+    this.dialogService.confirm(dialogOptions).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+      this.prefService.preferences.hide_builtin_groups = !this.prefService.preferences.hide_builtin_groups;
+      this.prefService.savePreferences();
+      this.entityList.getData();
     });
   }
 
   showOneTimeBuiltinMsg(): void {
     this.prefService.preferences.showGroupListMessage = false;
     this.prefService.savePreferences();
-    this.dialogService.confirm(helptext.builtinMessageDialog.title, helptext.builtinMessageDialog.message,
-      true, helptext.builtinMessageDialog.button, false, '', '', '', '', true);
+    this.dialogService.confirm({
+      title: helptext.builtinMessageDialog.title,
+      message: helptext.builtinMessageDialog.message,
+      hideCheckBox: true,
+      buttonMsg: helptext.builtinMessageDialog.button,
+      hideCancel: true,
+    });
   }
 
   doAdd(): void {
-    this.modalService.open('slide-in-form', this.addComponent);
+    this.modalService.openInSlideIn(GroupFormComponent);
   }
 }

@@ -8,8 +8,11 @@ import { MarkdownModule } from 'ngx-markdown';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { IxFormsModule } from 'app/pages/common/ix/ix-forms.module';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
+import { LocalizationForm2Component } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { EntityModule } from '../common/entity/entity.module';
@@ -47,19 +50,21 @@ import { KmipComponent } from './kmip/kmip.component';
 import { routing } from './system.routing';
 import { TunableFormComponent } from './tunable/tunable-form/tunable-form.component';
 import { TunableListComponent } from './tunable/tunable-list/tunable-list.component';
-import { TwoFactorComponent, QRDialog } from './two-factor/two-factor.component';
+import { TwoFactorComponent, QrDialogComponent } from './two-factor/two-factor.component';
 import { UpdateComponent } from './update/update.component';
 import { EnclosureModule } from './view-enclosure/enclosure.module';
 
 @NgModule({
   imports: [
-    EntityModule, CommonModule, FormsModule,
+    EntityModule, CommonModule, FormsModule, IxFormsModule,
     ReactiveFormsModule, NgxUploaderModule, routing,
     MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
     EnclosureModule, CommonDirectivesModule, QRCodeModule,
+    TooltipModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
+    LocalizationForm2Component,
     BootEnvironmentListComponent,
     BootEnvironmentCloneComponent,
     BootEnvironmentRenameComponent,
@@ -85,7 +90,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     SysInfoComponent,
     KmipComponent,
     TwoFactorComponent,
-    QRDialog,
+    QrDialogComponent,
     GeneralSettingsComponent,
     LocalizationFormComponent,
     GuiFormComponent,
@@ -100,7 +105,6 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     CronListComponent,
     SystemDatasetPoolComponent,
   ],
-  entryComponents: [QRDialog],
-  providers: [],
+  entryComponents: [QrDialogComponent],
 })
 export class SystemModule {}

@@ -1,6 +1,6 @@
 import { tween } from 'popmotion';
 import { debounceTime } from 'rxjs/operators';
-import { CoreService } from '../services/core.service';
+import { CoreService } from '../services/core-service/core.service';
 import { DisplayObject } from './display-object';
 
 /*
@@ -121,7 +121,7 @@ export class LayoutObject {
     this.orderedCollection = Object.keys(this.collection);
     // const collection = Object.entries(this.collection);
     // collection.map((value:DisplayObject) => {
-    this.orderedCollection.map((item) => {
+    this.orderedCollection.forEach((item) => {
       this.configureCollectionItem(this.collection[item]);
     });
     this.createLayoutFromArrangement('Grid');
@@ -408,26 +408,7 @@ export class LayoutObject {
     return containerDimensions.width / (elWidth + marg * 2);
   }
 
-  private detectCollisionByXY(a: any, b: any): boolean {
-    // a = dragTarget , b = target
-    let test = false;
-    const range = 16; // margin of error
-    if (a.x < b.x + range && a.x > b.x - range && a.y < b.y + range && a.y > b.y - range) {
-      test = true;
-    }
-    return test;
-  }
-
-  private detectCollision(a: any, b: any): boolean {
-    return !(
-      ((a.y + a.height) < (b.y))
-           || (a.y > (b.y + b.height))
-           || ((a.x + a.width) < b.x)
-           || (a.x > (b.x + b.width))
-    );
-  }
-
-  private detectBoxCollision(a: any, b: any): boolean {
+  private detectBoxCollision(a: BoundingBox, b: BoundingBox): boolean {
     return !(
       ((a.bottom) < (b.top))
            || (a.top > (b.bottom))

@@ -1,32 +1,32 @@
-export function belongs(item: any, array: any[], key: string): boolean {
+export function belongs<T>(item: T, array: unknown[], key: keyof T): boolean {
   return !!array.find((i) => i[key] === item[key]);
 }
-export function difference(arrayOne: any[], arrayTwo: any[], key: string): any[] {
+export function difference<T>(arrayOne: T[], arrayTwo: unknown[], key: keyof T): T[] {
   return arrayOne.filter((i) => !belongs(i, arrayTwo, key));
 }
 
-export interface ListSelection {
-  selectedItems: any[];
+export interface ListSelection<T> {
+  selectedItems: T[];
 
-  totalItems: any[];
+  totalItems: T[];
 
-  mouseDown(item: any): void;
+  mouseDown(item: T, event?: MouseEvent): void;
 
-  mouseUp(item: any): void;
+  mouseUp(item: T, event?: MouseEvent): void;
 
   selectAll(): void;
 
-  unselect(item: any): void;
+  unselect(item: T): void;
 
-  isSelected(item: any): boolean;
+  isSelected(item: T): boolean;
 }
 
-export class ListSelectionImpl implements ListSelection {
-  private _selectedItems: any[] = [];
+export class ListSelectionImpl<T> implements ListSelection<T> {
+  private _selectedItems: T[] = [];
 
-  constructor(readonly totalItems: any[]) {}
+  constructor(readonly totalItems: T[]) {}
 
-  mouseDown(item: any, event?: MouseEvent): void {
+  mouseDown(item: T, event?: MouseEvent): void {
     if (!event.ctrlKey) {
       if (!this.isSelected(item)) {
         this._selectedItems.length = 0;
@@ -39,7 +39,7 @@ export class ListSelectionImpl implements ListSelection {
     }
   }
 
-  mouseUp(item: any, event?: MouseEvent): void {
+  mouseUp(item: T, event?: MouseEvent): void {
     if (!event.ctrlKey) {
       if (this._selectedItems.length > 1 && this.isSelected(item)) {
         this._selectedItems.length = 0;
@@ -52,7 +52,7 @@ export class ListSelectionImpl implements ListSelection {
     this._selectedItems = this.totalItems;
   }
 
-  unselect(item: any): void {
+  unselect(item: T): void {
     if (!this.isSelected(item)) {
       throw new Error('Cannot unselect an item that is not selected');
     }
@@ -60,11 +60,11 @@ export class ListSelectionImpl implements ListSelection {
     this._selectedItems = this._selectedItems.filter((e) => e !== item);
   }
 
-  isSelected(item: any): boolean {
+  isSelected(item: T): boolean {
     return !!this._selectedItems.find((e) => e === item);
   }
 
-  get selectedItems(): any[] {
+  get selectedItems(): T[] {
     return this._selectedItems;
   }
 }

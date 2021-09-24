@@ -3,8 +3,10 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { helptext_system_failover } from 'app/helptext/system/failover';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FailoverConfig, FailoverUpdate } from 'app/interfaces/failover.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -59,7 +61,7 @@ export class FailoverComponent implements FormConfiguration {
               ds.componentInstance.method, ds.componentInstance.data,
             ).pipe(untilDestroyed(this)).subscribe(() => {
               this.load.close();
-              this.dialog.Info(helptext_system_failover.confirm_dialogs.sync_title,
+              this.dialog.info(helptext_system_failover.confirm_dialogs.sync_title,
                 helptext_system_failover.confirm_dialogs.sync_to_message, '', 'info', true);
             }, (err) => {
               this.load.close();
@@ -73,20 +75,20 @@ export class FailoverComponent implements FormConfiguration {
       id: 'sync_from_peer',
       name: T('Sync from Peer'),
       function: () => {
-        this.dialog.confirm(helptext_system_failover.dialog_sync_from_peer_title,
-          helptext_system_failover.dialog_sync_from_peer_message, false,
-          helptext_system_failover.dialog_button_ok).pipe(untilDestroyed(this)).subscribe((confirm: boolean) => {
-          if (confirm) {
-            this.load.open();
-            this.ws.call('failover.sync_from_peer').pipe(untilDestroyed(this)).subscribe(() => {
-              this.load.close();
-              this.dialog.Info(helptext_system_failover.confirm_dialogs.sync_title,
-                helptext_system_failover.confirm_dialogs.sync_from_message, '', 'info', true);
-            }, (err) => {
-              this.load.close();
-              new EntityUtils().handleWSError(this.entityForm, err);
-            });
-          }
+        this.dialog.confirm({
+          title: helptext_system_failover.dialog_sync_from_peer_title,
+          message: helptext_system_failover.dialog_sync_from_peer_message,
+          buttonMsg: helptext_system_failover.dialog_button_ok,
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          this.load.open();
+          this.ws.call('failover.sync_from_peer').pipe(untilDestroyed(this)).subscribe(() => {
+            this.load.close();
+            this.dialog.info(helptext_system_failover.confirm_dialogs.sync_title,
+              helptext_system_failover.confirm_dialogs.sync_from_message, '', 'info', true);
+          }, (err) => {
+            this.load.close();
+            new EntityUtils().handleWSError(this.entityForm, err);
+          });
         });
       },
     },
@@ -143,7 +145,7 @@ export class FailoverComponent implements FormConfiguration {
       }
     });
     this.master_fg = this.entityForm.formGroup.controls['master'] as FormControl;
-    this.master_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.master_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (!res && !this.warned) {
         this.dialog.confirm({
           title: helptext_system_failover.master_dialog_title,
@@ -167,12 +169,12 @@ export class FailoverComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(body: any): Subscription {
+  customSubmit(body: FailoverUpdate): Subscription {
     this.load.open();
     return this.ws.call('failover.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.alreadyDisabled = body['disabled'];
       this.load.close();
-      this.dialog.Info(T('Settings saved.'), '', '300px', 'info', true).pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialog.info(T('Settings saved.'), '', '300px', 'info', true).pipe(untilDestroyed(this)).subscribe(() => {
         if (body.disabled && !body.master) {
           this.ws.logout();
         }
@@ -183,7 +185,7 @@ export class FailoverComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(value: any): any {
+  resourceTransformIncomingRestData(value: FailoverConfig): FailoverConfig {
     this.alreadyDisabled = value['disabled'];
     value['master'] = true;
     return value;
