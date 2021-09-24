@@ -480,7 +480,7 @@ export class SharesDashboardComponent implements AfterViewInit {
       ],
       customSubmit: (dialog: EntityDialogComponent) => {
         dialog.dialogRef.close();
-        dialog.parent.add(null, dialog.formValue.share_type);
+        this.add(null, dialog.formValue.share_type);
       },
       parent: this,
     };

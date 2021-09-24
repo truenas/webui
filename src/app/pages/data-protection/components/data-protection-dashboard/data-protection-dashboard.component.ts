@@ -570,7 +570,6 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: T('Restore'),
         icon: 'restore',
         onClick: (row) => {
-          const parent = this;
           const conf: DialogFormConfiguration = {
             title: helptext_replication.replication_restore_dialog.title,
             fieldConfig: [
@@ -594,20 +593,20 @@ export class DataProtectionDashboardComponent implements OnInit {
               },
             ],
             saveButtonText: helptext_replication.replication_restore_dialog.saveButton,
-            customSubmit(entityDialog: EntityDialogComponent) {
-              parent.loader.open();
-              parent.ws
+            customSubmit: (entityDialog: EntityDialogComponent) => {
+              this.loader.open();
+              this.ws
                 .call('replication.restore', [row.id, entityDialog.formValue])
                 .pipe(untilDestroyed(entityDialog))
                 .subscribe(
                   () => {
                     entityDialog.dialogRef.close(true);
-                    parent.loader.close();
-                    parent.refreshTables();
+                    this.loader.close();
+                    this.refreshTables();
                   },
                   (err) => {
-                    parent.loader.close();
-                    new EntityUtils().handleWSError(entityDialog, err, parent.dialog);
+                    this.loader.close();
+                    new EntityUtils().handleWSError(entityDialog, err, this.dialog);
                   },
                 );
             },
@@ -739,7 +738,6 @@ export class DataProtectionDashboardComponent implements OnInit {
         matTooltip: T('Restore'),
         name: 'restore',
         onClick: (row) => {
-          const parent = this;
           const conf: DialogFormConfiguration = {
             title: T('Restore Cloud Sync Task'),
             fieldConfig: [
@@ -799,20 +797,20 @@ export class DataProtectionDashboardComponent implements OnInit {
                   }
                 });
             },
-            customSubmit(entityDialog: EntityDialogComponent) {
-              parent.loader.open();
-              parent.ws
+            customSubmit: (entityDialog: EntityDialogComponent) => {
+              this.loader.open();
+              this.ws
                 .call('cloudsync.restore', [row.id, entityDialog.formValue])
                 .pipe(untilDestroyed(entityDialog))
                 .subscribe(
                   () => {
                     entityDialog.dialogRef.close(true);
-                    parent.loader.close();
-                    parent.refreshTables();
+                    this.loader.close();
+                    this.refreshTables();
                   },
                   (err) => {
-                    parent.loader.close();
-                    new EntityUtils().handleWSError(entityDialog, err, parent.dialog);
+                    this.loader.close();
+                    new EntityUtils().handleWSError(entityDialog, err, this.dialog);
                   },
                 );
             },

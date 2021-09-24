@@ -413,25 +413,24 @@ export class CertificatesDashComponent implements OnInit {
     fieldConfig: this.signCSRFieldConf,
     method_ws: 'certificateauthority.ca_sign_csr',
     saveButtonText: helptext_system_ca.sign.sign,
-    customSubmit: this.doSignCSR,
+    customSubmit: (entityDialog) => this.doSignCSR(entityDialog),
     parent: this,
   };
 
   doSignCSR(entityDialog: EntityDialogComponent<this>): void {
-    const self = entityDialog.parent;
     const payload = {
-      ca_id: self.caId,
+      ca_id: this.caId,
       csr_cert_id: entityDialog.formGroup.controls.csr_cert_id.value,
       name: entityDialog.formGroup.controls.name.value,
     };
     entityDialog.loader.open();
     entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).pipe(untilDestroyed(this)).subscribe(() => {
       entityDialog.loader.close();
-      self.dialogService.closeAllDialogs();
-      self.getCards();
+      this.dialogService.closeAllDialogs();
+      this.getCards();
     }, (err: WebsocketError) => {
       entityDialog.loader.close();
-      self.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
+      this.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     });
   }
 }

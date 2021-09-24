@@ -874,11 +874,10 @@ export class VMWizardComponent implements WizardConfiguration {
   }
 
   memoryValidator(name: string): ValidatorFn {
-    const self = this;
-    return function validMem(control: FormControl) {
-      const config = self.wizardConfig[1].fieldConfig.find((c) => c.name === name);
+    return (control: FormControl) => {
+      const config = this.wizardConfig[1].fieldConfig.find((c) => c.name === name);
 
-      const errors = self.storageService.convertHumanStringToNum(control.value) < 268435456
+      const errors = this.storageService.convertHumanStringToNum(control.value) < 268435456
         ? { validMem: true }
         : null;
 
@@ -895,19 +894,18 @@ export class VMWizardComponent implements WizardConfiguration {
   }
 
   cpuValidator(name: string): ValidatorFn {
-    const self = this;
     // TODO: setTimeout breaks typing
-    return function validCPU(): any {
-      const config = self.wizardConfig[1].fieldConfig.find((c) => c.name === name);
+    return (): any => {
+      const config = this.wizardConfig[1].fieldConfig.find((c) => c.name === name);
       setTimeout(() => {
-        const errors = self.vcpus * self.cores * self.threads > self.maxVCPUs
+        const errors = this.vcpus * this.cores * this.threads > this.maxVCPUs
           ? { validCPU: true }
           : null;
 
         if (errors) {
           config.hasErrors = true;
-          self.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(self)).subscribe((warning) => {
-            config.warnings = warning + ` ${self.maxVCPUs}.`;
+          this.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
+            config.warnings = warning + ` ${this.maxVCPUs}.`;
           });
         } else {
           config.hasErrors = false;
@@ -919,19 +917,18 @@ export class VMWizardComponent implements WizardConfiguration {
   }
 
   volSizeValidator(name: string): ValidatorFn {
-    const self = this;
-    return function validStorage(control: FormControl) {
-      const config = self.wizardConfig[2].fieldConfig.find((c) => c.name === name);
+    return (control: FormControl) => {
+      const config = this.wizardConfig[2].fieldConfig.find((c) => c.name === name);
 
-      if (control.value && self.statSize) {
-        const requestedSize = self.storageService.convertHumanStringToNum(control.value);
-        const errors = self.statSize.free_bytes < requestedSize
+      if (control.value && this.statSize) {
+        const requestedSize = this.storageService.convertHumanStringToNum(control.value);
+        const errors = this.statSize.free_bytes < requestedSize
           ? { validStorage: true }
           : null;
 
         if (errors) {
           config.hasErrors = true;
-          config.warnings = self.translate.instant('Cannot allocate {size} to storage for this virtual machine.', { size: self.storageService.humanReadable });
+          config.warnings = this.translate.instant('Cannot allocate {size} to storage for this virtual machine.', { size: this.storageService.humanReadable });
         } else {
           config.hasErrors = false;
           config.warnings = '';

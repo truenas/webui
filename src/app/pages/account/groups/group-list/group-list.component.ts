@@ -132,9 +132,8 @@ export class GroupListComponent implements EntityTableConfig<Group> {
         name: 'delete',
         label: helptext.group_list_actions_label_delete,
         onClick: (members_delete: Group) => {
-          const self = this;
           this.loader.open();
-          self.ws.call('user.query', [[['group.id', '=', members_delete.id]]]).pipe(untilDestroyed(this)).subscribe(
+          this.ws.call('user.query', [[['group.id', '=', members_delete.id]]]).pipe(untilDestroyed(this)).subscribe(
             (usersInGroup) => {
               this.loader.close();
 
@@ -158,7 +157,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
                     value: false,
                     onChange: (valueChangeData: { event: MatCheckboxChange }) => {
                       if (valueChangeData.event.checked) {
-                        self.dialogService.info('Following users will be deleted', usersInGroup.map((user, index) => {
+                        this.dialogService.info('Following users will be deleted', usersInGroup.map((user, index) => {
                           if (user.full_name && user.full_name.length) {
                             return (index + 1) + '. ' + user.username + ' (' + user.full_name + ')';
                           }
@@ -168,25 +167,25 @@ export class GroupListComponent implements EntityTableConfig<Group> {
                     },
                   });
                 },
-                customSubmit(entityDialog: EntityDialogComponent) {
+                customSubmit: (entityDialog: EntityDialogComponent) => {
                   entityDialog.dialogRef.close(true);
-                  self.loader.open();
-                  self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue])
+                  this.loader.open();
+                  this.ws.call(this.wsDelete, [members_delete.id, entityDialog.formValue])
                     .pipe(untilDestroyed(this))
                     .subscribe(() => {
-                      self.entityList.getData();
-                      self.loader.close();
+                      this.entityList.getData();
+                      this.loader.close();
                     },
                     (err) => {
-                      new EntityUtils().handleWSError(self, err, self.dialogService);
-                      self.loader.close();
+                      new EntityUtils().handleWSError(this, err, this.dialogService);
+                      this.loader.close();
                     });
                 },
               };
               this.dialogService.dialogForm(conf);
             }, (err) => {
               this.loader.close();
-              new EntityUtils().handleWSError(self, err, self.dialogService);
+              new EntityUtils().handleWSError(this, err, this.dialogService);
             },
           );
         },
