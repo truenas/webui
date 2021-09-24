@@ -991,7 +991,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
       }
     }
 
-    if (rowData.type === 'FILESYSTEM') {
+    if (rowData.type === DatasetType.Filesystem) {
       if (!rowData.locked) {
         actions.push({
           id: rowData.name,
@@ -1189,7 +1189,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
         });
       }
     }
-    if (rowData.type === 'VOLUME') {
+    if (rowData.type === DatasetType.Volume) {
       actions.push({
         id: rowData.name,
         name: T('Delete Zvol'),
@@ -1233,7 +1233,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
         },
       });
     }
-    if (rowData.type === 'VOLUME' || rowData.type === 'FILESYSTEM') {
+    if (rowData.type === DatasetType.Volume || rowData.type === DatasetType.Filesystem) {
       actions.push({
         id: rowData.name,
         name: T('Create Snapshot'),
