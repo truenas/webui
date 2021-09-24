@@ -12,7 +12,7 @@ import { IxModalService } from 'app/services/ix-modal.service';
 })
 export class IxModalComponent implements OnInit, OnDestroy {
   @Input() id: string;
-  @ViewChild(IxModalDirective, { static: true }) ixModal!: IxModalDirective;
+  @ViewChild(IxModalDirective, { static: true }) ixModal: IxModalDirective;
   title = '';
   private element: HTMLElement;
 
