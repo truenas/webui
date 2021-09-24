@@ -6,7 +6,6 @@ import { IxModalComponent } from 'app/pages/common/ix/components/ix-modal/ix-mod
 export class IxModalService {
   private modalComponent: IxModalComponent;
   private modalClosed$ = new Subject();
-  currentTime: Date = new Date();
 
   setModal(modal: IxModalComponent): void {
     // add modal to array of active modals
