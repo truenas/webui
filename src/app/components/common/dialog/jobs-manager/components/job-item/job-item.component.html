@@ -1,8 +1,8 @@
 <div class="job-item" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px" [class.abortable]="job?.state === JobState.Running && job?.abortable">
-  <div fxFlex="100%" (click)="openJobDialog(job)">
+  <div fxFlex="100%" (click)="openJobDialog(job)" class="job-clickable">
     <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
-      <span>{{ job.description ? job.description : job.method }}</span>
-      <small *ngIf="job.state === JobState.Running">{{ job.progress.percent || 0 | number: '1.2-2' }}%</small>
+      <span class="job-description">{{ job.description ? job.description : job.method }}</span>
+      <small class="job-progress-percent" *ngIf="job.state === JobState.Running">{{ job.progress.percent || 0 | number: '1.2-2' }}%</small>
     </div>
 
     <mat-progress-bar
@@ -28,11 +28,22 @@
     </ng-template>
   </div>
 
-  <button mat-icon-button type="button" (click)="abort(job)" *ngIf="job.state === JobState.Running && job.abortable">
-    <mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+  <button
+    *ngIf="job.state === JobState.Running && job.abortable"
+    class="job-button-abort"
+    mat-icon-button
+    type="button"
+    (click)="abort(job)"
+  >
+    <mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle" class="job-icon-abort"></mat-icon>
   </button>
 
-  <button mat-icon-button type="button" [disabled]="true" *ngIf="job.state === JobState.Failed">
+  <button
+    *ngIf="job.state === JobState.Failed"
+    mat-icon-button
+    type="button"
+    [disabled]="true"
+  >
     <mat-icon [matTooltip]="job.error" matTooltipPosition="left" class="job-icon-failed">warning</mat-icon>
   </button>
 </div>

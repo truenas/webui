@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -16,6 +17,7 @@ import { T } from 'app/translate-marker';
   selector: 'app-job-item',
   templateUrl: './job-item.component.html',
   styleUrls: ['./job-item.component.scss'],
+  providers: [FormatDateTimePipe],
 })
 export class JobItemComponent {
   @Input() job: Job;
