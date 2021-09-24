@@ -67,7 +67,7 @@ export class CatalogEditFormComponent implements FormConfiguration {
       label: train,
       value: train,
     }));
-    const config: FormSelectConfig = this.fieldSets.config('preferred_trains');
+    const config = this.fieldSets.config('preferred_trains') as FormSelectConfig;
     config.options = trainOptions;
     return transformed;
   }

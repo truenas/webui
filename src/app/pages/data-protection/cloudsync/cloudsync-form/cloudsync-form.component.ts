@@ -615,8 +615,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.pk = entityForm.pk;
 
     this.title = entityForm.isNew ? helptext.cloudsync_task_add : helptext.cloudsync_task_edit;
-    this.credentials = this.fieldSets.config('credentials');
-    this.bucket_field = this.fieldSets.config('bucket');
+    this.credentials = this.fieldSets.config('credentials') as FormSelectConfig;
+    this.bucket_field = this.fieldSets.config('bucket') as FormSelectConfig;
     this.bucket_input_field = this.fieldSets.config('bucket_input') as FormInputConfig;
     this.setDisabled('bucket', true, true);
     this.setDisabled('bucket_input', true, true);
@@ -710,8 +710,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
       }
     });
 
-    this.folder_field_destination = this.fieldSets.config('folder_destination');
-    this.folder_field_source = this.fieldSets.config('folder_source');
+    this.folder_field_destination = this.fieldSets.config('folder_destination') as FormExplorerConfig;
+    this.folder_field_source = this.fieldSets.config('folder_source') as FormExplorerConfig;
     this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | typeof NULL_VALUE) => {
       this.setDisabled('bucket', true, true);
       this.setDisabled('bucket_input', true, true);

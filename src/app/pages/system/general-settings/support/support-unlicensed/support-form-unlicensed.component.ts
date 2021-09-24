@@ -145,7 +145,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   usernameOrPasswordBlur(parent: this): void {
     this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
     this.username_fc = _.find(parent.fieldConfig, { name: 'username' });
-    this.category = _.find(parent.fieldConfig, { name: 'category' });
+    this.category = _.find(parent.fieldConfig, { name: 'category' }) as FormSelectConfig;
     if (parent.entityEdit) {
       this.username = parent.entityEdit.formGroup.controls['username'].value;
       this.password = parent.entityEdit.formGroup.controls['password'].value;

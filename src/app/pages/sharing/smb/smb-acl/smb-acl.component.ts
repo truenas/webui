@@ -140,7 +140,7 @@ export class SMBAclComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
-    this.shareACLField = _.find(entityForm.fieldConfig, { name: 'share_acl' });
+    this.shareACLField = _.find(entityForm.fieldConfig, { name: 'share_acl' }) as FormListConfig;
 
     entityForm.formGroup.controls['share_acl'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {

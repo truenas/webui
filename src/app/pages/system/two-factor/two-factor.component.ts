@@ -7,7 +7,7 @@ import { helptext } from 'app/helptext/system/2fa';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormParagraphConfig, FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
 
@@ -224,7 +224,7 @@ export class TwoFactorComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.getURI();
-    const intervalValue = _.find(this.fieldConfig, { name: 'interval' });
+    const intervalValue: FormInputConfig = _.find(this.fieldConfig, { name: 'interval' }) as FormInputConfig;
     entityEdit.formGroup.controls['interval'].valueChanges.pipe(untilDestroyed(this)).subscribe((val: string) => {
       if (parseInt(val) !== 30) {
         intervalValue.hint = helptext.two_factor.interval.hint;

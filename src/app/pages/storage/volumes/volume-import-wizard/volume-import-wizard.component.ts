@@ -284,7 +284,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
 
     if (!this.productType.includes(ProductType.Scale)) {
       this.encrypted = (< FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
-      this.devices = _.find(this.wizardConfig[1].fieldConfig, { name: 'devices' });
+      this.devices = _.find(this.wizardConfig[1].fieldConfig, { name: 'devices' }) as FormSelectConfig;
       this.devices_fg = (< FormGroup > entityWizard.formArray.get([1]).get('devices'));
       this.key = _.find(this.wizardConfig[1].fieldConfig, { name: 'key' }) as FormUploadConfig;
       this.key_fg = (< FormGroup > entityWizard.formArray.get([1]).get('key'));
@@ -298,7 +298,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       });
     }
 
-    this.guid = _.find(this.wizardConfig[this.importIndex].fieldConfig, { name: 'guid' });
+    this.guid = _.find(this.wizardConfig[this.importIndex].fieldConfig, { name: 'guid' }) as FormSelectConfig;
     (< FormGroup > entityWizard.formArray.get([this.importIndex]).get('guid'))
       .valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         const pool = _.find(this.guid.options, { value: res });

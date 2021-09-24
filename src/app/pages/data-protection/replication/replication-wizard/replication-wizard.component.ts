@@ -826,7 +826,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const exist_replicationField: FormSelectConfig = _.find(this.preload_fieldSet.config, { name: 'exist_replication' });
+    const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
     this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
       (res: ReplicationTask[]) => {
         for (const task of res) {
@@ -845,7 +845,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       },
     );
 
-    const privateKeyField: FormSelectConfig = _.find(this.dialogFieldConfig, { name: 'private_key' });
+    const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' }) as FormSelectConfig;
     this.keychainCredentialService.getSSHKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
       privateKeyField.options = keyPairs.map((keypair) => ({
         label: keypair.name,
@@ -853,8 +853,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       }));
     });
 
-    const ssh_credentials_source_field: FormSelectConfig = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' });
-    const ssh_credentials_target_field: FormSelectConfig = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' });
+    const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+    const ssh_credentials_target_field = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
     this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
       connections.forEach((connection) => {
         ssh_credentials_source_field.options.push({ label: connection.name, value: connection.id });
@@ -1451,12 +1451,12 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                 value[item] = res.id;
                 createdItems[item] = res.id;
                 if (item === 'private_key') {
-                  const privateKeyField: FormSelectConfig = _.find(this.dialogFieldConfig, { name: 'private_key' });
+                  const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' }) as FormSelectConfig;
                   privateKeyField.options.push({ label: res.name + ' (New Created)', value: res.id });
                 }
                 if (item === 'ssh_credentials') {
-                  const ssh_credentials_source_field: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' });
-                  const ssh_credentials_target_field: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' });
+                  const ssh_credentials_source_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+                  const ssh_credentials_target_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
                   ssh_credentials_source_field.options.push({ label: res.name + ' (New Created)', value: res.id });
                   ssh_credentials_target_field.options.push({ label: res.name + ' (New Created)', value: res.id });
                   this.entityWizard.formArray.get([0]).get([activedField]).setValue(res.id);

@@ -239,7 +239,7 @@ export class VmFormComponent implements FormConfiguration {
   }
 
   afterInit(entityForm: EntityFormComponent): void {
-    this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' });
+    this.bootloader = _.find(this.fieldConfig, { name: 'bootloader' }) as FormSelectConfig;
     this.vmService.getBootloaderOptions().pipe(untilDestroyed(this)).subscribe((options) => {
       for (const option in options) {
         this.bootloader.options.push({ label: options[option], value: option });
@@ -272,7 +272,7 @@ export class VmFormComponent implements FormConfiguration {
 
     if (this.productType.includes(ProductType.Scale)) {
       _.find(this.fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
-      const cpuModel: FormSelectConfig = _.find(this.fieldConfig, { name: 'cpu_model' });
+      const cpuModel = _.find(this.fieldConfig, { name: 'cpu_model' }) as FormSelectConfig;
       cpuModel.isHidden = false;
 
       this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
@@ -298,7 +298,7 @@ export class VmFormComponent implements FormConfiguration {
           finalIsolatedPciIds.push(gpuValue);
         }
       }
-      const gpusConf: FormSelectConfig = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
+      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' }) as FormSelectConfig;
       if (finalIsolatedPciIds.length && finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.gpus) {
@@ -360,7 +360,7 @@ export class VmFormComponent implements FormConfiguration {
       const vmPciSlots = (vmRes.devices
         .filter((device) => device.dtype === VmDeviceType.Pci) as VmPciPassthroughDevice[])
         .map((pciDevice) => pciDevice.attributes.pptdev);
-      const gpusConf: FormSelectConfig = _.find(this.entityForm.fieldConfig, { name: 'gpus' });
+      const gpusConf = _.find(this.entityForm.fieldConfig, { name: 'gpus' }) as FormSelectConfig;
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
       }

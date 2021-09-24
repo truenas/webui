@@ -495,7 +495,7 @@ export class VMWizardComponent implements WizardConfiguration {
     });
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
-      const gpusConf: FormSelectConfig = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
+      const gpusConf = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' }) as FormSelectConfig;
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
       }
@@ -520,7 +520,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
   setValuesFromPref(stepNumber: number, fieldName: string, prefName: string, defaultIndex?: number): void {
     const field = this.getFormControlFromFieldName(fieldName);
-    const config: FormSelectConfig = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName });
+    const config = _.find(this.wizardConfig[stepNumber].fieldConfig, { name: fieldName }) as FormSelectConfig;
     const storedValue = this.prefService.preferences.storedValues[prefName];
     if (storedValue) {
       const valueToSet = config.options.find((o) => o.value === storedValue);
@@ -541,7 +541,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
     this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
-        const bind: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' });
+        const bind = _.find(this.wizardConfig[0].fieldConfig, { name: 'bind' }) as FormSelectConfig;
         Object.keys(res).forEach((address) => {
           bind.options.push({ label: address, value: address });
         });
@@ -552,7 +552,7 @@ export class VMWizardComponent implements WizardConfiguration {
     if (this.productType === ProductType.Scale || this.productType === ProductType.ScaleEnterprise) {
       _.find(this.wizardConfig[0].fieldConfig, { name: 'wait' })['isHidden'] = true;
       _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_mode' })['isHidden'] = false;
-      const cpuModel: FormSelectConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_model' });
+      const cpuModel = _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_model' }) as FormSelectConfig;
       cpuModel.isHidden = false;
 
       this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
@@ -570,13 +570,13 @@ export class VMWizardComponent implements WizardConfiguration {
       .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
       .pipe(map(new EntityUtils().array1DToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe((options) => {
-        const config: FormSelectConfig = this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore');
+        const config = this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore') as FormSelectConfig;
         config.options = options;
       });
 
     this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
-        const config: FormSelectConfig = _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' });
+        const config = _.find(this.wizardConfig[2].fieldConfig, { name: 'hdd_path' }) as FormSelectConfig;
         config.options.push(
           {
             label: zvol.id, value: zvol.id,
@@ -692,7 +692,7 @@ export class VMWizardComponent implements WizardConfiguration {
             finalIsolatedPciIds.push(gpuValue);
           }
         }
-        const gpusConf: FormSelectConfig = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
+        const gpusConf = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' }) as FormSelectConfig;
         if (finalIsolatedPciIds.length && finalIsolatedPciIds.length >= gpusConf.options.length) {
           const prevSelectedGpus = [];
           for (const gpu of this.gpus) {
@@ -813,7 +813,7 @@ export class VMWizardComponent implements WizardConfiguration {
     });
 
     this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.nicAttach = _.find(this.wizardConfig[3].fieldConfig, { name: 'nic_attach' });
+      this.nicAttach = _.find(this.wizardConfig[3].fieldConfig, { name: 'nic_attach' }) as FormSelectConfig;
       this.nicAttach.options = Object.keys(res || {}).map((nicId) => ({
         label: nicId,
         value: nicId,
@@ -828,7 +828,7 @@ export class VMWizardComponent implements WizardConfiguration {
         this.getFormControlFromFieldName('NIC_mac').setValue(mac_res);
       });
     });
-    this.nicType = _.find(this.wizardConfig[3].fieldConfig, { name: 'NIC_type' });
+    this.nicType = _.find(this.wizardConfig[3].fieldConfig, { name: 'NIC_type' }) as FormSelectConfig;
     this.vmService.getNICTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
@@ -838,7 +838,7 @@ export class VMWizardComponent implements WizardConfiguration {
       this.prefService.savePreferences();
     });
 
-    this.bootloader = _.find(this.wizardConfig[0].fieldConfig, { name: 'bootloader' });
+    this.bootloader = _.find(this.wizardConfig[0].fieldConfig, { name: 'bootloader' }) as FormSelectConfig;
 
     this.vmService.getBootloaderOptions().pipe(untilDestroyed(this)).subscribe((options) => {
       for (const option in options) {

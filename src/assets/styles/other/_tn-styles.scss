@@ -1760,4 +1760,18 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
+  // Disabled form fields
+  .form-element.form-combobox .mat-form-field[disabled],
+  .form-element.form-combobox .mat-menu-trigger[disabled]
+  .form-element.form-ip-netmask .mat-form-field[disabled],
+  .form-element .mat-form-field-wrapper[disabled],
+  .form-element input[type=email][disabled],
+  .form-element input[type=number][disabled],
+  .form-element input[type=password][disabled],
+  .form-element input[type=text][disabled],
+  .form-element select[disabled],
+  .form-element textarea[disabled] {
+    opacity: 0.38;
+  }
+
 } // end of ix theme

@@ -295,8 +295,8 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   }
 
   afterLogsDialogInit(entityDialog: EntityDialogComponent): void {
-    const podFC: FormSelectConfig = _.find(entityDialog.fieldConfig, { name: 'pods' });
-    const containerFC: FormSelectConfig = _.find(entityDialog.fieldConfig, { name: 'containers' });
+    const podFC = _.find(entityDialog.fieldConfig, { name: 'pods' }) as FormSelectConfig;
+    const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
 
     // when app selection changed
     entityDialog.formGroup.controls['apps'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
