@@ -339,11 +339,11 @@ export class GeneralSettingsComponent implements OnInit {
     }));
     formData.append('file', parent.subs.file);
     dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(parent)).subscribe(() => {
       dialogRef.close();
       parent.router.navigate(['/others/reboot']);
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(parent)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
