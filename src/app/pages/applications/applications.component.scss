@@ -45,6 +45,10 @@ mat-tab-group {
         }
       }
 
+      .badge-official {
+        background-color: var(--primary) !important;
+      }
+
       .badge-area {
         background-color: var(--yellow);
         color: rgba($color: #000, $alpha: 1);
