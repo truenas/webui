@@ -693,7 +693,7 @@ export class VMWizardComponent implements WizardConfiguration {
           }
         }
         const gpusConf: FormSelectConfig = _.find(this.wizardConfig[5].fieldConfig, { name: 'gpus' });
-        if (finalIsolatedPciIds.length >= gpusConf.options.length) {
+        if (finalIsolatedPciIds.length && finalIsolatedPciIds.length >= gpusConf.options.length) {
           const prevSelectedGpus = [];
           for (const gpu of this.gpus) {
             if (this.isolatedGpuPciIds.findIndex((igpi) => igpi === gpu.addr.pci_slot) >= 0) {
