@@ -1,7 +1,6 @@
 import {
-  Component, ComponentFactoryResolver, ElementRef, Input, OnDestroy, OnInit, ViewChild,
+  Component, ComponentFactoryResolver, ElementRef, Input, OnDestroy, OnInit, Type, ViewChild,
 } from '@angular/core';
-import { IxModal } from 'app/pages/common/ix/components/ix-modal/ix-modal.class';
 import { IxModalDirective } from 'app/pages/common/ix/components/ix-modal/ix-modal.directive';
 import { IxModalService } from 'app/services/ix-modal.service';
 
@@ -62,15 +61,14 @@ export class IxModalComponent implements OnInit, OnDestroy {
     this.title = '';
   }
 
-  openModal(modal: IxModal): void {
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(modal.component);
+  openModal<T>(modal: Type<T>, title: string): Component {
+    const componentFactory = this.componentFactoryResolver.resolveComponentFactory(modal);
 
     const viewContainerRef = this.ixModal.viewContainerRef;
     viewContainerRef.clear();
 
-    const componentRef = viewContainerRef.createComponent<IxModal>(componentFactory);
-    this.title = modal.data.title;
-    componentRef.instance.data = modal.data;
+    const componentRef = viewContainerRef.createComponent<Component>(componentFactory);
+    this.title = title;
 
     const modalInDom: HTMLElement = document.querySelector(`.ix-${this.id}`);
     const backgroundInDom: HTMLElement = document.querySelector(`.ix-${this.id}-background`);
@@ -78,5 +76,6 @@ export class IxModalComponent implements OnInit, OnDestroy {
     modalInDom.classList.add('open');
     backgroundInDom.classList.add('open');
     document.body.classList.add('ix-modal-open');
+    return componentRef.instance;
   }
 }

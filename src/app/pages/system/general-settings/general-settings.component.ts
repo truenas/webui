@@ -28,6 +28,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { GuiFormComponent } from './gui-form/gui-form.component';
 
 @UntilDestroy()
@@ -234,7 +235,7 @@ export class GeneralSettingsComponent implements OnInit {
         addComponent = NtpServerFormComponent;
         break;
       default:
-        this.ixModalService.open({ component: LocalizationForm2Component, data: { title: 'Localization Settings' } });
+        this.ixModalService.open(LocalizationForm2Component, T('Localization Settings'));
     }
     this.sysGeneralService.sendConfigData(this.configData);
     if (addComponent) {

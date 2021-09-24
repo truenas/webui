@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Component, Injectable, Type } from '@angular/core';
 import { Subject } from 'rxjs';
-import { IxModal } from 'app/pages/common/ix/components/ix-modal/ix-modal.class';
 import { IxModalComponent } from 'app/pages/common/ix/components/ix-modal/ix-modal.component';
 
 @Injectable()
@@ -14,8 +13,8 @@ export class IxModalService {
     this.modalComponent = modal;
   }
 
-  open(modal: IxModal): void {
-    this.modalComponent.openModal(modal);
+  open<T>(modal: Type<T>, title: string): Component {
+    return this.modalComponent.openModal(modal, title);
   }
 
   close(error?: Error, response?: any): void {

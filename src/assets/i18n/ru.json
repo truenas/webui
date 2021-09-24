@@ -517,6 +517,7 @@
   "List of files and directories to exclude from sync.<br>  Separate entries by pressing <code>Enter</code>. See  <a href=\"https://rclone.org/filtering/\" target=\"_blank\">rclone filtering</a>  for more details about the <code>--exclude</code> option.": "",
   "Loading": "",
   "Loading...": "",
+  "Localization Settings": "",
   "Lock Dataset {datasetName}": "",
   "Lock Dataset {datasetName}?": "",
   "Locking dataset {datasetName}": "",
