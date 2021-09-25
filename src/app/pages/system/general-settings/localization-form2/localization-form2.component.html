@@ -36,10 +36,8 @@
           [formControlName]="timeFormat.fcName"
         ></ix-select>
       </ix-fieldset>
-      <mat-divider class="divider" inset></mat-divider>
       <div class="form-actions">
         <button mat-button type="submit" [disabled]="formGroup.invalid || formIsLoading" color="primary">Save</button>
-        <button mat-button type="button" [disabled]="formIsLoading" (click)="cancel()">Cancel</button>
       </div>
     </form>
     <mat-progress-bar *ngIf="formIsLoading" mode="indeterminate"></mat-progress-bar>
