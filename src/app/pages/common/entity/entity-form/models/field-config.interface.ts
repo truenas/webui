@@ -127,7 +127,7 @@ export interface FormExplorerConfig<P = any> extends BaseFieldConfig<P> {
 }
 
 export interface FormInputConfig<P = any> extends BaseFieldConfig<P> {
-  blurEvent?: (parent: P) => void;
+  blurEvent?: () => void;
   blurStatus?: boolean;
   fileType?: string;
   hideButton?: boolean;
@@ -234,7 +234,7 @@ export interface FormTaskConfig<P = any> extends BaseFieldConfig<P> {
 }
 
 export interface FormTextareaConfig<P = any> extends BaseFieldConfig<P> {
-  blurEvent?: (parent: P) => void;
+  blurEvent?: () => void;
   blurStatus?: boolean;
   filereader?: boolean;
   fileType: string;
