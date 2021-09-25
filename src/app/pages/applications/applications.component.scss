@@ -45,15 +45,15 @@ mat-tab-group {
         }
       }
 
+      .badge-official {
+        background-color: var(--primary) !important;
+      }
+
       .badge-area {
         background-color: var(--yellow);
         color: rgba($color: #000, $alpha: 1);
         margin: 0 16px 16px;
         text-align: center;
-
-        .partner-badge {
-          background-color: var(--yellow);
-        }
 
         .train-badge {
           background-color: #00000052;

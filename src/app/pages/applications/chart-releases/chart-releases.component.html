@@ -5,14 +5,22 @@
         <div class="logo">
           <img [src]="item.chart_metadata.icon" [src-fallback]="imagePlaceholder"/>
         </div>
-        <div class="badge-area">
-          <div class="partner-badge capitalized-text">
-            {{ item.catalog }}
+          <div class="badge-area badge-official" *ngIf="item.catalog == 'OFFICIAL'">
+            <div class="capitalized-text" >
+             {{ item.catalog }}
+            </div>
+            <div class="train-badge capitalized-text">
+              {{ item.catalog_train }}
+            </div>
           </div>
-          <div class="train-badge capitalized-text">
-            {{ item.catalog_train }}
+          <div class="badge-area" *ngIf="item.catalog != 'OFFICIAL'">
+            <div class="capitalized-text">
+              {{ item.catalog }}
+            </div>
+            <div class="train-badge capitalized-text">
+              {{ item.catalog_train }}
+            </div>
           </div>
-        </div>
         <mat-checkbox color="primary" class="bulk-checkbox" [(ngModel)]="item.selected" (change)="onChangeCheck()"></mat-checkbox>
       </div>
       <div class="content-box"  (click)="showChartEvents(item.name)">
