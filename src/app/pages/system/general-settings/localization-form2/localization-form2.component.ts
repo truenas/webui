@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
@@ -99,7 +98,6 @@ export class LocalizationForm2Component implements OnInit {
     protected ws: WebSocketService,
     protected langService: LanguageService,
     private modalService: IxModalService,
-    private router: Router,
   ) {
     this.sysGeneralService.getGeneralConfig$
       .pipe(untilDestroyed(this)).subscribe((res) => {
