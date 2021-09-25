@@ -53,7 +53,12 @@ import {
   ChartReleaseQueryParams,
 } from 'app/interfaces/chart-release.interface';
 import { Choices } from 'app/interfaces/choices.interface';
-import { CloudSyncListDirectoryParams, CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
+import {
+  CloudSyncDirectoryListing,
+  CloudSyncListDirectoryParams,
+  CloudSyncTask,
+  CloudSyncTaskUpdate,
+} from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider, CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
@@ -66,7 +71,7 @@ import {
   EligibleManualSnapshotsCount,
   TargetUnmatchedSnapshotsParams,
 } from 'app/interfaces/count-manual-snapshots.interface';
-import { Cronjob } from 'app/interfaces/cronjob.interface';
+import { Cronjob, CronjobUpdate } from 'app/interfaces/cronjob.interface';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
 import {
   DatasetEncryptedRootKeys,
@@ -95,24 +100,33 @@ import {
   CreateGroup, DeleteGroupParams, Group, UpdateGroup,
 } from 'app/interfaces/group.interface';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
-import { Idmap } from 'app/interfaces/idmap.interface';
+import { Idmap, IdmapUpdate } from 'app/interfaces/idmap.interface';
 import {
   CreateInitShutdownScript,
   InitShutdownScript,
   UpdateInitShutdownScriptParams,
 } from 'app/interfaces/init-shutdown-script.interface';
 import { Ipmi, IpmiIdentify, IpmiUpdate } from 'app/interfaces/ipmi.interface';
-import { IscsiGlobalConfig, IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import {
-  IscsiAuthAccess, IscsiExtent,
-  IscsiInitiatorGroup,
-  IscsiPortal,
-  IscsiTarget, IscsiTargetExtent,
+  IscsiGlobalConfig,
+  IscsiGlobalConfigUpdate,
+  IscsiGlobalSession,
+} from 'app/interfaces/iscsi-global-config.interface';
+import {
+  IscsiAuthAccess, IscsiAuthAccessUpdate, IscsiExtent,
+  IscsiInitiatorGroup, IscsiInitiatorGroupUpdate,
+  IscsiPortal, IscsiPortalUpdate,
+  IscsiTarget, IscsiTargetExtent, IscsiTargetExtentUpdate, IscsiTargetUpdate,
 } from 'app/interfaces/iscsi.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { KerberosConfig, KerberosKeytab, KerberosKeytabUpdate } from 'app/interfaces/kerberos-config.interface';
+import {
+  KerberosConfig,
+  KerberosConfigUpdate,
+  KerberosKeytab,
+  KerberosKeytabUpdate,
+} from 'app/interfaces/kerberos-config.interface';
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
-import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { KeychainCredential, KeychainSshCredentials, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
@@ -138,7 +152,9 @@ import { ImportDiskParams, PoolFindResult, PoolImportParams } from 'app/interfac
 import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { CreatePoolScrub, PoolScrub, PoolScrubParams } from 'app/interfaces/pool-scrub.interface';
 import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
-import { CreatePool, Pool } from 'app/interfaces/pool.interface';
+import {
+  CreatePool, Pool, PoolAttachParams, PoolReplaceParams,
+} from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
   ReplicationTask,
@@ -152,7 +168,7 @@ import {
 import { ResilverConfig, ResilverConfigUpdate } from 'app/interfaces/resilver-config.interface';
 import { RsyncConfig, RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
 import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
-import { RsyncTask } from 'app/interfaces/rsync-task.interface';
+import { RsyncTask, RsyncTaskUpdate } from 'app/interfaces/rsync-task.interface';
 import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
 import { Sensor } from 'app/interfaces/sensor.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -160,13 +176,17 @@ import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import {
   SmartManualTestParams, SmartConfig, SmartConfigUpdate, SmartTest, SmartTestResults, ManualSmartTest, SmartTestUpdate,
 } from 'app/interfaces/smart-test.interface';
-import { SmbConfig } from 'app/interfaces/smb-config.interface';
+import { SmbConfig, SmbConfigUpdate } from 'app/interfaces/smb-config.interface';
 import {
-  SmbPresets, SmbShare, SmbSharesec, SmbShareUpdate,
+  SmbPresets, SmbShare, SmbSharesec, SmbSharesecAce, SmbShareUpdate,
 } from 'app/interfaces/smb-share.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
 import { SshConfig, SshConfigUpdate } from 'app/interfaces/ssh-config.interface';
-import { RemoteSshScanParams, SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
+import {
+  RemoteSshScanParams,
+  SshConnectionSetup,
+  SshSemiAutomaticSetup,
+} from 'app/interfaces/ssh-connection-setup.interface';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import {
   Disk, DiskQueryOptions, DiskUpdate, DiskWipeParams, UnusedDisk,
@@ -194,7 +214,7 @@ import {
 } from 'app/interfaces/true-command-config.interface';
 import { Tunable, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { TwoFactorConfig, TwoFactorConfigUpdate } from 'app/interfaces/two-factor-config.interface';
-import { UpsConfig } from 'app/interfaces/ups-config.interface';
+import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
 import { DeleteUserParams, User, UserUpdate } from 'app/interfaces/user.interface';
 import {
   VirtualizationDetails,
@@ -203,7 +223,11 @@ import {
   VmStopParams,
 } from 'app/interfaces/virtual-machine.interface';
 import { VmDevice, VmDisplayDevice } from 'app/interfaces/vm-device.interface';
-import { MatchDatastoresWithDatasets, MatchDatastoresWithDatasetsParams } from 'app/interfaces/vmware.interface';
+import {
+  MatchDatastoresWithDatasets,
+  MatchDatastoresWithDatasetsParams,
+  VmwareSnapshot, VmwareSnapshotUpdate,
+} from 'app/interfaces/vmware.interface';
 import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
 import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
 import { CloneZfsSnapshot, ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
@@ -302,7 +326,7 @@ export type ApiDirectory = {
   'certificate.extended_key_usage_choices': { params: void; response: ExtendedKeyUsageChoices };
   'certificate.profiles': { params: void; response: CertificateProfiles };
   'certificate.acme_server_choices': { params: void; response: Choices };
-  'certificate.get_domain_names': { params: any; response: any };
+  'certificate.get_domain_names': { params: [number]; response: string[] };
 
   // Certificate Authority
   'certificateauthority.create': { params: [CertificateAuthorityUpdate]; response: CertificateAuthority };
@@ -330,8 +354,8 @@ export type ApiDirectory = {
   'cronjob.run': { params: [id: number]; response: void };
   'cronjob.query': { params: QueryParams<Cronjob>; response: Cronjob[] };
   'cronjob.delete': { params: [id: number]; response: boolean };
-  'cronjob.create': { params: any; response: any };
-  'cronjob.update': { params: any; response: any };
+  'cronjob.create': { params: [CronjobUpdate]; response: Cronjob };
+  'cronjob.update': { params: [id: number, update: CronjobUpdate]; response: Cronjob };
 
   // Core
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
@@ -353,9 +377,9 @@ export type ApiDirectory = {
   'cloudsync.credentials.verify': { params: any; response: any };
   'cloudsync.onedrive_list_drives': { params: any; response: any };
   'cloudsync.list_buckets': { params: [id: number]; response: any };
-  'cloudsync.list_directory': { params: [CloudSyncListDirectoryParams]; response: any };
-  'cloudsync.update': { params: any; response: any };
-  'cloudsync.create': { params: any; response: any };
+  'cloudsync.list_directory': { params: [CloudSyncListDirectoryParams]; response: CloudSyncDirectoryListing[] };
+  'cloudsync.update': { params: [id: number, task: CloudSyncTaskUpdate]; response: CloudSyncTask };
+  'cloudsync.create': { params: [CloudSyncTaskUpdate]; response: CloudSyncTask };
   'cloudsync.sync': { params: [id: number, params?: { dry_run: boolean }]; response: number };
   'cloudsync.abort': { params: [id: number]; response: boolean };
   'cloudsync.restore': { params: CloudsyncRestoreParams; response: void };
@@ -421,7 +445,7 @@ export type ApiDirectory = {
   'failover.sync_from_peer': { params: void; response: void };
   'failover.status': { params: void; response: FailoverStatus };
   'failover.update': { params: [FailoverUpdate]; response: FailoverConfig };
-  'failover.force_master': { params: void; response: any };
+  'failover.force_master': { params: void; response: boolean };
   'failover.call_remote': { params: any; response: any };
   'failover.get_ips': { params: void; response: string[] };
   'failover.node': { params: void; response: string };
@@ -446,7 +470,10 @@ export type ApiDirectory = {
   'keychaincredential.generate_ssh_key_pair': { params: void; response: SshKeyPair };
   'keychaincredential.remote_ssh_host_key_scan': { params: [RemoteSshScanParams]; response: string };
   'keychaincredential.delete': { params: [id: number]; response: void };
-  'keychaincredential.remote_ssh_semiautomatic_setup': { params: any; response: any };
+  'keychaincredential.remote_ssh_semiautomatic_setup': {
+    params: [SshSemiAutomaticSetup];
+    response: KeychainSshCredentials;
+  };
   'keychaincredential.setup_ssh_connection': { params: [SshConnectionSetup]; response: any };
 
   // Kubernetes
@@ -465,8 +492,8 @@ export type ApiDirectory = {
   // idmap
   'idmap.backend_options': { params: void; response: IdmapBackendOptions };
   'idmap.query': { params: QueryParams<Idmap>; response: Idmap[] };
-  'idmap.create': { params: any; response: any };
-  'idmap.update': { params: any; response: any };
+  'idmap.create': { params: [IdmapUpdate]; response: Idmap };
+  'idmap.update': { params: [id: number, update: IdmapUpdate]; response: Idmap };
   'idmap.delete': { params: [id: number]; response: boolean };
   'idmap.clear_idmap_cache': { params: void; response: void };
 
@@ -502,22 +529,25 @@ export type ApiDirectory = {
   'iscsi.auth.delete': { params: [id: number]; response: boolean };
   'iscsi.global.sessions': { params: QueryParams<IscsiGlobalSession>; response: IscsiGlobalSession[] };
   'iscsi.global.config': { params: void; response: IscsiGlobalConfig };
-  'iscsi.global.update': { params: any; response: any };
-  'iscsi.targetextent.create': { params: any; response: any };
+  'iscsi.global.update': { params: [IscsiGlobalConfigUpdate]; response: IscsiGlobalConfig };
+  'iscsi.targetextent.create': { params: [IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
   'iscsi.targetextent.query': { params: QueryParams<IscsiTargetExtent>; response: IscsiTargetExtent[] };
-  'iscsi.targetextent.update': { params: any; response: any };
+  'iscsi.targetextent.update': { params: [id: number, extent: IscsiTargetExtentUpdate]; response: IscsiTargetExtent };
   'iscsi.targetextent.delete': { params: [id: number, force?: boolean]; response: boolean };
-  'iscsi.auth.update': { params: any; response: any };
-  'iscsi.auth.create': { params: any; response: any };
-  'iscsi.initiator.create': { params: any; response: any };
-  'iscsi.initiator.update': { params: any; response: any };
-  'iscsi.portal.create': { params: any; response: any };
-  'iscsi.portal.update': { params: any; response: any };
+  'iscsi.auth.update': { params: [id: number, auth: IscsiAuthAccessUpdate]; response: IscsiAuthAccess };
+  'iscsi.auth.create': { params: [IscsiAuthAccessUpdate]; response: IscsiAuthAccess };
+  'iscsi.initiator.create': { params: [IscsiInitiatorGroupUpdate]; response: IscsiInitiatorGroup };
+  'iscsi.initiator.update': {
+    params: [id: number, initiator: IscsiInitiatorGroupUpdate];
+    response: IscsiInitiatorGroup;
+  };
+  'iscsi.portal.create': { params: [IscsiPortalUpdate]; response: IscsiPortal };
+  'iscsi.portal.update': { params: [id: number, target: IscsiPortalUpdate]; response: IscsiPortal };
   'iscsi.portal.listen_ip_choices': { params: void; response: Choices };
   'iscsi.portal.query': { params: QueryParams<IscsiPortal>; response: IscsiPortal[] };
   'iscsi.portal.delete': { params: [number]; response: boolean };
-  'iscsi.target.update': { params: any; response: any };
-  'iscsi.target.create': { params: any; response: any };
+  'iscsi.target.update': { params: [id: number, target: IscsiTargetUpdate]; response: IscsiTarget };
+  'iscsi.target.create': { params: [IscsiTargetUpdate]; response: IscsiTarget };
   'iscsi.target.delete': { params: [id: number, force?: boolean]; response: boolean };
 
   // IPMI
@@ -547,7 +577,7 @@ export type ApiDirectory = {
   'kerberos.realm.delete': { params: [id: number]; response: boolean };
   'kerberos.keytab.has_nfs_principal': { params: void; response: boolean };
   'kerberos.config': { params: void; response: KerberosConfig };
-  'kerberos.update': { params: any; response: any };
+  'kerberos.update': { params: [KerberosConfigUpdate]; response: KerberosConfig };
   'kerberos.keytab.kerberos_principal_choices': { params: void; response: string[] };
   'kerberos.keytab.create': { params: [KerberosKeytabUpdate]; response: KerberosKeytab };
   'kerberos.keytab.update': { params: [id: number, update: KerberosKeytabUpdate]; response: KerberosKeytab };
@@ -594,7 +624,7 @@ export type ApiDirectory = {
   'openvpn.server.config': { params: void; response: OpenvpnServerConfig };
 
   // Pool
-  'pool.attach': { params: any; response: any };
+  'pool.attach': { params: [id: number, params: PoolAttachParams]; response: any };
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
   'pool.create': { params: [CreatePool]; response: Pool };
   'pool.dataset.attachments': { params: [datasetId: string]; response: PoolAttachment[] };
@@ -643,7 +673,7 @@ export type ApiDirectory = {
   'pool.recoverykey_rm': { params: any; response: any };
   'pool.rekey': { params: any; response: any };
   'pool.remove': { params: PoolRemoveParams; response: any };
-  'pool.replace': { params: any; response: any };
+  'pool.replace': { params: [id: number, params: PoolReplaceParams]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
   'pool.scrub': { params: PoolScrubParams; response: void };
@@ -678,8 +708,8 @@ export type ApiDirectory = {
   // Rsync
   'rsynctask.run': { params: [id: number]; response: any };
   'rsynctask.query': { params: QueryParams<RsyncTask>; response: RsyncTask[] };
-  'rsynctask.create': { params: any; response: any };
-  'rsynctask.update': { params: any; response: any };
+  'rsynctask.create': { params: [RsyncTaskUpdate]; response: RsyncTask };
+  'rsynctask.update': { params: [id: number, params: RsyncTaskUpdate]; response: RsyncTask };
   'rsynctask.delete': { params: [id: number]; response: boolean };
 
   // Rsyncd
@@ -708,10 +738,10 @@ export type ApiDirectory = {
   'smb.bindip_choices': { params: void; response: Choices };
   'smb.unixcharset_choices': { params: void; response: Choices };
   'smb.get_smb_ha_mode': { params: any; response: any };
-  'smb.update': { params: any; response: any };
+  'smb.update': { params: [SmbConfigUpdate]; response: SmbConfig };
   'smb.config': { params: void; response: SmbConfig };
   'smb.sharesec.query': { params: QueryParams<SmbSharesec>; response: SmbSharesec[] };
-  'smb.sharesec.update': { params: any; response: any };
+  'smb.sharesec.update': { params: [id: number, update: { share_acl: SmbSharesecAce[] }]; response: any };
 
   // SSH
   'ssh.update': { params: [SshConfigUpdate]; response: SshConfig };
@@ -855,9 +885,9 @@ export type ApiDirectory = {
 
   // Vmware
   'vmware.dataset_has_vms': { params: DatasetHasVmsQueryParams; response: boolean };
-  'vmware.query': { params: any; response: any };
-  'vmware.create': { params: any; response: any };
-  'vmware.update': { params: any; response: any };
+  'vmware.query': { params: QueryParams<VmwareSnapshot>; response: VmwareSnapshot[] };
+  'vmware.create': { params: [VmwareSnapshotUpdate]; response: VmwareSnapshot };
+  'vmware.update': { params: [id: number, update: VmwareSnapshotUpdate]; response: VmwareSnapshot };
   'vmware.delete': { params: [id: number]; response: boolean };
   'vmware.match_datastores_with_datasets': {
     params: [MatchDatastoresWithDatasetsParams];
@@ -872,12 +902,12 @@ export type ApiDirectory = {
   'user.delete': { params: DeleteUserParams; response: number };
   'user.get_user_obj': { params: [{ username?: string; uid?: number }]; response: DsUncachedUser };
   'user.shell_choices': { params: [userId?: number]; response: Choices };
-  'user.set_attribute': { params: any; response: any };
+  'user.set_attribute': { params: [id: number, key: string, value: unknown]; response: boolean };
   'user.get_next_uid': { params: void; response: number };
   'user.has_root_password': { params: void; response: boolean };
 
   // UPS
-  'ups.update': { params: any; response: any };
+  'ups.update': { params: [UpsConfigUpdate]; response: UpsConfig };
   'ups.config': { params: void; response: UpsConfig };
   'ups.driver_choices': { params: void; response: Choices };
   'ups.port_choices': { params: void; response: string[] };
@@ -898,7 +928,6 @@ export type ApiDirectory = {
   'zfs.snapshot.delete': { params: [id: string, params?: { defer?: boolean; recursive?: boolean }]; response: boolean };
   'zfs.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };
   'zfs.snapshot.rollback': { params: ZfsRollbackParams; response: void };
-  'zfs.pool.scan': { params: any; response: any };
 
   // staticroute
   'staticroute.query': { params: QueryParams<StaticRoute>; response: StaticRoute[] };

@@ -8,7 +8,7 @@ import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormChipConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
@@ -49,7 +49,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
           placeholder: helptext.groups.data_quota.placeholder,
           tooltip: `${helptext.groups.data_quota.tooltip} bytes.`,
           blurStatus: true,
-          blurEvent: this.dataQuotaBlur,
+          blurEvent: () => this.dataQuotaBlur(),
           parent: this,
         },
         {
@@ -188,15 +188,11 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
     });
   }
 
-  dataQuotaBlur(parent: this): void {
-    if (parent.entityForm && parent.storageService.humanReadable) {
-      parent.transformValue(parent, 'data_quota');
+  dataQuotaBlur(): void {
+    if (this.entityForm && this.storageService.humanReadable) {
+      this.entityForm.formGroup.controls['data_quota'].setValue(this.storageService.humanReadable || 0);
+      this.storageService.humanReadable = '';
     }
-  }
-
-  transformValue(parent: this, fieldname: string): void {
-    parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
-    parent.storageService.humanReadable = '';
   }
 
   updateSearchOptions(value = '', parent: this): void {

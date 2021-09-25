@@ -62,3 +62,17 @@ export interface CreatePool {
   checksum?: string;
   deduplication?: string;
 }
+
+export interface PoolAttachParams {
+  target_vdev?: string;
+  new_disk?: string;
+  passphrase?: string;
+}
+
+export interface PoolReplaceParams {
+  label: string;
+  disk: string;
+  force?: boolean;
+  passphrase?: string;
+  preserve_settings?: string;
+}

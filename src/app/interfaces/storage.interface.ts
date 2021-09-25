@@ -102,6 +102,8 @@ export interface DiskUpdate {
   difference?: number;
   informational?: number;
   enclosure?: EnclosureSlot;
+  number: number;
+  pool: string;
 }
 
 export interface UnusedDisk extends Disk {

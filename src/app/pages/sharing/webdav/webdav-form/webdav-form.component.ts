@@ -7,7 +7,7 @@ import { filter } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptext_sharing_webdav, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';

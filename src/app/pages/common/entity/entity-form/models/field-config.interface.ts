@@ -23,7 +23,7 @@ export interface InputUnitConfig {
 
 export interface BaseFieldConfig<P = any> {
   asyncValidation?: AsyncValidatorFn | AsyncValidatorFn[];
-  blurEvent?: (parent: P) => void;
+  blurEvent?: () => void;
   blurStatus?: boolean;
   class?: string;
   disabled?: boolean;
@@ -37,6 +37,9 @@ export interface BaseFieldConfig<P = any> {
   isHidden?: boolean;
   isLoading?: boolean;
   name: string;
+  /**
+   * @deprecated Prefer arrow function instead.
+   */
   parent?: P;
   placeholder?: string;
   readonly?: boolean;

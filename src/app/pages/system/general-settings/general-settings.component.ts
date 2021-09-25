@@ -15,7 +15,7 @@ import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-j
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { FieldConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
@@ -86,7 +86,7 @@ export class GeneralSettingsComponent implements OnInit {
     fieldConfig: this.uploadConfigFieldConf,
     method_ws: 'config.upload',
     saveButtonText: helptext.upload_config_form.button_text,
-    customSubmit: this.uploadConfigSubmit,
+    customSubmit: () => this.uploadConfigSubmit(),
     message: helptext.upload_config_form.message,
   };
 
@@ -325,23 +325,21 @@ export class GeneralSettingsComponent implements OnInit {
     }
   }
 
-  uploadConfigSubmit(entityDialog: EntityDialogComponent<GeneralSettingsComponent>): void {
-    const config = entityDialog.conf.fieldConfig[0] as FormUploadConfig;
-    const parent: GeneralSettingsComponent = config.parent;
+  uploadConfigSubmit(): void {
     const formData: FormData = new FormData();
 
-    const dialogRef = parent.mdDialog.open(EntityJobComponent,
+    const dialogRef = this.mdDialog.open(EntityJobComponent,
       { data: { title: helptext.config_upload.title, closeOnClickOutside: false } });
     dialogRef.componentInstance.setDescription(helptext.config_upload.message);
     formData.append('data', JSON.stringify({
       method: 'config.upload',
       params: [],
     }));
-    formData.append('file', parent.subs.file);
-    dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
+    formData.append('file', this.subs.file);
+    dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
-      parent.router.navigate(['/others/reboot']);
+      this.router.navigate(['/others/reboot']);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);

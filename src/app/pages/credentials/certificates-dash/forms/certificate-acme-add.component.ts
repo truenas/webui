@@ -9,7 +9,7 @@ import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormListConfig, FormParagraphConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -36,7 +36,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   formArray: FormArray;
   commonName: string;
   private getRow = new Subscription();
-  private rowNum: any;
+  private rowNum: number;
   private dns_map: FormSelectConfig;
   title = helptext_system_certificates.list.action_create_acme_certificate;
   protected isOneColumnForm = true;
@@ -137,7 +137,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     protected entityFormService: EntityFormService, protected dialogService: DialogService,
     private modalService: ModalService,
   ) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.rowNum = rowId;
       this.queryCallOption = [['id', '=', rowId]];
       this.getRow.unsubscribe();

@@ -99,7 +99,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
                 value: this.storageService.convertBytestoHumanReadable(res[0].quota, 0, null, true),
                 id: 'data-quota_input',
                 blurStatus: true,
-                blurEvent: this.blurEvent,
+                blurEvent: () => this.blurEvent(),
                 parent: this,
                 validation: [
                   (control: FormControl): ValidationErrors => {
@@ -198,8 +198,8 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
     });
   }
 
-  blurEvent(parent: this): void {
-    (<HTMLInputElement>document.getElementById('data-quota_input')).value = parent.storageService.humanReadable;
+  blurEvent(): void {
+    (<HTMLInputElement>document.getElementById('data-quota_input')).value = this.storageService.humanReadable;
   }
 
   toggleDisplay(): void {

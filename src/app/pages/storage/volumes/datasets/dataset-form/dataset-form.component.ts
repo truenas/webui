@@ -19,7 +19,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -171,7 +171,7 @@ export class DatasetFormComponent implements FormConfiguration {
           tooltip: helptext.dataset_form_refquota_tooltip,
           class: 'inline',
           width: '100%',
-          blurEvent: this.blurEventRefQuota,
+          blurEvent: () => this.blurEventRefQuota(),
           blurStatus: true,
           parent: this,
           validation: [
@@ -269,7 +269,7 @@ export class DatasetFormComponent implements FormConfiguration {
           tooltip: helptext.dataset_form_refreservation_tooltip,
           class: 'inline',
           width: '100%',
-          blurEvent: this.blurEventRefReservation,
+          blurEvent: () => this.blurEventRefReservation(),
           blurStatus: true,
           parent: this,
           validation: [
@@ -306,7 +306,7 @@ export class DatasetFormComponent implements FormConfiguration {
           tooltip: helptext.dataset_form_quota_tooltip,
           class: 'inline',
           width: '100%',
-          blurEvent: this.blurEventQuota,
+          blurEvent: () => this.blurEventQuota(),
           blurStatus: true,
           parent: this,
           validation: [
@@ -404,7 +404,7 @@ export class DatasetFormComponent implements FormConfiguration {
           tooltip: helptext.dataset_form_reservation_tooltip,
           class: 'inline',
           width: '100%',
-          blurEvent: this.blurEventReservation,
+          blurEvent: () => this.blurEventReservation(),
           blurStatus: true,
           parent: this,
           validation: [
@@ -679,7 +679,7 @@ export class DatasetFormComponent implements FormConfiguration {
           name: 'special_small_block_size',
           placeholder: helptext.dataset_form_special_small_blocks_placeholder,
           tooltip: helptext.dataset_form_special_small_blocks_tooltip,
-          blurEvent: this.blurSpecialSmallBlocks,
+          blurEvent: () => this.blurSpecialSmallBlocks(),
           blurStatus: true,
           parent: this,
           validation: [
@@ -874,33 +874,33 @@ export class DatasetFormComponent implements FormConfiguration {
     return data;
   }
 
-  blurEventQuota(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['quota'].setValue(parent.humanReadable['quota']);
+  blurEventQuota(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['quota'].setValue(this.humanReadable['quota']);
     }
   }
 
-  blurEventRefQuota(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['refquota'].setValue(parent.humanReadable['refquota']);
+  blurEventRefQuota(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['refquota'].setValue(this.humanReadable['refquota']);
     }
   }
 
-  blurEventReservation(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['reservation'].setValue(parent.humanReadable['reservation']);
+  blurEventReservation(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['reservation'].setValue(this.humanReadable['reservation']);
     }
   }
 
-  blurEventRefReservation(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['refreservation'].setValue(parent.humanReadable['refreservation']);
+  blurEventRefReservation(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['refreservation'].setValue(this.humanReadable['refreservation']);
     }
   }
 
-  blurSpecialSmallBlocks(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['special_small_block_size'].setValue(parent.humanReadable['special_small_block_size']);
+  blurSpecialSmallBlocks(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['special_small_block_size'].setValue(this.humanReadable['special_small_block_size']);
     }
   }
 

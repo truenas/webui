@@ -47,8 +47,9 @@ export class FailoverComponent implements OnInit {
     this.product_type = window.localStorage.getItem('product_type') as ProductType;
 
     this.dialog.closeAll();
+    // TODO: Check if next and error should trade places
     this.ws.call('failover.force_master').pipe(untilDestroyed(this)).subscribe(
-      (res) => { // error on reboot
+      (res: any) => { // error on reboot
         this.dialogService.errorReport(res.error, res.reason, res.trace.formatted)
           .pipe(untilDestroyed(this))
           .subscribe(() => {

@@ -150,7 +150,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           placeholder: helptext.zvol_volsize_placeholder,
           tooltip: helptext.zvol_volsize_tooltip,
           required: true,
-          blurEvent: this.blurVolsize,
+          blurEvent: () => this.blurVolsize(),
           blurStatus: true,
           parent: this,
           validation: [
@@ -435,7 +435,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   }
 
   afterInit(entityWizard: EntityWizardComponent): void {
-    const zvolEntityForm = (< FormGroup > this.entityWizard.formArray.get([1]));
+    const zvolEntityForm = (<FormGroup> this.entityWizard.formArray.get([1]));
     (<FormGroup> entityWizard.formArray.get([0])).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: string) => {
       if (pool.includes('mnt')) {
         const split = pool.split('/');
@@ -492,9 +492,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
     });
   }
 
-  blurVolsize(parent: any): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
+  blurVolsize(): void {
+    const zvolEntityForm = (<FormGroup> this.entityWizard.formArray.get([1]));
+    if (zvolEntityForm) {
+      zvolEntityForm.controls['volsize'].setValue(this.storageService.humanReadable);
     }
   }
 

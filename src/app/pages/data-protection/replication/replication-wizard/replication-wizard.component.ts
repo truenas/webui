@@ -239,8 +239,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               value: this.defaultNamingSchema,
               parent: this,
               blurStatus: true,
-              blurEvent: (parent: this) => {
-                parent.getSnapshots();
+              blurEvent: () => {
+                this.getSnapshots();
               },
             },
             {
@@ -250,8 +250,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.name_regex_tooltip,
               parent: this,
               isHidden: true,
-              blurEvent: (parent: this) => {
-                parent.getSnapshots();
+              blurEvent: () => {
+                this.getSnapshots();
               },
             },
           ],

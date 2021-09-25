@@ -9,7 +9,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/storage/import-disk/import-disk';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormRadioConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';

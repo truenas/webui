@@ -6,7 +6,8 @@ import * as _ from 'lodash';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { IscsiTargetUpdate } from 'app/interfaces/iscsi.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -234,7 +235,7 @@ export class TargetFormComponent implements FormConfiguration {
     this.title = entityForm.isNew ? T('Add ISCSI Target') : T('Edit ISCSI Target');
   }
 
-  customEditCall(value: any): void {
+  customEditCall(value: IscsiTargetUpdate): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
