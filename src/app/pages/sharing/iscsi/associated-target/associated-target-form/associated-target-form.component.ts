@@ -90,7 +90,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    this.target_control = _.find(this.fieldConfig, { name: 'target' });
+    this.target_control = _.find(this.fieldConfig, { name: 'target' }) as FormSelectConfig;
     this.target_control.options.push({ label: '----------', value: '' });
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       for (let i = 0; i < targets.length; i++) {
@@ -98,7 +98,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
       }
     });
 
-    this.extent_control = _.find(this.fieldConfig, { name: 'extent' });
+    this.extent_control = _.find(this.fieldConfig, { name: 'extent' }) as FormSelectConfig;
     this.extent_control.options.push({ label: '----------', value: '' });
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       for (let i = 0; i < extents.length; i++) {

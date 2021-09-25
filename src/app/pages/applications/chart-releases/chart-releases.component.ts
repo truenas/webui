@@ -519,14 +519,14 @@ export class ChartReleasesComponent implements OnInit {
         });
       } else {
         // Pods
-        const podsConfig: FormSelectConfig = this.choosePod.fieldConfig[0];
+        const podsConfig = this.choosePod.fieldConfig[0] as FormSelectConfig;
         podsConfig.value = this.podList[0];
         podsConfig.options = this.podList.map((item) => ({
           label: item,
           value: item,
         }));
         // Containers
-        const containerConfig: FormSelectConfig = this.choosePod.fieldConfig[1];
+        const containerConfig = this.choosePod.fieldConfig[1] as FormSelectConfig;
         containerConfig.value = this.podDetails[this.podList[0]][0];
         containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
           label: item,
@@ -558,14 +558,14 @@ export class ChartReleasesComponent implements OnInit {
         });
       } else {
         // Pods
-        const podsConfig: FormSelectConfig = this.choosePodForLogs.fieldConfig[0];
+        const podsConfig = this.choosePodForLogs.fieldConfig[0] as FormSelectConfig;
         podsConfig.value = this.podList[0];
         podsConfig.options = this.podList.map((item) => ({
           label: item,
           value: item,
         }));
         // Containers
-        const containerConfig: FormSelectConfig = this.choosePodForLogs.fieldConfig[1];
+        const containerConfig = this.choosePodForLogs.fieldConfig[1] as FormSelectConfig;
         containerConfig.value = this.podDetails[this.podList[0]][0];
         containerConfig.options = this.podDetails[this.podList[0]].map((item) => ({
           label: item,
@@ -596,7 +596,8 @@ export class ChartReleasesComponent implements OnInit {
   afterShellDialogInit(entityDialog: EntityDialogComponent<this>): void {
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const containers = this.podDetails[value];
-      const containerFC: FormSelectConfig = _.find(entityDialog.fieldConfig, { name: 'containers' });
+      const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
+
       containerFC.options = containers.map((item) => ({
         label: item,
         value: item,
@@ -608,7 +609,7 @@ export class ChartReleasesComponent implements OnInit {
   afterLogsDialogInit(entityDialog: EntityDialogComponent<this>): void {
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const containers = this.podDetails[value];
-      const containerFC: FormSelectConfig = _.find(entityDialog.fieldConfig, { name: 'containers' });
+      const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
       containerFC.options = containers.map((item) => ({
         label: item,
         value: item,

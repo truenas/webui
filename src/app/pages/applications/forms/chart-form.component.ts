@@ -90,7 +90,7 @@ export class ChartFormComponent implements FormConfiguration {
         if (fieldSet) {
           const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
 
-          const imageConfig: FormDictConfig = _.find(fieldConfigs, { name: 'image' });
+          const imageConfig = _.find(fieldConfigs, { name: 'image' }) as FormDictConfig;
           if (imageConfig) {
             const repositoryConfig = _.find(imageConfig.subFields, { name: 'repository' });
             if (repositoryConfig) {

@@ -544,14 +544,14 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const disk_field: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' });
+    const disk_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' }) as FormSelectConfig;
     // get device options
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
       for (const i in res) {
         disk_field.options.push({ label: res[i], value: i });
       }
     });
-    const target_field: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' });
+    const target_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' }) as FormSelectConfig;
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       for (const item of targets) {
         target_field.options.push({ label: item.name, value: item.id });
@@ -596,12 +596,12 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   step1Init(): void {
-    const authGroupField: FormSelectConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'discovery_authgroup' }); // select
-    const listenIpFieldConfig: FormListConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'listen' });
-    const listenIpField: FormSelectConfig = listenIpFieldConfig.templateListField[0]; // list
+    const authGroupField = _.find(this.wizardConfig[1].fieldConfig, { name: 'discovery_authgroup' }) as FormSelectConfig;
+    const listenIpFieldConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'listen' }) as FormListConfig;
+    const listenIpField = listenIpFieldConfig.templateListField[0] as FormSelectConfig; // list
 
     this.iscsiService.listPortals().pipe(untilDestroyed(this)).subscribe((portals) => {
-      const field: FormSelectConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' });
+      const field = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' }) as FormSelectConfig;
       for (const portal of portals) {
         const ips = portal.listen.map((ip) => ip.ip + ':' + ip.port);
         field.options.push({ label: portal.tag + ' (' + ips + ')', value: portal.id });
@@ -623,7 +623,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
       const listenListFields = listenIpFieldConfig.listFields;
       for (const listenField of listenListFields) {
-        const ipField: FormSelectConfig = _.find(listenField, { name: 'ip' });
+        const ipField = _.find(listenField, { name: 'ip' }) as FormSelectConfig;
         ipField.options = listenIpField.options;
       }
     });
@@ -662,7 +662,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
               this.summaryObj[name] = value;
               // get label value
               if (name == 'disk' || name == 'usefor' || name == 'portal' || name == 'target') {
-                const field: FormSelectConfig = _.find(this.wizardConfig[step].fieldConfig, { name });
+                const field = _.find(this.wizardConfig[step].fieldConfig, { name }) as FormSelectConfig;
                 if (field) {
                   this.summaryObj[name] = _.find(field.options, { value }).label;
                 }

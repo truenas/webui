@@ -238,7 +238,7 @@ export class LdapComponent implements FormConfiguration {
     this.entityForm = entityEdit;
 
     this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
-      this.ldap_kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
+      this.ldap_kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
       realms.forEach((realm) => {
         this.ldap_kerberos_realm.options.push(
           { label: realm.realm, value: realm.id },
@@ -247,7 +247,7 @@ export class LdapComponent implements FormConfiguration {
     });
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.ldap_kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
+      this.ldap_kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
       res.forEach((item) => {
         this.ldap_kerberos_principal.options.push(
           { label: item, value: item },
@@ -256,7 +256,7 @@ export class LdapComponent implements FormConfiguration {
     });
 
     this.ws.call('ldap.ssl_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      this.ldap_ssl = _.find(this.fieldConfig, { name: 'ssl' });
+      this.ldap_ssl = _.find(this.fieldConfig, { name: 'ssl' }) as FormSelectConfig;
       choices.forEach((item) => {
         this.ldap_ssl.options.push(
           { label: item, value: item },
@@ -265,7 +265,7 @@ export class LdapComponent implements FormConfiguration {
     });
 
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.ldapCertificate = _.find(this.fieldConfig, { name: 'certificate' });
+      this.ldapCertificate = _.find(this.fieldConfig, { name: 'certificate' }) as FormSelectConfig;
       res.forEach((item) => {
         this.ldapCertificate.options.push(
           { label: item.name, value: item.id },
@@ -279,7 +279,7 @@ export class LdapComponent implements FormConfiguration {
     });
 
     this.ws.call('ldap.schema_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.ldap_schema = _.find(this.fieldConfig, { name: 'schema' });
+      this.ldap_schema = _.find(this.fieldConfig, { name: 'schema' }) as FormSelectConfig;
       res.forEach(((item) => {
         this.ldap_schema.options.push(
           { label: item, value: item },

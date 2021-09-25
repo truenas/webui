@@ -649,7 +649,7 @@ export class CertificateAddComponent implements WizardConfiguration {
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
     this.systemGeneralService.getUnsignedCAs().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.signedby = this.getTarget('signedby');
+      this.signedby = this.getTarget('signedby') as FormSelectConfig;
       res.forEach((item) => {
         this.signedby.options.push(
           { label: item.name, value: item.id },
@@ -658,14 +658,14 @@ export class CertificateAddComponent implements WizardConfiguration {
     });
 
     this.ws.call('certificate.ec_curve_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      const ec_curves_field: FormSelectConfig = this.getTarget('ec_curve');
+      const ec_curves_field = this.getTarget('ec_curve') as FormSelectConfig;
       for (const key in res) {
         ec_curves_field.options.push({ label: res[key], value: key });
       }
     });
 
     this.systemGeneralService.getCertificateCountryChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.country = this.getTarget('country');
+      this.country = this.getTarget('country') as FormSelectConfig;
       for (const item in res) {
         this.country.options.push(
           { label: res[item], value: item },
@@ -674,7 +674,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     });
 
     this.ws.call('certificate.query').pipe(untilDestroyed(this)).subscribe((certificates) => {
-      this.csrlist = this.getTarget('csrlist');
+      this.csrlist = this.getTarget('csrlist') as FormSelectConfig;
       certificates.forEach((certificate) => {
         if (certificate.CSR !== null) {
           this.CSRList.push(certificate);
@@ -685,14 +685,14 @@ export class CertificateAddComponent implements WizardConfiguration {
       });
     });
 
-    this.usageField = this.getTarget('ExtendedKeyUsage-usages');
+    this.usageField = this.getTarget('ExtendedKeyUsage-usages') as FormSelectConfig;
     this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       Object.keys(choices).forEach((key) => {
         this.usageField.options.push({ label: choices[key], value: key });
       });
     });
 
-    const profilesField: FormSelectConfig = this.getTarget('profiles');
+    const profilesField = this.getTarget('profiles') as FormSelectConfig;
     this.ws.call('certificate.profiles').pipe(untilDestroyed(this)).subscribe((profiles) => {
       Object.keys(profiles).forEach((item) => {
         profilesField.options.push({ label: item, value: (profiles[item]) });
@@ -855,7 +855,7 @@ export class CertificateAddComponent implements WizardConfiguration {
 
     if (this.type && this.type === 'csr') {
       this.getField('create_type').setValue(helptext_system_certificates.add.csr_create_type.value);
-      const certType: FormSelectConfig = this.getTarget('create_type');
+      const certType = this.getTarget('create_type') as FormSelectConfig;
       certType.options = helptext_system_certificates.add.csr_create_type.options;
       certType.placeholder = helptext_system_certificates.add.csr_create_type.placeholder;
       certType.tooltip = helptext_system_certificates.add.csr_create_type.tooltip;

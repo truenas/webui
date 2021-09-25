@@ -389,8 +389,8 @@ export class UserFormComponent implements FormConfiguration {
     /* list groups */
     this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
       this.loader.callDone.emit(status);
-      this.group = this.fieldSets.config('group');
-      this.groups = this.fieldSets.config('groups');
+      this.group = this.fieldSets.config('group') as FormSelectConfig;
+      this.groups = this.fieldSets.config('groups') as FormSelectConfig;
       for (let i = 0; i < groups.length; i++) {
         this.group.options.push({ label: groups[i].group, value: groups[i].id });
         this.groups.options.push({ label: groups[i].group, value: groups[i].id });
@@ -457,7 +457,7 @@ export class UserFormComponent implements FormConfiguration {
       }
       this.userService.shellChoices(this.pk).then((choices) => {
         this.shells = choices;
-        this.shell = this.fieldSets.config('shell');
+        this.shell = this.fieldSets.config('shell') as FormSelectConfig;
         this.shell.options = this.shells;
 
         if (entityForm.isNew && Array.isArray(this.shells) && this.shells.length > 0) {

@@ -14,7 +14,12 @@ import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';
 import {
-  FieldConfig, UnitType, InputUnitConfig, FormArrayConfig, FormListConfig, FormDictConfig,
+  FieldConfig,
+  UnitType,
+  InputUnitConfig,
+  FormArrayConfig,
+  FormListConfig,
+  FormDictConfig,
 } from '../models/field-config.interface';
 
 @Injectable()
@@ -50,7 +55,10 @@ export class EntityFormService {
         if (formControl) {
           formGroup[controls[i].name] = formControl;
         }
-        controls[i].relation = Array.isArray(controls[i].relation) ? controls[i].relation : [];
+
+        if (controls[i]) {
+          controls[i].relation = Array.isArray(controls[i].relation) ? controls[i].relation : [];
+        }
       }
     }
 
@@ -79,7 +87,8 @@ export class EntityFormService {
       } else if (fieldConfig.type != 'label') {
         formControl = new FormControl(
           { value: fieldConfig.value, disabled: fieldConfig.disabled },
-          fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation, fieldConfig.asyncValidation,
+          fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation,
+          fieldConfig.asyncValidation,
         );
       }
     }

@@ -127,7 +127,7 @@ export class PodShellComponent implements TerminalConfiguration {
   afterShellDialogInit(entityDialog: EntityDialogComponent<PodShellComponent>): void {
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const containers = this.podDetails[value];
-      const containerFC: FormSelectConfig = _.find(entityDialog.fieldConfig, { name: 'containers' });
+      const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
       containerFC.options = containers.map((item) => ({
         label: item,
         value: item,

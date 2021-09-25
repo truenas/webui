@@ -520,7 +520,7 @@ export class SMBFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     const generalFieldsets = _.find(this.fieldSets, { class: 'basic' });
-    const purposeField: FormSelectConfig = _.find(generalFieldsets.config, { name: 'purpose' });
+    const purposeField = _.find(generalFieldsets.config, { name: 'purpose' }) as FormSelectConfig;
     this.ws.call('sharing.smb.presets').pipe(untilDestroyed(this)).subscribe(
       (presets) => {
         this.presets = presets;

@@ -65,7 +65,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
 
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
-      const gpusConf: FormSelectConfig = this.fieldSets.config('gpus');
+      const gpusConf = this.fieldSets.config('gpus') as FormSelectConfig;
       for (const item of gpus) {
         gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
       }
@@ -80,7 +80,7 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
     gpusFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((gpusValue: string[]) => {
       const finalIsolatedPciIds = [...gpusValue];
 
-      const gpusConf: FormSelectConfig = this.fieldSets.config('gpus');
+      const gpusConf = this.fieldSets.config('gpus') as FormSelectConfig;
       if (finalIsolatedPciIds.length >= gpusConf.options.length) {
         const prevSelectedGpus = [];
         for (const gpu of this.gpus) {

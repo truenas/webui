@@ -143,7 +143,7 @@ export class ServiceS3Component implements FormConfiguration {
       }
     });
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.certificate = _.find(this.fieldConfig, { name: 'certificate' });
+      this.certificate = _.find(this.fieldConfig, { name: 'certificate' }) as FormSelectConfig;
       if (res.length > 0) {
         res.forEach((item) => {
           this.certificate.options.push({ label: item.name, value: item.id });
@@ -164,7 +164,7 @@ export class ServiceS3Component implements FormConfiguration {
           this.validBindIps.push(ip.value);
         });
 
-        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'bindip' });
+        const config = _.find(this.fieldConfig, { name: 'bindip' }) as FormSelectConfig;
         config.options = choices;
       });
     entityForm.submitFunction = this.submitFunction;

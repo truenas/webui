@@ -124,7 +124,7 @@ export class DockerImagesComponent implements EntityTableConfig {
 
   onClickUpdateImage(row: ContainerImage): void {
     if (row.repo_tags.length > 0) {
-      const config: FormSelectConfig = this.chooseTag.fieldConfig[0];
+      const config = this.chooseTag.fieldConfig[0] as FormSelectConfig;
       config.options = row.repo_tags.map((item) => ({
         label: item,
         value: item,

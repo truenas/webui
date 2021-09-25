@@ -281,7 +281,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     const otherSet = _.find(this.fieldSets, { name: helptext.cifs_srv_fieldset_other });
     const otherColTwoSet = _.find(this.fieldSets, { name: 'otherColTwo' });
 
-    this.cifs_srv_unixcharset = otherSet.config.find((config) => config.name === 'unixcharset');
+    this.cifs_srv_unixcharset = otherSet.config.find((config) => config.name === 'unixcharset') as FormSelectConfig;
     this.ws.call('smb.unixcharset_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       const values = Object.values(res);
       for (let i = 0; i < values.length; i++) {
@@ -291,7 +291,7 @@ export class ServiceSMBComponent implements FormConfiguration {
 
     this.servicesService.getSmbBindIPChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.validBindIps = res;
-      this.cifs_srv_bindip = otherColTwoSet.config.find((config) => config.name === 'bindip');
+      this.cifs_srv_bindip = otherColTwoSet.config.find((config) => config.name === 'bindip') as FormSelectConfig;
       for (const key in res) {
         if (res.hasOwnProperty(key)) {
           this.cifs_srv_bindip.options.push({ label: res[key], value: res[key] });
@@ -300,7 +300,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     });
 
     this.ws.call('user.query').pipe(untilDestroyed(this)).subscribe((users) => {
-      this.cifs_srv_guest = otherColTwoSet.config.find((config) => config.name === 'guest');
+      this.cifs_srv_guest = otherColTwoSet.config.find((config) => config.name === 'guest') as FormSelectConfig;
       users.forEach((user) => {
         this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
       });

@@ -420,7 +420,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   ngOnInit(): void {
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.length > 0) {
-        const config: FormSelectConfig = this.fieldSets.config('ssltls_certificate');
+        const config = this.fieldSets.config('ssltls_certificate') as FormSelectConfig;
         config.options = res.map((cert) => ({ label: cert.name, value: cert.id }));
       }
     });

@@ -463,7 +463,7 @@ export class ZvolFormComponent implements FormConfiguration {
           this.entityForm.setDisabled('encryption', true, true);
           this.entityForm.setDisabled('inherit_encryption', true, true);
         } else {
-          const encryption_algorithm_fc: FormSelectConfig = _.find(this.fieldConfig, { name: 'algorithm' });
+          const encryption_algorithm_fc = _.find(this.fieldConfig, { name: 'algorithm' }) as FormSelectConfig;
           const encryption_algorithm_fg = this.entityForm.formGroup.controls['algorithm'];
           let parent_algorithm;
           if (this.encrypted_parent && pk_dataset[0].encryption_algorithm) {
@@ -596,7 +596,7 @@ export class ZvolFormComponent implements FormConfiguration {
 
       this.translate.get('Inherit').pipe(untilDestroyed(this)).subscribe((inheritTr) => {
         const readonly_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT' }];
-        const readonly: FormSelectConfig = _.find(this.fieldConfig, { name: 'readonly' });
+        const readonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
         readonly.options = readonly_inherit.concat(readonly.options);
         let readonly_value;
         if (this.isNew) {
@@ -609,11 +609,11 @@ export class ZvolFormComponent implements FormConfiguration {
         }
         entityForm.formGroup.controls['readonly'].setValue(readonly_value);
 
-        const sync: FormSelectConfig = _.find(this.fieldConfig, { name: 'sync' });
+        const sync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
         const sparse = _.find(this.fieldConfig, { name: 'sparse' }) as FormCheckboxConfig;
-        const compression: FormSelectConfig = _.find(this.fieldConfig, { name: 'compression' });
-        const deduplication: FormSelectConfig = _.find(this.fieldConfig, { name: 'deduplication' });
-        const volblocksize: FormSelectConfig = _.find(this.fieldConfig, { name: 'volblocksize' });
+        const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
+        const deduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
+        const volblocksize = _.find(this.fieldConfig, { name: 'volblocksize' }) as FormSelectConfig;
 
         if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {
           const sync_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];

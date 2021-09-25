@@ -98,7 +98,7 @@ export class ScrubFormComponent implements FormConfiguration {
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.scrub_task_add : helptext.scrub_task_edit;
 
-    this.volume_field = this.fieldSets.config('pool');
+    this.volume_field = this.fieldSets.config('pool') as FormSelectConfig;
     this.taskService.getVolumeList().pipe(untilDestroyed(this)).subscribe((pools) => {
       pools.forEach((pool) => {
         this.volume_field.options.push({ label: pool.name, value: pool.id });
