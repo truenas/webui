@@ -134,7 +134,7 @@ export class ServiceS3Component implements FormConfiguration {
           })
           .pipe(untilDestroyed(this))
           .subscribe(() => {
-            if (!confirm) {
+            if (!window.confirm) {
               this.storage_path.setValue(this.initial_path);
             } else {
               this.warned = true;

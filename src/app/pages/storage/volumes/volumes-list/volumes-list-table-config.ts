@@ -358,7 +358,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             type: 'upload',
             message: this.messageService,
             updater: this.keyFileUpdater,
-            parent: self,
+            parent: self, // eslint-disable-line no-restricted-globals
             hideButton: true,
             name: 'key',
             required: true,
@@ -1709,8 +1709,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
   dataHandler(data: any): TreeNode {
     const node: TreeNode = {};
     node.data = data;
-    parent = data.parent;
-    this.getMoreDatasetInfo(data, parent);
+    parent = data.parent; // eslint-disable-line no-restricted-globals
+    this.getMoreDatasetInfo(data, parent); // eslint-disable-line no-restricted-globals
     node.data.group_actions = true;
     let actions_title = helptext.dataset_actions;
     if (data.type === DatasetType.Volume) {

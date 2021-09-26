@@ -253,7 +253,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     } else {
       this.tableService.delete(this, row);
     }
-    event.stopPropagation();
+    event.stopPropagation(); // eslint-disable-line no-restricted-globals
   }
 
   // TODO: Enum

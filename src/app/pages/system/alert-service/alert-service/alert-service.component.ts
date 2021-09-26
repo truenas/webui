@@ -741,7 +741,7 @@ export class AlertServiceComponent implements FormConfiguration {
     // Telegram chat IDs must be an array of integer
     const arrayChatIds: number[] = data[i].map((strChatId: string) => {
       const chatId = Number(strChatId);
-      if (isNaN(chatId)) {
+      if (Number.isNaN(chatId)) {
         wrongChatIds.push(strChatId);
       }
       return chatId;

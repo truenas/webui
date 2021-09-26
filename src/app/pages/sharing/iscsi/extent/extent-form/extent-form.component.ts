@@ -127,7 +127,7 @@ export class ExtentFormComponent implements FormConfiguration {
             (control: FormControl): ValidationErrors => {
               const config = this.fieldConfig.find((c) => c.name === 'filesize');
               const size = this.storageService.convertHumanStringToNum(control.value, true);
-              const errors = control.value && isNaN(size)
+              const errors = control.value && Number.isNaN(size)
                 ? { invalid_byte_string: true }
                 : null;
               if (errors) {

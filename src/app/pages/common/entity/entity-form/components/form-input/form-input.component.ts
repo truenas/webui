@@ -70,7 +70,7 @@ export class FormInputComponent implements Field {
         this.group.controls[this.config.name].value,
         this.config.inputUnit,
       );
-      if (isNaN(phrasedValue as number)) {
+      if (Number.isNaN(phrasedValue as number)) {
         this.group.controls[this.config.name].setErrors({
           manualValidateError: true,
           manualValidateErrorMsg: globalHelptext.invalidInputValueWithUnit,

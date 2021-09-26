@@ -508,7 +508,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               entityDialog.dialogRef.close(true);
               this.getData();
               this.getUnusedDisk();
-              this.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + '.', '', 'info', true);
+              this.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + '.', '', 'info', true); // eslint-disable-line no-restricted-globals
             });
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();

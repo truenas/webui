@@ -116,7 +116,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   }
 
   resolve(path: string, obj: any): string {
-    return path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj || self);
+    return path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj || self); // eslint-disable-line no-restricted-globals
   }
 
   ngAfterViewInit(): void {

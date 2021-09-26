@@ -143,7 +143,7 @@ export class ZvolFormComponent implements FormConfiguration {
             const size = control.value && typeof control.value == 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;
             const humanSize = control.value;
 
-            let errors = control.value && isNaN(size)
+            let errors = control.value && Number.isNaN(size)
               ? { invalid_byte_string: true }
               : null;
 

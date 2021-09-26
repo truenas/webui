@@ -49,6 +49,7 @@ export class Thread extends IxAbstractObject {
 
   readonly main = (): void => {
     // Some example code to show how messages can be exchanged with main thread
+    // eslint-disable-next-line no-restricted-globals
     const context: Worker = self as any; // Needed for TypeScript not to complain. DO NOT REMOVE!
     context.postMessage('ThreadInitialized'); // This inits the worker. DO NOT REMOVE!
 

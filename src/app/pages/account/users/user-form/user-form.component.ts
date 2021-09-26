@@ -388,7 +388,7 @@ export class UserFormComponent implements FormConfiguration {
 
     /* list groups */
     this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
-      this.loader.callDone.emit(status);
+      this.loader.callDone.emit(window.status);
       this.group = this.fieldSets.config('group') as FormSelectConfig;
       this.groups = this.fieldSets.config('groups') as FormSelectConfig;
       for (let i = 0; i < groups.length; i++) {

@@ -152,7 +152,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     // Filter out stats per thread
     const keys = Object.keys(cpuData);
-    const threads = keys.filter((n) => !isNaN(parseFloat(n)));
+    const threads = keys.filter((n) => !Number.isNaN(parseFloat(n)));
 
     for (let i = 0; i < this.threadCount; i++) {
       usageColumn.push(parseInt(cpuData[i].usage.toFixed(1)));

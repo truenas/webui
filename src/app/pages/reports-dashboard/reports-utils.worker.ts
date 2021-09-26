@@ -331,7 +331,7 @@ function emit(evt: any): void {
   postMessage(evt);
 }
 
-addEventListener('message', ({ data }) => {
+addEventListener('message', ({ data }) => { // eslint-disable-line no-restricted-globals
   const evt = data;
   let output;
 
