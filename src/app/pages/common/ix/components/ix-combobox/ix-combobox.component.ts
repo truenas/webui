@@ -73,6 +73,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
     this.filterValue = '';
     const inputElementRef: HTMLElement = document.getElementById(this.elementId);
     (<HTMLInputElement>inputElementRef).value = '';
+    this.selectedOption = null;
+    this.onChange('');
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
@@ -90,10 +92,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
   }
 
   displayWith(): string {
-    if (this.selectedOption) {
-      return this.selectedOption.label;
-    }
-    return '';
+    return this.selectedOption ? this.selectedOption.label : '';
   }
 
   ngOnChanges(changes: SimpleChanges): void {

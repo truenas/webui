@@ -13,7 +13,7 @@
 
 .input-container {
   background: var(--bg1);
-  border: 2px solid var(--primary);
+  border: 1.5px solid var(--lines);
   border-radius: 2px;
   display: flex;
   flex-direction: row;
@@ -21,9 +21,8 @@
   padding: 6px;
   position: relative;
 
-  &:not(:focus-within) {
-    border: solid 1px var(--lines);
-    padding: 7.5px;
+  &:focus-within {
+    border-color: var(--primary);
   }
 }
 
