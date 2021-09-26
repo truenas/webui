@@ -36,6 +36,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   private entityWizard: EntityWizardComponent;
   private destroy$ = new Subject();
   private selectedVersionKey: string;
+  isLinear = true;
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
