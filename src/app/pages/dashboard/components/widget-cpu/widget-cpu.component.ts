@@ -51,7 +51,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   coreCount: number;
   threadCount: number;
   hyperthread: boolean;
-  legendData: any;
+  legendData: ChartDataSets[];
   screenType = 'Desktop'; // Desktop || Mobile
 
   // Mobile Stats
@@ -218,7 +218,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     this.coresChartInit();
   }
 
-  setCpuLoadData(data: any): void {
+  setCpuLoadData(data: (string | number)[]): void {
     const config = {
       data,
       units: '%',

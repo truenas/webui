@@ -45,15 +45,15 @@ mat-tab-group {
         }
       }
 
+      .badge-official {
+        background-color: var(--primary) !important;
+      }
+
       .badge-area {
         background-color: var(--yellow);
         color: rgba($color: #000, $alpha: 1);
         margin: 0 16px 16px;
         text-align: center;
-
-        .partner-badge {
-          background-color: var(--yellow);
-        }
 
         .train-badge {
           background-color: #00000052;
@@ -171,8 +171,10 @@ mat-tab-group {
 
     .chart-button-row {
       bottom: 5px;
+      height: 45px;
       position: absolute;
       right: 15px;
+      width: 315px;
     }
   }
 
@@ -212,11 +214,24 @@ mat-tab-group {
   }
 
   .ports {
-    bottom: 20px;
-    left: 170px;
-    position: absolute;
+    display: flex;
+    height: 45px;
+    overflow: hidden;
+    padding-right: 5px;
+    text-align: left;
+    vertical-align: middle;
+    width: 100%;
   }
 
+  .ports-text {
+    line-height: 40px;
+    /* If the ports text is smaller than 50px, hide all text. otherwise set maxwidth to "unlimited" */
+    max-width: max(0px, calc((100% - 50px)*999));
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+  }
 }
 
 .charts-info {

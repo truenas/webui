@@ -5,7 +5,6 @@ import { LetDirective } from './app-let.directive';
 import { EqualValidatorDirective } from './equal-validator.directive';
 import { IXAutoDirective } from './ix-auto.directive';
 import { LazyViewerDirective } from './lazy-viewer/lazy-viewer.directive';
-import { SideNavAccordionDirective } from './sidenav-accordion.directive';
 
 @NgModule({
   imports: [
@@ -13,7 +12,6 @@ import { SideNavAccordionDirective } from './sidenav-accordion.directive';
   ],
   declarations: [
     EqualValidatorDirective,
-    SideNavAccordionDirective,
     AppAccordionDirective,
     LazyViewerDirective,
     IXAutoDirective,
@@ -21,7 +19,6 @@ import { SideNavAccordionDirective } from './sidenav-accordion.directive';
   ],
   exports: [
     EqualValidatorDirective,
-    SideNavAccordionDirective,
     AppAccordionDirective,
     LazyViewerDirective,
     IXAutoDirective,

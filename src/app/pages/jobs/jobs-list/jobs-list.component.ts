@@ -73,11 +73,11 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   onAborted(job: Job): void {
     this.dialogService
       .confirm({
-        title: this.translate.instant(T('Abort the task')),
-        message: `<pre>${job.method}</pre>`,
+        title: this.translate.instant('Abort'),
+        message: this.translate.instant('Are you sure you want to abort the <b>{task}</b> task?', { task: job.method }),
         hideCheckBox: true,
-        buttonMsg: this.translate.instant(T('Abort')),
-        cancelMsg: this.translate.instant(T('Close')),
+        buttonMsg: this.translate.instant('Abort'),
+        cancelMsg: this.translate.instant('Cancel'),
         disableClose: true,
       })
       .pipe(filter(Boolean), untilDestroyed(this))

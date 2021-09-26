@@ -18,9 +18,11 @@ import filesize from 'filesize';
 import { styler, tween } from 'popmotion';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
-import { CoreEvent } from 'app/interfaces/events';
+import { DisksDataEvent } from 'app/interfaces/events/disks-data-event.interface';
+import { MultipathDataEvent } from 'app/interfaces/events/multipath-event.interface';
+import { Multipath } from 'app/interfaces/multipath.interface';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { T } from 'app/translate-marker';
@@ -39,21 +41,6 @@ interface PoolDiagnosis {
   errors: string[];
   selector: string;
   level: string;
-}
-
-export interface Disk {
-  name: string;
-  smart_enabled: boolean;
-  size: number;
-  model: string;
-  description?: string;
-  enclosure_slot?: any;
-  expiretime?: any;
-  hddstandby?: string;
-  serial?: string;
-  smartoptions?: string;
-  temp?: number;
-  displaysize?: string;
 }
 
 @UntilDestroy()
@@ -172,7 +159,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   title: string;
   voldataavail = false;
-  displayValue: any;
+  displayValue: string;
   diskSize: string;
   diskSizeLabel: string;
   poolHealth: PoolDiagnosis = {
@@ -183,7 +170,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     level: 'safe',
   };
 
-  currentMultipathDetails: any;
+  currentMultipathDetails: Multipath;
   currentDiskDetails: Disk;
   get currentDiskDetailsKeys(): (keyof Disk)[] {
     return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) as (keyof Disk)[] : [];
@@ -227,14 +214,14 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
     this.cdr.detectChanges();
 
-    this.core.register({ observerClass: this, eventName: 'MultipathData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'MultipathData' }).pipe(untilDestroyed(this)).subscribe((evt: MultipathDataEvent) => {
       this.currentMultipathDetails = evt.data[0];
 
-      const activeDisk = evt.data[0].children.filter((prop: any) => prop.status == 'ACTIVE');
+      const activeDisk = evt.data[0].children.filter((prop) => prop.status == 'ACTIVE');
       this.core.emit({ name: 'DisksRequest', data: [[['name', '=', activeDisk[0].name]]] });
     });
 
-    this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
       const currentPath = this.path[this.currentSlideIndex];
       const currentName = currentPath && currentPath.dataSource
         ? this.currentMultipathDetails
@@ -258,6 +245,11 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     });
 
     this.checkVolumeHealth();
+  }
+
+  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
+  diskKey(key: keyof Disk): keyof Disk {
+    return key;
   }
 
   getAvailableSpace(): number {

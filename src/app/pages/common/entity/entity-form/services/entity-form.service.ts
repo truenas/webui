@@ -10,10 +10,16 @@ import { TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';
 import {
-  FieldConfig, UnitType, InputUnitConfig, FormArrayConfig, FormListConfig, FormDictConfig,
+  FieldConfig,
+  UnitType,
+  InputUnitConfig,
+  FormArrayConfig,
+  FormListConfig,
+  FormDictConfig,
 } from '../models/field-config.interface';
 
 @Injectable()
@@ -49,7 +55,10 @@ export class EntityFormService {
         if (formControl) {
           formGroup[controls[i].name] = formControl;
         }
-        controls[i].relation = Array.isArray(controls[i].relation) ? controls[i].relation : [];
+
+        if (controls[i]) {
+          controls[i].relation = Array.isArray(controls[i].relation) ? controls[i].relation : [];
+        }
       }
     }
 
@@ -78,7 +87,8 @@ export class EntityFormService {
       } else if (fieldConfig.type != 'label') {
         formControl = new FormControl(
           { value: fieldConfig.value, disabled: fieldConfig.disabled },
-          fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation, fieldConfig.asyncValidation,
+          fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation,
+          fieldConfig.asyncValidation,
         );
       }
     }
@@ -110,17 +120,21 @@ export class EntityFormService {
     explorerType?: string,
     hideDirs?: string,
     showHiddenFiles = false,
-  ): Promise<any[]> {
-    const children: any[] = [];
+  ): Promise<ListdirChild[]> {
+    const children: ListdirChild[] = [];
     let typeFilter: any;
-    explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', FileType.Directory]] : typeFilter = [];
+    if (explorerType && explorerType === 'directory') {
+      typeFilter = [['type', '=', FileType.Directory]];
+    } else {
+      typeFilter = [];
+    }
 
     return this.ws.call('filesystem.listdir', [node.data.name, typeFilter,
       { order_by: ['name'], limit: 1000 }]).toPromise().then((res) => {
       res = _.sortBy(res, (o) => o.name.toLowerCase());
 
       for (let i = 0; i < res.length; i++) {
-        const child: any = {};
+        const child = {} as ListdirChild;
         if (!showHiddenFiles) {
           if (res[i].hasOwnProperty('name') && !res[i].name.startsWith('.')) {
             if (res[i].type === FileType.Symlink) {
@@ -168,17 +182,17 @@ export class EntityFormService {
     }); */
   }
 
-  getPoolDatasets(param: [DatasetType[]?] = []): Promise<any[]> {
-    const nodes: any[] = [];
+  getPoolDatasets(param: [DatasetType[]?] = []): Promise<ListdirChild[]> {
+    const nodes: ListdirChild[] = [];
     return this.ws.call('pool.filesystem_choices', param).toPromise().then((res) => {
       for (let i = 0; i < res.length; i++) {
         const pathArr = res[i].split('/');
         if (pathArr.length === 1) {
-          const node = {
+          const node: ListdirChild = {
             name: res[i],
             subTitle: pathArr[0],
             hasChildren: false,
-            children: [] as any,
+            children: [],
           };
           nodes.push(node);
         } else {
@@ -187,11 +201,11 @@ export class EntityFormService {
           while (_.find(parent.children, { subTitle: pathArr[j] })) {
             parent = _.find(parent.children, { subTitle: pathArr[j++] });
           }
-          const node = {
+          const node: ListdirChild = {
             name: res[i],
             subTitle: pathArr[j],
             hasChildren: false,
-            children: [] as any,
+            children: [],
           };
           parent.children.push(node);
           parent.hasChildren = true;

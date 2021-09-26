@@ -544,14 +544,14 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const disk_field: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' });
+    const disk_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'disk' }) as FormSelectConfig;
     // get device options
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
       for (const i in res) {
         disk_field.options.push({ label: res[i], value: i });
       }
     });
-    const target_field: FormSelectConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' });
+    const target_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'target' }) as FormSelectConfig;
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       for (const item of targets) {
         target_field.options.push({ label: item.name, value: item.id });
@@ -596,12 +596,12 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   step1Init(): void {
-    const authGroupField: FormSelectConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'discovery_authgroup' }); // select
-    const listenIpFieldConfig: FormListConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'listen' });
-    const listenIpField: FormSelectConfig = listenIpFieldConfig.templateListField[0]; // list
+    const authGroupField = _.find(this.wizardConfig[1].fieldConfig, { name: 'discovery_authgroup' }) as FormSelectConfig;
+    const listenIpFieldConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'listen' }) as FormListConfig;
+    const listenIpField = listenIpFieldConfig.templateListField[0] as FormSelectConfig; // list
 
     this.iscsiService.listPortals().pipe(untilDestroyed(this)).subscribe((portals) => {
-      const field: FormSelectConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' });
+      const field = _.find(this.wizardConfig[1].fieldConfig, { name: 'portal' }) as FormSelectConfig;
       for (const portal of portals) {
         const ips = portal.listen.map((ip) => ip.ip + ':' + ip.port);
         field.options.push({ label: portal.tag + ' (' + ips + ')', value: portal.id });
@@ -623,7 +623,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
       const listenListFields = listenIpFieldConfig.listFields;
       for (const listenField of listenListFields) {
-        const ipField: FormSelectConfig = _.find(listenField, { name: 'ip' });
+        const ipField = _.find(listenField, { name: 'ip' }) as FormSelectConfig;
         ipField.options = listenIpField.options;
       }
     });
@@ -662,7 +662,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
               this.summaryObj[name] = value;
               // get label value
               if (name == 'disk' || name == 'usefor' || name == 'portal' || name == 'target') {
-                const field: FormSelectConfig = _.find(this.wizardConfig[step].fieldConfig, { name });
+                const field = _.find(this.wizardConfig[step].fieldConfig, { name }) as FormSelectConfig;
                 if (field) {
                   this.summaryObj[name] = _.find(field.options, { value }).label;
                 }
@@ -708,11 +708,24 @@ export class IscsiWizardComponent implements WizardConfiguration {
       delete summary['Extent']['New Device'];
     } else {
       delete summary['Extent']['File'];
-      this.summaryObj.disk === 'Create New' ? delete summary['Extent']['Device'] : delete summary['Extent']['New Device'];
+      if (this.summaryObj.disk === 'Create New') {
+        delete summary['Extent']['Device'];
+      } else {
+        delete summary['Extent']['New Device'];
+      }
     }
 
-    this.summaryObj.portal === 'Create New' ? delete summary['Portal'] : delete summary['New Portal'];
-    this.summaryObj.discovery_authgroup === 'NEW' ? delete summary['Authorized Access'] : delete summary['New Authorized Access'];
+    if (this.summaryObj.portal === 'Create New') {
+      delete summary['Portal'];
+    } else {
+      delete summary['New Portal'];
+    }
+
+    if (this.summaryObj.discovery_authgroup === 'NEW') {
+      delete summary['Authorized Access'];
+    } else {
+      delete summary['New Authorized Access'];
+    }
 
     if (!this.summaryObj.initiators && !this.summaryObj.auth_network && !this.summaryObj.comment) {
       delete summary['Initiator'];
@@ -736,9 +749,11 @@ export class IscsiWizardComponent implements WizardConfiguration {
         const control = _.find(this.wizardConfig[stepIndex].fieldConfig, { name: field });
         control['isHidden'] = disabled;
         control.disabled = disabled;
-        disabled
-          ? this.entityWizard.formArray.get([stepIndex]).get(field).disable()
-          : this.entityWizard.formArray.get([stepIndex]).get(field).enable();
+        if (disabled) {
+          this.entityWizard.formArray.get([stepIndex]).get(field).disable();
+        } else {
+          this.entityWizard.formArray.get([stepIndex]).get(field).enable();
+        }
         if (disabled) {
           this.summaryObj[field] = null;
         }
@@ -771,13 +786,12 @@ export class IscsiWizardComponent implements WizardConfiguration {
         if (datasets.length == 0) {
           datasetField.hasErrors = true;
         } else {
-          for (const i in this.zvolFieldGroup) {
-            const fieldName = this.zvolFieldGroup[i];
+          this.zvolFieldGroup.forEach((fieldName) => {
             if (fieldName in datasets[0]) {
               const controller = this.entityWizard.formArray.get([0]).get(fieldName);
               controller.setValue((datasets[0][fieldName as keyof Dataset] as any).value);
             }
-          }
+          });
         }
       },
     );
@@ -922,25 +936,24 @@ export class IscsiWizardComponent implements WizardConfiguration {
   }
 
   rollBack(items: any[]): void {
-    for (const item in items) {
-      if (items[item] != null) {
-        this.ws.call((this.deleteCalls as any)[item], [items[item]]).pipe(untilDestroyed(this)).subscribe(
+    items.forEach((item, i) => {
+      if (item != null) {
+        this.ws.call((this.deleteCalls as any)[i], [item]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
-            console.info('rollback ' + item, res);
+            console.info('rollback ' + i, res);
           },
         );
       }
-    }
+    });
   }
 
   ipValidator(name: string): ValidatorFn {
-    const self = this;
-    return function validIPs(control: FormControl) {
-      const config = self.wizardConfig[2].fieldConfig.find((c) => c.name === name);
+    return (control: FormControl) => {
+      const config = this.wizardConfig[2].fieldConfig.find((c) => c.name === name);
       let counter = 0;
       if (control.value) {
         control.value.forEach((item: any) => {
-          if (!self.networkService.authNetworkValidator(item)) {
+          if (!this.networkService.authNetworkValidator(item)) {
             counter++;
           }
         });

@@ -360,13 +360,15 @@ export class EntityUtils {
       const checkboxConfig = fieldConfig as FormCheckboxConfig;
       checkboxConfig['type'] = 'checkbox';
     } else if (schemaConfig.schema.type == 'ipaddr') {
-      const ipConfig = fieldConfig as FormIpWithNetmaskConfig;
-      ipConfig['type'] = 'ipwithnetmask';
       if (!schemaConfig.schema.cidr) {
-        ipConfig['type'] = 'input';
+        const ipInputConfig = fieldConfig as FormInputConfig;
+        ipInputConfig['type'] = 'input';
+      } else {
+        const ipConfig = fieldConfig as FormIpWithNetmaskConfig;
+        ipConfig['type'] = 'ipwithnetmask';
       }
     } else if (schemaConfig.schema.type == 'hostpath') {
-      const conf: FormExplorerConfig = { ...fieldConfig };
+      const conf = { ...fieldConfig } as FormExplorerConfig;
       conf['type'] = 'explorer';
       conf['initial'] = '/mnt';
       conf['explorerType'] = 'file';
@@ -410,7 +412,7 @@ export class EntityUtils {
 
     if (fieldConfig) {
       if (fieldConfig['type']) {
-        if (relations) {
+        if (fieldConfig && relations) {
           fieldConfig['relation'] = this.createRelations(relations);
         }
 
@@ -423,6 +425,7 @@ export class EntityUtils {
             if (schemaConfig.schema.show_subquestions_if !== undefined) {
               subResults.forEach((subFieldConfig) => {
                 subFieldConfig['isHidden'] = true;
+
                 subFieldConfig['relation'] = [{
                   action: RelationAction.Show,
                   when: [{
@@ -513,6 +516,10 @@ export class EntityUtils {
 
   snakeToPascal(str: string): string {
     return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+  }
+
+  snakeToHuman(str: string): string {
+    return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 
   getCleanMethod(str: string): string {

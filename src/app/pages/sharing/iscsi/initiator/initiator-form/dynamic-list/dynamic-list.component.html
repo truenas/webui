@@ -1,7 +1,7 @@
 <div class="dynamic-list-container" fxLayout="row" [ngClass]="this.listControl.disabled ? 'disabled' : ''">
     <div fxFlexAlign="center" class="move-to-action">
       <button
-        ix-auto ix-auto-type="button" [ix-auto-identifier]="listControl"
+        ix-auto ix-auto-type="button" ix-auto-identifier="{{inputConfig.name}}_move_to"
         mat-flat-button color="primary"
         class="move-to-btn"
         type="button"

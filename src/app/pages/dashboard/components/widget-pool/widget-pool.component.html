@@ -104,11 +104,11 @@
                         </ng-container>
 
                         <ng-template #noerrors>
-                          <span *ngIf="poolState.status == PoolStatus.Locked || !poolState.is_decrypted" 
+                          <span *ngIf="poolState.status == PoolStatus.Locked || !poolState.is_decrypted"
                             class="lock-icon-wrapper icon">
                             <mat-icon>lock</mat-icon>
                           </span>
-                          <span *ngIf="poolState.is_decrypted && ( poolState.status == PoolStatus.Online || poolState.status == PoolStatus.Healthy )" 
+                          <span *ngIf="poolState.is_decrypted && ( poolState.status == PoolStatus.Online || poolState.status == PoolStatus.Healthy )"
                             class="{{poolHealth.level}} icon">
                             <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                           </span>
@@ -372,8 +372,8 @@
               <div class="list-subheader">{{"Advanced Details" | translate}}</div>
               <mat-list>
                 <ng-container *ngFor="let key of currentDiskDetailsKeys">
-                  <mat-list-item *ngIf="key != 'identifier' && currentDiskDetails[key]" role="listitem">
-                    <strong class="detail-key"> {{key}}:</strong>&nbsp;&nbsp; {{currentDiskDetails[key]}}
+                  <mat-list-item *ngIf="key != 'identifier' && currentDiskDetails[diskKey(key)]" role="listitem">
+                    <strong class="detail-key"> {{key}}:</strong>&nbsp;&nbsp; {{currentDiskDetails[diskKey(key)]}}
                   </mat-list-item>
                 </ng-container>
               </mat-list>

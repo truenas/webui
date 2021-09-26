@@ -315,6 +315,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   .mat-form-field .mat-select.mat-select-disabled .mat-select-arrow,
   .mat-select-disabled .mat-select-value {
     @include variable(color, --fg2, $fg2);
+    cursor: not-allowed;
     opacity: 0.38;
   }
 
@@ -324,6 +325,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
 
   .mat-checkbox-disabled .mat-checkbox-label {
     @include variable(color, --grey, #4d4d4d);
+    cursor: not-allowed;
     opacity: 0.6;
   }
 
@@ -569,6 +571,10 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
   /////////////////// END SpecSelectors
 
+  .mat-dialog-container {
+    max-width: 800px;
+  }
+
   .mat-dialog-title {
     .warning-icon {
       color: #ffc107;
@@ -580,9 +586,19 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-dialog-content {
-    max-width: 600px;
     overflow: hidden;
     padding-bottom: -3px;
+
+    .more-info {
+      margin-bottom: 4px;
+    }
+
+    .more-info .mat-icon {
+      cursor: pointer;
+      margin: 0 4px 12px;
+      position: relative;
+      top: 7px;
+    }
 
     .info-panel {
       border: 0;
@@ -592,18 +608,19 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       transition: max-height 0.5s linear;
 
       &.open {
-        max-height: calc(100px + 2rem + 4px);
+        margin-bottom: 24px;
+        max-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
         padding: 2px;
       }
 
-      textarea {
-        background: white;
-        border: 1px solid #ddd;
-        color: black;
+      .textarea {
+        background: var(--contrast-darker);
+        border: 1px solid var(--lines);
+        color: var(--fg2);
+        height: 100%;
         min-height: 100px;
         overflow: auto;
         padding: 1rem;
-        width: calc(100% - 2rem);
       }
     }
 
@@ -612,21 +629,22 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
       max-height: 0;
       overflow: hidden;
       padding: 0;
-      transition: max-height 0.5s linear;
+      transition: max-height 0.25s linear;
 
       &.open {
-        max-height: calc(100px + 2rem + 4px);
+        margin-bottom: 24px;
+        max-height: calc(80vh - 48px - 240px); // Viewport - topbar - sum of sibling elements
         padding: 2px;
       }
 
-      textarea {
-        background: white;
-        border: 1px solid #ddd;
-        color: black;
+      .textarea {
+        background: var(--contrast-darker);
+        border: 1px solid var(--lines);
+        color: var(--fg2);
+        height: calc(100%);
         min-height: 100px;
         overflow: auto;
         padding: 1rem;
-        width: calc(100% - 2rem);
       }
     }
   }
@@ -1735,6 +1753,20 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     .mat-dialog-actions {
       padding-bottom: 24px;
     }
+  }
+
+  // Disabled form fields
+  .form-element.form-combobox .mat-form-field[disabled],
+  .form-element.form-combobox .mat-menu-trigger[disabled]
+  .form-element.form-ip-netmask .mat-form-field[disabled],
+  .form-element .mat-form-field-wrapper[disabled],
+  .form-element input[type=email][disabled],
+  .form-element input[type=number][disabled],
+  .form-element input[type=password][disabled],
+  .form-element input[type=text][disabled],
+  .form-element select[disabled],
+  .form-element textarea[disabled] {
+    opacity: 0.38;
   }
 
 } // end of ix theme

@@ -37,16 +37,16 @@ export class EntityDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.parent = this.aroute.parent.parent.routeConfig.path;
     const routeConfigs: EntityDashboardRoutePart[] = this.aroute.parent.routeConfig.children;
-    for (const i in routeConfigs) {
-      if (routeConfigs[i].path !== '' && routeConfigs[i].path.indexOf(':') < 0) {
-        if (_.find(routeConfigs[i].children, { path: 'add' })) {
-          routeConfigs[i]['addPath'] = 'add';
-        } else if (_.find(routeConfigs[i].children, { path: 'import' })) {
-          routeConfigs[i]['addPath'] = 'import';
+    routeConfigs.forEach((routeConfig) => {
+      if (routeConfig.path !== '' && routeConfig.path.indexOf(':') < 0) {
+        if (_.find(routeConfig.children, { path: 'add' })) {
+          routeConfig['addPath'] = 'add';
+        } else if (_.find(routeConfig.children, { path: 'import' })) {
+          routeConfig['addPath'] = 'import';
         }
-        this.routeParts.push(routeConfigs[i]);
+        this.routeParts.push(routeConfig);
       }
-    }
+    });
 
     let exclude: string[] = [];
     if (this.productType.includes(ProductType.Scale)) {

@@ -2,8 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  TREE_ACTIONS, KEYS, IActionMapping, TreeNode,
+  TREE_ACTIONS, KEYS, IActionMapping, TreeNode, ITreeOptions,
 } from 'angular-tree-component';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { FormExplorerConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
@@ -57,7 +58,7 @@ export class FormExplorerComponent implements Field, OnInit {
     },
   };
 
-  customTemplateStringOptions = {
+  customTemplateStringOptions: ITreeOptions = {
     useCheckbox: false,
     displayField: '',
     isExpandedField: 'expanded',
@@ -110,11 +111,11 @@ export class FormExplorerComponent implements Field, OnInit {
     this.customTemplateStringOptions.displayField = this.displayFieldName;
   }
 
-  getChildren(node: TreeNode): Promise<any> {
+  getChildren(node: TreeNode): Promise<ListdirChild[]> {
     return new Promise((resolve) => {
       switch (this.config.explorerType) {
         case 'zvol':
-          resolve(this.entityFormService.getDatasetsAndZvolsListChildren());
+          resolve(this.entityFormService.getDatasetsAndZvolsListChildren() as any);
           break;
         case 'directory':
           resolve(

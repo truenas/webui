@@ -191,6 +191,10 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  disabledReason(reason: FailoverDisabledReason): FailoverDisabledReason {
+    return reason;
+  }
+
   loginToken(): void {
     let middleware_token;
     if ((window as any)['MIDDLEWARE_TOKEN']) {
@@ -387,8 +391,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     this.signinData.otp = '';
     let message = '';
     if (this.ws.token === null) {
-      this.isTwoFactor ? message = T('Username, Password, or 2FA Code is incorrect.')
-        : message = T('Username or Password is incorrect.');
+      if (this.isTwoFactor) {
+        message = T('Username, Password, or 2FA Code is incorrect.');
+      } else {
+        message = T('Username or Password is incorrect.');
+      }
     } else {
       message = T('Token expired, please log back in.');
       this.ws.token = null;

@@ -87,8 +87,8 @@ export class ResilverComponent implements FormConfiguration {
   fieldConfig: FieldConfig[];
 
   constructor(protected router: Router, protected taskService: TaskService) {
-    const begin_field: FormSelectConfig = _.find(this.fieldSets[0].config, { name: 'begin' });
-    const end_field: FormSelectConfig = _.find(this.fieldSets[0].config, { name: 'end' });
+    const begin_field = _.find(this.fieldSets[0].config, { name: 'begin' }) as FormSelectConfig;
+    const end_field = _.find(this.fieldSets[0].config, { name: 'end' }) as FormSelectConfig;
     const time_options = this.taskService.getTimeOptions();
     for (let i = 0; i < time_options.length; i++) {
       begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });

@@ -102,7 +102,6 @@ module.exports = {
         "no-restricted-syntax": "off",
         "guard-for-in": "off",
         "no-param-reassign": "off",
-        "@typescript-eslint/no-unused-expressions": "off",
         "radix": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
@@ -135,8 +134,6 @@ module.exports = {
         "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
-        "@typescript-eslint/no-this-alias": "off",
-        "@typescript-eslint/no-for-in-array": "off",
         "@typescript-eslint/prefer-regexp-exec": "off",
         "@typescript-eslint/no-misused-promises": "off",
 

@@ -15,6 +15,7 @@ import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -472,7 +473,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     return this.ws.call('cloudsync.list_buckets', [credential.id]);
   }
 
-  getChildren(node: TreeNode): Promise<Promise<any>> {
+  getChildren(node: TreeNode): Promise<Promise<ListdirChild[]>> {
     const credential = this.formGroup.controls['credentials'].value;
     let bucket = this.formGroup.controls['bucket'].value;
     if (this.bucket_field.disabled) {
@@ -497,9 +498,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
     }
   }
 
-  getBucketFolders(credential: number, bucket: string, node: TreeNode): Promise<any> {
+  getBucketFolders(credential: number, bucket: string, node: TreeNode): Promise<ListdirChild[]> {
     const formValue = this.entityForm.formGroup.value;
-    const children: any[] = [];
+    const children: ListdirChild[] = [];
     const data = {
       credentials: credential,
       encryption: formValue['encryption'] === undefined ? false : formValue['encryption'],
@@ -520,7 +521,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         this.setBucketError(null);
 
         for (let i = 0; i < res.length; i++) {
-          const child: any = {};
+          const child = {} as ListdirChild;
           if (res[i].IsDir) {
             if (data.attributes.folder == '/') {
               child['name'] = data.attributes.folder + res[i].Name;
@@ -541,6 +542,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           new EntityUtils().handleWSError(this, err, this.dialog);
         }
         node.collapse();
+        return [];
       },
     );
   }
@@ -568,10 +570,17 @@ export class CloudsyncFormComponent implements FormConfiguration {
     const data = entityForm.wsResponse;
     if (data.direction === Direction.Pull) {
       data.path_destination = data.path;
-      data.attributes.folder_source = data.attributes.include.map((p: string) => data.attributes.folder + '/' + p.split('/')[1]);
+
+      if (data.attributes.include) {
+        data.attributes.folder_source = data.attributes.include.map((p: string) => {
+          return data.attributes.folder + '/' + p.split('/')[1];
+        });
+      }
     } else {
       data.attributes.folder_destination = data.attributes.folder;
-      data.path_source = data.include.map((p: string) => data.path + '/' + p.split('/')[1]);
+      if (data.include) {
+        data.path_source = data.include.map((p: string) => data.path + '/' + p.split('/')[1]);
+      }
     }
 
     for (const i in data) {
@@ -606,8 +615,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.pk = entityForm.pk;
 
     this.title = entityForm.isNew ? helptext.cloudsync_task_add : helptext.cloudsync_task_edit;
-    this.credentials = this.fieldSets.config('credentials');
-    this.bucket_field = this.fieldSets.config('bucket');
+    this.credentials = this.fieldSets.config('credentials') as FormSelectConfig;
+    this.bucket_field = this.fieldSets.config('bucket') as FormSelectConfig;
     this.bucket_input_field = this.fieldSets.config('bucket_input') as FormInputConfig;
     this.setDisabled('bucket', true, true);
     this.setDisabled('bucket_input', true, true);
@@ -701,8 +710,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
       }
     });
 
-    this.folder_field_destination = this.fieldSets.config('folder_destination');
-    this.folder_field_source = this.fieldSets.config('folder_source');
+    this.folder_field_destination = this.fieldSets.config('folder_destination') as FormExplorerConfig;
+    this.folder_field_source = this.fieldSets.config('folder_source') as FormExplorerConfig;
     this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | typeof NULL_VALUE) => {
       this.setDisabled('bucket', true, true);
       this.setDisabled('bucket_input', true, true);

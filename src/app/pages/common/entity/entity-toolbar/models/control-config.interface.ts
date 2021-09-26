@@ -16,6 +16,9 @@ export interface ControlConfig {
   required?: boolean;
   zeroStateMessage?: string;
   multiple?: boolean;
+  selectedValue?: any;
+  tooltip?: string;
+  class?: string;
 }
 
 export interface ToolbarConfig {

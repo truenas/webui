@@ -14,7 +14,7 @@ import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.i
 })
 export class ToolbarMultimenuComponent extends IxAbstractObject implements OnInit {
   @Input() config?: ControlConfig;
-  @Input() controller: Subject<any>;
+  @Input() controller: Subject<Control>;
   allSelected = false;
   values: any[] = [];
   selectStates: boolean [] = [];

@@ -69,7 +69,6 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       id: 'leave_domain',
       name: helptext.activedirectory_custactions_leave_domain,
       function: () => {
-        const that = this;
         this.dialogservice.dialogForm(
           {
             title: helptext.activedirectory_custactions_leave_domain,
@@ -95,24 +94,23 @@ export class ActiveDirectoryComponent implements FormConfiguration {
               },
             ],
             saveButtonText: helptext.activedirectory_custactions_leave_domain,
-            customSubmit(entityDialog: EntityDialogComponent) {
+            customSubmit: (entityDialog: EntityDialogComponent) => {
               const value = entityDialog.formValue;
-              const self = entityDialog;
-              self.loader.open();
-              self.ws.call('activedirectory.leave', [{ username: value.username, password: value.password }])
+              entityDialog.loader.open();
+              entityDialog.ws.call('activedirectory.leave', [{ username: value.username, password: value.password }])
                 .pipe(untilDestroyed(this)).subscribe(() => {
-                  self.loader.close();
-                  self.dialogRef.close(true);
-                  _.find(that.fieldConfig, { name: 'enable' })['value'] = false;
-                  that.entityEdit.formGroup.controls['enable'].setValue(false);
-                  that.adStatus = false;
-                  that.isCustActionVisible('leave_domain');
-                  that.dialogservice.info(helptext.ad_leave_domain_dialog.success,
+                  entityDialog.loader.close();
+                  entityDialog.dialogRef.close(true);
+                  _.find(this.fieldConfig, { name: 'enable' })['value'] = false;
+                  this.entityEdit.formGroup.controls['enable'].setValue(false);
+                  this.adStatus = false;
+                  this.isCustActionVisible('leave_domain');
+                  this.dialogservice.info(helptext.ad_leave_domain_dialog.success,
                     helptext.ad_leave_domain_dialog.success_msg, '400px', 'info', true);
                 },
                 (err: WebsocketError) => {
-                  self.loader.close();
-                  new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, that.dialogservice);
+                  entityDialog.loader.close();
+                  new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, this.dialogservice);
                 });
             },
           },
@@ -337,7 +335,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
-      this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
+      this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
       realms.forEach((realm) => {
         this.kerberos_realm.options.push(
           { label: realm.realm, value: realm.id },
@@ -346,7 +344,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
+      this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
       res.forEach((item) => {
         this.kerberos_principal.options.push(
           { label: item, value: item },
@@ -355,7 +353,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
 
     this.ws.call('activedirectory.nss_info_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      this.nss_info = _.find(this.fieldConfig, { name: 'nss_info' });
+      this.nss_info = _.find(this.fieldConfig, { name: 'nss_info' }) as FormSelectConfig;
       choices.forEach((choice) => {
         this.nss_info.options.push(
           { label: choice, value: choice },
@@ -425,7 +423,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     }
 
     this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
-      this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
+      this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
       realms.forEach((realm) => {
         this.kerberos_realm.options.push(
           { label: realm.realm, value: realm.id },
@@ -434,7 +432,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
+      this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
       this.kerberos_principal.options.length = 0;
       this.kerberos_principal.options.push({ label: '---', value: null });
       res.forEach((item) => {

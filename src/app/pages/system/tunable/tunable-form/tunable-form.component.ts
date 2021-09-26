@@ -85,7 +85,7 @@ export class TunableFormComponent implements FormConfiguration {
   constructor(protected ws: WebSocketService, protected sysGeneralService: SystemGeneralService) {}
 
   preInit(): void {
-    this.type_fc = _.find(this.fieldSets[0].config, { name: 'type' });
+    this.type_fc = _.find(this.fieldSets[0].config, { name: 'type' }) as FormSelectConfig;
     this.ws.call('tunable.tunable_type_choices').pipe(untilDestroyed(this)).subscribe((tunables) => {
       for (const key in tunables) {
         this.type_fc.options.push({ label: tunables[key], value: key });

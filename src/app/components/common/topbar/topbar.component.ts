@@ -23,13 +23,15 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
 import { CoreEvent } from 'app/interfaces/events';
+import { HaStatus, HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
-import { ResilverEvent } from 'app/interfaces/events/resilver-event.interface';
+import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import {
   UserPreferencesEvent,
   UserPreferencesReadyEvent,
 } from 'app/interfaces/events/user-preferences-event.interface';
+import { ResilverData } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -68,7 +70,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   showResilvering = false;
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
-  resilveringDetails: any;
+  resilveringDetails: ResilverData;
   themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme = 'ix-blue';
   isTaskMangerOpened = false;
@@ -140,7 +142,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
         this.is_ha = is_ha;
-        this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
+        if (this.is_ha) {
+          window.localStorage.setItem('alias_ips', 'show');
+        } else {
+          window.localStorage.setItem('alias_ips', '0');
+        }
         this.getHAStatus();
       });
       this.sysName = 'TrueNAS ENTERPRISE';
@@ -231,10 +237,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.core.register({
       observerClass: this,
       eventName: 'Resilvering',
-    }).pipe(untilDestroyed(this)).subscribe((evt: ResilverEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
       if (evt.data.scan.state == PoolScanState.Finished) {
         this.showResilvering = false;
-        this.resilveringDetails = '';
+        this.resilveringDetails = null;
       } else {
         this.resilveringDetails = evt.data;
         this.showResilvering = true;
@@ -523,7 +529,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     );
   }
 
-  updateHAInfo(info: any): void {
+  updateHAInfo(info: HaStatus): void {
     this.ha_disabled_reasons = info.reasons;
     if (info.status == 'HA Enabled') {
       this.ha_status_text = helptext.ha_status_text_enabled;
@@ -536,7 +542,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   getHAStatus(): void {
-    this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
       this.updateHAInfo(evt.data);
     });
   }
@@ -643,7 +649,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showTCStatus(): void {
-    this.tcConnected ? this.openStatusDialog() : this.openSignupDialog();
+    if (this.tcConnected) {
+      this.openStatusDialog();
+    } else {
+      this.openSignupDialog();
+    }
   }
 
   openSignupDialog(): void {
@@ -663,19 +673,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         },
       ],
       parent: this,
-      customSubmit(entityDialog: EntityDialogComponent) {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close();
-        entityDialog.parent.updateTC();
+        this.updateTC();
       },
     };
     this.dialogService.dialogForm(conf);
   }
 
   updateTC(): void {
-    const self = this;
     let updateDialog: EntityDialogComponent;
     const conf: DialogFormConfiguration = {
-      title: self.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
+      title: this.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
       fieldConfig: [
         {
           type: 'input',
@@ -695,7 +704,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         id: 'deregister',
         name: helptext.tcDeregisterBtn,
         function: () => {
-          self.dialogService.generalDialog({
+          this.dialogService.generalDialog({
             title: helptext.tcDeregisterDialog.title,
             icon: helptext.tcDeregisterDialog.icon,
             message: helptext.tcDeregisterDialog.message,
@@ -705,59 +714,59 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
               return;
             }
 
-            self.loader.open();
-            self.ws.call(self.tc_updateCall, [{ api_key: null, enabled: false }])
+            this.loader.open();
+            this.ws.call(this.tc_updateCall, [{ api_key: null, enabled: false }])
               .pipe(untilDestroyed(this))
               .subscribe(
                 () => {
-                  self.loader.close();
+                  this.loader.close();
                   updateDialog.dialogRef.close();
-                  self.tcStatusDialogRef.close(true);
-                  self.dialogService.generalDialog({
+                  this.tcStatusDialogRef.close(true);
+                  this.dialogService.generalDialog({
                     title: helptext.deregisterInfoDialog.title,
                     message: helptext.deregisterInfoDialog.message,
                     hideCancel: true,
                   });
                 },
                 (err) => {
-                  self.loader.close();
-                  new EntityUtils().handleWSError(updateDialog.parent, err, updateDialog.parent.dialogService);
+                  this.loader.close();
+                  new EntityUtils().handleWSError(this, err, this.dialogService);
                 },
               );
           });
         },
       }],
-      isCustActionVisible(actionId: string) {
-        return !(actionId === 'deregister' && !self.tcConnected);
+      isCustActionVisible: (actionId: string) => {
+        return !(actionId === 'deregister' && !this.tcConnected);
       },
-      saveButtonText: self.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
+      saveButtonText: this.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
       parent: this,
-      afterInit(entityDialog: EntityDialogComponent) {
+      afterInit: (entityDialog: EntityDialogComponent) => {
         updateDialog = entityDialog;
         // load settings
-        if (self.tcConnected) {
-          Object.keys(self.tcStatus).forEach((key) => {
+        if (this.tcConnected) {
+          Object.keys(this.tcStatus).forEach((key) => {
             const ctrl = entityDialog.formGroup.controls[key];
             if (ctrl) {
-              ctrl.setValue(self.tcStatus[key as keyof TrueCommandConfig]);
+              ctrl.setValue(this.tcStatus[key as keyof TrueCommandConfig]);
             }
           });
         }
       },
-      customSubmit(entityDialog: EntityDialogComponent) {
-        self.loader.open();
-        self.ws.call(self.tc_updateCall, [entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
+      customSubmit: (entityDialog: EntityDialogComponent) => {
+        this.loader.open();
+        this.ws.call(this.tc_updateCall, [entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
           () => {
-            self.loader.close();
+            this.loader.close();
             entityDialog.dialogRef.close();
             // only show this for connecting TC
-            if (!self.tcConnected) {
-              self.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message, '500px', 'info');
+            if (!this.tcConnected) {
+              this.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message, '500px', 'info');
             }
           },
           (err) => {
-            self.loader.close();
-            new EntityUtils().handleWSError(entityDialog.parent, err, entityDialog.parent.dialogService);
+            this.loader.close();
+            new EntityUtils().handleWSError(this, err, this.dialogService);
           },
         );
       },

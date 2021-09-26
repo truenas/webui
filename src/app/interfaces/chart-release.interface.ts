@@ -2,13 +2,6 @@ import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartMetadata } from 'app/interfaces/catalog.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
-// TODO: Conflicts with ChartMetadata (lowercase d).
-export interface ChartMetaData {
-  name: string;
-  version: string;
-  latest_chart_version: string;
-}
-
 export interface UsedPort {
   port: number;
   protocol: string;
@@ -79,6 +72,7 @@ export interface ChartRelease {
   history: { [key: string]: string };
   resources?: ChartResources;
 
+  // TODO: Frontend field, move to another interface.
   selected?: boolean;
 }
 

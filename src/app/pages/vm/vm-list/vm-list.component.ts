@@ -212,7 +212,6 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     let method: ApiMethod;
     if (row['status']['state'] === ServiceStatus.Running) {
       method = this.wsMethods.stop;
-      const parent = this;
       const stopDialog: DialogFormConfiguration = {
         title: T('Stop ' + row.name + '?'),
         fieldConfig: [
@@ -226,12 +225,12 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           },
         ],
         saveButtonText: T('Stop'),
-        customSubmit(entityDialog: EntityDialogComponent) {
+        customSubmit: (entityDialog: EntityDialogComponent) => {
           entityDialog.dialogRef.close(true);
           const forceValue = false; // We are not exposing this in the UI
           const forceValueTimeout = !!entityDialog.formValue.force_after_timeout;
           const params = [row.id, { force: forceValue, force_after_timeout: forceValueTimeout }];
-          parent.doRowAction(row, method, params);
+          this.doRowAction(row, method, params);
         },
       };
       this.dialogService.dialogForm(stopDialog);
@@ -391,7 +390,6 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
       icon: 'delete',
       label: T('Delete'),
       onClick: (delete_row: VirtualMachineRow) => {
-        const parent = this;
         const conf: DialogFormConfiguration = {
           title: T('Delete Virtual Machine'),
           fieldConfig: [
@@ -424,7 +422,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
             },
           ],
           saveButtonText: T('Delete'),
-          customSubmit(entityDialog: EntityDialogComponent) {
+          customSubmit: (entityDialog: EntityDialogComponent) => {
             entityDialog.dialogRef.close(true);
             const params = [
               delete_row.id,
@@ -433,7 +431,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
                 force: entityDialog.formValue.force,
               },
             ];
-            parent.doRowAction(delete_row, parent.wsDelete, params, true);
+            this.doRowAction(delete_row, this.wsDelete, params, true);
           },
         };
         this.dialogService.dialogForm(conf);
@@ -452,7 +450,6 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
       icon: 'filter_none',
       label: T('Clone'),
       onClick: (clone_row: VirtualMachineRow) => {
-        const parent = this;
         const conf: DialogFormConfiguration = {
           title: T('Name'),
           fieldConfig: [
@@ -465,13 +462,13 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
             },
           ],
           saveButtonText: T('Clone'),
-          customSubmit(entityDialog: EntityDialogComponent) {
+          customSubmit: (entityDialog: EntityDialogComponent) => {
             entityDialog.dialogRef.close(true);
             const params = [clone_row.id];
             if (entityDialog.formValue.name) {
               params.push(entityDialog.formValue.name);
             }
-            parent.doRowAction(clone_row, parent.wsMethods.clone, params, true);
+            this.doRowAction(clone_row, this.wsMethods.clone, params, true);
           },
         };
         this.dialogService.dialogForm(conf);

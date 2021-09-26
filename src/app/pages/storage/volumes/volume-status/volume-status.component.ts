@@ -3,6 +3,7 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
@@ -16,7 +17,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Pool, PoolScan, PoolTopologyCategory } from 'app/interfaces/pool.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { VDev, VDevStats } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -160,6 +161,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     protected matDialog: MatDialog,
     protected localeService: LocaleService,
     protected modalService: ModalService,
+    protected translate: TranslateService,
   ) {}
 
   getZfsPoolScan(poolName: string): void {
@@ -210,21 +212,21 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   getUnusedDisk(): void {
     const availableDisks: Option[] = [];
     const availableDisksForExtend: Option[] = [];
-    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res) => {
-      for (const i in res) {
+    this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((disks) => {
+      disks.forEach((disk) => {
         availableDisks.push({
-          label: res[i].devname,
-          value: res[i].identifier,
+          label: disk.devname,
+          value: disk.identifier,
         });
         availableDisksForExtend.push({
-          label: res[i].devname + ' (' + filesize(res[i].size, { standard: 'iec' }) + ')',
-          value: res[i].name,
+          label: disk.devname + ' (' + filesize(disk.size, { standard: 'iec' }) + ')',
+          value: disk.name,
         });
-      }
-      const diskConfig: FormSelectConfig = _.find(this.replaceDiskFormFields, { name: 'disk' });
+      });
+      const diskConfig = _.find(this.replaceDiskFormFields, { name: 'disk' }) as FormSelectConfig;
       diskConfig.options = availableDisks;
 
-      const newDiskConfig: FormSelectConfig = _.find(this.extendVdevFormFields, { name: 'new_disk' });
+      const newDiskConfig = _.find(this.extendVdevFormFields, { name: 'new_disk' }) as FormSelectConfig;
       newDiskConfig.options = availableDisksForExtend;
     });
   }
@@ -273,7 +275,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     this.loader.close();
   }
 
-  getAction(data: any, category: any, vdev_type: VDevType): any {
+  getAction(data: any, category: PoolTopologyCategory, vdev_type: VDevType): any {
     const actions = [{
       id: 'edit',
       label: helptext.actions_label.edit,
@@ -366,10 +368,10 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           fieldConfig: this.replaceDiskFormFields,
           saveButtonText: helptext.replace_disk.saveButtonText,
           parent: this,
-          customSubmit(entityDialog: EntityDialogComponent) {
+          customSubmit: (entityDialog: EntityDialogComponent) => {
             delete entityDialog.formValue['passphrase2'];
 
-            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {
+            const dialogRef = this.matDialog.open(EntityJobComponent, {
               data: { title: helptext.replace_disk.title },
               disableClose: true,
             });
@@ -379,11 +381,11 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
             dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               dialogRef.close(true);
               entityDialog.dialogRef.close(true);
-              entityDialog.parent.getData();
-              entityDialog.parent.getUnusedDisk();
-              entityDialog.parent.dialogService.info(
+              this.getData();
+              this.getUnusedDisk();
+              this.dialogService.info(
                 helptext.replace_disk.title,
-                entityDialog.parent.translate.instant('Successfully replaced disk {disk}.', { disk: name }),
+                this.translate.instant('Successfully replaced disk {disk}.', { disk: name }),
                 '',
                 'info',
                 true,
@@ -396,7 +398,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               if (res.error.startsWith('[EINVAL]')) {
                 err = res.error;
               }
-              entityDialog.parent.dialogService.errorReport(helptext.replace_disk.err_title, err, res.exception);
+              this.dialogService.errorReport(helptext.replace_disk.err_title, err, res.exception);
             });
           },
         };
@@ -459,7 +461,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
 
     if (category == 'data') {
       _.find(actions, { id: 'remove' }).isHidden = true;
-    } else if (category == 'spares') {
+    } else if (category == 'spare') {
       _.find(actions, { id: 'online' }).isHidden = true;
       _.find(actions, { id: 'offline' }).isHidden = true;
       _.find(actions, { id: 'Replace' }).isHidden = true;
@@ -491,10 +493,10 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           fieldConfig: this.extendVdevFormFields,
           saveButtonText: helptext.extend_disk.saveButtonText,
           parent: this,
-          customSubmit(entityDialog: EntityDialogComponent) {
+          customSubmit: (entityDialog: EntityDialogComponent) => {
             delete entityDialog.formValue['passphrase2'];
 
-            const dialogRef = entityDialog.parent.matDialog.open(EntityJobComponent, {
+            const dialogRef = this.matDialog.open(EntityJobComponent, {
               data: { title: helptext.extend_disk.title },
               disableClose: true,
             });
@@ -504,9 +506,9 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
             dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
               dialogRef.close(true);
               entityDialog.dialogRef.close(true);
-              entityDialog.parent.getData();
-              entityDialog.parent.getUnusedDisk();
-              entityDialog.parent.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + '.', '', 'info', true);
+              this.getData();
+              this.getUnusedDisk();
+              this.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + '.', '', 'info', true);
             });
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();
@@ -515,7 +517,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               if (res.error.startsWith('[EINVAL]')) {
                 err = res.error;
               }
-              entityDialog.parent.dialogService.errorReport(helptext.extend_disk.err_title, err, res.exception);
+              this.dialogService.errorReport(helptext.extend_disk.err_title, err, res.exception);
             });
           },
         };
@@ -545,26 +547,26 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }];
   }
 
-  parseData(data: any, category?: any, vdev_type?: VDevType): PoolDiskInfo {
-    let stats: any = {
+  parseData(data: Pool | VDev, category?: PoolTopologyCategory, vdev_type?: VDevType): PoolDiskInfo {
+    let stats = {
       read_errors: 0,
       write_errors: 0,
       checksum_errors: 0,
-    };
+    } as VDevStats;
 
-    if (data.stats) {
+    if ('stats' in data) {
       stats = data.stats;
     }
-    if (data.type && data.type != 'DISK') {
-      data.name = data.type;
+    if ('type' in data && data.type != VDevType.Disk) {
+      (data as any).name = data.type;
     }
     // use path as the device name if the device name is null
-    if (!data.disk || data.disk == null) {
-      data.disk = data.path;
+    if (!(data as VDev).disk || (data as VDev).disk == null) {
+      (data as any).disk = data.path;
     }
 
     const item: PoolDiskInfo = {
-      name: data.name ? data.name : data.disk,
+      name: 'name' in data ? data.name : data.disk,
       read: stats.read_errors ? stats.read_errors : 0,
       write: stats.write_errors ? stats.write_errors : 0,
       checksum: stats.checksum_errors ? stats.checksum_errors : 0,
@@ -574,10 +576,10 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     };
 
     // add actions
-    if (category && data.type) {
-      if (data.type == 'DISK') {
+    if (category && 'type' in data) {
+      if (data.type == VDevType.Disk) {
         item.actions = [{ title: 'Disk Actions', actions: this.getAction(data, category, vdev_type) }];
-      } else if (data.type === 'MIRROR') {
+      } else if (data.type === VDevType.Mirror) {
         item.actions = [{ title: 'Mirror Actions', actions: this.extendAction() }];
       }
     }

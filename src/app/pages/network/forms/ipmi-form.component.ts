@@ -220,7 +220,7 @@ export class IPMIFromComponent implements FormConfiguration {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'ipaddress' }));
       const ipValue = entityEdit.formGroup.controls['ipaddress'].value;
       const btn = <HTMLInputElement>document.getElementById('cust_button_Manage');
-      status === 'INVALID' || ipValue === '0.0.0.0' ? btn.disabled = true : btn.disabled = false;
+      btn.disabled = (status === 'INVALID' || ipValue === '0.0.0.0');
     });
 
     entityEdit.formGroup.controls['ipaddress'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
@@ -243,7 +243,7 @@ export class IPMIFromComponent implements FormConfiguration {
   }
 
   setErrorStatus(status: string, field: FieldConfig): void {
-    status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
+    field.hasErrors = (status === 'INVALID');
   }
 
   customSubmit(payload: IpmiUpdate): Subscription {

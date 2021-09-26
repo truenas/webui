@@ -397,8 +397,10 @@ export class SMBFormComponent implements FormConfiguration {
             this.dialog.errorReport('Error', err.err, err.backtrace);
           },
         );
+      } else if (source === 'timemachine') {
+        this.checkAllowDeny(entityForm);
       } else {
-        source === 'timemachine' ? this.checkAllowDeny(entityForm) : this.checkAclActions(entityForm);
+        this.checkAclActions(entityForm);
       }
     });
   }
@@ -518,7 +520,7 @@ export class SMBFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     const generalFieldsets = _.find(this.fieldSets, { class: 'basic' });
-    const purposeField: FormSelectConfig = _.find(generalFieldsets.config, { name: 'purpose' });
+    const purposeField = _.find(generalFieldsets.config, { name: 'purpose' }) as FormSelectConfig;
     this.ws.call('sharing.smb.presets').pipe(untilDestroyed(this)).subscribe(
       (presets) => {
         this.presets = presets;

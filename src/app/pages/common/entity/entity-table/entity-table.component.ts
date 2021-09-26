@@ -540,14 +540,13 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
   getData(): void {
     const sort: string[] = [];
 
-    for (const i in this.config.sorting.columns) {
-      const col = this.config.sorting.columns[i];
+    this.config.sorting.columns.forEach((col) => {
       if (col.sort === 'asc') {
         sort.push(col.name);
       } else if (col.sort === 'desc') {
         sort.push('-' + col.name);
       }
-    }
+    });
 
     const options: any = { limit: 0 };
     if (sort.length > 0) {
@@ -1112,15 +1111,21 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     const state: JobState = row.state;
 
     switch (state) {
-      case JobState.Pending: return 'fn-theme-orange';
-      case JobState.Running: return 'fn-theme-orange';
-      case JobState.Aborted: return 'fn-theme-orange';
-      case JobState.Finished: return 'fn-theme-green';
-      case JobState.Success: return 'fn-theme-green';
-      case JobState.Error: return 'fn-theme-red';
-      case JobState.Failed: return 'fn-theme-red';
-      case JobState.Hold: return 'fn-theme-yellow';
-      default: return 'fn-theme-primary';
+      case JobState.Pending:
+      case JobState.Running:
+      case JobState.Aborted:
+        return 'fn-theme-orange';
+      case JobState.Finished:
+      case JobState.Success:
+        return 'fn-theme-green';
+      case JobState.Error:
+      case JobState.Failed:
+        return 'fn-theme-red';
+      case JobState.Locked:
+      case JobState.Hold:
+        return 'fn-theme-yellow';
+      default:
+        return 'fn-theme-primary';
     }
   }
 

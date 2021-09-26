@@ -67,6 +67,12 @@ export class KubernetesSettingsComponent implements FormConfiguration {
           tooltip: helptext.kubForm.enable_container_image_update.tooltip,
           value: true,
         },
+        {
+          type: 'checkbox',
+          name: 'configure_gpus',
+          placeholder: helptext.kubForm.configure_gpus.placeholder,
+          value: true,
+        },
       ],
     },
     {
@@ -116,7 +122,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
   async prerequisite(): Promise<boolean> {
     const setNodeIpControl$ = this.appService.getBindIPChoices().pipe(
       tap((ips) => {
-        const nodeIpControl: FormSelectConfig = _.find(this.fieldSets[0].config, { name: 'node_ip' });
+        const nodeIpControl = _.find(this.fieldSets[0].config, { name: 'node_ip' }) as FormSelectConfig;
         for (const ip in ips) {
           nodeIpControl.options.push({ label: ip, value: ip });
         }
@@ -125,7 +131,8 @@ export class KubernetesSettingsComponent implements FormConfiguration {
 
     const setV4InterfaceControl$ = this.appService.getInterfaces().pipe(
       tap((interfaces) => {
-        const v4InterfaceControl: FormSelectConfig = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' });
+        const v4InterfaceControl = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' }) as FormSelectConfig;
+
         interfaces.forEach((i) => {
           v4InterfaceControl.options.push({ label: i.name, value: i.name });
         });

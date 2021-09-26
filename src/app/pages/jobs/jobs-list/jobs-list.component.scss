@@ -27,6 +27,10 @@ mat-table.jobs-table {
     }
   }
 
+  .mat-column-name {
+    padding-right: 24px;
+  }
+
   .mat-column-state,
   .mat-column-logs_excerpt {
     min-width: 110px;

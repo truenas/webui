@@ -6,7 +6,9 @@ import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationGroup } from 'app/pages/common/entity/entity-form/models/field-relation.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
@@ -29,7 +31,7 @@ export class InitiatorFormComponent implements OnInit {
   protected editCall: 'iscsi.initiator.update' = 'iscsi.initiator.update';
   protected customFilter: any[] = [[['id', '=']]];
   route_success: string[] = ['sharing', 'iscsi', 'initiator'];
-  protected pk: any;
+  protected pk: number;
 
   fieldConfig: FieldConfig[] = [
     {
@@ -124,12 +126,12 @@ export class InitiatorFormComponent implements OnInit {
     });
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-    for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
+
+    this.fieldConfig.forEach((config) => {
       if (config.relation.length > 0) {
         this.setRelation(config);
       }
-    }
+    });
 
     this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.connectedInitiatorsDisabled = res === 'DISABLED';
@@ -194,6 +196,8 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   setRelation(config: FieldConfig): void {
+    if (!config) return;
+
     const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(

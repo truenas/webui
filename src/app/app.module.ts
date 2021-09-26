@@ -9,6 +9,7 @@ import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
+import { NgxPopperjsModule } from 'ngx-popperjs';
 import {
   TranslateMessageFormatCompiler,
 } from 'ngx-translate-messageformat-compiler';
@@ -25,6 +26,7 @@ import { CoreComponents } from 'app/core/components/core-components.module';
 import { setCoreServiceInjector } from 'app/core/services/core-service-injector';
 import { CoreServices } from 'app/core/services/core-services.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import { ErdService } from 'app/services/erd.service';
 import { IxModalService } from 'app/services/ix-modal.service';
@@ -64,6 +66,7 @@ import { WebSocketService } from './services/ws.service';
     AppLoaderModule,
     HttpClientModule,
     AppCommonModule,
+    TooltipModule,
     TranslateModule.forRoot({
       defaultLanguage: 'en',
       loader: {
@@ -83,6 +86,7 @@ import { WebSocketService } from './services/ws.service';
     }),
     MaterialModule,
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
+    NgxPopperjsModule.forRoot({ appendTo: 'body' }),
     MarkdownModule.forRoot(),
     CoreServices.forRoot(),
     CoreComponents,

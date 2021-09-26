@@ -4,6 +4,7 @@ import { reject } from 'q';
 import { Observable } from 'rxjs';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { SshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -21,7 +22,7 @@ export class ReplicationService {
     return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
   }
 
-  getRemoteDataset(transport: TransportMode, sshCredentials: number, parentComponent: any): Promise<any> {
+  getRemoteDataset(transport: TransportMode, sshCredentials: number, parentComponent: any): Promise<ListdirChild[]> {
     const queryParams: [transport: TransportMode, credentials?: number] = [transport];
     if (transport !== TransportMode.Local) {
       queryParams.push(sshCredentials);
@@ -32,11 +33,11 @@ export class ReplicationService {
         for (let i = 0; i < res.length; i++) {
           const pathArr = res[i].split('/');
           if (pathArr.length === 1) {
-            const node = {
+            const node: ListdirChild = {
               name: res[i],
               subTitle: pathArr[0],
               hasChildren: false,
-              children: [] as any,
+              children: [],
             };
             nodes.push(node);
           } else {
@@ -45,11 +46,11 @@ export class ReplicationService {
             while (_.find(parent.children, { subTitle: pathArr[j] })) {
               parent = _.find(parent.children, { subTitle: pathArr[j++] });
             }
-            const node = {
+            const node: ListdirChild = {
               name: res[i],
               subTitle: pathArr[j],
               hasChildren: false,
-              children: [] as any,
+              children: [],
             };
             parent.children.push(node);
             parent.hasChildren = true;

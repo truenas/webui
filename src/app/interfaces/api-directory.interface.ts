@@ -2,6 +2,7 @@ import { DefaultAclType } from 'app/enums/acl-type.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
+import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { LACPDURate, XmitHashPolicy } from 'app/enums/network-interface.enum';
@@ -112,6 +113,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { KerberosConfig, KerberosKeytab, KerberosKeytabUpdate } from 'app/interfaces/kerberos-config.interface';
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
 import { KeychainCredential, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
@@ -125,11 +127,11 @@ import {
 import { NetworkInterface, ServiceRestartedOnNetworkSync } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { AddNfsPrincipal, NfsConfig, NfsConfigUpdate } from 'app/interfaces/nfs-config.interface';
-import { NfsShare } from 'app/interfaces/nfs-share.interface';
+import { NfsShare, NfsShareUpdate } from 'app/interfaces/nfs-share.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
-import { OpenvpnClientConfig, OpenvpnClientUpdate } from 'app/interfaces/openvpn-client-config.interface';
-import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
-import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
+import { OpenvpnClientConfig, OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
+import { OpenvpnServerConfig, OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
+import { PeriodicSnapshotTask, PeriodSnapshotTaskUpdate } from 'app/interfaces/periodic-snapshot-task.interface';
 import { PoolAttachment } from 'app/interfaces/pool-attachment.interface';
 import { PoolExportParams } from 'app/interfaces/pool-export.interface';
 import { ImportDiskParams, PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
@@ -328,6 +330,8 @@ export type ApiDirectory = {
   'cronjob.run': { params: [id: number]; response: void };
   'cronjob.query': { params: QueryParams<Cronjob>; response: Cronjob[] };
   'cronjob.delete': { params: [id: number]; response: boolean };
+  'cronjob.create': { params: any; response: any };
+  'cronjob.update': { params: any; response: any };
 
   // Core
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
@@ -345,7 +349,7 @@ export type ApiDirectory = {
   'cloudsync.credentials.query': { params: QueryParams<CloudsyncCredential>; response: CloudsyncCredential[] };
   'cloudsync.credentials.create': { params: any; response: any };
   'cloudsync.credentials.update': { params: any; response: any };
-  'cloudsync.credentials.delete': { params: any; response: any };
+  'cloudsync.credentials.delete': { params: [id: number]; response: boolean };
   'cloudsync.credentials.verify': { params: any; response: any };
   'cloudsync.onedrive_list_drives': { params: any; response: any };
   'cloudsync.list_buckets': { params: [id: number]; response: any };
@@ -392,7 +396,7 @@ export type ApiDirectory = {
   // Enclosure
   'enclosure.query': { params: void; response: Enclosure[] };
   'enclosure.update': { params: any; response: any };
-  'enclosure.set_slot_status': { params: any; response: any };
+  'enclosure.set_slot_status': { params: [id: string, slot: number, status: EnclosureSlotStatus ]; response: any };
 
   // Filesystem
   'filesystem.acl_is_trivial': {
@@ -541,7 +545,7 @@ export type ApiDirectory = {
   'kerberos.realm.create': { params: [KerberosRealmUpdate]; response: KerberosRealm };
   'kerberos.realm.update': { params: [id: number, update: KerberosRealmUpdate]; response: KerberosRealm };
   'kerberos.realm.delete': { params: [id: number]; response: boolean };
-  'kerberos.keytab.has_nfs_principal': { params: any; response: any };
+  'kerberos.keytab.has_nfs_principal': { params: void; response: boolean };
   'kerberos.config': { params: void; response: KerberosConfig };
   'kerberos.update': { params: any; response: any };
   'kerberos.keytab.kerberos_principal_choices': { params: void; response: string[] };
@@ -551,11 +555,11 @@ export type ApiDirectory = {
   'kerberos.keytab.delete': { params: [id: number]; response: boolean };
 
   // KMIP
-  'kmip.update': { params: any; response: any };
-  'kmip.config': { params: any; response: any };
+  'kmip.update': { params: [KmipConfigUpdate]; response: KmipConfig };
+  'kmip.config': { params: void; response: KmipConfig };
   'kmip.kmip_sync_pending': { params: void; response: boolean };
-  'kmip.sync_keys': { params: any; response: any };
-  'kmip.clear_sync_pending_keys': { params: any; response: any };
+  'kmip.sync_keys': { params: void; response: void };
+  'kmip.clear_sync_pending_keys': { params: void; response: void };
 
   // Ldap
   'ldap.ssl_choices': { params: void; response: string[] };
@@ -575,7 +579,7 @@ export type ApiDirectory = {
   'nfs.update': { params: [NfsConfigUpdate]; response: NfsConfig };
 
   // OpenVPN
-  'openvpn.client.update': { params: [OpenvpnClientUpdate]; response: OpenvpnClientConfig };
+  'openvpn.client.update': { params: [OpenvpnClientConfigUpdate]; response: OpenvpnClientConfig };
   'openvpn.client.authentication_algorithm_choices': { params: void; response: Choices };
   'openvpn.client.cipher_choices': { params: void; response: Choices };
   'openvpn.server.renew_static_key': { params: void; response: OpenvpnServerConfig };
@@ -586,10 +590,11 @@ export type ApiDirectory = {
     params: [certificateId: number, serverAddress: string];
     response: string;
   };
-  'openvpn.server.update': { params: any; response: any };
+  'openvpn.server.update': { params: [OpenvpnServerConfigUpdate]; response: OpenvpnServerConfig };
   'openvpn.server.config': { params: void; response: OpenvpnServerConfig };
 
   // Pool
+  'pool.attach': { params: any; response: any };
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
   'pool.create': { params: [CreatePool]; response: Pool };
   'pool.dataset.attachments': { params: [datasetId: string]; response: PoolAttachment[] };
@@ -606,7 +611,7 @@ export type ApiDirectory = {
   'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
   'pool.dataset.inherit_parent_encryption_properties': { params: [id: string]; response: void };
   'pool.dataset.lock': { params: [id: string, params?: { force_umount: boolean }]; response: boolean };
-  'pool.dataset.path_in_locked_datasets': { params: any; response: any };
+  'pool.dataset.path_in_locked_datasets': { params: [path: string]; response: boolean };
   'pool.dataset.permission': { params: DatasetPermissionsUpdate; response: number };
   'pool.dataset.processes': { params: [datasetId: string]; response: PoolProcess[] };
   'pool.dataset.promote': { params: [id: string]; response: void };
@@ -638,6 +643,7 @@ export type ApiDirectory = {
   'pool.recoverykey_rm': { params: any; response: any };
   'pool.rekey': { params: any; response: any };
   'pool.remove': { params: PoolRemoveParams; response: any };
+  'pool.replace': { params: any; response: any };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
   'pool.scrub': { params: PoolScrubParams; response: void };
@@ -645,10 +651,10 @@ export type ApiDirectory = {
   'pool.scrub.delete': { params: [id: number]; response: boolean };
   'pool.scrub.query': { params: QueryParams<PoolScrub>; response: PoolScrub[] };
   'pool.scrub.update': { params: [id: number, params: CreatePoolScrub]; response: PoolScrub };
-  'pool.snapshottask.create': { params: any; response: any };
+  'pool.snapshottask.create': { params: [PeriodSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
   'pool.snapshottask.delete': { params: [id: number]; response: boolean };
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
-  'pool.snapshottask.update': { params: any; response: any };
+  'pool.snapshottask.update': { params: [id: number, update: PeriodSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
   'pool.unlock': { params: PoolUnlockQuery; response: PoolUnlockResult };
   'pool.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.update': { params: any; response: Pool };
@@ -782,8 +788,8 @@ export type ApiDirectory = {
   'sharing.smb.delete': { params: [id: number]; response: boolean };
   'sharing.smb.presets': { params: void; response: SmbPresets };
   'sharing.nfs.query': { params: QueryParams<NfsShare>; response: NfsShare[] };
-  'sharing.nfs.update': { params: any; response: any };
-  'sharing.nfs.create': { params: any; response: any };
+  'sharing.nfs.update': { params: [id: number, update: NfsShareUpdate]; response: NfsShare };
+  'sharing.nfs.create': { params: [NfsShareUpdate]; response: NfsShare };
   'sharing.nfs.delete': { params: [id: number]; response: boolean };
   'sharing.webdav.query': { params: QueryParams<WebDavShare>; response: WebDavShare[] };
   'sharing.webdav.update': { params: [id: number, update: WebDavShareUpdate]; response: WebDavShare };

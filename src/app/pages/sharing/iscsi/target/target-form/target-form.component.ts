@@ -143,7 +143,7 @@ export class TargetFormComponent implements FormConfiguration {
   ];
   fieldConfig: FieldConfig[];
   title = T('Add ISCSI Target');
-  pk: any;
+  pk: number;
   protected entityForm: EntityFormComponent;
   constructor(protected router: Router,
     protected aroute: ActivatedRoute,
@@ -152,7 +152,7 @@ export class TargetFormComponent implements FormConfiguration {
     public translate: TranslateService,
     protected ws: WebSocketService,
     private modalService: ModalService) {
-    this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: string) => {
+    this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.customFilter = [[['id', '=', rowId]]];
       this.pk = rowId;
     });
@@ -168,10 +168,10 @@ export class TargetFormComponent implements FormConfiguration {
 
   async prerequisite(): Promise<boolean> {
     const targetGroupFieldset = _.find(this.fieldSets, { class: 'group' });
-    const targetGroupFieldConfig: FormListConfig = _.find(targetGroupFieldset.config, { name: 'groups' });
-    const portalGroupField: FormSelectConfig = targetGroupFieldConfig.templateListField[0];
-    const initiatorGroupField: FormSelectConfig = targetGroupFieldConfig.templateListField[1];
-    const authGroupField: FormSelectConfig = targetGroupFieldConfig.templateListField[3];
+    const targetGroupFieldConfig = _.find(targetGroupFieldset.config, { name: 'groups' }) as FormListConfig;
+    const portalGroupField = targetGroupFieldConfig.templateListField[0] as FormSelectConfig;
+    const initiatorGroupField = targetGroupFieldConfig.templateListField[1] as FormSelectConfig;
+    const authGroupField = targetGroupFieldConfig.templateListField[3] as FormSelectConfig;
     const promise1 = new Promise((resolve) => {
       this.iscsiService.listPortals().toPromise().then(
         (portals) => {

@@ -318,10 +318,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
     if (!this.parent) return;
 
     const sparse = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sparse');
-    const sync: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sync');
-    const compression: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'compression');
-    const deduplication: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'deduplication');
-    const volblocksize: FormSelectConfig = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize');
+    const sync = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sync') as FormSelectConfig;
+    const compression = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'compression') as FormSelectConfig;
+    const deduplication = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'deduplication') as FormSelectConfig;
+    const volblocksize = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize') as FormSelectConfig;
 
     this.isNew = true;
 
@@ -329,9 +329,9 @@ export class ZvolWizardComponent implements WizardConfiguration {
       const children = (pk_dataset[0].children);
       entityWizard.setDisabled('name', false, 1);
       if (children.length > 0) {
-        for (const i in children) {
-          this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
-        }
+        children.forEach((child) => {
+          this.namesInUse.push(/[^/]*$/.exec(child.name)[0]);
+        });
       }
       this.translate.get('Inherit').pipe(untilDestroyed(this)).subscribe((inheritTr) => {
         if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {

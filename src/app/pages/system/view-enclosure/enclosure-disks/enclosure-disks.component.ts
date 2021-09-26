@@ -17,8 +17,10 @@ import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { E16 } from 'app/core/classes/hardware/e16';
 import { E24 } from 'app/core/classes/hardware/e24';
 import { E60 } from 'app/core/classes/hardware/e60';
+import { ES102 } from 'app/core/classes/hardware/es102';
 import { ES12 } from 'app/core/classes/hardware/es12';
 import { ES24 } from 'app/core/classes/hardware/es24';
+import { ES24F } from 'app/core/classes/hardware/es24f';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { R10 } from 'app/core/classes/hardware/r10';
@@ -33,6 +35,7 @@ import {
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { Temperature } from 'app/core/services/disk-temperature.service';
+import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
@@ -392,6 +395,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.controllerEvent$.next({ name: 'VisualizerReady', sender: this });
   }
 
+  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
+  themeKey(key: string): keyof Theme {
+    return key as keyof Theme;
+  }
+
   createEnclosure(profile: EnclosureMetadata = this.selectedEnclosure): void {
     if (this.currentView == 'details') {
       this.clearDisk();
@@ -432,6 +440,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'ES24':
         this.chassis = new ES24();
         break;
+      case 'ES24F':
+        this.chassis = new ES24F();
+        break;
       case 'E24':
         this.chassis = new E24();
         break;
@@ -440,6 +451,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         break;
       case 'E60':
         this.chassis = new E60();
+        break;
+      case 'ES102':
+        this.chassis = new ES102();
+        this.showCaption = false;
         break;
       default:
         this.controllerEvent$.next({
@@ -541,11 +556,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'ES24':
         chassis = new ES24();
         break;
+      case 'ES24F':
+        chassis = new ES24F();
+        break;
       case 'ES60':
         chassis = new ES60();
         break;
       case 'E60':
         chassis = new E60();
+        break;
+      case 'ES102':
+        chassis = new ES102();
         break;
       default:
         this.controllerEvent$.next({
@@ -961,11 +982,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   findDiskBySlotNumber(slot: number): EnclosureDisk {
     const selectedEnclosure = this.getSelectedEnclosure();
-    for (const i in selectedEnclosure.disks) {
-      if (selectedEnclosure.disks[i].enclosure.slot == slot) {
-        return selectedEnclosure.disks[i];
-      }
-    }
+    return selectedEnclosure.disks.find((disk) => {
+      return disk.enclosure.slot == slot;
+    });
   }
 
   toggleHighlightMode(mode: string): void {
@@ -1016,7 +1035,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const selectedEnclosure = this.getSelectedEnclosure();
     const enclosure_id = this.system.enclosures[selectedEnclosure.enclosureKey].id;
     const slot = this.selectedDisk.enclosure.slot;
-    const status = !this.identifyBtnRef && !kill ? 'IDENTIFY' : 'CLEAR';
+    const status = !this.identifyBtnRef && !kill ? EnclosureSlotStatus.Identify : EnclosureSlotStatus.Clear;
     const args = [enclosure_id, slot, status];
 
     // Arguments are Str("enclosure_id"), Int("slot"), Str("status", enum=["CLEAR", "FAULT", "IDENTIFY"])
@@ -1115,10 +1134,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   labelForm(): void {
-    const self = this;
-
-    const obj = self.system.enclosures[self.selectedEnclosure.enclosureKey];
-    const currentLabel = obj.label !== obj.name ? obj.label : self.selectedEnclosure.model;
+    const obj = this.system.enclosures[this.selectedEnclosure.enclosureKey];
+    const currentLabel = obj.label !== obj.name ? obj.label : this.selectedEnclosure.model;
     const conf: DialogFormConfiguration = {
       title: T('Change Enclosure Label'),
       fieldConfig: [
@@ -1147,10 +1164,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         },
       ],
       saveButtonText: T('SAVE'),
-      customSubmit(entityDialog: EntityDialogComponent) {
-        self.pendingDialog = entityDialog;
+      customSubmit: (entityDialog: EntityDialogComponent) => {
+        this.pendingDialog = entityDialog;
         entityDialog.loader.open();
-        self.setEnclosureLabel(entityDialog.formValue.label);
+        this.setEnclosureLabel(entityDialog.formValue.label);
       },
     };
 

@@ -59,9 +59,8 @@ export class StorageService {
     dlink.href = window.URL.createObjectURL(blob);
     dlink.onclick = () => {
       // revokeObjectURL needs a delay to work properly
-      const that: any = this;
       setTimeout(() => {
-        window.URL.revokeObjectURL(that.href);
+        window.URL.revokeObjectURL((this as any).href);
       }, 1500);
     };
 
@@ -193,7 +192,11 @@ export class StorageService {
     // Rejoins the sorted keys with the rest of the row data
     let v: number;
     // ascending or decending
-    asc === 'asc' ? (v = 1) : (v = -1);
+    if (asc === 'asc') {
+      (v = 1);
+    } else {
+      (v = -1);
+    }
     arr.sort((a, b) => {
       const A = a[key];
       const B = b[key];

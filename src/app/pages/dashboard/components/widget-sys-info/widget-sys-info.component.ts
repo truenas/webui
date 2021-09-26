@@ -10,6 +10,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
 import { UpdateCheckedEvent } from 'app/interfaces/events/update-checked-event.interface';
 import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -67,7 +68,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     super(translate);
     this.configurable = false;
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
+      this.isUpdateRunning = res === 'true';
     });
 
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
@@ -94,7 +95,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     });
 
     if (this.isHA && this.isPassive) {
-      this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+      this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
         if (evt.data.status == 'HA Enabled' && !this.data) {
           this.ws.call('failover.call_remote', ['system.info']).pipe(untilDestroyed(this)).subscribe((res) => {
             const evt = { name: 'SysInfoPassive', data: res };
@@ -143,10 +144,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
 
   get themeAccentColors(): string[] {
     const theme = this.themeService.currentTheme();
-    this._themeAccentColors = [];
-    for (const color in theme.accentColors) {
-      this._themeAccentColors.push((theme as any)[theme.accentColors[color]]);
-    }
+    this._themeAccentColors = theme.accentColors.map((color) => (theme as any)[color]);
     return this._themeAccentColors;
   }
 
@@ -203,9 +201,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     }
 
     if (days > 0) {
-      days === 1
-        ? this.uptimeString += days + T(' day, ')
-        : this.uptimeString += days + T(' days, ') + `${hrs}:${pmin}`;
+      if (days === 1) {
+        this.uptimeString += days + T(' day, ');
+      } else {
+        this.uptimeString += days + T(' days, ') + `${hrs}:${pmin}`;
+      }
     } else if (hrs > 0) {
       this.uptimeString += `${hrs}:${pmin}`;
     } else {

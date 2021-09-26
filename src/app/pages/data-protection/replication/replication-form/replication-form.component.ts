@@ -17,6 +17,7 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
@@ -54,7 +55,7 @@ export class ReplicationFormComponent implements FormConfiguration {
   editCall: 'replication.update' = 'replication.update';
   isEntity = true;
   protected entityForm: EntityFormComponent;
-  protected queryRes: ReplicationTask[];
+  protected queryRes: ReplicationTask;
   title: string;
   pk: number;
   protected retentionPolicyChoice = [
@@ -1104,32 +1105,30 @@ export class ReplicationFormComponent implements FormConfiguration {
     this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: number) => {
       this.queryCallOption = [['id', '=', id]];
     });
-    const sshCredentialsField: FormSelectConfig = this.fieldSets.config('ssh_credentials');
+    const sshCredentialsField = this.fieldSets.config('ssh_credentials') as FormSelectConfig;
     this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
-      for (const i in connections) {
-        sshCredentialsField.options.push({
-          label: connections[i].name,
-          value: connections[i].id,
-        });
-      }
+      sshCredentialsField.options = connections.map((connection) => ({
+        label: connection.name,
+        value: connection.id,
+      }));
     });
-    const periodicSnapshotTasksField: FormSelectConfig = this.fieldSets.config('periodic_snapshot_tasks');
-    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      for (const i in res) {
-        const label = `${res[i].dataset} - ${res[i].naming_schema} - ${res[i].lifetime_value} ${
-          res[i].lifetime_unit
-        } (S) - ${res[i].enabled ? 'Enabled' : 'Disabled'}`;
+    const periodicSnapshotTasksField = this.fieldSets.config('periodic_snapshot_tasks') as FormSelectConfig;
+    this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((tasks) => {
+      tasks.forEach((task) => {
+        const label = `${task.dataset} - ${task.naming_schema} - ${task.lifetime_value} ${
+          task.lifetime_unit
+        } (S) - ${task.enabled ? 'Enabled' : 'Disabled'}`;
         periodicSnapshotTasksField.options.push({
           label,
-          value: res[i].id,
+          value: task.id,
         });
-      }
+      });
     });
 
-    const scheduleBeginField: FormSelectConfig = this.fieldSets.config('schedule_begin');
-    const restrictScheduleBeginField: FormSelectConfig = this.fieldSets.config('restrict_schedule_begin');
-    const scheduleEndField: FormSelectConfig = this.fieldSets.config('schedule_end');
-    const restrictScheduleEndField: FormSelectConfig = this.fieldSets.config('restrict_schedule_end');
+    const scheduleBeginField = this.fieldSets.config('schedule_begin') as FormSelectConfig;
+    const restrictScheduleBeginField = this.fieldSets.config('restrict_schedule_begin') as FormSelectConfig;
+    const scheduleEndField = this.fieldSets.config('schedule_end') as FormSelectConfig;
+    const restrictScheduleEndField = this.fieldSets.config('restrict_schedule_end') as FormSelectConfig;
     const time_options = this.taskService.getTimeOptions();
 
     for (let i = 0; i < time_options.length; i++) {
@@ -1224,7 +1223,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       this.toggleNamingSchemaOrRegex();
     });
 
-    const retentionPolicyField: FormSelectConfig = this.fieldSets.config('retention_policy');
+    const retentionPolicyField = this.fieldSets.config('retention_policy') as FormSelectConfig;
     entityForm.formGroup.controls['transport'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (
         res !== TransportMode.Local
@@ -1277,7 +1276,7 @@ export class ReplicationFormComponent implements FormConfiguration {
 
     entityForm.formGroup.controls['ssh_credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
-        const explorerConfig: FormExplorerConfig = this.fieldSets.config(item);
+        const explorerConfig = this.fieldSets.config(item) as FormExplorerConfig;
         const explorerComponent = explorerConfig.customTemplateStringOptions.explorerComponent;
         if (explorerComponent) {
           explorerComponent.nodes = [
@@ -1527,7 +1526,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           if (prop === 'only_matching_schedule' || prop === 'hold_pending_snapshots') {
             data[prop] = false;
           } else {
-            data[prop] = Array.isArray(this.queryRes[prop]) ? [] : null;
+            data[prop] = Array.isArray(this.queryRes[prop as keyof ReplicationTask]) ? [] : null;
           }
         }
         if (prop === 'schedule' && data[prop] === false) {
@@ -1537,7 +1536,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
   }
 
-  getChildren(): Promise<Promise<any>> {
+  getChildren(): Promise<Promise<ListdirChild[]>> {
     for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
       this.fieldSets.config(item).hasErrors = false;
     }

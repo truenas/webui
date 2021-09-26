@@ -68,7 +68,7 @@ export class ZvolFormComponent implements FormConfiguration {
   protected encrypted_parent = false;
   protected inherit_encryption = true;
   protected passphrase_parent = false;
-  protected encryption_type = 'key';
+  protected encryption_type: 'key' | 'passphrase' = 'key';
   protected generate_key = true;
   protected encryption_algorithm: string;
 
@@ -437,9 +437,9 @@ export class ZvolFormComponent implements FormConfiguration {
       this.encryption_algorithm = pk_dataset[0].encryption_algorithm.value;
       const children = (pk_dataset[0].children);
       if (children.length > 0) {
-        for (const i in children) {
-          this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
-        }
+        children.forEach((child) => {
+          this.namesInUse.push(/[^/]*$/.exec(child.name)[0]);
+        });
       }
 
       let inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
@@ -463,7 +463,7 @@ export class ZvolFormComponent implements FormConfiguration {
           this.entityForm.setDisabled('encryption', true, true);
           this.entityForm.setDisabled('inherit_encryption', true, true);
         } else {
-          const encryption_algorithm_fc: FormSelectConfig = _.find(this.fieldConfig, { name: 'algorithm' });
+          const encryption_algorithm_fc = _.find(this.fieldConfig, { name: 'algorithm' }) as FormSelectConfig;
           const encryption_algorithm_fg = this.entityForm.formGroup.controls['algorithm'];
           let parent_algorithm;
           if (this.encrypted_parent && pk_dataset[0].encryption_algorithm) {
@@ -488,7 +488,7 @@ export class ZvolFormComponent implements FormConfiguration {
           for (let i = 0; i < this.encryption_fields.length; i++) {
             this.entityForm.setDisabled(this.encryption_fields[i], true, true);
           }
-          inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: any) => {
+          inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: boolean) => {
             this.inherit_encryption = inherit;
             if (inherit) {
               for (let i = 0; i < all_encryption_fields.length; i++) {
@@ -514,7 +514,7 @@ export class ZvolFormComponent implements FormConfiguration {
               }
             }
           });
-          encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: any) => {
+          encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: boolean) => {
             // if on an encrypted parent we should warn the user, otherwise just disable the fields
             if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
               this.dialogService.confirm({
@@ -554,7 +554,7 @@ export class ZvolFormComponent implements FormConfiguration {
               }
             }
           });
-          encryption_type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: any) => {
+          encryption_type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: 'key' | 'passphrase') => {
             this.encryption_type = type;
             const key = (type === 'key');
             this.entityForm.setDisabled('passphrase', key, key);
@@ -567,7 +567,7 @@ export class ZvolFormComponent implements FormConfiguration {
               this.entityForm.setDisabled('key', true, true);
             }
           });
-          this.entityForm.formGroup.controls['generate_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((generate_key: any) => {
+          this.entityForm.formGroup.controls['generate_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((generate_key: boolean) => {
             this.generate_key = generate_key;
             this.entityForm.setDisabled('key', generate_key, generate_key);
           });
@@ -596,7 +596,7 @@ export class ZvolFormComponent implements FormConfiguration {
 
       this.translate.get('Inherit').pipe(untilDestroyed(this)).subscribe((inheritTr) => {
         const readonly_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT' }];
-        const readonly: FormSelectConfig = _.find(this.fieldConfig, { name: 'readonly' });
+        const readonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
         readonly.options = readonly_inherit.concat(readonly.options);
         let readonly_value;
         if (this.isNew) {
@@ -609,11 +609,11 @@ export class ZvolFormComponent implements FormConfiguration {
         }
         entityForm.formGroup.controls['readonly'].setValue(readonly_value);
 
-        const sync: FormSelectConfig = _.find(this.fieldConfig, { name: 'sync' });
+        const sync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
         const sparse = _.find(this.fieldConfig, { name: 'sparse' }) as FormCheckboxConfig;
-        const compression: FormSelectConfig = _.find(this.fieldConfig, { name: 'compression' });
-        const deduplication: FormSelectConfig = _.find(this.fieldConfig, { name: 'deduplication' });
-        const volblocksize: FormSelectConfig = _.find(this.fieldConfig, { name: 'volblocksize' });
+        const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
+        const deduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
+        const volblocksize = _.find(this.fieldConfig, { name: 'volblocksize' }) as FormSelectConfig;
 
         if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {
           const sync_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];

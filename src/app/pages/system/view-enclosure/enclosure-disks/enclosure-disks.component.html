@@ -52,7 +52,7 @@
             <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
               <div *ngFor="let pool of enclosurePools; let i=index">
                 <div class="swatch"
-                  [style.background]="subenclosure ? theme[theme.accentColors[subenclosure.poolKeys[pool]]] : theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
+                  [style.background]="subenclosure ? theme[themeKey(theme.accentColors[subenclosure.poolKeys[pool]])] : theme[themeKey(theme.accentColors[selectedEnclosure.poolKeys[pool]])]">
                 </div>
                 {{pool}}
                 <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]] || !system.pools[selectedEnclosure.poolKeys[pool]].healthy">
@@ -109,7 +109,7 @@
             </div>
             <div *ngIf="selectedVdev.type !== 'None'" class="title">
               <span class="semibold">Function:</span>
-              <span> {{selectedVdev.topology == 'None' ? 'UNKNOWN' : selectedVdev.topology.toUpperCase()}}</span>
+              <span> {{$any(selectedVdev).topology == 'None' ? 'UNKNOWN' : selectedVdev.topology.toUpperCase()}}</span>
             </div>
             <div class="title">
               <span class="semibold">Slot: </span>

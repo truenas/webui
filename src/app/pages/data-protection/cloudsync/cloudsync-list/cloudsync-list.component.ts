@@ -104,7 +104,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
       transformed.next_run = this.taskService.getTaskNextRun(transformed.cron_schedule);
 
       if (task.job === null) {
-        transformed.state = { state: JobState.Pending };
+        transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };
       } else {
         transformed.state = { state: task.job.state };
         this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: Job) => {
@@ -230,7 +230,6 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         label: T('Restore'),
         icon: 'restore',
         onClick: (row: CloudSyncTaskUi) => {
-          const parent = this;
           const conf: DialogFormConfiguration = {
             title: T('Restore Cloud Sync Task'),
             fieldConfig: [
@@ -287,16 +286,16 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                 }
               });
             },
-            customSubmit(entityDialog: EntityDialogComponent) {
-              parent.loader.open();
-              parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
+            customSubmit: (entityDialog: EntityDialogComponent) => {
+              this.loader.open();
+              this.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
                 () => {
                   entityDialog.dialogRef.close(true);
-                  parent.entityList.getData();
+                  this.entityList.getData();
                 },
                 (err) => {
-                  parent.loader.close();
-                  new EntityUtils().handleWSError(entityDialog, err, parent.dialog);
+                  this.loader.close();
+                  new EntityUtils().handleWSError(entityDialog, err, this.dialog);
                 },
               );
             },

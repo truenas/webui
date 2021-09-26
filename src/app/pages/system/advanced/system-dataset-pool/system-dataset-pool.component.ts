@@ -67,7 +67,7 @@ export class SystemDatasetPoolComponent implements FormConfiguration {
       .call('systemdataset.pool_choices')
       .pipe(untilDestroyed(this))
       .subscribe((poolChoices) => {
-        const poolField: FormSelectConfig = this.fieldSets.config(poolFieldName);
+        const poolField = this.fieldSets.config(poolFieldName) as FormSelectConfig;
         poolField.options = Object.entries(poolChoices)
           .map(([label, value]) => ({ label, value }));
       });
