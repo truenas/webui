@@ -10,9 +10,13 @@
 
 
   <div class="outlined input-container">
-    <span *ngIf="prefixText" matPrefix>{{prefixText}} &nbsp;</span>
-    <input matInput [required]="required" [(ngModel)]="value" (ngModelChange)="onChange($event)" (blur)="onTouch()">
-    <mat-icon *ngIf="suffixIcon" (click)="suffixIconClick()" matSuffix>{{suffixIcon}}</mat-icon>
+    <span *ngIf="prefixIcon" class="prefix-icon">
+      <mat-icon>{{prefixIcon}}</mat-icon>
+    </span>
+    <input matInput [ngClass]="{ 'prefix-padding': prefixIcon ? true : false}" [required]="required" [(ngModel)]="value" (ngModelChange)="onChange($event)" (blur)="onTouch()">
+    <span *ngIf="shouldShowResetInput()" class="reset-input">
+      <mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+    </span>
   </div>
   <mat-hint *ngIf="hint">{{hint}}</mat-hint>
 

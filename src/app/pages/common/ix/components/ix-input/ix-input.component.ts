@@ -1,5 +1,5 @@
 import {
-  Component, EventEmitter, forwardRef, Input, Output,
+  Component, forwardRef, Input,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
@@ -21,27 +21,21 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() prefixText: string;
-  @Input() suffixIcon: string;
-  @Output() suffixIconClick: EventEmitter<MouseEvent> = new EventEmitter();
+  @Input() prefixIcon: string;
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;
 
   formControl = new FormControl(this).value as FormControl;
 
-  value: string | number = '';
+  value = '';
   touched = false;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
-  suffixIconClicked(evt: MouseEvent): void {
-    this.suffixIconClick.emit(evt);
-  }
-
-  writeValue(value: string | number): void {
+  writeValue(value: string): void {
     this.value = value;
-    this.onChange(value);
     this.onTouch();
   }
 
@@ -51,5 +45,18 @@ export class IxInputComponent implements ControlValueAccessor {
 
   registerOnTouched(onTouched: () => void): void {
     this.onTouch = onTouched;
+  }
+
+  shouldShowResetInput(): boolean {
+    return this.hasValue();
+  }
+
+  hasValue(): boolean {
+    return this.value && this.value.length > 0;
+  }
+
+  resetInput(): void {
+    this.value = '';
+    this.onChange('');
   }
 }
