@@ -8,7 +8,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
-import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
+import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
@@ -60,6 +60,8 @@ export class ChartReleasesComponent implements OnInit {
   private podList: string[] = [];
   private podDetails: Record<string, string[]> = {};
   imagePlaceholder = appImagePlaceholder;
+
+  readonly officialCatalog = officialCatalog;
 
   emptyPageConf: EmptyConfig = {
     type: EmptyType.Loading,

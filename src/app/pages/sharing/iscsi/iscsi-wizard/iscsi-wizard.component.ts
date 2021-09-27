@@ -859,7 +859,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     return volsize + (volblocksize - volsize % volblocksize);
   }
 
-  doCreate(value: any, item: any): Promise<any> {
+  doCreate(value: any, item: string): Promise<any> {
     let payload: any;
     if (item === 'zvol') {
       payload = {

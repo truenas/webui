@@ -111,9 +111,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
       label: helptext.group_list_actions_label_member,
       icon: 'people',
       onClick: (members: Group) => {
-        this._router.navigate(new Array('/').concat(
-          ['credentials', 'groups', 'members', String(members.id)],
-        ));
+        this._router.navigate(['/', 'credentials', 'groups', 'members', String(members.id)]);
       },
     });
     if (row.builtin === !true) {

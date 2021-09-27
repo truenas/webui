@@ -338,7 +338,7 @@ export class TwoFactorComponent implements FormConfiguration {
 export class QrDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<QrDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: { qrInfo: string },
   ) {}
 
   onNoClick(): void {

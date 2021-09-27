@@ -1,5 +1,5 @@
 export type PoolExportParams = [
-  id: string,
+  id: number,
   params: {
     cascade: boolean;
     destroy: boolean;

@@ -9,6 +9,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
+import { Subs } from 'app/interfaces/subs.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
@@ -42,7 +43,7 @@ export class GeneralSettingsComponent implements OnInit {
   localeData: DataCard;
   configData: SystemGeneralConfig;
   displayedColumns: string[];
-  subs: any;
+  subs: Subs;
   dataSource: NtpServer[];
   formEvent$: Subject<CoreEvent>;
 

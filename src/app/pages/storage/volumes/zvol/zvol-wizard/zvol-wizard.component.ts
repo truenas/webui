@@ -48,7 +48,6 @@ interface ZvolFormData {
 })
 export class ZvolWizardComponent implements WizardConfiguration {
   addWsCall: 'pool.dataset.create' = 'pool.dataset.create';
-  protected pk: any;
   protected path: string;
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   advanced_field = ['volblocksize'];
@@ -56,7 +55,6 @@ export class ZvolWizardComponent implements WizardConfiguration {
   protected isNew = true;
   protected isEntity = true;
   parent: string;
-  data: any;
   volid: string;
   customFilter: any[] = [];
   protected entityWizard: EntityWizardComponent;

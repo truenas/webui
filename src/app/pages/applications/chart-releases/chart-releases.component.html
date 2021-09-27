@@ -5,7 +5,7 @@
         <div class="logo">
           <img [src]="item.chart_metadata.icon" [src-fallback]="imagePlaceholder"/>
         </div>
-        <div class="badge-area badge-official" *ngIf="item.catalog == 'OFFICIAL'">
+        <div class="badge-area badge-official" *ngIf="item.catalog == officialCatalog">
           <div class="capitalized-text" >
             {{ item.catalog }}
           </div>
@@ -13,7 +13,7 @@
             {{ item.catalog_train }}
           </div>
         </div>
-        <div class="badge-area" *ngIf="item.catalog != 'OFFICIAL'">
+        <div class="badge-area" *ngIf="item.catalog != officialCatalog">
           <div class="capitalized-text">
             {{ item.catalog }}
           </div>

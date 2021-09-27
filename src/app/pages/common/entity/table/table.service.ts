@@ -180,7 +180,6 @@ export class TableService {
     switch (state.toUpperCase()) {
       case 'UP':
         return stateClass.UP;
-        break;
       case 'DOWN':
         return stateClass.DOWN;
     }

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -77,7 +78,7 @@ export class ExtentListComponent implements EntityTableConfig {
   doDelete(row: IscsiExtent): void {
     const id = row.id;
     const entityTable = this.entityTable;
-    const isFile = row.type === 'FILE';
+    const isFile = row.type === IscsiExtentType.File;
     const deleteMsg = entityTable.getDeleteMessage(row);
     const conf: DialogFormConfiguration = {
       title: T('Delete iSCSI extent ') + row.name + '?',

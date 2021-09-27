@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { Subs } from 'app/interfaces/subs.interface';
 import { NewTicketResponse } from 'app/interfaces/support.interface';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -26,7 +27,7 @@ import { ModalService } from 'app/services/modal.service';
 export class SupportFormLicensedComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
   screenshot: FieldConfig;
-  subs: any[];
+  subs: Subs[];
   saveSubmitText = helptext.submitBtn;
   title = helptext.ticket;
   custActions: FormCustomAction[] = [];

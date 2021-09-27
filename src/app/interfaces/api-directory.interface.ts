@@ -78,7 +78,7 @@ import {
   DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams,
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetHasVmsQueryParams } from 'app/interfaces/dataset-has-vms-query-params.interface';
-import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
+import { DatasetLockParams, DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { DatasetQuota, DatasetQuotaQueryParams, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
@@ -153,7 +153,7 @@ import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { CreatePoolScrub, PoolScrub, PoolScrubParams } from 'app/interfaces/pool-scrub.interface';
 import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
 import {
-  CreatePool, Pool, PoolAttachParams, PoolReplaceParams,
+  CreatePool, Pool, PoolAttachParams, PoolExpandParams, PoolReplaceParams,
 } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
@@ -640,7 +640,7 @@ export type ApiDirectory = {
   'pool.dataset.export_key': { params: [id: string, download?: boolean]; response: string };
   'pool.dataset.get_quota': { params: DatasetQuotaQueryParams; response: DatasetQuota[] };
   'pool.dataset.inherit_parent_encryption_properties': { params: [id: string]; response: void };
-  'pool.dataset.lock': { params: [id: string, params?: { force_umount: boolean }]; response: boolean };
+  'pool.dataset.lock': { params: DatasetLockParams; response: boolean };
   'pool.dataset.path_in_locked_datasets': { params: [path: string]; response: boolean };
   'pool.dataset.permission': { params: DatasetPermissionsUpdate; response: number };
   'pool.dataset.processes': { params: [datasetId: string]; response: PoolProcess[] };
@@ -654,7 +654,7 @@ export type ApiDirectory = {
   'pool.dataset.update': { params: any; response: any };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.download_encryption_key': { params: any; response: any };
-  'pool.expand': { params: [id: number, params?: { geli: { passphrase: string } }]; response: null };
+  'pool.expand': { params: PoolExpandParams; response: null };
   'pool.export': { params: PoolExportParams; response: void };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
   'pool.get_disks': { params: [ids: string[]]; response: string[] };
@@ -686,7 +686,7 @@ export type ApiDirectory = {
   'pool.snapshottask.query': { params: QueryParams<PeriodicSnapshotTask>; response: PeriodicSnapshotTask[] };
   'pool.snapshottask.update': { params: [id: number, update: PeriodSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
   'pool.unlock': { params: PoolUnlockQuery; response: PoolUnlockResult };
-  'pool.unlock_services_restart_choices': { params: [id: string]; response: Choices };
+  'pool.unlock_services_restart_choices': { params: [id: number]; response: Choices };
   'pool.update': { params: any; response: Pool };
   'pool.upgrade': { params: [id: number]; response: boolean };
 
@@ -737,7 +737,7 @@ export type ApiDirectory = {
   // SMB
   'smb.bindip_choices': { params: void; response: Choices };
   'smb.unixcharset_choices': { params: void; response: Choices };
-  'smb.get_smb_ha_mode': { params: any; response: any };
+  'smb.get_smb_ha_mode': { params: void; response: string };
   'smb.update': { params: [SmbConfigUpdate]; response: SmbConfig };
   'smb.config': { params: void; response: SmbConfig };
   'smb.sharesec.query': { params: QueryParams<SmbSharesec>; response: SmbSharesec[] };

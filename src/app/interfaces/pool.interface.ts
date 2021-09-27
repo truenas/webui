@@ -76,3 +76,8 @@ export interface PoolReplaceParams {
   passphrase?: string;
   preserve_settings?: string;
 }
+
+export type PoolExpandParams = [
+  id: number,
+  params?: { geli: { passphrase: string } },
+];

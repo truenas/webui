@@ -6,6 +6,7 @@ import { NewTicketType } from 'app/enums/new-ticket-type.enum';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { Subs } from 'app/interfaces/subs.interface';
 import { CreateNewTicket, NewTicketResponse } from 'app/interfaces/support.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
@@ -24,13 +25,13 @@ import { T } from 'app/translate-marker';
 })
 export class SupportFormUnlicensedComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
-  password: any;
-  username: any;
+  password: string;
+  username: string;
   category: FormSelectConfig;
   screenshot: FieldConfig;
   password_fc: FieldConfig;
   username_fc: FieldConfig;
-  subs: any[];
+  subs: Subs[];
   saveSubmitText = helptext.submitBtn;
   isEntity = true;
   title = helptext.ticket;
