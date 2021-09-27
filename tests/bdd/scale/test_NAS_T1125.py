@@ -60,16 +60,16 @@ def you_should_be_on_the_dashboard_click_on_credentials_and_then_directory_servi
 @then('the Directory Services page should open, then click LDAP settings button')
 def the_directory_services_page_should_open_then_click_ldap_settings_button(driver):
     """the Directory Services page should open, then click LDAP settings button."""
-    ## First we have to disable AD
-    #assert wait_on_element(driver, 5, '//mat-card//span[contains(text(),"Settings")]', 'clickable')
-    #driver.find_element_by_xpath('//mat-card//span[contains(text(),"Settings")]').click()
-    #assert wait_on_element(driver, 5, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'clickable')
-    #checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'class', 'mat-checkbox-checked')
-    #if checkbox_checked:
-    #    driver.find_element_by_xpath('//mat-checkbox[contains(@ix-auto, "Enable (requires password")]').click()
-    #assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
-    #driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
-    #assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
+    # First we have to disable AD
+    assert wait_on_element(driver, 5, '//mat-card//span[contains(text(),"Settings")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card//span[contains(text(),"Settings")]').click()
+    assert wait_on_element(driver, 5, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'clickable')
+    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'class', 'mat-checkbox-checked')
+    if checkbox_checked:
+        driver.find_element_by_xpath('//mat-checkbox[contains(@ix-auto, "Enable (requires password")]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, '//span[contains(text(),"Configure LDAP")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Configure LDAP")]').click()
 
