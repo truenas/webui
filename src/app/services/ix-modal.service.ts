@@ -1,4 +1,4 @@
-import { Component, Injectable, Type } from '@angular/core';
+import { Injectable, Type } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IxModalComponent } from 'app/pages/common/ix/components/ix-modal/ix-modal.component';
 
@@ -11,11 +11,11 @@ export class IxModalService {
     this.modalComponent = modal;
   }
 
-  open<T>(modal: Type<T>, title: string): Component {
+  open<T>(modal: Type<T>, title: string): T {
     return this.modalComponent.openModal(modal, title);
   }
 
-  close(error?: Error, response?: any): void {
+  close(error?: Error, response?: unknown): void {
     if (error) {
       this.modalClosed$.error(error);
     }

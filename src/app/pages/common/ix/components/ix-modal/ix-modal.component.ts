@@ -61,13 +61,13 @@ export class IxModalComponent implements OnInit, OnDestroy {
     this.title = '';
   }
 
-  openModal<T>(modal: Type<T>, title: string): Component {
+  openModal<T>(modal: Type<T>, title: string): T {
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(modal);
 
     const viewContainerRef = this.ixModal.viewContainerRef;
     viewContainerRef.clear();
 
-    const componentRef = viewContainerRef.createComponent<Component>(componentFactory);
+    const componentRef = viewContainerRef.createComponent<T>(componentFactory);
     this.title = title;
 
     const modalInDom: HTMLElement = document.querySelector(`.ix-${this.id}`);
