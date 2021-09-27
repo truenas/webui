@@ -23,7 +23,7 @@ def test_create_a_new_dataset_with_the_ldap_user_and_group_permissions():
 
 
 @given('the browser is open, the FreeNAS URL and logged in')
-def the_browser_is_open_the_freenas_url_and_logged_in():
+def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_password):
     """the browser is open, the FreeNAS URL and logged in."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
@@ -42,14 +42,14 @@ def the_browser_is_open_the_freenas_url_and_logged_in():
 
 
 @when('you should be on the dashboard, click on Storage.')
-def you_should_be_on_the_dashboard_click_on_storage():
+def you_should_be_on_the_dashboard_click_on_storage(driver):
     """you should be on the dashboard, click on Storage.."""
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
 
 @then('the storage page should open, then click on the tank three dots button, select Add Dataset')
-def the_storage_page_should_open_then_click_on_the_tank_three_dots_button_select_add_dataset():
+def the_storage_page_should_open_then_click_on_the_tank_three_dots_button_select_add_dataset(driver):
     """the storage page should open, then click on the tank three dots button, select Add Dataset."""
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
@@ -58,9 +58,9 @@ def the_storage_page_should_open_then_click_on_the_tank_three_dots_button_select
     driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()   
 
 
-
+                     
 @then(parsers.parse('the Dataset window should open, input dataset name "{dataset_name}" and click save'))
-def the_dataset_window_should_open_input_dataset_name_my_ldap_dataset_and_click_save():
+def the_dataset_window_should_open_input_dataset_name_my_ldap_dataset_and_click_save(driver, dataset_name):
     """the Dataset window should open, input dataset name "{dataset_name}" and click save."""
     assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
@@ -71,9 +71,8 @@ def the_dataset_window_should_open_input_dataset_name_my_ldap_dataset_and_click_
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
 
-
 @then(parsers.parse('the my_ldap_dataset should be created, click on the "{dataset_name}" three dots button, select Edit Permissions'))
-def the_my_ldap_dataset_should_be_created_click_on_the_my_ldap_dataset_three_dots_button_select_edit_permissions():
+def the_my_ldap_dataset_should_be_created_click_on_the_my_ldap_dataset_three_dots_button_select_edit_permissions(driver, dataset_name):
     """the my_ldap_dataset should be created, click on the "{dataset_name}" three dots button, select Edit Permissions."""
     time.sleep(4)
     assert wait_on_element(driver, 10, f'//div[contains(text(),"{dataset_name}")]')
@@ -88,7 +87,7 @@ def the_my_ldap_dataset_should_be_created_click_on_the_my_ldap_dataset_three_dot
 
 
 @then('the Edit Permissions page should open, select eturgeon for User, click on the Apply User checkbox, then select eturgeon for Group name, click on the Apply Group checkbox, and click the Save button')
-def the_edit_permissions_page_should_open_select_eturgeon_for_user_click_on_the_apply_user_checkbox_then_select_eturgeon_for_group_name_click_on_the_apply_group_checkbox_and_click_the_save_button():
+def the_edit_permissions_page_should_open_select_eturgeon_for_user_click_on_the_apply_user_checkbox_then_select_eturgeon_for_group_name_click_on_the_apply_group_checkbox_and_click_the_save_button(driver):
     """the Edit Permissions page should open, select eturgeon for User, click on the Apply User checkbox, then select eturgeon for Group name, click on the Apply Group checkbox, and click the Save button."""
     assert wait_on_element(driver, 5, '//mat-card-title[contains(text(),"Unix Permissions Editor")]')
     assert wait_on_element(driver, 5, '//input[@data-placeholder="User"]', 'inputable')
@@ -112,13 +111,11 @@ def the_edit_permissions_page_should_open_select_eturgeon_for_user_click_on_the_
 
 
 @then(parsers.parse('on the storage page, click on the "{dataset_name}" three dots button, select Edit Permissions and verify that user and group name is "{user}"'))
-def on_the_storage_page_click_on_the_my_ldap_dataset_three_dots_button_select_edit_permissions_and_verify_that_user_and_group_name_is_eturgeon():
+def on_the_storage_page_click_on_the_my_ldap_dataset_three_dots_button_select_edit_permissions_and_verify_that_user_and_group_name_is_eturgeon(driver, dataset_name):
     """on the storage page, click on the "{dataset_name}" three dots button, select Edit Permissions and verify that user and group name is "{user}"."""
-
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]')
     driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
     assert wait_on_element(driver, 5, '//div[contains(text(),"eturgeon")]')
-
