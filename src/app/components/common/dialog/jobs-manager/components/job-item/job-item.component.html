@@ -1,5 +1,5 @@
 <div class="job-item" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px" [class.abortable]="job?.state === JobState.Running && job?.abortable">
-  <div fxFlex="100%" (click)="openJobDialog(job)" class="job-clickable">
+  <div fxFlex="100%" (click)="open()" class="job-clickable">
     <div fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
       <span class="job-description">{{ job.description ? job.description : job.method }}</span>
       <small class="job-progress-percent" *ngIf="job.state === JobState.Running">{{ job.progress.percent || 0 | number: '1.2-2' }}%</small>
@@ -33,7 +33,7 @@
     class="job-button-abort"
     mat-icon-button
     type="button"
-    (click)="abort(job)"
+    (click)="abort()"
   >
     <mat-icon fontSet="mdi-set" fontIcon="mdi-close-circle" class="job-icon-abort"></mat-icon>
   </button>
