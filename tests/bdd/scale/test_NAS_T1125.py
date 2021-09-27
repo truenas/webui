@@ -132,7 +132,7 @@ def wait_for_please_wait_should_appear_while_settings_are_applied_then_after_set
     assert wait_on_element(driver, 5, '//mat-card//span[contains(text(),"Hostname:")]')
 
 
-@then(parsers.parse('run "{command}" trough ssh, the ssh result should pass and return {user} info'))
+@then(parsers.parse('run {command} trough ssh, the ssh result should pass and return {user} info'))
 def run_command_trough_ssh_the_ssh_result_should_pass_and_return_user_info(driver, command, root_password, nas_ip, user):
     """run {command} trough ssh, the ssh result should pass and return {user} info."""
     global ssh_result
