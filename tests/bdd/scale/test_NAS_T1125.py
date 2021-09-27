@@ -138,4 +138,4 @@ def run_command_trough_ssh_the_ssh_result_should_pass_and_return_user_info(drive
     global ssh_result
     ssh_result = ssh_cmd(command, 'root', root_password, nas_ip)
     assert ssh_result['result'], ssh_result['output']
-    assert user in ssh_result['output'], ssh_result['output']
+    assert "eturgeon" in ssh_result['output'], ssh_result['output']
