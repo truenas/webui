@@ -6,13 +6,14 @@ from function import (
     wait_on_element,
     is_element_present,
     attribute_value_exist,
+    wait_on_element_disappear,
 )
-
 from pytest_bdd import (
     given,
     scenario,
     then,
     when,
+    parsers
 )
 
 
@@ -36,6 +37,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in():
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
+        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -43,18 +45,12 @@ def the_browser_is_open_the_freenas_url_and_logged_in():
 def you_should_be_on_the_dashboard_click_on_storage():
     """you should be on the dashboard, click on Storage.."""
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
 
 @then('the storage page should open, then click on the tank three dots button, select Add Dataset')
 def the_storage_page_should_open_then_click_on_the_tank_three_dots_button_select_add_dataset():
     """the storage page should open, then click on the tank three dots button, select Add Dataset."""
-    raise NotImplementedError
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
@@ -66,7 +62,6 @@ def the_storage_page_should_open_then_click_on_the_tank_three_dots_button_select
 @then(parsers.parse('the Dataset window should open, input dataset name "{dataset_name}" and click save'))
 def the_dataset_window_should_open_input_dataset_name_my_ldap_dataset_and_click_save():
     """the Dataset window should open, input dataset name "{dataset_name}" and click save."""
-    time.sleep(1)
     assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
@@ -85,30 +80,45 @@ def the_my_ldap_dataset_should_be_created_click_on_the_my_ldap_dataset_three_dot
     time.sleep(1)
     assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]')
     driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="Edit Permissions"]')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Edit Permissions"]').click()
+    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
+    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
+    assert wait_on_element(driver, 5, '//div[contains(text(),"Dataset Permissions")]')
+    assert wait_on_element(driver, 5, '//mat-icon[normalize-space(text())="edit"]')
+    driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
 
 
 @then('the Edit Permissions page should open, select eturgeon for User, click on the Apply User checkbox, then select eturgeon for Group name, click on the Apply Group checkbox, and click the Save button')
 def the_edit_permissions_page_should_open_select_eturgeon_for_user_click_on_the_apply_user_checkbox_then_select_eturgeon_for_group_name_click_on_the_apply_group_checkbox_and_click_the_save_button():
     """the Edit Permissions page should open, select eturgeon for User, click on the Apply User checkbox, then select eturgeon for Group name, click on the Apply Group checkbox, and click the Save button."""
-    raise NotImplementedError
+    assert wait_on_element(driver, 5, '//mat-card-title[contains(text(),"Unix Permissions Editor")]')
+    assert wait_on_element(driver, 5, '//input[@data-placeholder="User"]', 'inputable')
+    driver.find_element_by_xpath('//input[@data-placeholder="User"]').clear()
+    driver.find_element_by_xpath('//input[@data-placeholder="User"]').send_keys('eturgeon')
+    assert wait_on_element(driver, 5, '//span[contains(text(),"eturgeon")]', 'clickable')    
+    driver.find_element_by_xpath('//span[contains(text(),"eturgeon")]').click()
+    assert wait_on_element(driver, 5, '//input[@data-placeholder="Group"]', 'inputable')
+    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').clear()
+    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys('eturgeon')
+    assert wait_on_element(driver, 5, '//span[contains(text(),"eturgeon")]', 'clickable')    
+    driver.find_element_by_xpath('//span[contains(text(),"eturgeon")]').click()
+    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Apply User"]', 'class', 'mat-checkbox-checked')
+    if not checkbox_checked:
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply User"]').click()
+    checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]', 'class', 'mat-checkbox-checked')
+    if not checkbox_checked:
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')    
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
 
 
 @then(parsers.parse('on the storage page, click on the "{dataset_name}" three dots button, select Edit Permissions and verify that user and group name is "{user}"'))
 def on_the_storage_page_click_on_the_my_ldap_dataset_three_dots_button_select_edit_permissions_and_verify_that_user_and_group_name_is_eturgeon():
     """on the storage page, click on the "{dataset_name}" three dots button, select Edit Permissions and verify that user and group name is "{user}"."""
 
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    time.sleep(8)
-    assert wait_on_element(driver, 10, '//div[contains(text(),"{dataset_name}")]')
-    assert wait_on_element(driver, 5, '//input[@data-placeholder="Group"]')
-    assert attribute_value_exist(driver, '//input[@data-placeholder="Group"]', 'value', user)
-
-
-    ## return to dashboard
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
+    assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]')
+    driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()
+    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
+    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
+    assert wait_on_element(driver, 5, '//div[contains(text(),"eturgeon")]')
 
