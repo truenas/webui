@@ -641,10 +641,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
         background: var(--contrast-darker);
         border: 1px solid var(--lines);
         color: var(--fg2);
-        height: calc(100%);
+        font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace;
+        height: 100%;
         min-height: 100px;
         overflow: auto;
         padding: 1rem;
+        white-space: pre-wrap;
       }
     }
   }
