@@ -10,7 +10,7 @@
 
 
   <div class="outlined input-container">
-    <input matInput id="{{elementId}}"
+    <input #ixInput matInput
       [value]="selectedOption?.label"
       [placeholder]="'Search'"
       (input)="onChanged($event.target.value)"

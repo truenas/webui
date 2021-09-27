@@ -1,9 +1,8 @@
 import {
-  Component, forwardRef, Input, OnChanges, SimpleChanges,
+  Component, ElementRef, forwardRef, Input, OnChanges, SimpleChanges, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { UUID } from 'angular2-uuid';
 import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 
@@ -26,7 +25,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
   @Input() required: boolean;
   @Input() tooltip: string;
   @Input() options: Observable<Option[]>;
-  elementId = UUID.UUID();
+  @ViewChild('ixInput') inputElementRef: ElementRef;
 
   @Input() filter: (options: Option[], filterValue: string) => Observable<Option[]> =
   (options: Option[], value: string): Observable<Option[]> => {
@@ -71,8 +70,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
 
   resetInput(): void {
     this.filterValue = '';
-    const inputElementRef: HTMLElement = document.getElementById(this.elementId);
-    (<HTMLInputElement>inputElementRef).value = '';
+    this.inputElementRef.nativeElement.value = '';
     this.selectedOption = null;
     this.onChange('');
   }
