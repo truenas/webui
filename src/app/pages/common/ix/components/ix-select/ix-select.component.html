@@ -9,7 +9,7 @@
   </div>
 
   <div class="outlined input-container">
-    <mat-select [(ngModel)]="value" [required]="required" (ngModelChange)="onChange($event)">
+    <mat-select (blur)="onTouch()" [(ngModel)]="value" [required]="required" (ngModelChange)="onChange($event)">
       <mat-option *ngFor="let option of options | async" [value]="option.value">{{option.label}}</mat-option>
     </mat-select>
   </div>

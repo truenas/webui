@@ -36,8 +36,6 @@ export class IxSelectComponent implements ControlValueAccessor {
 
   writeValue(val: string | number): void {
     this.value = val;
-    this.onChange(val);
-    this.onTouch();
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {

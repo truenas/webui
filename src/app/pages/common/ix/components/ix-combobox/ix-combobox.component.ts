@@ -56,7 +56,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
     if (this.selectedOption) {
       this.filterValue = this.selectedOption.label;
     }
-    this.onTouch();
   }
 
   onChanged(changedValue: string): void {

@@ -20,7 +20,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 export class IxInputComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() placeholder: string;
-  @Input() prefixText: string;
   @Input() prefixIcon: string;
   @Input() hint: string;
   @Input() tooltip: string;
@@ -36,7 +35,6 @@ export class IxInputComponent implements ControlValueAccessor {
 
   writeValue(value: string): void {
     this.value = value;
-    this.onTouch();
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
