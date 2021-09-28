@@ -74,10 +74,8 @@ def the_dataset_window_should_open_input_dataset_name_my_ldap_dataset_and_click_
 @then(parsers.parse('the my_ldap_dataset should be created, click on the "{dataset_name}" three dots button, select Edit Permissions'))
 def the_my_ldap_dataset_should_be_created_click_on_the_my_ldap_dataset_three_dots_button_select_edit_permissions(driver, dataset_name):
     """the my_ldap_dataset should be created, click on the "{dataset_name}" three dots button, select Edit Permissions."""
-    time.sleep(4)
     assert wait_on_element(driver, 10, f'//div[contains(text(),"{dataset_name}")]')
-    time.sleep(1)
-    assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]')
+    assert wait_on_element(driver, 5, f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath(f'//tr[contains(.,"{dataset_name}")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]', 'clickable')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
