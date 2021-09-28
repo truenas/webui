@@ -745,7 +745,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           if (item.id == res) {
             const targetProvider = _.find(this.providers, { name: item.provider });
             if (targetProvider && targetProvider['buckets']) {
-              if (entityForm.loaderOpen === false) {
+              if (!entityForm.loaderOpen) {
                 this.loader.open();
               } else {
                 entityForm.keepLoaderOpen = true;
@@ -765,7 +765,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
               }
 
               this.getBuckets(item).pipe(untilDestroyed(this)).subscribe((res) => {
-                if (entityForm.loaderOpen === false) {
+                if (!entityForm.loaderOpen) {
                   this.loader.close();
                 } else {
                   entityForm.loader.close();
@@ -782,7 +782,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
                 this.setDisabled('bucket_input', true, true);
               },
               (err) => {
-                if (entityForm.loaderOpen === false) {
+                if (!entityForm.loaderOpen) {
                   this.loader.close();
                 } else {
                   entityForm.loader.close();

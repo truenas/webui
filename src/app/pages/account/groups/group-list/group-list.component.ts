@@ -97,7 +97,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
   }
 
   isActionVisible(actionId: string, row: Group): boolean {
-    if (actionId === 'delete' && row.builtin === true) {
+    if (actionId === 'delete' && row.builtin) {
       return false;
     }
     return true;

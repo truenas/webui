@@ -371,10 +371,10 @@ export class NFSFormComponent implements FormConfiguration {
   }
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     }
-    if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;

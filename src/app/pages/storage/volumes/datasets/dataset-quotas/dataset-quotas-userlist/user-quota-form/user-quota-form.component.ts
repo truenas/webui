@@ -124,7 +124,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
     if ((this.dq || this.oq)
         && (this.selectedEntriesValue.value && this.selectedEntriesValue.value.length > 0
         || this.searchedEntries && this.searchedEntries.length > 0)
-        && this.entryErrBool === false) {
+        && !this.entryErrBool) {
       this.save_button_enabled = true;
     } else {
       this.save_button_enabled = false;

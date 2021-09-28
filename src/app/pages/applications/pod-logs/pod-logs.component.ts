@@ -130,7 +130,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   scrollToBottom(): void {
     try {
       this.logContainer.nativeElement.scrollTop = this.logContainer.nativeElement.scrollHeight;
-    } catch (err) {
+    } catch (err: unknown) {
 
     }
   }

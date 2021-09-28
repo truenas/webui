@@ -715,7 +715,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     let re;
     try {
       re = new RegExp(val);
-    } catch (e) {
+    } catch (e: unknown) {
       this.re_has_errors = true;
     }
 

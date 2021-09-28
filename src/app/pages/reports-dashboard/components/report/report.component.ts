@@ -210,7 +210,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.report) {
-      if (changes.report.previousValue && this.ready == false) {
+      if (changes.report.previousValue && !this.ready) {
         this.setupData(changes);
       } else if (!changes.report.previousValue) {
         setTimeout(() => {

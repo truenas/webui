@@ -281,13 +281,13 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   advanced_field = helptext.activedirectory_advanced_fields;
 
   isCustActionVisible(actionname: string): boolean {
-    if (actionname === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionname === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionname === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionname === 'basic_mode' && this.isBasicMode) {
       return false;
-    } if (actionname === 'leave_domain' && this.isBasicMode === true) {
+    } if (actionname === 'leave_domain' && this.isBasicMode) {
       return false;
-    } if (actionname === 'leave_domain' && this.adStatus === false) {
+    } if (actionname === 'leave_domain' && !this.adStatus) {
       return false;
     }
     return true;

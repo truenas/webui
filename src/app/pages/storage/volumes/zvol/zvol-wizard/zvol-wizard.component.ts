@@ -266,9 +266,9 @@ export class ZvolWizardComponent implements WizardConfiguration {
     if (!(stepperIndex == 1)) {
       return false;
     }
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -277,7 +277,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   sendAsBasicOrAdvanced(data: ZvolFormData): ZvolFormData {
     data.type = 'VOLUME';
 
-    if (this.isNew === false) {
+    if (!this.isNew) {
       delete data.name;
       delete data.volblocksize;
       delete data.type;
@@ -312,7 +312,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   }
 
   async preInitZvolForm(entityWizard: EntityWizardComponent): Promise<void> {
-    const zvolEntityForm = (< FormGroup > entityWizard.formArray.get([1]));
+    const zvolEntityForm = entityWizard.formArray.get([1]) as FormGroup;
     if (!this.parent) return;
 
     const sparse = this.wizardConfig[1].fieldConfig.find((c) => c.name === 'sparse');
@@ -433,8 +433,8 @@ export class ZvolWizardComponent implements WizardConfiguration {
   }
 
   afterInit(entityWizard: EntityWizardComponent): void {
-    const zvolEntityForm = (<FormGroup> this.entityWizard.formArray.get([1]));
-    (<FormGroup> entityWizard.formArray.get([0])).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: string) => {
+    const zvolEntityForm = this.entityWizard.formArray.get([1]) as FormGroup;
+    (entityWizard.formArray.get([0]) as FormGroup).get('path').valueChanges.pipe(untilDestroyed(this)).subscribe((pool: string) => {
       if (pool.includes('mnt')) {
         const split = pool.split('/');
         this.parent = '';
@@ -445,7 +445,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           }
         }
         this.summary[T('Dataset Path')] = this.parent;
-        (< FormGroup > entityWizard.formArray.get([0])).controls['path'].setValue(this.parent);
+        (entityWizard.formArray.get([0]) as FormGroup).controls['path'].setValue(this.parent);
       }
     });
     zvolEntityForm.controls['name'].valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
@@ -491,7 +491,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   }
 
   blurVolsize(): void {
-    const zvolEntityForm = (<FormGroup> this.entityWizard.formArray.get([1]));
+    const zvolEntityForm = this.entityWizard.formArray.get([1]) as FormGroup;
     if (zvolEntityForm) {
       zvolEntityForm.controls['volsize'].setValue(this.storageService.humanReadable);
     }
@@ -543,7 +543,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   customSubmit(body: any): void {
     this.loader.open();
 
-    if (this.isNew === true) {
+    if (this.isNew) {
       this.addSubmit(body).pipe(untilDestroyed(this)).subscribe((restPostResp) => {
         this.loader.close();
         this.modalService.close('slide-in-form').then(

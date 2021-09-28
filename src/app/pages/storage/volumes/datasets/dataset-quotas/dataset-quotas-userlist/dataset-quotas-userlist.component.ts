@@ -199,7 +199,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
   }
 
   blurEvent(): void {
-    (<HTMLInputElement>document.getElementById('data-quota_input')).value = this.storageService.humanReadable;
+    (document.getElementById('data-quota_input') as HTMLInputElement).value = this.storageService.humanReadable;
   }
 
   toggleDisplay(): void {

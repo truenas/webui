@@ -1317,7 +1317,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   }
 
   isCustActionVisible(actionname: string): boolean {
-    if (actionname === 'authenticate' && this.credentialsOauth === false) {
+    if (actionname === 'authenticate' && !this.credentialsOauth) {
       return false;
     }
     return true;

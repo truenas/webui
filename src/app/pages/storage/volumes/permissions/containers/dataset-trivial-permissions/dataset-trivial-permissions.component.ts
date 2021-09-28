@@ -215,7 +215,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
 
     const recursive = entityEdit.formGroup.controls['recursive'];
     recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
-      if (value === true) {
+      if (value) {
         this.dialog.confirm({
           title: T('Warning'),
           message: T('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'),

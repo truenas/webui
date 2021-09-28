@@ -22,7 +22,7 @@ export class DisplayComponent {
   ) {}
 
   create(component: Type<any>): any {
-    const compRef = <any> this.resolver.resolveComponentFactory(component).create(this.viewContainerRef.injector);
+    const compRef = this.resolver.resolveComponentFactory(component).create(this.viewContainerRef.injector);
     this.children.push(compRef);
     return compRef.instance;
   }
