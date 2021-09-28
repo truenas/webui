@@ -146,7 +146,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
         changes.options.currentValue.pipe(untilDestroyed(this)).subscribe((options: Option[]) => {
           this.syncOptions = options;
           this.filteredOptions = of(options);
-          this.selectedOption = { ...(this.syncOptions.find((option: Option) => option.value === this.value)) };
+          const setOption = this.syncOptions.find((option: Option) => option.value === this.value);
+          this.selectedOption = setOption ? { ...setOption } : null;
           if (this.selectedOption) {
             this.filterValue = this.selectedOption.label;
           }
