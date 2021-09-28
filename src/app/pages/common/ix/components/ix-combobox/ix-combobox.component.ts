@@ -1,11 +1,15 @@
 import {
-  Component, ElementRef, EventEmitter, forwardRef, Input, OnChanges, Output, SimpleChanges, ViewChild,
+  Component, ElementRef, EventEmitter, forwardRef, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { fromEvent, Observable, of } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
+import {
+  fromEvent, Observable, of, Subject,
+} from 'rxjs';
+import {
+  debounceTime, distinctUntilChanged, map, takeUntil,
+} from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 
 @UntilDestroy()
@@ -21,7 +25,7 @@ import { Option } from 'app/interfaces/option.interface';
     },
   ],
 })
-export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
+export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnInit {
   @Input() label: string;
   @Input() hint: string;
   @Input() required: boolean;
@@ -42,7 +46,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
   };
 
   filteredOptions: Observable<Option[]>;
-
+  filterChanged$ = new Subject<string>();
   formControl = new FormControl(this);
   value: string | number = '';
   filterValue = '';
@@ -61,6 +65,21 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
     if (this.selectedOption) {
       this.filterValue = this.selectedOption.label;
     }
+  }
+
+  ngOnInit(): void {
+    this.filterChanged$.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      untilDestroyed(this),
+    ).subscribe((changedValue: string) => {
+      this.filterValue = changedValue;
+      if (changedValue) {
+        this.filteredOptions = this.filter(this.syncOptions, changedValue);
+      } else {
+        this.filteredOptions = of(this.syncOptions);
+      }
+    });
   }
 
   onOpenDropdown(): void {
@@ -93,12 +112,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
   }
 
   onChanged(changedValue: string): void {
-    this.filterValue = changedValue;
-    if (changedValue) {
-      this.filteredOptions = this.filter(this.syncOptions, changedValue);
-    } else {
-      this.filteredOptions = of(this.syncOptions);
-    }
+    this.filterChanged$.next(changedValue);
   }
 
   resetInput(): void {
