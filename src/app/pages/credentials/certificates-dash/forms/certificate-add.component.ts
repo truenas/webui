@@ -922,7 +922,7 @@ export class CertificateAddComponent implements WizardConfiguration {
   getField(fieldName: string): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = (< FormGroup > this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
+      const target = (this.entityWizard.formArray.get([stepNumber]) as FormGroup).controls[fieldName];
       return target;
     }
     return null;

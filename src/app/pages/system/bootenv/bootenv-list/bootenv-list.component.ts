@@ -176,7 +176,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       });
     }
 
-    if (row.keep === true) {
+    if (row.keep) {
       actions.push({
         label: T('Unkeep'),
         id: 'keep',

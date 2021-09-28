@@ -168,7 +168,7 @@ export class FormExplorerComponent implements Field, OnInit {
       if (selectedTreeNodes[i].parent.isAllSelected && this.config.tristate) {
         let parent = selectedTreeNodes[i];
         while (
-          parent && parent.isRoot != true
+          parent && !parent.isRoot
           && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected
         ) {
           parent = parent.parent;

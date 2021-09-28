@@ -219,7 +219,7 @@ export class IPMIFromComponent implements FormConfiguration {
     entityEdit.formGroup.controls['ipaddress'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'ipaddress' }));
       const ipValue = entityEdit.formGroup.controls['ipaddress'].value;
-      const btn = <HTMLInputElement>document.getElementById('cust_button_Manage');
+      const btn = document.getElementById('cust_button_Manage') as HTMLInputElement;
       btn.disabled = (status === 'INVALID' || ipValue === '0.0.0.0');
     });
 

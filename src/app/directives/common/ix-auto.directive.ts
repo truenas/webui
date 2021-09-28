@@ -30,7 +30,7 @@ export class IXAutoDirective implements OnChanges {
         IXAutoDirective.ATTRIBUTE,
         this.identifier ? `${elType}__${this.identifier}${elTag}` : `${elType}__${elTag}`,
       );
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(`Error in ${IXAutoDirective.name}:`, error);
     }
   }

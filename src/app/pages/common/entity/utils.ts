@@ -318,6 +318,8 @@ export class EntityUtils {
       }));
     }
 
+    // TODO: Check if condition can be simplified to !schemaConfig.schema.editable
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
     if (schemaConfig.schema.editable === false) {
       fieldConfig['readonly'] = true;
     }

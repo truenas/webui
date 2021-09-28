@@ -60,7 +60,7 @@ export class ViewEnclosureComponent implements OnDestroy {
       || !this.events
       || !this.system.pools
       || !this.system.enclosures
-      || this.supportedHardware !== true
+      || !this.supportedHardware
     ) return false;
 
     // These conditions are here because M series actually reports a separate chassis for

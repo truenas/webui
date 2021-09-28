@@ -969,7 +969,7 @@ export class VMWizardComponent implements WizardConfiguration {
   }
 
   getFormControlFromFieldName(fieldName: string, parent: VMWizardComponent = this): FormControl {
-    return (<FormGroup>parent.entityWizard.formArray.get([parent.getFormArrayIndexFromFieldName(fieldName, parent)]))
+    return parent.entityWizard.formArray.get([parent.getFormArrayIndexFromFieldName(fieldName, parent)])
       .get(fieldName) as FormControl;
   }
 
