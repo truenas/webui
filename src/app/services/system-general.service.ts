@@ -26,7 +26,8 @@ export class SystemGeneralService {
   generalConfigInfo: SystemGeneralConfig | { waiting: true };
   getGeneralConfig$ = new Observable<SystemGeneralConfig>((observer) => {
     if (!this.ws.loggedIn) {
-      return observer.next({} as SystemGeneralConfig);
+      observer.next({} as SystemGeneralConfig);
+      return;
     }
     if ((!this.generalConfigInfo || _.isEmpty(this.generalConfigInfo))) {
       // Since the api call can be made many times before the first response comes back,

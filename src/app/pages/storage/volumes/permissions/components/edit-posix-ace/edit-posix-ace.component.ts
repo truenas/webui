@@ -93,7 +93,7 @@ export class EditPosixAceComponent implements FormConfiguration, OnChanges {
     this.formGroup.get('permissions').setValue(formValues.permissions, { onlySelf: true });
 
     this.fieldConfig.forEach((config) => {
-      return this.relationService.refreshRelations(config, this.formGroup, { emitEvent: false });
+      this.relationService.refreshRelations(config, this.formGroup, { emitEvent: false });
     });
 
     this.formGroup.markAllAsTouched();

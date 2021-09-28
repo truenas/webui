@@ -143,7 +143,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     });
     entityForm.formGroup.controls['adminpw'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.admin_pw = res;
-      const btn = <HTMLInputElement> document.getElementById('cust_button_Download Encryption Key');
+      const btn = document.getElementById('cust_button_Download Encryption Key') as HTMLInputElement;
       btn.disabled = this.admin_pw === '';
     });
   }

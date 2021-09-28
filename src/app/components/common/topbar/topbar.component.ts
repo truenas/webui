@@ -205,14 +205,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     const notifications = this.notificationsService.getNotificationList();
 
     notifications.forEach((notificationAlert: NotificationAlert) => {
-      if (notificationAlert.dismissed === false && notificationAlert.level !== AlertLevel.Info) {
+      if (!notificationAlert.dismissed && notificationAlert.level !== AlertLevel.Info) {
         this.notifications.push(notificationAlert);
       }
     });
     this.notificationsService.getNotifications().pipe(untilDestroyed(this)).subscribe((notifications1) => {
       this.notifications = [];
       notifications1.forEach((notificationAlert: NotificationAlert) => {
-        if (notificationAlert.dismissed === false && notificationAlert.level !== AlertLevel.Info) {
+        if (!notificationAlert.dismissed && notificationAlert.level !== AlertLevel.Info) {
           this.notifications.push(notificationAlert);
         }
       });

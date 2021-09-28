@@ -434,7 +434,7 @@ export class UpdateComponent implements OnInit {
     this.updateType = 'applyPending';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res === false) {
+      if (!res) {
         this.continueUpdate();
       }
     });
@@ -444,7 +444,7 @@ export class UpdateComponent implements OnInit {
     this.updateType = 'manual';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res === false) {
+      if (!res) {
         this.continueUpdate();
       }
     });
@@ -500,7 +500,7 @@ export class UpdateComponent implements OnInit {
           this.updateType = 'standard';
           // Calls the 'Save Config' dialog - Returns here if user declines
           this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-            if (res === false) {
+            if (!res) {
               this.confirmAndUpdate();
             }
           });

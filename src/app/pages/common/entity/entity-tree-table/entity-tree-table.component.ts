@@ -71,7 +71,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   }
 
   fillTable(): void {
-    const cols = this._conf.columns.filter((col) => !col.hidden || col.always_display == true);
+    const cols = this._conf.columns.filter((col) => !col.hidden || col.always_display);
     this.displayedColumns = cols.map((col) => col.prop);
 
     const mutated = Object.assign([], this._conf.tableData);

@@ -204,9 +204,9 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'enable_action' && this.TwoFactorEnabled === true) {
+    if (actionId === 'enable_action' && this.TwoFactorEnabled) {
       return false;
-    } if (actionId === 'disable_action' && this.TwoFactorEnabled === false) {
+    } if (actionId === 'disable_action' && !this.TwoFactorEnabled) {
       return false;
     }
     return true;

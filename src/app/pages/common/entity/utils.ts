@@ -318,7 +318,7 @@ export class EntityUtils {
       }));
     }
 
-    if (schemaConfig.schema.editable === false) {
+    if (!schemaConfig.schema.editable) {
       fieldConfig['readonly'] = true;
     }
 

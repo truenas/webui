@@ -368,9 +368,9 @@ export class ZvolFormComponent implements FormConfiguration {
   ];
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -379,7 +379,7 @@ export class ZvolFormComponent implements FormConfiguration {
   sendAsBasicOrAdvanced(data: ZvolFormData): ZvolFormData {
     data.type = 'VOLUME';
 
-    if (this.isNew === false) {
+    if (!this.isNew) {
       delete data.name;
       delete data.volblocksize;
       delete data.type;
@@ -847,7 +847,7 @@ export class ZvolFormComponent implements FormConfiguration {
   customSubmit(body: any): void {
     this.loader.open();
 
-    if (this.isNew === true) {
+    if (this.isNew) {
       this.addSubmit(body).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.modalService.close('slide-in-form');

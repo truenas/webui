@@ -655,7 +655,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     for (let step = 0; step < 3; step++) {
       Object.entries((this.entityWizard.formArray.get([step]) as FormGroup).controls).forEach(([name, control]) => {
         if (name in this.summaryObj) {
-          (<FormControl>control).valueChanges.pipe(untilDestroyed(this)).subscribe(((value) => {
+          (control as FormControl).valueChanges.pipe(untilDestroyed(this)).subscribe(((value) => {
             if (value == undefined) {
               this.summaryObj[name] = null;
             } else {

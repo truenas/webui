@@ -122,7 +122,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
           this.parseSchema();
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }

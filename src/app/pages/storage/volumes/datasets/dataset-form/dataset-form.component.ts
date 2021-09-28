@@ -845,13 +845,13 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   sendAsBasicOrAdvanced(data: any): DatasetFormData {
-    if (this.isNew === false) {
+    if (!this.isNew) {
       delete data.name;
     } else {
       data.name = this.parent + '/' + data.name;
     }
 
-    if (this.isNew === true && this.isBasicMode === true) {
+    if (this.isNew && this.isBasicMode) {
       data.refquota = null;
       data.quota = null;
       data.refreservation = null;
@@ -905,9 +905,9 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -1588,7 +1588,7 @@ export class DatasetFormComponent implements FormConfiguration {
       this.modalService.close('slide-in-form');
       const parentPath = `/mnt/${this.parent}`;
       this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res === false) {
+        if (!res) {
           this.dialogService.confirm({
             title: helptext.afterSubmitDialog.title,
             message: helptext.afterSubmitDialog.message,

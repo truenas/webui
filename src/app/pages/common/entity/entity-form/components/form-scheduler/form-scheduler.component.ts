@@ -95,7 +95,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         this.validMinutes = true;
         this._minutes = val;
         this.updateCronTab();
-      } catch (err) {
+      } catch (err: unknown) {
         this.validMinutes = false;
       }
     } else {
@@ -112,7 +112,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         this.validHours = true;
         this._hours = val;
         this.updateCronTab();
-      } catch (err) {
+      } catch (err: unknown) {
         this.validHours = false;
       }
     } else {
@@ -129,7 +129,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         this.validDays = true;
         this._days = val;
         this.updateCronTab();
-      } catch (err) {
+      } catch (err: unknown) {
         this.validDays = false;
       }
     } else {
@@ -332,7 +332,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   validPopup(): boolean {
     // Assigned to disabled attribute
-    if (this.validMinutes === false || this.validHours === false || this.validDays === false) {
+    if (!this.validMinutes || !this.validHours || !this.validDays) {
       return true;
     }
     return false;
@@ -506,7 +506,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
             parseCounter++;
           }
         }
-      } catch (e) {
+      } catch (e: unknown) {
         console.warn(e);
         break;
       }
@@ -530,7 +530,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         try {
           const obj: any = intervalDays.next();
           daySchedule.push(obj.value);
-        } catch (e) {
+        } catch (e: unknown) {
           console.error(e);
           break;
         }
