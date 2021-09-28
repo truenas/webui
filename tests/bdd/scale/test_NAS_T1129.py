@@ -112,7 +112,6 @@ def verify_that_the_file_is_on_the_nas_dataset(driver, nas_ip, root_password):
     assert 'testfile' in results['output'], results['output']
 
 
-
 @then('click on Credentials/DirectoryServices, then LDAP Settings, then disable and click SAVE')
 def click_on_credentialsdirectoryservices_then_ldap_settings_then_disable_and_click_save(driver):
     """click on Credentials/DirectoryServices, then LDAP Settings, then disable and click SAVE."""
@@ -127,4 +126,3 @@ def click_on_credentialsdirectoryservices_then_ldap_settings_then_disable_and_cl
     wait_on_element(driver, 10, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
-
