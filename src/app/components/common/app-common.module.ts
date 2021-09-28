@@ -14,6 +14,7 @@ import { CoreComponents } from 'app/core/components/core-components.module';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
+import { IxFormsModule } from 'app/pages/common/ix/ix-forms.module';
 import { DialogService } from 'app/services/dialog.service';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -36,6 +37,7 @@ import { TopbarComponent } from './topbar/topbar.component';
     MaterialModule,
     CommonDirectivesModule,
     TranslateModule,
+    IxFormsModule,
     ChartistModule,
     HttpClientModule,
     EntityModule,

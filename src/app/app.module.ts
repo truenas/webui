@@ -29,6 +29,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import { ErdService } from 'app/services/erd.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { NotificationsService } from 'app/services/notifications.service';
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
@@ -122,6 +123,7 @@ import { WebSocketService } from './services/ws.service';
     NotificationsService,
     ErdService,
     JobsManagerStore,
+    IxModalService,
   ],
   bootstrap: [
     AppComponent,

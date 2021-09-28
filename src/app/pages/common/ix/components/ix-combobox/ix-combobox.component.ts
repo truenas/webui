@@ -1,5 +1,5 @@
 import {
-  Component, forwardRef, Input, OnChanges, SimpleChanges,
+  Component, ElementRef, forwardRef, Input, OnChanges, SimpleChanges, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -25,6 +25,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
   @Input() required: boolean;
   @Input() tooltip: string;
   @Input() options: Observable<Option[]>;
+  @ViewChild('ixInput') inputElementRef: ElementRef;
 
   @Input() filter: (options: Option[], filterValue: string) => Observable<Option[]> =
   (options: Option[], value: string): Observable<Option[]> => {
@@ -38,7 +39,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
   filteredOptions: Observable<Option[]>;
 
   formControl = new FormControl(this);
-  value = '';
+  value: string | number = '';
+  filterValue = '';
   touched = false;
   selectedOption: Option = null;
   syncOptions: Option[];
@@ -46,21 +48,30 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
-  writeValue(value: string): void {
+  writeValue(value: string | number): void {
     this.value = value;
     if (this.value && this.syncOptions) {
       this.selectedOption = { ...(this.syncOptions.find((option: Option) => option.value === this.value)) };
     }
-    this.onChange(value);
-    this.onTouch();
+    if (this.selectedOption) {
+      this.filterValue = this.selectedOption.label;
+    }
   }
 
   onChanged(changedValue: string): void {
+    this.filterValue = changedValue;
     if (changedValue) {
       this.filteredOptions = this.filter(this.syncOptions, changedValue);
     } else {
       this.filteredOptions = of(this.syncOptions);
     }
+  }
+
+  resetInput(): void {
+    this.filterValue = '';
+    this.inputElementRef.nativeElement.value = '';
+    this.selectedOption = null;
+    this.onChange('');
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
@@ -73,13 +84,12 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
 
   optionSelected(option: Option): void {
     this.selectedOption = { ...option };
+    this.filterValue = this.selectedOption.label;
     this.onChange(this.selectedOption.value);
   }
 
   displayWith(): string {
-    if (this.selectedOption) {
-      return this.selectedOption.label;
-    }
+    return this.selectedOption ? this.selectedOption.label : '';
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -89,8 +99,19 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
           this.syncOptions = options;
           this.filteredOptions = of(options);
           this.selectedOption = { ...(this.syncOptions.find((option: Option) => option.value === this.value)) };
+          if (this.selectedOption) {
+            this.filterValue = this.selectedOption.label;
+          }
         });
       }
     }
+  }
+
+  shouldShowResetInput(): boolean {
+    return this.hasValue();
+  }
+
+  hasValue(): boolean {
+    return this.filterValue && this.filterValue.length > 0;
   }
 }
