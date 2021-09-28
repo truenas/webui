@@ -76,7 +76,6 @@ export class ExtentListComponent implements EntityTableConfig {
 
   doDelete(row: IscsiExtent): void {
     const id = row.id;
-    const self = this;
     const entityTable = this.entityTable;
     const isFile = row.type === 'FILE';
     const deleteMsg = entityTable.getDeleteMessage(row);
@@ -103,11 +102,11 @@ export class ExtentListComponent implements EntityTableConfig {
         },
       ],
       saveButtonText: T('Delete'),
-      customSubmit(entityDialog: EntityDialogComponent) {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         const value = entityDialog.formValue;
         entityTable.loader.open();
         entityTable.loaderOpen = true;
-        entityTable.ws.call(self.wsDelete, [id, value.remove, value.force]).pipe(untilDestroyed(this)).subscribe(
+        entityTable.ws.call(this.wsDelete, [id, value.remove, value.force]).pipe(untilDestroyed(this)).subscribe(
           () => {
             entityDialog.dialogRef.close(true);
             entityTable.getData();

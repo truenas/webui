@@ -317,10 +317,10 @@ export class SMBFormComponent implements FormConfiguration {
   }
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     }
-    if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -520,7 +520,7 @@ export class SMBFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     const generalFieldsets = _.find(this.fieldSets, { class: 'basic' });
-    const purposeField: FormSelectConfig = _.find(generalFieldsets.config, { name: 'purpose' });
+    const purposeField = _.find(generalFieldsets.config, { name: 'purpose' }) as FormSelectConfig;
     this.ws.call('sharing.smb.presets').pipe(untilDestroyed(this)).subscribe(
       (presets) => {
         this.presets = presets;
@@ -567,7 +567,7 @@ export class SMBFormComponent implements FormConfiguration {
 
       if (!this.stripACLWarningSent) {
         this.ws.call('filesystem.acl_is_trivial', [path]).pipe(untilDestroyed(this)).subscribe((res) => {
-          if (res === false && !entityForm.formGroup.controls['acl'].value) {
+          if (!res && !entityForm.formGroup.controls['acl'].value) {
             this.stripACLWarningSent = true;
             this.showStripACLWarning();
           }

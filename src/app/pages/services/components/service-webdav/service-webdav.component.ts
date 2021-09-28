@@ -136,7 +136,7 @@ export class ServiceWebdavComponent implements FormConfiguration {
         this.handleAuth(value);
       });
 
-    this.webdav_certssl = _.find(this.fieldConfig, { name: 'certssl' });
+    this.webdav_certssl = _.find(this.fieldConfig, { name: 'certssl' }) as FormSelectConfig;
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.length > 0) {
         res.forEach((item) => {

@@ -157,7 +157,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     for (let i = maxVdevs; i > 0; i--) {
       vdevs_options.push({ label: i, value: i });
     }
-    const self = this;
     const conf: DialogFormConfiguration = {
       title: helptext.manager_duplicate_title,
       fieldConfig: [
@@ -177,44 +176,43 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       ],
 
       saveButtonText: helptext.manager_duplicate_button,
-      customSubmit(entityDialog: EntityDialogComponent) {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         const value = entityDialog.formValue;
-        const origVdevs = self.vdevComponents.toArray();
+        const origVdevs = this.vdevComponents.toArray();
         // handle case of extending with zero vdevs filled out
         if (origVdevs.length === 1 && origVdevs[0].disks.length === 0) {
           const vdev = origVdevs[0];
           value.vdevs = value.vdevs - 1;
-          for (let i = 0; i < self.first_data_vdev_disknum; i++) {
+          for (let i = 0; i < this.first_data_vdev_disknum; i++) {
             const disk = duplicable_disks.shift();
             vdev.addDisk(disk);
-            self.removeDisk(disk);
+            this.removeDisk(disk);
           }
         }
         for (let i = 0; i < value.vdevs; i++) {
-          const vdev_values = { disks: [] as ManagerDisk[], type: self.first_data_vdev_type };
-          for (let j = 0; j < self.first_data_vdev_disknum; j++) {
+          const vdev_values = { disks: [] as ManagerDisk[], type: this.first_data_vdev_type };
+          for (let j = 0; j < this.first_data_vdev_disknum; j++) {
             const disk = duplicable_disks.shift();
             vdev_values.disks.push(disk);
             // remove disk from selected
-            self.selected = _.remove(self.selected, (d) => d.devname !== disk.devname);
+            this.selected = _.remove(this.selected, (d) => d.devname !== disk.devname);
           }
-          self.addVdev('data', vdev_values);
+          this.addVdev('data', vdev_values);
         }
         entityDialog.dialogRef.close(true);
         setTimeout(() => {
-          self.getCurrentLayout();
+          this.getCurrentLayout();
         }, 500);
       },
       parent: this,
-      afterInit(entityDialog: EntityDialogComponent) {
-        const copy_desc: FormParagraphConfig = _.find(this.fieldConfig, { name: 'copy_desc' });
-        const parent = entityDialog.parent;
+      afterInit: (entityDialog: EntityDialogComponent) => {
+        const copy_desc: FormParagraphConfig = _.find(entityDialog.fieldConfig, { name: 'copy_desc' });
         const setParatext = (vdevs: number): void => {
-          const used = parent.first_data_vdev_disknum * vdevs;
-          const remaining = parent.duplicable_disks.length - used;
-          const size = filesize(parent.first_data_vdev_disksize, { standard: 'iec' });
-          const type = parent.first_data_vdev_disktype;
-          const vdev_type = parent.first_data_vdev_type;
+          const used = this.first_data_vdev_disknum * vdevs;
+          const remaining = this.duplicable_disks.length - used;
+          const size = filesize(this.first_data_vdev_disksize, { standard: 'iec' });
+          const type = this.first_data_vdev_disktype;
+          const vdev_type = this.first_data_vdev_type;
           const paraText = 'Create ' + vdevs + ' new ' + vdev_type + ' data vdevs using ' + used
             + ' (' + size + ') ' + type + 's and leaving ' + remaining + ' of those drives unused.';
           copy_desc.paraText = paraText;
@@ -656,7 +654,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           );
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           dialogRef.close(false);
-          new EntityUtils().handleWSError(self, error, this.dialog);
+          new EntityUtils().handleWSError(this, error, this.dialog);
         });
         dialogRef.componentInstance.submit();
       });
@@ -717,7 +715,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     let re;
     try {
       re = new RegExp(val);
-    } catch (e) {
+    } catch (e: unknown) {
       this.re_has_errors = true;
     }
 
@@ -730,13 +728,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       }
 
       this.re_has_errors = false;
-      const self = this;
-      const temp = this.temp.filter((d) => {
-        return self.nameFilter.test(d.devname.toLowerCase()) && self.capacityFilter.test(d.capacity.toLowerCase());
-      });
 
       // update the rows
-      this.disks = temp;
+      this.disks = this.temp.filter((d) => {
+        return this.nameFilter.test(d.devname.toLowerCase()) && this.capacityFilter.test(d.capacity.toLowerCase());
+      });
 
       // Whenever the filter changes, always go back to the first page
       this.table.offset = 0;

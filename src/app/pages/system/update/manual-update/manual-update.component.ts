@@ -127,7 +127,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
           return;
         }
 
-        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'filelocation' });
+        const config = _.find(this.fieldConfig, { name: 'filelocation' }) as FormSelectConfig;
         config.options.push({
           label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
         });
@@ -150,10 +150,10 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
 
     entityForm.formGroup.controls['filelocation'].valueChanges.pipe(untilDestroyed(this)).subscribe((filelocation: string) => {
       if (filelocation === ':temp:') {
-        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'filename' });
+        const config = _.find(this.fieldConfig, { name: 'filename' }) as FormSelectConfig;
         config.fileLocation = null;
       } else {
-        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'filename' });
+        const config = _.find(this.fieldConfig, { name: 'filename' }) as FormSelectConfig;
         config.fileLocation = filelocation;
       }
     });

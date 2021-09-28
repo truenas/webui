@@ -10,13 +10,16 @@
 
 
   <div class="outlined input-container">
-    <input matInput
+    <input #ixInput matInput
       [value]="selectedOption?.label"
       [placeholder]="'Search'"
       (input)="onChanged($event.target.value)"
       (blur)="onTouch()"
       [matAutocomplete]="auto"
     >
+    <span *ngIf="shouldShowResetInput()" class="reset-input">
+      <mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+    </span>
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayWith" (optionSelected)="optionSelected($event.option.value)">
       <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
         {{option.label}}

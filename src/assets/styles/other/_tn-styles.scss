@@ -641,10 +641,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
         background: var(--contrast-darker);
         border: 1px solid var(--lines);
         color: var(--fg2);
-        height: calc(100%);
+        font-family: 'Droid Sans Mono', 'Courier New', Courier, monospace;
+        height: 100%;
         min-height: 100px;
         overflow: auto;
         padding: 1rem;
+        white-space: pre-wrap;
       }
     }
   }
@@ -1666,11 +1668,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  // Remove card depth effect from slide in forms
-  .slidein-entity-form mat-card {
-    box-shadow: none !important;
-  }
-
   // Remove indentation for form elements on vertical stepper
   .jw-modal-body entity-wizard {
     mat-card {
@@ -1758,6 +1755,20 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     .mat-dialog-actions {
       padding-bottom: 24px;
     }
+  }
+
+  // Disabled form fields
+  .form-element.form-combobox .mat-form-field[disabled],
+  .form-element.form-combobox .mat-menu-trigger[disabled]
+  .form-element.form-ip-netmask .mat-form-field[disabled],
+  .form-element .mat-form-field-wrapper[disabled],
+  .form-element input[type=email][disabled],
+  .form-element input[type=number][disabled],
+  .form-element input[type=password][disabled],
+  .form-element input[type=text][disabled],
+  .form-element select[disabled],
+  .form-element textarea[disabled] {
+    opacity: 0.38;
   }
 
 } // end of ix theme

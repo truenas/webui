@@ -236,7 +236,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     }],
     method_ws: 'certificateauthority.ca_sign_csr',
     saveButtonText: helptext_system_ca.sign.sign,
-    customSubmit: this.doSignCSR,
+    customSubmit: (entityDialog) => this.doSignCSR(entityDialog),
     parent: this,
   };
 
@@ -287,20 +287,19 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   }
 
   doSignCSR(entityDialog: EntityDialogComponent<this>): void {
-    const self = entityDialog.parent;
     const payload = {
-      ca_id: self.rowNum,
+      ca_id: this.rowNum,
       csr_cert_id: entityDialog.formGroup.controls.csr_cert_id.value,
       name: entityDialog.formGroup.controls.name.value,
     };
     entityDialog.loader.open();
     entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).pipe(untilDestroyed(this)).subscribe(() => {
       entityDialog.loader.close();
-      self.dialog.closeAllDialogs();
-      self.modalService.refreshTable();
+      this.dialog.closeAllDialogs();
+      this.modalService.refreshTable();
     }, (err: WebsocketError) => {
       entityDialog.loader.close();
-      self.dialog.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
+      this.dialog.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     });
   }
 

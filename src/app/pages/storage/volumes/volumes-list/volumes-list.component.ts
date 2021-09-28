@@ -262,7 +262,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
                   break;
                 }
               }
-            } catch (error) {
+            } catch (error: unknown) {
               pool.availStr = '' + pool.children[0].available.parsed;
               pool.children[0].available_parsed = 'Unknown';
               pool.children[0].used_parsed = 'Unknown';
@@ -272,7 +272,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
               const used_pct = pool.children[0].used.parsed
                 / (pool.children[0].used.parsed + pool.children[0].available.parsed);
               pool.usedStr = '' + filesize(pool.children[0].used.parsed, { standard: 'iec' }) + ' (' + Math.round(used_pct * 100) + '%)';
-            } catch (error) {
+            } catch (error: unknown) {
               pool.usedStr = '' + pool.children[0].used.parsed;
             }
           }

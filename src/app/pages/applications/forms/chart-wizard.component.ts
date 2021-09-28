@@ -36,6 +36,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   private entityWizard: EntityWizardComponent;
   private destroy$ = new Subject();
   private selectedVersionKey: string;
+  isLinear = true;
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
     private modalService: ModalService, private appService: ApplicationsService) {
@@ -121,7 +122,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
           this.parseSchema();
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }

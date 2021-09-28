@@ -84,7 +84,7 @@ export class CatalogComponent implements OnInit {
     ],
     method_ws: 'kubernetes.update',
     saveButtonText: helptext.choosePool.action,
-    customSubmit: this.doPoolSelect,
+    customSubmit: (entityForm) => this.doPoolSelect(entityForm),
     parent: this,
   };
 
@@ -201,7 +201,8 @@ export class CatalogComponent implements OnInit {
     if (evt.data.event_control == 'settings' && evt.data.settings) {
       switch (evt.data.settings.value) {
         case 'select_pool':
-          return this.selectPool();
+          this.selectPool();
+          return;
         case 'advanced_settings':
           this.modalService.openInSlideIn(KubernetesSettingsComponent);
           break;
@@ -307,17 +308,16 @@ export class CatalogComponent implements OnInit {
       });
 
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-        new EntityUtils().handleWSError(self, err, this.dialogService);
+        new EntityUtils().handleWSError(this, err, this.dialogService);
       });
     });
   }
 
   doPoolSelect(entityDialog: EntityDialogComponent<this>): void {
-    const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
     const migrateApplications = entityDialog.formGroup.controls['migrateApplications'].value;
-    self.dialogService.closeAllDialogs();
-    const dialogRef = self.mdDialog.open(EntityJobComponent, {
+    this.dialogService.closeAllDialogs();
+    const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: helptext.choosePool.jobTitle,
       },
@@ -327,12 +327,12 @@ export class CatalogComponent implements OnInit {
       migrate_applications: migrateApplications,
     }]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe((res: Job<KubernetesConfig>) => {
-      self.selectedPool = pool;
-      self.refreshToolbarMenus();
-      self.dialogService.closeAllDialogs();
-      self.translate.get(helptext.choosePool.message).pipe(untilDestroyed(self)).subscribe((msg: string) => {
-        self.dialogService.info(helptext.choosePool.success, msg + res.result.pool,
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<KubernetesConfig>) => {
+      this.selectedPool = pool;
+      this.refreshToolbarMenus();
+      this.dialogService.closeAllDialogs();
+      this.translate.get(helptext.choosePool.message).pipe(untilDestroyed(this)).subscribe((msg: string) => {
+        this.dialogService.info(helptext.choosePool.success, msg + res.result.pool,
           '500px', 'info', true);
       });
     });

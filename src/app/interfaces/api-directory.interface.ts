@@ -594,6 +594,7 @@ export type ApiDirectory = {
   'openvpn.server.config': { params: void; response: OpenvpnServerConfig };
 
   // Pool
+  'pool.attach': { params: any; response: any };
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
   'pool.create': { params: [CreatePool]; response: Pool };
   'pool.dataset.attachments': { params: [datasetId: string]; response: PoolAttachment[] };
@@ -642,6 +643,7 @@ export type ApiDirectory = {
   'pool.recoverykey_rm': { params: any; response: any };
   'pool.rekey': { params: any; response: any };
   'pool.remove': { params: PoolRemoveParams; response: any };
+  'pool.replace': { params: any; response: any };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
   'pool.scrub': { params: PoolScrubParams; response: void };

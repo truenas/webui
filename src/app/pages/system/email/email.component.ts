@@ -206,24 +206,23 @@ export class EmailComponent implements FormConfiguration {
           name: 'login-gmail',
           customEventActionLabel: helptext_system_email.auth.login_button,
           customEventMethod: () => {
-            const self = this;
             const dialogService = this.dialogservice;
 
             window.open('https://freenas.org/oauth/gmail?origin='
               + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
-            window.addEventListener('message', doAuth, false);
 
-            function doAuth(message: OauthMessage<OAuthData>): void {
+            const doAuth = (message: OauthMessage<OAuthData>): void => {
               if (message.data.oauth_portal) {
                 if (message.data.error) {
                   dialogService.errorReport(T('Error'), message.data.error);
                 } else {
-                  self.oauthCreds$.next(message.data.result);
-                  self.checkForOauthCreds();
+                  this.oauthCreds$.next(message.data.result);
+                  this.checkForOauthCreds();
                 }
               }
               window.removeEventListener('message', doAuth);
-            }
+            };
+            window.addEventListener('message', doAuth, false);
           },
         },
       ],

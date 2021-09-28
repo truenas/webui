@@ -148,7 +148,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     fieldConfig: this.rollbackFieldConf,
     method_ws: 'zfs.snapshot.rollback',
     saveButtonText: helptext.label_rollback,
-    customSubmit: this.rollbackSubmit,
+    customSubmit: (entityDialog) => this.rollbackSubmit(entityDialog),
     parent: this,
     warning: helptext.rollback_warning,
   };
@@ -414,28 +414,27 @@ export class SnapshotListComponent implements EntityTableConfig {
   }
 
   rollbackSubmit(entityDialog: EntityDialogComponent<this>): void {
-    const parent = entityDialog.parent;
-    const item = entityDialog.parent.rollback;
+    const item = this.rollback;
     const recursive = entityDialog.formValue.recursive;
     const data = {} as ZfsRollbackParams[1];
     if (recursive !== null) {
       data['recursive'] = true;
     }
     data['force'] = true;
-    parent.entityList.loader.open();
-    parent.entityList.loaderOpen = true;
-    parent.ws
+    this.entityList.loader.open();
+    this.entityList.loaderOpen = true;
+    this.ws
       .call('zfs.snapshot.rollback', [item.name, data])
       .pipe(untilDestroyed(this)).subscribe(
         () => {
           entityDialog.dialogRef.close();
-          parent.entityList.getData();
+          this.entityList.getData();
         },
         (err: WebsocketError) => {
-          parent.entityList.loaderOpen = false;
-          parent.entityList.loader.close();
+          this.entityList.loaderOpen = false;
+          this.entityList.loader.close();
           entityDialog.dialogRef.close();
-          new EntityUtils().handleWSError(parent.entityList, err, parent.entityList.dialogService);
+          new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
         },
       );
   }

@@ -90,7 +90,7 @@ export class ChartFormComponent implements FormConfiguration {
         if (fieldSet) {
           const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
 
-          const imageConfig: FormDictConfig = _.find(fieldConfigs, { name: 'image' });
+          const imageConfig = _.find(fieldConfigs, { name: 'image' }) as FormDictConfig;
           if (imageConfig) {
             const repositoryConfig = _.find(imageConfig.subFields, { name: 'repository' });
             if (repositoryConfig) {
@@ -103,7 +103,7 @@ export class ChartFormComponent implements FormConfiguration {
       });
 
       fieldSets = fieldSets.filter((fieldSet) => fieldSet.config.length > 0);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }

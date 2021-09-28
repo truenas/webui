@@ -93,7 +93,7 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
   };
 
   isActionVisible(actionId: string, row: UserListRow): boolean {
-    if (actionId === 'delete' && row.builtin === true) {
+    if (actionId === 'delete' && row.builtin) {
       return false;
     }
     return true;
@@ -129,22 +129,21 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
         this.modalService.openInSlideIn(UserFormComponent, users_edit.id);
       },
     });
-    if (row.builtin !== true) {
+    if (!row.builtin) {
       actions.push({
         id: row.username,
         icon: 'delete',
         name: 'delete',
         label: helptext.user_list_actions_delete_label,
         onClick: (users_edit) => {
-          const self = this;
           const conf: DialogFormConfiguration = {
             title: helptext.deleteDialog.title,
             message: helptext.deleteDialog.message + `<i>${users_edit.username}</i>?`,
             fieldConfig: [],
             confirmCheckbox: true,
             saveButtonText: helptext.deleteDialog.saveButtonText,
-            preInit() {
-              if (self.ableToDeleteGroup(users_edit.id)) {
+            preInit: () => {
+              if (this.ableToDeleteGroup(users_edit.id)) {
                 conf.fieldConfig.push({
                   type: 'checkbox',
                   name: 'delete_group',
@@ -153,18 +152,18 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
                 });
               }
             },
-            customSubmit(entityDialog: EntityDialogComponent) {
+            customSubmit: (entityDialog: EntityDialogComponent) => {
               entityDialog.dialogRef.close(true);
-              self.loader.open();
-              self.ws.call(self.wsDelete, [users_edit.id, entityDialog.formValue])
+              this.loader.open();
+              this.ws.call(this.wsDelete, [users_edit.id, entityDialog.formValue])
                 .pipe(untilDestroyed(this))
                 .subscribe(() => {
-                  self.entityList.getData();
-                  self.loader.close();
+                  this.entityList.getData();
+                  this.loader.close();
                 },
                 (err) => {
-                  new EntityUtils().handleWSError(self, err, self.dialogService);
-                  self.loader.close();
+                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                  this.loader.close();
                 });
             },
           };

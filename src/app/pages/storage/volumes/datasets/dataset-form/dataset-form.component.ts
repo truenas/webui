@@ -845,13 +845,13 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   sendAsBasicOrAdvanced(data: any): DatasetFormData {
-    if (this.isNew === false) {
+    if (!this.isNew) {
       delete data.name;
     } else {
       data.name = this.parent + '/' + data.name;
     }
 
-    if (this.isNew === true && this.isBasicMode === true) {
+    if (this.isNew && this.isBasicMode) {
       data.refquota = null;
       data.quota = null;
       data.refreservation = null;
@@ -905,9 +905,9 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -1045,7 +1045,7 @@ export class DatasetFormComponent implements FormConfiguration {
       _.find(this.fieldSets, { class: 'refdataset' }).label = false;
     }
     this.ws.call('pool.dataset.compression_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      const compression: FormSelectConfig = _.find(this.fieldConfig, { name: 'compression' });
+      const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
       for (const key in choices) {
         compression.options.push({ label: key, value: choices[key] });
       }
@@ -1104,7 +1104,7 @@ export class DatasetFormComponent implements FormConfiguration {
               this.entityForm.setDisabled('encryption', true, true);
               this.entityForm.setDisabled('inherit_encryption', true, true);
             } else {
-              const encryption_algorithm_fc: FormSelectConfig = _.find(this.fieldConfig, { name: 'algorithm' });
+              const encryption_algorithm_fc = _.find(this.fieldConfig, { name: 'algorithm' }) as FormSelectConfig;
               const encryption_algorithm_fg = this.entityForm.formGroup.controls['algorithm'];
               let parent_algorithm;
               if (this.encrypted_parent && pk_dataset[0].encryption_algorithm) {
@@ -1214,13 +1214,13 @@ export class DatasetFormComponent implements FormConfiguration {
                 this.entityForm.setDisabled('key', generate_key, generate_key);
               });
             }
-            const sync: FormSelectConfig = _.find(this.fieldConfig, { name: 'sync' });
-            const compression: FormSelectConfig = _.find(this.fieldConfig, { name: 'compression' });
-            const deduplication: FormSelectConfig = _.find(this.fieldConfig, { name: 'deduplication' });
-            const exec: FormSelectConfig = _.find(this.fieldConfig, { name: 'exec' });
-            const readonly: FormSelectConfig = _.find(this.fieldConfig, { name: 'readonly' });
-            const atime: FormSelectConfig = _.find(this.fieldConfig, { name: 'atime' });
-            const recordsize: FormSelectConfig = _.find(this.fieldConfig, { name: 'recordsize' });
+            const sync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
+            const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
+            const deduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
+            const exec = _.find(this.fieldConfig, { name: 'exec' }) as FormSelectConfig;
+            const readonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
+            const atime = _.find(this.fieldConfig, { name: 'atime' }) as FormSelectConfig;
+            const recordsize = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
             const sync_inherit: Option[] = [{ label: `Inherit (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
             const compression_inherit: Option[] = [{ label: `Inherit (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
             const deduplication_inherit: Option[] = [{ label: `Inherit (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
@@ -1262,16 +1262,16 @@ export class DatasetFormComponent implements FormConfiguration {
               this.parent_dataset = parent_dataset[0];
               const current_dataset = _.find(this.parent_dataset.children, { name: this.pk });
               if (current_dataset.hasOwnProperty('recordsize') && current_dataset['recordsize'].value) {
-                const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'recordsize' });
+                const config = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
                 (_.find(config.options, { value: current_dataset['recordsize'].value }) as any)['hiddenFromDisplay'] = false;
               }
-              const edit_sync: FormSelectConfig = _.find(this.fieldConfig, { name: 'sync' });
-              const edit_compression: FormSelectConfig = _.find(this.fieldConfig, { name: 'compression' });
-              const edit_deduplication: FormSelectConfig = _.find(this.fieldConfig, { name: 'deduplication' });
-              const edit_exec: FormSelectConfig = _.find(this.fieldConfig, { name: 'exec' });
-              const edit_readonly: FormSelectConfig = _.find(this.fieldConfig, { name: 'readonly' });
-              const edit_atime: FormSelectConfig = _.find(this.fieldConfig, { name: 'atime' });
-              const edit_recordsize: FormSelectConfig = _.find(this.fieldConfig, { name: 'recordsize' });
+              const edit_sync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
+              const edit_compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
+              const edit_deduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
+              const edit_exec = _.find(this.fieldConfig, { name: 'exec' }) as FormSelectConfig;
+              const edit_readonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
+              const edit_atime = _.find(this.fieldConfig, { name: 'atime' }) as FormSelectConfig;
+              const edit_recordsize = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
 
               const edit_sync_collection: Option[] = [{ label: `Inherit (${this.parent_dataset.sync.rawvalue})`, value: 'INHERIT' }];
               edit_sync.options = edit_sync_collection.concat(edit_sync.options);
@@ -1588,7 +1588,7 @@ export class DatasetFormComponent implements FormConfiguration {
       this.modalService.close('slide-in-form');
       const parentPath = `/mnt/${this.parent}`;
       this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res === false) {
+        if (!res) {
           this.dialogService.confirm({
             title: helptext.afterSubmitDialog.title,
             message: helptext.afterSubmitDialog.message,

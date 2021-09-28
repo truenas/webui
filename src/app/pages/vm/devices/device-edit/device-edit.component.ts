@@ -344,7 +344,7 @@ export class DeviceEditComponent implements OnInit {
     // Display
     this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
-        this.ipAddress = _.find(this.displayFieldConfig, { name: 'bind' });
+        this.ipAddress = _.find(this.displayFieldConfig, { name: 'bind' }) as FormSelectConfig;
         Object.keys(res).forEach((address) => {
           this.ipAddress.options.push({ label: address, value: address });
         });
@@ -352,7 +352,7 @@ export class DeviceEditComponent implements OnInit {
     });
 
     this.ws.call('vm.resolution_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      const resolution: FormSelectConfig = _.find(this.displayFieldConfig, { name: 'resolution' });
+      const resolution = _.find(this.displayFieldConfig, { name: 'resolution' }) as FormSelectConfig;
       for (const key in res) {
         resolution.options.push({ label: key, value: res[key] });
       }
@@ -360,21 +360,21 @@ export class DeviceEditComponent implements OnInit {
 
     // nic
     this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.nic_attach = _.find(this.nicFieldConfig, { name: 'nic_attach' });
+      this.nic_attach = _.find(this.nicFieldConfig, { name: 'nic_attach' }) as FormSelectConfig;
       this.nic_attach.options = Object.keys(res || {}).map((nicId) => ({
         label: nicId,
         value: nicId,
       }));
     });
 
-    this.nicType = _.find(this.nicFieldConfig, { name: 'type' });
+    this.nicType = _.find(this.nicFieldConfig, { name: 'type' }) as FormSelectConfig;
     this.vmService.getNICTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 
     // pci
     this.ws.call('vm.device.passthrough_device_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.pptdev = _.find(this.pciFieldConfig, { name: 'pptdev' });
+      this.pptdev = _.find(this.pciFieldConfig, { name: 'pptdev' }) as FormSelectConfig;
       this.pptdev.options = Object.keys(res || {}).map((pptdevId) => ({
         label: pptdevId,
         value: pptdevId,
@@ -508,7 +508,7 @@ export class DeviceEditComponent implements OnInit {
   afterInit(): void {
     this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]], { extra: { properties: ['id'] } }]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
-        const config: FormSelectConfig = _.find(this.diskFieldConfig, { name: 'path' });
+        const config = _.find(this.diskFieldConfig, { name: 'path' }) as FormSelectConfig;
         config.options.push(
           {
             label: zvol.id, value: '/dev/zvol/' + zvol.id,

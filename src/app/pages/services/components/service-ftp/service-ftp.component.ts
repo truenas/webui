@@ -400,9 +400,9 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   private ssltls_certificate: any;
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+    if (actionId == 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId == 'basic_mode' && this.isBasicMode == true) {
+    } if (actionId == 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -422,7 +422,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   ngOnInit(): void {
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.length > 0) {
-        const config: FormSelectConfig = this.fieldSets.config('ssltls_certificate');
+        const config = this.fieldSets.config('ssltls_certificate') as FormSelectConfig;
         config.options = res.map((cert) => ({ label: cert.name, value: cert.id }));
       }
     });

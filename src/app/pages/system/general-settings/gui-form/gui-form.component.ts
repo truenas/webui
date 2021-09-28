@@ -163,9 +163,8 @@ export class GuiFormComponent implements FormConfiguration {
   }
 
   ipValidator(name: 'ui_address' | 'ui_v6address', wildcard: string): ValidatorFn {
-    const self = this;
-    return function validIPs(control: FormControl) {
-      const config = self.fieldSets
+    return (control: FormControl) => {
+      const config = this.fieldSets
         .find((set) => set.name === helptext.stg_fieldset_gui)
         .config.find((c) => c.name === name);
 
@@ -213,7 +212,7 @@ export class GuiFormComponent implements FormConfiguration {
 
     this.ui_certificate = this.fieldSets
       .find((set) => set.name === helptext.stg_fieldset_gui)
-      .config.find((config) => config.name === 'ui_certificate');
+      .config.find((config) => config.name === 'ui_certificate') as FormSelectConfig;
 
     this.ws.call('system.general.ui_certificate_choices')
       .pipe(untilDestroyed(this))
@@ -225,9 +224,9 @@ export class GuiFormComponent implements FormConfiguration {
         entityEdit.formGroup.controls['ui_certificate'].setValue(this.configData.ui_certificate.id.toString());
       });
 
-    const httpsprotocolsField: FormSelectConfig = this.fieldSets
+    const httpsprotocolsField = this.fieldSets
       .find((set) => set.name === helptext.stg_fieldset_gui)
-      .config.find((config) => config.name === 'ui_httpsprotocols');
+      .config.find((config) => config.name === 'ui_httpsprotocols') as FormSelectConfig;
 
     this.ws.call('system.general.ui_httpsprotocols_choices').pipe(untilDestroyed(this)).subscribe(
       (res) => {
@@ -242,9 +241,9 @@ export class GuiFormComponent implements FormConfiguration {
     this.sysGeneralService
       .ipChoicesv4()
       .pipe(untilDestroyed(this)).subscribe((ips) => {
-        const config: FormSelectConfig = this.fieldSets
+        const config = this.fieldSets
           .find((set) => set.name === helptext.stg_fieldset_gui)
-          .config.find((config) => config.name === 'ui_address');
+          .config.find((config) => config.name === 'ui_address') as FormSelectConfig;
         config.options = ips;
         entityEdit.formGroup.controls['ui_address'].setValue(this.configData.ui_address);
       });
@@ -252,9 +251,9 @@ export class GuiFormComponent implements FormConfiguration {
     this.sysGeneralService
       .ipChoicesv6()
       .pipe(untilDestroyed(this)).subscribe((v6Ips) => {
-        const config: FormSelectConfig = this.fieldSets
+        const config = this.fieldSets
           .find((set) => set.name === helptext.stg_fieldset_gui)
-          .config.find((config) => config.name === 'ui_v6address');
+          .config.find((config) => config.name === 'ui_v6address') as FormSelectConfig;
         config.options = v6Ips;
         entityEdit.formGroup.controls['ui_v6address'].setValue(this.configData.ui_v6address);
       });

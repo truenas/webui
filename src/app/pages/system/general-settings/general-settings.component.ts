@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, Type } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -17,17 +18,19 @@ import { FormUploadComponent } from 'app/pages/common/entity/entity-form/compone
 import { FieldConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { LocalizationForm2Component } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
-  WebSocketService, SystemGeneralService, DialogService,
+  WebSocketService, SystemGeneralService, DialogService, StorageService,
 }
   from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { GuiFormComponent } from './gui-form/gui-form.component';
-import { LocalizationFormComponent } from './localization-form/localization-form.component';
 
 @UntilDestroy()
 @Component({
@@ -61,7 +64,7 @@ export class GeneralSettingsComponent implements OnInit {
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
     saveButtonText: helptext.save_config_form.button_text,
-    customSubmit: this.saveConfigSubmit,
+    customSubmit: (entityDialog) => this.saveConfigSubmit(entityDialog),
     parent: this,
     warning: helptext.save_config_form.warning,
   };
@@ -104,7 +107,7 @@ export class GeneralSettingsComponent implements OnInit {
     fieldConfig: this.resetConfigFieldConf,
     method_ws: 'config.reset',
     saveButtonText: helptext.reset_config_form.button_text,
-    customSubmit: this.resetConfigSubmit,
+    customSubmit: () => this.resetConfigSubmit(),
     parent: this,
   };
 
@@ -118,6 +121,9 @@ export class GeneralSettingsComponent implements OnInit {
     private router: Router,
     public mdDialog: MatDialog,
     private core: CoreService,
+    private ixModalService: IxModalService,
+    private storage: StorageService,
+    private http: HttpClient,
   ) { }
 
   ngOnInit(): void {
@@ -223,7 +229,7 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   doAdd(name: string, id?: number): void {
-    let addComponent: Type<GuiFormComponent | NtpServerFormComponent | LocalizationFormComponent>;
+    let addComponent: Type<GuiFormComponent | NtpServerFormComponent>;
     switch (name) {
       case 'gui':
         addComponent = GuiFormComponent;
@@ -232,10 +238,12 @@ export class GeneralSettingsComponent implements OnInit {
         addComponent = NtpServerFormComponent;
         break;
       default:
-        addComponent = LocalizationFormComponent;
+        this.ixModalService.open(LocalizationForm2Component, T('Localization Settings'));
     }
     this.sysGeneralService.sendConfigData(this.configData);
-    this.modalService.openInSlideIn(addComponent, id);
+    if (addComponent) {
+      this.modalService.openInSlideIn(addComponent, id);
+    }
   }
 
   doNTPDelete(server: NtpServer): void {
@@ -287,17 +295,17 @@ export class GeneralSettingsComponent implements OnInit {
         .pipe(untilDestroyed(this)).subscribe(
           (download) => {
             const url = download[1];
-            entityDialog.parent.storage
-              .streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
+            this.storage
+              .streamDownloadFile(this.http, url, fileName, mimetype)
               .pipe(untilDestroyed(this))
               .subscribe((file: Blob) => {
                 entityDialog.loader.close();
                 entityDialog.dialogRef.close();
-                entityDialog.parent.storage.downloadBlob(file, fileName);
+                this.storage.downloadBlob(file, fileName);
               }, (err: Error) => {
                 entityDialog.loader.close();
                 entityDialog.dialogRef.close();
-                entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title,
+                this.dialog.errorReport(helptext.config_download.failed_title,
                   helptext.config_download.failed_message, err.message);
               });
           },
@@ -336,17 +344,16 @@ export class GeneralSettingsComponent implements OnInit {
     }));
     formData.append('file', parent.subs.file);
     dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(parent)).subscribe(() => {
       dialogRef.close();
       parent.router.navigate(['/others/reboot']);
     });
-    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(parent)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
 
-  resetConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
-    const parent = entityDialog.parent;
-    parent.router.navigate(new Array('').concat(['others', 'config-reset']));
+  resetConfigSubmit(): void {
+    this.router.navigate(new Array('').concat(['others', 'config-reset']));
   }
 }

@@ -104,7 +104,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
       id: 'FetchDataStores',
       name: T('Fetch DataStores'),
       function: () => {
-        this.datastore = _.find(this.fieldConfig, { name: 'datastore' });
+        this.datastore = _.find(this.fieldConfig, { name: 'datastore' }) as FormSelectConfig;
         this.datastore.type = 'select';
 
         if (
@@ -148,7 +148,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
     this.fieldConfig = entityForm.fieldConfig;
 
     if (this.entityForm.pk) {
-      this.datastore = _.find(this.fieldConfig, { name: 'datastore' });
+      this.datastore = _.find(this.fieldConfig, { name: 'datastore' }) as FormSelectConfig;
       this.datastore.options.length = 0;
     }
 
@@ -246,7 +246,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
 
   passwordBlur(parent: this): void {
     if (parent.entityForm) {
-      this.datastore = _.find(parent.fieldConfig, { name: 'datastore' });
+      this.datastore = _.find(parent.fieldConfig, { name: 'datastore' }) as FormSelectConfig;
       const payload: MatchDatastoresWithDatasetsParams = {
         hostname: parent.entityForm.formGroup.value.hostname,
         username: parent.entityForm.formGroup.value.username,
@@ -257,7 +257,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
         parent.loader.open();
         parent.ws.call('vmware.match_datastores_with_datasets', [payload]).pipe(untilDestroyed(parent)).subscribe((res) => {
           res.filesystems.forEach((filesystem_item) => {
-            const config: FormSelectConfig = _.find(parent.fieldConfig, { name: 'filesystem' });
+            const config = _.find(parent.fieldConfig, { name: 'filesystem' }) as FormSelectConfig;
             config.options.push(
               {
                 label: filesystem_item.name, value: filesystem_item.name,

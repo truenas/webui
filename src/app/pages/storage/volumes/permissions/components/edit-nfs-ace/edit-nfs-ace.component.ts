@@ -131,7 +131,7 @@ export class EditNfsAceComponent implements FormConfiguration, OnChanges {
     this.formGroup.get('advancedFlags').setValue(formValues.advancedFlags, { onlySelf: true });
 
     this.fieldConfig.forEach((config) => {
-      return this.relationService.refreshRelations(config, this.formGroup, { emitEvent: false });
+      this.relationService.refreshRelations(config, this.formGroup, { emitEvent: false });
     });
 
     this.formGroup.markAllAsTouched();

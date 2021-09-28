@@ -1105,14 +1105,14 @@ export class ReplicationFormComponent implements FormConfiguration {
     this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: number) => {
       this.queryCallOption = [['id', '=', id]];
     });
-    const sshCredentialsField: FormSelectConfig = this.fieldSets.config('ssh_credentials');
+    const sshCredentialsField = this.fieldSets.config('ssh_credentials') as FormSelectConfig;
     this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
       sshCredentialsField.options = connections.map((connection) => ({
         label: connection.name,
         value: connection.id,
       }));
     });
-    const periodicSnapshotTasksField: FormSelectConfig = this.fieldSets.config('periodic_snapshot_tasks');
+    const periodicSnapshotTasksField = this.fieldSets.config('periodic_snapshot_tasks') as FormSelectConfig;
     this.ws.call('pool.snapshottask.query').pipe(untilDestroyed(this)).subscribe((tasks) => {
       tasks.forEach((task) => {
         const label = `${task.dataset} - ${task.naming_schema} - ${task.lifetime_value} ${
@@ -1125,10 +1125,10 @@ export class ReplicationFormComponent implements FormConfiguration {
       });
     });
 
-    const scheduleBeginField: FormSelectConfig = this.fieldSets.config('schedule_begin');
-    const restrictScheduleBeginField: FormSelectConfig = this.fieldSets.config('restrict_schedule_begin');
-    const scheduleEndField: FormSelectConfig = this.fieldSets.config('schedule_end');
-    const restrictScheduleEndField: FormSelectConfig = this.fieldSets.config('restrict_schedule_end');
+    const scheduleBeginField = this.fieldSets.config('schedule_begin') as FormSelectConfig;
+    const restrictScheduleBeginField = this.fieldSets.config('restrict_schedule_begin') as FormSelectConfig;
+    const scheduleEndField = this.fieldSets.config('schedule_end') as FormSelectConfig;
+    const restrictScheduleEndField = this.fieldSets.config('restrict_schedule_end') as FormSelectConfig;
     const time_options = this.taskService.getTimeOptions();
 
     for (let i = 0; i < time_options.length; i++) {
@@ -1223,7 +1223,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       this.toggleNamingSchemaOrRegex();
     });
 
-    const retentionPolicyField: FormSelectConfig = this.fieldSets.config('retention_policy');
+    const retentionPolicyField = this.fieldSets.config('retention_policy') as FormSelectConfig;
     entityForm.formGroup.controls['transport'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       if (
         res !== TransportMode.Local
@@ -1276,7 +1276,7 @@ export class ReplicationFormComponent implements FormConfiguration {
 
     entityForm.formGroup.controls['ssh_credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
       for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
-        const explorerConfig: FormExplorerConfig = this.fieldSets.config(item);
+        const explorerConfig = this.fieldSets.config(item) as FormExplorerConfig;
         const explorerComponent = explorerConfig.customTemplateStringOptions.explorerComponent;
         if (explorerComponent) {
           explorerComponent.nodes = [

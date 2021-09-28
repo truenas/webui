@@ -134,7 +134,6 @@ module.exports = {
         "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
-        "@typescript-eslint/no-this-alias": "off",
         "@typescript-eslint/prefer-regexp-exec": "off",
         "@typescript-eslint/no-misused-promises": "off",
 
@@ -154,6 +153,9 @@ module.exports = {
         "@typescript-eslint/type-annotation-spacing": "error",
         "@typescript-eslint/ban-ts-comment": "error",
         "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
+        "@typescript-eslint/consistent-type-assertions": ["error"],
+        "@typescript-eslint/no-implicit-any-catch": ["error"],
+        "@typescript-eslint/no-unnecessary-boolean-literal-compare": ["error"],
         "@angular-eslint/use-component-view-encapsulation": ["error"],
         "@typescript-eslint/no-unused-vars": "off",
         "unused-imports/no-unused-imports": "error",

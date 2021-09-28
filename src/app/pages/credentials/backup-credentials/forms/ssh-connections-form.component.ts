@@ -246,7 +246,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       this.queryCallOption = [['id', '=', this.rowNum]];
       _.find(this.fieldSets[0].config, { name: 'setup_method' }).isHidden = true;
     } else {
-      const selectConfig: FormSelectConfig = _.find(this.fieldSets[1].config, { name: 'private_key' });
+      const selectConfig = _.find(this.fieldSets[1].config, { name: 'private_key' }) as FormSelectConfig;
       selectConfig.options.push({
         label: 'Generate New',
         value: 'NEW',
@@ -259,7 +259,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       this.namesInUse.push(...sshConnections);
       this.namesInUseConnection.push(...sshConnections);
     });
-    const privateKeyField: FormSelectConfig = _.find(this.fieldSets[1].config, { name: 'private_key' });
+    const privateKeyField = _.find(this.fieldSets[1].config, { name: 'private_key' }) as FormSelectConfig;
     this.keychainCredentialService.getSSHKeys().toPromise().then((keyPairs) => {
       const namesInUse = keyPairs
         .filter((sshKey) => sshKey.name.endsWith(' Key'))

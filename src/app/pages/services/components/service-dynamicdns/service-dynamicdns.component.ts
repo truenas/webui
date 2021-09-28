@@ -180,7 +180,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    this.provider = this.fieldSets.config('provider');
+    this.provider = this.fieldSets.config('provider') as FormSelectConfig;
     this.ws.call('dyndns.provider_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       for (const key in res) {
         this.provider.options.push({ label: res[key], value: key });

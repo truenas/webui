@@ -94,7 +94,7 @@ export class UpdateComponent implements OnInit {
     method_ws: 'core.download',
     saveButtonText: T('SAVE CONFIGURATION'),
     cancelButtonText: T('NO'),
-    customSubmit: this.saveConfigSubmit,
+    customSubmit: (entityDialog) => this.saveConfigSubmit(entityDialog),
     parent: this,
   };
 
@@ -434,7 +434,7 @@ export class UpdateComponent implements OnInit {
     this.updateType = 'applyPending';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res === false) {
+      if (!res) {
         this.continueUpdate();
       }
     });
@@ -444,7 +444,7 @@ export class UpdateComponent implements OnInit {
     this.updateType = 'manual';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res === false) {
+      if (!res) {
         this.continueUpdate();
       }
     });
@@ -500,7 +500,7 @@ export class UpdateComponent implements OnInit {
           this.updateType = 'standard';
           // Calls the 'Save Config' dialog - Returns here if user declines
           this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-            if (res === false) {
+            if (!res) {
               this.confirmAndUpdate();
             }
           });
@@ -604,8 +604,8 @@ export class UpdateComponent implements OnInit {
   saveConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
     let fileName = '';
     let mimetype: string;
-    if (entityDialog.parent.sysInfo) {
-      const hostname = entityDialog.parent.sysInfo.hostname.split('.')[0];
+    if (this.sysInfo) {
+      const hostname = this.sysInfo.hostname.split('.')[0];
       const date = entityDialog.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
       fileName = hostname + '-' + date;
       if (entityDialog.formValue['secretseed']) {
@@ -618,37 +618,37 @@ export class UpdateComponent implements OnInit {
     }
 
     entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
-      .pipe(untilDestroyed(entityDialog.parent)).subscribe(
+      .pipe(untilDestroyed(this)).subscribe(
         (succ) => {
           const url = succ[1];
-          entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
-            .pipe(untilDestroyed(entityDialog.parent)).subscribe((file: Blob) => {
+          this.storage.streamDownloadFile(this.http, url, fileName, mimetype)
+            .pipe(untilDestroyed(this)).subscribe((file: Blob) => {
               entityDialog.dialogRef.close();
-              entityDialog.parent.storage.downloadBlob(file, fileName);
-              entityDialog.parent.continueUpdate();
+              this.storage.downloadBlob(file, fileName);
+              this.continueUpdate();
             }, () => {
               entityDialog.dialogRef.close();
-              entityDialog.parent.dialogService.confirm({
-                title: entityDialog.parent.translate.instant(helptext.save_config_err.title),
-                message: entityDialog.parent.translate.instant(helptext.save_config_err.message),
-                buttonMsg: entityDialog.parent.translate.instant(helptext.save_config_err.button_text),
+              this.dialogService.confirm({
+                title: this.translate.instant(helptext.save_config_err.title),
+                message: this.translate.instant(helptext.save_config_err.message),
+                buttonMsg: this.translate.instant(helptext.save_config_err.button_text),
               }).pipe(
                 filter(Boolean),
-                untilDestroyed(entityDialog.parent),
+                untilDestroyed(this),
               ).subscribe(() => {
-                entityDialog.parent.continueUpdate();
+                this.continueUpdate();
               });
             });
           entityDialog.dialogRef.close();
         },
         () => {
-          entityDialog.parent.dialogService.confirm({
-            title: entityDialog.parent.translate.instant(helptext.save_config_err.title),
-            message: entityDialog.parent.translate.instant(helptext.save_config_err.message),
+          this.dialogService.confirm({
+            title: this.translate.instant(helptext.save_config_err.title),
+            message: this.translate.instant(helptext.save_config_err.message),
             hideCheckBox: false,
-            buttonMsg: entityDialog.parent.translate.instant(helptext.save_config_err.button_text),
-          }).pipe(filter(Boolean), untilDestroyed(entityDialog.parent)).subscribe(() => {
-            entityDialog.parent.continueUpdate();
+            buttonMsg: this.translate.instant(helptext.save_config_err.button_text),
+          }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+            this.continueUpdate();
           });
         },
       );

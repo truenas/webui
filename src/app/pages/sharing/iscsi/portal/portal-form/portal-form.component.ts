@@ -152,15 +152,15 @@ export class PortalFormComponent implements FormConfiguration {
 
   prerequisite(): Promise<boolean> {
     return new Promise(async (resolve) => {
-      const listenIpFieldConfig: FormListConfig = _.find(this.fieldSets[2].config, { name: 'listen' });
-      const listenIpField: FormSelectConfig = listenIpFieldConfig.templateListField[0];
+      const listenIpFieldConfig = _.find(this.fieldSets[2].config, { name: 'listen' }) as FormListConfig;
+      const listenIpField = listenIpFieldConfig.templateListField[0] as FormSelectConfig;
       await this.iscsiService.getIpChoices().toPromise().then((ips) => {
         for (const ip in ips) {
           listenIpField.options.push({ label: ips[ip], value: ip });
         }
         const listenListFields = listenIpFieldConfig.listFields;
         for (const listenField of listenListFields) {
-          const ipField: FormSelectConfig = _.find(listenField, { name: 'ip' });
+          const ipField = _.find(listenField, { name: 'ip' }) as FormSelectConfig;
           ipField.options = listenIpField.options;
         }
         resolve(true);
@@ -178,7 +178,7 @@ export class PortalFormComponent implements FormConfiguration {
       }
     });
     const authgroupFieldset = _.find(this.fieldSets, { class: 'authgroup' });
-    this.authgroup_field = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' });
+    this.authgroup_field = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' }) as FormSelectConfig;
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       for (let i = 0; i < accessRecords.length; i++) {
         if (_.find(this.authgroup_field.options, { value: accessRecords[i].tag }) == undefined) {

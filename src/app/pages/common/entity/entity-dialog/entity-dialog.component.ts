@@ -36,6 +36,9 @@ export class EntityDialogComponent<P = any> implements OnInit {
   error: string;
   formValue: any;
   showPassword = false;
+  /**
+   * @deprecated Capture parent with an arrow function instead
+   */
   parent: P;
   submitEnabled = true;
   instructions: string;

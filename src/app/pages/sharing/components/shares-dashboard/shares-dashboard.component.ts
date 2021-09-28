@@ -4,9 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import {
-  delay, filter, map, tap,
-} from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptext_sharing_webdav, helptext_sharing_smb, helptext_sharing_nfs } from 'app/helptext/sharing';
@@ -110,8 +108,6 @@ export class SharesDashboardComponent implements AfterViewInit {
       .pipe(
         map((event) => event.fields),
         filter((service) => this.servicesToCheck.includes(service.service)),
-        tap((service) => this.updateTableServiceStatus({ ...service, state: ServiceStatus.Loading })),
-        delay(300), /* delay to show spinner */
         untilDestroyed(this),
       )
       .subscribe((service: Service) => {
@@ -480,7 +476,7 @@ export class SharesDashboardComponent implements AfterViewInit {
       ],
       customSubmit: (dialog: EntityDialogComponent) => {
         dialog.dialogRef.close();
-        dialog.parent.add(null, dialog.formValue.share_type);
+        this.add(null, dialog.formValue.share_type);
       },
       parent: this,
     };
