@@ -8,8 +8,8 @@ describe('FormatDateTimePipe', () => {
   const inputValue = 1632831778445;
   const createPipe = createPipeFactory(FormatDateTimePipe);
 
-  it('converts timestamp using timezone from pipe args', () => {
-    spectator = createPipe('{{ 1632831778445 | formatDateTime: "America/Los_Angeles" }}', {
+  it('converts timestamp to date', () => {
+    spectator = createPipe('{{ 1632831778445 | formatDateTime:"America/Los_Angeles" }}', {
       providers: [mockProvider(SystemGeneralService, {
         getGeneralConfig$: of(),
       })],
@@ -18,7 +18,7 @@ describe('FormatDateTimePipe', () => {
   });
 
   it('converts timestamp using timezone from pipe args', () => {
-    spectator = createPipe('{{ inputValue | formatDateTime: "America/Los_Angeles" }}', {
+    spectator = createPipe('{{ inputValue | formatDateTime:"America/Los_Angeles" }}', {
       hostProps: {
         inputValue,
       },
@@ -75,5 +75,17 @@ describe('FormatDateTimePipe', () => {
       })],
     });
     expect(spectator.element).toHaveExactText('28/09/2021 15:22:58');
+  });
+
+  it('converts date using custom time format', () => {
+    spectator = createPipe('{{ inputDateValue | formatDateTime:"Europe/Kiev":"":"HH:mm" }}', {
+      hostProps: {
+        inputDateValue: new Date(inputValue),
+      },
+      providers: [mockProvider(SystemGeneralService, {
+        getGeneralConfig$: of(),
+      })],
+    });
+    expect(spectator.element).toHaveExactText('2021-09-28 15:22');
   });
 });
