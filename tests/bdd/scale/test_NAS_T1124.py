@@ -91,6 +91,7 @@ def set_path_to_the_acl_dataset_mnttanktank_acl_dataset_input_mytankshare_as_nam
 def mysmbshare_should_be_added_click_on_service_and_the_service_page_should_open(driver, smbname):
     """"{smbname}" should be added, Click on service and the Service page should open."""
     assert wait_on_element(driver, 5, f'//div[contains(.,"mytankshare")]')
+    time.sleep(2)
 
 
 @then(parsers.parse('Send a file to the share with nas_ip/"{mytankshare}" and "{user}" and "{password}"'))
