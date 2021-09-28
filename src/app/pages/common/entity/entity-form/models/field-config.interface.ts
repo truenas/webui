@@ -31,6 +31,9 @@ export interface BaseFieldConfig<P = any> {
   id?: string;
   isHidden?: boolean;
   name: string;
+  /**
+   * @deprecated Capture parent with an arrow function instead.
+   */
   parent?: P;
   placeholder?: string;
   readonly?: boolean;

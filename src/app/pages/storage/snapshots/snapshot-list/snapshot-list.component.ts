@@ -188,6 +188,7 @@ export class SnapshotListComponent implements EntityTableConfig {
       const [datasetName, snapshotName] = row.name.split('@');
 
       const transformedRow = {
+        id: row.name,
         dataset: datasetName,
         snapshot: snapshotName,
         properties: row.properties,

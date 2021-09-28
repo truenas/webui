@@ -161,12 +161,6 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(value: any): void {
-    if (value.filesystem !== undefined) {
-      value.filesystem = value.filesystem;
-    }
-  }
-
   customSubmit(value: any): void {
     const payload = {
       datastore: value.datastore,

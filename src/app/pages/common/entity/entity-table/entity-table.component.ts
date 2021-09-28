@@ -651,7 +651,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
       this.paginationPageIndex = 0;
       this.showDefaults = true;
     }
-    if ((this.expandedRows === 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) && this.filterValue === '') {
+    if (this.expandedRows === 0 || !this.asyncView || this.excuteDeletion || this.needRefreshTable) {
       this.excuteDeletion = false;
       this.needRefreshTable = false;
 
