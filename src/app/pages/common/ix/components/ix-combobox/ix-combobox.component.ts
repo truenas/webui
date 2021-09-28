@@ -1,9 +1,11 @@
 import {
-  Component, ElementRef, forwardRef, Input, OnChanges, SimpleChanges, ViewChild,
+  Component, ElementRef, EventEmitter, forwardRef, Input, OnChanges, Output, SimpleChanges, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
+import { fromEvent, Observable, of } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 
 @UntilDestroy()
@@ -26,6 +28,9 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
   @Input() tooltip: string;
   @Input() options: Observable<Option[]>;
   @ViewChild('ixInput') inputElementRef: ElementRef;
+  @ViewChild('auto') autoCompleteRef: MatAutocomplete;
+  @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
+  @Output() scrollEnd: EventEmitter<string> = new EventEmitter<string>();
 
   @Input() filter: (options: Option[], filterValue: string) => Observable<Option[]> =
   (options: Option[], value: string): Observable<Option[]> => {
@@ -56,6 +61,35 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
     if (this.selectedOption) {
       this.filterValue = this.selectedOption.label;
     }
+  }
+
+  onOpenDropdown(): void {
+    setTimeout(() => {
+      if (
+        this.autoCompleteRef
+        && this.autocompleteTrigger
+        && this.autoCompleteRef.panel
+      ) {
+        fromEvent(this.autoCompleteRef.panel.nativeElement, 'scroll')
+          .pipe(
+            map(() => this.autoCompleteRef.panel.nativeElement.scrollTop),
+            takeUntil(this.autocompleteTrigger.panelClosingActions),
+            untilDestroyed(this),
+          )
+          .subscribe(() => {
+            const scrollTop = this.autoCompleteRef.panel.nativeElement
+              .scrollTop;
+            const scrollHeight = this.autoCompleteRef.panel.nativeElement
+              .scrollHeight;
+            const elementHeight = this.autoCompleteRef.panel.nativeElement
+              .clientHeight;
+            const atBottom = scrollHeight === scrollTop + elementHeight;
+            if (atBottom) {
+              this.scrollEnd.emit(this.filterValue);
+            }
+          });
+      }
+    });
   }
 
   onChanged(changedValue: string): void {
