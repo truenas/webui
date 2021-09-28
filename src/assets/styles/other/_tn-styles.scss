@@ -1666,11 +1666,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  // Remove card depth effect from slide in forms
-  .slidein-entity-form mat-card {
-    box-shadow: none !important;
-  }
-
   // Remove indentation for form elements on vertical stepper
   .jw-modal-body entity-wizard {
     mat-card {
