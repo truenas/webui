@@ -18,6 +18,7 @@ from pytest_bdd import (
     scenario,
     then,
     when,
+
     parsers
 )
 
@@ -59,7 +60,6 @@ def you_should_be_on_the_dashboard_click_on_sharing_and_click_add(driver):
 @then(parsers.parse('set Path to the LDAP dataset at "{path}"'))
 def set_path_to_the_ldap_dataset_at_mnttankmy_ldap_dataset(driver, path):
     """set Path to the LDAP dataset at "/mnt/tank/my_ldap_dataset"."""
-    time.sleep(2)
     assert wait_on_element(driver, 5, '//h3[contains(.,"Add SMB")]')
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
@@ -83,8 +83,7 @@ def input_my_ldap_smb_test_share_as_the_description_and_click_summit(driver, des
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
     if not checkbox_checked:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]'. 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
@@ -128,3 +127,4 @@ def click_on_credentialsdirectoryservices_then_ldap_settings_then_disable_and_cl
     wait_on_element(driver, 10, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
+
