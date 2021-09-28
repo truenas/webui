@@ -797,7 +797,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
                   hideCheckBox: true,
                   buttonMsg: T('Fix Credential'),
                 }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                  this.router.navigate(new Array('/').concat(['system', 'cloudcredentials', 'edit', String(item.id)]));
+                  this.router.navigate(['/', 'system', 'cloudcredentials', 'edit', String(item.id)]);
                 });
               });
             } else {

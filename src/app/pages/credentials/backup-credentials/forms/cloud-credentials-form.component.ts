@@ -38,7 +38,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   queryCallOption: QueryFilter<CloudsyncCredential>[];
   protected formGroup: FormGroup;
   protected id: number;
-  pk: any;
   protected keyID: number;
   protected isOneColumnForm = true;
   private rowNum: number;

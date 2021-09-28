@@ -18,7 +18,7 @@ export class KerberosRealmsFormComponent implements FormConfiguration {
   addCall: 'kerberos.realm.create' = 'kerberos.realm.create';
   editCall: 'kerberos.realm.update' = 'kerberos.realm.update';
   queryCall: 'kerberos.realm.query' = 'kerberos.realm.query';
-  pk: any;
+  pk: number;
   queryKey = 'id';
   isEntity = true;
   private getRow = new Subscription();
@@ -61,7 +61,7 @@ export class KerberosRealmsFormComponent implements FormConfiguration {
   ];
 
   constructor(private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
     });

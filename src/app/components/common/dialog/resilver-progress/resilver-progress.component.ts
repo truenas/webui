@@ -25,6 +25,8 @@ export class ResilverProgressDialogComponent implements OnInit {
   statusLabel = T('Status: ');
   diskName: string;
 
+  readonly PoolScanState = PoolScanState;
+
   constructor(
     protected translate: TranslateService,
     protected ws: WebSocketService,

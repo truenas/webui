@@ -134,15 +134,15 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       name: helptext.acl_manager_button,
       function: () => {
         if (this.aclType === AclType.Posix1e) {
-          this.router.navigate(new Array('/').concat([
-            'storage', 'id', this.datasetId.split('/')[0], 'dataset',
+          this.router.navigate([
+            '/', 'storage', 'id', this.datasetId.split('/')[0], 'dataset',
             'posix-acl', this.datasetId,
-          ]));
+          ]);
         } else {
-          this.router.navigate(new Array('/').concat([
-            'storage', 'id', this.datasetId.split('/')[0], 'dataset',
+          this.router.navigate([
+            '/', 'storage', 'id', this.datasetId.split('/')[0], 'dataset',
             'acl', this.datasetId,
-          ]));
+          ]);
         }
       },
     },

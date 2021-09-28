@@ -35,7 +35,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   route_success: string[] = ['system', 'update'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   fileLocation: string;
-  subs: any;
+  subs: { formData: FormData; apiEndPoint: string };
   isHA = false;
   isUpdateRunning = false;
   updateMethod = 'update.update';

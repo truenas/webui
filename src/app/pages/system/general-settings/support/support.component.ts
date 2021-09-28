@@ -19,7 +19,6 @@ import { SupportFormUnlicensedComponent } from './support-unlicensed/support-for
   templateUrl: './support.component.html',
 })
 export class SupportComponent implements OnInit {
-  subs: any;
   isProduction: boolean;
   product_image = '';
   isProductImageRack = false;

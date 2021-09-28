@@ -2,7 +2,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ResponseErrorType } from 'app/enums/response-error-type.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
-import { ApiValidationError } from 'app/interfaces/error-response.interface';
 
 export interface Job<R = null, A = unknown[]> {
   abortable: boolean;
@@ -11,7 +10,7 @@ export interface Job<R = null, A = unknown[]> {
   error: string;
   exc_info: {
     type: ResponseErrorType | null;
-    extra: ApiValidationError;
+    extra: Record<string, unknown>;
   };
   exception: string;
   id: number;

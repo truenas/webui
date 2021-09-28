@@ -55,8 +55,7 @@ export class DatasetFormComponent implements FormConfiguration {
   protected recordsize_fg: FormControl;
   protected recommended_size_number: number;
   protected recordsize_warning: string;
-  protected dedup_warned = false;
-  protected dedup_value: any;
+  protected dedup_value: string;
   protected dedup_fg: FormControl;
   protected dedup_field: FieldConfig;
   protected encrypted_parent = false;
@@ -77,14 +76,13 @@ export class DatasetFormComponent implements FormConfiguration {
   private minrefquota = 1024 * 1024 * 1024;
 
   parent: string;
-  data: any;
   protected passphrase_parent = false;
 
   protected size_fields: SizeField[] = [
     'quota', 'refquota', 'reservation', 'refreservation', 'special_small_block_size',
   ];
-  protected OrigSize: any = {};
-  protected OrigHuman: any = {};
+  protected OrigSize: { [field in SizeField]?: any } = {};
+  protected OrigHuman: { [field in SizeField]?: any } = {};
 
   protected warning = 80;
   protected critical = 95;
@@ -1599,13 +1597,15 @@ export class DatasetFormComponent implements FormConfiguration {
             if (res) {
               this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
                 if (acltype === AclType.Posix1e) {
-                  this.router.navigate(new Array('/').concat(
-                    ['storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
-                  ), { queryParams: { default: parentPath } });
+                  this.router.navigate(
+                    ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
+                    { queryParams: { default: parentPath } },
+                  );
                 } else {
-                  this.router.navigate(new Array('/').concat(
-                    ['storage', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
-                  ), { queryParams: { default: parentPath } });
+                  this.router.navigate(
+                    ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
+                    { queryParams: { default: parentPath } },
+                  );
                 }
               });
             } else {

@@ -51,7 +51,6 @@ export class ZvolFormComponent implements FormConfiguration {
   isNew = true;
   isEntity = true;
   parent: string;
-  data: any;
   volid: string;
   customFilter: any[] = [];
   edit_data: any;
