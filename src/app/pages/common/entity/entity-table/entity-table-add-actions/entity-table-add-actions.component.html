@@ -154,7 +154,13 @@
   <!-- OLD TEMPLATE END -->
   <!--</div>-->
 
-  <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="(!entity.showDefaults && entity.showSpinner)" #entityspinner>
+  <mat-spinner
+    [diameter]="40"
+    id="entity-spinner"
+    *ngIf="!entity.showDefaults && entity.showSpinner"
+    #entityspinner
+    style="margin-left: 8px;"
+  >
   </mat-spinner>
 
   <ng-container *ngIf="conf && conf.custActions">
@@ -173,7 +179,7 @@
     </span>
   </ng-container>
 
-  <div id='config' *ngIf="conf.globalConfig">
+  <div id="config" *ngIf="conf.globalConfig">
     <button
       mat-icon-button
       id="{{ conf.globalConfig.id }}"
