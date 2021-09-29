@@ -1,0 +1,17 @@
+<div class="full-width container has-tooltip">
+
+  <div *ngIf="label" class="label-container">
+    <label class="label">
+      {{label}}
+      <span *ngIf="required">*</span>
+    </label>
+    <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+  </div>
+
+  <div class="outlined input-container">
+    <mat-select (blur)="onTouch()" [(ngModel)]="value" [required]="required" (ngModelChange)="onChange($event)">
+      <mat-option *ngFor="let option of options | async" [value]="option.value">{{option.label}}</mat-option>
+    </mat-select>
+  </div>
+
+</div>

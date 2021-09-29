@@ -7,8 +7,8 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -54,7 +54,7 @@ export class UserFormComponent implements FormConfiguration {
           required: true,
           validation: helptext.user_form_full_name_validation,
           blurStatus: true,
-          blurEvent: this.fullNameBlur,
+          blurEvent: () => this.fullNameBlur(),
           parent: this,
         },
         {
@@ -70,7 +70,7 @@ export class UserFormComponent implements FormConfiguration {
             forbiddenValues(this.namesInUse),
           ],
           blurStatus: true,
-          blurEvent: this.userNameBlur,
+          blurEvent: () => this.userNameBlur(),
           parent: this,
         },
         {
@@ -512,10 +512,10 @@ export class UserFormComponent implements FormConfiguration {
     return this.ws.call('user.update', [this.pk, entityForm]);
   }
 
-  fullNameBlur(parent: this): void {
-    if (parent.entityForm && parent.entityForm.isNew) {
+  fullNameBlur(): void {
+    if (this.entityForm && this.entityForm.isNew) {
       let username: string;
-      const fullname = parent.entityForm.formGroup.controls.full_name.value.split(/[\s,]+/);
+      const fullname = this.entityForm.formGroup.controls.full_name.value.split(/[\s,]+/);
       if (fullname.length === 1) {
         username = fullname[0];
       } else {
@@ -525,16 +525,16 @@ export class UserFormComponent implements FormConfiguration {
         username = username.substring(0, 8);
       }
       if (username !== '') {
-        parent.entityForm.formGroup.controls['username'].setValue(username.toLocaleLowerCase());
-        parent.entityForm.formGroup.controls['username'].markAsTouched();
+        this.entityForm.formGroup.controls['username'].setValue(username.toLocaleLowerCase());
+        this.entityForm.formGroup.controls['username'].markAsTouched();
       }
     }
   }
 
-  userNameBlur(parent: this): void {
-    if (parent.entityForm) {
-      const username = parent.entityForm.formGroup.controls.username.value;
-      parent.fieldSets.config('username').warnings = username.length > 8 ? helptext.user_form_blur_event2_warning : null;
+  userNameBlur(): void {
+    if (this.entityForm) {
+      const username = this.entityForm.formGroup.controls.username.value;
+      this.fieldSets.config('username').warnings = username.length > 8 ? helptext.user_form_blur_event2_warning : null;
     }
   }
 

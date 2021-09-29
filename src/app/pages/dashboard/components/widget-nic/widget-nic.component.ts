@@ -43,7 +43,10 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   traffic: NetTraffic;
   currentSlide = '0';
   private utils: WidgetUtils;
-  LinkState = LinkState;
+
+  readonly LinkState = LinkState;
+  readonly NetworkInterfaceAliasType = NetworkInterfaceAliasType;
+
   get currentSlideName(): string {
     return this.path[parseInt(this.currentSlide)].name;
   }

@@ -9,6 +9,9 @@ import * as _ from 'lodash';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { PoolFindResult } from 'app/interfaces/pool-import.interface';
+import { Subs } from 'app/interfaces/subs.interface';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FormInputConfig, FormSelectConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -33,7 +36,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   isLinear = true;
   firstFormGroup: FormGroup;
   summaryTitle = 'Pool Import Summary';
-  subs: any;
+  subs: Subs;
   saveSubmitText = T('Import');
   entityWizard: EntityWizardComponent;
   protected productType: ProductType;
@@ -112,7 +115,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
         tooltip: helptext.key_tooltip,
         fileLocation: '',
         message: this.messageService,
-        updater: this.updater,
+        updater: (uploadComponent: FormUploadComponent) => this.updater(uploadComponent),
         parent: this,
         isHidden: true,
         disabled: true,
@@ -160,10 +163,10 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   },
   ];
 
-  updater(file: FormUploadComponent, parent: this): void {
+  updater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
+      this.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 
@@ -179,7 +182,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   protected passphrase: FormInputConfig;
   protected passphrase_fg: FormGroup;
   protected guid: FormSelectConfig;
-  protected pool: any;
+  protected pool: string;
   hideCancel = true;
 
   constructor(
@@ -248,7 +251,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
     dialogRef.componentInstance.setCall('pool.import_find');
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<PoolFindResult[]>) => {
       if (res && res.result) {
         this.guid.options = [];
         const result = res.result;
@@ -283,13 +286,13 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     this.entityWizard = entityWizard;
 
     if (!this.productType.includes(ProductType.Scale)) {
-      this.encrypted = (< FormGroup > entityWizard.formArray.get([1]).get('encrypted'));
+      this.encrypted = entityWizard.formArray.get([1]).get('encrypted') as FormGroup;
       this.devices = _.find(this.wizardConfig[1].fieldConfig, { name: 'devices' }) as FormSelectConfig;
-      this.devices_fg = (< FormGroup > entityWizard.formArray.get([1]).get('devices'));
+      this.devices_fg = entityWizard.formArray.get([1]).get('devices') as FormGroup;
       this.key = _.find(this.wizardConfig[1].fieldConfig, { name: 'key' }) as FormUploadConfig;
-      this.key_fg = (< FormGroup > entityWizard.formArray.get([1]).get('key'));
+      this.key_fg = entityWizard.formArray.get([1]).get('key') as FormGroup;
       this.passphrase = _.find(this.wizardConfig[1].fieldConfig, { name: 'passphrase' }) as FormInputConfig;
-      this.passphrase_fg = (< FormGroup > entityWizard.formArray.get([1]).get('passphrase'));
+      this.passphrase_fg = entityWizard.formArray.get([1]).get('passphrase') as FormGroup;
 
       this.ws.call('disk.get_encrypted', [{ unused: true }]).pipe(untilDestroyed(this)).subscribe((res) => {
         for (let i = 0; i < res.length; i++) {
@@ -299,7 +302,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     }
 
     this.guid = _.find(this.wizardConfig[this.importIndex].fieldConfig, { name: 'guid' }) as FormSelectConfig;
-    (< FormGroup > entityWizard.formArray.get([this.importIndex]).get('guid'))
+    (entityWizard.formArray.get([this.importIndex]).get('guid') as FormGroup)
       .valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         const pool = _.find(this.guid.options, { value: res });
         this.summary[T('Pool to import')] = pool['label'];

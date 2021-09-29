@@ -14,8 +14,8 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -35,7 +35,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   route_success: string[] = ['system', 'update'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   fileLocation: string;
-  subs: any;
+  subs: { formData: FormData; apiEndPoint: string };
   isHA = false;
   isUpdateRunning = false;
   updateMethod = 'update.update';

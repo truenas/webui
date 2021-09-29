@@ -79,16 +79,6 @@ export const rootRouterConfig: Routes = [{
     data: { title: 'Applications', breadcrumb: 'Applications', toplevel: true },
   },
   {
-    path: 'containers',
-    loadChildren: () => import('./pages/containers/containers.module').then((module) => module.ContainersModule),
-    data: { title: 'Containers', breadcrumb: 'Containers' },
-  },
-  {
-    path: 'clustering',
-    loadChildren: () => import('./pages/clustering/clustering.module').then((module) => module.ClusteringModule),
-    data: { title: 'Clustering', breadcrumb: 'Clustering' },
-  },
-  {
     path: 'sharing',
     loadChildren: () => import('./pages/sharing/sharing.module').then((module) => module.SharingModule),
     data: { title: 'Sharing', breadcrumb: 'Sharing' },

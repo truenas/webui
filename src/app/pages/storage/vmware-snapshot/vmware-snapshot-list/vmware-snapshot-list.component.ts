@@ -56,9 +56,7 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
         name: 'edit',
         label: T('Edit'),
         onClick: (row: any) => {
-          this._router.navigate(new Array('/').concat(
-            ['storage', 'vmware-snapshots', 'edit', row.id],
-          ));
+          this._router.navigate(['/', 'storage', 'vmware-snapshots', 'edit', row.id]);
         },
       },
     ] as EntityTableAction[];

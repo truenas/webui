@@ -4,9 +4,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
+import { IscsiTargetExtent, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -71,7 +71,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
 
   protected target_control: FormSelectConfig;
   protected extent_control: FormSelectConfig;
-  pk: string;
+  pk: number;
   protected entityForm: EntityFormComponent;
 
   constructor(protected router: Router, protected iscsiService: IscsiService, protected aroute: ActivatedRoute,
@@ -113,7 +113,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     }
   }
 
-  customEditCall(value: any): void {
+  customEditCall(value: IscsiTargetExtentUpdate): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {

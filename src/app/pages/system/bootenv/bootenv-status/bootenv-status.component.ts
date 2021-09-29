@@ -218,10 +218,4 @@ export class BootStatusListComponent implements OnInit {
     config.tableData = [node];
     this.treeTableConfig = config;
   }
-
-  getReadableDate(data: ApiTimestamp): Date {
-    if (data != null) {
-      return new Date(data.$date);
-    }
-  }
 }

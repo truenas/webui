@@ -153,12 +153,12 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     const result = this.alwaysDisplayedCols.concat(this.conf.columns) as any;
 
     // Actions without expansion
-    if (this.hasActions && result[result.length - 1] !== 'action' && (this.hasDetails() === false || !this.hasDetails)) {
+    if (this.hasActions && result[result.length - 1] !== 'action' && (!this.hasDetails() || !this.hasDetails)) {
       result.push({ prop: 'action' });
     }
 
     // Expansion
-    if (this.hasDetails() === true) {
+    if (this.hasDetails()) {
       result.push({ prop: 'expansion-chevrons' });
     }
 
@@ -253,7 +253,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
   ngOnInit(): void {
     this.actionsConfig = { actionType: EntityTableAddActionsComponent, actionConfig: this };
     this.cardHeaderReady = !this.conf.cardHeaderComponent;
-    this.hasActions = this.conf.noActions !== true;
+    this.hasActions = !this.conf.noActions;
     if (this.conf.config?.pagingOptions?.pageSize) {
       this.paginationPageSize = this.conf.config.pagingOptions.pageSize;
     }
@@ -787,7 +787,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     if (this.conf.rowValue) {
       try {
         return this.conf.rowValue(row, attr);
-      } catch (e) {
+      } catch (e: unknown) {
         return row[attr];
       }
     }

@@ -21,7 +21,6 @@ export class TunableFormComponent implements FormConfiguration {
   queryKey = 'id';
   editCall: 'tunable.update' = 'tunable.update';
   addCall: 'tunable.create' = 'tunable.create';
-  pk: any;
   title: string;
   protected isOneColumnForm = true;
 

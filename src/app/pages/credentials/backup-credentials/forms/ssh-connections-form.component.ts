@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { CipherType } from 'app/enums/cipher-type.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import helptext from 'app/helptext/system/ssh-connections';
@@ -12,7 +13,7 @@ import { KeychainCredential } from 'app/interfaces/keychain-credential.interface
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -194,16 +195,16 @@ export class SshConnectionsFormComponent implements FormConfiguration {
           options: [
             {
               label: 'Standard',
-              value: 'STANDARD',
+              value: CipherType.Standard,
             }, {
               label: 'Fast',
-              value: 'FAST',
+              value: CipherType.Fast,
             }, {
               label: 'Disabled',
-              value: 'DISABLED',
+              value: CipherType.Disabled,
             },
           ],
-          value: 'STANDARD',
+          value: CipherType.Standard,
         }, {
           type: 'input',
           inputType: 'number',

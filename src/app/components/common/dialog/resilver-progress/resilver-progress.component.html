@@ -1,7 +1,7 @@
 <h1 mat-dialog-title>{{title | translate}}</h1>
 <mat-dialog-content class="resilver-progress-dialog"
 	ix-auto ix-auto-type="dialog" ix-auto-identifier="title">
-  <div *ngIf="state !== 'FINISHED'">
+  <div *ngIf="state !== PoolScanState.Finished">
     <mat-progress-bar class="example-margin"
 			color="primary"
 			mode="indeterminate"

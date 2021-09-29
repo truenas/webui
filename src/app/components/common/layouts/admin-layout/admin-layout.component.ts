@@ -184,7 +184,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   scrollToBottomOnFooterBar(): void {
     try {
       this.footerBarScroll.nativeElement.scrollTop = this.footerBarScroll.nativeElement.scrollHeight;
-    } catch (err) { }
+    } catch (err: unknown) { }
   }
 
   checkIfConsoleMsgShows(): void {

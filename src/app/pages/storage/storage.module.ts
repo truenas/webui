@@ -9,8 +9,10 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
+import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
 import { AclEditorListComponent } from 'app/pages/storage/volumes/permissions/components/acl-editor-list/acl-editor-list.component';
 import { EditNfsAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
@@ -33,7 +35,6 @@ import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volume-rekey
 import { JobService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
-import { MessageService } from '../common/entity/entity-form/services/message.service';
 import { EntityModule } from '../common/entity/entity.module';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from './disks/disk-form/disk-form.component';
@@ -69,7 +70,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     ReactiveFormsModule, routing, MaterialModule, TreeTableModule,
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
     NgxFilesizeModule, CommonDirectivesModule, CdkAccordionModule,
-    TooltipModule,
+    TooltipModule, CoreComponents,
   ],
   declarations: [
     VolumesListComponent,

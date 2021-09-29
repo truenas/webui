@@ -86,7 +86,7 @@ export class NotificationsService {
     });
 
     this.notifications.forEach((notification) => {
-      if (notificationMap.has(notification.id) === true) {
+      if (notificationMap.has(notification.id)) {
         notification.dismissed = true;
       }
     });
@@ -103,7 +103,7 @@ export class NotificationsService {
     });
 
     this.notifications.forEach((notification) => {
-      if (notificationMap.has(notification.id) === true) {
+      if (notificationMap.has(notification.id)) {
         notification.dismissed = false;
       }
     });
@@ -128,7 +128,7 @@ export class NotificationsService {
     const dateStr = date.toUTCString();
     const dateStrLocale = date.toLocaleString(this.locale, { timeZone: this.timeZone });
     const one_shot: boolean = alert.one_shot;
-    let icon_tooltip: string = <string>alert.level;
+    let icon_tooltip = alert.level as string;
     const routeName = '/dashboard';
     let icon = 'info';
     let color = 'primary';

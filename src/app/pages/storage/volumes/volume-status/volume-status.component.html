@@ -26,8 +26,8 @@
         <span class="time-remaining" *ngIf="timeRemaining.seconds || timeRemaining.seconds === 0">
           {{timeRemaining.seconds}} {{ timeRemaining.seconds === 1 ? 'second' :'seconds' | translate }}</span>
       </mat-list-item>
-      <mat-list-item *ngIf="poolScan['errors'] != null">{{'Errors' | translate}}: {{poolScan['errors']}}</mat-list-item>
-      <mat-list-item *ngIf="poolScan.start_time != null">{{'Date' | translate}}: {{getReadableDate(poolScan.start_time)}}</mat-list-item>
+      <mat-list-item *ngIf="poolScan.errors != null">{{'Errors' | translate}}: {{poolScan.errors}}</mat-list-item>
+      <mat-list-item *ngIf="poolScan.start_time?.$date">{{'Date' | translate}}: {{poolScan.start_time.$date | formatDateTime}}</mat-list-item>
     </mat-list>
   </div>
   <div>

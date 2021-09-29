@@ -11,7 +11,7 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SmbConfig } from 'app/interfaces/smb-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormComboboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
@@ -89,7 +89,7 @@ export class ServiceSMBComponent implements FormConfiguration {
           validation: [
             (control: FormControl): ValidationErrors => {
               const config = this.fieldConfig.find((c) => c.name === 'netbiosalias');
-              const aliasArr: any[] = control.value ? control.value : [];
+              const aliasArr: string[] = control.value ? control.value : [];
               let counter = 0;
               aliasArr.forEach((alias) => {
                 if (alias.length > 15) {
@@ -262,9 +262,9 @@ export class ServiceSMBComponent implements FormConfiguration {
   ];
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -368,7 +368,7 @@ export class ServiceSMBComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(data: any): void {
+  beforeSubmit(data: SmbConfig): void {
     this.compareBindIps(data);
   }
 }

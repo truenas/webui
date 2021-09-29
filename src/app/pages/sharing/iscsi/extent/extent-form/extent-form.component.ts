@@ -10,7 +10,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -120,7 +120,7 @@ export class ExtentFormComponent implements FormConfiguration {
           isHidden: false,
           disabled: false,
           required: true,
-          blurEvent: this.blurFilesize,
+          blurEvent: () => this.blurFilesize(),
           blurStatus: true,
           parent: this,
           validation: [Validators.required,
@@ -391,9 +391,9 @@ export class ExtentFormComponent implements FormConfiguration {
     }
   }
 
-  blurFilesize(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['filesize'].setValue(parent.storageService.humanReadable);
+  blurFilesize(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['filesize'].setValue(this.storageService.humanReadable);
     }
   }
 }

@@ -57,7 +57,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   editCall: 'pool.update' = 'pool.update';
   queryCall: 'pool.query' = 'pool.query';
   datasetQueryCall: 'pool.dataset.query' = 'pool.dataset.query';
-  pk: any;
+  pk: number;
   isNew = true;
   vol_encrypt = 0;
   isEncrypted = false;
@@ -715,7 +715,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     let re;
     try {
       re = new RegExp(val);
-    } catch (e) {
+    } catch (e: unknown) {
       this.re_has_errors = true;
     }
 

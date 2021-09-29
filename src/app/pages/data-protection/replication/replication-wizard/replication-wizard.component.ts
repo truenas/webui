@@ -239,8 +239,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               value: this.defaultNamingSchema,
               parent: this,
               blurStatus: true,
-              blurEvent: (parent: this) => {
-                parent.getSnapshots();
+              blurEvent: () => {
+                this.getSnapshots();
               },
             },
             {
@@ -250,8 +250,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.name_regex_tooltip,
               parent: this,
               isHidden: true,
-              blurEvent: (parent: this) => {
-                parent.getSnapshots();
+              blurEvent: () => {
+                this.getSnapshots();
               },
             },
           ],
@@ -886,7 +886,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       const datasetFrom = datasetName + '_from';
       this.entityWizard.formArray.get([0]).get(datasetFrom).valueChanges
         .pipe(untilDestroyed(this))
-        .subscribe((value: any) => {
+        .subscribe((value: DatasetSource) => {
           this.toggleNamingSchemaOrRegex();
           if (value === DatasetSource.Remote) {
             if (datasetFrom === 'source_datasets_from') {
@@ -909,7 +909,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
       this.entityWizard.formArray.get([0]).get(credentialName).valueChanges
         .pipe(untilDestroyed(this))
-        .subscribe((value: any) => {
+        .subscribe((value: string) => {
           if (value === 'NEW' && this.entityWizard.formArray.get([0]).get(datasetFrom).value === DatasetSource.Remote) {
             this.createSSHConnection(credentialName);
             this.setDisable(datasetName, false, false, 0);

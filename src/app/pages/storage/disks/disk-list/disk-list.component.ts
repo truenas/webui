@@ -82,7 +82,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
           this.diskNames.push(i.name);
           this.hddStandby.push(i.hddstandby);
           this.advPowerMgt.push(i.advpowermgmt);
-          if (i.togglesmart === true) {
+          if (i.togglesmart) {
             this.diskToggle = true;
             this.SMARToptions.push(i.smartoptions);
           }

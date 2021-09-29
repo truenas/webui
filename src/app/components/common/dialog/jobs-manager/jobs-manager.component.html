@@ -20,7 +20,7 @@
         *ngFor="let job of jobs"
         [job]="job"
         (aborted)="onAbort(job)"
-        (opened)="onChildrenDialogOpened()"
+        (opened)="openEntityJobDialog(job)"
       ></app-job-item>
     </div>
   </ng-template>

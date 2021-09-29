@@ -23,3 +23,5 @@ export interface UpsConfig {
   shutdowncmd: unknown;
   shutdowntimer: number;
 }
+
+export type UpsConfigUpdate = Omit<UpsConfig, 'id'>;

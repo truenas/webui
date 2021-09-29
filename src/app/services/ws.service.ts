@@ -109,7 +109,7 @@ export class WebSocketService {
     let data: any;
     try {
       data = JSON.parse(msg.data);
-    } catch (e) {
+    } catch (e: unknown) {
       console.warn(`Malformed response: "${msg.data}"`);
       return;
     }
@@ -267,7 +267,7 @@ export class WebSocketService {
   }
 
   loginCallback(result: boolean, observer: Observer<boolean>): void {
-    if (result === true) {
+    if (result) {
       if (!this.loggedIn) {
         this.authStatus$.next(this.loggedIn);
       }

@@ -10,3 +10,5 @@ export interface Cronjob {
   stdout: boolean;
   user: string;
 }
+
+export type CronjobUpdate = Omit<Cronjob, 'id'>;

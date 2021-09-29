@@ -9,15 +9,17 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
+import { Subs } from 'app/interfaces/subs.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { FieldConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { LocalizationForm2Component } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
@@ -25,10 +27,11 @@ import {
 }
   from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
 import { ModalService } from 'app/services/modal.service';
+import { T } from 'app/translate-marker';
 import { GuiFormComponent } from './gui-form/gui-form.component';
-import { LocalizationFormComponent } from './localization-form/localization-form.component';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +45,7 @@ export class GeneralSettingsComponent implements OnInit {
   localeData: DataCard;
   configData: SystemGeneralConfig;
   displayedColumns: string[];
-  subs: any;
+  subs: Subs;
   dataSource: NtpServer[];
   formEvent$: Subject<CoreEvent>;
 
@@ -86,7 +89,7 @@ export class GeneralSettingsComponent implements OnInit {
     fieldConfig: this.uploadConfigFieldConf,
     method_ws: 'config.upload',
     saveButtonText: helptext.upload_config_form.button_text,
-    customSubmit: this.uploadConfigSubmit,
+    customSubmit: () => this.uploadConfigSubmit(),
     message: helptext.upload_config_form.message,
   };
 
@@ -119,6 +122,7 @@ export class GeneralSettingsComponent implements OnInit {
     private router: Router,
     public mdDialog: MatDialog,
     private core: CoreService,
+    private ixModalService: IxModalService,
     private storage: StorageService,
     private http: HttpClient,
   ) { }
@@ -226,7 +230,7 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   doAdd(name: string, id?: number): void {
-    let addComponent: Type<GuiFormComponent | NtpServerFormComponent | LocalizationFormComponent>;
+    let addComponent: Type<GuiFormComponent | NtpServerFormComponent>;
     switch (name) {
       case 'gui':
         addComponent = GuiFormComponent;
@@ -235,10 +239,12 @@ export class GeneralSettingsComponent implements OnInit {
         addComponent = NtpServerFormComponent;
         break;
       default:
-        addComponent = LocalizationFormComponent;
+        this.ixModalService.open(LocalizationForm2Component, T('Localization Settings'));
     }
     this.sysGeneralService.sendConfigData(this.configData);
-    this.modalService.openInSlideIn(addComponent, id);
+    if (addComponent) {
+      this.modalService.openInSlideIn(addComponent, id);
+    }
   }
 
   doNTPDelete(server: NtpServer): void {
@@ -325,23 +331,21 @@ export class GeneralSettingsComponent implements OnInit {
     }
   }
 
-  uploadConfigSubmit(entityDialog: EntityDialogComponent<GeneralSettingsComponent>): void {
-    const config = entityDialog.conf.fieldConfig[0] as FormUploadConfig;
-    const parent: GeneralSettingsComponent = config.parent;
+  uploadConfigSubmit(): void {
     const formData: FormData = new FormData();
 
-    const dialogRef = parent.mdDialog.open(EntityJobComponent,
+    const dialogRef = this.mdDialog.open(EntityJobComponent,
       { data: { title: helptext.config_upload.title, closeOnClickOutside: false } });
     dialogRef.componentInstance.setDescription(helptext.config_upload.message);
     formData.append('data', JSON.stringify({
       method: 'config.upload',
       params: [],
     }));
-    formData.append('file', parent.subs.file);
-    dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
+    formData.append('file', this.subs.file);
+    dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
     dialogRef.componentInstance.success.pipe(untilDestroyed(parent)).subscribe(() => {
       dialogRef.close();
-      parent.router.navigate(['/others/reboot']);
+      this.router.navigate(['/others/reboot']);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(parent)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
