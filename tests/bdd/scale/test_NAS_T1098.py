@@ -90,7 +90,7 @@ def the_user_edit_page_should_open_change_some_permissions_for_the_home_director
 @then('reopen the user edit page and verify all permissions are save properly')
 def reopen_the_user_edit_page_and_verify_all_permissions_are_save_properly(driver):
     """reopen the user edit page and verify all permissions are save properly."""
-    time.sleep(4)
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tbody/tr[@id="ericbsd"]/td[5]/mat-icon[1]', 'clickable')
     driver.find_element_by_xpath('//tbody/tr[@id="ericbsd"]/td[5]/mat-icon[1]').click()
