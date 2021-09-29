@@ -6,6 +6,8 @@ export interface IscsiGlobalConfig {
   pool_avail_threshold: number;
 }
 
+export type IscsiGlobalConfigUpdate = Omit<IscsiGlobalConfig, 'id'>;
+
 export interface IscsiGlobalSession {
   initiator: string;
   initiator_addr: string;

@@ -10,12 +10,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
-import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
+import {
+  DatasetEncryptionSummary,
+} from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { Subs } from 'app/interfaces/subs.interface';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormCheckboxConfig, FormListConfig, FormParagraphConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -51,7 +54,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
   protected key_file_fg: FormControl;
   protected unlock_children_fg: FormControl;
 
-  subs: any;
+  subs: Subs;
 
   fieldSetDisplay = 'default';// default | carousel | stepper
   fieldConfig: FieldConfig[] = [];

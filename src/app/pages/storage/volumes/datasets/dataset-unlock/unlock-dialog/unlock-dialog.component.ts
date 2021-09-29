@@ -1,5 +1,5 @@
 import {
-  Component, Output, EventEmitter,
+  Component,
 } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
@@ -21,16 +21,14 @@ export class UnlockDialogComponent {
   buttonMsg: string = helptext.unlock_dataset_dialog.ok_button;
   cancelMsg: string = helptext.unlock_dataset_dialog.cancel_button;
   skipped_message: string = helptext.unlock_result_dialog.skipped_message;
-  unlock_datasets: any[] = [];
-  error_datasets: any[] = [];
-  skipped_datasets: any[] = [];
+  unlock_datasets: { name: string }[] = [];
+  error_datasets: { name: string; unlock_error?: string }[] = [];
+  skipped_datasets: { name: string }[] = [];
   tooltip: string;
   hideCancel = false;
   final = false;
   data = {};
   parent: DatasetUnlockComponent;
-
-  @Output() switchSelectionEmitter = new EventEmitter<any>();
 
   constructor(
     public dialogRef: MatDialogRef<UnlockDialogComponent>,
@@ -59,7 +57,7 @@ export class UnlockDialogComponent {
     this.parent.dialogOpen = false;
   }
 
-  showError(dataset: any): void {
+  showError(dataset: { name: string; unlock_error?: string }): void {
     if (this.dialogService && dataset.unlock_error) {
       this.dialogService.info(
         helptext.unlock_dataset_dialog.error_dialog_title + dataset.name,

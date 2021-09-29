@@ -1,4 +1,3 @@
-import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
@@ -11,7 +10,7 @@ export interface Dataset {
   encryption_algorithm: ZfsProperty<string>;
   encryption_root: unknown;
   id: string;
-  key_format: ZfsProperty<DatasetEncryptionType>;
+  key_format: ZfsProperty<string>;
   key_loaded: boolean;
   locked: boolean;
   mountpoint: string;

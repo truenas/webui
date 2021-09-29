@@ -7,7 +7,7 @@ import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { matchOtherValidator, doesNotEqualValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -119,7 +119,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     },
   ];
 
-  pk: string;
+  pk: number;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected loader: AppLoaderService,
     protected ws: WebSocketService) {}

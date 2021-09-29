@@ -66,6 +66,8 @@ export class CatalogComponent implements OnInit {
     title: helptext.catalogMessage.loading,
   };
 
+  readonly officialCatalog = officialCatalog;
+
   choosePool: DialogFormConfiguration = {
     title: helptext.choosePool.title,
     fieldConfig: [

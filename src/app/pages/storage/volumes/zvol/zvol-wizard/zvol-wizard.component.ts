@@ -48,7 +48,6 @@ interface ZvolFormData {
 })
 export class ZvolWizardComponent implements WizardConfiguration {
   addWsCall: 'pool.dataset.create' = 'pool.dataset.create';
-  protected pk: any;
   protected path: string;
   queryCall: 'pool.dataset.query' = 'pool.dataset.query';
   advanced_field = ['volblocksize'];
@@ -56,7 +55,6 @@ export class ZvolWizardComponent implements WizardConfiguration {
   protected isNew = true;
   protected isEntity = true;
   parent: string;
-  data: any;
   volid: string;
   customFilter: any[] = [];
   protected entityWizard: EntityWizardComponent;
@@ -150,7 +148,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           placeholder: helptext.zvol_volsize_placeholder,
           tooltip: helptext.zvol_volsize_tooltip,
           required: true,
-          blurEvent: this.blurVolsize,
+          blurEvent: () => this.blurVolsize(),
           blurStatus: true,
           parent: this,
           validation: [
@@ -492,9 +490,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
     });
   }
 
-  blurVolsize(parent: any): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
+  blurVolsize(): void {
+    const zvolEntityForm = this.entityWizard.formArray.get([1]) as FormGroup;
+    if (zvolEntityForm) {
+      zvolEntityForm.controls['volsize'].setValue(this.storageService.humanReadable);
     }
   }
 

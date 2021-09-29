@@ -5,8 +5,8 @@ import { filter } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/reporting';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ReportingConfig, ReportingConfigUpdate } from 'app/interfaces/reporting.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
 

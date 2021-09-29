@@ -10,7 +10,7 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions'
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -134,15 +134,15 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       name: helptext.acl_manager_button,
       function: () => {
         if (this.aclType === AclType.Posix1e) {
-          this.router.navigate(new Array('/').concat([
-            'storage', 'id', this.datasetId.split('/')[0], 'dataset',
+          this.router.navigate([
+            '/', 'storage', 'id', this.datasetId.split('/')[0], 'dataset',
             'posix-acl', this.datasetId,
-          ]));
+          ]);
         } else {
-          this.router.navigate(new Array('/').concat([
-            'storage', 'id', this.datasetId.split('/')[0], 'dataset',
+          this.router.navigate([
+            '/', 'storage', 'id', this.datasetId.split('/')[0], 'dataset',
             'acl', this.datasetId,
-          ]));
+          ]);
         }
       },
     },
