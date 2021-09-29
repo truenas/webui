@@ -57,7 +57,9 @@ def on_the_dashboard_if_there_is_dismiss_all_notification(driver):
         assert wait_on_element(driver, 7, '//h6[contains(.,"Alerts")]')
         assert wait_on_element(driver, 7, '//a[text()="Dismiss All Alerts"]', 'clickable')
         driver.find_element_by_xpath('//a[text()="Dismiss All Alerts"]').click()
+        time.sleep(0.5)
         ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+        time.sleep(0.5)
 
 
 @then('kill a python process with ssh to trigger core files alert')
