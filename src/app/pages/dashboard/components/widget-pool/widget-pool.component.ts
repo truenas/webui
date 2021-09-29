@@ -259,7 +259,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
 
     let usedValue;
-    if (isNaN(this.volumeData.used)) { // eslint-disable-line no-restricted-globals
+    if (Number.isNaN(this.volumeData.used)) {
       usedValue = this.volumeData.used;
     } else {
       usedValue = filesize(this.volumeData.used, { exponent: 3 });
@@ -271,7 +271,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       return 0;
     }
 
-    if (!isNaN(this.volumeData.avail)) { // eslint-disable-line no-restricted-globals
+    if (!Number.isNaN(this.volumeData.avail)) {
       this.voldataavail = true;
     }
 

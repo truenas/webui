@@ -9,7 +9,7 @@ import helptext from 'app/helptext/services/components/service-rsync';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { UserService, WebSocketService } from 'app/services';

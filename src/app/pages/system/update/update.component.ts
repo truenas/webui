@@ -14,6 +14,7 @@ import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
+import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -33,12 +34,11 @@ import { T } from 'app/translate-marker';
 export class UpdateComponent implements OnInit {
   packages: { operation: string; name: string }[] = [];
   status: SystemUpdateStatus;
-  releaseNotes: any = '';
-  changeLog: any = '';
+  releaseNotes = '';
+  changeLog = '';
   updating = false;
   updated = false;
   progress: Record<string, unknown> = {};
-  job: any = {};
   error: string;
   autoCheck = false;
   train: string;
@@ -57,7 +57,7 @@ export class UpdateComponent implements OnInit {
   updateMethod: ApiMethod = 'update.update';
   is_ha = false;
   product_type: ProductType;
-  ds: any;
+  ds: MatDialogRef<ConfirmDialogComponent, boolean>;
   failover_upgrade_pending = false;
   showSpinner = false;
   singleDescription: string;
@@ -252,7 +252,7 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  onTrainChanged(event: any): void {
+  onTrainChanged(event: string): void {
     // For the case when the user switches away, then BACK to the train of the current OS
     if (event === this.selectedTrain) {
       this.currentTrainDescription = this.trainDescriptionOnPageLoad;
@@ -281,8 +281,8 @@ export class UpdateComponent implements OnInit {
   }
 
   setTrainDescription(): void {
-    if ((this.fullTrainList as any)[this.train]) {
-      this.currentTrainDescription = (this.fullTrainList as any)[this.train].description.toLowerCase();
+    if (this.fullTrainList[this.train]) {
+      this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
     } else {
       this.currentTrainDescription = '';
     }
@@ -434,7 +434,7 @@ export class UpdateComponent implements OnInit {
     this.updateType = 'applyPending';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res === false) {
+      if (!res) {
         this.continueUpdate();
       }
     });
@@ -444,7 +444,7 @@ export class UpdateComponent implements OnInit {
     this.updateType = 'manual';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res === false) {
+      if (!res) {
         this.continueUpdate();
       }
     });
@@ -500,7 +500,7 @@ export class UpdateComponent implements OnInit {
           this.updateType = 'standard';
           // Calls the 'Save Config' dialog - Returns here if user declines
           this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-            if (res === false) {
+            if (!res) {
               this.confirmAndUpdate();
             }
           });
@@ -541,12 +541,12 @@ export class UpdateComponent implements OnInit {
       secondaryCheckBoxMsg: this.translate.instant(confirmMsg),
       method: this.updateMethod,
       data: [{ reboot: false }],
-    });
+    }) as MatDialogRef<ConfirmDialogComponent, boolean>;
 
     this.ds.componentInstance.isSubmitEnabled = true;
-    this.ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status: any) => {
+    this.ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status) => {
       if (status) {
-        if (!this.ds.componentInstance.data[0].reboot) {
+        if (!(this.ds.componentInstance.data[0] as any).reboot) {
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
           this.dialogRef.componentInstance.setCall('update.download');
           this.dialogRef.componentInstance.submit();

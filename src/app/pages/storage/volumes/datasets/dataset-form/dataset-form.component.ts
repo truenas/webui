@@ -19,7 +19,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -55,8 +55,7 @@ export class DatasetFormComponent implements FormConfiguration {
   protected recordsize_fg: FormControl;
   protected recommended_size_number: number;
   protected recordsize_warning: string;
-  protected dedup_warned = false;
-  protected dedup_value: any;
+  protected dedup_value: string;
   protected dedup_fg: FormControl;
   protected dedup_field: FieldConfig;
   protected encrypted_parent = false;
@@ -77,14 +76,13 @@ export class DatasetFormComponent implements FormConfiguration {
   private minrefquota = 1024 * 1024 * 1024;
 
   parent: string;
-  data: any;
   protected passphrase_parent = false;
 
   protected size_fields: SizeField[] = [
     'quota', 'refquota', 'reservation', 'refreservation', 'special_small_block_size',
   ];
-  protected OrigSize: any = {};
-  protected OrigHuman: any = {};
+  protected OrigSize: { [field in SizeField]?: any } = {};
+  protected OrigHuman: { [field in SizeField]?: any } = {};
 
   protected warning = 80;
   protected critical = 95;
@@ -171,7 +169,7 @@ export class DatasetFormComponent implements FormConfiguration {
           tooltip: helptext.dataset_form_refquota_tooltip,
           class: 'inline',
           width: '100%',
-          blurEvent: this.blurEventRefQuota,
+          blurEvent: () => this.blurEventRefQuota(),
           blurStatus: true,
           parent: this,
           validation: [
@@ -269,7 +267,7 @@ export class DatasetFormComponent implements FormConfiguration {
           tooltip: helptext.dataset_form_refreservation_tooltip,
           class: 'inline',
           width: '100%',
-          blurEvent: this.blurEventRefReservation,
+          blurEvent: () => this.blurEventRefReservation(),
           blurStatus: true,
           parent: this,
           validation: [
@@ -306,7 +304,7 @@ export class DatasetFormComponent implements FormConfiguration {
           tooltip: helptext.dataset_form_quota_tooltip,
           class: 'inline',
           width: '100%',
-          blurEvent: this.blurEventQuota,
+          blurEvent: () => this.blurEventQuota(),
           blurStatus: true,
           parent: this,
           validation: [
@@ -404,7 +402,7 @@ export class DatasetFormComponent implements FormConfiguration {
           tooltip: helptext.dataset_form_reservation_tooltip,
           class: 'inline',
           width: '100%',
-          blurEvent: this.blurEventReservation,
+          blurEvent: () => this.blurEventReservation(),
           blurStatus: true,
           parent: this,
           validation: [
@@ -679,7 +677,7 @@ export class DatasetFormComponent implements FormConfiguration {
           name: 'special_small_block_size',
           placeholder: helptext.dataset_form_special_small_blocks_placeholder,
           tooltip: helptext.dataset_form_special_small_blocks_tooltip,
-          blurEvent: this.blurSpecialSmallBlocks,
+          blurEvent: () => this.blurSpecialSmallBlocks(),
           blurStatus: true,
           parent: this,
           validation: [
@@ -845,13 +843,13 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   sendAsBasicOrAdvanced(data: any): DatasetFormData {
-    if (this.isNew === false) {
+    if (!this.isNew) {
       delete data.name;
     } else {
       data.name = this.parent + '/' + data.name;
     }
 
-    if (this.isNew === true && this.isBasicMode === true) {
+    if (this.isNew && this.isBasicMode) {
       data.refquota = null;
       data.quota = null;
       data.refreservation = null;
@@ -874,40 +872,40 @@ export class DatasetFormComponent implements FormConfiguration {
     return data;
   }
 
-  blurEventQuota(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['quota'].setValue(parent.humanReadable['quota']);
+  blurEventQuota(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['quota'].setValue(this.humanReadable['quota']);
     }
   }
 
-  blurEventRefQuota(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['refquota'].setValue(parent.humanReadable['refquota']);
+  blurEventRefQuota(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['refquota'].setValue(this.humanReadable['refquota']);
     }
   }
 
-  blurEventReservation(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['reservation'].setValue(parent.humanReadable['reservation']);
+  blurEventReservation(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['reservation'].setValue(this.humanReadable['reservation']);
     }
   }
 
-  blurEventRefReservation(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['refreservation'].setValue(parent.humanReadable['refreservation']);
+  blurEventRefReservation(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['refreservation'].setValue(this.humanReadable['refreservation']);
     }
   }
 
-  blurSpecialSmallBlocks(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['special_small_block_size'].setValue(parent.humanReadable['special_small_block_size']);
+  blurSpecialSmallBlocks(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['special_small_block_size'].setValue(this.humanReadable['special_small_block_size']);
     }
   }
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -1588,7 +1586,7 @@ export class DatasetFormComponent implements FormConfiguration {
       this.modalService.close('slide-in-form');
       const parentPath = `/mnt/${this.parent}`;
       this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res === false) {
+        if (!res) {
           this.dialogService.confirm({
             title: helptext.afterSubmitDialog.title,
             message: helptext.afterSubmitDialog.message,
@@ -1599,13 +1597,15 @@ export class DatasetFormComponent implements FormConfiguration {
             if (res) {
               this.ws.call('filesystem.getacl', [parentPath]).pipe(untilDestroyed(this)).subscribe(({ acltype }) => {
                 if (acltype === AclType.Posix1e) {
-                  this.router.navigate(new Array('/').concat(
-                    ['storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
-                  ), { queryParams: { default: parentPath } });
+                  this.router.navigate(
+                    ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'posix-acl', restPostResp.name],
+                    { queryParams: { default: parentPath } },
+                  );
                 } else {
-                  this.router.navigate(new Array('/').concat(
-                    ['storage', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
-                  ), { queryParams: { default: parentPath } });
+                  this.router.navigate(
+                    ['/', 'storage', 'id', restPostResp.pool, 'dataset', 'acl', restPostResp.name],
+                    { queryParams: { default: parentPath } },
+                  );
                 }
               });
             } else {

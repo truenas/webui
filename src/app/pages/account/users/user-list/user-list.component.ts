@@ -93,7 +93,7 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
   };
 
   isActionVisible(actionId: string, row: UserListRow): boolean {
-    if (actionId === 'delete' && row.builtin === true) {
+    if (actionId === 'delete' && row.builtin) {
       return false;
     }
     return true;
@@ -129,7 +129,7 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
         this.modalService.openInSlideIn(UserFormComponent, users_edit.id);
       },
     });
-    if (row.builtin !== true) {
+    if (!row.builtin) {
       actions.push({
         id: row.username,
         icon: 'delete',

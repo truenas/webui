@@ -622,7 +622,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
           'ipmi.identify',
           'seconds',
         );
-        event.stopPropagation(); // eslint-disable-line no-restricted-globals
       },
     }, {
       icon: 'launch',
@@ -630,7 +629,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       matTooltip: T('Manage'),
       onClick: (row: IpmiRow) => {
         window.open(`http://${row.ipaddress}`);
-        event.stopPropagation(); // eslint-disable-line no-restricted-globals
       },
     }];
   }
@@ -701,7 +699,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               );
             },
           );
-        event.stopPropagation(); // eslint-disable-line no-restricted-globals
       },
     },
     {
@@ -740,7 +737,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               );
             },
           );
-        event.stopPropagation(); // eslint-disable-line no-restricted-globals
       },
     }];
   }

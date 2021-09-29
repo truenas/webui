@@ -6,11 +6,12 @@ import { NewTicketType } from 'app/enums/new-ticket-type.enum';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { Subs } from 'app/interfaces/subs.interface';
 import { CreateNewTicket, NewTicketResponse } from 'app/interfaces/support.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
@@ -24,13 +25,13 @@ import { T } from 'app/translate-marker';
 })
 export class SupportFormUnlicensedComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
-  password: any;
-  username: any;
+  password: string;
+  username: string;
   category: FormSelectConfig;
   screenshot: FieldConfig;
   password_fc: FieldConfig;
   username_fc: FieldConfig;
-  subs: any[];
+  subs: Subs[];
   saveSubmitText = helptext.submitBtn;
   isEntity = true;
   title = helptext.ticket;
@@ -55,7 +56,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           required: true,
           validation: helptext.username.validation,
           blurStatus: true,
-          blurEvent: this.usernameOrPasswordBlur,
+          blurEvent: () => this.usernameOrPasswordBlur(),
           parent: this,
           value: '',
         },
@@ -68,7 +69,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           required: true,
           validation: helptext.password.validation,
           blurStatus: true,
-          blurEvent: this.usernameOrPasswordBlur,
+          blurEvent: () => this.usernameOrPasswordBlur(),
           parent: this,
           togglePw: true,
           value: '',
@@ -142,13 +143,13 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     this.entityEdit = entityEdit;
   }
 
-  usernameOrPasswordBlur(parent: this): void {
-    this.password_fc = _.find(parent.fieldConfig, { name: 'password' });
-    this.username_fc = _.find(parent.fieldConfig, { name: 'username' });
-    this.category = _.find(parent.fieldConfig, { name: 'category' }) as FormSelectConfig;
-    if (parent.entityEdit) {
-      this.username = parent.entityEdit.formGroup.controls['username'].value;
-      this.password = parent.entityEdit.formGroup.controls['password'].value;
+  usernameOrPasswordBlur(): void {
+    this.password_fc = _.find(this.fieldConfig, { name: 'password' });
+    this.username_fc = _.find(this.fieldConfig, { name: 'username' });
+    this.category = _.find(this.fieldConfig, { name: 'category' }) as FormSelectConfig;
+    if (this.entityEdit) {
+      this.username = this.entityEdit.formGroup.controls['username'].value;
+      this.password = this.entityEdit.formGroup.controls['password'].value;
       this.password_fc['hasErrors'] = false;
       this.password_fc['errors'] = '';
       this.username_fc['hasErrors'] = false;
@@ -159,9 +160,9 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
       }
       if (this.category.options.length === 0 && this.username !== '' && this.password !== '') {
         this.category.isLoading = true;
-        parent.ws.call('support.fetch_categories', [this.username, this.password]).pipe(untilDestroyed(this)).subscribe((res) => {
+        this.ws.call('support.fetch_categories', [this.username, this.password]).pipe(untilDestroyed(this)).subscribe((res) => {
           this.category.isLoading = false;
-          parent.entityEdit.setDisabled('category', false);
+          this.entityEdit.setDisabled('category', false);
           const options = [];
           for (const property in res) {
             if (res.hasOwnProperty(property)) {
@@ -175,7 +176,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
               error.reason = error.reason.slice(1);
             }
           }
-          parent.entityEdit.setDisabled('category', true);
+          this.entityEdit.setDisabled('category', true);
           this.category.isLoading = false;
           this.password_fc['hasErrors'] = true;
           this.password_fc['errors'] = error.reason;

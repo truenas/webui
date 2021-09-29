@@ -201,7 +201,7 @@ export class StorageService {
       const A = a[key];
       const B = b[key];
       if (sorter.indexOf(A) > sorter.indexOf(B)) {
-        return 1 * v;
+        return v;
       }
       return -1 * v;
     });
@@ -240,7 +240,7 @@ export class StorageService {
     }
   }
 
-  poolUnlockServiceOptions(id: string): Observable<Option[]> {
+  poolUnlockServiceOptions(id: number): Observable<Option[]> {
     return this.ws.call('pool.unlock_services_restart_choices', [id]).pipe(
       map((response: Choices) =>
         Object.keys(response || {}).map((serviceId) => ({

@@ -43,6 +43,8 @@ export interface CloudSyncTask {
   transfers: number;
 }
 
+export type CloudSyncTaskUpdate = Omit<CloudSyncTask, 'id' | 'job' | 'locked'>;
+
 export interface CloudSyncTaskUi extends CloudSyncTask {
   credential: string;
   cron_schedule: string;
@@ -60,4 +62,10 @@ export interface CloudSyncListDirectoryParams {
   encryption_salt?: string;
   attributes?: unknown;
   args?: string;
+}
+
+export interface CloudSyncDirectoryListing {
+  Name: string;
+  IsDir: boolean;
+  Decrypted: boolean;
 }

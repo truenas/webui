@@ -275,7 +275,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     this.loader.close();
   }
 
-  getAction(data: any, category: PoolTopologyCategory, vdev_type: VDevType): any {
+  getAction(data: VDev, category: PoolTopologyCategory, vdev_type: VDevType): any {
     const actions = [{
       id: 'edit',
       label: helptext.actions_label.edit,
@@ -508,7 +508,14 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               entityDialog.dialogRef.close(true);
               this.getData();
               this.getUnusedDisk();
-              this.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + '.', '', 'info', true); // eslint-disable-line no-restricted-globals
+
+              let diskName = row.name;
+              if (!_.startsWith(row.name, '/')) {
+                const pIndex = row.name.lastIndexOf('p');
+                diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+              }
+
+              this.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + diskName + '.', '', 'info', true);
             });
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();

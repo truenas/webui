@@ -66,6 +66,8 @@ export class CatalogComponent implements OnInit {
     title: helptext.catalogMessage.loading,
   };
 
+  readonly officialCatalog = officialCatalog;
+
   choosePool: DialogFormConfiguration = {
     title: helptext.choosePool.title,
     fieldConfig: [
@@ -201,7 +203,8 @@ export class CatalogComponent implements OnInit {
     if (evt.data.event_control == 'settings' && evt.data.settings) {
       switch (evt.data.settings.value) {
         case 'select_pool':
-          return this.selectPool();
+          this.selectPool();
+          return;
         case 'advanced_settings':
           this.modalService.openInSlideIn(KubernetesSettingsComponent);
           break;

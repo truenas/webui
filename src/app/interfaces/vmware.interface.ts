@@ -22,3 +22,14 @@ export interface MatchDatastoresWithDatasetsParams {
   username: string;
   password: string;
 }
+
+export interface VmwareSnapshot {
+  id: number;
+  datastore: string;
+  filesystem: string;
+  hostname: string;
+  password: string;
+  username: string;
+}
+
+export type VmwareSnapshotUpdate = Omit<VmwareSnapshot, 'id'>;

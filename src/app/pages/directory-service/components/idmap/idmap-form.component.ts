@@ -9,7 +9,7 @@ import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/idmap';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -384,7 +384,7 @@ export class IdmapFormComponent implements FormConfiguration {
       data.name = data.custom_name;
       delete data.custom_name;
     }
-    const options: any = {};
+    const options: Record<string, string> = {};
     for (const item in data) {
       if (this.optionsFields.includes(item)) {
         if (data[item]) {

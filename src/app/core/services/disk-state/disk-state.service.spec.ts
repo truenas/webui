@@ -49,7 +49,7 @@ describe('DiskStateService', () => {
           done();
           waiting = false;
         }
-      } catch (error) {
+      } catch (error: unknown) {
         done(error);
       }
     });

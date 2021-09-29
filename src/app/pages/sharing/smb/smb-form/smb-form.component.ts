@@ -14,7 +14,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -74,7 +74,7 @@ export class SMBFormComponent implements FormConfiguration {
           hasErrors: false,
           errors: helptext_sharing_smb.errormsg_name,
           blurStatus: true,
-          blurEvent: this.blurEventName,
+          blurEvent: () => this.blurEventName(),
           parent: this,
         },
         {
@@ -317,10 +317,10 @@ export class SMBFormComponent implements FormConfiguration {
   }
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     }
-    if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -567,7 +567,7 @@ export class SMBFormComponent implements FormConfiguration {
 
       if (!this.stripACLWarningSent) {
         this.ws.call('filesystem.acl_is_trivial', [path]).pipe(untilDestroyed(this)).subscribe((res) => {
-          if (res === false && !entityForm.formGroup.controls['acl'].value) {
+          if (!res && !entityForm.formGroup.controls['acl'].value) {
             this.stripACLWarningSent = true;
             this.showStripACLWarning();
           }
@@ -645,9 +645,9 @@ export class SMBFormComponent implements FormConfiguration {
   }
 
   /* If user blurs name field with empty value, try to auto-populate based on path */
-  blurEventName(parent: { entityForm: EntityFormComponent }): void {
-    const pathControl = parent.entityForm.formGroup.controls['path'];
-    const nameControl = parent.entityForm.formGroup.controls['name'];
+  blurEventName(): void {
+    const pathControl = this.entityForm.formGroup.controls['path'];
+    const nameControl = this.entityForm.formGroup.controls['name'];
     if (pathControl.value && !nameControl.value) {
       nameControl.setValue(pathControl.value.split('/').pop());
     }

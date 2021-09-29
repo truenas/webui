@@ -30,7 +30,7 @@ export class FormReadFileComponent implements Field {
       this.fileString = fReader.result;
       this.contents(fReader.result);
     };
-    return fReader.readAsText(file);
+    fReader.readAsText(file);
   }
 
   contents(result: string | ArrayBuffer): void {

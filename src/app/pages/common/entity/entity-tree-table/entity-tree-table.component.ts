@@ -71,7 +71,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   }
 
   fillTable(): void {
-    const cols = this._conf.columns.filter((col) => !col.hidden || col.always_display == true);
+    const cols = this._conf.columns.filter((col) => !col.hidden || col.always_display);
     this.displayedColumns = cols.map((col) => col.prop);
 
     const mutated = Object.assign([], this._conf.tableData);
@@ -116,7 +116,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   }
 
   resolve(path: string, obj: any): string {
-    return path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj || self); // eslint-disable-line no-restricted-globals
+    return path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj || {});
   }
 
   ngAfterViewInit(): void {

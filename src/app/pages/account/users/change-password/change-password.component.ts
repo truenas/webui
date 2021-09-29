@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import helptext from 'app/helptext/account/user-change-pw';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';

@@ -1,48 +1,41 @@
 import {
-  Component, EventEmitter, forwardRef, Input, Output,
+  Component, forwardRef, Input,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { Observable } from 'rxjs';
+import { Option } from 'app/interfaces/option.interface';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-input',
-  styleUrls: ['./ix-input.component.scss'],
-  templateUrl: './ix-input.component.html',
+  selector: 'ix-select',
+  styleUrls: ['./ix-select.component.scss'],
+  templateUrl: './ix-select.component.html',
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => IxInputComponent),
       multi: true,
+      useExisting: forwardRef(() => IxSelectComponent),
     },
   ],
 })
-export class IxInputComponent implements ControlValueAccessor {
+export class IxSelectComponent implements ControlValueAccessor {
   @Input() label: string;
-  @Input() placeholder: string;
-  @Input() prefixText: string;
-  @Input() suffixIcon: string;
-  @Output() suffixIconClick: EventEmitter<MouseEvent> = new EventEmitter();
+  @Input() value: string | number;
   @Input() hint: string;
-  @Input() tooltip: string;
+  @Input() options: Observable<Option[]>;
   @Input() required: boolean;
+  @Input() tooltip: string;
 
   formControl = new FormControl(this).value as FormControl;
 
-  value: string | number = '';
   touched = false;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
-  suffixIconClicked(evt: MouseEvent): void {
-    this.suffixIconClick.emit(evt);
-  }
-
-  writeValue(value: string | number): void {
-    this.value = value;
-    this.onChange(value);
-    this.onTouch();
+  writeValue(val: string | number): void {
+    this.value = val;
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {

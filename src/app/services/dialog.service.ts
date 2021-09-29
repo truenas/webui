@@ -206,7 +206,7 @@ export class DialogService {
         });
       },
       customSubmit(entityDialog: EntityDialogComponent) {
-        return entityDialog.dialogRef.close(true);
+        entityDialog.dialogRef.close(true);
       },
     } as DialogFormConfiguration;
     return this.dialogForm(conf);

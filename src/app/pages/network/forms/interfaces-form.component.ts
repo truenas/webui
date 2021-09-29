@@ -14,7 +14,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormListConfig, FormSelectConfig, FormInputConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';

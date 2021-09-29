@@ -8,7 +8,7 @@ import global_helptext from 'app/helptext/global-helptext';
 import { FormConfiguration, FormCustomAction } from 'app/interfaces/entity-form.interface';
 import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -206,11 +206,11 @@ export class LdapComponent implements FormConfiguration {
   advanced_field = helptext.ldap_advanced_fields;
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
-    } if (actionId === 'edit_idmap' && this.isBasicMode === true) {
+    } if (actionId === 'edit_idmap' && this.isBasicMode) {
       return false;
     }
     return true;

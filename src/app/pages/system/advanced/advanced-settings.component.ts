@@ -106,7 +106,7 @@ export class AdvancedSettingsComponent implements OnInit {
               )
               .pipe(untilDestroyed(this)).subscribe(
                 () => {
-                  const message = row.enabled == true
+                  const message = row.enabled
                     ? T('This job is scheduled to run again ' + row.next_run + '.')
                     : T('This job will not run again until it is enabled.');
                   this.dialog.info(

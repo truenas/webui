@@ -34,14 +34,14 @@ export class FieldRelationService {
       if (config.name === rel.name) {
         throw new Error(`FormControl ${config.name} cannot depend on itself`);
       }
-      const control = <FormControl>controlGroup.get(rel.name);
+      const control = controlGroup.get(rel.name) as FormControl;
       if (control
           && !controls.some((controlElement) => controlElement === control)) {
         controls.push(control);
       } else {
         const subControlKeys = Object.keys(controlGroup.controls).filter((key) => key.startsWith(`${rel.name}_`));
         subControlKeys.forEach((key) => {
-          const control = <FormControl>controlGroup.get(key);
+          const control = controlGroup.get(key) as FormControl;
           if (control
               && !controls.some((controlElement) => controlElement === control)) {
             controls.push(control);

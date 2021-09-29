@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { BootEnvService, WebSocketService } from 'app/services';

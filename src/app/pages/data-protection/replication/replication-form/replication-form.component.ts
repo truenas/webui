@@ -21,8 +21,8 @@ import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormExplorerConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
@@ -376,7 +376,7 @@ export class ReplicationFormComponent implements FormConfiguration {
             },
           ],
           blurStatus: true,
-          blurEvent: this.speedLimitBlur,
+          blurEvent: () => this.speedLimitBlur(),
           parent: this,
         },
         {
@@ -672,7 +672,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           placeholder: helptext.also_include_naming_schema_placeholder,
           tooltip: helptext.also_include_naming_schema_tooltip,
           blurStatus: true,
-          blurEvent: this.blurEventCountSnapshots,
+          blurEvent: () => this.blurEventCountSnapshots(),
           parent: this,
         },
         {
@@ -681,7 +681,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           placeholder: helptext.name_regex_placeholder,
           tooltip: helptext.name_regex_tooltip,
           parent: this,
-          blurEvent: this.blurEventCountSnapshots,
+          blurEvent: () => this.blurEventCountSnapshots(),
           isHidden: true,
         },
         {
@@ -1557,22 +1557,23 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
   }
 
-  speedLimitBlur(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable);
+  speedLimitBlur(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['speed_limit'].setValue(this.storageService.humanReadable);
     }
   }
 
-  blurEventCountSnapshots(parent: this): void {
+  blurEventCountSnapshots(): void {
     if (
-      parent.entityForm
-      && parent.entityForm.formGroup.controls['direction'].value === Direction.Push
-      && parent.entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-      && (parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || parent.entityForm.formGroup.controls['name_regex'].value !== undefined)
+      this.entityForm
+      && this.entityForm.formGroup.controls['direction'].value === Direction.Push
+      && this.entityForm.formGroup.controls['transport'].value !== TransportMode.Local
+      && (this.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+        || this.entityForm.formGroup.controls['name_regex'].value !== undefined)
     ) {
-      parent.countEligibleManualSnapshots();
+      this.countEligibleManualSnapshots();
     } else {
-      parent.form_message.content = '';
+      this.form_message.content = '';
     }
   }
 

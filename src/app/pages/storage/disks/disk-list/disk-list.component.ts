@@ -82,7 +82,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
           this.diskNames.push(i.name);
           this.hddStandby.push(i.hddstandby);
           this.advPowerMgt.push(i.advpowermgmt);
-          if (i.togglesmart === true) {
+          if (i.togglesmart) {
             this.diskToggle = true;
             this.SMARToptions.push(i.smartoptions);
           }
@@ -342,7 +342,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
           item.type = entityDialog.formValue.type;
         });
 
-        this.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(parent)).subscribe( // eslint-disable-line no-restricted-globals
+        this.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             entityDialog.dialogRef.close(true);
             this.generateManualTestSummary(res);

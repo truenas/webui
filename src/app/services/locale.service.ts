@@ -93,7 +93,7 @@ export class LocaleService {
   formatDateTimeWithNoTz(date: Date): string {
     try {
       return format(date.valueOf(), `${this.dateFormat} ${this.timeFormat}`);
-    } catch (e) {
+    } catch (e: unknown) {
       return 'Invalid date';
     }
   }

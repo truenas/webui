@@ -108,7 +108,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           isHidden: false,
           disabled: false,
           required: true,
-          blurEvent: this.blurFilesize,
+          blurEvent: () => this.blurFilesize(),
           blurStatus: true,
           parent: this,
           value: 0,
@@ -655,7 +655,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     for (let step = 0; step < 3; step++) {
       Object.entries((this.entityWizard.formArray.get([step]) as FormGroup).controls).forEach(([name, control]) => {
         if (name in this.summaryObj) {
-          (<FormControl>control).valueChanges.pipe(untilDestroyed(this)).subscribe(((value) => {
+          (control as FormControl).valueChanges.pipe(untilDestroyed(this)).subscribe(((value) => {
             if (value == undefined) {
               this.summaryObj[name] = null;
             } else {
@@ -859,7 +859,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     return volsize + (volblocksize - volsize % volblocksize);
   }
 
-  doCreate(value: any, item: any): Promise<any> {
+  doCreate(value: any, item: string): Promise<any> {
     let payload: any;
     if (item === 'zvol') {
       payload = {
@@ -975,9 +975,9 @@ export class IscsiWizardComponent implements WizardConfiguration {
     };
   }
 
-  blurFilesize(parent: this): void {
-    if (parent.entityWizard) {
-      parent.entityWizard.formArray.get([0]).get('filesize').setValue(parent.storageService.humanReadable);
+  blurFilesize(): void {
+    if (this.entityWizard) {
+      this.entityWizard.formArray.get([0]).get('filesize').setValue(this.storageService.humanReadable);
     }
   }
 }

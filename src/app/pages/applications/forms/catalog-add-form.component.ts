@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { chartsTrain } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { DialogService } from 'app/services/index';

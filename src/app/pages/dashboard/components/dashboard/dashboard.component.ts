@@ -537,16 +537,20 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         data = this.statsDataEvent$;
         break;
       case 'pool':
-        const pools = spl
-          ? this.pools.filter((pool) => pool[key as keyof Pool] == value)
-          : console.warn('DashConfigItem has no identifier!');
-        if (pools) { data = pools[0]; }
+        if (spl) {
+          const pools = this.pools.filter((pool) => pool[key as keyof Pool] == value);
+          if (pools) { data = pools[0]; }
+        } else {
+          console.warn('DashConfigItem has no identifier!');
+        }
         break;
       case 'interface':
-        const nics = spl
-          ? this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] == value)
-          : console.warn('DashConfigItem has no identifier!');
-        if (nics) { data = nics[0].state; }
+        if (spl) {
+          const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] == value);
+          if (nics) { data = nics[0].state; }
+        } else {
+          console.warn('DashConfigItem has no identifier!');
+        }
         break;
       case 'storage':
         data = this.pools;

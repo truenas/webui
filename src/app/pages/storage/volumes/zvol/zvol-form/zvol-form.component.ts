@@ -13,7 +13,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormCheckboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -51,7 +51,6 @@ export class ZvolFormComponent implements FormConfiguration {
   isNew = true;
   isEntity = true;
   parent: string;
-  data: any;
   volid: string;
   customFilter: any[] = [];
   edit_data: any;
@@ -133,7 +132,7 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_volsize_placeholder,
         tooltip: helptext.zvol_volsize_tooltip,
         required: true,
-        blurEvent: this.blurVolsize,
+        blurEvent: () => this.blurVolsize(),
         blurStatus: true,
         parent: this,
         validation: [
@@ -368,9 +367,9 @@ export class ZvolFormComponent implements FormConfiguration {
   ];
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -379,7 +378,7 @@ export class ZvolFormComponent implements FormConfiguration {
   sendAsBasicOrAdvanced(data: ZvolFormData): ZvolFormData {
     data.type = 'VOLUME';
 
-    if (this.isNew === false) {
+    if (!this.isNew) {
       delete data.name;
       delete data.volblocksize;
       delete data.type;
@@ -717,9 +716,9 @@ export class ZvolFormComponent implements FormConfiguration {
     });
   }
 
-  blurVolsize(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
+  blurVolsize(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['volsize'].setValue(this.storageService.humanReadable);
     }
   }
 
@@ -847,7 +846,7 @@ export class ZvolFormComponent implements FormConfiguration {
   customSubmit(body: any): void {
     this.loader.open();
 
-    if (this.isNew === true) {
+    if (this.isNew) {
       this.addSubmit(body).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
         this.modalService.close('slide-in-form');

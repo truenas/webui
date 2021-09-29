@@ -11,6 +11,8 @@ export interface IscsiPortal {
   tag: number;
 }
 
+export type IscsiPortalUpdate = Omit<IscsiPortal, 'id' | 'tag'>;
+
 export interface IscsiInterface {
   ip: string;
   port: number;
@@ -23,6 +25,8 @@ export interface IscsiInitiatorGroup {
   initiators: string;
 }
 
+export type IscsiInitiatorGroupUpdate = Omit<IscsiInitiatorGroup, 'id'>;
+
 export interface IscsiAuthAccess {
   id: number;
   peersecret: string;
@@ -32,6 +36,8 @@ export interface IscsiAuthAccess {
   user: string;
 }
 
+export type IscsiAuthAccessUpdate = Omit<IscsiAuthAccess, 'id'>;
+
 export interface IscsiTarget {
   alias: string;
   groups: IscsiTargetGroup[];
@@ -39,6 +45,8 @@ export interface IscsiTarget {
   mode: IscsiTargetMode;
   name: string;
 }
+
+export type IscsiTargetUpdate = Omit<IscsiTarget, 'id'>;
 
 export interface IscsiTargetGroup {
   portal: number;
@@ -75,3 +83,5 @@ export interface IscsiTargetExtent {
   lunid: number;
   target: number;
 }
+
+export type IscsiTargetExtentUpdate = Omit<IscsiTargetExtent, 'id'>;

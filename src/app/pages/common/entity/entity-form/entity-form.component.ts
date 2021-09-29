@@ -491,7 +491,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.conf.beforeSubmit(value);
     }
     if (this.conf.customEditCall && this.pk) {
-      return this.conf.customEditCall(value);
+      this.conf.customEditCall(value);
+      return;
     }
 
     if (this.conf.customSubmit) {

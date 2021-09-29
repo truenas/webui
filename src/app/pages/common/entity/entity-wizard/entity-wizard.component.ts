@@ -132,7 +132,8 @@ export class EntityWizardComponent implements OnInit {
 
   goBack(): void {
     if (this.conf.customCancel) {
-      return this.conf.customCancel();
+      this.conf.customCancel();
+      return;
     }
     let route = this.conf.route_cancel;
     if (!route) {

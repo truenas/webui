@@ -268,7 +268,7 @@ export class VMWizardComponent implements WizardConfiguration {
           value: '',
           required: true,
           blurStatus: true,
-          blurEvent: this.blurEventForMemory,
+          blurEvent: () => this.blurEventForMemory(),
           parent: this,
           tooltip: helptext.memory_tooltip,
         },
@@ -312,7 +312,7 @@ export class VMWizardComponent implements WizardConfiguration {
           tooltip: helptext.datastore_tooltip,
           placeholder: helptext.datastore_placeholder,
           blurStatus: true,
-          blurEvent: this.blueEventForVolSize,
+          blurEvent: () => this.blueEventForVolSize(),
           options: [],
           isHidden: false,
           validation: [Validators.required],
@@ -326,7 +326,7 @@ export class VMWizardComponent implements WizardConfiguration {
           tooltip: helptext.volsize_tooltip,
           isHidden: false,
           blurStatus: true,
-          blurEvent: this.blueEventForVolSize,
+          blurEvent: () => this.blueEventForVolSize(),
           parent: this,
           validation: [
             ...helptext.volsize_validation,
@@ -939,37 +939,37 @@ export class VMWizardComponent implements WizardConfiguration {
     };
   }
 
-  blurEventForMemory(parent: this): void {
-    const enteredVal = parent.entityWizard.formGroup.value.formArray[1].memory;
-    const vm_memory_requested = parent.storageService.convertHumanStringToNum(enteredVal);
+  blurEventForMemory(): void {
+    const enteredVal = this.entityWizard.formGroup.value.formArray[1].memory;
+    const vm_memory_requested = this.storageService.convertHumanStringToNum(enteredVal);
     if (Number.isNaN(vm_memory_requested)) {
       console.error(vm_memory_requested); // leaves form in previous error state
     } else if (enteredVal.replace(/\s/g, '').match(/[^0-9]/g) === null) {
-      parent.entityWizard.formArray.get([1]).get('memory')
-        .setValue(parent.storageService.convertBytestoHumanReadable(enteredVal.replace(/\s/g, ''), 0));
+      this.entityWizard.formArray.get([1]).get('memory')
+        .setValue(this.storageService.convertBytestoHumanReadable(enteredVal.replace(/\s/g, ''), 0));
     } else {
-      parent.entityWizard.formArray.get([1]).get('memory').setValue(parent.storageService.humanReadable);
-      _.find(parent.wizardConfig[1].fieldConfig, { name: 'memory' })['hasErrors'] = false;
-      _.find(parent.wizardConfig[1].fieldConfig, { name: 'memory' })['errors'] = '';
+      this.entityWizard.formArray.get([1]).get('memory').setValue(this.storageService.humanReadable);
+      _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' })['hasErrors'] = false;
+      _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' })['errors'] = '';
     }
   }
 
-  blueEventForVolSize(parent: this): void {
-    const enteredVal = (parent.entityWizard.formArray as FormArray).controls[2].value.volsize;
-    const volsize = parent.storageService.convertHumanStringToNum(enteredVal, false, 'mgtp');
+  blueEventForVolSize(): void {
+    const enteredVal = (this.entityWizard.formArray as FormArray).controls[2].value.volsize;
+    const volsize = this.storageService.convertHumanStringToNum(enteredVal, false, 'mgtp');
     if (volsize >= 1048576) {
-      parent.entityWizard.formArray.get([2]).get('volsize').setValue(parent.storageService.humanReadable);
-      _.find(parent.wizardConfig[2].fieldConfig, { name: 'volsize' })['hasErrors'] = false;
-      _.find(parent.wizardConfig[2].fieldConfig, { name: 'volsize' })['errors'] = '';
+      this.entityWizard.formArray.get([2]).get('volsize').setValue(this.storageService.humanReadable);
+      _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['hasErrors'] = false;
+      _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['errors'] = '';
     } else if (Number.isNaN(volsize)) {
       console.error(volsize); // leaves form in previous error state
     } else {
-      parent.entityWizard.formArray.get([2]).get('volsize').setValue('1 MiB');
+      this.entityWizard.formArray.get([2]).get('volsize').setValue('1 MiB');
     }
   }
 
   getFormControlFromFieldName(fieldName: string, parent: VMWizardComponent = this): FormControl {
-    return (<FormGroup>parent.entityWizard.formArray.get([parent.getFormArrayIndexFromFieldName(fieldName, parent)]))
+    return parent.entityWizard.formArray.get([parent.getFormArrayIndexFromFieldName(fieldName, parent)])
       .get(fieldName) as FormControl;
   }
 

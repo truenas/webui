@@ -5,7 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SupportConfig, SupportConfigUpdate } from 'app/interfaces/support.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';

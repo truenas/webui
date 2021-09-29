@@ -92,7 +92,7 @@ export interface AppTableConfig<P = any> {
   onButtonClick?(row: any): void;
 
   expandable?: boolean; // field introduced by ExpandableTable, "fake" field
-  afterGetDataExpandable?(data: any): void; // field introduced by ExpandableTable, "fake" field
+  afterGetDataExpandable?(data: any): any; // field introduced by ExpandableTable, "fake" field
 }
 
 @UntilDestroy()
@@ -253,7 +253,6 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     } else {
       this.tableService.delete(this, row);
     }
-    event.stopPropagation(); // eslint-disable-line no-restricted-globals
   }
 
   // TODO: Enum
@@ -337,7 +336,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       return 'state-icon';
     }
 
-    if (column.prop === 'state' && column.button === true) {
+    if (column.prop === 'state' && column.button) {
       return 'state-button';
     }
 

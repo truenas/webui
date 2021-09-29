@@ -43,26 +43,15 @@ export interface EmbeddedFormConfig {
   target?: Subject<CoreEvent>;
   resource_name?: string;
   isEntity?: boolean;
-  addCall?: any;
-  editCall?: any;
-  queryCall?: any;
-  queryCallOption?: any;
   isNew?: boolean;
   pk?: number | string;
-  custom_get_query?: any;
   fieldConfig?: FieldConfig[];
-  resourceTransformIncomingRestData?: any;
-  route_usebaseUrl?: any;
   afterInit?: (entityForm: EntityFormEmbeddedComponent) => void;
   initial?: (this: EmbeddedFormConfig, entityForm: EntityFormEmbeddedComponent) => void;
-  dataHandler?: any;
-  dataAttributeHandler?: any;
   route_cancel?: string[];
   route_success?: string[];
   // TODO: Broken
   route_delete?: string[];
-  custom_edit_query?: any;
-  custom_add_query?: any;
   actionButtonsAlign?: string;
   custActions?: any[];
   customFilter?: any[];

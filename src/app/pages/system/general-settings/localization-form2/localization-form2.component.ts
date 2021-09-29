@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
@@ -10,14 +9,16 @@ import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  LanguageService, ModalService, SystemGeneralService, WebSocketService,
+  LanguageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
 @Component({
   selector: 'localization-form2',
   templateUrl: './localization-form2.component.html',
+  styleUrls: ['./localization-form2.component.scss'],
 })
 export class LocalizationForm2Component implements OnInit {
   fieldsetTitle = helptext.localeTitle;
@@ -96,8 +97,7 @@ export class LocalizationForm2Component implements OnInit {
     public localeService: LocaleService,
     protected ws: WebSocketService,
     protected langService: LanguageService,
-    private modalService: ModalService,
-    private router: Router,
+    private modalService: IxModalService,
   ) {
     this.sysGeneralService.getGeneralConfig$
       .pipe(untilDestroyed(this)).subscribe((res) => {
@@ -127,7 +127,8 @@ export class LocalizationForm2Component implements OnInit {
     this.dateFormat.options = of(dateOptions);
   }
 
-  submit(body: any): void {
+  submit(): void {
+    const body = this.formGroup.value;
     this.formIsLoading = true;
     this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
     delete body.date_format;
@@ -135,13 +136,12 @@ export class LocalizationForm2Component implements OnInit {
     this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.sysGeneralService.refreshSysGeneral();
       this.formIsLoading = false;
-      this.modalService.close('slide-in-form');
+      this.modalService.close();
       this.setTimeOptions(body.timezone);
       this.langService.setLanguage(body.language);
-      this.router.navigate(['/', 'dashboard']);
     }, (res) => {
       this.formIsLoading = false;
-      this.modalService.close('slide-in-form');
+      this.modalService.close();
       new EntityUtils().handleWSError(this, res);
     });
   }

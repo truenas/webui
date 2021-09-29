@@ -55,7 +55,7 @@ export class FormInputComponent implements Field {
 
   blurEvent(): void {
     if (this.config.blurStatus) {
-      this.config.blurEvent(this.config.parent);
+      this.config.blurEvent();
     }
   }
 

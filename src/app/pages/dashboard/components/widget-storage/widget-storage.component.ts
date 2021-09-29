@@ -255,8 +255,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   getFreeSpace(pool: Pool): string {
     const volume = this.volumeData[pool.name];
     if (volume && volume.used_pct) {
-      // eslint-disable-next-line no-restricted-globals
-      if (isNaN(volume.used) ? volume.used : filesize(volume.used, { exponent: 3 }) !== 'Locked') {
+      if (Number.isNaN(volume.used) ? volume.used : filesize(volume.used, { exponent: 3 }) !== 'Locked') {
         return this.getSizeString(volume.avail);
       }
     } else if (!volume || typeof volume.avail == undefined) {

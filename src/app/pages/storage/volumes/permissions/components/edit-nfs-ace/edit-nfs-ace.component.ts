@@ -19,7 +19,7 @@ import {
   NfsAclItem,
 } from 'app/interfaces/acl.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
@@ -131,7 +131,7 @@ export class EditNfsAceComponent implements FormConfiguration, OnChanges {
     this.formGroup.get('advancedFlags').setValue(formValues.advancedFlags, { onlySelf: true });
 
     this.fieldConfig.forEach((config) => {
-      return this.relationService.refreshRelations(config, this.formGroup, { emitEvent: false });
+      this.relationService.refreshRelations(config, this.formGroup, { emitEvent: false });
     });
 
     this.formGroup.markAllAsTouched();

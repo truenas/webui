@@ -9,7 +9,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -219,7 +219,7 @@ export class IPMIFromComponent implements FormConfiguration {
     entityEdit.formGroup.controls['ipaddress'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'ipaddress' }));
       const ipValue = entityEdit.formGroup.controls['ipaddress'].value;
-      const btn = <HTMLInputElement>document.getElementById('cust_button_Manage');
+      const btn = document.getElementById('cust_button_Manage') as HTMLInputElement;
       btn.disabled = (status === 'INVALID' || ipValue === '0.0.0.0');
     });
 

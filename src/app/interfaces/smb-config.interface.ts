@@ -22,3 +22,7 @@ export interface SmbConfig {
   unixcharset: string;
   workgroup: string;
 }
+
+export type SmbConfigUpdate = {
+  multichannel?: boolean;
+} & Omit<SmbConfig, 'cifs_SID' | 'id' | 'netbiosname_local' | 'next_rid'>;
