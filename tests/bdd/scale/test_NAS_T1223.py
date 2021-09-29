@@ -29,7 +29,10 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
         assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
-    if not is_element_present(driver, '//mat-list-item[@ix-auto="option__Dashboard"]'):
+    else:
+        # the UI seams to get brooked at this point
+        driver.refresh()
+    if not wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]'):
         assert wait_on_element(driver, 5, '//input[@data-placeholder="Username"]', 'inputable')
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
         driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
