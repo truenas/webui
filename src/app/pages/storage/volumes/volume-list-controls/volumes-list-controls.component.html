@@ -1,6 +1,7 @@
 <div *ngIf="entity && conf" fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
 
   <!-- SEARCH -->
+  <!-- TODO: Replace with ix-input when its ready -->
   <div class="form-element" id="row-filter">
     <mat-form-field floatPlaceholder="auto">
       <span matPrefix style="cursor: default; user-select: none;"><mat-icon>search</mat-icon></span>
@@ -11,7 +12,7 @@
         ix-auto-identifier="Filter {{entity.title}}">
       <span
         class="reset-filter-icon"
-        [class.hidden]="!filterValue || filterValue.length == 0"
+        [class.invisible]="!filterValue || filterValue.length == 0"
         matSuffix
       >
         <mat-icon (click)="resetDatasetFilter()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
