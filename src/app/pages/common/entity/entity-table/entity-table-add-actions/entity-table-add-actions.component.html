@@ -154,15 +154,6 @@
   <!-- OLD TEMPLATE END -->
   <!--</div>-->
 
-  <mat-spinner
-    [diameter]="40"
-    id="entity-spinner"
-    *ngIf="!entity.showDefaults && entity.showSpinner"
-    #entityspinner
-    style="margin-left: 8px;"
-  >
-  </mat-spinner>
-
   <ng-container *ngIf="conf && conf.custActions">
     <span *ngFor="let custBtn of conf.custActions">
       <button
@@ -191,6 +182,15 @@
       <ng-template #settingsIcon><mat-icon>settings</mat-icon></ng-template>
     </button>
   </div>
+
+  <mat-spinner
+    [diameter]="40"
+    id="entity-spinner"
+    *ngIf="!entity.showDefaults && entity.showSpinner"
+    #entityspinner
+    style="margin-left: 8px;"
+  >
+  </mat-spinner>
 
   <!-- END OF CONTROLS SECTION -->
 

@@ -105,4 +105,13 @@
       </a>
     </mat-menu>
   </div>
+
+  <mat-spinner
+    [diameter]="40"
+    *ngIf="!entity.showDefaults && entity.showSpinner"
+    id="entity-spinner"
+    #entityspinner
+    style="margin-left: 8px;"
+  >
+  </mat-spinner>
 </div>
