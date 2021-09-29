@@ -15,8 +15,7 @@ export class ChartDataUtilsService {
   constructor(protected core: CoreService) {
     // Operations are what will run on the thread
     const operations = (): void => {
-      // eslint-disable-next-line no-restricted-globals
-      const context: Worker = self as any; // Required so Typescript doesn't complain
+      const context: Worker = window.self as any; // Required so Typescript doesn't complain
 
       const callback = (data: any): void => {
         context.postMessage({ name: 'TEST FROM THREAD CALLBACK', data });
