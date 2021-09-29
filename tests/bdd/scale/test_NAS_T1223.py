@@ -44,13 +44,19 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
-@when('on the dashboard, click on System Settings on the side menu')
-def on_the_dashboard_click_on_system_settings_on_the_side_menu(driver):
-    """on the dashboard, click on System Settings on the side menu."""
+@when('on the dashboard, if there is dismiss all notification')
+def on_the_dashboard_if_there_is_dismiss_all_notification(driver):
+    """on the dashboard, if there is dismiss all notification."""
     assert wait_on_element(driver, 7, '//h1[text()="Dashboard"]')
     assert wait_on_element(driver, 7, '//span[contains(text(),"System Information")]')
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
+    assert wait_on_element(driver, 7, '//mat-icon[text()="notifications"]')
+    if wait_on_element(driver, 5, '//span[contains(.,"notifications")]//span[not(contains(text(),"0"))]'):
+        assert wait_on_element(driver, 7, '//button[@ix-auto="button__notifications"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
+        assert wait_on_element(driver, 7, '//h6[contains(.,"Alerts")]')
+        assert wait_on_element(driver, 7, '//a[text()="Dismiss All Alerts"]', 'clickable')
+        driver.find_element_by_xpath('//a[text()="Dismiss All Alerts"]').click()
+        ActionChains(driver).send_keys(Keys.ESCAPE).perform()
 
 
 @then('click on Services, and the Services page should open')
@@ -73,12 +79,13 @@ def if_the_smb_service_is_not_started_start_it(driver):
     time.sleep(1)
 
 
-@then('kill all smbd with ssh to trigger core files alert')
-def kill_all_smbd_with_ssh_to_trigger_core_files_alert(driver, nas_ip, root_password):
-    """kill all smbd with ssh to trigger core files alert."""
-    cmd = 'killall -6 smbd'
+@then('kill a python process with ssh to trigger core files alert')
+def kill_a_python_process_with_ssh_to_trigger_core_files_alert(driver, nas_ip, root_password):
+    """kill a python process with ssh to trigger core files alert."""
+    cmd = 'python3 -c "import os; os.abort()"'
     results = ssh_cmd(cmd, 'root', root_password, nas_ip)
-    assert results['result'] is True, results['output']
+    # Command will failed since kills a process
+    assert results['result'] is False, results['output']
     time.sleep(1)
 
 
@@ -90,24 +97,24 @@ def wait_for_the_alert_and_verify_the_core_files_warning_alert(driver):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__notifications"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
     assert wait_on_element(driver, 7, '//h6[contains(.,"Alerts")]')
-    assert wait_on_element(driver, 7, '//h3[contains(.,"WARNING")]')
-    assert wait_on_element(driver, 7, '//h4[contains(.,"Core files for the following executables were found: /usr/sbin/smbd")]')
-    assert wait_on_element(driver, 7, '//mat-icon[text()="warning"]')
+    assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//h3[contains(.,"WARNING")]')
+    assert wait_on_element(driver, 7, '//h4[contains(.,"Core files for the following executables were found: /usr/bin/python")]')
+    assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//mat-icon[text()="warning"]')
 
 
 @then('click on the core files warning Dismiss and verify it is dismissed')
 def click_on_the_core_files_warning_dismiss_and_verify_it_is_dismissed(driver):
     """click on the core files warning Dismiss and verify it is dismissed."""
-    assert wait_on_element(driver, 7, '//a[@class="dismiss" and text()="Dismiss"]', 'clickable')
-    driver.find_element_by_xpath('//a[@class="dismiss" and text()="Dismiss"]').click()
-    assert wait_on_element(driver, 7, '//mat-icon[@mattooltip="DISMISSED"]', 'clickable')
+    assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//a[text()="Dismiss"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[contains(.,"Core files")]//a[text()="Dismiss"]').click()
+    assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//mat-icon[@mattooltip="DISMISSED"]', 'clickable')
 
 
 @then('click on the core files warning Re-Open and verify the alert is back')
 def click_on_the_core_files_warning_reopen_and_verify_the_alert_is_back(driver):
     """click on the core files warning Re-Open and verify the alert is back."""
-    assert wait_on_element(driver, 7, '//a[@class="dismiss" and text()="Re-Open"]', 'clickable')
-    driver.find_element_by_xpath('//a[@class="dismiss" and text()="Re-Open"]').click()
+    assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//a[text()="Re-Open"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[contains(.,"Core files")]//a[text()="Re-Open"]').click()
     assert wait_on_element(driver, 7, '//mat-icon[text()="warning"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
 
