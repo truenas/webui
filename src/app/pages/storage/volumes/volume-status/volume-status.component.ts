@@ -31,7 +31,6 @@ import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.c
 import {
   WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';
-import { LocaleService } from 'app/services/locale.service';
 import { ModalService } from 'app/services/modal.service';
 import { T } from 'app/translate-marker';
 
@@ -159,7 +158,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected matDialog: MatDialog,
-    protected localeService: LocaleService,
     protected modalService: ModalService,
     protected translate: TranslateService,
   ) {}
@@ -637,12 +635,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       tableData: [node],
       columns: [...this.treeTableConfig.columns],
     };
-  }
-
-  getReadableDate(data: any): string {
-    if (data != null) {
-      return this.localeService.formatDateTime(new Date(data.$date));
-    }
   }
 
   onClickEdit(pk: string): void {
