@@ -211,9 +211,6 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.zfsPoolRows = await Promise.all(pools.map(async (originalPool) => {
         const pool = { ...originalPool } as VolumesListPool;
         pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();
-        if (!pool.is_decrypted) {
-          pool.status = PoolStatus.Locked;
-        }
 
         /* Filter out system datasets */
         const pChild = datasets.find((set) => set.name === pool.name);

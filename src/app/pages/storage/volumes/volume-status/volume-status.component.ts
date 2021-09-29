@@ -186,15 +186,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // if pool is passphrase protected, abled passphrase field.
-      if (pools[0].encrypt === 2) {
-        [this.replaceDiskFormFields, this.extendVdevFormFields].forEach((formFields) => {
-          _.find(formFields, { name: 'passphrase' })['isHidden'] = false;
-          _.find(formFields, { name: 'passphrase' }).disabled = false;
-          _.find(formFields, { name: 'passphrase2' })['isHidden'] = false;
-          _.find(formFields, { name: 'passphrase2' }).disabled = false;
-        });
-      }
       this.poolScan = pools[0].scan;
       // subscribe zfs.pool.scan to get scrub job info
       if (this.poolScan.state == PoolScanState.Scanning) {
@@ -298,7 +289,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
         }
         this.dialogService.confirm({
           title: helptext.offline_disk.title,
-          message: helptext.offline_disk.message + name + '?' + (this.pool.encrypt == 0 ? '' : helptext.offline_disk.encryptPoolWarning),
+          message: helptext.offline_disk.message + name + '?',
           buttonMsg: helptext.offline_disk.buttonMsg,
         }).pipe(
           filter(Boolean),

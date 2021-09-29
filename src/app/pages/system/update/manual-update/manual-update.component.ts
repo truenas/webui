@@ -123,10 +123,6 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       }
 
       pools.forEach((pool) => {
-        if (!pool.is_decrypted) {
-          return;
-        }
-
         const config = _.find(this.fieldConfig, { name: 'filelocation' }) as FormSelectConfig;
         config.options.push({
           label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
