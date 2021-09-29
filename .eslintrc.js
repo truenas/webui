@@ -120,7 +120,6 @@ module.exports = {
         "no-prototype-builtins": "off",
         "prefer-promise-reject-errors": "off",
         "import/no-cycle": "off",
-        "no-self-assign": "off",
         "no-async-promise-executor": "off",
         "no-bitwise": "off",
         "@typescript-eslint/member-ordering": "off",

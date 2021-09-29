@@ -940,7 +940,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           },
         });
 
-        if (rowData.is_upgraded === false) {
+        if (!rowData.is_upgraded) {
           actions.push({
             id: rowData.name,
             name: T('Upgrade Pool'),
