@@ -8,8 +8,6 @@ from function import (
     wait_on_element,
     is_element_present,
     wait_on_element_disappear,
-    attribute_value_exist,
-    wait_for_attribute_value,
     ssh_cmd
 )
 from pytest_bdd import (
@@ -57,26 +55,6 @@ def on_the_dashboard_if_there_is_dismiss_all_notification(driver):
         assert wait_on_element(driver, 7, '//a[text()="Dismiss All Alerts"]', 'clickable')
         driver.find_element_by_xpath('//a[text()="Dismiss All Alerts"]').click()
         ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-
-
-@then('click on Services, and the Services page should open')
-def click_on_services_and_the_services_page_should_open(driver):
-    """click on Services, and the Services page should open."""
-    assert wait_on_element(driver, 5, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
-    driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
-    assert wait_on_element(driver, 7, '//h1[text()="Services"]')
-
-
-@then('if the SMB service is not started, start it')
-def if_the_smb_service_is_not_started_start_it(driver):
-    """if the SMB service is not started, start it."""
-    assert wait_on_element(driver, 5, '//div[text()="SMB"]')
-    assert wait_on_element(driver, 5, '//mat-slide-toggle[@id="slide-toggle__state_SMB"]')
-    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@id="slide-toggle__state_SMB"]', 'class', 'mat-checked')
-    if not value_exist:
-        driver.find_element_by_xpath('//div[@id="overlay__SMB_Running"]').click()
-        assert wait_for_attribute_value(driver, 7, '//mat-slide-toggle[@id="slide-toggle__state_SMB"]', 'class', 'mat-checked')
-    time.sleep(1)
 
 
 @then('kill a python process with ssh to trigger core files alert')
@@ -132,3 +110,7 @@ def after_remove_the_core_files_in_vardbsystemcores(driver, nas_ip, root_passwor
 def verify_that_the_core_file_alert_disappear(driver):
     """verify that the core file alert disappear."""
     assert wait_on_element_disappear(driver, 120, '//span[contains(.,"notifications")]//span[contains(text(),"1")]')
+    driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
+    assert wait_on_element(driver, 7, '//h6[contains(.,"Alerts")]')
+    assert not is_element_present(driver, '//h4[contains(.,"Core files")]')
+    ActionChains(driver).send_keys(Keys.ESCAPE).perform()
