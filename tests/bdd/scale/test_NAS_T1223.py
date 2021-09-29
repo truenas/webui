@@ -1,9 +1,6 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
-import time
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.keys import Keys
 from function import (
     wait_on_element,
     is_element_present,
@@ -57,9 +54,8 @@ def on_the_dashboard_if_there_is_dismiss_all_notification(driver):
         assert wait_on_element(driver, 7, '//h6[contains(.,"Alerts")]')
         assert wait_on_element(driver, 7, '//a[text()="Dismiss All Alerts"]', 'clickable')
         driver.find_element_by_xpath('//a[text()="Dismiss All Alerts"]').click()
-        time.sleep(0.5)
-        ActionChains(driver).send_keys(Keys.ESCAPE).perform()
-        time.sleep(0.5)
+        assert wait_on_element(driver, 7, '//button[contains(.,"clear")]', 'clickable')
+        driver.find_element_by_xpath('//button[contains(.,"clear")]').click()
 
 
 @then('kill a python process with ssh to trigger core files alert')
@@ -69,7 +65,6 @@ def kill_a_python_process_with_ssh_to_trigger_core_files_alert(driver, nas_ip, r
     results = ssh_cmd(cmd, 'root', root_password, nas_ip)
     # Command will failed since kills a process
     assert results['result'] is False, results['output']
-    time.sleep(1)
 
 
 @then('wait for the alert and verify the core files warning alert')
@@ -99,7 +94,8 @@ def click_on_the_core_files_warning_reopen_and_verify_the_alert_is_back(driver):
     assert wait_on_element(driver, 7, '//mat-list-item[contains(.,"Core files")]//a[text()="Re-Open"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[contains(.,"Core files")]//a[text()="Re-Open"]').click()
     assert wait_on_element(driver, 7, '//mat-icon[text()="warning"]')
-    ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+    assert wait_on_element(driver, 7, '//button[contains(.,"clear")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"clear")]').click()
 
 
 @then('after remove the core files in "/var/db/system/cores"')
@@ -108,7 +104,6 @@ def after_remove_the_core_files_in_vardbsystemcores(driver, nas_ip, root_passwor
     cmd = 'rm -f /var/db/system/cores/*'
     results = ssh_cmd(cmd, 'root', root_password, nas_ip)
     assert results['result'] is True, results['output']
-    time.sleep(1)
 
 
 @then('verify that the core file alert disappear')
@@ -118,4 +113,6 @@ def verify_that_the_core_file_alert_disappear(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
     assert wait_on_element(driver, 7, '//h6[contains(.,"Alerts")]')
     assert not is_element_present(driver, '//h4[contains(.,"Core files")]')
-    ActionChains(driver).send_keys(Keys.ESCAPE).perform()
+    assert wait_on_element(driver, 7, '//button[contains(.,"clear")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"clear")]').click()
+
