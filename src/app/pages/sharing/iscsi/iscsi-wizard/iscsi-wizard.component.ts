@@ -117,7 +117,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
               const config = this.wizardConfig[0].fieldConfig.find((c) => c.name === 'filesize');
               const size = this.storageService.convertHumanStringToNum(control.value, true);
 
-              const errors = control.value && isNaN(size)
+              const errors = control.value && Number.isNaN(size)
                 ? { invalid_byte_string: true }
                 : null;
 

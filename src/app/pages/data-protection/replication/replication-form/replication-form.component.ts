@@ -1295,7 +1295,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value) : undefined;
       speedLimitField['hasErrors'] = false;
       speedLimitField['errors'] = '';
-      if (filteredValue !== undefined && isNaN(filteredValue)) {
+      if (filteredValue !== undefined && Number.isNaN(filteredValue)) {
         speedLimitField['hasErrors'] = true;
         speedLimitField['errors'] = helptext.speed_limit_errors;
       }

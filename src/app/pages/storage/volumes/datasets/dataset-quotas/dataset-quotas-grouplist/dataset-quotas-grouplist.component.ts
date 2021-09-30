@@ -106,7 +106,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
                     const config = conf.fieldConfig.find((c) => c.name === 'data_quota');
                     this.quotaValue = control.value;
                     const size = this.storageService.convertHumanStringToNum(control.value);
-                    const errors = control.value && isNaN(size)
+                    const errors = control.value && Number.isNaN(size)
                       ? { invalid_byte_string: true }
                       : null;
 

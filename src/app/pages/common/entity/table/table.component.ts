@@ -253,7 +253,6 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     } else {
       this.tableService.delete(this, row);
     }
-    event.stopPropagation();
   }
 
   // TODO: Enum

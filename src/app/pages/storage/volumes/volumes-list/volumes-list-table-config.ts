@@ -192,7 +192,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             type: 'upload',
             message: this.messageService,
             updater: this.keyFileUpdater,
-            parent: self,
+            parent: this,
             hideButton: true,
             name: 'key',
             required: true,

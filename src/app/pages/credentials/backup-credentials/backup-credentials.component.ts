@@ -154,7 +154,6 @@ export class BackupCredentialsComponent implements OnInit {
           const blob = new Blob([key as any], { type: 'text/plain' });
           this.storage.downloadBlob(blob, filename);
         }
-        event.stopPropagation();
       },
     }];
   }

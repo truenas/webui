@@ -108,7 +108,6 @@ module.exports = {
         "no-nested-ternary": "off",
         "implicit-arrow-linebreak": "off",
         "@typescript-eslint/no-shadow": "off",
-        "no-restricted-globals": "off",
         "no-case-declarations": "off",
         "no-multi-str": "off",
         "max-classes-per-file": "off",

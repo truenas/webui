@@ -176,7 +176,7 @@ export class DatasetFormComponent implements FormConfiguration {
               const config = this.fieldConfig.find((c) => c.name === 'refquota');
 
               const size = this.convertHumanStringToNum(control.value, 'refquota');
-              const errors = control.value && isNaN(size)
+              const errors = control.value && Number.isNaN(size)
                 ? { invalid_byte_string: true }
                 : null;
 
@@ -273,7 +273,7 @@ export class DatasetFormComponent implements FormConfiguration {
             (control: FormControl): ValidationErrors => {
               const config = this.fieldConfig.find((c) => c.name === 'refreservation');
 
-              const errors = control.value && isNaN(this.convertHumanStringToNum(control.value, 'refreservation'))
+              const errors = control.value && Number.isNaN(this.convertHumanStringToNum(control.value, 'refreservation'))
                 ? { invalid_byte_string: true }
                 : null;
 
@@ -311,7 +311,7 @@ export class DatasetFormComponent implements FormConfiguration {
               const config = this.fieldConfig.find((c) => c.name === 'quota');
 
               const size = this.convertHumanStringToNum(control.value, 'quota');
-              const errors = control.value && isNaN(size)
+              const errors = control.value && Number.isNaN(size)
                 ? { invalid_byte_string: true }
                 : null;
 
@@ -408,7 +408,7 @@ export class DatasetFormComponent implements FormConfiguration {
             (control: FormControl): ValidationErrors => {
               const config = this.fieldConfig.find((c) => c.name === 'reservation');
 
-              const errors = control.value && isNaN(this.convertHumanStringToNum(control.value, 'reservation'))
+              const errors = control.value && Number.isNaN(this.convertHumanStringToNum(control.value, 'reservation'))
                 ? { invalid_byte_string: true }
                 : null;
 
@@ -684,7 +684,7 @@ export class DatasetFormComponent implements FormConfiguration {
               const config = this.fieldConfig.find((c) => c.name === 'special_small_block_size');
 
               const size = this.convertHumanStringToNum(control.value, 'special_small_block_size');
-              const errors = control.value && isNaN(size)
+              const errors = control.value && Number.isNaN(size)
                 ? { invalid_byte_string: true }
                 : null;
 
