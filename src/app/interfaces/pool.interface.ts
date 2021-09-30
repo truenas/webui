@@ -7,12 +7,28 @@ import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
 export interface Pool {
   autotrim: ZfsProperty<string>;
+
+  /**
+   * @deprecated Legacy encryption. Not supported in Scale.
+   */
   encrypt: number;
+
+  /**
+   * @deprecated Legacy encryption. Not supported in Scale.
+   */
   encryptkey: string;
+
+  /**
+   * @deprecated Legacy encryption. Not supported in Scale.
+   */
   encryptkey_path: string;
   guid: string;
   healthy: boolean;
   id: number;
+
+  /**
+   * @deprecated Legacy encryption. Not supported in Scale.
+   */
   is_decrypted: boolean;
   name: string;
   path: string;
