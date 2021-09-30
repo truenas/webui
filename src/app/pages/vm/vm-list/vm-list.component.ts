@@ -16,7 +16,7 @@ import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { VmDisplayAttributes, VmDisplayDevice } from 'app/interfaces/vm-device.interface';
+import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
@@ -186,8 +186,8 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     if (this.productType !== ProductType.Scale && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
       return false;
     }
-    for (let i = 0; i < devices.length; i++) {
-      if (devices && devices[i].dtype === VmDeviceType.Display) {
+    for (const device of devices) {
+      if (devices && device.dtype === VmDeviceType.Display) {
         return true;
       }
     }
@@ -201,9 +201,9 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     if (this.productType !== ProductType.Scale && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
       return false;
     }
-    for (let i = 0; i < devices.length; i++) {
-      if (devices && devices[i].dtype === VmDeviceType.Display) {
-        return (devices[i].attributes as VmDisplayAttributes).port;
+    for (const device of devices) {
+      if (devices && device.dtype === VmDeviceType.Display) {
+        return (device.attributes).port;
       }
     }
   }

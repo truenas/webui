@@ -13,12 +13,12 @@ export class EntityTreeTableService {
   constructor(private ws: WebSocketService) {}
 
   // Do we still need this?
-  buildTree(data: any): TreeNode[] {
+  buildTree(data: any[]): TreeNode[] {
     const tree: TreeNode[] = [];
-    for (let i = 0; i < data.length; i++) {
-      const node = this.getNode(data[i]);
+    data.forEach((item) => {
+      const node = this.getNode(item);
       tree.push(node);
-    }
+    });
     return tree;
   }
 

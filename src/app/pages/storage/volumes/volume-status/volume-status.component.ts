@@ -596,9 +596,9 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
         node.data.actions.push(extend_action[0]);
       }
       vdev_type = (data as any).name;
-      for (let i = 0; i < data.children.length; i++) {
-        node.children.push(this.parseTopolgy(data.children[i], category, vdev_type));
-      }
+      data.children.forEach((child) => {
+        node.children.push(this.parseTopolgy(child, category, vdev_type));
+      });
     }
     delete node.data.children;
     return node;
@@ -619,13 +619,13 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       topoNode.expanded = true;
       topoNode.children = [];
 
-      for (let i = 0; i < pool.topology[category].length; i++) {
+      pool.topology[category].forEach((vdev) => {
         if (category != 'data') {
-          topoNode.children.push(this.parseTopolgy(pool.topology[category][i], category));
+          topoNode.children.push(this.parseTopolgy(vdev, category));
         } else {
-          node.children.push(this.parseTopolgy(pool.topology[category][i], category));
+          node.children.push(this.parseTopolgy(vdev, category));
         }
-      }
+      });
       if (category != 'data' && pool.topology[category].length > 0) {
         node.children.push(topoNode);
       }

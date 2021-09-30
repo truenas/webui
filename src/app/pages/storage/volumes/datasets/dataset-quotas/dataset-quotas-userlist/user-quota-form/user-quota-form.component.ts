@@ -5,7 +5,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormChipConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -195,11 +194,9 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
 
   updateSearchOptions(value = '', parent: this): void {
     parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      const entries: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        entries.push({ label: items[i].username, value: items[i].username });
-      }
-      parent.entryField.searchOptions = entries;
+      parent.entryField.searchOptions = items.map((user) => {
+        return { label: user.username, value: user.username };
+      });
     });
   }
 

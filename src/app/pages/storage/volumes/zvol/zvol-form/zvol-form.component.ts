@@ -410,9 +410,9 @@ export class ZvolFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     if (!this.parent) return;
     if (!entityForm.isNew) {
-      for (let i = 0; i < this.encryption_fields.length; i++) {
-        this.entityForm.setDisabled(this.encryption_fields[i], true, true);
-      }
+      this.encryption_fields.forEach((field) => {
+        this.entityForm.setDisabled(field, true, true);
+      });
       _.find(this.fieldSets, { name: 'encryption_divider' }).divider = false;
       this.entityForm.setDisabled('encryption', true, true);
       this.entityForm.setDisabled('inherit_encryption', true, true);
@@ -455,10 +455,10 @@ export class ZvolFormComponent implements FormConfiguration {
 
       if (this.isNew) {
         if (this.legacy_encryption) {
-          for (let i = 0; i < this.encryption_fields.length; i++) {
-            this.entityForm.setDisabled(this.encryption_fields[i], true, true);
+          this.encryption_fields.forEach((field) => {
+            this.entityForm.setDisabled(field, true, true);
             _.find(this.fieldSets, { name: 'encryption_divider' }).divider = false;
-          }
+          });
           this.entityForm.setDisabled('encryption', true, true);
           this.entityForm.setDisabled('inherit_encryption', true, true);
         } else {
@@ -484,15 +484,15 @@ export class ZvolFormComponent implements FormConfiguration {
           if (this.passphrase_parent) {
             encryption_type_fg.setValue('passphrase');
           }
-          for (let i = 0; i < this.encryption_fields.length; i++) {
-            this.entityForm.setDisabled(this.encryption_fields[i], true, true);
-          }
+          this.encryption_fields.forEach((field) => {
+            this.entityForm.setDisabled(field, true, true);
+          });
           inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: boolean) => {
             this.inherit_encryption = inherit;
             if (inherit) {
-              for (let i = 0; i < all_encryption_fields.length; i++) {
-                this.entityForm.setDisabled(all_encryption_fields[i], inherit, inherit);
-              }
+              all_encryption_fields.forEach((field) => {
+                this.entityForm.setDisabled(field, inherit, inherit);
+              });
               _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inherit;
             }
             if (!inherit) {
@@ -524,29 +524,29 @@ export class ZvolFormComponent implements FormConfiguration {
                 untilDestroyed(this),
               ).subscribe(() => {
                 this.non_encrypted_warned = true;
-                for (let i = 0; i < all_encryption_fields.length; i++) {
-                  if (all_encryption_fields[i] !== 'encryption') {
-                    this.entityForm.setDisabled(all_encryption_fields[i], true, true);
+                all_encryption_fields.forEach((field) => {
+                  if (field !== 'encryption') {
+                    this.entityForm.setDisabled(field, true, true);
                   }
-                }
+                });
               });
             } else {
-              for (let i = 0; i < this.encryption_fields.length; i++) {
-                if (this.encryption_fields[i] !== 'encryption') {
-                  if (this.encryption_fields[i] === 'generate_key' && this.encryption_type !== 'key') {
-                    continue;
-                  } else {
-                    this.entityForm.setDisabled(this.encryption_fields[i], !encryption, !encryption);
+              this.encryption_fields.forEach((field) => {
+                if (field !== 'encryption') {
+                  if (field === 'generate_key' && this.encryption_type !== 'key') {
+                    return;
                   }
+
+                  this.entityForm.setDisabled(field, !encryption, !encryption);
                 }
-              }
+              });
               if (this.encryption_type === 'key' && !this.generate_key) {
                 this.entityForm.setDisabled('key', !encryption, !encryption);
               }
               if (this.encryption_type === 'passphrase') {
-                for (let i = 0; i < this.passphrase_fields.length; i++) {
-                  this.entityForm.setDisabled(this.passphrase_fields[i], !encryption, !encryption);
-                }
+                this.passphrase_fields.forEach((field) => {
+                  this.entityForm.setDisabled(field, !encryption, !encryption);
+                });
               }
               if (this.passphrase_parent) { // keep this field hidden if parent has a passphrase
                 _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = true;

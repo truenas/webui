@@ -7,7 +7,6 @@ import { Observable } from 'rxjs';
 import { RsyncModuleMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/services/components/service-rsync';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { RsyncModule, RsyncModuleCreate } from 'app/interfaces/rsync-module.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -192,21 +191,17 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
 
   updateGroupSearchOptions(value = '', parent: this): void {
     parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
-      parent.rsyncmod_group.searchOptions = groupOptions;
+      parent.rsyncmod_group.searchOptions = groups.map((group) => {
+        return { label: group.group, value: group.group };
+      });
     });
   }
 
   updateUserSearchOptions(value = '', parent: this): void {
     parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      parent.rsyncmod_user.searchOptions = users;
+      parent.rsyncmod_user.searchOptions = items.map((user) => {
+        return { label: user.username, value: user.username };
+      });
     });
   }
 

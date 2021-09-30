@@ -720,39 +720,37 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
       rows = new EntityUtils().flattenData(res);
     }
 
-    for (let i = 0; i < rows.length; i++) {
-      for (const attr in rows[i]) {
-        if (rows[i].hasOwnProperty(attr)) {
-          rows[i][attr] = this.rowValue(rows[i], attr);
+    rows.forEach((row) => {
+      for (const attr in row) {
+        if (row.hasOwnProperty(attr)) {
+          row[attr] = this.rowValue(row, attr);
         }
       }
-    }
+    });
 
     if (this.rows.length === 0) {
       if (this.conf.queryRes) {
         this.conf.queryRes = rows;
       }
     } else {
-      for (let i = 0; i < this.currentRows.length; i++) {
-        const index = _.findIndex(rows, { id: this.currentRows[i].id });
+      this.currentRows.forEach((row) => {
+        const index = _.findIndex(rows, { id: row.id });
         if (index > -1) {
           for (const prop in rows[index]) {
-            this.currentRows[i][prop] = rows[index][prop];
+            row[prop] = rows[index][prop];
           }
         }
-      }
+      });
 
-      const newRows = [];
-      for (let i = 0; i < this.rows.length; i++) {
-        const index = _.findIndex(rows, { id: (this.rows[i] as any).id });
+      return this.rows.map((row) => {
+        const index = _.findIndex(rows, { id: ((row) as any).id });
         if (index < 0) {
-          continue;
+          return;
         }
         const updatedItem = rows[index];
         rows.splice(index, 1);
-        newRows.push(updatedItem);
-      }
-      return newRows.concat(rows);
+        return updatedItem;
+      });
     }
     return rows;
   }
@@ -942,30 +940,30 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
       );
   }
 
-  getMultiDeleteMessage(items: any): string {
+  getMultiDeleteMessage(items: any[]): string {
     let deleteMsg = 'Delete the selected items?';
     if (this.conf.config.deleteMsg) {
       deleteMsg = 'Delete selected ' + this.conf.config.deleteMsg.title + '(s)?';
       let msg_content = '<ul>';
-      for (let j = 0; j < items.length; j++) {
+      items.forEach((item) => {
         let sub_msg_content;
         if (this.conf.config.deleteMsg.key_props.length > 1) {
-          sub_msg_content = '<li><strong>' + items[j][this.conf.config.deleteMsg.key_props[0]] + '</strong>';
+          sub_msg_content = '<li><strong>' + item[this.conf.config.deleteMsg.key_props[0]] + '</strong>';
           sub_msg_content += '<ul class="nested-list">';
 
           for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
-            if (items[j][this.conf.config.deleteMsg.key_props[i]] != '') {
-              sub_msg_content += '<li>' + items[j][this.conf.config.deleteMsg.key_props[i]] + '</li>';
+            if (item[this.conf.config.deleteMsg.key_props[i]] != '') {
+              sub_msg_content += '<li>' + item[this.conf.config.deleteMsg.key_props[i]] + '</li>';
             }
           }
           sub_msg_content += '</ul>';
         } else {
-          sub_msg_content = '<li>' + items[j][this.conf.config.deleteMsg.key_props[0]];
+          sub_msg_content = '<li>' + item[this.conf.config.deleteMsg.key_props[0]];
         }
 
         sub_msg_content += '</li>';
         msg_content += sub_msg_content;
-      }
+      });
       msg_content += '</ul>';
       deleteMsg += msg_content;
     }
@@ -1166,8 +1164,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     const row = this.findRow(evt);
     const cells = row.children;
 
-    for (let i = 0; i < cells.length; i++) {
-      const cell = cells[i];
+    for (const cell of cells) {
       if (cell.classList.contains('mat-table-sticky') || cell.classList.contains('threedot-column')) {
         if (over) {
           cell.classList.add('hover');

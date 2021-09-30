@@ -60,10 +60,10 @@ export class VdevComponent implements OnInit {
       this.type = 'stripe';
     }
     if (this.initial_values['disks']) {
-      for (let i = 0; i < this.initial_values['disks'].length; i++) {
-        this.addDisk(this.initial_values['disks'][i]);
-        this.manager.removeDisk(this.initial_values['disks'][i]);
-      }
+      this.initial_values['disks'].forEach((disk: ManagerDisk) => {
+        this.addDisk(disk);
+        this.manager.removeDisk(disk);
+      });
       this.initial_values['disks'] = [];
     }
     if (this.initial_values['type']) {
@@ -186,18 +186,18 @@ export class VdevComponent implements OnInit {
   }
 
   removeSelectedDisks(): void {
-    for (let i = 0; i < this.selected.length; i++) {
-      this.manager.addDisk(this.selected[i]);
-      this.removeDisk(this.selected[i]);
-    }
+    this.selected.forEach((disk) => {
+      this.manager.addDisk(disk);
+      this.removeDisk(disk);
+    });
     this.selected = [];
   }
 
   addSelectedDisks(): void {
-    for (let i = 0; i < this.manager.selected.length; i++) {
-      this.addDisk(this.manager.selected[i]);
-      this.manager.removeDisk(this.manager.selected[i]);
-    }
+    this.manager.selected.forEach((disk) => {
+      this.addDisk(disk);
+      this.manager.removeDisk(disk);
+    });
     this.manager.selected = [];
   }
 

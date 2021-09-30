@@ -520,19 +520,19 @@ export class CloudsyncFormComponent implements FormConfiguration {
       (res) => {
         this.setBucketError(null);
 
-        for (let i = 0; i < res.length; i++) {
+        res.forEach((file) => {
           const child = {} as ListdirChild;
-          if (res[i].IsDir) {
+          if (file.IsDir) {
             if (data.attributes.folder == '/') {
-              child['name'] = data.attributes.folder + res[i].Name;
+              child['name'] = data.attributes.folder + file.Name;
             } else {
-              child['name'] = data.attributes.folder + '/' + res[i].Name;
+              child['name'] = data.attributes.folder + '/' + file.Name;
             }
-            child['subTitle'] = res[i].Decrypted ? `${res[i].Decrypted} (${res[i].Name})` : res[i].Name;
+            child['subTitle'] = file.Decrypted ? `${file.Decrypted} (${file.Name})` : file.Name;
             child['hasChildren'] = true;
             children.push(child);
           }
-        }
+        });
         return children;
       },
       (err) => {
@@ -903,16 +903,15 @@ export class CloudsyncFormComponent implements FormConfiguration {
                           + data.schedule.dow;
 
     if (data.bwlimit) {
-      const bwlimit = [];
-      for (let i = 0; i < data.bwlimit.length; i++) {
-        let sub_bwlimit = data.bwlimit[i].time + ',off';
-        if (data.bwlimit[i].bandwidth != null) {
-          const bandwidth = filesize(data.bwlimit[i].bandwidth);
-          sub_bwlimit = `${data.bwlimit[i].time}, ${bandwidth}`;
+      transformed.bwlimit = data.bwlimit.map((bwlimit) => {
+        let sub_bwlimit = bwlimit.time + ',off';
+        if (bwlimit.bandwidth != null) {
+          const bandwidth = filesize(bwlimit.bandwidth);
+          sub_bwlimit = `${bwlimit.time}, ${bandwidth}`;
         }
-        bwlimit.push(sub_bwlimit);
-      }
-      transformed.bwlimit = bwlimit;
+
+        return sub_bwlimit;
+      });
     }
 
     return transformed;
@@ -921,8 +920,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
   handleBwlimit(bwlimit: string): any[] {
     const bwlimtArr = [];
 
-    for (let i = 0; i < bwlimit.length; i++) {
-      const sublimitArr = bwlimit[i].split(',');
+    for (const limit of bwlimit) {
+      const sublimitArr = limit.split(',');
       if (sublimitArr.length === 1 && bwlimit.length === 1) {
         if (!sublimitArr[0].includes(':')) {
           sublimitArr.unshift('00:00');

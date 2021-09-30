@@ -5,7 +5,6 @@ import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/data-protection/resync/resync-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -258,12 +257,12 @@ export class RsyncFormComponent implements FormConfiguration {
 
     this.user_field = this.fieldSets.config('user') as FormComboboxConfig;
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
-      for (let i = 0; i < items.length; i++) {
+      items.forEach((user) => {
         this.user_field.options.push({
-          label: items[i].username,
-          value: items[i].username,
+          label: user.username,
+          value: user.username,
         });
-      }
+      });
     });
 
     this.hideFields(entityForm.formGroup.controls['mode'].value);
@@ -293,11 +292,9 @@ export class RsyncFormComponent implements FormConfiguration {
 
   updateUserSearchOptions(value = '', parent: this): void {
     parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      parent.user_field.searchOptions = users;
+      parent.user_field.searchOptions = items.map((user) => {
+        return { label: user.username, value: user.username };
+      });
     });
   }
 
@@ -311,11 +308,11 @@ export class RsyncFormComponent implements FormConfiguration {
       hide_fields = this.rsync_ssh_field;
       show_fields = this.rsync_module_field;
     }
-    for (let i = 0; i < hide_fields.length; i++) {
-      this.entityForm.setDisabled(hide_fields[i], true, true);
-    }
-    for (let i = 0; i < show_fields.length; i++) {
-      this.entityForm.setDisabled(show_fields[i], false, false);
-    }
+    hide_fields.forEach((field) => {
+      this.entityForm.setDisabled(field, true, true);
+    });
+    show_fields.forEach((field) => {
+      this.entityForm.setDisabled(field, false, false);
+    });
   }
 }

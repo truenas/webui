@@ -465,11 +465,11 @@ export class ChartReleasesComponent implements OnInit {
         (res: Job<CoreBulkResponse[]>) => {
           this.dialogService.closeAllDialogs();
           let message = '';
-          for (let i = 0; i < res.result.length; i++) {
-            if (res.result[i].error != null) {
-              message = message + '<li>' + res.result[i].error + '</li>';
+          res.result.forEach((item) => {
+            if (item.error != null) {
+              message = message + '<li>' + item.error + '</li>';
             }
-          }
+          });
 
           if (message !== '') {
             message = '<ul>' + message + '</ul>';

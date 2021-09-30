@@ -194,9 +194,9 @@ export class BootStatusListComponent implements OnInit {
     node.children = [];
 
     if (data.children) {
-      for (let i = 0; i < data.children.length; i++) {
-        node.children.push(this.parseTopology(data.children[i], category, parent));
-      }
+      node.children = data.children.map((vdev) => {
+        return this.parseTopology(vdev, category, parent);
+      });
     }
     delete node.data.children;
     return node;
@@ -209,9 +209,9 @@ export class BootStatusListComponent implements OnInit {
     node.expanded = true;
     node.children = [];
 
-    for (let i = 0; i < pool.groups.data.length; i++) {
-      node.children.push(this.parseTopology(pool.groups.data[i], 'data', pool.groups.data[i]));
-    }
+    node.children = pool.groups.data.map((vdev) => {
+      return this.parseTopology(vdev, 'data', vdev);
+    });
 
     delete node.data.children;
     const config = { ...this.treeTableConfig };

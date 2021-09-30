@@ -9,7 +9,6 @@ import { AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -179,28 +178,24 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       this.aclType = dataset[0].acltype.value as AclType;
     });
 
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
+    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
       this.userField = _.find(
         this.fieldSets.find((set) => set.name === helptext.heading_owner).config,
         { name: 'user' },
       ) as FormComboboxConfig;
-      this.userField.options = users;
+      this.userField.options = users.map((user) => {
+        return { label: user.username, value: user.username };
+      });
     });
 
     this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
       this.groupField = _.find(
         this.fieldSets.find((set) => set.name === helptext.heading_owner).config,
         { name: 'group' },
       ) as FormComboboxConfig;
-      this.groupField.options = groupOptions;
+      this.groupField.options = groups.map((group) => {
+        return { label: group.group, value: group.group };
+      });
     });
   }
 
@@ -231,21 +226,17 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
 
   updateGroupSearchOptions(value = '', parent: this): void {
     parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((groups) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
-      parent.groupField.searchOptions = groupOptions;
+      parent.groupField.searchOptions = groups.map((group) => {
+        return { label: group.group, value: group.group };
+      });
     });
   }
 
   updateUserSearchOptions(value = '', parent: this): void {
     parent.userService.userQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((items) => {
-      const users = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      parent.userField.searchOptions = users;
+      parent.userField.searchOptions = items.map((user) => {
+        return { label: user.username, value: user.username };
+      });
     });
   }
 
@@ -293,15 +284,14 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   loadMoreOptions(length: number, parent: this, searchText: string): void {
     parent.userService.userQueryDSCache(searchText, length)
       .pipe(untilDestroyed(parent))
-      .subscribe((items) => {
-        const users = [];
-        for (let i = 0; i < items.length; i++) {
-          users.push({ label: items[i].username, value: items[i].username });
-        }
+      .subscribe((users) => {
+        const userOptions = users.map((user) => {
+          return { label: user.username, value: user.username };
+        });
         if (searchText == '') {
-          parent.userField.options = parent.userField.options.concat(users);
+          parent.userField.options = parent.userField.options.concat(userOptions);
         } else {
-          parent.userField.searchOptions = parent.userField.searchOptions.concat(users);
+          parent.userField.searchOptions = parent.userField.searchOptions.concat(userOptions);
         }
       });
   }
@@ -310,10 +300,9 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     parent.userService.groupQueryDSCache(searchText, false, length)
       .pipe(untilDestroyed(parent))
       .subscribe((groups) => {
-        const groupOptions: Option[] = [];
-        for (let i = 0; i < groups.length; i++) {
-          groupOptions.push({ label: groups[i].group, value: groups[i].group });
-        }
+        const groupOptions = groups.map((group) => {
+          return { label: group.group, value: group.group };
+        });
         if (searchText == '') {
           parent.groupField.options = parent.groupField.options.concat(groupOptions);
         } else {
