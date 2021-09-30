@@ -300,11 +300,6 @@ def navigate_to_storage_then_click_the_gear_icon_and_click_disks(driver):
     assert wait_on_element(driver, 7, '//a[@ix-auto="button__STORAGE_DISKS"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="button__STORAGE_DISKS"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"Disks")]')
-    # sort disk was removed, probably need to rewrite the step
-    # disk = ''
-    # while disk != 'sda':
-    #     driver.find_element_by_xpath('//span[contains(.,"Name")]').click()
-    #     disk = driver.find_element_by_xpath('(//datatable-body-cell[2]/div/div)[1]').text
 
 
 @then('the list of disks should appear in ascending order starting with sda')
