@@ -83,7 +83,7 @@ def the_license_widget_should_open(driver):
 @then(parsers.parse('enter "{License}"'))
 def enter_license(driver, License):
     """enter "License"."""
-    assert wait_on_element(driver, 7, '//textarea', 'clickable')
+    assert wait_on_element(driver, 7, '//textarea', 'inputable')
     driver.find_element_by_xpath('//textarea').clear()
     driver.find_element_by_xpath('//textarea').send_keys(License)
 
@@ -128,6 +128,11 @@ def click_agree(driver):
 @then('we should be returned to the General page')
 def we_should_be_returned_to_license_information(driver):
     """we should be returned to the General page."""
+    if is_element_present(driver, '//h1[text()="Dashboard"]'):
+        assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
+        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
+        assert wait_on_element(driver, 7, '//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]', 'clickable')
+        driver.find_element_by_xpath('//div[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__General"]').click()
     assert wait_on_element(driver, 7, '//h1[contains(.,"General")]')
 
 
