@@ -89,7 +89,7 @@
           </mat-select>
         </mat-form-field>
         <div style="display:inline-block; margin-left:16px;">
-          <span *ngIf="group === 'data' && vdev_type_disabled">{{getType() | translate}}</span>
+          <p *ngIf="group === 'data' && vdev_type_disabled">{{getType() | translate}}</p>
           <span>{{"Estimated raw capacity:" | translate}} {{size}}</span>
           <tooltip [message]=vdev_type_tooltip></tooltip>
         </div>
