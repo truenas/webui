@@ -439,7 +439,11 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
 
       case EmptyType.Errors:
         title = T('Something went wrong');
-        message = T('The system returned the following error - ');
+
+        if (error) {
+          message = T('The system returned the following error - ');
+        }
+
         if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.errors) {
           title = this.conf.emptyTableConfigMessages.errors.title;
           message = this.conf.emptyTableConfigMessages.errors.message;
@@ -592,7 +596,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
       },
       (res: any) => {
         this.isTableEmpty = true;
-        this.configureEmptyTable(EmptyType.Errors, res);
+        this.configureEmptyTable(EmptyType.Errors, res.reason);
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
