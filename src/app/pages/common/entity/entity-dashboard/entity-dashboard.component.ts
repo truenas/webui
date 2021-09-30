@@ -38,7 +38,7 @@ export class EntityDashboardComponent implements OnInit {
     this.parent = this.aroute.parent.parent.routeConfig.path;
     const routeConfigs: EntityDashboardRoutePart[] = this.aroute.parent.routeConfig.children;
     routeConfigs.forEach((routeConfig) => {
-      if (routeConfig.path !== '' && routeConfig.path.indexOf(':') < 0) {
+      if (routeConfig.path !== '' && !routeConfig.path.includes(':')) {
         if (_.find(routeConfig.children, { path: 'add' })) {
           routeConfig['addPath'] = 'add';
         } else if (_.find(routeConfig.children, { path: 'import' })) {

@@ -574,15 +574,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
-      if (this.conf.advanced_field.indexOf(id) > -1) {
+      if (this.conf.advanced_field.includes(id)) {
         return false;
       }
-    } else if (this.conf.basic_field !== undefined && this.conf.basic_field.indexOf(id) > -1) {
+    } else if (this.conf.basic_field !== undefined && this.conf.basic_field.includes(id)) {
       return false;
     }
 
     if (this.conf.hide_fileds !== undefined) {
-      if (this.conf.hide_fileds.indexOf(id) > -1) {
+      if (this.conf.hide_fileds.includes(id)) {
         return false;
       }
     }

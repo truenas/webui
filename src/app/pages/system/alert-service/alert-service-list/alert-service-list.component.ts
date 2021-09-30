@@ -57,7 +57,7 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
   ) { }
 
   isActionVisible(actionId: string, row: AlertService): boolean {
-    if (actionId === 'edit' && this.providerList.indexOf(row.type) === -1) {
+    if (actionId === 'edit' && !this.providerList.includes(row.type)) {
       return false;
     }
     return true;

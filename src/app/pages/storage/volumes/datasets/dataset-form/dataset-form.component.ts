@@ -940,7 +940,7 @@ export class DatasetFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     if (this.productType.includes(ProductType.Enterprise)) {
       this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
-        if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.Dedup) > -1) {
+        if (systemInfo.license && systemInfo.license.features.includes(LicenseFeature.Dedup)) {
           this.entityForm.setDisabled('deduplication', false, false);
         }
       });

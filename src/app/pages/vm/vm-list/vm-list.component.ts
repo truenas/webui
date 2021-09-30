@@ -265,7 +265,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   extractHostname(url: string): string {
     let hostname: string;
-    if (url.indexOf('//') > -1) {
+    if (url.includes('//')) {
       hostname = url.split('/')[2];
     } else {
       hostname = url.split('/')[0];

@@ -575,7 +575,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   showConfigForm(): void {
     const widgetTypes: string[] = [];
     this.dashState.forEach((item) => {
-      if (widgetTypes.indexOf(item.name) == -1) {
+      if (!widgetTypes.includes(item.name)) {
         widgetTypes.push(item.name);
       }
     });

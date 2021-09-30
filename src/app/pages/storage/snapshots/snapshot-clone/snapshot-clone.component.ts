@@ -69,7 +69,7 @@ export class SnapshotCloneComponent implements FormConfiguration {
 
   setName(name: string): string {
     let value;
-    if (name.indexOf('/') !== -1) {
+    if (name.includes('/')) {
       value = name.replace('@', '-') + '-clone';
     } else {
       value = name.replace('@', '/') + '-clone';

@@ -160,7 +160,7 @@ export class FormExplorerComponent implements Field, OnInit {
   }
 
   valueHandler(selectedTreeNodes: TreeNode[]): void {
-    const res = [];
+    const res: string[] = [];
     for (let i = 0; i < selectedTreeNodes.length; i++) {
       if (selectedTreeNodes[i] == undefined) {
         continue;
@@ -173,7 +173,7 @@ export class FormExplorerComponent implements Field, OnInit {
         ) {
           parent = parent.parent;
         }
-        if (res.indexOf(parent.data.name) === -1) {
+        if (!res.includes(parent.data.name)) {
           res.push(parent.data.name);
         }
       } else if (selectedTreeNodes[i].isAllSelected) {
