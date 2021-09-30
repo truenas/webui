@@ -165,6 +165,7 @@ module.exports = {
         }],
         "@typescript-eslint/ban-types": ["error"],
         "unicorn/filename-case": ["error", { case: "kebabCase"}],
+        "unicorn/prefer-array-find": ["error"],
         "@angular-eslint/component-max-inline-declarations": ["error"],
         "@angular-eslint/contextual-decorator": ["error"],
         "@angular-eslint/contextual-lifecycle": ["error"],

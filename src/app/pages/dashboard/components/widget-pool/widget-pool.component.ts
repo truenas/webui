@@ -217,8 +217,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     this.core.register({ observerClass: this, eventName: 'MultipathData' }).pipe(untilDestroyed(this)).subscribe((evt: MultipathDataEvent) => {
       this.currentMultipathDetails = evt.data[0];
 
-      const activeDisk = evt.data[0].children.filter((prop) => prop.status == 'ACTIVE');
-      this.core.emit({ name: 'DisksRequest', data: [[['name', '=', activeDisk[0].name]]] });
+      const activeDisk = evt.data[0].children.find((prop) => prop.status == 'ACTIVE');
+      this.core.emit({ name: 'DisksRequest', data: [[['name', '=', activeDisk.name]]] });
     });
 
     this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {

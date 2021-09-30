@@ -155,7 +155,7 @@ export class VDevLabelsSVG {
 
       if (slot && slot >= this.chassis.slotRange.start && slot <= this.chassis.slotRange.end) {
         // Create tile if the disk is in the current enclosure
-        const dt = this.chassis.driveTrayObjects.filter((dto) => parseInt(dto.id) == slot)[0];
+        const dt = this.chassis.driveTrayObjects.find((dto) => parseInt(dto.id) == slot);
         const src = dt.container;
         const tray = src.getGlobalPosition();
 
