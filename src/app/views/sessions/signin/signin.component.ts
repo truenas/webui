@@ -70,17 +70,17 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   failover_status: FailoverStatus;
   failover_statuses = {
     [FailoverStatus.Single]: '',
-    [FailoverStatus.Master]: T(`Active ${globalHelptext.Ctrlr}.`),
-    [FailoverStatus.Backup]: T(`Standby ${globalHelptext.Ctrlr}.`),
-    [FailoverStatus.Electing]: T(`Electing ${globalHelptext.Ctrlr}.`),
-    [FailoverStatus.Importing]: T('Importing pools.'),
-    [FailoverStatus.Error]: T('Failover is in an error state.'),
+    [FailoverStatus.Master]: this.translate.instant('Active {controller}.', { controller: globalHelptext.Ctrlr }),
+    [FailoverStatus.Backup]: this.translate.instant('Standby {controller}.', { controller: globalHelptext.Ctrlr }),
+    [FailoverStatus.Electing]: this.translate.instant('Electing {controller}.', { controller: globalHelptext.Ctrlr }),
+    [FailoverStatus.Importing]: this.translate.instant('Importing pools.'),
+    [FailoverStatus.Error]: this.translate.instant('Failover is in an error state.'),
   };
   failover_ips: string[] = [];
   ha_disabled_reasons: FailoverDisabledReason[] = [];
   show_reasons = false;
   reason_text = helptext.ha_disabled_reasons;
-  ha_status_text = T('Checking HA status');
+  ha_status_text = this.translate.instant('Checking HA status');
   ha_status = false;
   tc_ip: string;
   protected tc_url: string;
@@ -88,14 +88,20 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly ProductType = ProductType;
   readonly FailoverStatus = FailoverStatus;
 
-  constructor(private ws: WebSocketService, private router: Router,
-    private snackBar: MatSnackBar, public translate: TranslateService,
+  constructor(
+    private ws: WebSocketService,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    public translate: TranslateService,
     private dialogService: DialogService,
     private fb: FormBuilder,
     private core: CoreService,
     private api: ApiService,
     private _autofill: AutofillMonitor,
-    private http: HttpClient, private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
+    private http: HttpClient,
+    private sysGeneralService: SystemGeneralService,
+    private localeService: LocaleService,
+  ) {
     this.ws = ws;
     const ha_status = window.sessionStorage.getItem('ha_status');
     if (ha_status && ha_status === 'true') {

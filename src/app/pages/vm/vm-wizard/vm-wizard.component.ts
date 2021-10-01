@@ -737,12 +737,12 @@ export class VMWizardComponent implements WizardConfiguration {
           if (datastore === '/mnt') {
             this.getFormControlFromFieldName('datastore').setValue(null);
             _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = true;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = T(`Virtual machines cannot be stored in an unmounted mountpoint: ${datastore}`);
+            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = this.translate.instant('Virtual machines cannot be stored in an unmounted mountpoint: {datastore}', { datastore });
           }
           if (datastore === '') {
             this.getFormControlFromFieldName('datastore').setValue(null);
             _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = true;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = T('Please select a valid path');
+            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = this.translate.instant('Please select a valid path');
           }
         }
         this.getFormControlFromFieldName('NIC_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {

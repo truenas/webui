@@ -402,8 +402,14 @@ export class SnapshotListComponent implements EntityTableConfig {
       const snapshot = res[0];
       this.entityList.loader.close();
       this.entityList.loaderOpen = false;
-      const msg = T(`Use snapshot <i>${item.snapshot}</i> to roll <b>${item.dataset}</b> back to `)
-        + new Date(snapshot.properties.creation.parsed.$date).toLocaleString() + '?';
+      const msg = this.translate.instant(
+        'Use snapshot <i>{snapshot}</i> to roll <b>{dataset}</b> back to {datetime}?',
+        {
+          snapshot: item.snapshot,
+          dataset: item.dataset,
+          datetime: new Date(snapshot.properties.creation.parsed.$date).toLocaleString(),
+        },
+      );
       this.rollbackFormConf.message = msg;
       this.rollback = snapshot;
       this.entityList.dialogService.dialogForm(this.rollbackFormConf);

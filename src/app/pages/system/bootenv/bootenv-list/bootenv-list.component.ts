@@ -4,6 +4,7 @@ import {
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
@@ -56,6 +57,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     private storage: StorageService,
     protected localeService: LocaleService,
     private sysGeneralService: SystemGeneralService,
+    protected translate: TranslateService,
   ) {}
 
   columns = [
@@ -324,22 +326,22 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             {
               type: 'paragraph',
               name: 'condition',
-              paraText: T(`<b>Boot Pool Condition:</b> ${this.condition}`),
+              paraText: this.translate.instant('<b>Boot Pool Condition:</b> {condition}', { condition: this.condition }),
             },
             {
               type: 'paragraph',
               name: 'size_boot',
-              paraText: T(`<b>Size:</b> ${this.size_boot}`),
+              paraText: this.translate.instant('<b>Size:</b> {size_boot}', { size_boot: this.size_boot }),
             },
             {
               type: 'paragraph',
               name: 'size_consumed',
-              paraText: T(`<b>Used:</b> ${this.size_consumed}`),
+              paraText: this.translate.instant('<b>Used:</b> {size_consumed}', { size_consumed: this.size_consumed }),
             },
             {
               type: 'paragraph',
               name: 'scrub_msg',
-              paraText: T(`<b>Last Scrub Run:</b> ${this.scrub_msg}<br /><br />`),
+              paraText: this.translate.instant('<b>Last Scrub Run:</b> {scrub_msg}<br /><br />', { scrub_msg: this.scrub_msg }),
             },
             {
               type: 'input',
@@ -362,7 +364,13 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
               if (scrubIntervalValue > 0) {
                 localWS.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(this)).subscribe(() => {
                   localDialog.closeAllDialogs();
-                  localDialog.info(T('Scrub Interval Set'), T(`Scrub interval set to ${scrubIntervalValue} days`), '300px', 'info', true);
+                  localDialog.info(
+                    T('Scrub Interval Set'),
+                    this.translate.instant('Scrub interval set to {scrubIntervalValue} days', { scrubIntervalValue }),
+                    '300px',
+                    'info',
+                    true,
+                  );
                 });
               } else {
                 localDialog.info(T('Enter valid value'), T(scrubIntervalValue + ' is not a valid number of days.'));
