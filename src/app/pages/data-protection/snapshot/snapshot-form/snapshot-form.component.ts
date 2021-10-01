@@ -229,7 +229,7 @@ export class SnapshotFormComponent implements FormConfiguration {
     const formatted = schedule.minute + ' ' + schedule.hour + ' ' + schedule.dom + ' ' + schedule.month + ' ' + schedule.dow;
     const cronField = entity.formGroup.controls['cron_schedule'];
     cronField.setValue(formatted);
-    const cronEntity = entity.fieldConfig.filter((field) => field.name == 'cron_schedule')[0];
+    const cronEntity = entity.fieldConfig.find((field) => field.name == 'cron_schedule');
     cronEntity.value = formatted;
 
     // Setup all the other fields

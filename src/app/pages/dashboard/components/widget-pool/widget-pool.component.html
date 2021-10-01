@@ -63,9 +63,8 @@
 
           <ng-template #locked>
             <div fxFlex="40" class="locked offline">
-              <mat-icon *ngIf="!poolState.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock-alert"></mat-icon>
-              <mat-icon *ngIf="poolState.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
-              <h4>{{"Data not available" | translate}} <span *ngIf="!poolState.is_decrypted"><br>{{"while pool is encrypted" | translate}}</span>.</h4>
+              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+              <h4>{{"Data not available" | translate}}.</h4>
             </div>
           </ng-template>
 
@@ -104,11 +103,11 @@
                         </ng-container>
 
                         <ng-template #noerrors>
-                          <span *ngIf="poolState.status == PoolStatus.Locked || !poolState.is_decrypted"
+                          <span *ngIf="poolState.status == PoolStatus.Locked"
                             class="lock-icon-wrapper icon">
                             <mat-icon>lock</mat-icon>
                           </span>
-                          <span *ngIf="poolState.is_decrypted && ( poolState.status == PoolStatus.Online || poolState.status == PoolStatus.Healthy )"
+                          <span *ngIf="poolState.status == PoolStatus.Online || poolState.status == PoolStatus.Healthy"
                             class="{{poolHealth.level}} icon">
                             <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
                           </span>

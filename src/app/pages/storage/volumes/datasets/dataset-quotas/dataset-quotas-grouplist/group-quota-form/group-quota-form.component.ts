@@ -180,7 +180,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
       formField['hasErrors'] = false;
       formField['errors'] = '';
-      if (filteredValue !== undefined && isNaN(filteredValue)) {
+      if (filteredValue !== undefined && Number.isNaN(filteredValue)) {
         formField['hasErrors'] = true;
         formField['errors'] = helptext.shared.input_error;
       }

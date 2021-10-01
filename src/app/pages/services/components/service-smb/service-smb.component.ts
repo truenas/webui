@@ -246,7 +246,7 @@ export class ServiceSMBComponent implements FormConfiguration {
       name: global_helptext.basic_options,
       function: () => {
         this.hiddenFieldSets.forEach((setId) => (this.fieldSets.find((set) => set.name === setId).label = false));
-        this.fieldSets.filter((set) => set.name === 'divider')[0].divider = false;
+        this.fieldSets.find((set) => set.name === 'divider').divider = false;
         this.isBasicMode = !this.isBasicMode;
       },
     },

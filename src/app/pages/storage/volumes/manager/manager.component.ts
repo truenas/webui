@@ -278,9 +278,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         });
         this.name = res[0].name;
         this.vol_encrypt = res[0].encrypt;
-        if (this.vol_encrypt > 0) {
-          this.isEncrypted = true;
-        }
         this.ws.call(this.datasetQueryCall, [[['id', '=', res[0].name]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
           if (datasets[0]) {
             this.extendedAvailable = datasets[0].available.parsed;

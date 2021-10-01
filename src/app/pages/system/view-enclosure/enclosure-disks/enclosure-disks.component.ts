@@ -863,7 +863,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
       ? this.system.enclosures[disk.enclosure.number].elements as any[]
       : this.system.enclosures[disk.enclosure.number].elements[0].elements;
-    const slot = elements.filter((s) => s.slot == disk.enclosure.slot)[0];
+    const slot = elements.find((s) => s.slot == disk.enclosure.slot);
 
     if (!failed && slot.fault) {
       failed = true;
@@ -904,7 +904,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
         ? this.system.enclosures[disk.enclosure.number].elements as any[]
         : this.system.enclosures[disk.enclosure.number].elements[0].elements;
-      const slot = elements.filter((s) => s.slot == disk.enclosure.slot)[0];
+      const slot = elements.find((s) => s.slot == disk.enclosure.slot);
 
       if (!failed && slot.fault) {
         failed = true;

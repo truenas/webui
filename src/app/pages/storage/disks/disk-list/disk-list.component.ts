@@ -342,7 +342,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
           item.type = entityDialog.formValue.type;
         });
 
-        this.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(parent)).subscribe(
+        this.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             entityDialog.dialogRef.close(true);
             this.generateManualTestSummary(res);

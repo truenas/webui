@@ -274,7 +274,7 @@ export class ViewEnclosureComponent implements OnDestroy {
       this.formEvent$.pipe(
         untilDestroyed(this),
       ).subscribe((evt: CoreEvent) => {
-        const nextView = this.views.filter((view) => view.alias == evt.data.configFiles.value)[0];
+        const nextView = this.views.find((view) => view.alias == evt.data.configFiles.value);
         this.changeView(nextView.id);
       });
     }

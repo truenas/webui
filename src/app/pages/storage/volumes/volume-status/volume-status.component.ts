@@ -186,15 +186,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
         return;
       }
 
-      // if pool is passphrase protected, abled passphrase field.
-      if (pools[0].encrypt === 2) {
-        [this.replaceDiskFormFields, this.extendVdevFormFields].forEach((formFields) => {
-          _.find(formFields, { name: 'passphrase' })['isHidden'] = false;
-          _.find(formFields, { name: 'passphrase' }).disabled = false;
-          _.find(formFields, { name: 'passphrase2' })['isHidden'] = false;
-          _.find(formFields, { name: 'passphrase2' }).disabled = false;
-        });
-      }
       this.poolScan = pools[0].scan;
       // subscribe zfs.pool.scan to get scrub job info
       if (this.poolScan.state == PoolScanState.Scanning) {
@@ -298,7 +289,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
         }
         this.dialogService.confirm({
           title: helptext.offline_disk.title,
-          message: helptext.offline_disk.message + name + '?' + (this.pool.encrypt == 0 ? '' : helptext.offline_disk.encryptPoolWarning),
+          message: helptext.offline_disk.message + name + '?',
           buttonMsg: helptext.offline_disk.buttonMsg,
         }).pipe(
           filter(Boolean),
@@ -506,7 +497,14 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               entityDialog.dialogRef.close(true);
               this.getData();
               this.getUnusedDisk();
-              this.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + '.', '', 'info', true);
+
+              let diskName = row.name;
+              if (!_.startsWith(row.name, '/')) {
+                const pIndex = row.name.lastIndexOf('p');
+                diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+              }
+
+              this.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + diskName + '.', '', 'info', true);
             });
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();
@@ -593,7 +591,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     if (data.children) {
       if (data.children.length === 0 && vdev_type === undefined) {
         const extend_action = this.extendAction();
-        node.data.actions.push(extend_action[0]);
+        node.data.actions[0].actions.push(extend_action[0]);
       }
       vdev_type = (data as any).name;
       data.children.forEach((child) => {

@@ -53,14 +53,11 @@ export default {
   disable_offload_capabilities_placeholder: T('Disable Hardware Offloading'),
   disable_offload_capabilities_tooltip: T('Turn off hardware offloading \
  for network traffic processing. WARNING: disabling hardware offloading \
- can reduce network performance. Disabling hardware offloading is only \
- recommended when the interface is managing jails, plugins, or virtual \
- machines.'),
+ can reduce network performance.'),
 
   disable_offload_capabilities_warning_title: T('Disable Hardware Offloading'),
   disable_offload_capabilities_warning_msg: T('Disabling hardware offloading can severely reduce\
- network performance. Disabling this feature is only recommended when an interface is used for\
- plugin, jail, or virtual machine networking.'),
+ network performance.'),
 
   alias_address_placeholder: T('IP Address'),
   alias_address_tooltip: T('Define an alias for the interface \

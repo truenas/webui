@@ -619,7 +619,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
           'ipmi.identify',
           'seconds',
         );
-        event.stopPropagation();
       },
     }, {
       icon: 'launch',
@@ -627,7 +626,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       matTooltip: T('Manage'),
       onClick: (row: IpmiRow) => {
         window.open(`http://${row.ipaddress}`);
-        event.stopPropagation();
       },
     }];
   }
@@ -698,7 +696,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               );
             },
           );
-        event.stopPropagation();
       },
     },
     {
@@ -737,7 +734,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               );
             },
           );
-        event.stopPropagation();
       },
     }];
   }

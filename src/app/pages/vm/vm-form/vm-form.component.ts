@@ -254,7 +254,7 @@ export class VmFormComponent implements FormConfiguration {
       const filteredValue = this.storageService.convertHumanStringToNum(value);
       mem['hasErrors'] = false;
       mem['errors'] = '';
-      if (isNaN(filteredValue)) {
+      if (Number.isNaN(filteredValue)) {
         mem['hasErrors'] = true;
         mem['errors'] = globalHelptext.human_readable.input_error;
       }
