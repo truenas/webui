@@ -853,8 +853,8 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           }
           if (data[key]) {
             if (type_prop.length === 1) {
-              for (let i = 0; i < data[key].length; i++) {
-                (cert_extensions as any)[type_prop[0]][data[key][i]] = true;
+              for (const item of data[key]) {
+                (cert_extensions as any)[type_prop[0]][item] = true;
               }
             } else {
               (cert_extensions as any)[type_prop[0]][type_prop[1]] = data[key];

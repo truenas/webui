@@ -86,12 +86,12 @@ export class FibreChannelPortComponent implements OnInit {
   ) {
     const targetField = _.find(this.fieldSets[1].config, { name: 'target' }) as FormSelectConfig;
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
-      for (let i = 0; i < targets.length; i++) {
-        targetField.options.push({
-          label: targets[i].name,
-          value: targets[i].id,
-        });
-      }
+      targetField.options = targets.map((target) => {
+        return {
+          label: target.name,
+          value: target.id,
+        };
+      });
     },
     (err) => {
       new EntityUtils().handleWSError(this, err, this.parent.dialogService);
@@ -99,12 +99,11 @@ export class FibreChannelPortComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    for (let i = 0; i < this.fieldSets.length; i++) {
-      const fieldset = this.fieldSets[i];
+    this.fieldSets.forEach((fieldset) => {
       if (fieldset.config) {
         this.fieldConfig = this.fieldConfig.concat(fieldset.config);
       }
-    }
+    });
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     const targetField = _.find(this.fieldConfig, { name: 'target' });

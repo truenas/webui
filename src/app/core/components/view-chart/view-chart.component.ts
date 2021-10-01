@@ -75,13 +75,13 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
         this.showLegendValues = true;
       }
       const time = raw[0].x;
-      for (let index = 0; index < this.legend.length; index++) {
-        for (let i = 0; i < raw.length; i++) {
-          if (this.legend[index].name == raw[i].name) {
-            this.legend[index].value = raw[i].value;
+      for (const legend of this.legend) {
+        for (const item of raw) {
+          if (legend.name == item.name) {
+            legend.value = item.value;
           }
         }
-        this.legend[index].x = time;
+        legend.x = time;
       }
       return '<div style="display:none">' + time + '</div>';
     },
@@ -120,18 +120,17 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
     } else {
       const result: any[] = [];
 
-      for (let i = 0; i < d.length; i++) {
+      d.forEach((data) => {
         // setup data
-        const item = d[i];
-        const legend = [item.legend];
-        const dataObj = legend.concat(item.data);
+        const legend = [data.legend];
+        const dataObj = legend.concat(data.data);
         result.push(dataObj);
 
         const legendHtmlItem: Legend = {
-          swatch: '', name: item.legend, value: 'empty', x: 'empty', visible: true,
+          swatch: '', name: data.legend, value: 'empty', x: 'empty', visible: true,
         };
         if (this.chartType == 'donut' || this.chartType == 'pie') {
-          legendHtmlItem.value = d[i].data[0];
+          legendHtmlItem.value = data.data[0];
           this.showLegendValues = true;
         }
 
@@ -143,7 +142,7 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
           const dupe = this.legend[legendIndex];
           dupe.value = legendHtmlItem.value;
         }
-      }
+      });
       this._data = result;
 
       this.render();

@@ -167,14 +167,14 @@ export class KmipComponent implements FormConfiguration {
     const certificateAuthorityField = _.find(certificateFieldset.config, { name: 'certificate_authority' }) as FormSelectConfig;
 
     this.systemGeneralService.getCA().pipe(untilDestroyed(this)).subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        certificateAuthorityField.options.push({ label: res[i].name, value: res[i].id });
-      }
+      res.forEach((authority) => {
+        certificateAuthorityField.options.push({ label: authority.name, value: authority.id });
+      });
     });
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        certificateField.options.push({ label: res[i].name, value: res[i].id });
-      }
+      res.forEach((certificate) => {
+        certificateField.options.push({ label: certificate.name, value: certificate.id });
+      });
     });
   }
 

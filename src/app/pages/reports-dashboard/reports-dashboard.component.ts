@@ -114,9 +114,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
         const allReports: any[] = evt.data.map((report) => {
           const list = [];
           if ((report as any).identifiers) {
-            for (let i = 0; i < (report as any).identifiers.length; i++) {
-              list.push(true);
-            }
+            (report as any).identifiers.forEach(() => list.push(true));
           } else {
             list.push(true);
           }

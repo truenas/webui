@@ -391,10 +391,10 @@ export class UserFormComponent implements FormConfiguration {
       this.loader.callDone.emit();
       this.group = this.fieldSets.config('group') as FormSelectConfig;
       this.groups = this.fieldSets.config('groups') as FormSelectConfig;
-      for (let i = 0; i < groups.length; i++) {
-        this.group.options.push({ label: groups[i].group, value: groups[i].id });
-        this.groups.options.push({ label: groups[i].group, value: groups[i].id });
-      }
+      groups.forEach((group) => {
+        this.group.options.push({ label: group.group, value: group.id });
+        this.groups.options.push({ label: group.group, value: group.id });
+      });
     });
 
     /* list users */

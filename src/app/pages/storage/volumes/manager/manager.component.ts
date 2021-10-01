@@ -352,16 +352,16 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
       // assign disks for suggested layout
       let largest_capacity = 0;
-      for (let i = 0; i < this.disks.length; i++) {
-        if (this.disks[i].real_capacity > largest_capacity) {
-          largest_capacity = this.disks[i].real_capacity;
+      this.disks.forEach((disk) => {
+        if (disk.real_capacity > largest_capacity) {
+          largest_capacity = disk.real_capacity;
         }
-      }
-      for (let i = 0; i < this.disks.length; i++) {
-        if (this.disks[i].real_capacity === largest_capacity) {
-          this.suggestable_disks.push(this.disks[i]);
+      });
+      this.disks.forEach((disk) => {
+        if (disk.real_capacity === largest_capacity) {
+          this.suggestable_disks.push(disk);
         }
-      }
+      });
       this.orig_suggestable_disks = Array.from(this.suggestable_disks);
       this.can_suggest = this.suggestable_disks.length < 11;
 
@@ -488,12 +488,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   getDuplicableDisks(): void {
     this.duplicable_disks = [];
-    for (let i = 0; i < this.disks.length; i++) {
-      const disk = this.disks[i];
+    this.disks.forEach((disk) => {
       if (disk.size === this.first_data_vdev_disksize && disk.type === this.first_data_vdev_disktype) {
         this.duplicable_disks.push(disk);
       }
-    }
+    });
     if (!this.first_data_vdev_disknum || this.duplicable_disks.length < this.first_data_vdev_disknum) {
       this.canDuplicate = false;
     } else {
@@ -767,9 +766,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   suggestRedundancyLayout(): void {
-    for (let i = 0; i < this.suggestable_disks.length; i++) {
-      this.vdevComponents.first.addDisk(this.suggestable_disks[i]);
-    }
+    this.suggestable_disks.forEach((disk) => {
+      this.vdevComponents.first.addDisk(disk);
+    });
     while (this.suggestable_disks.length > 0) {
       this.removeDisk(this.suggestable_disks[0]);
       this.suggestable_disks.shift();

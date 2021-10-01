@@ -106,12 +106,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
     protected validationService: ValidationService,
   ) {
     if (typeof (this.classId) !== 'undefined' && this.classId !== '' && volumeData && volumeData['children']) {
-      this.tableData = [];
-      for (let i = 0; i < volumeData['children'].length; i++) {
-        const child = volumeData['children'][i];
+      this.tableData = volumeData['children'].map((child) => {
         child.parent = volumeData;
-        this.tableData.push(this.dataHandler(child));
-      }
+        return this.dataHandler(child);
+      });
     }
   }
 
@@ -1139,8 +1137,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           onClick: (row: VolumesListDataset) => {
             // open encryption options dialog
             let key_child = false;
-            for (let i = 0; i < this.datasetData.length; i++) {
-              const ds = this.datasetData[i];
+            for (const ds of this.datasetData) {
               if (ds['id'].startsWith(row.id) && ds.id !== row.id
                 && ds.encryption_root && (ds.id === ds.encryption_root)
                 && ds.key_format && ds.key_format.value && ds.key_format.value === 'HEX') {
@@ -1256,15 +1253,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 const all_encryption_fields = ['encryption_type', 'passphrase', 'confirm_passphrase', 'pbkdf2iters', 'generate_key', 'key'];
 
                 if (inherit_encryption_fg.value) { // if already inheriting show as inherit
-                  for (let i = 0; i < all_encryption_fields.length; i++) {
-                    entityDialog.setDisabled(all_encryption_fields[i], true, true);
-                  }
+                  all_encryption_fields.forEach((field) => {
+                    entityDialog.setDisabled(field, true, true);
+                  });
                 }
                 inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this, 'destroy')).subscribe((inherit) => {
                   if (inherit) {
-                    for (let i = 0; i < all_encryption_fields.length; i++) {
-                      entityDialog.setDisabled(all_encryption_fields[i], inherit, inherit);
-                    }
+                    all_encryption_fields.forEach((field) => {
+                      entityDialog.setDisabled(field, inherit, inherit);
+                    });
                   } else {
                     entityDialog.setDisabled('encryption_type', inherit, inherit);
                     if (passphrase_parent || key_child) { // keep hidden if passphrase parent;
@@ -1515,11 +1512,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
     node.children = [];
 
     if (data.children) {
-      for (let i = 0; i < data.children.length; i++) {
-        const child = data.children[i];
+      node.children = data.children.map((child) => {
         child.parent = data;
-        node.children.push(this.dataHandler(child));
-      }
+        return this.dataHandler(child);
+      });
       node.children.sort((a, b) => a.data.id.localeCompare(b.data.id));
     }
     delete node.data.children;

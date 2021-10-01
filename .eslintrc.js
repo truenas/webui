@@ -154,6 +154,7 @@ module.exports = {
         "@typescript-eslint/consistent-type-assertions": ["error"],
         "@typescript-eslint/no-implicit-any-catch": ["error"],
         "@typescript-eslint/no-unnecessary-boolean-literal-compare": ["error"],
+        "@typescript-eslint/prefer-for-of": ["error"],
         "@angular-eslint/use-component-view-encapsulation": ["error"],
         "@typescript-eslint/no-unused-vars": "off",
         "unused-imports/no-unused-imports": "error",

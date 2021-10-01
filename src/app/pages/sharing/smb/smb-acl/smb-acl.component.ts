@@ -180,13 +180,13 @@ export class SMBAclComponent implements FormConfiguration {
   }
 
   resourceTransformIncomingRestData(data: any): any {
-    for (let i = 0; i < data['share_acl'].length; i++) {
-      if (data['share_acl'][i]['ae_who_name']) {
-        data['share_acl'][i]['ae_who_name_domain'] = data['share_acl'][i]['ae_who_name']['domain'];
-        data['share_acl'][i]['ae_who_name_name'] = data['share_acl'][i]['ae_who_name']['name'];
-        delete data['share_acl'][i]['ae_who_name'];
+    data.share_acl.forEach((acl: any) => {
+      if (acl['ae_who_name']) {
+        acl['ae_who_name_domain'] = acl['ae_who_name']['domain'];
+        acl['ae_who_name_name'] = acl['ae_who_name']['name'];
+        delete acl['ae_who_name'];
       }
-    }
+    });
     return data;
   }
 

@@ -252,9 +252,9 @@ export class ConfigurationComponent implements FormConfiguration {
     this.entityEdit = entityEdit;
     if ([ProductType.Enterprise, ProductType.ScaleEnterprise].includes(window.localStorage.getItem('product_type') as ProductType)) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => { // fixme, stupid race condition makes me need to call this again
-        for (let i = 0; i < this.failover_fields.length; i++) {
-          entityEdit.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
-        }
+        this.failover_fields.forEach((field) => {
+          entityEdit.setDisabled(field, !is_ha, !is_ha);
+        });
       });
     }
     this.entityEdit.submitFunction = this.submitFunction;

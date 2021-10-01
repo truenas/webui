@@ -565,12 +565,11 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   private getCalendarCells(): any[] {
     const rows = this.calendar.nativeElement.children[0].children[1].children;
     let cells: any[] = [];
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i].childNodes;
+    for (const row of rows) {
       const tds = [];
-      for (let index = 0; index < row.length; index++) {
-        if (row[index].tagName == 'TD') {
-          tds.push(row[index]);
+      for (const node of row.childNodes) {
+        if (node.tagName == 'TD') {
+          tds.push(node);
         }
       }
       cells = cells.concat(tds);
