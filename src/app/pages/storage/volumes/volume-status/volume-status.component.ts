@@ -591,7 +591,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     if (data.children) {
       if (data.children.length === 0 && vdev_type === undefined) {
         const extend_action = this.extendAction();
-        node.data.actions.push(extend_action[0]);
+        node.data.actions[0].actions.push(extend_action[0]);
       }
       vdev_type = (data as any).name;
       for (let i = 0; i < data.children.length; i++) {
