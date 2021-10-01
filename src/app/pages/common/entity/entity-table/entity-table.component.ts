@@ -424,20 +424,18 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       this.dataSource.filter = '';
     }
 
-    setTimeout(() => {
-      if (this.dataSource.filteredData && this.dataSource.filteredData.length) {
-        this.isTableEmpty = false;
-      } else {
-        this.isTableEmpty = true;
-        this.configureEmptyTable(
-          this.dataSource.filter
-            ? EmptyType.NoSearchResults
-            : this.firstUse
-              ? EmptyType.FirstUse
-              : EmptyType.NoPageData,
-        );
-      }
-    }, 3000);
+    if (this.dataSource.filteredData && this.dataSource.filteredData.length) {
+      this.isTableEmpty = false;
+    } else {
+      this.isTableEmpty = true;
+      this.configureEmptyTable(
+        this.dataSource.filter
+          ? EmptyType.NoSearchResults
+          : this.firstUse
+            ? EmptyType.FirstUse
+            : EmptyType.NoPageData,
+      );
+    }
 
     if (this.dataSource.paginator && this.conf.config.paging) {
       this.dataSource.paginator.firstPage();
