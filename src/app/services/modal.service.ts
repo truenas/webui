@@ -63,13 +63,13 @@ export class ModalService {
       this.getRow$.next(rowid);
     }
     // open modal specified by id
-    const modal = this.modals.filter((x) => x.id === id)[0];
+    const modal = this.modals.find((x) => x.id === id);
     modal.open(conf);
   }
 
   close(id: string, error?: any, response?: any): Promise<boolean> {
     // close modal specified by id
-    const modal = this.modals.filter((x) => x.id === id)[0];
+    const modal = this.modals.find((x) => x.id === id);
     if (error) {
       this.onClose$.error(error);
     } else if (response) {

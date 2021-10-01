@@ -72,7 +72,7 @@ export class R50 extends Chassis {
 
             return undefined;
           });
-          return test.filter((v) => v !== undefined)[0];
+          return test.find((v) => v !== undefined);
         };
 
         const currentColumn: number = getCurrentColumn();
