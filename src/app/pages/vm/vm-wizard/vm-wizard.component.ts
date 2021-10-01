@@ -23,6 +23,8 @@ import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Statfs } from 'app/interfaces/filesystem-stat.interface';
+import { VmDevice } from 'app/interfaces/vm-device.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   FieldConfig, FormParagraphConfig, FormSelectConfig, FormUploadConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -1121,25 +1123,7 @@ export class VMWizardComponent implements WizardConfiguration {
           },
           (error) => {
             setTimeout(() => {
-              this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe(
-                () => {
-                  this.loader.close();
-                  this.dialogService.errorReport(
-                    T('Error creating VM.'),
-                    T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason,
-                    error.trace.formatted,
-                  );
-                },
-                (err) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(
-                    T('Error creating VM.'),
-                    T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason,
-                    error.trace.formatted,
-                  );
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
-                },
-              );
+              this.deleteVm(vm_res.id, error);
             }, 1000);
           },
         );
@@ -1184,31 +1168,7 @@ export class VMWizardComponent implements WizardConfiguration {
           },
           (error) => {
             setTimeout(() => {
-              this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe(
-                () => {
-                  this.loader.close();
-                  this.dialogService.errorReport(
-                    T('Error creating VM.'),
-                    this.translate.instant(
-                      'Error while creating the {device} device.\n {reason}',
-                      { device: error.device.dtype, reason: error.reason },
-                    ),
-                    error.trace.formatted,
-                  );
-                },
-                (err) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(
-                    T('Error creating VM.'),
-                    this.translate.instant(
-                      'Error while creating the {device} device.\n {reason}',
-                      { device: error.device.dtype, reason: error.reason },
-                    ),
-                    error.trace.formatted,
-                  );
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
-                },
-              );
+              this.deleteVm(vm_res.id, error);
             }, 1000);
           },
         );
@@ -1217,5 +1177,33 @@ export class VMWizardComponent implements WizardConfiguration {
         this.dialogService.errorReport(T('Error creating VM.'), error.reason, error.trace.formatted);
       });
     }
+  }
+
+  deleteVm(id: number, error: WebsocketError & { device: VmDevice }): void {
+    this.ws.call('vm.delete', [id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe(
+      () => {
+        this.loader.close();
+        this.dialogService.errorReport(
+          this.translate.instant('Error creating VM.'),
+          this.translate.instant(
+            'Error while creating the {device} device.\n {reason}',
+            { device: error.device.dtype, reason: error.reason },
+          ),
+          error.trace.formatted,
+        );
+      },
+      (err) => {
+        this.loader.close();
+        this.dialogService.errorReport(
+          this.translate.instant('Error creating VM.'),
+          this.translate.instant(
+            'Error while creating the {device} device.\n {reason}',
+            { device: error.device.dtype, reason: error.reason },
+          ),
+          error.trace.formatted,
+        );
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      },
+    );
   }
 }
