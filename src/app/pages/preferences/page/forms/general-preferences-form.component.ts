@@ -143,10 +143,9 @@ export class GeneralPreferencesFormComponent implements EmbeddedFormConfig, OnIn
 
   setThemeOptions(): void {
     this.themeOptions.splice(0, this.themeOptions.length);
-    for (let i = 0; i < this.themeService.allThemes.length; i++) {
-      const theme = this.themeService.allThemes[i];
+    this.themeService.allThemes.forEach((theme) => {
       this.themeOptions.push({ label: theme.label, value: theme.name });
-    }
+    });
   }
 
   onPreferences(prefs: any): void {

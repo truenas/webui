@@ -175,7 +175,7 @@ export class StorageService {
 
     // Select strings that Date.parse can turn into a number (ie, that are a legit date)
     } else if (typeof (tempArr[n]) === 'string'
-      && !isNaN(Date.parse(tempArr[n]))) {
+      && !Number.isNaN(Date.parse(tempArr[n]))) {
       let timeArr = [];
       for (const i of tempArr) {
         timeArr.push(Date.parse(i));

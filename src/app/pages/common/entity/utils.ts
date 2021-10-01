@@ -80,7 +80,7 @@ export class EntityUtils {
     dialogService?: DialogService,
     targetFieldConfig?: FieldConfig[],
   ): void {
-    let dialog;
+    let dialog: DialogService;
     if (dialogService) {
       dialog = dialogService;
     } else if (entity) {
@@ -95,9 +95,9 @@ export class EntityUtils {
       if ((res.extra as any).excerpt) {
         this.errorReport(res, dialog);
       }
-      for (let i = 0; i < res.extra.length; i++) {
-        const field = res.extra[i][0].split('.')[1];
-        const error = res.extra[i][1];
+      res.extra.forEach((extraItem) => {
+        const field = extraItem[0].split('.')[1];
+        const error = extraItem[1];
 
         let fc = _.find(entity.fieldConfig, { name: field })
           || (entity.getErrorField ? entity.getErrorField(field) : undefined);
@@ -137,7 +137,7 @@ export class EntityUtils {
         } else {
           this.errorReport(res, dialog);
         }
-      }
+      });
     } else {
       this.errorReport(res, dialog);
     }

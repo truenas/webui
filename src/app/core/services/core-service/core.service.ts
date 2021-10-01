@@ -71,9 +71,7 @@ export class CoreService {
       evt.sender = 'null';
     }
 
-    for (let i = 0; i < this.dispatchTable.length; i++) {
-      const reg = this.dispatchTable[i]; // subscription
-
+    this.dispatchTable.forEach((reg) => {
       let subscriptionType = 'Any';
       if (reg.eventName && reg.sender) {
         subscriptionType = 'NameSender';
@@ -92,7 +90,7 @@ export class CoreService {
       } else if (subscriptionType == 'Any') {
         reg.observable$.next(evt);
       }
-    }
+    });
 
     return this;
   }

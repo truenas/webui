@@ -291,7 +291,6 @@ export class CertificatesDashComponent implements OnInit {
               new EntityUtils().handleWSError(this, err, this.dialogService);
             },
           );
-          event.stopPropagation();
         },
       },
     ];
@@ -333,7 +332,6 @@ export class CertificatesDashComponent implements OnInit {
       matTooltip: T('Create ACME Certificate'),
       onClick: (rowinner: Certificate) => {
         this.modalService.openInSlideIn(CertificateAcmeAddComponent, rowinner.id);
-        event.stopPropagation();
       },
     };
 
@@ -350,7 +348,6 @@ export class CertificatesDashComponent implements OnInit {
       onClick: (rowinner: CertificateAuthority) => {
         this.dialogService.dialogForm(this.signCSRFormConf);
         this.caId = rowinner.id;
-        event.stopPropagation();
       },
     };
 

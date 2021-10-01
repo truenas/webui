@@ -65,9 +65,9 @@ export class EntityDashboardComponent implements OnInit {
         this.remove('multipaths');
       }
     });
-    for (let i = 0; i < exclude.length; i++) {
-      this.remove(exclude[i]);
-    }
+    exclude.forEach((element) => {
+      this.remove(element);
+    });
   }
 
   remove(element: string): void {

@@ -161,12 +161,12 @@ export class FormExplorerComponent implements Field, OnInit {
 
   valueHandler(selectedTreeNodes: TreeNode[]): void {
     const res: string[] = [];
-    for (let i = 0; i < selectedTreeNodes.length; i++) {
-      if (selectedTreeNodes[i] == undefined) {
-        continue;
+    selectedTreeNodes.forEach((node) => {
+      if (node == undefined) {
+        return;
       }
-      if (selectedTreeNodes[i].parent.isAllSelected && this.config.tristate) {
-        let parent = selectedTreeNodes[i];
+      if (node.parent.isAllSelected && this.config.tristate) {
+        let parent = node;
         while (
           parent && !parent.isRoot
           && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected
@@ -176,12 +176,12 @@ export class FormExplorerComponent implements Field, OnInit {
         if (!res.includes(parent.data.name)) {
           res.push(parent.data.name);
         }
-      } else if (selectedTreeNodes[i].isAllSelected) {
-        if (selectedTreeNodes[i].data.name !== '') {
-          res.push(selectedTreeNodes[i].data.name);
+      } else if (node.isAllSelected) {
+        if (node.data.name !== '') {
+          res.push(node.data.name);
         }
       }
-    }
+    });
     this.group.controls[this.config.name].setValue(res);
   }
 

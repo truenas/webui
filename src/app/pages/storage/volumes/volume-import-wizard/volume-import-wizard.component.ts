@@ -253,11 +253,9 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<PoolFindResult[]>) => {
       if (res && res.result) {
-        this.guid.options = [];
-        const result = res.result;
-        for (let i = 0; i < result.length; i++) {
-          this.guid.options.push({ label: result[i].name + ' | ' + result[i].guid, value: result[i].guid });
-        }
+        this.guid.options = res.result.map((pool) => {
+          return { label: pool.name + ' | ' + pool.guid, value: pool.guid };
+        });
       }
       dialogRef.close(false);
     });
@@ -295,8 +293,8 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       this.passphrase_fg = entityWizard.formArray.get([1]).get('passphrase') as FormGroup;
 
       this.ws.call('disk.get_encrypted', [{ unused: true }]).pipe(untilDestroyed(this)).subscribe((res) => {
-        for (let i = 0; i < res.length; i++) {
-          this.devices.options.push({ label: res[i].name, value: res[i].dev });
+        for (const disk of res) {
+          this.devices.options.push({ label: disk.name, value: disk.dev });
         }
       });
     }

@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import helptext from 'app/helptext/system/cron-form';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -111,12 +110,10 @@ export class CronFormComponent implements FormConfiguration {
   constructor(protected userService: UserService, protected modalService: ModalService) {}
 
   updateUserSearchOptions(value = '', parent: this): void {
-    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      parent.user_field.searchOptions = users;
+    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((users) => {
+      parent.user_field.searchOptions = users.map((user) => {
+        return { label: user.username, value: user.username };
+      });
     });
   }
 
@@ -128,11 +125,11 @@ export class CronFormComponent implements FormConfiguration {
 
     // Setup user field options
     this.user_field = _.find(this.fieldSets[0].config, { name: 'user' }) as FormComboboxConfig;
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
-      for (let i = 0; i < items.length; i++) {
+    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
+      for (const user of users) {
         this.user_field.options.push({
-          label: items[i].username,
-          value: items[i].username,
+          label: user.username,
+          value: user.username,
         });
       }
     });

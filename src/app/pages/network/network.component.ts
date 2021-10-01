@@ -564,29 +564,26 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       // TODO: Replace with probably enum for link_state.
       transformed['link_state'] = networkInterface['state']['link_state'].replace('LINK_STATE_', '');
       const addresses = new Set([]);
-      for (let j = 0; j < transformed['aliases'].length; j++) {
-        const alias = transformed['aliases'][j];
+      transformed.aliases.forEach((alias) => {
         // TODO: See if checks can be removed or replace with enum.
         if (alias.type.startsWith('INET')) {
           addresses.add(alias.address + '/' + alias.netmask);
         }
-      }
+      });
 
       if (transformed['ipv4_dhcp'] || transformed['ipv6_auto']) {
-        for (let j = 0; j < transformed['state']['aliases'].length; j++) {
-          const alias = transformed['state']['aliases'][j];
+        transformed.state.aliases.forEach((alias) => {
           if (alias.type.startsWith('INET')) {
             addresses.add(alias.address + '/' + alias.netmask);
           }
-        }
+        });
       }
       if (transformed.hasOwnProperty('failover_aliases')) {
-        for (let j = 0; j < transformed['failover_aliases'].length; j++) {
-          const alias = transformed['failover_aliases'][j];
+        transformed.failover_aliases.forEach((alias) => {
           if (alias.type.startsWith('INET')) {
             addresses.add(alias.address + '/' + alias.netmask);
           }
-        }
+        });
       }
       transformed['addresses'] = Array.from(addresses);
       if (networkInterface.type === NetworkInterfaceType.Physical) {
@@ -622,7 +619,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
           'ipmi.identify',
           'seconds',
         );
-        event.stopPropagation();
       },
     }, {
       icon: 'launch',
@@ -630,7 +626,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       matTooltip: T('Manage'),
       onClick: (row: IpmiRow) => {
         window.open(`http://${row.ipaddress}`);
-        event.stopPropagation();
       },
     }];
   }
@@ -701,7 +696,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               );
             },
           );
-        event.stopPropagation();
       },
     },
     {
@@ -740,7 +734,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               );
             },
           );
-        event.stopPropagation();
       },
     }];
   }

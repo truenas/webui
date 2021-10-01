@@ -250,7 +250,7 @@ export class VMWizardComponent implements WizardConfiguration {
             this.memoryValidator('memory'),
             (control: FormControl): ValidationErrors => {
               const config = this.wizardConfig.find((c) => c.label === helptext.vcpus_label).fieldConfig.find((c) => c.name === 'memory');
-              const errors = control.value && isNaN(this.storageService.convertHumanStringToNum(control.value))
+              const errors = control.value && Number.isNaN(this.storageService.convertHumanStringToNum(control.value))
                 ? { invalid_byte_string: true }
                 : null;
 
@@ -333,7 +333,7 @@ export class VMWizardComponent implements WizardConfiguration {
             this.volSizeValidator('volsize'),
             (control: FormControl): ValidationErrors => {
               const config = this.wizardConfig.find((c) => c.label === helptext.disks_label).fieldConfig.find((c) => c.name === 'volsize');
-              const errors = control.value && isNaN(this.storageService.convertHumanStringToNum(control.value, false, 'mgtp'))
+              const errors = control.value && Number.isNaN(this.storageService.convertHumanStringToNum(control.value, false, 'mgtp'))
                 ? { invalid_byte_string: true }
                 : null;
 
@@ -657,7 +657,7 @@ export class VMWizardComponent implements WizardConfiguration {
       }
 
       this.getFormControlFromFieldName('memory').valueChanges.pipe(untilDestroyed(this)).subscribe((memory) => {
-        this.summary[T('Memory')] = isNaN(this.storageService.convertHumanStringToNum(memory))
+        this.summary[T('Memory')] = Number.isNaN(this.storageService.convertHumanStringToNum(memory))
           ? '0 MiB'
           : this.storageService.humanReadable;
       });
@@ -942,7 +942,7 @@ export class VMWizardComponent implements WizardConfiguration {
   blurEventForMemory(): void {
     const enteredVal = this.entityWizard.formGroup.value.formArray[1].memory;
     const vm_memory_requested = this.storageService.convertHumanStringToNum(enteredVal);
-    if (isNaN(vm_memory_requested)) {
+    if (Number.isNaN(vm_memory_requested)) {
       console.error(vm_memory_requested); // leaves form in previous error state
     } else if (enteredVal.replace(/\s/g, '').match(/[^0-9]/g) === null) {
       this.entityWizard.formArray.get([1]).get('memory')
@@ -961,7 +961,7 @@ export class VMWizardComponent implements WizardConfiguration {
       this.entityWizard.formArray.get([2]).get('volsize').setValue(this.storageService.humanReadable);
       _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['hasErrors'] = false;
       _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['errors'] = '';
-    } else if (isNaN(volsize)) {
+    } else if (Number.isNaN(volsize)) {
       console.error(volsize); // leaves form in previous error state
     } else {
       this.entityWizard.formArray.get([2]).get('volsize').setValue('1 MiB');

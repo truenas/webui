@@ -342,7 +342,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
           item.type = entityDialog.formValue.type;
         });
 
-        this.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(parent)).subscribe(
+        this.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             entityDialog.dialogRef.close(true);
             this.generateManualTestSummary(res);
@@ -362,15 +362,15 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     let fail_note = '<h4>Errors:</h4>';
     let hasFailNote = false;
 
-    for (let i = 0; i < res.length; i++) {
-      if (res[i].expected_result_time) {
+    res.forEach((test) => {
+      if (test.expected_result_time) {
         hasSuccessNote = true;
-        success_note += `<b>${res[i].disk}</b>: ${this.localeService.formatDateTime(res[i].expected_result_time.$date)}<br>`;
-      } else if (res[i].error) {
+        success_note += `<b>${test.disk}</b>: ${this.localeService.formatDateTime(test.expected_result_time.$date)}<br>`;
+      } else if (test.error) {
         hasFailNote = true;
-        fail_note += `<b>${res[i].disk}</b><br>${res[i].error}<br>`;
+        fail_note += `<b>${test.disk}</b><br>${test.error}<br>`;
       }
-    }
+    });
     this.dialogService.info(
       T('Manual Test Summary'),
       (hasSuccessNote ? success_note + '<br>' : '') + (hasFailNote ? fail_note : ''),

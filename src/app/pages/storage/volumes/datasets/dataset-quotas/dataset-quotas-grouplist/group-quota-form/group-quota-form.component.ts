@@ -7,7 +7,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormChipConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -181,7 +180,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
       formField['hasErrors'] = false;
       formField['errors'] = '';
-      if (filteredValue !== undefined && isNaN(filteredValue)) {
+      if (filteredValue !== undefined && Number.isNaN(filteredValue)) {
         formField['hasErrors'] = true;
         formField['errors'] = helptext.shared.input_error;
       }
@@ -197,11 +196,9 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
 
   updateSearchOptions(value = '', parent: this): void {
     parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
-      parent.entryField.searchOptions = groupOptions;
+      parent.entryField.searchOptions = groups.map((group) => {
+        return { label: group.group, value: group.group };
+      });
     });
   }
 

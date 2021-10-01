@@ -176,13 +176,13 @@ export class TargetFormComponent implements FormConfiguration {
     const promise1 = new Promise((resolve) => {
       this.iscsiService.listPortals().toPromise().then(
         (portals) => {
-          for (let i = 0; i < portals.length; i++) {
-            let label = String(portals[i].tag);
-            if (portals[i].comment) {
-              label += ' (' + portals[i].comment + ')';
+          portals.forEach((portal) => {
+            let label = String(portal.tag);
+            if (portal.comment) {
+              label += ' (' + portal.comment + ')';
             }
-            portalGroupField.options.push({ label, value: portals[i].id });
-          }
+            portalGroupField.options.push({ label, value: portal.id });
+          });
           resolve(true);
         },
         () => {
@@ -194,13 +194,13 @@ export class TargetFormComponent implements FormConfiguration {
       this.iscsiService.listInitiators().toPromise().then(
         (initiatorsRes) => {
           initiatorGroupField.options.push({ label: 'None', value: null });
-          for (let i = 0; i < initiatorsRes.length; i++) {
-            const optionLabel = initiatorsRes[i].id
+          initiatorsRes.forEach((initiator) => {
+            const optionLabel = initiator.id
               + ' ('
-              + (initiatorsRes[i].initiators.length === 0 ? 'ALL Initiators Allowed' : initiatorsRes[i].initiators.toString())
+              + (initiator.initiators.length === 0 ? 'ALL Initiators Allowed' : initiator.initiators.toString())
               + ')';
-            initiatorGroupField.options.push({ label: optionLabel, value: initiatorsRes[i].id });
-          }
+            initiatorGroupField.options.push({ label: optionLabel, value: initiator.id });
+          });
           resolve(true);
         },
         () => {

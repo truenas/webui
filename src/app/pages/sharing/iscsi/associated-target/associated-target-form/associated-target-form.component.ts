@@ -93,17 +93,17 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     this.target_control = _.find(this.fieldConfig, { name: 'target' }) as FormSelectConfig;
     this.target_control.options.push({ label: '----------', value: '' });
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
-      for (let i = 0; i < targets.length; i++) {
-        this.target_control.options.push({ label: targets[i].name, value: targets[i].id });
-      }
+      targets.forEach((target) => {
+        this.target_control.options.push({ label: target.name, value: target.id });
+      });
     });
 
     this.extent_control = _.find(this.fieldConfig, { name: 'extent' }) as FormSelectConfig;
     this.extent_control.options.push({ label: '----------', value: '' });
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
-      for (let i = 0; i < extents.length; i++) {
-        this.extent_control.options.push({ label: extents[i].name, value: extents[i].id });
-      }
+      extents.forEach((extent) => {
+        this.extent_control.options.push({ label: (extent).name, value: (extent).id });
+      });
     });
   }
 

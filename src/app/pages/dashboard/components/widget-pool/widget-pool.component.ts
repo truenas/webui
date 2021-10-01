@@ -217,8 +217,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     this.core.register({ observerClass: this, eventName: 'MultipathData' }).pipe(untilDestroyed(this)).subscribe((evt: MultipathDataEvent) => {
       this.currentMultipathDetails = evt.data[0];
 
-      const activeDisk = evt.data[0].children.filter((prop) => prop.status == 'ACTIVE');
-      this.core.emit({ name: 'DisksRequest', data: [[['name', '=', activeDisk[0].name]]] });
+      const activeDisk = evt.data[0].children.find((prop) => prop.status == 'ACTIVE');
+      this.core.emit({ name: 'DisksRequest', data: [[['name', '=', activeDisk.name]]] });
     });
 
     this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
@@ -259,7 +259,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
 
     let usedValue;
-    if (isNaN(this.volumeData.used)) {
+    if (Number.isNaN(this.volumeData.used)) {
       usedValue = this.volumeData.used;
     } else {
       usedValue = filesize(this.volumeData.used, { exponent: 3 });
@@ -271,7 +271,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       return 0;
     }
 
-    if (!isNaN(this.volumeData.avail)) {
+    if (!Number.isNaN(this.volumeData.avail)) {
       this.voldataavail = true;
     }
 

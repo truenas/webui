@@ -246,7 +246,7 @@ export class ServiceSMBComponent implements FormConfiguration {
       name: global_helptext.basic_options,
       function: () => {
         this.hiddenFieldSets.forEach((setId) => (this.fieldSets.find((set) => set.name === setId).label = false));
-        this.fieldSets.filter((set) => set.name === 'divider')[0].divider = false;
+        this.fieldSets.find((set) => set.name === 'divider').divider = false;
         this.isBasicMode = !this.isBasicMode;
       },
     },
@@ -284,9 +284,9 @@ export class ServiceSMBComponent implements FormConfiguration {
     this.cifs_srv_unixcharset = otherSet.config.find((config) => config.name === 'unixcharset') as FormSelectConfig;
     this.ws.call('smb.unixcharset_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       const values = Object.values(res);
-      for (let i = 0; i < values.length; i++) {
-        this.cifs_srv_unixcharset.options.push({ label: values[i], value: values[i] });
-      }
+      values.forEach((charset) => {
+        this.cifs_srv_unixcharset.options.push({ label: charset, value: charset });
+      });
     });
 
     this.servicesService.getSmbBindIPChoices().pipe(untilDestroyed(this)).subscribe((res) => {
@@ -360,11 +360,9 @@ export class ServiceSMBComponent implements FormConfiguration {
 
   updateGroupSearchOptions(value = '', parent: this): void {
     parent.userService.groupQueryDSCache(value, true).pipe(untilDestroyed(this)).subscribe((items) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        groupOptions.push({ label: items[i].group, value: items[i].group });
-      }
-      parent.cifs_srv_admin_group.searchOptions = groupOptions;
+      parent.cifs_srv_admin_group.searchOptions = items.map((group) => {
+        return { label: group.group, value: group.group };
+      });
     });
   }
 

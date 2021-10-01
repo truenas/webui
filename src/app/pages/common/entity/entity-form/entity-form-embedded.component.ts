@@ -308,10 +308,10 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   clearErrors(): void {
-    for (let f = 0; f < this.fieldConfig.length; f++) {
-      this.fieldConfig[f]['errors'] = '';
-      this.fieldConfig[f]['hasErrors'] = false;
-    }
+    this.fieldConfig.forEach((config) => {
+      config['errors'] = '';
+      config['hasErrors'] = false;
+    });
   }
 
   isShow(id: string): boolean {

@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { IscsiPortal } from 'app/interfaces/iscsi.interface';
+import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -180,11 +180,11 @@ export class PortalFormComponent implements FormConfiguration {
     const authgroupFieldset = _.find(this.fieldSets, { class: 'authgroup' });
     this.authgroup_field = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' }) as FormSelectConfig;
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
-      for (let i = 0; i < accessRecords.length; i++) {
-        if (_.find(this.authgroup_field.options, { value: accessRecords[i].tag }) == undefined) {
-          this.authgroup_field.options.push({ label: String(accessRecords[i].tag), value: accessRecords[i].tag });
+      accessRecords.forEach((record) => {
+        if (_.find(this.authgroup_field.options, { value: record.tag }) == undefined) {
+          this.authgroup_field.options.push({ label: String(record.tag), value: record.tag });
         }
-      }
+      });
     });
   }
 
@@ -213,15 +213,15 @@ export class PortalFormComponent implements FormConfiguration {
 
   genPortalAddress(data: PortalListen[]): void {
     let ips: PortalAddress[] = [];
-    for (let i = 0; i < data.length; i++) {
-      if (data[i]['ip']) {
-        const samePortIps = data[i]['ip'].reduce(
-          (fullIps: PortalAddress[], currip: string) => fullIps.concat({ ip: currip, port: data[i]['port'] }),
+    data.forEach((portal) => {
+      if (portal['ip']) {
+        const samePortIps = portal['ip'].reduce(
+          (fullIps: PortalAddress[], currip: string) => fullIps.concat({ ip: currip, port: portal['port'] }),
           [],
         );
         ips = ips.concat(samePortIps);
       }
-    }
+    });
     this.ip = ips;
   }
 
@@ -231,18 +231,18 @@ export class PortalFormComponent implements FormConfiguration {
 
   resourceTransformIncomingRestData(data: IscsiPortal): any {
     const ports = new Map() as any;
-    const groupedIp = [];
-    for (let i = 0; i < data.listen.length; i++) {
+    const groupedIp: IscsiInterface[] = [];
+    data.listen.forEach((listen) => {
       // TODO: Incorrect usage of map. Update to .get
-      if (ports[data.listen[i].port] === undefined) {
-        ports[data.listen[i].port] = [];
+      if (ports[listen.port] === undefined) {
+        ports[listen.port] = [];
         groupedIp.push({
-          ip: ports[data.listen[i].port],
-          port: data.listen[i].port,
+          ip: ports[listen.port],
+          port: listen.port,
         });
       }
-      ports[data.listen[i].port].push(data.listen[i]['ip']);
-    }
+      ports[listen.port].push(listen['ip']);
+    });
     return {
       ...data,
       listen: groupedIp,

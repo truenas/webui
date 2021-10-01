@@ -253,8 +253,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
             );
             pool.availStr = filesize(pool.children[0].available.parsed, { standard: 'iec' });
             pool.children[0].has_encrypted_children = false;
-            for (let i = 0; i < datasets.length; i++) {
-              const ds = datasets[i];
+            for (const ds of datasets) {
               if (ds['id'].startsWith(pool.children[0].id) && ds.id !== pool.children[0].id && ds.encrypted) {
                 pool.children[0].has_encrypted_children = true;
                 break;

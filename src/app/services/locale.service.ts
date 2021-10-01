@@ -164,11 +164,11 @@ export class LocaleService {
     const ngTimeFormat = this.timeFormat === 'hh:mm:ss a' ? 'hh:mm:ss aaaaa\'m\'' : this.timeFormat;
     const tempStr = `${this.dateFormat} ${ngTimeFormat}`;
     let dateStr = '';
-    for (let i = 0; i < tempStr.length; i++) {
-      if (tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H') {
-        dateStr += tempStr[i];
+    for (const char of tempStr) {
+      if (char === 'M' || char === 'Z' || char === 'H') {
+        dateStr += char;
       } else {
-        dateStr += tempStr[i].toLowerCase();
+        dateStr += char.toLowerCase();
       }
     }
     return dateStr;

@@ -360,17 +360,16 @@ export class DatasetUnlockComponent implements FormConfiguration {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetEncryptionSummary[]>) => {
       dialogRef.close();
       // show summary dialog;
-      const errors = [];
-      const unlock = [];
+      const errors: DatasetEncryptionSummary[] = [];
+      const unlock: DatasetEncryptionSummary[] = [];
       if (res && res.result) {
-        for (let i = 0; i < res.result.length; i++) {
-          const result = res.result[i];
+        res.result.forEach((result) => {
           if (result.unlock_successful) {
             unlock.push(result);
           } else {
             errors.push(result);
           }
-        }
+        });
       }
       if (!this.dialogOpen) { // prevent dialog from opening more than once
         this.dialogOpen = true;
@@ -408,8 +407,8 @@ export class DatasetUnlockComponent implements FormConfiguration {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetUnlockResult>) => {
       dialogRef.close();
       const errors = [];
-      const skipped = [];
-      const unlock = [];
+      const skipped: { name: string }[] = [];
+      const unlock: { name: string }[] = [];
       if (res && res.result) {
         if (res.result.failed) {
           const failed = res.result.failed;
@@ -419,15 +418,15 @@ export class DatasetUnlockComponent implements FormConfiguration {
               const error = fail.error;
               const skip = fail.skipped;
               errors.push({ name: err_ds, unlock_error: error });
-              for (let i = 0; i < skip.length; i++) {
-                skipped.push({ name: skip[i] });
+              for (const name of skip) {
+                skipped.push({ name });
               }
             }
           }
         }
-        for (let i = 0; i < res.result.unlocked.length; i++) {
-          unlock.push({ name: res.result.unlocked[i] });
-        }
+        res.result.unlocked.forEach((name) => {
+          unlock.push({ name });
+        });
         if (!this.dialogOpen) { // prevent dialog from opening more than once
           this.dialogOpen = true;
           const unlockDialogRef = this.dialog.open(UnlockDialogComponent, { disableClose: true });

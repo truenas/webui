@@ -81,12 +81,11 @@ export class EntityWizardComponent implements OnInit {
 
         /* Temp patch to support both FieldSet approaches */
         const fieldSets = config.fieldSets;
-        for (let j = 0; j < fieldSets.length; j++) {
-          const fieldset = fieldSets[j];
+        fieldSets.forEach((fieldset) => {
           if (fieldset.config) {
             fieldConfig = fieldConfig.concat(fieldset.config);
           }
-        }
+        });
         config.fieldConfig = fieldConfig;
       } else {
         // const fieldConfig = this.conf.wizardConfig[i].fieldConfig;
@@ -204,11 +203,7 @@ export class EntityWizardComponent implements OnInit {
 
   isFieldsetAvailabel(fieldset: FieldSet): boolean {
     if (fieldset.config) {
-      for (let i = 0; i < fieldset.config.length; i++) {
-        if (!fieldset.config[i].isHidden) {
-          return true;
-        }
-      }
+      return fieldset.config.some((config) => !config.isHidden);
     }
     return false;
   }

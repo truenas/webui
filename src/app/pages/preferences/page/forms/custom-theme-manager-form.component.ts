@@ -10,7 +10,7 @@ import { EmbeddedFormConfig } from 'app/pages/common/entity/entity-form/entity-f
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
-import { ThemeService } from 'app/services/theme/theme.service';
+import { Theme, ThemeService } from 'app/services/theme/theme.service';
 import { T } from 'app/translate-marker';
 
 @UntilDestroy()
@@ -101,13 +101,12 @@ export class CustomThemeManagerFormComponent implements EmbeddedFormConfig, OnIn
     this.target.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       switch (evt.name) {
         case 'FormSubmitted':
-          const submission = [];
-          for (let i = 0; i < this.themeService.customThemes.length; i++) {
-            const theme = this.themeService.customThemes[i];
+          const submission: Theme[] = [];
+          this.themeService.customThemes.forEach((theme) => {
             if (!evt.data[theme.name]) {
               submission.push(theme);
             }
-          }
+          });
           this.core.emit({ name: 'ChangeCustomThemesPreference', data: submission });
           break;
       }
@@ -117,8 +116,7 @@ export class CustomThemeManagerFormComponent implements EmbeddedFormConfig, OnIn
   loadValues(key: string): void {
     const values: boolean[] = [];
 
-    for (let i = 0; i < this.themeService.customThemes.length; i++) {
-      const theme = this.themeService.customThemes[i];
+    this.themeService.customThemes.forEach((theme) => {
       switch (key) {
         case 'selectAll':
           values.push(true);
@@ -129,7 +127,7 @@ export class CustomThemeManagerFormComponent implements EmbeddedFormConfig, OnIn
         case 'favorites':
           values.push(theme.favorite);
       }
-    }
+    });
     this.values = values;
   }
 
@@ -138,8 +136,7 @@ export class CustomThemeManagerFormComponent implements EmbeddedFormConfig, OnIn
       this.customThemeFields.splice(0, this.customThemeFields.length);
     }
 
-    for (let i = 0; i < this.themeService.customThemes.length; i++) {
-      const theme = this.themeService.customThemes[i];
+    this.themeService.customThemes.forEach((theme) => {
       const field: FieldConfig = {
         type: 'checkbox',
         name: theme.name,
@@ -149,7 +146,7 @@ export class CustomThemeManagerFormComponent implements EmbeddedFormConfig, OnIn
         class: 'inline',
       };
       this.customThemeFields.push(field);
-    }
+    });
   }
 
   generateFieldConfig(): void {

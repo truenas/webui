@@ -497,7 +497,14 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
               entityDialog.dialogRef.close(true);
               this.getData();
               this.getUnusedDisk();
-              this.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + name + '.', '', 'info', true);
+
+              let diskName = row.name;
+              if (!_.startsWith(row.name, '/')) {
+                const pIndex = row.name.lastIndexOf('p');
+                diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
+              }
+
+              this.dialogService.info(helptext.extend_disk.title, helptext.extend_disk.info_dialog_content + diskName + '.', '', 'info', true);
             });
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();
@@ -584,12 +591,12 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     if (data.children) {
       if (data.children.length === 0 && vdev_type === undefined) {
         const extend_action = this.extendAction();
-        node.data.actions.push(extend_action[0]);
+        node.data.actions[0].actions.push(extend_action[0]);
       }
       vdev_type = (data as any).name;
-      for (let i = 0; i < data.children.length; i++) {
-        node.children.push(this.parseTopolgy(data.children[i], category, vdev_type));
-      }
+      data.children.forEach((child) => {
+        node.children.push(this.parseTopolgy(child, category, vdev_type));
+      });
     }
     delete node.data.children;
     return node;
@@ -610,13 +617,13 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       topoNode.expanded = true;
       topoNode.children = [];
 
-      for (let i = 0; i < pool.topology[category].length; i++) {
+      pool.topology[category].forEach((vdev) => {
         if (category != 'data') {
-          topoNode.children.push(this.parseTopolgy(pool.topology[category][i], category));
+          topoNode.children.push(this.parseTopolgy(vdev, category));
         } else {
-          node.children.push(this.parseTopolgy(pool.topology[category][i], category));
+          node.children.push(this.parseTopolgy(vdev, category));
         }
-      }
+      });
       if (category != 'data' && pool.topology[category].length > 0) {
         node.children.push(topoNode);
       }

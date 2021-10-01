@@ -621,7 +621,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // Apply
     keys.forEach((key) => {
       const value = evt.data[key];
-      const dashItem = clone.filter((w) => {
+      const dashItem = clone.find((w) => {
         if (w.identifier) {
           const spl = w.identifier.split(',');
           const name = spl[1];
@@ -630,7 +630,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return key == w.name;
       });
 
-      dashItem[0].rendered = value;
+      dashItem.rendered = value;
     });
 
     this.dashState = clone;

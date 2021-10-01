@@ -132,8 +132,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.fieldConfig = [];
       /* Temp patch to support both FieldSet approaches */
       this.fieldSets = (this.conf.fieldSets instanceof FieldSets) ? this.conf.fieldSets.list() : this.conf.fieldSets;
-      for (let i = 0; i < this.fieldSets.length; i++) {
-        const fieldset = this.fieldSets[i];
+      this.fieldSets.forEach((fieldset) => {
         if (!fieldset.divider) {
           if (fieldset.maxWidth) fieldset.width = '100%';
           else fieldset.width = this.conf.columnsOnForm === 1 || fieldset.colspan === 2 ? '100%' : '50%';
@@ -142,7 +141,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         if (fieldset.config) {
           this.fieldConfig = this.fieldConfig.concat(fieldset.config);
         }
-      }
+      });
       this.conf.fieldConfig = this.fieldConfig;
     } else {
       this.fieldConfig = this.conf.fieldConfig;
@@ -555,19 +554,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   clearErrors(): void {
-    for (let f = 0; f < this.fieldConfig.length; f++) {
-      this.fieldConfig[f]['errors'] = '';
-      this.fieldConfig[f]['hasErrors'] = false;
-    }
+    this.fieldConfig.forEach((fieldConfig) => {
+      fieldConfig['errors'] = '';
+      fieldConfig['hasErrors'] = false;
+    });
   }
 
   isFieldsetAvailabel(fieldset: FieldSet): boolean {
     if (fieldset.config) {
-      for (let i = 0; i < fieldset.config.length; i++) {
-        if (!fieldset.config[i].isHidden) {
-          return true;
-        }
-      }
+      return fieldset.config.some((config) => !config.isHidden);
     }
     return false;
   }
@@ -692,10 +687,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     const listConfig: FormListConfig = fieldConfig as FormListConfig;
     const dictConfig: FormDictConfig = fieldConfig as FormDictConfig;
     if (listConfig.type == 'list' && listConfig.listFields) {
-      for (let i = 0; i < listConfig.listFields.length; i++) {
-        const formGroup = this.entityFormService.createFormGroup(listConfig.listFields[i]);
+      listConfig.listFields.forEach((field) => {
+        const formGroup = this.entityFormService.createFormGroup(field);
         (formControl as FormArray).push(formGroup);
-      }
+      });
       for (let i = 0; i < listConfig.listFields.length; i++) {
         listConfig.listFields[i].forEach((subFieldConfig) => {
           this.fieldRelationService.setRelation(subFieldConfig, (formControl as FormArray).at(i) as FormGroup);
