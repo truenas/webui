@@ -5,15 +5,7 @@
         <div class="logo">
           <img [src]="item.chart_metadata.icon" [src-fallback]="imagePlaceholder"/>
         </div>
-        <div class="badge-area badge-official" *ngIf="item.catalog == officialCatalog">
-          <div class="capitalized-text" >
-            {{ item.catalog }}
-          </div>
-          <div class="train-badge capitalized-text">
-            {{ item.catalog_train }}
-          </div>
-        </div>
-        <div class="badge-area" *ngIf="item.catalog != officialCatalog">
+        <div class="badge-area" [class.badge-official]="item.catalog === officialCatalog">
           <div class="capitalized-text">
             {{ item.catalog }}
           </div>
