@@ -12,7 +12,7 @@
   <div class="outlined input-container">
     <input #ixInput matInput
       [value]="selectedOption?.label"
-      [placeholder]="'Search'"
+      [placeholder]="placeholder"
       (input)="onChanged($event.target.value)"
       (blur)="onTouch()"
       [matAutocomplete]="auto"
@@ -22,7 +22,7 @@
     </span>
     <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayWith"
       (optionSelected)="optionSelected($event.option.value)" (opened)="onOpenDropdown()">
-      <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+      <mat-option *ngFor="let option of filteredOptions | async" [value]="option"  [class.ix-selected]="option.value === selectedOption?.value">
         {{option.label}}
       </mat-option>
     </mat-autocomplete>

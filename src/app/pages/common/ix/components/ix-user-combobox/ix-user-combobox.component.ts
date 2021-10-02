@@ -13,6 +13,7 @@ import {
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { UserService } from 'app/services';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -35,6 +36,7 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
   @ViewChild('ixInput') inputElementRef: ElementRef;
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
+  placeholder = T('Search');
 
   filter: (options: Option[], filterValue: string) => Observable<Option[]> =
   (options: Option[], value: string): Observable<Option[]> => {
@@ -70,7 +72,8 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
       this.selectedOption = { ...(this.syncOptions.find((option: Option) => option.value === this.value)) };
     }
     if (this.selectedOption) {
-      this.filterValue = this.selectedOption.label;
+      this.currentOffset = 0;
+      this.filterValue = '';
     }
   }
 
@@ -94,7 +97,8 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
       const setOption = this.syncOptions.find((option: Option) => option.value === this.value);
       this.selectedOption = setOption ? { ...setOption } : null;
       if (this.selectedOption) {
-        this.filterValue = this.selectedOption.label;
+        this.currentOffset = 0;
+        this.filterValue = '';
       }
     });
   }
@@ -149,6 +153,7 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   resetInput(): void {
+    this.currentOffset = 0;
     this.filterValue = '';
     this.inputElementRef.nativeElement.value = '';
     this.selectedOption = null;
@@ -165,7 +170,8 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
 
   optionSelected(option: Option): void {
     this.selectedOption = { ...option };
-    this.filterValue = this.selectedOption.label;
+    this.currentOffset = 0;
+    this.filterValue = '';
     this.onChange(this.selectedOption.value);
   }
 
@@ -178,6 +184,6 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   hasValue(): boolean {
-    return this.filterValue && this.filterValue.length > 0;
+    return this.inputElementRef?.nativeElement?.value && this.inputElementRef.nativeElement.value.length > 0;
   }
 }

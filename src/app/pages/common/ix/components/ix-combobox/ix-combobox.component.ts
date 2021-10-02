@@ -11,6 +11,7 @@ import {
   debounceTime, distinctUntilChanged, map, takeUntil,
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
+import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -35,6 +36,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
   @Output() scrollEnd: EventEmitter<string> = new EventEmitter<string>();
+  placeholder = T('Search');
 
   @Input() filter: (options: Option[], filterValue: string) => Observable<Option[]> =
   (options: Option[], value: string): Observable<Option[]> => {
@@ -63,7 +65,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
       this.selectedOption = { ...(this.syncOptions.find((option: Option) => option.value === this.value)) };
     }
     if (this.selectedOption) {
-      this.filterValue = this.selectedOption.label;
+      this.filterValue = '';
     }
   }
 
@@ -132,7 +134,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
 
   optionSelected(option: Option): void {
     this.selectedOption = { ...option };
-    this.filterValue = this.selectedOption.label;
+    this.filterValue = '';
     this.onChange(this.selectedOption.value);
   }
 
@@ -149,7 +151,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
           const setOption = this.syncOptions.find((option: Option) => option.value === this.value);
           this.selectedOption = setOption ? { ...setOption } : null;
           if (this.selectedOption) {
-            this.filterValue = this.selectedOption.label;
+            this.filterValue = '';
           }
         });
       }
@@ -161,6 +163,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
   }
 
   hasValue(): boolean {
-    return this.filterValue && this.filterValue.length > 0;
+    return this.inputElementRef?.nativeElement?.value && this.inputElementRef.nativeElement.value > 0;
   }
 }
