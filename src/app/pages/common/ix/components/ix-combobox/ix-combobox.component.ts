@@ -98,12 +98,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
             untilDestroyed(this),
           )
           .subscribe(() => {
-            const scrollTop = this.autoCompleteRef.panel.nativeElement
-              .scrollTop;
-            const scrollHeight = this.autoCompleteRef.panel.nativeElement
-              .scrollHeight;
-            const elementHeight = this.autoCompleteRef.panel.nativeElement
-              .clientHeight;
+            const { scrollTop, scrollHeight, clientHeight: elementHeight } = this.autoCompleteRef.panel.nativeElement;
             const atBottom = scrollHeight === scrollTop + elementHeight;
             if (atBottom) {
               this.scrollEnd.emit(this.filterValue);
