@@ -406,7 +406,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     this.selection.clear();
   }
 
-  configureEmptyTable(emptyType: EmptyType, error: any = null): void {
+  configureEmptyTable(emptyType: EmptyType, error?: string): void {
     if (!emptyType) {
       return;
     }
@@ -596,7 +596,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
       },
       (res: any) => {
         this.isTableEmpty = true;
-        this.configureEmptyTable(EmptyType.Errors, res.reason);
+        this.configureEmptyTable(EmptyType.Errors, res.error || res.reason);
         if (this.loaderOpen) {
           this.loader.close();
           this.loaderOpen = false;
