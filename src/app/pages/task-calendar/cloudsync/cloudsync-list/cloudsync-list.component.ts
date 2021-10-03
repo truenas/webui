@@ -80,12 +80,12 @@ export class CloudsyncListComponent implements InputTableConf {
       task.dow = task.schedule['dow'];
       task.credential = task.credentials['name'];
 
-      task.cron = `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}`;
+      task.cron = task.enabled ? `${task.minute} ${task.hour} ${task.dom} ${task.month} ${task.dow}` : T('Disabled');
 
       /* Weird type assertions are due to a type definition error in the cron-parser library */
-      task.next_run = ((cronParser.parseExpression(task.cron, { iterator: true }).next() as unknown) as {
+      task.next_run = task.enabled ? ((cronParser.parseExpression(task.cron, { iterator: true }).next() as unknown) as {
         value: { _date: Moment };
-      }).value._date.fromNow();
+      }).value._date.fromNow() : T('Disabled');
 
       if (task.job == null) {
         task.state = T('NOT RUN SINCE LAST BOOT');

@@ -39,8 +39,10 @@ export class TaskScheduleListComponent implements OnInit, OnChanges {
   private _buildFutureRuns(): void {
     const scheduleExpression = this.config.cron_schedule || this.config.cron || this.config.scrub_schedule || this.config.schedule;
 
-    this.futureRuns = this._taskService
-      .getTaskNextRuns(scheduleExpression, TaskScheduleListComponent.LIST_LENGTH)
-      .map((run) => run.toLocaleString());
+    if (scheduleExpression != 'Disabled') {
+      this.futureRuns = this._taskService
+        .getTaskNextRuns(scheduleExpression, TaskScheduleListComponent.LIST_LENGTH)
+        .map((run) => run.toLocaleString());
+    }
   }
 }
