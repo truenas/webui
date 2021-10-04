@@ -98,7 +98,7 @@ def wait_for_the_alert_and_verify_the_core_files_warning_alert(driver):
     """wait for the alert and verify the core files warning alert."""
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 7, '//mat-icon[text()="notifications"]')
-    assert wait_on_element(driver, 120, '//span[contains(@class,"notification-number")]')
+    assert wait_on_element(driver, 180, '//span[contains(@class,"notification-number")]')
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__notifications"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__notifications"]').click()
     assert wait_on_element(driver, 7, '//h6[contains(.,"Alerts")]')
@@ -136,4 +136,4 @@ def after_remove_the_the_core_files_in_var_db_system_cores(driver, nas_ip, root_
 @then('verify that the core file alert disappear')
 def verify_that_the_core_file_alert_disappear(driver):
     """verify that the core file alert disappear."""
-    assert wait_on_element_disappear(driver, 120, '//span[contains(@class,"notification-number")]')
+    assert wait_on_element_disappear(driver, 180, '//span[contains(@class,"notification-number")]')
