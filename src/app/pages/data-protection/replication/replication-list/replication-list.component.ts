@@ -115,7 +115,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         onClick: (row: ReplicationTaskUi) => {
           this.dialog.confirm({
             title: T('Run Now'),
-            message: T('Replicate <i>') + row.name + T('</i> now?'),
+            message: this.translate.instant('Replicate <i>{name}</i> now?', { name: row.name }),
             hideCheckBox: true,
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
             row.state = { state: JobState.Running };
