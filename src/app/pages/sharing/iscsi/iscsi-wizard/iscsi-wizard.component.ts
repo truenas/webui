@@ -609,11 +609,11 @@ export class IscsiWizardComponent implements WizardConfiguration {
     });
 
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
-      for (let i = 0; i < accessRecords.length; i++) {
-        if (_.find(authGroupField.options, { value: accessRecords[i].tag }) == undefined) {
-          authGroupField.options.push({ label: String(accessRecords[i].tag), value: accessRecords[i].tag });
+      accessRecords.forEach((record) => {
+        if (_.find(authGroupField.options, { value: record.tag }) == undefined) {
+          authGroupField.options.push({ label: String(record.tag), value: record.tag });
         }
-      }
+      });
     });
 
     this.iscsiService.getIpChoices().pipe(untilDestroyed(this)).subscribe((ips) => {

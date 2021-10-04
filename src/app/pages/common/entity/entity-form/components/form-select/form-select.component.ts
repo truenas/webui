@@ -103,13 +103,12 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
             return item;
           });
           const newStates = this.config.options.map((item) => this.selectedValues.indexOf(item.value) !== -1);
-          const triggerValue = [];
-          for (let i = 0; i < this.config.options.length; i++) {
-            const item = this.config.options[i];
-            if (this.selectedValues.indexOf(item.value) !== -1) {
-              triggerValue.push(item.label);
+          const triggerValue: string[] = [];
+          this.config.options.forEach((option) => {
+            if (this.selectedValues.indexOf(option.value) !== -1) {
+              triggerValue.push(option.label);
             }
-          }
+          });
           this.selectStates = newStates;
           this.customTriggerValue = triggerValue;
         }

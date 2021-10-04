@@ -268,14 +268,14 @@ export class IPMIFromComponent implements FormConfiguration {
       query$ = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);
     }
     query$.pipe(untilDestroyed(this)).subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.channelValue = res[i].channel;
-        this.entityEdit.formGroup.controls['netmask'].setValue(res[i].netmask);
-        this.entityEdit.formGroup.controls['dhcp'].setValue(res[i].dhcp);
-        this.entityEdit.formGroup.controls['ipaddress'].setValue(res[i].ipaddress);
-        this.entityEdit.formGroup.controls['gateway'].setValue(res[i].gateway);
-        this.entityEdit.formGroup.controls['vlan'].setValue(res[i].vlan);
-      }
+      res.forEach((ipmi) => {
+        this.channelValue = ipmi.channel;
+        this.entityEdit.formGroup.controls['netmask'].setValue(ipmi.netmask);
+        this.entityEdit.formGroup.controls['dhcp'].setValue(ipmi.dhcp);
+        this.entityEdit.formGroup.controls['ipaddress'].setValue(ipmi.ipaddress);
+        this.entityEdit.formGroup.controls['gateway'].setValue(ipmi.gateway);
+        this.entityEdit.formGroup.controls['vlan'].setValue(ipmi.vlan);
+      });
     });
   }
 }

@@ -140,10 +140,10 @@ export class SnapshotFormComponent implements FormConfiguration {
     const begin_field = this.fieldSets.config('begin') as FormSelectConfig;
     const end_field = this.fieldSets.config('end') as FormSelectConfig;
     const time_options = this.taskService.getTimeOptions();
-    for (let i = 0; i < time_options.length; i++) {
-      begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
-      end_field.options.push({ label: time_options[i].label, value: time_options[i].value });
-    }
+    time_options.forEach((option) => {
+      begin_field.options.push({ label: option.label, value: option.value });
+      end_field.options.push({ label: option.label, value: option.value });
+    });
   }
 
   afterInit(entityForm: EntityFormComponent): void {

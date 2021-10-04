@@ -132,8 +132,7 @@ export class CatalogComponent implements OnInit {
 
     this.appService.getAllCatalogItems().pipe(untilDestroyed(this)).subscribe((catalogs) => {
       this.noAvailableCatalog = true;
-      for (let i = 0; i < catalogs.length; i++) {
-        const catalog = catalogs[i];
+      catalogs.forEach((catalog) => {
         if (!catalog.cached) {
           if (catalog.caching_job) {
             this.catalogSyncJobs.push({
@@ -142,7 +141,7 @@ export class CatalogComponent implements OnInit {
               progress: catalog.caching_job.progress.percent,
             });
           }
-          continue;
+          return;
         }
 
         if (!catalog.error) {
@@ -162,7 +161,7 @@ export class CatalogComponent implements OnInit {
             }
           });
         }
-      }
+      });
 
       this.refreshToolbarMenus();
       this.filterApps();

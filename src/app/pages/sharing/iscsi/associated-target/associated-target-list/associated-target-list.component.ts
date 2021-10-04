@@ -76,10 +76,10 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
       this.iscsiService.getTargets(),
       this.iscsiService.getExtents(),
     ]).pipe(untilDestroyed(this)).subscribe(([targets, extents]) => {
-      for (let i = 0; i < entityList.rows.length; i++) {
-        entityList.rows[i].target = _.find(targets, { id: entityList.rows[i].target })['name'];
-        entityList.rows[i].extent = _.find(extents, { id: entityList.rows[i].extent })['name'];
-      }
+      entityList.rows.forEach((row) => {
+        row.target = _.find(targets, { id: row.target })['name'];
+        row.extent = _.find(extents, { id: row.extent })['name'];
+      });
     });
   }
 
@@ -98,13 +98,13 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
       onClick: (rowinner: IscsiTargetExtent) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
-          (res) => {
+          (sessions) => {
             let warningMsg = '';
-            for (let i = 0; i < res.length; i++) {
-              if (res[i].target.split(':')[1] == (rowinner.target as any)) {
+            sessions.forEach((session) => {
+              if (session.target.split(':')[1] == (rowinner.target as any)) {
                 warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
               }
-            }
+            });
             deleteMsg = warningMsg + deleteMsg;
 
             this.dialogService.confirm({

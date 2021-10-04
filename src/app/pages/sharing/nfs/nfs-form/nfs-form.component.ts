@@ -321,9 +321,9 @@ export class NFSFormComponent implements FormConfiguration {
             value: '',
           },
         ];
-        for (let i = 0; i < items.length; i++) {
-          users.push({ label: items[i].username, value: items[i].username });
-        }
+        items.forEach((user) => {
+          users.push({ label: user.username, value: user.username });
+        });
         this.mapall_user = this.fieldSets.config('mapall_user') as FormComboboxConfig;
         this.mapall_user.options = users;
         this.maproot_user = this.fieldSets.config('maproot_user') as FormComboboxConfig;
@@ -340,9 +340,9 @@ export class NFSFormComponent implements FormConfiguration {
             value: '',
           },
         ];
-        for (let i = 0; i < groups.length; i++) {
-          groupOptions.push({ label: groups[i].group, value: groups[i].group });
-        }
+        groups.forEach((group) => {
+          groupOptions.push({ label: group.group, value: group.group });
+        });
         this.mapall_group = this.fieldSets.config('mapall_group') as FormComboboxConfig;
         this.mapall_group.options = groupOptions;
         this.maproot_group = this.fieldSets.config('maproot_group') as FormComboboxConfig;
@@ -386,15 +386,8 @@ export class NFSFormComponent implements FormConfiguration {
       paths.push({ path: data['paths'][i], alias: data['aliases'][i] ? data['aliases'][i] : undefined });
     }
 
-    const networks = [];
-    for (let i = 0; i < data['networks'].length; i++) {
-      networks.push({ network: data['networks'][i] });
-    }
-
-    const hosts = [];
-    for (let i = 0; i < data['hosts'].length; i++) {
-      hosts.push({ host: data['hosts'][i] });
-    }
+    const networks = data.networks.map((network) => ({ network }));
+    const hosts = data.hosts.map((host) => ({ host }));
 
     return {
       ...data,
@@ -482,12 +475,8 @@ export class NFSFormComponent implements FormConfiguration {
       .groupQueryDSCache(value)
       .pipe(untilDestroyed(parent))
       .subscribe((groups) => {
-        const groupOptions: Option[] = [];
-        for (let i = 0; i < groups.length; i++) {
-          groupOptions.push({ label: groups[i].group, value: groups[i].group });
-        }
         const config = parent.fieldSets.config(field) as FormComboboxConfig;
-        config.searchOptions = groupOptions;
+        config.searchOptions = groups.map((group) => ({ label: group.group, value: group.group }));
       });
   }
 
@@ -503,13 +492,9 @@ export class NFSFormComponent implements FormConfiguration {
     parent.userService
       .userQueryDSCache(value)
       .pipe(untilDestroyed(parent))
-      .subscribe((items) => {
-        const users: Option[] = [];
-        for (let i = 0; i < items.length; i++) {
-          users.push({ label: items[i].username, value: items[i].username });
-        }
+      .subscribe((users) => {
         const config = parent.fieldSets.config(field) as FormComboboxConfig;
-        config.searchOptions = users;
+        config.searchOptions = users.map((user) => ({ label: user.username, value: user.username }));
       });
   }
 
@@ -518,10 +503,7 @@ export class NFSFormComponent implements FormConfiguration {
       .userQueryDSCache(searchText, length)
       .pipe(untilDestroyed(parent))
       .subscribe((items) => {
-        const users: Option[] = [];
-        for (let i = 0; i < items.length; i++) {
-          users.push({ label: items[i].username, value: items[i].username });
-        }
+        const users = items.map((user) => ({ label: user.username, value: user.username }));
 
         const config = fieldConfig as FormComboboxConfig;
 
@@ -538,10 +520,7 @@ export class NFSFormComponent implements FormConfiguration {
       .groupQueryDSCache(searchText, false, length)
       .pipe(untilDestroyed(parent))
       .subscribe((items: Group[]) => {
-        const groups: Option[] = [];
-        for (let i = 0; i < items.length; i++) {
-          groups.push({ label: items[i].group, value: items[i].group });
-        }
+        const groups = items.map((group) => ({ label: group.group, value: group.group }));
 
         const config = fieldConfig as FormComboboxConfig;
 

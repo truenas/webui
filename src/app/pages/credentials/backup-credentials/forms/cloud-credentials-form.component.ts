@@ -1309,9 +1309,9 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     const privateKeySFTPField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' }) as FormSelectConfig;
     this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]).pipe(untilDestroyed(this)).subscribe(
       (credentials) => {
-        for (let i = 0; i < credentials.length; i++) {
-          privateKeySFTPField.options.push({ label: credentials[i].name, value: credentials[i].id });
-        }
+        credentials.forEach((credential) => {
+          privateKeySFTPField.options.push({ label: credential.name, value: credential.id });
+        });
       },
     );
   }
@@ -1598,10 +1598,10 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       client_secret: data.client_secret,
       token: data.token,
     }]).pipe(untilDestroyed(this)).subscribe(
-      (drives) => {
-        for (let i = 0; i < drives.length; i++) {
-          drivesConfig.options.push({ label: drives[i].drive_type + ' - ' + drives[i].drive_id, value: drives[i] });
-        }
+      (drives: any[]) => {
+        drives.forEach((drive) => {
+          drivesConfig.options.push({ label: drive.drive_type + ' - ' + drive.drive_id, value: drive });
+        });
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialog);

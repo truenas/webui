@@ -554,10 +554,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     if (this.ha_disabled_reasons.length > 0) {
       ha_status = helptext.ha_status_text_disabled;
       ha_icon = 'warning';
-      for (let i = 0; i < this.ha_disabled_reasons.length; i++) {
-        const reason_text = helptext.ha_disabled_reasons[this.ha_disabled_reasons[i]];
+      this.ha_disabled_reasons.forEach((reason) => {
+        const reason_text = helptext.ha_disabled_reasons[reason];
         reasons = reasons + '<li>' + this.translate.instant(reason_text) + '</li>\n';
-      }
+      });
     } else {
       ha_status = helptext.ha_status_text_enabled;
       reasons = reasons + '<li>' + this.translate.instant(helptext.ha_is_enabled) + '</li>\n';

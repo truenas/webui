@@ -26,14 +26,14 @@ export class EntityCardActionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.actions = this.entity.getCardActions();
-    for (let i = 0; i < this.actions.length; i++) {
+    this.actions.forEach((action) => {
       if (this.entity.conf.isActionVisible) {
-        this.actions[i].visible = this.entity.conf.isActionVisible.bind(
+        action.visible = this.entity.conf.isActionVisible.bind(
           this.entity.conf,
-        )(this.actions[i].id, this.row);
+        )(action.id, this.row);
       } else {
-        this.actions[i].visible = true;
+        action.visible = true;
       }
-    }
+    });
   }
 }

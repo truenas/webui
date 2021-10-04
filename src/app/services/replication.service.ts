@@ -29,12 +29,12 @@ export class ReplicationService {
     }
     return this.ws.call('replication.list_datasets', queryParams).toPromise().then(
       (res) => {
-        const nodes = [];
-        for (let i = 0; i < res.length; i++) {
-          const pathArr = res[i].split('/');
+        const nodes: ListdirChild[] = [];
+        res.forEach((dataset) => {
+          const pathArr = dataset.split('/');
           if (pathArr.length === 1) {
             const node: ListdirChild = {
-              name: res[i],
+              name: dataset,
               subTitle: pathArr[0],
               hasChildren: false,
               children: [],
@@ -47,7 +47,7 @@ export class ReplicationService {
               parent = _.find(parent.children, { subTitle: pathArr[j++] });
             }
             const node: ListdirChild = {
-              name: res[i],
+              name: dataset,
               subTitle: pathArr[j],
               hasChildren: false,
               children: [],
@@ -55,7 +55,7 @@ export class ReplicationService {
             parent.children.push(node);
             parent.hasChildren = true;
           }
-        }
+        });
         return nodes;
       },
       (err) => {

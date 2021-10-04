@@ -1135,16 +1135,16 @@ export class ReplicationFormComponent implements FormConfiguration {
     const restrictScheduleEndField = this.fieldSets.config('restrict_schedule_end') as FormSelectConfig;
     const time_options = this.taskService.getTimeOptions();
 
-    for (let i = 0; i < time_options.length; i++) {
+    time_options.forEach((timeOption) => {
       const option = {
-        label: time_options[i].label,
-        value: time_options[i].value,
+        label: timeOption.label,
+        value: timeOption.value,
       };
       scheduleBeginField.options.push(option);
       restrictScheduleBeginField.options.push(option);
       scheduleEndField.options.push(option);
       restrictScheduleEndField.options.push(option);
-    }
+    });
   }
 
   countEligibleManualSnapshots(): void {

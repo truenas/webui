@@ -1393,9 +1393,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
   async rollBack(items: any): Promise<void> {
     const keys = Object.keys(items).reverse();
-    for (let i = 0; i < keys.length; i++) {
-      if (items[keys[i]] != null) {
-        await this.ws.call((this.deleteCalls as any)[keys[i]], [items[keys[i]]]).toPromise().then(
+    for (const key of keys) {
+      if (items[key] != null) {
+        await this.ws.call((this.deleteCalls as any)[key], [items[key]]).toPromise().then(
           () => {},
         );
       }
