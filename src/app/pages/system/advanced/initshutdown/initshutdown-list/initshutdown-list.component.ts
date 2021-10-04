@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { InitshutdownFormComponent } from '../initshutdown-form/initshutdown-form.component';
 
 @UntilDestroy()

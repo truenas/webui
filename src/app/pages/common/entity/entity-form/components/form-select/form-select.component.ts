@@ -4,6 +4,7 @@ import {
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -14,7 +15,6 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
 import { FormSelectOption } from 'app/pages/common/entity/entity-form/models/form-select-option.interface';
 import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

@@ -38,7 +38,7 @@ export class NFSFormComponent implements FormConfiguration {
   save_button_enabled = true;
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['alldirs', 'quiet'];
-  title = helptext_sharing_nfs.title;
+  title: string = helptext_sharing_nfs.title;
   isOneColumnForm = true;
 
   fieldSets = new FieldSets([

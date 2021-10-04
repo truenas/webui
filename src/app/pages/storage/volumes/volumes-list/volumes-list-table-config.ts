@@ -3,6 +3,7 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
@@ -46,7 +47,6 @@ import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/vol
 import {
   AppLoaderService, DialogService, StorageService, ValidationService, WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 export class VolumesListTableConfig implements EntityTableConfig {
   hideTopActions = true;
@@ -1499,7 +1499,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     node.data = data;
     this.getMoreDatasetInfo(data, data.parent);
     node.data.group_actions = true;
-    let actions_title = helptext.dataset_actions;
+    let actions_title: string = helptext.dataset_actions;
     if (data.type === DatasetType.Volume) {
       actions_title = helptext.zvol_actions;
     }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -7,7 +8,6 @@ import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-t
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, ModalService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from 'app/translate-marker';
 import { NFSFormComponent } from '../nfs-form/nfs-form.component';
 
 @UntilDestroy()

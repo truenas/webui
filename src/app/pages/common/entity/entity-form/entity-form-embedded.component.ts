@@ -17,6 +17,7 @@ import {
   FormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -26,7 +27,6 @@ import { RelationGroup } from 'app/pages/common/entity/entity-form/models/field-
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { FieldSets } from './classes/field-sets';
 import { FieldConfig, FormArrayConfig } from './models/field-config.interface';
@@ -94,7 +94,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   fieldSets: FieldSet[];
   fieldConfig: FieldConfig[];
   hasConf = true;
-  saveSubmitText = T('Save');
+  saveSubmitText: string = T('Save');
   saveSubmitStatus = '';
   actionButtonsAlign = 'center';
 

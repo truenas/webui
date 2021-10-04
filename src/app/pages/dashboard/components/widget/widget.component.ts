@@ -2,12 +2,12 @@ import {
   Component, Input, Output, EventEmitter,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { IxObject } from 'app/core/classes/ix-object';
 import { CoreServiceInjector } from 'app/core/services/core-service-injector';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ThemeService } from 'app/services/theme/theme.service';
-import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'widget',

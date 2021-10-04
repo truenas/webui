@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
@@ -10,7 +11,6 @@ import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapsh
 import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { TaskService } from 'app/services/task.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

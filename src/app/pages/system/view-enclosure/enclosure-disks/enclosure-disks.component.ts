@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { DomSanitizer } from '@angular/platform-browser';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Application, Container,
@@ -48,7 +49,6 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { ViewConfig } from 'app/pages/system/view-enclosure/view-enclosure.component';
 import { DialogService } from 'app/services/dialog.service';
 import { Theme } from 'app/services/theme/theme.service';
-import { T } from 'app/translate-marker';
 
 export enum EnclosureLocation {
   Front = 'front',

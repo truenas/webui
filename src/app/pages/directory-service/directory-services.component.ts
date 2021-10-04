@@ -1,5 +1,6 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { Component, OnInit, Type } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, of, combineLatest } from 'rxjs';
@@ -22,7 +23,6 @@ import {
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { IdmapFormComponent } from './components/idmap/idmap-form.component';
 import { LdapComponent } from './components/ldap/ldap.component';
 

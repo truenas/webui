@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { CompressionType } from 'app/enums/compression-type.enum';
@@ -16,6 +18,7 @@ import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
+import globalHelptext from 'app/helptext/global-helptext';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -35,7 +38,6 @@ import {
   StorageService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -361,7 +363,8 @@ export class ReplicationFormComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'speed_limit',
-          placeholder: helptext.speed_limit_placeholder,
+          placeholder: this.translate.instant(helptext.speed_limit_placeholder)
+          + this.translate.instant(globalHelptext.human_readable.suggestion_label),
           tooltip: helptext.speed_limit_tooltip,
           hasErrors: false,
           relation: [
@@ -1101,6 +1104,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     protected keychainCredentialService: KeychainCredentialService,
     protected replicationService: ReplicationService,
     protected modalService: ModalService,
+    protected translate: TranslateService,
   ) {
     this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: number) => {
       this.queryCallOption = [['id', '=', id]];

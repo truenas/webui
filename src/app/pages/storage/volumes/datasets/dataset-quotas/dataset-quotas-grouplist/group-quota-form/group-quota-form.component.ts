@@ -4,7 +4,9 @@ import {
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -46,8 +48,11 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
         {
           type: 'input',
           name: 'data_quota',
-          placeholder: helptext.groups.data_quota.placeholder,
-          tooltip: `${helptext.groups.data_quota.tooltip} bytes.`,
+          placeholder: this.translate.instant(helptext.groups.data_quota.placeholder)
+          + this.translate.instant(globalHelptext.human_readable.suggestion_label),
+          tooltip: this.translate.instant(helptext.groups.data_quota.tooltip)
+           + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+           + this.translate.instant(' bytes.'),
           blurStatus: true,
           blurEvent: () => this.dataQuotaBlur(),
           parent: this,
@@ -99,10 +104,17 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
     },
   ];
 
-  constructor(protected ws: WebSocketService, protected storageService: StorageService,
-    protected aroute: ActivatedRoute, protected loader: AppLoaderService,
-    protected router: Router, protected userService: UserService, private dialog: DialogService,
-    protected differs: IterableDiffers) {
+  constructor(
+    protected ws: WebSocketService,
+    protected storageService: StorageService,
+    protected aroute: ActivatedRoute,
+    protected loader: AppLoaderService,
+    protected router: Router,
+    protected userService: UserService,
+    private dialog: DialogService,
+    protected differs: IterableDiffers,
+    protected translate: TranslateService,
+  ) {
     this.differ = differs.find([]).create(null);
   }
 

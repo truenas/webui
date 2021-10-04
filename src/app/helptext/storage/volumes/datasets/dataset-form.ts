@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
-import { T } from 'app/translate-marker';
 
 export default {
   dataset_form_name_placeholder: T('Name'),

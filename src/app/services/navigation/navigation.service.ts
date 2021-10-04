@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { BehaviorSubject } from 'rxjs';
 import { MenuItem } from 'app/interfaces/menu-item.interface';
-import { T } from 'app/translate-marker';
 
 @Injectable()
 export class NavigationService {

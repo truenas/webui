@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -19,7 +20,6 @@ import { DialogService, WebSocketService, SystemGeneralService } from 'app/servi
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
-import { T } from 'app/translate-marker';
 import { BootenvRow } from './bootenv-row.interface';
 
 @UntilDestroy()
@@ -138,9 +138,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: T('Clone'),
       id: 'clone',
       onClick: (row: BootenvRow) => {
-        this._router.navigate(new Array('').concat(
-          ['system', 'boot', 'clone', row.id],
-        ));
+        this._router.navigate(['/', 'system', 'boot', 'clone', row.id]);
       },
     });
 
@@ -148,9 +146,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: T('Rename'),
       id: 'rename',
       onClick: (row: BootenvRow) => {
-        this._router.navigate(new Array('').concat(
-          ['system', 'boot', 'rename', row.id],
-        ));
+        this._router.navigate(['/', 'system', 'boot', 'rename', row.id]);
       },
     });
 
@@ -373,7 +369,10 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
                   );
                 });
               } else {
-                localDialog.info(T('Enter valid value'), T(scrubIntervalValue + ' is not a valid number of days.'));
+                localDialog.info(
+                  T('Enter valid value'),
+                  this.translate.instant('{scrubIntervalValue} is not a valid number of days.', { scrubIntervalValue }),
+                );
               }
             },
           };
@@ -396,9 +395,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   }
 
   goToStatus(): void {
-    this._router.navigate(new Array('').concat(
-      ['system', 'boot', 'status'],
-    ));
+    this._router.navigate(['/', 'system', 'boot', 'status']);
   }
 
   scrub(): void {

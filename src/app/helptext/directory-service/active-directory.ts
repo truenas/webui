@@ -1,6 +1,5 @@
 import { Validators } from '@angular/forms';
-import { T } from 'app/translate-marker';
-import globalHelptext from '../global-helptext';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   title: T('Active Directory'),
@@ -137,7 +136,7 @@ export default {
   activedirectory_netbiosname_a_validation: [Validators.required, Validators.maxLength(15)],
 
   activedirectory_netbiosname_b_name: 'netbiosname_b',
-  activedirectory_netbiosname_b_placeholder: T(`Netbios Name (${globalHelptext.Ctrlr} 2)`),
+  activedirectory_netbiosname_b_placeholder: T('Netbios Name (TrueNAS Controller 2)'),
   activedirectory_netbiosname_b_tooltip: T('Netbios Name of this NAS. This name must differ from\
  the <i>Workgroup</i> name and be no greater than 15 characters.'),
   activedirectory_netbiosname_b_validation: [Validators.required, Validators.maxLength(15)],

@@ -1,6 +1,5 @@
 import { Validators } from '@angular/forms';
-import globalHelptext from 'app/helptext/global-helptext';
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptext_sharing_iscsi = {
   fieldset_target_basic: T('Basic Info'),
@@ -144,9 +143,9 @@ export const helptext_sharing_iscsi = {
    for both file and device based extents.'),
 
   globalconf_placeholder_alua: T('Enable iSCSI ALUA'),
-  globalconf_tooltip_alua: T(`Allow initiator to discover paths to both\
- ${globalHelptext.ctrlrs} on the target and increase storage traffic\
- efficiency. Requires ALUA-capable, High Availability (HA) hardware.`),
+  globalconf_tooltip_alua: T('Allow initiator to discover paths to both\
+ TrueNAS controllers on the target and increase storage traffic\
+ efficiency. Requires ALUA-capable, High Availability (HA) hardware.'),
 
   fieldset_extent_basic: T('Basic Info'),
   fieldset_extent_type: T('Type'),

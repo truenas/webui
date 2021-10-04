@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SmartTestResults } from 'app/interfaces/smart-test.interface';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { PageTitleService } from 'app/services/page-title.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable, Subscription } from 'rxjs';
@@ -30,7 +31,6 @@ import { StorageService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 type SizeField = 'quota' | 'refquota' | 'reservation' | 'refreservation' | 'special_small_block_size';
 
@@ -1060,7 +1060,7 @@ export class DatasetFormComponent implements FormConfiguration {
       this.ws.call('pool.dataset.query', [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe(
         (pk_dataset) => {
           this.encrypted_parent = pk_dataset[0].encrypted;
-          let inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
+          let inherit_encrypt_placeholder: string = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
           if (this.encrypted_parent) {
             if (pk_dataset[0].key_format.value === DatasetEncryptionType.Passphrase) {
               this.passphrase_parent = true;

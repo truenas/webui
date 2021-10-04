@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -11,7 +12,6 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-
 import { FieldConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { EncryptionService } from 'app/services/encryption.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

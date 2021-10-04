@@ -11,6 +11,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NavigationStart, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -37,7 +38,6 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';
@@ -814,8 +814,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
   }
 
   // generate delete msg
-  getDeleteMessage(item: any, action = T('Delete ')): string {
-    let deleteMsg = T('Delete the selected item?');
+  getDeleteMessage(item: any, action: string = T('Delete ')): string {
+    let deleteMsg: string = T('Delete the selected item?');
     if (this.conf.config.deleteMsg) {
       deleteMsg = action + this.conf.config.deleteMsg.title;
       let msg_content = ' <b>' + item[this.conf.config.deleteMsg.key_props[0]];

@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -16,7 +17,6 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -94,8 +94,11 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
               {
                 type: 'input',
                 name: 'data_quota',
-                placeholder: helptext.users.data_quota.placeholder,
-                tooltip: `${helptext.users.data_quota.tooltip} bytes.`,
+                placeholder: this.translate.instant(helptext.users.data_quota.placeholder)
+                   + this.translate.instant(globalHelptext.human_readable.suggestion_label),
+                tooltip: this.translate.instant(helptext.users.data_quota.tooltip)
+                + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+                + this.translate.instant(' bytes.'),
                 value: this.storageService.convertBytestoHumanReadable(res[0].quota, 0, null, true),
                 id: 'data-quota_input',
                 blurStatus: true,

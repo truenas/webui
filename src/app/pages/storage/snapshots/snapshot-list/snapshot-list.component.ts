@@ -2,6 +2,7 @@ import { Component, Type } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -25,7 +26,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SnapshotListRow } from 'app/pages/storage/snapshots/snapshot-list/snapshot-list-row.interface';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import { T } from 'app/translate-marker';
 import { SnapshotDetailsComponent } from './components/snapshot-details.component';
 
 interface DialogData {
@@ -370,7 +370,7 @@ export class SnapshotListComponent implements EntityTableConfig {
         this.entityList.getData();
 
         if (jobErrors.length > 0) {
-          const errorTitle = T('Warning') + ', ' + jobErrors.length + ' of ' + params[1].length + ' ' + T('snapshots could not be deleted.');
+          const errorTitle = this.translate.instant('Warning: {n} of {total} snapshots could not be deleted.', { n: jobErrors.length, total: params[1].length });
 
           let errorMessage = jobErrors.map((err) => err + '\n').toString();
           errorMessage = errorMessage.split(',').join('');
