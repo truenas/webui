@@ -798,7 +798,7 @@
   "Find this information later by clicking": "",
   "Finding Pools": "",
   "Finding pools to import...": "",
-  "First vdev has {vdevDiskNum} disks, new vdev has {disks}": "",
+  "First vdev has {n} disks, new vdev has {m}": "",
   "First vdev is a {vdevType}, new vdev is {newVdevType}": "",
   "Fix Credential": "",
   "Fix database": "",

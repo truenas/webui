@@ -227,7 +227,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   getDiskNumErrorMsg(disks: number): void {
-    this.disknumError = `${this.translate.instant(this.disknumErrorMessage)} ${this.translate.instant('First vdev has {vdevDiskNum} disks, new vdev has {disks}', { vdevDiskNum: this.first_data_vdev_disknum, disks })}`;
+    this.disknumError = `${this.translate.instant(this.disknumErrorMessage)} ${this.translate.instant('First vdev has {n} disks, new vdev has {m}', { n: this.first_data_vdev_disknum, m: disks })}`;
   }
 
   getVdevTypeErrorMsg(type: string): void {

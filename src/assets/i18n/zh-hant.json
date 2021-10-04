@@ -1077,7 +1077,7 @@
   "Finding pools to import...": "",
   "Finish Upgrade?": "",
   "Finished": "",
-  "First vdev has {vdevDiskNum} disks, new vdev has {disks}": "",
+  "First vdev has {n} disks, new vdev has {m}": "",
   "First vdev is a {vdevType}, new vdev is {newVdevType}": "",
   "Fix Credential": "",
   "Fix database": "",

@@ -85,7 +85,7 @@
   "FTP": "",
   "Failed to load datasets": "",
   "Fetching data...": "",
-  "First vdev has {vdevDiskNum} disks, new vdev has {disks}": "",
+  "First vdev has {n} disks, new vdev has {m}": "",
   "First vdev is a {vdevType}, new vdev is {newVdevType}": "",
   "Fix database": "",
   "Force Delete": "",
