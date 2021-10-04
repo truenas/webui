@@ -303,10 +303,13 @@ export class CatalogComponent implements OnInit {
         this.dialogService.closeAllDialogs();
         this.selectedPool = null;
         this.refreshToolbarMenus();
-        this.translate.get(helptext.choosePool.unsetPool.label).pipe(untilDestroyed(this)).subscribe((msg) => {
-          this.dialogService.info(helptext.choosePool.success, msg,
-            '500px', 'info', true);
-        });
+        this.dialogService.info(
+          helptext.choosePool.success,
+          this.translate.instant(helptext.choosePool.unsetPool.label),
+          '500px',
+          'info',
+          true,
+        );
       });
 
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
@@ -333,10 +336,13 @@ export class CatalogComponent implements OnInit {
       this.selectedPool = pool;
       this.refreshToolbarMenus();
       this.dialogService.closeAllDialogs();
-      this.translate.get(helptext.choosePool.message).pipe(untilDestroyed(this)).subscribe((msg: string) => {
-        this.dialogService.info(helptext.choosePool.success, msg + res.result.pool,
-          '500px', 'info', true);
-      });
+      this.dialogService.info(
+        helptext.choosePool.success,
+        this.translate.instant(helptext.choosePool.message) + res.result.pool,
+        '500px',
+        'info',
+        true,
+      );
     });
   }
 

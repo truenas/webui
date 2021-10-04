@@ -55,9 +55,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.translate.get(this.conf.title).pipe(untilDestroyed(this)).subscribe((title) => {
-      this.title = title;
-    });
+    this.title = this.translate.instant(this.conf.title);
 
     this.fieldConfig = this.conf.fieldConfig;
 

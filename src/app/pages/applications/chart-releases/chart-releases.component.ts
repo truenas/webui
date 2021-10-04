@@ -413,15 +413,13 @@ export class ChartReleasesComponent implements OnInit {
           }
         });
 
-        this.translate.get(helptext.bulkActions.finished).pipe(untilDestroyed(this)).subscribe((msg) => {
-          this.dialogService.info(helptext.bulkActions.success, msg,
-            '500px', 'info', true);
-        });
+        this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished), '500px', 'info', true);
       }
     } else {
-      this.translate.get(helptext.bulkActions.no_selected).pipe(untilDestroyed(this)).subscribe((msg) => {
-        this.dialogService.errorReport(helptext.bulkActions.error, msg);
-      });
+      this.dialogService.errorReport(
+        helptext.bulkActions.error,
+        this.translate.instant(helptext.bulkActions.no_selected),
+      );
     }
   }
 

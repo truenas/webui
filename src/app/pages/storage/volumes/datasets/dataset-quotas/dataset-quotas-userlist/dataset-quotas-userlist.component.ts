@@ -185,19 +185,16 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
   }
 
   dataHandler(data: EntityTableComponent): void {
-    this.translate.get(helptext.shared.nameErr).pipe(untilDestroyed(this)).subscribe((msg) => {
-      data.rows.forEach((row: any) => {
-        if (!row.name) {
-          row.name = `*ERR* (${msg}), ID: ${row.id}`;
-        }
-        row.quota = this.storageService.convertBytestoHumanReadable(row.quota, 0);
-        if (row.used_bytes !== 0) {
-          row.used_bytes = this.storageService.convertBytestoHumanReadable(row.used_bytes, 2);
-        }
-        row.used_percent = `${Math.round((row.used_percent) * 100) / 100}%`;
-        row.obj_used_percent = `${Math.round((row.obj_used_percent) * 100) / 100}%`;
-      });
-      return data;
+    data.rows.forEach((row: any) => {
+      if (!row.name) {
+        row.name = `*ERR* (${this.translate.instant(helptext.shared.nameErr)}), ID: ${row.id}`;
+      }
+      row.quota = this.storageService.convertBytestoHumanReadable(row.quota, 0);
+      if (row.used_bytes !== 0) {
+        row.used_bytes = this.storageService.convertBytestoHumanReadable(row.used_bytes, 2);
+      }
+      row.used_percent = `${Math.round((row.used_percent) * 100) / 100}%`;
+      row.obj_used_percent = `${Math.round((row.obj_used_percent) * 100) / 100}%`;
     });
   }
 

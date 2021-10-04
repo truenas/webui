@@ -829,9 +829,9 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
       msg_content += '</b>?';
       deleteMsg += msg_content;
     }
-    this.translate.get(deleteMsg).pipe(untilDestroyed(this)).subscribe((res) => {
-      deleteMsg = res;
-    });
+
+    deleteMsg = this.translate.instant(deleteMsg);
+
     return deleteMsg;
   }
 
@@ -969,9 +969,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
       msg_content += '</ul>';
       deleteMsg += msg_content;
     }
-    this.translate.get(deleteMsg).pipe(untilDestroyed(this)).subscribe((res) => {
-      deleteMsg = res;
-    });
+    deleteMsg = this.translate.instant(deleteMsg);
+
     return deleteMsg;
   }
 
