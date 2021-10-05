@@ -1,3 +1,4 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import {
   nfsAclTagLabels, nfsAclTypeLabels,
   NfsAdvancedFlag, nfsAdvancedPermissionLabels,
@@ -9,7 +10,6 @@ import {
   NfsFormFlagsType,
   NfsFormPermsType,
 } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form-values.interface';
-import { T } from 'app/translate-marker';
 
 export default {
   dataset_acl_title_file: T('File Information'),

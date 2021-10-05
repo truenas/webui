@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { T } from 'app/translate-marker';
 
 export default {
   location_placeholder: T('Location'),

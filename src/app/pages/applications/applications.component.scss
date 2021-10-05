@@ -18,6 +18,21 @@ mat-tab-group {
   }
 }
 
+.badge-area {
+  background-color: var(--yellow);
+  color: rgba($color: #000, $alpha: 1);
+  margin: 0 16px 16px;
+  text-align: center;
+
+  .train-badge {
+    background-color: #00000052;
+  }
+
+  &.badge-official {
+    background-color: var(--primary) !important;
+  }
+}
+
 .catalog-item {
   height: 160px;
   width: 350px;
@@ -42,21 +57,6 @@ mat-tab-group {
           height: 100px;
           object-fit: contain;
           width: 100%;
-        }
-      }
-
-      .badge-official {
-        background-color: var(--primary) !important;
-      }
-
-      .badge-area {
-        background-color: var(--yellow);
-        color: rgba($color: #000, $alpha: 1);
-        margin: 0 16px 16px;
-        text-align: center;
-
-        .train-badge {
-          background-color: #00000052;
         }
       }
     }
@@ -86,7 +86,6 @@ mat-tab-group {
     right: 0;
     top: 0;
   }
-
 }
 
 .chart-item {
@@ -113,21 +112,6 @@ mat-tab-group {
           height: 100px;
           object-fit: contain;
           width: 100%;
-        }
-      }
-
-      .badge-area {
-        background-color: var(--yellow);
-        color: rgba($color: #000, $alpha: 1);
-        margin: 0 16px 16px;
-        text-align: center;
-
-        .partner-badge {
-          background-color: var(--yellow);
-        }
-
-        .train-badge {
-          background-color: #00000052;
         }
       }
 

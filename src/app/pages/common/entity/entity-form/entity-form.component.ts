@@ -16,6 +16,7 @@ import {
   FormBuilder, FormControl, FormGroup, FormArray, AbstractControl,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -26,7 +27,6 @@ import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-set
 import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { EntityUtils } from '../utils';
 import {
@@ -60,9 +60,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   wsfg: AbstractControl;
   wsResponseIdx: any;
   queryResponse: any;
-  saveSubmitText = T('Save');
+  saveSubmitText: string = T('Save');
   showPassword = false;
-  successMessage = T('Settings saved.');
+  successMessage: string = T('Settings saved.');
 
   loaderOpen = false;
   keepLoaderOpen = false;

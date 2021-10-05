@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'primeng/api';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
@@ -10,7 +12,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
 
 interface PoolDiskInfo {
   name: string;
@@ -28,7 +29,7 @@ interface PoolDiskInfo {
   templateUrl: './bootenv-status.component.html',
 })
 export class BootStatusListComponent implements OnInit {
-  title = 'Boot Pool Status';
+  title = T('Boot Pool Status');
   protected queryCall: 'boot.get_state' = 'boot.get_state';
   protected pk: number;
   poolScan: {
@@ -44,11 +45,11 @@ export class BootStatusListComponent implements OnInit {
   treeTableConfig: EntityTreeTable = {
     tableData: [],
     columns: [
-      { name: 'Name', prop: 'name' },
-      { name: 'Read', prop: 'read' },
-      { name: 'Write', prop: 'write' },
-      { name: 'Checksum', prop: 'checksum' },
-      { name: 'Status', prop: 'status' },
+      { name: T('Name'), prop: 'name' },
+      { name: T('Read'), prop: 'read' },
+      { name: T('Write'), prop: 'write' },
+      { name: T('Checksum'), prop: 'checksum' },
+      { name: T('Status'), prop: 'status' },
       { name: T('Actions'), prop: 'actions' },
     ],
   };
@@ -59,6 +60,7 @@ export class BootStatusListComponent implements OnInit {
     private dialog: DialogService,
     protected loader: AppLoaderService,
     protected aroute: ActivatedRoute,
+    protected translate: TranslateService,
   ) {}
 
   getData(): void {
@@ -90,10 +92,14 @@ export class BootStatusListComponent implements OnInit {
     this.ws.call('boot.detach', [disk]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.router.navigate(
-          new Array('').concat('system', 'boot'),
+        this.router.navigate(['/', 'system', 'boot']);
+        this.dialog.info(
+          this.translate.instant('Device detached'),
+          this.translate.instant('<i>{disk}</i> has been detached.', { disk }),
+          '300px',
+          'info',
+          true,
         );
-        this.dialog.info(T('Device detached '), T(`<i>${disk}</i> has been detached.`), '300px', 'info', true);
       },
       (res) => {
         this.loader.close();
@@ -145,7 +151,7 @@ export class BootStatusListComponent implements OnInit {
       {
         label: T('Replace'),
         onClick: (row: PoolDiskInfo) => {
-          this.router.navigate(new Array('').concat(['system', 'boot', 'replace', row.name]));
+          this.router.navigate(['/', 'system', 'boot', 'replace', row.name]);
         },
         isHidden: false,
       }];
@@ -156,7 +162,7 @@ export class BootStatusListComponent implements OnInit {
         {
           label: T('Replace'),
           onClick: (row: PoolDiskInfo) => {
-            this.router.navigate(new Array('').concat(['system', 'boot', 'replace', row.name]));
+            this.router.navigate(['/', 'system', 'boot', 'replace', row.name]);
           },
           isHidden: false,
         }];
@@ -167,21 +173,21 @@ export class BootStatusListComponent implements OnInit {
         {
           label: T('Attach'),
           onClick: (row: PoolDiskInfo) => {
-            this.router.navigate(new Array('').concat(['system', 'boot', 'attach', row.name]));
+            this.router.navigate(['/', 'system', 'boot', 'attach', row.name]);
           },
           isHidden: false,
         },
         {
           label: T('Replace'),
           onClick: (row: PoolDiskInfo) => {
-            this.router.navigate(new Array('').concat(['system', 'boot', 'replace', row.name]));
+            this.router.navigate(['/', 'system', 'boot', 'replace', row.name]);
           },
           isHidden: false,
         }];
     }
 
     if (actions.length) {
-      item.actions = [{ actions, title: 'Actions' }];
+      item.actions = [{ actions, title: T('Actions') }];
     }
 
     return item;

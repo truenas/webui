@@ -4,6 +4,7 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -23,6 +24,8 @@ import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Statfs } from 'app/interfaces/filesystem-stat.interface';
+import { VmDevice } from 'app/interfaces/vm-device.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   FieldConfig, FormParagraphConfig, FormSelectConfig, FormUploadConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -39,7 +42,6 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { VmService } from 'app/services/vm.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -491,7 +493,7 @@ export class VMWizardComponent implements WizardConfiguration {
     this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((max) => {
       this.maxVCPUs = max;
       const vcpuLimitConf: FormParagraphConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' });
-      vcpuLimitConf.paraText = helptext.vcpus_warning + ` ${this.maxVCPUs} ` + helptext.vcpus_warning_b;
+      vcpuLimitConf.paraText = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVCPUs });
     });
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
@@ -735,12 +737,12 @@ export class VMWizardComponent implements WizardConfiguration {
           if (datastore === '/mnt') {
             this.getFormControlFromFieldName('datastore').setValue(null);
             _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = true;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = T(`Virtual machines cannot be stored in an unmounted mountpoint: ${datastore}`);
+            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = this.translate.instant('Virtual machines cannot be stored in an unmounted mountpoint: {datastore}', { datastore });
           }
           if (datastore === '') {
             this.getFormControlFromFieldName('datastore').setValue(null);
             _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = true;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = T('Please select a valid path');
+            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = this.translate.instant('Please select a valid path');
           }
         }
         this.getFormControlFromFieldName('NIC_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
@@ -904,9 +906,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
         if (errors) {
           config.hasErrors = true;
-          this.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
-            config.warnings = warning + ` ${this.maxVCPUs}.`;
-          });
+          config.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVCPUs });
         } else {
           config.hasErrors = false;
           config.warnings = '';
@@ -1121,25 +1121,7 @@ export class VMWizardComponent implements WizardConfiguration {
           },
           (error) => {
             setTimeout(() => {
-              this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe(
-                () => {
-                  this.loader.close();
-                  this.dialogService.errorReport(
-                    T('Error creating VM.'),
-                    T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason,
-                    error.trace.formatted,
-                  );
-                },
-                (err) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(
-                    T('Error creating VM.'),
-                    T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason,
-                    error.trace.formatted,
-                  );
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
-                },
-              );
+              this.deleteVm(vm_res.id, error);
             }, 1000);
           },
         );
@@ -1184,31 +1166,7 @@ export class VMWizardComponent implements WizardConfiguration {
           },
           (error) => {
             setTimeout(() => {
-              this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe(
-                () => {
-                  this.loader.close();
-                  this.dialogService.errorReport(
-                    T('Error creating VM.'),
-                    this.translate.instant(
-                      'Error while creating the {device} device.\n {reason}',
-                      { device: error.device.dtype, reason: error.reason },
-                    ),
-                    error.trace.formatted,
-                  );
-                },
-                (err) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(
-                    T('Error creating VM.'),
-                    this.translate.instant(
-                      'Error while creating the {device} device.\n {reason}',
-                      { device: error.device.dtype, reason: error.reason },
-                    ),
-                    error.trace.formatted,
-                  );
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
-                },
-              );
+              this.deleteVm(vm_res.id, error);
             }, 1000);
           },
         );
@@ -1217,5 +1175,33 @@ export class VMWizardComponent implements WizardConfiguration {
         this.dialogService.errorReport(T('Error creating VM.'), error.reason, error.trace.formatted);
       });
     }
+  }
+
+  deleteVm(id: number, error: WebsocketError & { device: VmDevice }): void {
+    this.ws.call('vm.delete', [id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe(
+      () => {
+        this.loader.close();
+        this.dialogService.errorReport(
+          this.translate.instant('Error creating VM.'),
+          this.translate.instant(
+            'Error while creating the {device} device.\n {reason}',
+            { device: error.device.dtype, reason: error.reason },
+          ),
+          error.trace.formatted,
+        );
+      },
+      (err) => {
+        this.loader.close();
+        this.dialogService.errorReport(
+          this.translate.instant('Error creating VM.'),
+          this.translate.instant(
+            'Error while creating the {device} device.\n {reason}',
+            { device: error.device.dtype, reason: error.reason },
+          ),
+          error.trace.formatted,
+        );
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      },
+    );
   }
 }

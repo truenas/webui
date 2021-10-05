@@ -1,4 +1,4 @@
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   fieldset_cloud_sync_tasks: T('Cloud Sync Tasks'),

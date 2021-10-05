@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef, Component, OnDestroy, OnInit,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
@@ -28,7 +31,6 @@ import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from '../../../../translate-marker';
 import { DatasetFormComponent } from '../datasets/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from '../zvol/zvol-form/zvol-form.component';
 
@@ -65,7 +67,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       const actions = [
         {
           name: 'pool_actions',
-          title: helptext.pool_actions_title,
+          title: helptext.pool_actions_title as string,
           actions: this.conf.getActions(row),
         },
       ];
@@ -159,8 +161,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected http: HttpClient,
     modalService: ModalService,
     protected validationService: ValidationService,
+    public cdr: ChangeDetectorRef,
   ) {
-    super(core, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService);
+    super(core, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService, cdr);
 
     this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this };
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });

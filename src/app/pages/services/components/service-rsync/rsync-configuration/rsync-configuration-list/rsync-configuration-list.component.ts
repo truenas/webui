@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-rsync-module-list',

@@ -1,6 +1,7 @@
 import { AfterViewInit, Component, Type } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
@@ -36,7 +37,6 @@ import {
   ModalService,
   WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 enum ShareType {
   SMB = 'smb',

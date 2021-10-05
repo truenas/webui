@@ -2,6 +2,7 @@ import {
   AfterViewInit, Component, Input, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
@@ -11,7 +12,6 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { T } from 'app/translate-marker';
 
 interface ItemInfo {
   icon: string;
@@ -193,7 +193,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   getDiskWithErrorsItemInfo(pool: Pool): ItemInfo {
     let level = 'warn';
     let icon = 'mdi-alert-circle';
-    let value = T('Unknown');
+    let value: string = T('Unknown');
 
     if (pool && pool.topology) {
       const unhealthy: string[] = []; // Disks with errors

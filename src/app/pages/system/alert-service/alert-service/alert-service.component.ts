@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -18,7 +19,6 @@ import { RelationConnection } from 'app/pages/common/entity/entity-form/models/r
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services/';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

@@ -1,7 +1,6 @@
 import { Validators } from '@angular/forms';
-import globalHelptext from 'app/helptext/global-helptext';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { T } from 'app/translate-marker';
 
 export default {
   cifs_srv_fieldset_netbios: T('NetBIOS'),
@@ -14,7 +13,7 @@ export default {
  cannot be the <b>Workgroup</b> name.'),
   cifs_srv_netbiosname_validation: [Validators.required, Validators.maxLength(15)],
 
-  cifs_srv_netbiosname_b_placeholder: T(`NetBIOS Name (${globalHelptext.Ctrlr} 2)`),
+  cifs_srv_netbiosname_b_placeholder: T('NetBIOS Name (TrueNAS Controller 2)'),
   cifs_srv_netbiosname_b_tooltip: T('Automatically populated with the original hostname\
  of the system. This name is limited to 15 characters and\
  cannot be the <b>Workgroup</b> name.'),

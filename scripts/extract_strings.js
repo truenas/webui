@@ -31,7 +31,7 @@ fs.readdir(translationDir, function (err, files) {
     .map(getFilePath)
     .join(' ');
 
-  exec('ngx-translate-extract --input src --output ' + outputArgument + ' --clean -m T', (err, stdout, stderr) => {
+  exec('ngx-translate-extract --input src --output ' + outputArgument + ' --clean --string-as-default-value --fi "\t"', (err, stdout, stderr) => {
     if (err) {
       console.error(err);
       console.error("Error extracting strings.");

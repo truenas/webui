@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -10,6 +11,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
@@ -23,7 +25,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -64,8 +65,8 @@ export class UpdateComponent implements OnInit {
   updateType: string;
   sysInfo: SystemInfoWithFeatures;
   isHA: boolean;
-  sysUpdateMessage = T('A system update is in progress. ');
-  sysUpdateMsgPt2 = helptext.sysUpdateMessage;
+  sysUpdateMessage = globalHelptext.sysUpdateMessage;
+  sysUpdateMsgPt2 = globalHelptext.sysUpdateMessagePt2;
   updatecheck_tooltip = T('Check the update server daily for \
                                   any updates on the chosen train. \
                                   Automatically download an update if \
@@ -266,8 +267,8 @@ export class UpdateComponent implements OnInit {
     }
 
     this.dialogService.confirm({
-      title: this.translate.instant(T('Switch Train')),
-      message: this.translate.instant(warning + T('Switch update trains?')),
+      title: this.translate.instant('Switch Train'),
+      message: warning + T('Switch update trains?'),
     }).pipe(untilDestroyed(this)).subscribe((train_res: boolean) => {
       if (train_res) {
         this.train = event;
@@ -387,7 +388,7 @@ export class UpdateComponent implements OnInit {
         this.showSpinner = false;
       },
       (err) => {
-        this.general_update_error = err.reason.replace('>', '').replace('<', '') + T(': Automatic update check failed. Please check system network settings.');
+        this.general_update_error = `${err.reason.replace('>', '').replace('<', '')}: ${T('Automatic update check failed. Please check system network settings.')}`;
         this.showSpinner = false;
       },
       () => {

@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import globalHelptext from 'app/helptext/global-helptext';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
-import { T } from 'app/translate-marker';
 
 export default {
   fieldset_general: T('General Options'),
@@ -94,10 +94,8 @@ export default {
  means any port above 1023.'),
   passiveportsmax_validation: [rangeValidator(0, 65535), Validators.required],
 
-  localuserbw_placeholder: T('Local User Upload Bandwidth: ')
-    + globalHelptext.human_readable.suggestion_label,
-  userbw_tooltip: T('In KiBs or greater. A default of <i>0 KiB</i> means unlimited. ')
-    + globalHelptext.human_readable.suggestion_tooltip + T(' KiB.'),
+  localuserbw_placeholder: T('Local User Upload Bandwidth: '),
+  userbw_tooltip: T('In KiBs or greater. A default of <i>0 KiB</i> means unlimited. '),
   userbw_validation: [Validators.required],
 
   bandwidth_err: globalHelptext.human_readable.input_error,

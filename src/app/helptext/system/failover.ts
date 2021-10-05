@@ -1,5 +1,4 @@
-import { T } from 'app/translate-marker';
-import globalHelptext from '../global-helptext';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptext_system_failover = {
   save_button_text: T('SAVE'),
@@ -14,7 +13,7 @@ export const helptext_system_failover = {
   dialog_sync_to_peer_title: T('Sync to Peer'),
   dialog_sync_to_peer_message: T('Are you sure you want to sync to peer?'),
 
-  dialog_sync_to_peer_checkbox: T(`Reboot standby ${globalHelptext.ctrlr}`),
+  dialog_sync_to_peer_checkbox: T('Reboot standby TrueNAS controller'),
   dialog_button_ok: T('Proceed'),
 
   dialog_sync_from_peer_title: T('Sync from Peer'),
@@ -29,12 +28,8 @@ export const helptext_system_failover = {
   disabled_placeholder: T('Disable Failover'),
   disabled_tooltip: T('Disable automatic failover.'),
 
-  master_placeholder: T(`Default ${globalHelptext.ctrlr}`),
-  master_tooltip: T(`Make the currently active ${globalHelptext.ctrlr} \
- the default when both ${globalHelptext.ctrlr}s are online and HA is \
- enabled. To change the default ${globalHelptext.ctrlr}, unset this \
- option on the default ${globalHelptext.ctrlr} and allow the system to \
- fail over. This briefly interrupts system services.`),
+  master_placeholder: T('Default TrueNAS controller'),
+  master_tooltip: T('Make the currently active TrueNAS controller the default when both TrueNAS controllers are online and HA is enabled. To change the default TrueNAS controller, unset this option on the default TrueNAS controller and allow the system to fail over. This briefly interrupts system services.'),
 
   timeout_placeholder: T('Network Timeout Before Initiating Failover'),
   timeout_tooltip: T('Number of seconds to wait after a network failure \
@@ -43,10 +38,10 @@ export const helptext_system_failover = {
  aggregation.'),
 
   master_dialog_title: T('Confirm Failover'),
-  master_dialog_warning: T(`Forcing the other ${globalHelptext.ctrlr} to \
+  master_dialog_warning: T('Forcing the other TrueNAS controller to \
  become active requires a failover. This will temporarily interrupt \
  system services. After confirmation, <b>SAVE AND FAILOVER</b> must \
- be clicked on the previous screen.`),
+ be clicked on the previous screen.'),
 
   fieldset_title: T('Failover Configuration'),
 };

@@ -5,6 +5,7 @@ import {
 import {
   Router, ActivatedRoute,
 } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -26,7 +27,6 @@ import {
 } from 'app/services';
 import { ErdService } from 'app/services/erd.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { Report } from './components/report/report.component';
 import { ReportsConfigComponent } from './components/reports-config/reports-config.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
@@ -186,7 +186,17 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   generateTabs(): void {
-    const labels = [T('CPU'), T('Disk'), T('Memory'), T('Network'), T('NFS'), T('Partition'), T('System'), T('Target'), T('ZFS')];
+    const labels: string[] = [
+      T('CPU'),
+      T('Disk'),
+      T('Memory'),
+      T('Network'),
+      T('NFS'),
+      T('Partition'),
+      T('System'),
+      T('Target'),
+      T('ZFS'),
+    ];
     const UPS = this.otherReports.find((report) => report.title.startsWith('UPS'));
 
     if (UPS) {
