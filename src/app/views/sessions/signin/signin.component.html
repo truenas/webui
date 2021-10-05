@@ -99,7 +99,7 @@
               </div>
             </div>
 
-            <span *ngIf="product_type === ProductType.Enterprise && failover_status != FailoverStatus.Single">
+            <span *ngIf="productSupportsHa && failover_status != FailoverStatus.Single">
               <div class="ha-status">
                 <div class="ha-status-txt">
                   <p>{{ha_status_text}}</p>
