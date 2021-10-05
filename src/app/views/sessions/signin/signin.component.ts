@@ -263,14 +263,17 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     return false;
   }
 
+  get productSupportsHa(): boolean {
+    return this.product_type?.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale;
+  }
+
   getHAStatus(): void {
-    if ((this.product_type.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale)
-      && !this.checking_status) {
+    if (this.productSupportsHa && !this.checking_status) {
       this.checking_status = true;
-      this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe((res) => {
-        this.failover_status = res;
+      this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe((failoverStatus) => {
+        this.failover_status = failoverStatus;
         this.ha_info_ready = true;
-        if (res !== FailoverStatus.Single) {
+        if (failoverStatus !== FailoverStatus.Single) {
           this.ws.call('failover.get_ips').pipe(untilDestroyed(this)).subscribe((ips) => {
             this.failover_ips = ips;
           }, (err) => {
