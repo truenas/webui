@@ -1,10 +1,10 @@
 .widget {
   height: 400px;
   width: 600px;
-}
 
-.widget mat-card-content {
-  width: 100%;
+  mat-card-content {
+    width: 100%;
+  }
 }
 
 .controls {
@@ -25,48 +25,62 @@ mat-grid-tile {
   }
 
   .tile {
-    padding-left: 15px;
+    padding-left: 16px;
+
+    &:hover,
+    &:focus,
+    &:active {
+      .tile-header-button {
+        display: inline-flex;
+      }
+    }
+
+    &.rows-2 {
+      .tile-header {
+        padding-top: 8px;
+      }
+    }
+
+    &.rows-3 {
+      padding-left: 12px;
+      padding-right: 4px;
+
+      .tile-header-title {
+        height: 40px;
+        line-height: 40px;
+        min-height: 40px;
+      }
+    }
+
+    &.rows-2-2 {
+      padding-left: 12px;
+      padding-right: 4px;
+
+      .tile-content {
+        padding-bottom: 13px;
+      }
+    }
+
+    .tile-header {
+      min-width: 0;
+    }
 
     .tile-header-button {
-      position: absolute;
-      right: 0;
-      top: 0;
+      display: none;
+      flex-shrink: 0;
     }
 
     .tile-header-title {
-      align-items: center;
-      display: flex;
-      font-size: 27px;
+      flex: 1;
+      font-size: 24px;
       height: 48px;
+      line-height: 2;
       min-height: 48px;
       overflow: hidden;
       text-align: left;
       text-overflow: ellipsis;
       text-transform: uppercase;
       white-space: nowrap;
-      width: calc(100% - 40px);
-    }
-
-    &.rows-3 {
-      .tile-header-title {
-        height: 38px;
-        min-height: 38px;
-      }
-
-      .tile-content {
-        padding-bottom: 0;
-      }
-    }
-
-    &.rows-2-2 {
-      .tile-header-title {
-        height: 48px;
-        min-height: 48px;
-      }
-
-      .tile-content {
-        padding-bottom: 13px;
-      }
     }
 
     .tile-content {
@@ -92,9 +106,12 @@ mat-grid-tile {
     }
 
     span.icon {
-      height: 10px;
-      text-align: left;
-      width: 17px;
+      cursor: default;
+      display: inline-flex;
+      height: 20px;
+      min-width: 20px;
+      user-select: none;
+      width: 20px;
 
       &.error {
         color: var(--red);
@@ -109,13 +126,13 @@ mat-grid-tile {
       }
 
       .mat-icon {
-        font-size: 18px;
-        top: 0;
+        font-size: 16px;
+        height: 14px;
         width: 14px;
 
         &.mdi-set {
           font-size: 14px;
-          margin-top: -2px;
+          margin-top: 0;
         }
       }
     }
