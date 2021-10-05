@@ -225,7 +225,7 @@ def open_a_new_tab_navigate_to_dropbox_url_and_input_account_id(driver, box_url)
     driver.execute_script("window.open();")
     driver.switch_to.window(driver.window_handles[1])
     driver.get(box_url)
-    time.sleep(1)
+    time.sleep(2)
 
 
 @then('input <user_name> and <password>, click Sign in')
@@ -252,7 +252,7 @@ def input_user_name_and_password_click_sign_in(driver, user_name, password):
         while len(driver.window_handles) != 2:
             time.sleep(1)
         driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 10, '//h2[text()="Dropbox"]')
+    assert wait_on_element(driver, 15, '//h2[text()="Dropbox"]')
 
 
 @then(parsers.parse('click on {folder1} then click on the test folder'))
