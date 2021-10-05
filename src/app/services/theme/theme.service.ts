@@ -403,7 +403,7 @@ export class ThemeService {
       const swatch = theme[color] as any;
 
       // Generate aux. text styles
-      if (this.freenasThemes[0].accentColors.indexOf(color) !== -1) {
+      if (this.freenasThemes[0].accentColors.includes(color)) {
         const txtColor = this.utils.textContrast(swatch, theme['bg2']);
         document.documentElement.style.setProperty('--' + color + '-txt', txtColor);
       }

@@ -469,8 +469,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     const visible: number[] = [];
     this.activeReports.forEach((item, index) => {
-      const deviceMatch = device.indexOf(item.identifiers[0]) !== -1;
-      const metricMatch = metric.indexOf(item.name) !== -1;
+      const deviceMatch = device.includes(item.identifiers[0]);
+      const metricMatch = metric.includes(item.name);
       const condition = (deviceMatch && metricMatch);
       if (condition) {
         visible.push(index);

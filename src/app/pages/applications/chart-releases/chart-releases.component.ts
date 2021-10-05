@@ -483,7 +483,7 @@ export class ChartReleasesComponent implements OnInit {
   filerChartItems(): void {
     if (this.filterString) {
       this.filteredChartItems = this.getChartItems().filter((chart) => {
-        return chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1;
+        return chart.name.toLowerCase().includes(this.filterString.toLocaleLowerCase());
       });
     } else {
       this.filteredChartItems = this.getChartItems();

@@ -49,7 +49,7 @@ export class IscsiComponent implements OnInit {
   ngOnInit(): void {
     this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe(
       (systemInfo) => {
-        if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.FibreChannel) > -1) {
+        if (systemInfo.license && systemInfo.license.features.includes(LicenseFeature.FibreChannel)) {
           this.fcEnabled = true;
           this.navLinks.push({
             label: T('Fibre Channel Ports'),

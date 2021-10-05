@@ -174,7 +174,7 @@ export class EntityTaskComponent implements OnInit {
 
   isShow(name: string): boolean {
     if (this.conf.hide_fileds !== undefined) {
-      if (this.conf.hide_fileds.indexOf(name) > -1) {
+      if (this.conf.hide_fileds.includes(name)) {
         return false;
       }
     }

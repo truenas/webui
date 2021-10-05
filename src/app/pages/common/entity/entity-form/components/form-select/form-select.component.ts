@@ -102,10 +102,10 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
             }
             return item;
           });
-          const newStates = this.config.options.map((item) => this.selectedValues.indexOf(item.value) !== -1);
+          const newStates = this.config.options.map((item) => this.selectedValues.includes(item.value));
           const triggerValue: string[] = [];
           this.config.options.forEach((option) => {
-            if (this.selectedValues.indexOf(option.value) !== -1) {
+            if (this.selectedValues.includes(option.value)) {
               triggerValue.push(option.label);
             }
           });
@@ -118,7 +118,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
 
   ngAfterViewChecked(): void {
     if (!this.formReady && typeof this.config.options !== 'undefined' && this.config.options && this.config.options.length > 0) {
-      const newStates = this.config.options.map((item) => item && this.selectedValues.indexOf(item.value) !== -1);
+      const newStates = this.config.options.map((item) => item && this.selectedValues.includes(item.value));
       this.selectStates = newStates;
       this.updateValues();
       this.formReady = true;

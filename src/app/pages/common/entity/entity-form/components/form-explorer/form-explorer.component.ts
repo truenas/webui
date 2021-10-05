@@ -173,7 +173,7 @@ export class FormExplorerComponent implements Field, OnInit {
         ) {
           parent = parent.parent;
         }
-        if (res.indexOf(parent.data.name) === -1) {
+        if (!res.includes(parent.data.name)) {
           res.push(parent.data.name);
         }
       } else if (node.isAllSelected) {

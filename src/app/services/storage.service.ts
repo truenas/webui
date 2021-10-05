@@ -270,7 +270,7 @@ export class StorageService {
      */
     path = path.indexOf('/') === 0 ? path.substr(1) : path;
 
-    return path.indexOf('/') < 0;
+    return !path.includes('/');
   }
 
   // ----------------------- //

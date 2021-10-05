@@ -219,7 +219,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         const pChild = datasets.find((set) => set.name === pool.name);
         if (pChild) {
           pChild.children = pChild.children.filter((child: Dataset) => {
-            return child.name.indexOf(`${pool.name}/.system`) === -1 && child.name.indexOf(`${pool.name}/.glusterfs`) === -1;
+            return !child.name.includes(`${pool.name}/.system`) && !child.name.includes(`${pool.name}/.glusterfs`);
           });
         }
         pool.children = pChild ? [{ ...pChild } as unknown as VolumesListDataset] : [];

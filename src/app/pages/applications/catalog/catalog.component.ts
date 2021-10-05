@@ -367,7 +367,7 @@ export class CatalogComponent implements OnInit {
   filterApps(): void {
     if (this.filterString) {
       this.filteredCatalogApps = this.catalogApps.filter((app) => {
-        return app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1;
+        return app.name.toLowerCase().includes(this.filterString.toLocaleLowerCase());
       });
     } else {
       this.filteredCatalogApps = this.catalogApps;

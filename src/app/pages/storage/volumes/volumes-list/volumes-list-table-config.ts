@@ -839,7 +839,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
         });
       }
 
-      if (rowData.id.indexOf('/') !== -1) {
+      if (rowData.id.includes('/')) {
         actions.push({
           id: rowData.name,
           name: T('Delete Dataset'),

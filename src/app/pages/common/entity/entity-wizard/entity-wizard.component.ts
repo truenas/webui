@@ -122,7 +122,7 @@ export class EntityWizardComponent implements OnInit {
 
   isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
-      if (this.conf.advanced_field.indexOf(id) > -1) {
+      if (this.conf.advanced_field.includes(id)) {
         return false;
       }
     }

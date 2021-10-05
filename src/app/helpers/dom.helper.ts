@@ -33,7 +33,7 @@ export function findClosest(el: HTMLElement, className: string): HTMLElement {
 
 export function hasClass(el: HTMLElement, className: string): boolean {
   if (!el) return;
-  return (` ${el.className} `).replace(/[\n\t]/g, ' ').indexOf(` ${className} `) > -1;
+  return (` ${el.className} `).replace(/[\n\t]/g, ' ').includes(` ${className} `);
 }
 
 export function toggleClass(el: HTMLElement | HTMLCollectionOf<HTMLElement>, className: string): void {

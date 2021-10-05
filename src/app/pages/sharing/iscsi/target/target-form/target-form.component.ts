@@ -160,7 +160,7 @@ export class TargetFormComponent implements FormConfiguration {
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
     this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe(
       (systemInfo) => {
-        if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.FibreChannel) > -1) {
+        if (systemInfo.license && systemInfo.license.features.includes(LicenseFeature.FibreChannel)) {
           _.find(basicFieldset.config, { name: 'mode' }).isHidden = false;
         }
       },
