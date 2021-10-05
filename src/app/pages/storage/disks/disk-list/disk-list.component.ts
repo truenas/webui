@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
 import { filter } from 'rxjs/operators';
@@ -24,7 +25,6 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -152,7 +152,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       id: parentRow.name,
       icon: 'edit',
       name: 'edit',
-      label: T('Edit'),
+      label: T('Edit') as string,
       onClick: (row: Disk) => {
         this.router.navigate(['/', 'storage', 'disks', 'edit', row.identifier]);
       },

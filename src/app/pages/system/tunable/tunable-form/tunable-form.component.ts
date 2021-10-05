@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -9,7 +10,6 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

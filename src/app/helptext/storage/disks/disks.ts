@@ -1,6 +1,6 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
-import { T } from 'app/translate-marker';
 
 export default {
   disk_form_title: T('Edit Pool Disk'),

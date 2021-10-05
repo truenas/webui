@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -14,7 +15,6 @@ import { GeneralDialogComponent, GeneralDialogConfig } from 'app/pages/common/ge
 import { InfoDialogComponent } from 'app/pages/common/info-dialog/info-dialog.component';
 import { PasswordDialogComponent } from 'app/pages/common/password-dialog/password-dialog.component';
 import { SelectDialogComponent } from 'app/pages/common/select-dialog/select-dialog.component';
-import { T } from 'app/translate-marker';
 import { AppLoaderService } from './app-loader/app-loader.service';
 import { WebSocketService } from './ws.service';
 

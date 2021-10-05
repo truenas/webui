@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Navigation, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
@@ -33,7 +34,6 @@ import {
   WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { EntityUtils } from '../common/entity/utils';
 import { CardWidgetConf } from './card-widget/card-widget.component';
 import { ConfigurationComponent } from './forms/configuration.component';

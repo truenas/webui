@@ -1,6 +1,5 @@
 import { Validators } from '@angular/forms';
-import globalHelptext from 'app/helptext/global-helptext';
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptext_system_update = {
   version: {
@@ -47,8 +46,6 @@ export const helptext_system_update = {
   manual_update_error_dialog: {
     message: T('Error submitting file'),
   },
-
-  sysUpdateMessage: globalHelptext.sys_update_message,
 
   ha_update: {
     complete_title: T('Complete the Upgrade'),

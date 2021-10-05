@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptext_system_ntpservers = {
   header: T('NTP Server Settings'),

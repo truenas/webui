@@ -1,5 +1,5 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import globalHelptext from 'app/helptext/global-helptext';
-import { T } from 'app/translate-marker';
 
 export default {
   fieldset_general: T('General'),
@@ -256,9 +256,8 @@ to determine snapshots creation order.'),
  size of the data being replicated. Only appears when <i>SSH</i> is \
  chosen for <i>Transport</i> type.'),
 
-  speed_limit_placeholder: T(`Limit ${globalHelptext.human_readable.suggestion_label}`),
-  speed_limit_tooltip: T('Limit replication speed to this number of \
- bytes per second.'),
+  speed_limit_placeholder: T('Limit'),
+  speed_limit_tooltip: T('Limit replication speed to this number of bytes per second.'),
   speed_limit_errors: globalHelptext.human_readable.input_error,
 
   large_block_placeholder: T('Allow Blocks Larger than 128KB'),
@@ -268,14 +267,6 @@ to determine snapshots creation order.'),
  <a href="https://www.freebsd.org/cgi/man.cgi?query=zfs" \
  target="_blank">zfs(8)</a>.'),
 
-  /** Not visible in 11.3
-    embed_placeholder: T('Allow WRITE_EMBEDDED Records'),
-    embed_tooltip: T('Use WRITE_EMBEDDED records to make the stream more \
- efficient. The destination system must also support WRITE_EMBEDDED \
- records. When the source system is using lz4 compression, the destination \
- system must use the same compression. See \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=zfs" target="_blank">zfs(8)</a>.'),
-*/
   compressed_placeholder: T('Allow Compressed WRITE Records'),
   compressed_tooltip: T('Use compressed WRITE records to make the \
  stream more efficient. The destination system must also support \

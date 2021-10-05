@@ -2,6 +2,7 @@ import {
   Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -15,7 +16,6 @@ import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interfac
 import { DashboardNicState } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
-import { T } from 'app/translate-marker';
 
 interface NetTraffic {
   sent: string;

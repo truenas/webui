@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
@@ -16,7 +17,6 @@ import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row
 import { DialogService, TaskService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { UserService } from 'app/services/user.service';
-import { T } from 'app/translate-marker';
 import { CronFormComponent } from '../cron-form/cron-form.component';
 
 @UntilDestroy()

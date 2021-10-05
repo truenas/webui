@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
@@ -11,7 +12,6 @@ import {
   DialogService, ReplicationService, StorageService, CloudCredentialService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
 import { SshConnectionsFormComponent } from './forms/ssh-connections-form.component';
 import { SshKeypairsFormComponent } from './forms/ssh-keypairs-form.component';

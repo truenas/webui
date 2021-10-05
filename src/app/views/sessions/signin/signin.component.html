@@ -13,7 +13,7 @@
               <form #signinForm="ngForm" (ngSubmit)="signin()" [hidden]="!has_root_password">
                 <div class="form-element username">
                   <div class="label-container">
-                    <label class="label input-text">Username</label>
+                    <label class="label input-text">{{ 'Username' | translate }}</label>
                   </div>
                   <mat-form-field class="full-width">
                     <span matPrefix><mat-icon fontSet="mdi-set" fontIcon="mdi-account" style="color:var(--fg1);position:relative;top:4px;"></mat-icon>&nbsp;&nbsp;</span>
@@ -34,7 +34,7 @@
                 </div>
                 <div class="form-element password">
                   <div class="label-container">
-                    <label class="label input-text">Password</label>
+                    <label class="label input-text">{{ 'Password' | translate }}</label>
                   </div>
                   <mat-form-field class="full-width">
                     <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:4px;">lock</mat-icon>&nbsp;&nbsp;</span>
@@ -103,13 +103,15 @@
               <div class="ha-status">
                 <div class="ha-status-txt">
                   <p>{{ha_status_text}}</p>
-                  <span *ngIf="show_reasons"><p *ngFor='let reason of ha_disabled_reasons'>
-                    {{reason_text[disabledReason(reason)] | translate}}
-                    </p></span>
+                  <span *ngIf="show_reasons">
+                    <p *ngFor="let reason of ha_disabled_reasons">
+                      {{reason_text[disabledReason(reason)] | translate}}
+                    </p>
+                  </span>
                   <span *ngIf="ha_info_ready">
                     <p>{{failover_statuses[failover_status]}}</p>
                     <span *ngIf="failover_ips.length > 0">
-                      <p>Active IP Addresses: {{failover_ips.join(", ")}}</p>
+                      <p>{{ 'Active IP Addresses' | translate }}: {{failover_ips.join(", ")}}</p>
                     </span>
                   </span>
                 </div>
@@ -118,7 +120,7 @@
 
             <div class="truecommand" *ngIf="tc_ip" (click)="gotoTC()">
               <img id="truecommand-logo" src="assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg">
-              <span class="truecommand-txt">TrueCommand IP: {{tc_ip}}</span>
+              <span class="truecommand-txt">{{ 'TrueCommand IP' | translate }}: {{tc_ip}}</span>
             </div>
 
             <div class="copyright-line">

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -11,7 +12,6 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -25,7 +25,7 @@ export class WebdavFormComponent implements FormConfiguration {
   addCall: 'sharing.webdav.create' = 'sharing.webdav.create';
   editCall: 'sharing.webdav.update' = 'sharing.webdav.update';
   isEntity = true;
-  title = T('Add WebDAV');
+  title: string = T('Add WebDAV');
   confirmSubmit = true;
   confirmSubmitDialog = {
     title: helptext_sharing_webdav.warning_dialog_title,

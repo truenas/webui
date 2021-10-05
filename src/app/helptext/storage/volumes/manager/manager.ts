@@ -1,4 +1,4 @@
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   manager_needsDiskMessage: T('Add one or more disks to be used for data.'),

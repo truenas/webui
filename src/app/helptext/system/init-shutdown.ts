@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   ini_type_placeholder: T('Type'),

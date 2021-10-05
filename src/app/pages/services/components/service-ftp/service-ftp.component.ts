@@ -3,10 +3,12 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
-import global_helptext from 'app/helptext/global-helptext';
+import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/services/components/service-ftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
@@ -18,7 +20,6 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import {
   DialogService, SystemGeneralService, WebSocketService, StorageService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -270,8 +271,11 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
         {
           type: 'input',
           name: 'localuserbw',
-          placeholder: helptext.localuserbw_placeholder,
-          tooltip: helptext.userbw_tooltip,
+          placeholder: this.translate.instant(helptext.localuserbw_placeholder)
+          + this.translate.instant(globalHelptext.human_readable.suggestion_label),
+          tooltip: this.translate.instant(helptext.userbw_tooltip)
+          + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+          + this.translate.instant(' KiB.'),
           required: true,
           validation: helptext.userbw_validation,
           blurStatus: true,
@@ -282,7 +286,9 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           type: 'input',
           name: 'localuserdlbw',
           placeholder: helptext.localuserdlbw_placeholder,
-          tooltip: helptext.userbw_tooltip,
+          tooltip: this.translate.instant(helptext.userbw_tooltip)
+          + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+          + this.translate.instant(' KiB.'),
           required: true,
           validation: helptext.userbw_validation,
           blurStatus: true,
@@ -293,7 +299,9 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           type: 'input',
           name: 'anonuserbw',
           placeholder: helptext.anonuserbw_placeholder,
-          tooltip: helptext.userbw_tooltip,
+          tooltip: this.translate.instant(helptext.userbw_tooltip)
+          + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+          + this.translate.instant(' KiB.'),
           required: true,
           validation: helptext.userbw_validation,
           blurStatus: true,
@@ -304,7 +312,9 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           type: 'input',
           name: 'anonuserdlbw',
           placeholder: helptext.anonuserdlbw_placeholder,
-          tooltip: helptext.userbw_tooltip,
+          tooltip: this.translate.instant(helptext.userbw_tooltip)
+          + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+          + this.translate.instant(' KiB.'),
           required: true,
           validation: helptext.userbw_validation,
           blurStatus: true,
@@ -381,7 +391,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   custActions = [
     {
       id: 'basic_mode',
-      name: global_helptext.basic_options,
+      name: globalHelptext.basic_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
         this.fieldSets.toggleSets().toggleDividers();
@@ -389,7 +399,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     },
     {
       id: 'advanced_mode',
-      name: global_helptext.advanced_options,
+      name: globalHelptext.advanced_options,
       function: () => {
         this.isBasicMode = !this.isBasicMode;
         this.fieldSets.toggleSets().toggleDividers();
@@ -415,6 +425,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     protected dialog: DialogService,
     protected storageService: StorageService,
     protected systemGeneralService: SystemGeneralService,
+    protected translate: TranslateService,
   ) {}
 
   ngOnInit(): void {

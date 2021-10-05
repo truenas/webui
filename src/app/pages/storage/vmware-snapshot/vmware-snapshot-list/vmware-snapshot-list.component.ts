@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'vmware-snapshot-list',

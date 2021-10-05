@@ -8,7 +8,6 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
@@ -56,9 +55,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.translate.get(this.conf.title).pipe(untilDestroyed(this)).subscribe((title) => {
-      this.title = title;
-    });
+    this.title = this.translate.instant(this.conf.title);
 
     this.fieldConfig = this.conf.fieldConfig;
 
@@ -91,7 +88,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
     if (this.conf.afterInit) {
       this.conf.afterInit(this);
     }
-    this.instructions = T(`Enter <strong>${this.conf.name}</strong> below to confirm.`);
+    this.instructions = this.translate.instant('Enter <strong>{name}</strong> below to confirm.', { name: this.conf.name });
   }
 
   submit(): void {

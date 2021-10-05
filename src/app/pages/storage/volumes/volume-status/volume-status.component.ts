@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
@@ -32,7 +33,6 @@ import {
   WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 interface PoolDiskInfo {
   name: string;
@@ -383,7 +383,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
-              let err = helptext.replace_disk.err_msg;
+              let err: string = helptext.replace_disk.err_msg;
               if (res.error.startsWith('[EINVAL]')) {
                 err = res.error;
               }
@@ -509,7 +509,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
             dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res: Job) => {
               dialogRef.close();
               entityDialog.dialogRef.close();
-              let err = helptext.extend_disk.err_msg;
+              let err: string = helptext.extend_disk.err_msg;
               if (res.error.startsWith('[EINVAL]')) {
                 err = res.error;
               }

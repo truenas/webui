@@ -2,6 +2,7 @@ import {
   ApplicationRef, Component, Injector, OnInit, OnDestroy,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -11,7 +12,6 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService } from 'app/services/';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

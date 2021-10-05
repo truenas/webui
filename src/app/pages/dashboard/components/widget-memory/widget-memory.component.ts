@@ -6,6 +6,7 @@ import {
   DomSanitizer, SafeStyle,
 } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
@@ -19,7 +20,6 @@ import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.i
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetMemoryData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { Theme } from 'app/services/theme/theme.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

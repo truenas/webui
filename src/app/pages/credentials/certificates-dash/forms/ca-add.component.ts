@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_ca } from 'app/helptext/system/ca';
@@ -14,7 +15,6 @@ import { SystemGeneralService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

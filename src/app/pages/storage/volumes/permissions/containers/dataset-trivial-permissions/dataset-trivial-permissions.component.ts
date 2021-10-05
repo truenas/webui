@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
@@ -16,7 +17,6 @@ import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-jo
 import {
   DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

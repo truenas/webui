@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { MatStep, MatStepper } from '@angular/material/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -14,7 +15,6 @@ import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { T } from 'app/translate-marker';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
@@ -37,7 +37,7 @@ export class EntityWizardComponent implements OnInit {
   summaryValue: any;
   summaryFieldConfigs: FieldConfig[] = [];
 
-  saveSubmitText = T('Save');
+  saveSubmitText: string = T('Save');
   customNextText = T('Next');
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 

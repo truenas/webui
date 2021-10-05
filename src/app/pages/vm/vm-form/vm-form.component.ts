@@ -1,6 +1,7 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -26,7 +27,6 @@ import {
   VmService,
   WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -163,7 +163,7 @@ export class VmFormComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'memory',
-          placeholder: `${helptext.memory_placeholder} ${globalHelptext.human_readable.suggestion_label}`,
+          placeholder: `${this.translate.instant(helptext.memory_placeholder)} ${this.translate.instant(globalHelptext.human_readable.suggestion_label)}`,
           tooltip: helptext.memory_tooltip,
           blurStatus: true,
           blurEvent: () => this.memoryBlur(),
@@ -339,10 +339,7 @@ export class VmFormComponent implements FormConfiguration {
 
         if (errors) {
           config.hasErrors = true;
-          config.hasErrors = true;
-          this.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
-            config.warnings = warning + ` ${this.maxVCPUs}.`;
-          });
+          config.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVCPUs });
         } else {
           config.hasErrors = false;
           config.warnings = '';

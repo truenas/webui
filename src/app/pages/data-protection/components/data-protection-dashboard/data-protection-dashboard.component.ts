@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -43,7 +44,6 @@ import {
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { JobService } from 'app/services/job.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 export interface TaskCard {
   name: string;

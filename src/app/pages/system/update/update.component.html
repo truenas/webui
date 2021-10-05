@@ -115,9 +115,7 @@
 
 <mat-card class="p-0" id="changelog-card" *ngIf="changeLog && nightly_train">
   <mat-card-title id="changelog-title">
-    <!-- <div class="mat-toolbar mat-card-toolbar"> -->
     <div >{{"Change log" | translate}}</div>
-    <!-- </div> -->
   </mat-card-title>
   <mat-card-content id="changelog-scrollbox">
     <div [innerHTML]="changeLog"></div>
@@ -129,7 +127,7 @@
     <strong>{{"This is not a production release, and should only be used for testing." | translate}}</strong>
   </div>
   <div class="stable-warning" id="stable_warning_line_2">
-    <a href='https://www.truenas.com/docs/hub/intro/release-notes/' target="new">
+    <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="new">
       {{"Before updating, please read the release notes." | translate}}
     </a>
   </div>
@@ -137,7 +135,7 @@
 
 <mat-card *ngIf="updates_available && release_train && product_type === ProductType.Core" id="stable-warning-card">
   <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
-    <a href='https://www.truenas.com/docs/hub/intro/release-notes/' target="new">
+    <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="new">
       {{"Before updating, please read the release notes." | translate}}
     </a>
   </div>
@@ -145,7 +143,7 @@
 
 <mat-card *ngIf="updates_available && pre_release_train && product_type === ProductType.Enterprise" id="stable-warning-card">
   <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
-    <a href='https://www.truenas.com/docs/hub/intro/release-notes/' target="new">
+    <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="new">
       {{"Before updating, please read the release notes." | translate}}
     </a>
   </div>
@@ -153,7 +151,7 @@
 
 <mat-card *ngIf="updates_available && release_train && product_type === ProductType.Enterprise" id="stable-warning-card">
   <div class="stable-warning"><i class="material-icons" id="update-info">info</i>
-    <a href='https://www.truenas.com/docs/hub/intro/release-notes/' target="new">
+    <a href="https://www.truenas.com/docs/hub/intro/release-notes/" target="new">
       {{"Before updating, please read the release notes." | translate}}
     </a>
   </div>
@@ -189,7 +187,6 @@
         (click)="manualUpdate()"
         ix-auto ix-auto-type="button" ix-auto-identifier="INSTALL MANUAL UPDATE FILE"
       >{{"Install Manual Update File" | translate}}</button>
-      <!-- <button mat-button class="btn btn-success update-button red-warning-button" *ngIf="failover_upgrade_pending" (click)="applyFailoverUpgrade()">{{"Apply Failover Upgrade" | translate}}</button> -->
       <p><font color="red">{{general_update_error}}</font></p>
     </div>
   </div>
@@ -197,8 +194,9 @@
 <mat-card id="update-in-progress-card" *ngIf="isUpdateRunning">
   <div class="row">
     <div class="col-md-12">
-      <p><i class="material-icons">warning</i><span id="update-running-msg">
-        {{ is_ha? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}</span>
+      <p>
+        <i class="material-icons">warning</i>
+        <span id="update-running-msg">{{ is_ha? sysUpdateMessage : sysUpdateMessage + sysUpdateMsgPt2 }}</span>
       </p>
     </div>
   </div>

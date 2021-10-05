@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -8,7 +9,6 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { AppTableConfirmDeleteDialog, TableComponent } from 'app/pages/common/entity/table/table.component';
 import { DialogService, AppLoaderService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
 import { EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';
@@ -77,7 +77,7 @@ export class TableService {
   }
 
   delete(table: TableComponent, item: any, action?: string): void {
-    const deleteMsg = table.tableConf.confirmDeleteDialog && table.tableConf.confirmDeleteDialog.isMessageComplete
+    const deleteMsg: string = table.tableConf.confirmDeleteDialog?.isMessageComplete
       ? ''
       : this.getDeleteMessage(table, item, action);
 
@@ -109,8 +109,8 @@ export class TableService {
   }
 
   // generate delete msg
-  getDeleteMessage(table: TableComponent, item: any, action = T('Delete ')): string {
-    let deleteMsg = T('Delete the selected item?');
+  getDeleteMessage(table: TableComponent, item: any, action: string = T('Delete ')): string {
+    let deleteMsg: string = T('Delete the selected item?');
     if (table.tableConf.deleteMsg) {
       deleteMsg = action + table.tableConf.deleteMsg.title;
       let msg_content = ' <b>' + item[table.tableConf.deleteMsg.key_props[0]];

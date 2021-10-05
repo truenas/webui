@@ -1,8 +1,8 @@
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { VmCpuMode } from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { T } from 'app/translate-marker';
 
 export default {
   no_pools_dialog: {
@@ -64,8 +64,7 @@ export default {
  address can be chosen.'),
 
   vcpus_label: T('CPU and Memory'),
-  vcpus_warning: T('The product of vCPUs, cores and threads must not exceed'),
-  vcpus_warning_b: T('on this system.'),
+  vcpus_warning: T('The product of vCPUs, cores and threads must not exceed {maxVCPUs} on this system.'),
   vcpus_placeholder: T('Virtual CPUs'),
   vcpus_validation: [Validators.required, Validators.min(1), Validators.max(16)],
   vcpus_tooltip: T('Number of virtual CPUs to allocate to the virtual\

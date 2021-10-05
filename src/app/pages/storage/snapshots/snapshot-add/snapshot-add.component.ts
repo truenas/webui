@@ -3,11 +3,11 @@ import {
 } from '@angular/core';
 import { FormControl, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { map } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { T } from 'app/translate-marker';
 import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import {
   DialogService, SystemGeneralService, WebSocketService,

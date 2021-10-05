@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { MatRadioChange } from '@angular/material/radio/radio';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { BehaviorSubject } from 'rxjs';
@@ -22,7 +23,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService, WebSocketService, AppLoaderService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 interface OAuthData {
   client_id?: string;

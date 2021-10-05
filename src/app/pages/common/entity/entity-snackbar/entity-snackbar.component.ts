@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 
 @UntilDestroy()
@@ -19,9 +19,7 @@ export class EntitySnackbarComponent {
   constructor(private snackbar: MatSnackBar,
     protected translate: TranslateService,
     public snackBarRef: MatSnackBarRef<EntitySnackbarComponent>) {
-    this.translate.get(EntitySnackbarComponent.message).pipe(untilDestroyed(this)).subscribe((res) => {
-      this.translatedMsg = res;
-    });
+    this.translatedMsg = this.translate.instant(EntitySnackbarComponent.message);
     this.action = EntitySnackbarComponent.action;
   }
 }

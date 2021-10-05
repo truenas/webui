@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as ipRegex from 'ip-regex';
 import isCidr from 'is-cidr';
@@ -10,7 +11,6 @@ import {
   LACPDURate, LinkAggregationProtocol, NetworkInterfaceAliasType, NetworkInterfaceType, XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
@@ -21,7 +21,6 @@ import {
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { NetworkService, DialogService, WebSocketService } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -427,11 +426,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.node').pipe(untilDestroyed(this)).subscribe((node) => {
         if (node === 'A') {
-          this.ipPlaceholder = ` (${globalHelptext.thisCtlr})`;
-          this.failoverPlaceholder = ` (${globalHelptext.Ctrlr} 2)`;
+          this.ipPlaceholder = ' (This Controller)';
+          this.failoverPlaceholder = ' (TrueNAS Controller 2)';
         } else if (node === 'B') {
-          this.ipPlaceholder = ` (${globalHelptext.Ctrlr} 1)`;
-          this.failoverPlaceholder = ` (${globalHelptext.thisCtlr})`;
+          this.ipPlaceholder = ' (TrueNAS Controller 1)';
+          this.failoverPlaceholder = ' (This Controller)';
         } else {
           return;
         }

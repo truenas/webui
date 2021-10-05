@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { MatMonthView } from '@angular/material/datepicker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as parser from 'cron-parser';
@@ -17,7 +18,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SystemGeneralService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
 
 interface CronPreset {
   label: string;
