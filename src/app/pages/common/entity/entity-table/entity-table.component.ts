@@ -3,7 +3,16 @@ import {
 } from '@angular/animations';
 import { SelectionModel } from '@angular/cdk/collections';
 import {
-  AfterViewChecked, Component, Input, OnDestroy, OnInit, TemplateRef, ViewChild,
+  AfterViewInit,
+  AfterViewChecked,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,7 +24,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import {
-  Observable, of, Subscription, EMPTY,
+  Observable, of, Subscription, EMPTY, Subject,
 } from 'rxjs';
 import {
   catchError, filter, switchMap, take, tap,
@@ -50,6 +59,7 @@ export interface Command {
 
 @UntilDestroy()
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'entity-table',
   templateUrl: './entity-table.component.html',
   styleUrls: ['./entity-table.component.scss'],
@@ -62,13 +72,17 @@ export interface Command {
     ]),
   ],
 })
-export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked, OnDestroy {
+export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() title = '';
   @Input() conf: EntityTableConfig;
 
   @ViewChild('newEntityTable', { static: false }) entitytable: TemplateRef<void>;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+
+  dataSourceStreamer$: Subject<any[]> = new Subject();
+  dataSource$: Observable<any[]> = this.dataSourceStreamer$.asObservable();
+  dataReady = false;
 
   // MdPaginator Inputs
   paginationPageSize = 10;
@@ -122,7 +136,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
   expandedRows = document.querySelectorAll('.expanded-row').length;
   expandedElement: Row | null = null;
 
-  dataSource: MatTableDataSource<any>;
+  dataSource: MatTableDataSource<any[]>;
   rows: Row[] = [];
   currentRows: any[] = []; // Rows applying filter
   getFunction: Observable<any>;
@@ -189,6 +203,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     protected prefService: PreferencesService,
     protected matDialog: MatDialog,
     public modalService: ModalService,
+    public changeDetectorRef: ChangeDetectorRef,
   ) {
     this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
       this.multiActionsIconsOnly = evt.data.preferIconsOnly;
@@ -254,6 +269,9 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     this.actionsConfig = { actionType: EntityTableAddActionsComponent, actionConfig: this };
     this.cardHeaderReady = !this.conf.cardHeaderComponent;
     this.hasActions = !this.conf.noActions;
+  }
+
+  altInit(): void {
     if (this.conf.config?.pagingOptions?.pageSize) {
       this.paginationPageSize = this.conf.config.pagingOptions.pageSize;
     }
@@ -264,36 +282,36 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     this.sortKey = (this.conf.config.deleteMsg && this.conf.config.deleteMsg.key_props)
       ? this.conf.config.deleteMsg.key_props[0] as keyof Row
       : this.conf.columns[0].prop as keyof Row;
-    setTimeout(async () => {
-      if (this.conf.prerequisite) {
-        await this.conf.prerequisite().then(
-          (canContinue) => {
-            if (canContinue) {
-              if (this.conf.preInit) {
-                this.conf.preInit(this);
-              }
-              this.getData();
-              if (this.conf.afterInit) {
-                this.conf.afterInit(this);
-              }
-            } else {
-              this.showSpinner = false;
-              if (this.conf.prerequisiteFailedHandler) {
-                this.conf.prerequisiteFailedHandler(this);
-              }
+
+    if (this.conf.prerequisite) {
+      this.conf.prerequisite().then(
+        (canContinue) => {
+          if (canContinue) {
+            if (this.conf.preInit) {
+              this.conf.preInit(this);
             }
-          },
-        );
-      } else {
-        if (this.conf.preInit) {
-          this.conf.preInit(this);
-        }
-        this.getData();
-        if (this.conf.afterInit) {
-          this.conf.afterInit(this);
-        }
+            this.getData();
+            if (this.conf.afterInit) {
+              this.conf.afterInit(this);
+            }
+          } else {
+            this.showSpinner = false;
+            if (this.conf.prerequisiteFailedHandler) {
+              this.conf.prerequisiteFailedHandler(this);
+            }
+          }
+        },
+      );
+    } else {
+      if (this.conf.preInit) {
+        this.conf.preInit(this);
       }
-    });
+      this.getData();
+      if (this.conf.afterInit) {
+        this.conf.afterInit(this);
+      }
+    }
+
     this.asyncView = this.conf.asyncView ? this.conf.asyncView : false;
 
     this.conf.columns.forEach((column) => {
@@ -316,44 +334,42 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     }
     this.conf.columns = this.originalConfColumns;
 
-    setTimeout(() => {
-      const preferredCols = this.prefService.preferences.tableDisplayedColumns;
-      // Turn off preferred cols for snapshots to allow for two diffferent column sets to be displayed
-      if (preferredCols.length > 0 && this.title !== 'Snapshots') {
-        preferredCols.forEach((column) => {
-          // If preferred columns have been set for THIS table...
-          if (column.title === this.title) {
-            this.firstUse = false;
-            this.conf.columns = column.cols.filter((col) =>
-              // Remove columns if they are already present in always displayed columns
-              !this.alwaysDisplayedCols.find((item) => item.prop === col.prop));
-            // Remove columns from display and preferred cols if they don't exist in the table
-            const notFound: EntityTableColumnProp[] = [];
-            this.conf.columns.forEach((col) => {
-              const found = this.filterColumns.find((o) => o.prop === col.prop);
-              if (!found) {
-                notFound.push(col.prop);
-              }
-            });
-            this.conf.columns = this.conf.columns.filter((col) => !notFound.includes(col.prop));
-            this.selectColumnsToShowOrHide();
-          }
-        });
-        if (this.title === 'Users') {
-          // Makes a list of the table's column maxWidths
-          this.filterColumns.forEach((column) => {
-            const tempObj: any = {};
-            tempObj['name'] = column.name;
-            tempObj['maxWidth'] = column.maxWidth;
-            this.colMaxWidths.push(tempObj);
+    const preferredCols = this.prefService.preferences.tableDisplayedColumns;
+    // Turn off preferred cols for snapshots to allow for two diffferent column sets to be displayed
+    if (preferredCols.length > 0 && this.title !== 'Snapshots') {
+      preferredCols.forEach((column) => {
+        // If preferred columns have been set for THIS table...
+        if (column.title === this.title) {
+          this.firstUse = false;
+          this.conf.columns = column.cols.filter((col) =>
+          // Remove columns if they are already present in always displayed columns
+            !this.alwaysDisplayedCols.find((item) => item.prop === col.prop));
+          // Remove columns from display and preferred cols if they don't exist in the table
+          const notFound: EntityTableColumnProp[] = [];
+          this.conf.columns.forEach((col) => {
+            const found = this.filterColumns.find((o) => o.prop === col.prop);
+            if (!found) {
+              notFound.push(col.prop);
+            }
           });
-          this.conf.columns = this.dropLastMaxWidth();
+          this.conf.columns = this.conf.columns.filter((col) => !notFound.includes(col.prop));
+          this.selectColumnsToShowOrHide();
         }
+      });
+      if (this.title === 'Users') {
+        // Makes a list of the table's column maxWidths
+        this.filterColumns.forEach((column) => {
+          const tempObj: any = {};
+          tempObj['name'] = column.name;
+          tempObj['maxWidth'] = column.maxWidth;
+          this.colMaxWidths.push(tempObj);
+        });
+        this.conf.columns = this.dropLastMaxWidth();
       }
-      if (this.firstUse) {
-        this.selectColumnsToShowOrHide();
-      }
-    }, this.prefService.preferences.tableDisplayedColumns.length === 0 ? 200 : 0);
+    }
+    if (this.firstUse) {
+      this.selectColumnsToShowOrHide();
+    }
 
     this.displayedColumns.push('action');
     if (this.conf.changeEvent) {
@@ -365,7 +381,29 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     }
 
     // Delay spinner 500ms so it won't show up on a fast-loading page
-    setTimeout(() => { this.setShowSpinner(); }, 500);
+    setTimeout(() => {
+      this.setShowSpinner();
+    }, 500);
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource = new MatTableDataSource();
+    this.altInit();
+
+    if (this.paginator) this.dataSource.paginator = this.paginator;
+    if (this.sort) this.dataSource.sort = this.sort;
+
+    this.dataSource$
+      .pipe(untilDestroyed(this))
+      .subscribe((data) => {
+        if (!this.dataSource) return;
+
+        if (data.length === 0) this.isTableEmpty = true;
+
+        this.dataSource.data = data;
+
+        this.changeDetectorRef.detectChanges();
+      });
   }
 
   ngAfterViewChecked(): void {
@@ -578,6 +616,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     } else {
       this.callGetFunction();
     }
+
     if (this.asyncView) {
       this.interval = setInterval(() => {
         if (this.conf.callGetFunction) {
@@ -673,10 +712,6 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
     for (let i = 0; i < this.currentRows.length; i++) {
       this.currentRows[i].multiselect_id = i;
     }
-    this.dataSource = new MatTableDataSource(this.currentRows);
-    this.dataSource.sort = this.sort;
-
-    this.filter(this.filterValue);
 
     if (this.conf.config.paging) {
       // On first load, paginator is not rendered because table is empty,
@@ -685,6 +720,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewChecked
         this.dataSource.paginator = this.paginator;
       }, 0);
     }
+
+    this.dataSourceStreamer$.next(this.currentRows);
 
     return res;
   }

@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef, Component, OnDestroy, OnInit,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
@@ -159,8 +161,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected http: HttpClient,
     modalService: ModalService,
     protected validationService: ValidationService,
+    public cdr: ChangeDetectorRef,
   ) {
-    super(core, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService);
+    super(core, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService, cdr);
 
     this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this };
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
