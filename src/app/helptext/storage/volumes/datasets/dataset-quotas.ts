@@ -1,5 +1,5 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import globalHelptext from 'app/helptext/global-helptext';
-import { T } from 'app/translate-marker';
 
 export default {
   users: {
@@ -18,9 +18,9 @@ export default {
  if there are no matches.'),
     },
     data_quota: {
-      placeholder: T('User Data Quota ') + globalHelptext.human_readable.suggestion_label,
+      placeholder: T('User Data Quota '),
       tooltip: T('Amount of disk space that can be used by the selected users. \
- Entering <code>0</code> (zero) allows all disk space to be used.') + globalHelptext.human_readable.suggestion_tooltip,
+ Entering <code>0</code> (zero) allows all disk space to be used.'),
     },
     obj_quota: {
       placeholder: T('User Object Quota'),
@@ -60,9 +60,9 @@ export default {
  if there are no matches.'),
     },
     data_quota: {
-      placeholder: T('Group Data Quota ') + globalHelptext.human_readable.suggestion_label,
+      placeholder: T('Group Data Quota '),
       tooltip: T('Amount of disk space that can be used by the selected groups. \
- Entering <code>0</code> (zero) allows all disk space.') + globalHelptext.human_readable.suggestion_tooltip,
+ Entering <code>0</code> (zero) allows all disk space.'),
     },
     obj_quota: {
       placeholder: T('Group Object Quota'),

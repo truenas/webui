@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as ipRegex from 'ip-regex';
 import isCidr from 'is-cidr';
@@ -10,18 +11,16 @@ import {
   LACPDURate, LinkAggregationProtocol, NetworkInterfaceAliasType, NetworkInterfaceType, XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { NetworkInterface } from 'app/interfaces/network-interface.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormListConfig, FormSelectConfig, FormInputConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { NetworkService, DialogService, WebSocketService } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -339,12 +338,12 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     const is_vlan = (type === NetworkInterfaceType.Vlan);
     const is_bridge = (type === NetworkInterfaceType.Bridge);
     const is_lagg = (type === NetworkInterfaceType.LinkAggregation);
-    for (let i = 0; i < this.vlan_fields.length; i++) {
-      this.entityForm.setDisabled(this.vlan_fields[i], !is_vlan, !is_vlan);
-    }
-    for (let i = 0; i < this.lagg_fields.length; i++) {
-      this.entityForm.setDisabled(this.lagg_fields[i], !is_lagg, !is_lagg);
-    }
+    this.vlan_fields.forEach((field) => {
+      this.entityForm.setDisabled(field, !is_vlan, !is_vlan);
+    });
+    this.lagg_fields.forEach((field) => {
+      this.entityForm.setDisabled(field, !is_lagg, !is_lagg);
+    });
     const lagProtocol = this.entityForm.formGroup.get('lag_protocol')?.value;
     if (lagProtocol) {
       if (lagProtocol === LinkAggregationProtocol.Lacp) {
@@ -362,9 +361,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       this.entityForm.setDisabled('xmit_hash_policy', true, true);
     }
 
-    for (let i = 0; i < this.bridge_fields.length; i++) {
-      this.entityForm.setDisabled(this.bridge_fields[i], !is_bridge, !is_bridge);
-    }
+    this.bridge_fields.forEach((field) => {
+      this.entityForm.setDisabled(field, !is_bridge, !is_bridge);
+    });
     this.vlan_fieldset.label = is_vlan;
     this.lag_fieldset.label = is_lagg;
     this.bridge_fieldset.label = is_bridge;
@@ -427,11 +426,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.node').pipe(untilDestroyed(this)).subscribe((node) => {
         if (node === 'A') {
-          this.ipPlaceholder = ` (${globalHelptext.thisCtlr})`;
-          this.failoverPlaceholder = ` (${globalHelptext.Ctrlr} 2)`;
+          this.ipPlaceholder = ' (This Controller)';
+          this.failoverPlaceholder = ' (TrueNAS Controller 2)';
         } else if (node === 'B') {
-          this.ipPlaceholder = ` (${globalHelptext.Ctrlr} 1)`;
-          this.failoverPlaceholder = ` (${globalHelptext.thisCtlr})`;
+          this.ipPlaceholder = ' (TrueNAS Controller 1)';
+          this.failoverPlaceholder = ' (This Controller)';
         } else {
           return;
         }
@@ -472,15 +471,14 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         if (window.localStorage.getItem('product_type').includes(ProductType.Scale)) {
           _.remove(this.failover_fields, (el) => el === 'failover_vhid');
         }
-        for (let i = 0; i < this.failover_fields.length; i++) {
-          entityForm.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
-        }
+        this.failover_fields.forEach((field) => {
+          entityForm.setDisabled(field, !is_ha, !is_ha);
+        });
         if (is_ha) {
-          this.entityForm.formGroup.controls['aliases'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+          this.entityForm.formGroup.controls['aliases'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any[]) => {
             let v6_found = false;
             let mismatch_found = false;
-            for (let i = 0; i < res.length; i++) {
-              const alias = res[i];
+            res.forEach((alias) => {
               const address = alias['address'];
               const failover_address = alias['failover_address'];
               const virtual_address = alias['failover_virtual_address'];
@@ -495,7 +493,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
                   || isCidr.v6(virtual_address)) {
                 v6_found = true;
               }
-            }
+            });
             if (v6_found) {
               this.aliases_fc.hasErrors = true;
               this.aliases_fc.errors = helptext.failover_alias_v6_error;
@@ -534,9 +532,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         }
       });
       this.networkService.getLaggProtocolChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-        for (let i = 0; i < res.length; i++) {
-          this.lag_protocol.options.push({ label: res[i], value: res[i] });
-        }
+        res.forEach((protocol) => {
+          this.lag_protocol.options.push({ label: protocol, value: protocol });
+        });
       });
       this.networkService.getBridgeMembersChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
         for (const key in choices) {
@@ -566,13 +564,13 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     if (data['mtu'] === '') {
       data['mtu'] = 1500;
     }
-    const aliases = [];
-    const failover_aliases = [];
-    const failover_virtual_aliases = [];
-    for (let i = 0; i < data.aliases.length; i++) {
-      if (!data.aliases[i]['delete']
-        && !!data.aliases[i]['address']) {
-        const strings = data.aliases[i]['address'].split('/');
+    const aliases: NetworkInterfaceAlias[] = [];
+    const failover_aliases: { address: string }[] = [];
+    const failover_virtual_aliases: { address: string }[] = [];
+    data.aliases.forEach((alias: any) => {
+      if (!alias['delete']
+        && !!alias['address']) {
+        const strings = alias['address'].split('/');
         if (strings[0]) {
           aliases.push({
             address: strings[0],
@@ -580,20 +578,20 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
             netmask: parseInt(strings[1], 10),
           });
         }
-        if (data.aliases[i]['failover_address']) {
-          const f_strings = data.aliases[i]['failover_address'].split('/');
+        if (alias['failover_address']) {
+          const f_strings = alias['failover_address'].split('/');
           if (f_strings[0]) {
             failover_aliases.push({ address: f_strings[0] });
           }
         }
-        if (data.aliases[i]['failover_virtual_address']) {
-          const fv_strings = data.aliases[i]['failover_virtual_address'].split('/');
+        if (alias['failover_virtual_address']) {
+          const fv_strings = alias['failover_virtual_address'].split('/');
           if (fv_strings[0]) {
             failover_virtual_aliases.push({ address: fv_strings[0] });
           }
         }
       }
-    }
+    });
 
     data.aliases = aliases;
     if (data.type === NetworkInterfaceType.Bridge && data.bridge_members === undefined) {
@@ -635,9 +633,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       });
 
       this.networkService.getLaggProtocolChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-        for (let i = 0; i < res.length; i++) {
-          this.lag_protocol.options.push({ label: res[i], value: res[i] });
-        }
+        res.forEach((protocol) => {
+          this.lag_protocol.options.push({ label: protocol, value: protocol });
+        });
       });
     } else if (type === NetworkInterfaceType.Bridge) {
       this.networkService.getBridgeMembersChoices(id).pipe(untilDestroyed(this)).subscribe((choices) => {

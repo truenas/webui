@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { Subject } from 'rxjs';
@@ -7,7 +8,6 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { UserPreferencesReadyEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { T } from 'app/translate-marker';
 import { SystemGeneralService } from '.';
 
 @UntilDestroy()
@@ -164,11 +164,11 @@ export class LocaleService {
     const ngTimeFormat = this.timeFormat === 'hh:mm:ss a' ? 'hh:mm:ss aaaaa\'m\'' : this.timeFormat;
     const tempStr = `${this.dateFormat} ${ngTimeFormat}`;
     let dateStr = '';
-    for (let i = 0; i < tempStr.length; i++) {
-      if (tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H') {
-        dateStr += tempStr[i];
+    for (const char of tempStr) {
+      if (char === 'M' || char === 'Z' || char === 'H') {
+        dateStr += char;
       } else {
-        dateStr += tempStr[i].toLowerCase();
+        dateStr += char.toLowerCase();
       }
     }
     return dateStr;

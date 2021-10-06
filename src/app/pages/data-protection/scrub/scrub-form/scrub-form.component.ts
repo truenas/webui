@@ -3,8 +3,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/data-protection/scrub/scrub-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -149,7 +149,7 @@ export class ScrubFormComponent implements FormConfiguration {
     const formatted = schedule.minute + ' ' + schedule.hour + ' ' + schedule.dom + ' ' + schedule.month + ' ' + schedule.dow;
     const cronField = entity.formGroup.controls['cron_schedule'];
     cronField.setValue(formatted);
-    const cronEntity = entity.fieldConfig.filter((field) => field.name == 'cron_schedule')[0];
+    const cronEntity = entity.fieldConfig.find((field) => field.name == 'cron_schedule');
     cronEntity.value = formatted;
 
     // Setup all the other fields

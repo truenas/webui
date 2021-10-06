@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { CompressionType } from 'app/enums/compression-type.enum';
@@ -16,13 +18,14 @@ import { SnapshotNamingOption } from 'app/enums/snapshot-naming-option.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import repwizardhelptext from 'app/helptext/data-protection/replication/replication-wizard';
+import globalHelptext from 'app/helptext/global-helptext';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormExplorerConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
@@ -35,7 +38,6 @@ import {
   StorageService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -361,7 +363,8 @@ export class ReplicationFormComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'speed_limit',
-          placeholder: helptext.speed_limit_placeholder,
+          placeholder: this.translate.instant(helptext.speed_limit_placeholder)
+          + this.translate.instant(globalHelptext.human_readable.suggestion_label),
           tooltip: helptext.speed_limit_tooltip,
           hasErrors: false,
           relation: [
@@ -376,7 +379,7 @@ export class ReplicationFormComponent implements FormConfiguration {
             },
           ],
           blurStatus: true,
-          blurEvent: this.speedLimitBlur,
+          blurEvent: () => this.speedLimitBlur(),
           parent: this,
         },
         {
@@ -672,7 +675,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           placeholder: helptext.also_include_naming_schema_placeholder,
           tooltip: helptext.also_include_naming_schema_tooltip,
           blurStatus: true,
-          blurEvent: this.blurEventCountSnapshots,
+          blurEvent: () => this.blurEventCountSnapshots(),
           parent: this,
         },
         {
@@ -681,7 +684,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           placeholder: helptext.name_regex_placeholder,
           tooltip: helptext.name_regex_tooltip,
           parent: this,
-          blurEvent: this.blurEventCountSnapshots,
+          blurEvent: () => this.blurEventCountSnapshots(),
           isHidden: true,
         },
         {
@@ -1101,6 +1104,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     protected keychainCredentialService: KeychainCredentialService,
     protected replicationService: ReplicationService,
     protected modalService: ModalService,
+    protected translate: TranslateService,
   ) {
     this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: number) => {
       this.queryCallOption = [['id', '=', id]];
@@ -1131,16 +1135,16 @@ export class ReplicationFormComponent implements FormConfiguration {
     const restrictScheduleEndField = this.fieldSets.config('restrict_schedule_end') as FormSelectConfig;
     const time_options = this.taskService.getTimeOptions();
 
-    for (let i = 0; i < time_options.length; i++) {
+    time_options.forEach((timeOption) => {
       const option = {
-        label: time_options[i].label,
-        value: time_options[i].value,
+        label: timeOption.label,
+        value: timeOption.value,
       };
       scheduleBeginField.options.push(option);
       restrictScheduleBeginField.options.push(option);
       scheduleEndField.options.push(option);
       restrictScheduleEndField.options.push(option);
-    }
+    });
   }
 
   countEligibleManualSnapshots(): void {
@@ -1295,7 +1299,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value) : undefined;
       speedLimitField['hasErrors'] = false;
       speedLimitField['errors'] = '';
-      if (filteredValue !== undefined && isNaN(filteredValue)) {
+      if (filteredValue !== undefined && Number.isNaN(filteredValue)) {
         speedLimitField['hasErrors'] = true;
         speedLimitField['errors'] = helptext.speed_limit_errors;
       }
@@ -1557,22 +1561,23 @@ export class ReplicationFormComponent implements FormConfiguration {
     });
   }
 
-  speedLimitBlur(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['speed_limit'].setValue(parent.storageService.humanReadable);
+  speedLimitBlur(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['speed_limit'].setValue(this.storageService.humanReadable);
     }
   }
 
-  blurEventCountSnapshots(parent: this): void {
+  blurEventCountSnapshots(): void {
     if (
-      parent.entityForm
-      && parent.entityForm.formGroup.controls['direction'].value === Direction.Push
-      && parent.entityForm.formGroup.controls['transport'].value !== TransportMode.Local
-      && (parent.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined || parent.entityForm.formGroup.controls['name_regex'].value !== undefined)
+      this.entityForm
+      && this.entityForm.formGroup.controls['direction'].value === Direction.Push
+      && this.entityForm.formGroup.controls['transport'].value !== TransportMode.Local
+      && (this.entityForm.formGroup.controls['also_include_naming_schema'].value !== undefined
+        || this.entityForm.formGroup.controls['name_regex'].value !== undefined)
     ) {
-      parent.countEligibleManualSnapshots();
+      this.countEligibleManualSnapshots();
     } else {
-      parent.form_message.content = '';
+      this.form_message.content = '';
     }
   }
 

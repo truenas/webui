@@ -5,7 +5,8 @@ import { UpsMode } from 'app/enums/ups-mode.enum';
 import helptext from 'app/helptext/services/components/service-ups';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -259,9 +260,9 @@ export class ServiceUPSComponent implements FormConfiguration {
     });
 
     this.ws.call('ups.port_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.ups_port.options.push({ label: res[i], value: res[i] });
-      }
+      res.forEach((port) => {
+        this.ups_port.options.push({ label: port, value: port });
+      });
     });
 
     entityForm.formGroup.controls['driver'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
@@ -282,7 +283,7 @@ export class ServiceUPSComponent implements FormConfiguration {
     return Object.keys(object).find((key) => object[key] === value);
   }
 
-  beforeSubmit(data: any): void {
+  beforeSubmit(data: UpsConfigUpdate): void {
     data.driver = this.ups_driver_key;
   }
 }

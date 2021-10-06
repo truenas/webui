@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -9,34 +11,33 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { ModalService } from 'app/services';
 import { IscsiService } from 'app/services/iscsi.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
   selector: 'app-iscsi-target-list',
   template: `
-    <entity-table [conf]="this" [title]="tableTitle"></entity-table>
+    <entity-table [conf]="this" [title]="title"></entity-table>
   `,
   providers: [IscsiService],
 })
 export class TargetListComponent implements EntityTableConfig, OnInit {
   @Input() fcEnabled: boolean;
 
-  tableTitle = 'Targets';
+  title = T('Targets');
   queryCall: 'iscsi.target.query' = 'iscsi.target.query';
   wsDelete: 'iscsi.target.delete' = 'iscsi.target.delete';
   route_add: string[] = ['sharing', 'iscsi', 'target', 'add'];
-  route_add_tooltip = 'Add Target';
+  route_add_tooltip = T('Add Target');
   route_edit: string[] = ['sharing', 'iscsi', 'target', 'edit'];
 
   columns = [
     {
-      name: T('Target Name'),
+      name: T('Target Name') as string,
       prop: 'name',
       always_display: true,
     },
     {
-      name: T('Target Alias'),
+      name: T('Target Alias') as string,
       prop: 'alias',
     },
   ];
@@ -44,7 +45,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Target',
+      title: T('Target'),
       key_props: ['name'],
     },
   };
@@ -53,6 +54,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   constructor(
     private iscsiService: IscsiService,
     private modalService: ModalService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -97,9 +99,9 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
           (res) => {
             const payload: [id: number, force?: boolean] = [rowinner.id];
             let warningMsg = '';
-            for (let i = 0; i < res.length; i++) {
-              if (res[i].target.split(':')[1] == rowinner.name) {
-                warningMsg = '<font color="red">' + T('Warning: iSCSI Target is already in use.</font><br>');
+            for (const session of res) {
+              if (session.target.split(':')[1] == rowinner.name) {
+                warningMsg = `<font color="red">${this.translate.instant('Warning: iSCSI Target is already in use.</font><br>')}`;
                 payload.push(true); // enable force delele
                 break;
               }
@@ -124,6 +126,6 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
           },
         );
       },
-    }] as EntityTableAction[];
+    }];
   }
 }

@@ -2,23 +2,30 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { StorageService } from 'app/services/storage.service';
-import { T } from 'app/translate-marker';
 import helptext from '../helptext/storage/volumes/volume-key';
 
 @Injectable({
   providedIn: 'root',
 })
-
 export class EncryptionService {
-  constructor(protected ws: WebSocketService, protected dialogService: DialogService,
-    protected loader: AppLoaderService, protected storage: StorageService,
-    protected mdDialog: MatDialog, protected router: Router, protected http: HttpClient) {}
+  constructor(
+    protected ws: WebSocketService,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    protected storage: StorageService,
+    protected mdDialog: MatDialog,
+    protected router: Router,
+    protected http: HttpClient,
+    protected translate: TranslateService,
+  ) {}
 
   setPassphrase(
     row: string,
@@ -28,7 +35,7 @@ export class EncryptionService {
     route_success: string[],
     addRecoveryKey?: boolean,
     downloadEncrytpKey?: boolean,
-    success_message?: string,
+    successMessage?: string,
   ): void {
     this.loader.open();
     this.ws.call('pool.passphrase', [parseInt(row), {
@@ -36,12 +43,22 @@ export class EncryptionService {
       admin_password: adminPassphrase,
     }]).subscribe(() => {
       this.loader.close();
-      this.dialogService.info(T('Set Passphrase'), T(`Passphrase ${success_message} <i>${poolName}</i>`), '300px', 'info', true);
+      this.dialogService.info(
+        T('Set Passphrase'),
+        this.translate.instant('Passphrase {successMessage} <i>{poolName}</i>', { successMessage, poolName }),
+        '300px',
+        'info',
+        true,
+      );
       this.openEncryptDialog(row, route_success, poolName, addRecoveryKey);
     },
     (err) => {
       this.loader.close();
-      this.dialogService.errorReport(T(`Error creating passphrase for pool ${poolName}`), err.reason, err.trace.formatted);
+      this.dialogService.errorReport(
+        this.translate.instant('Error creating passphrase for pool {poolName}', { poolName }),
+        err.reason,
+        err.trace.formatted,
+      );
     });
   }
 
@@ -89,7 +106,11 @@ export class EncryptionService {
       });
     }, (err) => {
       this.loader.close();
-      this.dialogService.errorReport(T(`Error adding recovery key to pool ${poolName}`), err.reason, err.trace.formatted);
+      this.dialogService.errorReport(
+        this.translate.instant('Error adding recovery key to pool {poolName}', { poolName }),
+        err.reason,
+        err.trace.formatted,
+      );
     });
   }
 
@@ -105,12 +126,22 @@ export class EncryptionService {
         this.loader.open();
         this.ws.call('pool.recoverykey_rm', [parseInt(row), { admin_password: adminPassphrase }]).subscribe(() => {
           this.loader.close();
-          this.dialogService.info(helptext.delete_recovery_key_title, T(`Recovery key deleted from pool <i>${poolName}</i>`), '300px', 'info', true);
+          this.dialogService.info(
+            helptext.delete_recovery_key_title,
+            this.translate.instant('Recovery key deleted from pool <i>{poolName}</i>', { poolName }),
+            '300px',
+            'info',
+            true,
+          );
           this.router.navigate(new Array('/').concat(route_success));
         },
         (err) => {
           this.loader.close();
-          this.dialogService.errorReport(T(`Error deleting recovery key for pool ${poolName}`), err.error.message, err.error.traceback);
+          this.dialogService.errorReport(
+            this.translate.instant('Error deleting recovery key for pool {poolName}', { poolName }),
+            err.error.message,
+            err.error.traceback,
+          );
         });
       });
   }

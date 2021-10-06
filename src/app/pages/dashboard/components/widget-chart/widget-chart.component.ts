@@ -3,12 +3,12 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ChartData } from 'app/core/components/view-chart/view-chart.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { T } from 'app/translate-marker';
 
 export interface TimeData {
   start: number;
@@ -101,23 +101,23 @@ export class WidgetChartComponent extends WidgetComponent implements OnDestroy {
     result.data.length = parsedData[0].data.length;
     result.data.fill(Number(0));
 
-    for (let index = 0; index < parsedData.length; index++) {
-      const stat = parsedData[index].data;
-      const isWanted = wanted.indexOf(parsedData[index].legend);
+    parsedData.forEach((item) => {
+      const stat = item.data;
+      const isWanted = wanted.indexOf(item.legend);
       if (isWanted !== -1) {
         for (let i = 0; i < stat.length; i++) {
           const newNumber = Number(result.data[i]) + Number(stat[i]);
           result.data[i] = newNumber.toFixed(2);
         }
       }
-    }
+    });
 
     if (operation && operation == 'average') {
       const average: string[] = [];
-      for (let a = 0; a < result.data.length; a++) {
-        const dataPoint = result.data[a] / wanted.length;
+      result.data.forEach((item) => {
+        const dataPoint = item / wanted.length;
         average.push(Number(dataPoint).toFixed(2));
-      }
+      });
       result.data = average;
     }
     return result;
@@ -125,11 +125,11 @@ export class WidgetChartComponent extends WidgetComponent implements OnDestroy {
 
   makeColumns(parsedData: ChartData[]): any[] {
     const columns: any[] = [];
-    for (let i = 0; i < parsedData.length; i++) {
-      const stat = parsedData[i].data;
-      stat.unshift(parsedData[i].legend);
+    parsedData.forEach((item) => {
+      const stat = item.data;
+      stat.unshift(item.legend);
       columns.push(stat);
-    }
+    });
     return columns;
   }
 

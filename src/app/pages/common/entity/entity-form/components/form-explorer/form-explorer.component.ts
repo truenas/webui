@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
 import {
   TREE_ACTIONS, KEYS, IActionMapping, TreeNode, ITreeOptions,
@@ -8,7 +9,6 @@ import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { FormExplorerConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'form-explorer',
@@ -160,28 +160,28 @@ export class FormExplorerComponent implements Field, OnInit {
   }
 
   valueHandler(selectedTreeNodes: TreeNode[]): void {
-    const res = [];
-    for (let i = 0; i < selectedTreeNodes.length; i++) {
-      if (selectedTreeNodes[i] == undefined) {
-        continue;
+    const res: string[] = [];
+    selectedTreeNodes.forEach((node) => {
+      if (node == undefined) {
+        return;
       }
-      if (selectedTreeNodes[i].parent.isAllSelected && this.config.tristate) {
-        let parent = selectedTreeNodes[i];
+      if (node.parent.isAllSelected && this.config.tristate) {
+        let parent = node;
         while (
           parent && !parent.isRoot
           && parent.parent && !parent.parent.isRoot && parent.parent.isAllSelected
         ) {
           parent = parent.parent;
         }
-        if (res.indexOf(parent.data.name) === -1) {
+        if (!res.includes(parent.data.name)) {
           res.push(parent.data.name);
         }
-      } else if (selectedTreeNodes[i].isAllSelected) {
-        if (selectedTreeNodes[i].data.name !== '') {
-          res.push(selectedTreeNodes[i].data.name);
+      } else if (node.isAllSelected) {
+        if (node.data.name !== '') {
+          res.push(node.data.name);
         }
       }
-    }
+    });
     this.group.controls[this.config.name].setValue(res);
   }
 

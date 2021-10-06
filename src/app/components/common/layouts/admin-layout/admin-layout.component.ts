@@ -208,11 +208,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     const msgarr = msg.split('\n');
 
     // consoleMSgList will store just 500 messages.
-    for (let i = 0; i < msgarr.length; i++) {
-      if (msgarr[i] !== '') {
-        this.consoleMSgList.push(msgarr[i]);
+    msgarr.forEach((message) => {
+      if ((message) !== '') {
+        this.consoleMSgList.push((message));
       }
-    }
+    });
     while (this.consoleMSgList.length > 500) {
       this.consoleMSgList.shift();
     }

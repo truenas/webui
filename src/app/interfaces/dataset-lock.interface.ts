@@ -1,3 +1,8 @@
+export type DatasetLockParams = [
+  id: string,
+  params?: { force_umount: boolean },
+];
+
 export interface DatasetUnlockResult {
   failed: {
     [path: string]: {

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { AlertLevel } from 'app/enums/alert-level.enum';
@@ -10,7 +11,7 @@ import { AlertService, AlertServiceCreate } from 'app/interfaces/alert-service.i
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -18,7 +19,6 @@ import { RelationConnection } from 'app/pages/common/entity/entity-form/models/r
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services/';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -741,7 +741,7 @@ export class AlertServiceComponent implements FormConfiguration {
     // Telegram chat IDs must be an array of integer
     const arrayChatIds: number[] = data[i].map((strChatId: string) => {
       const chatId = Number(strChatId);
-      if (isNaN(chatId)) {
+      if (Number.isNaN(chatId)) {
         wrongChatIds.push(strChatId);
       }
       return chatId;

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
@@ -12,7 +13,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -22,7 +23,6 @@ import {
   CloudCredentialService, DialogService, WebSocketService, ReplicationService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +38,6 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   queryCallOption: QueryFilter<CloudsyncCredential>[];
   protected formGroup: FormGroup;
   protected id: number;
-  pk: any;
   protected keyID: number;
   protected isOneColumnForm = true;
   private rowNum: number;
@@ -1310,9 +1309,9 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     const privateKeySFTPField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' }) as FormSelectConfig;
     this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]).pipe(untilDestroyed(this)).subscribe(
       (credentials) => {
-        for (let i = 0; i < credentials.length; i++) {
-          privateKeySFTPField.options.push({ label: credentials[i].name, value: credentials[i].id });
-        }
+        credentials.forEach((credential) => {
+          privateKeySFTPField.options.push({ label: credential.name, value: credential.id });
+        });
       },
     );
   }
@@ -1599,10 +1598,10 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       client_secret: data.client_secret,
       token: data.token,
     }]).pipe(untilDestroyed(this)).subscribe(
-      (drives) => {
-        for (let i = 0; i < drives.length; i++) {
-          drivesConfig.options.push({ label: drives[i].drive_type + ' - ' + drives[i].drive_id, value: drives[i] });
-        }
+      (drives: any[]) => {
+        drives.forEach((drive) => {
+          drivesConfig.options.push({ label: drive.drive_type + ' - ' + drive.drive_id, value: drive });
+        });
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialog);

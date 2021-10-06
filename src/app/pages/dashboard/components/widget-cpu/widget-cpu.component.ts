@@ -4,6 +4,7 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
@@ -22,7 +23,6 @@ import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { Theme } from 'app/services/theme/theme.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -152,7 +152,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
 
     // Filter out stats per thread
     const keys = Object.keys(cpuData);
-    const threads = keys.filter((n) => !isNaN(parseFloat(n)));
+    const threads = keys.filter((n) => !Number.isNaN(parseFloat(n)));
 
     for (let i = 0; i < this.threadCount; i++) {
       usageColumn.push(parseInt(cpuData[i].usage.toFixed(1)));

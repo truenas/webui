@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/data-protection/smart/smart';
@@ -12,7 +13,6 @@ import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/s
 import { TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

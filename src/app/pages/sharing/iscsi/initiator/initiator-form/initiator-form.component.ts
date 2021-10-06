@@ -46,8 +46,8 @@ export class InitiatorFormComponent implements OnInit {
       placeholder: helptext_sharing_iscsi.initiator_form_placeholder_initiators,
       tooltip: helptext_sharing_iscsi.initiator_form_tooltip_initiators,
       customEventMethod: (parent) => {
-        for (let i = 0; i < parent.source.selectedOptions.selected.length; i++) {
-          parent.listControl.value.add(parent.source.selectedOptions.selected[i].value.initiator);
+        for (const selected of parent.source.selectedOptions.selected) {
+          parent.listControl.value.add(selected.value.initiator);
         }
         parent.source.deselectAll();
       },
@@ -66,8 +66,8 @@ export class InitiatorFormComponent implements OnInit {
       tooltip: helptext_sharing_iscsi.initiator_form_tooltip_auth_network,
       validation: [ipv4or6OptionalCidrValidator()],
       customEventMethod: (parent) => {
-        for (let i = 0; i < parent.source.selectedOptions.selected.length; i++) {
-          parent.listControl.value.add(parent.source.selectedOptions.selected[i].value.initiator_addr);
+        for (const selected of parent.source.selectedOptions.selected.length) {
+          parent.listControl.value.add(selected.value.initiator_addr);
         }
         parent.source.deselectAll();
       },

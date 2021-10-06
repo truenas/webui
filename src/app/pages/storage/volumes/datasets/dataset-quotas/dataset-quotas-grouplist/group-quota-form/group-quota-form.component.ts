@@ -4,11 +4,12 @@ import {
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormChipConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
@@ -46,10 +47,13 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
         {
           type: 'input',
           name: 'data_quota',
-          placeholder: helptext.groups.data_quota.placeholder,
-          tooltip: `${helptext.groups.data_quota.tooltip} bytes.`,
+          placeholder: this.translate.instant(helptext.groups.data_quota.placeholder)
+          + this.translate.instant(globalHelptext.human_readable.suggestion_label),
+          tooltip: this.translate.instant(helptext.groups.data_quota.tooltip)
+           + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+           + this.translate.instant(' bytes.'),
           blurStatus: true,
-          blurEvent: this.dataQuotaBlur,
+          blurEvent: () => this.dataQuotaBlur(),
           parent: this,
         },
         {
@@ -99,10 +103,17 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
     },
   ];
 
-  constructor(protected ws: WebSocketService, protected storageService: StorageService,
-    protected aroute: ActivatedRoute, protected loader: AppLoaderService,
-    protected router: Router, protected userService: UserService, private dialog: DialogService,
-    protected differs: IterableDiffers) {
+  constructor(
+    protected ws: WebSocketService,
+    protected storageService: StorageService,
+    protected aroute: ActivatedRoute,
+    protected loader: AppLoaderService,
+    protected router: Router,
+    protected userService: UserService,
+    private dialog: DialogService,
+    protected differs: IterableDiffers,
+    protected translate: TranslateService,
+  ) {
     this.differ = differs.find([]).create(null);
   }
 
@@ -181,31 +192,25 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
       formField['hasErrors'] = false;
       formField['errors'] = '';
-      if (filteredValue !== undefined && isNaN(filteredValue)) {
+      if (filteredValue !== undefined && Number.isNaN(filteredValue)) {
         formField['hasErrors'] = true;
         formField['errors'] = helptext.shared.input_error;
       }
     });
   }
 
-  dataQuotaBlur(parent: this): void {
-    if (parent.entityForm && parent.storageService.humanReadable) {
-      parent.transformValue(parent, 'data_quota');
+  dataQuotaBlur(): void {
+    if (this.entityForm && this.storageService.humanReadable) {
+      this.entityForm.formGroup.controls['data_quota'].setValue(this.storageService.humanReadable || 0);
+      this.storageService.humanReadable = '';
     }
-  }
-
-  transformValue(parent: this, fieldname: string): void {
-    parent.entityForm.formGroup.controls[fieldname].setValue(parent.storageService.humanReadable || 0);
-    parent.storageService.humanReadable = '';
   }
 
   updateSearchOptions(value = '', parent: this): void {
     parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
-      parent.entryField.searchOptions = groupOptions;
+      parent.entryField.searchOptions = groups.map((group) => {
+        return { label: group.group, value: group.group };
+      });
     });
   }
 

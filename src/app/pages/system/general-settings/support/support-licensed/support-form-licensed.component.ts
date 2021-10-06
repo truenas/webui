@@ -7,9 +7,10 @@ import * as _ from 'lodash';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { Subs } from 'app/interfaces/subs.interface';
 import { NewTicketResponse } from 'app/interfaces/support.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -26,7 +27,7 @@ import { ModalService } from 'app/services/modal.service';
 export class SupportFormLicensedComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
   screenshot: FieldConfig;
-  subs: any[];
+  subs: Subs[];
   saveSubmitText = helptext.submitBtn;
   title = helptext.ticket;
   custActions: FormCustomAction[] = [];
@@ -271,12 +272,12 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });
     this.screenshot['hasErrors'] = false;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      for (let i = 0; i < fileBrowser.files.length; i++) {
-        if (fileBrowser.files[i].size >= 52428800) {
+      for (const browserFile of fileBrowser.files) {
+        if (browserFile.size >= 52428800) {
           this.screenshot['hasErrors'] = true;
           this.screenshot['errors'] = 'File size is limited to 50 MiB.';
         } else {
-          parent.subs.push({ apiEndPoint: file.apiEndPoint, file: fileBrowser.files[i] });
+          parent.subs.push({ apiEndPoint: file.apiEndPoint, file: browserFile });
         }
       }
     }

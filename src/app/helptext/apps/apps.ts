@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   choosePool: {
@@ -58,7 +58,7 @@ export default {
     options: [
       {
         value: 'select_all',
-        label: T('Select All'),
+        label: T('Select All') as string,
         icon: 'check_circle',
         disabled: false,
       },

@@ -55,8 +55,13 @@ export class IxModalComponent implements OnInit, OnDestroy {
     const modalInDom: HTMLElement = document.querySelector(`.ix-${this.id}`);
     const backgroundInDom: HTMLElement = document.querySelector(`.ix-${this.id}-background`);
 
-    modalInDom.classList.remove('open');
-    backgroundInDom.classList.remove('open');
+    if (modalInDom) {
+      modalInDom.classList.remove('open');
+    }
+
+    if (backgroundInDom) {
+      backgroundInDom.classList.remove('open');
+    }
     document.body.classList.remove('ix-modal-open');
     this.title = '';
   }

@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
@@ -8,7 +9,6 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, IscsiService } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -86,12 +86,12 @@ export class FibreChannelPortComponent implements OnInit {
   ) {
     const targetField = _.find(this.fieldSets[1].config, { name: 'target' }) as FormSelectConfig;
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
-      for (let i = 0; i < targets.length; i++) {
-        targetField.options.push({
-          label: targets[i].name,
-          value: targets[i].id,
-        });
-      }
+      targetField.options = targets.map((target) => {
+        return {
+          label: target.name,
+          value: target.id,
+        };
+      });
     },
     (err) => {
       new EntityUtils().handleWSError(this, err, this.parent.dialogService);
@@ -99,12 +99,11 @@ export class FibreChannelPortComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    for (let i = 0; i < this.fieldSets.length; i++) {
-      const fieldset = this.fieldSets[i];
+    this.fieldSets.forEach((fieldset) => {
       if (fieldset.config) {
         this.fieldConfig = this.fieldConfig.concat(fieldset.config);
       }
-    }
+    });
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
     const targetField = _.find(this.fieldConfig, { name: 'target' });

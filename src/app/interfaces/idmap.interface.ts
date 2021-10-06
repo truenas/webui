@@ -10,3 +10,5 @@ export interface Idmap {
   range_high: number;
   range_low: number;
 }
+
+export type IdmapUpdate = Omit<Idmap, 'id'>;

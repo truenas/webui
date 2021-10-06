@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormArray, FormGroup, Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ITreeOptions, TreeNode } from 'angular-tree-component';
@@ -51,7 +52,6 @@ import {
   WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -239,8 +239,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               value: this.defaultNamingSchema,
               parent: this,
               blurStatus: true,
-              blurEvent: (parent: this) => {
-                parent.getSnapshots();
+              blurEvent: () => {
+                this.getSnapshots();
               },
             },
             {
@@ -250,8 +250,8 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.name_regex_tooltip,
               parent: this,
               isHidden: true,
-              blurEvent: (parent: this) => {
-                parent.getSnapshots();
+              blurEvent: () => {
+                this.getSnapshots();
               },
             },
           ],
@@ -886,7 +886,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       const datasetFrom = datasetName + '_from';
       this.entityWizard.formArray.get([0]).get(datasetFrom).valueChanges
         .pipe(untilDestroyed(this))
-        .subscribe((value: any) => {
+        .subscribe((value: DatasetSource) => {
           this.toggleNamingSchemaOrRegex();
           if (value === DatasetSource.Remote) {
             if (datasetFrom === 'source_datasets_from') {
@@ -909,7 +909,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
       this.entityWizard.formArray.get([0]).get(credentialName).valueChanges
         .pipe(untilDestroyed(this))
-        .subscribe((value: any) => {
+        .subscribe((value: string) => {
           if (value === 'NEW' && this.entityWizard.formArray.get([0]).get(datasetFrom).value === DatasetSource.Remote) {
             this.createSSHConnection(credentialName);
             this.setDisable(datasetName, false, false, 0);
@@ -1393,9 +1393,9 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
   async rollBack(items: any): Promise<void> {
     const keys = Object.keys(items).reverse();
-    for (let i = 0; i < keys.length; i++) {
-      if (items[keys[i]] != null) {
-        await this.ws.call((this.deleteCalls as any)[keys[i]], [items[keys[i]]]).toPromise().then(
+    for (const key of keys) {
+      if (items[key] != null) {
+        await this.ws.call((this.deleteCalls as any)[key], [items[key]]).toPromise().then(
           () => {},
         );
       }

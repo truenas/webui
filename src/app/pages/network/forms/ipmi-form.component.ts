@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -9,7 +10,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -17,7 +18,6 @@ import { ipv4Validator } from 'app/pages/common/entity/entity-form/validators/ip
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -268,14 +268,14 @@ export class IPMIFromComponent implements FormConfiguration {
       query$ = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);
     }
     query$.pipe(untilDestroyed(this)).subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.channelValue = res[i].channel;
-        this.entityEdit.formGroup.controls['netmask'].setValue(res[i].netmask);
-        this.entityEdit.formGroup.controls['dhcp'].setValue(res[i].dhcp);
-        this.entityEdit.formGroup.controls['ipaddress'].setValue(res[i].ipaddress);
-        this.entityEdit.formGroup.controls['gateway'].setValue(res[i].gateway);
-        this.entityEdit.formGroup.controls['vlan'].setValue(res[i].vlan);
-      }
+      res.forEach((ipmi) => {
+        this.channelValue = ipmi.channel;
+        this.entityEdit.formGroup.controls['netmask'].setValue(ipmi.netmask);
+        this.entityEdit.formGroup.controls['dhcp'].setValue(ipmi.dhcp);
+        this.entityEdit.formGroup.controls['ipaddress'].setValue(ipmi.ipaddress);
+        this.entityEdit.formGroup.controls['gateway'].setValue(ipmi.gateway);
+        this.entityEdit.formGroup.controls['vlan'].setValue(ipmi.vlan);
+      });
     });
   }
 }

@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -69,7 +69,7 @@ export class SnapshotCloneComponent implements FormConfiguration {
 
   setName(name: string): string {
     let value;
-    if (name.indexOf('/') !== -1) {
+    if (name.includes('/')) {
       value = name.replace('@', '-') + '-clone';
     } else {
       value = name.replace('@', '/') + '-clone';

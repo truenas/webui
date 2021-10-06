@@ -3,8 +3,8 @@ export function removeClass(el: HTMLElement | HTMLCollectionOf<HTMLElement>, cla
   if (!('length' in el)) {
     el.classList.remove(className);
   } else {
-    for (let i = 0; i < el.length; i++) {
-      el[i].classList.remove(className);
+    for (const element of el) {
+      element.classList.remove(className);
     }
   }
 }
@@ -14,8 +14,8 @@ export function addClass(el: HTMLElement | HTMLCollectionOf<HTMLElement>, classN
   if (!('length' in el)) {
     el.classList.add(className);
   } else {
-    for (let i = 0; i < el.length; i++) {
-      el[i].classList.add(className);
+    for (const element of el) {
+      element.classList.add(className);
     }
   }
 }
@@ -33,7 +33,7 @@ export function findClosest(el: HTMLElement, className: string): HTMLElement {
 
 export function hasClass(el: HTMLElement, className: string): boolean {
   if (!el) return;
-  return (` ${el.className} `).replace(/[\n\t]/g, ' ').indexOf(` ${className} `) > -1;
+  return (` ${el.className} `).replace(/[\n\t]/g, ' ').includes(` ${className} `);
 }
 
 export function toggleClass(el: HTMLElement | HTMLCollectionOf<HTMLElement>, className: string): void {

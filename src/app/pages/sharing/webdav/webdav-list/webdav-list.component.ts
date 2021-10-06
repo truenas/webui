@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptext_sharing_webdav } from 'app/helptext/sharing';
 import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
@@ -9,7 +10,6 @@ import { WebdavFormComponent } from 'app/pages/sharing/webdav/webdav-form/webdav
 import { ModalService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({

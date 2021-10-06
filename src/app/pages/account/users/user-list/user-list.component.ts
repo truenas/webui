@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -21,7 +22,6 @@ import {
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
 import { UserFormComponent } from '../user-form/user-form.component';
 
 @UntilDestroy()
@@ -195,14 +195,13 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
         const group = _.find(res, { gid: user.group.bsdgrp_gid });
         user.gid = group['gid'];
       });
-      const rows = users;
-      for (let i = 0; i < rows.length; i++) {
-        rows[i].details = [];
-        rows[i].details.push({ label: T('GID'), value: rows[i].group['bsdgrp_gid'] },
-          { label: T('Home Directory'), value: rows[i].home },
-          { label: T('Shell'), value: rows[i].shell },
-          { label: T('Email'), value: rows[i].email });
-      }
+      users.forEach((user) => {
+        user.details = [];
+        user.details.push({ label: T('GID'), value: user.group['bsdgrp_gid'] },
+          { label: T('Home Directory'), value: user.home },
+          { label: T('Shell'), value: user.shell },
+          { label: T('Email'), value: user.email });
+      });
     });
     if (this.prefService.preferences.hide_builtin_users) {
       const newData: UserListRow[] = [];

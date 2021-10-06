@@ -50,14 +50,11 @@ export class ThemeUtils {
     switch (valueType) {
       case 'hex':
         return this.hexToRGB(value);
-        break;
       case 'rgba':
         const hex = this.rgbToHex(value);
         return this.hexToRGB(hex);
-        break;
       default:
         throw new Error('Conversion from color format ' + valueType + ' is not currently supported.');
-        break;
     }
   }
 

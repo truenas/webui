@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-rsync-module-list',
@@ -36,12 +36,12 @@ export class RsyncConfigurationListComponent implements EntityTableConfig {
 
   dataHandler(entityTable: EntityTableComponent): void {
     const rows = entityTable.rows;
-    for (let i = 0; i < rows.length; i++) {
-      rows[i].details = [];
-      rows[i].details.push({ label: T('Maximum connections'), value: rows[i]['maxconn'] },
-        { label: T('Host Allow'), value: rows[i]['hostsallow'] },
-        { label: T('Host Deny'), value: rows[i]['hostsdeny'] },
-        { label: T('Auxiliary parameters'), value: rows[i]['auxiliary'] });
-    }
+    rows.forEach((row) => {
+      row.details = [];
+      row.details.push({ label: T('Maximum connections'), value: row['maxconn'] },
+        { label: T('Host Allow'), value: row['hostsallow'] },
+        { label: T('Host Deny'), value: row['hostsdeny'] },
+        { label: T('Auxiliary parameters'), value: row['auxiliary'] });
+    });
   }
 }

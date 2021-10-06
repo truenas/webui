@@ -108,7 +108,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           isHidden: false,
           disabled: false,
           required: true,
-          blurEvent: this.blurFilesize,
+          blurEvent: () => this.blurFilesize(),
           blurStatus: true,
           parent: this,
           value: 0,
@@ -117,7 +117,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
               const config = this.wizardConfig[0].fieldConfig.find((c) => c.name === 'filesize');
               const size = this.storageService.convertHumanStringToNum(control.value, true);
 
-              const errors = control.value && isNaN(size)
+              const errors = control.value && Number.isNaN(size)
                 ? { invalid_byte_string: true }
                 : null;
 
@@ -609,11 +609,11 @@ export class IscsiWizardComponent implements WizardConfiguration {
     });
 
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
-      for (let i = 0; i < accessRecords.length; i++) {
-        if (_.find(authGroupField.options, { value: accessRecords[i].tag }) == undefined) {
-          authGroupField.options.push({ label: String(accessRecords[i].tag), value: accessRecords[i].tag });
+      accessRecords.forEach((record) => {
+        if (_.find(authGroupField.options, { value: record.tag }) == undefined) {
+          authGroupField.options.push({ label: String(record.tag), value: record.tag });
         }
-      }
+      });
     });
 
     this.iscsiService.getIpChoices().pipe(untilDestroyed(this)).subscribe((ips) => {
@@ -859,7 +859,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     return volsize + (volblocksize - volsize % volblocksize);
   }
 
-  doCreate(value: any, item: any): Promise<any> {
+  doCreate(value: any, item: string): Promise<any> {
     let payload: any;
     if (item === 'zvol') {
       payload = {
@@ -975,9 +975,9 @@ export class IscsiWizardComponent implements WizardConfiguration {
     };
   }
 
-  blurFilesize(parent: this): void {
-    if (parent.entityWizard) {
-      parent.entityWizard.formArray.get([0]).get('filesize').setValue(parent.storageService.humanReadable);
+  blurFilesize(): void {
+    if (this.entityWizard) {
+      this.entityWizard.formArray.get([0]).get('filesize').setValue(this.storageService.humanReadable);
     }
   }
 }

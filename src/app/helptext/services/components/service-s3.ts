@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { T } from 'app/translate-marker';
 
 export default {
   bindip_placeholder: T('IP Address'),

@@ -1,6 +1,7 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -14,7 +15,7 @@ import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -26,7 +27,6 @@ import {
   VmService,
   WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -163,10 +163,10 @@ export class VmFormComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'memory',
-          placeholder: `${helptext.memory_placeholder} ${globalHelptext.human_readable.suggestion_label}`,
+          placeholder: `${this.translate.instant(helptext.memory_placeholder)} ${this.translate.instant(globalHelptext.human_readable.suggestion_label)}`,
           tooltip: helptext.memory_tooltip,
           blurStatus: true,
-          blurEvent: this.memoryBlur,
+          blurEvent: () => this.memoryBlur(),
           parent: this,
         },
 
@@ -254,7 +254,7 @@ export class VmFormComponent implements FormConfiguration {
       const filteredValue = this.storageService.convertHumanStringToNum(value);
       mem['hasErrors'] = false;
       mem['errors'] = '';
-      if (isNaN(filteredValue)) {
+      if (Number.isNaN(filteredValue)) {
         mem['hasErrors'] = true;
         mem['errors'] = globalHelptext.human_readable.input_error;
       }
@@ -316,13 +316,13 @@ export class VmFormComponent implements FormConfiguration {
     });
   }
 
-  memoryBlur(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['memory'].setValue(parent.storageService.humanReadable);
-      const valString = (parent.entityForm.formGroup.controls['memory'].value);
-      const valBytes = Math.round(parent.storageService.convertHumanStringToNum(valString) / 1048576);
+  memoryBlur(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['memory'].setValue(this.storageService.humanReadable);
+      const valString = (this.entityForm.formGroup.controls['memory'].value);
+      const valBytes = Math.round(this.storageService.convertHumanStringToNum(valString) / 1048576);
       if (valBytes < 256) {
-        const mem = _.find(parent.fieldConfig, { name: 'memory' });
+        const mem = _.find(this.fieldConfig, { name: 'memory' });
         mem['hasErrors'] = true;
         mem['errors'] = helptext.memory_size_err;
       }
@@ -339,10 +339,7 @@ export class VmFormComponent implements FormConfiguration {
 
         if (errors) {
           config.hasErrors = true;
-          config.hasErrors = true;
-          this.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
-            config.warnings = warning + ` ${this.maxVCPUs}.`;
-          });
+          config.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVCPUs });
         } else {
           config.hasErrors = false;
           config.warnings = '';

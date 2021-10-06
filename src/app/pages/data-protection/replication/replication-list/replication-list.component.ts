@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -28,7 +29,6 @@ import {
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -115,7 +115,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         onClick: (row: ReplicationTaskUi) => {
           this.dialog.confirm({
             title: T('Run Now'),
-            message: T('Replicate <i>') + row.name + T('</i> now?'),
+            message: this.translate.instant('Replicate <i>{name}</i> now?', { name: row.name }),
             hideCheckBox: true,
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
             row.state = { state: JobState.Running };

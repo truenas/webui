@@ -7,7 +7,7 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { EntityTaskConfiguration } from 'app/pages/common/entity/entity-task/entity-task-configuration.interface';
 import { TaskService, UserService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { EntityFormComponent } from '../entity-form';
+import { EntityFormComponent } from '../entity-form/entity-form.component';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 
 @UntilDestroy()
@@ -174,7 +174,7 @@ export class EntityTaskComponent implements OnInit {
 
   isShow(name: string): boolean {
     if (this.conf.hide_fileds !== undefined) {
-      if (this.conf.hide_fileds.indexOf(name) > -1) {
+      if (this.conf.hide_fileds.includes(name)) {
         return false;
       }
     }

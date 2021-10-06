@@ -9,7 +9,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
 import { DisplayComponent } from 'app/core/components/display/display.component';
-import { PageComponent } from 'app/core/components/page/page.component';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { ViewButtonComponent } from 'app/core/components/view-button/view-button.component';
 import { ViewChartAreaComponent } from 'app/core/components/view-chart-area/view-chart-area.component';
@@ -53,7 +52,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
   ],
   declarations: [
     ContextMenuComponent,
-    PageComponent,
     ViewComponent,
     ViewControlComponent,
     ViewControllerComponent,
@@ -81,7 +79,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     FlexLayoutModule,
     DisplayComponent,
     ContextMenuComponent,
-    PageComponent,
     ViewComponent,
     ViewChartComponent,
     ViewChartAreaComponent,

@@ -2,6 +2,7 @@ import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
@@ -32,7 +33,6 @@ import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/e
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {
@@ -575,7 +575,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   showConfigForm(): void {
     const widgetTypes: string[] = [];
     this.dashState.forEach((item) => {
-      if (widgetTypes.indexOf(item.name) == -1) {
+      if (!widgetTypes.includes(item.name)) {
         widgetTypes.push(item.name);
       }
     });
@@ -621,7 +621,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // Apply
     keys.forEach((key) => {
       const value = evt.data[key];
-      const dashItem = clone.filter((w) => {
+      const dashItem = clone.find((w) => {
         if (w.identifier) {
           const spl = w.identifier.split(',');
           const name = spl[1];
@@ -630,7 +630,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return key == w.name;
       });
 
-      dashItem[0].rendered = value;
+      dashItem.rendered = value;
     });
 
     this.dashState = clone;

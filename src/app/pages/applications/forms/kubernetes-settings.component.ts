@@ -10,7 +10,7 @@ import {
 import helptext from 'app/helptext/apps/apps';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -131,7 +131,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
 
     const setV4InterfaceControl$ = this.appService.getInterfaces().pipe(
       tap((interfaces) => {
-        const v4InterfaceControl = _.find(this.fieldSets[1].config, { name: 'route_v4_interface' }) as FormSelectConfig;
+        const v4InterfaceControl = _.find(this.fieldSets[0].config, { name: 'route_v4_interface' }) as FormSelectConfig;
 
         interfaces.forEach((i) => {
           v4InterfaceControl.options.push({ label: i.name, value: i.name });

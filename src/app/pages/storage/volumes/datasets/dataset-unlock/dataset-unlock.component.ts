@@ -10,12 +10,15 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
-import { DatasetEncryptionSummary } from 'app/interfaces/dataset-encryption-summary.interface';
+import {
+  DatasetEncryptionSummary,
+} from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { Subs } from 'app/interfaces/subs.interface';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormCheckboxConfig, FormListConfig, FormParagraphConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -51,7 +54,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
   protected key_file_fg: FormControl;
   protected unlock_children_fg: FormControl;
 
-  subs: any;
+  subs: Subs;
 
   fieldSetDisplay = 'default';// default | carousel | stepper
   fieldConfig: FieldConfig[] = [];
@@ -357,17 +360,16 @@ export class DatasetUnlockComponent implements FormConfiguration {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetEncryptionSummary[]>) => {
       dialogRef.close();
       // show summary dialog;
-      const errors = [];
-      const unlock = [];
+      const errors: DatasetEncryptionSummary[] = [];
+      const unlock: DatasetEncryptionSummary[] = [];
       if (res && res.result) {
-        for (let i = 0; i < res.result.length; i++) {
-          const result = res.result[i];
+        res.result.forEach((result) => {
           if (result.unlock_successful) {
             unlock.push(result);
           } else {
             errors.push(result);
           }
-        }
+        });
       }
       if (!this.dialogOpen) { // prevent dialog from opening more than once
         this.dialogOpen = true;
@@ -405,8 +407,8 @@ export class DatasetUnlockComponent implements FormConfiguration {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<DatasetUnlockResult>) => {
       dialogRef.close();
       const errors = [];
-      const skipped = [];
-      const unlock = [];
+      const skipped: { name: string }[] = [];
+      const unlock: { name: string }[] = [];
       if (res && res.result) {
         if (res.result.failed) {
           const failed = res.result.failed;
@@ -416,15 +418,15 @@ export class DatasetUnlockComponent implements FormConfiguration {
               const error = fail.error;
               const skip = fail.skipped;
               errors.push({ name: err_ds, unlock_error: error });
-              for (let i = 0; i < skip.length; i++) {
-                skipped.push({ name: skip[i] });
+              for (const name of skip) {
+                skipped.push({ name });
               }
             }
           }
         }
-        for (let i = 0; i < res.result.unlocked.length; i++) {
-          unlock.push({ name: res.result.unlocked[i] });
-        }
+        res.result.unlocked.forEach((name) => {
+          unlock.push({ name });
+        });
         if (!this.dialogOpen) { // prevent dialog from opening more than once
           this.dialogOpen = true;
           const unlockDialogRef = this.dialog.open(UnlockDialogComponent, { disableClose: true });

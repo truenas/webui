@@ -1,5 +1,4 @@
-import globalHelptext from 'app/helptext/global-helptext';
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   title: T('Global Configuration'),
@@ -7,7 +6,7 @@ export default {
   hostname_placeholder: T('Hostname'),
   hostname_tooltip: T('System hostname.'),
 
-  hostname_b_placeholder: T(`Hostname (${globalHelptext.Ctrlr} 2)`),
+  hostname_b_placeholder: T('Hostname (TrueNAS Controller 2)'),
   hostname_b_tooltip: T('Host name of second TrueNAS controller.'),
 
   hostname_virtual_placeholder: T('Hostname (Virtual)'),

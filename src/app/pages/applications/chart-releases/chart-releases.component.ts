@@ -4,11 +4,12 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
-import { appImagePlaceholder, ixChartApp } from 'app/constants/catalog.constants';
+import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
 import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
@@ -29,7 +30,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { ApplicationsService } from '../applications.service';
 import { ChartEventsDialogComponent } from '../dialogs/chart-events/chart-events-dialog.component';
 import { ChartFormComponent } from '../forms/chart-form.component';
@@ -60,6 +60,8 @@ export class ChartReleasesComponent implements OnInit {
   private podList: string[] = [];
   private podDetails: Record<string, string[]> = {};
   imagePlaceholder = appImagePlaceholder;
+
+  readonly officialCatalog = officialCatalog;
 
   emptyPageConf: EmptyConfig = {
     type: EmptyType.Loading,
@@ -411,15 +413,13 @@ export class ChartReleasesComponent implements OnInit {
           }
         });
 
-        this.translate.get(helptext.bulkActions.finished).pipe(untilDestroyed(this)).subscribe((msg) => {
-          this.dialogService.info(helptext.bulkActions.success, msg,
-            '500px', 'info', true);
-        });
+        this.dialogService.info(helptext.bulkActions.success, this.translate.instant(helptext.bulkActions.finished), '500px', 'info', true);
       }
     } else {
-      this.translate.get(helptext.bulkActions.no_selected).pipe(untilDestroyed(this)).subscribe((msg) => {
-        this.dialogService.errorReport(helptext.bulkActions.error, msg);
-      });
+      this.dialogService.errorReport(
+        helptext.bulkActions.error,
+        this.translate.instant(helptext.bulkActions.no_selected),
+      );
     }
   }
 
@@ -463,11 +463,11 @@ export class ChartReleasesComponent implements OnInit {
         (res: Job<CoreBulkResponse[]>) => {
           this.dialogService.closeAllDialogs();
           let message = '';
-          for (let i = 0; i < res.result.length; i++) {
-            if (res.result[i].error != null) {
-              message = message + '<li>' + res.result[i].error + '</li>';
+          res.result.forEach((item) => {
+            if (item.error != null) {
+              message = message + '<li>' + item.error + '</li>';
             }
-          }
+          });
 
           if (message !== '') {
             message = '<ul>' + message + '</ul>';
@@ -483,7 +483,7 @@ export class ChartReleasesComponent implements OnInit {
   filerChartItems(): void {
     if (this.filterString) {
       this.filteredChartItems = this.getChartItems().filter((chart) => {
-        return chart.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1;
+        return chart.name.toLowerCase().includes(this.filterString.toLocaleLowerCase());
       });
     } else {
       this.filteredChartItems = this.getChartItems();

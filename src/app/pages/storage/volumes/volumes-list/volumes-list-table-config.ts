@@ -3,6 +3,7 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { format } from 'date-fns';
@@ -10,22 +11,25 @@ import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { combineLatest, Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
+import { DatasetLockParams } from 'app/interfaces/dataset-lock.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { PoolUnlockQuery } from 'app/interfaces/pool-unlock-query.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { Pool, PoolExpandParams } from 'app/interfaces/pool.interface';
+import { Subs } from 'app/interfaces/subs.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -33,13 +37,16 @@ import { FormUploadComponent } from 'app/pages/common/entity/entity-form/compone
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import {
+  VolumesListDataset,
+  VolumesListPool,
+} from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
 import {
   AppLoaderService, DialogService, StorageService, ValidationService, WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 export class VolumesListTableConfig implements EntityTableConfig {
   hideTopActions = true;
@@ -77,8 +84,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
   private vmware_res_status: boolean;
   dialogConf: DialogFormConfiguration;
   restartServices = false;
-  subs: any;
+  subs: Subs;
   productType = window.localStorage.getItem('product_type') as ProductType;
+
+  private recursiveIsChecked = false;
 
   constructor(
     private parentVolumesListComponent: VolumesListComponent,
@@ -91,18 +100,16 @@ export class VolumesListTableConfig implements EntityTableConfig {
     protected loader: AppLoaderService,
     protected translate: TranslateService,
     protected storageService: StorageService,
-    protected volumeData: any,
+    protected volumeData: VolumesListPool,
     protected messageService: MessageService,
     protected http: HttpClient,
     protected validationService: ValidationService,
   ) {
     if (typeof (this.classId) !== 'undefined' && this.classId !== '' && volumeData && volumeData['children']) {
-      this.tableData = [];
-      for (let i = 0; i < volumeData['children'].length; i++) {
-        const child = volumeData['children'][i];
+      this.tableData = volumeData['children'].map((child) => {
         child.parent = volumeData;
-        this.tableData.push(this.dataHandler(child));
-      }
+        return this.dataHandler(child);
+      });
     }
   }
 
@@ -117,189 +124,14 @@ export class VolumesListTableConfig implements EntityTableConfig {
     return false;
   }
 
-  getEncryptedActions(rowData: Pool): any[] {
+  getEncryptedActions(rowData: VolumesListPool): EntityTableAction[] {
     const actions = [];
-    if (rowData.encrypt === 2) {
-      if (rowData.is_decrypted) {
-        if (this.parentVolumesListComponent.systemdatasetPool != rowData.name) {
-          actions.push({
-            label: T('Lock'),
-            onClick: (row1: Pool) => {
-              let p1 = '';
-              this.loader.open();
-              this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((attachments) => {
-                if (attachments.length > 0) {
-                  p1 = this.translate.instant(helptext.encryptMsg, { name: row1.name });
-                  attachments.forEach((item) => {
-                    p1 += `<br><br>${item.type}:`;
-                    item.attachments.forEach((i: string) => {
-                      const tempArr = i.split(',');
-                      tempArr.forEach((i) => {
-                        p1 += `<br> - ${i}`;
-                      });
-                    });
-                  });
-                }
-                this.ws.call('pool.processes', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-                  const running_processes: PoolProcess[] = [];
-                  const running_unknown_processes: PoolProcess[] = [];
-                  if (res.length > 0) {
-                    res.forEach((item) => {
-                      if (!item.service) {
-                        if (item.name && item.name !== '') {
-                          running_processes.push(item);
-                        } else {
-                          running_unknown_processes.push(item);
-                        }
-                      }
-                    });
-                    if (running_processes.length > 0) {
-                      const servicesMsg = this.translate.instant(helptext.runningMsg);
-                      p1 += `<br><br>${servicesMsg} <b>${row1.name}</b>:`;
-                      running_processes.forEach((process) => {
-                        if (process.name) {
-                          p1 += `<br> - ${process.name}`;
-                        }
-                      });
-                    }
-                    if (running_unknown_processes.length > 0) {
-                      const servicesMsg = this.translate.instant(helptext.unknownMsg);
-                      const terminatedMsg = this.translate.instant(helptext.terminatedMsg);
-                      p1 += `<br><br>${servicesMsg}`;
-                      running_unknown_processes.forEach((process) => {
-                        if (process.pid) {
-                          p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
-                        }
-                      });
-                      p1 += `<br><br>${terminatedMsg}`;
-                    }
-                  }
-                  this.loader.close();
-                  doLock();
-                },
-                (err) => {
-                  this.loader.close();
-                  new EntityUtils().handleWSError(helptext.dataErrMsg, err, this.dialogService);
-                });
-              },
-              (err) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(helptext.dataErrMsg, err, this.dialogService);
-              });
-
-              const doLock = (): void => {
-                const conf: DialogFormConfiguration = {
-                  title: T('Enter passphrase to lock pool ') + row1.name + '.',
-                  fieldConfig: [
-                    {
-                      type: 'paragraph',
-                      name: 'pool_lock_warning',
-                      paraText: helptext.pool_lock_warning_paratext_a + row1.name
-                        + helptext.pool_lock_warning_paratext_b,
-                      isHidden: false,
-                    },
-                    {
-                      type: 'paragraph',
-                      name: 'pool_processes',
-                      paraText: p1,
-                      isHidden: p1 === '',
-                    },
-                    {
-                      type: 'input',
-                      inputType: 'password',
-                      name: 'passphrase',
-                      placeholder: 'passphrase',
-                      togglePw: true,
-                      required: true,
-                    },
-                  ],
-                  saveButtonText: T('Lock Pool'),
-                  customSubmit: (entityDialog: EntityDialogComponent) => {
-                    const value = entityDialog.formValue;
-                    this.loader.open();
-                    this.ws.job('pool.lock', [row1.id, value.passphrase]).pipe(untilDestroyed(this, 'destroy')).subscribe(
-                      (res) => {
-                        if (res.error) {
-                          this.loader.close();
-                          if (res.exc_info && res.exc_info.extra) {
-                            (res as any).extra = res.exc_info.extra;
-                          }
-                          new EntityUtils().handleWSError(this, res, this.dialogService);
-                        }
-                        if (res.state === JobState.Success) {
-                          this.loader.close();
-                          entityDialog.dialogRef.close(true);
-                          this.parentVolumesListComponent.repaintMe();
-                        }
-                      }, (e) => {
-                        this.loader.close();
-                        new EntityUtils().handleWSError(this, e, this.dialogService);
-                      },
-                    );
-                  },
-                };
-                this.dialogService.dialogForm(conf);
-              };
-            },
-          });
-        }
-      } else {
-        actions.push({
-          label: T('Unlock'),
-          onClick: (row1: Pool) => {
-            this.unlockAction(row1);
-          },
-        });
-      }
-
-      if (rowData.is_decrypted) {
-        actions.push({
-          label: T('Encryption Key/Passphrase'),
-          onClick: (row1: any) => {
-            this.router.navigate(new Array('/').concat(
-              ['storage', 'changekey', row1.id],
-            ));
-          },
-        });
-      }
-    } else if (
-      rowData.encrypt === 1 && rowData.is_decrypted && this.parentVolumesListComponent.systemdatasetPool != rowData.name
-    ) {
-      actions.push({
-        label: T('Encryption Key'),
-        onClick: (row1: any) => {
-          this.router.navigate(new Array('/').concat(
-            ['storage', 'createkey', row1.id],
-          ));
-        },
-      });
-    }
-
-    if (rowData.encrypt !== 0 && rowData.is_decrypted) {
-      actions.push({
-        label: T('Manage Recovery Key'),
-        onClick: (row1: any) => {
-          this.router.navigate(new Array('/').concat(
-            ['storage', 'addkey', row1.id],
-          ));
-        },
-      });
-
-      actions.push({
-        label: T('Reset Keys'),
-        onClick: (row1: any) => {
-          this.router.navigate(new Array('/').concat(
-            ['storage', 'rekey', row1.id],
-          ));
-        },
-      });
-    }
 
     if (this.parentVolumesListComponent.has_encrypted_root[rowData.name]
       && this.parentVolumesListComponent.has_key_dataset[rowData.name]) {
       actions.push({
         label: T('Export Dataset Keys'),
-        onClick: (row1: any) => {
+        onClick: (row1: VolumesListPool) => {
           const message = helptext.export_keys_message + row1.name;
           const fileName = 'dataset_' + row1.name + '_keys.json';
           this.dialogService.passwordConfirm(message).pipe(untilDestroyed(this, 'destroy')).subscribe((export_keys) => {
@@ -326,7 +158,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
       });
     }
 
-    return actions;
+    return actions as EntityTableAction[];
   }
 
   keyFileUpdater(file: FormUploadComponent, parent: this): void {
@@ -336,7 +168,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     }
   }
 
-  unlockAction(row1: any): void {
+  unlockAction(row1: VolumesListPool): void {
     this.storageService.poolUnlockServiceOptions(row1.id).pipe(
       map((serviceOptions) => ({
         title: T('Unlock ') + row1.name,
@@ -358,7 +190,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             type: 'upload',
             message: this.messageService,
             updater: this.keyFileUpdater,
-            parent: self,
+            parent: this,
             hideButton: true,
             name: 'key',
             required: true,
@@ -407,7 +239,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           let done = false;
           const value = entityDialog.formValue;
           const params: PoolUnlockQuery = [
-            row1.id,
+            row1.id as any,
             { passphrase: value.passphrase, services_restart: value.services_restart },
           ];
           const dialogRef = this.mdDialog.open(EntityJobComponent, {
@@ -451,22 +283,22 @@ export class VolumesListTableConfig implements EntityTableConfig {
     return this.ws.call('pool.query', [[['id', '=', poolId]]]);
   }
 
-  getActions(rowData: any): any[] {
-    rowData.is_passphrase = (!!(rowData.key_format && rowData.key_format.parsed === 'passphrase'));
-    let rowDataPathSplit = [];
-    if (rowData.mountpoint) {
+  getActions(rowData: VolumesListPool | VolumesListDataset): EntityTableAction[] {
+    (rowData as any).is_passphrase = (!!('key_format' in rowData && rowData.key_format.parsed === 'passphrase'));
+    let rowDataPathSplit: string[] = [];
+    if ('mountpoint' in rowData && rowData.mountpoint) {
       rowDataPathSplit = rowData.mountpoint.split('/');
     }
     let p1 = '';
     const actions = [];
     // workaround to make deleting volumes work again,  was if (row.vol_fstype == "ZFS")
     if (rowData.type === 'zpool') {
-      if (rowData.is_decrypted && rowData.status !== 'OFFLINE') {
+      if (rowData.status !== PoolStatus.Offline) {
         actions.push({
           id: rowData.name,
           name: T('Pool Options'),
           label: T('Pool Options'),
-          onClick: (row: any) => {
+          onClick: (row: VolumesListPool) => {
             this.dialogConf = {
               title: this.translate.instant('Edit Pool Options for {name}', { name: row.name }),
               confirmCheckbox: true,
@@ -485,10 +317,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
               customSubmit: (entityDialog: EntityDialogComponent) => {
                 const formValue = entityDialog.formValue;
                 const method = 'pool.update';
-                const body: any = {};
-                const payload = [row.id];
-                body['autotrim'] = (formValue.autotrim ? 'ON' : 'OFF');
-                payload.push(body);
+                const payload = [
+                  row.id,
+                  { autotrim: formValue.autotrim ? 'ON' : 'OFF' },
+                ];
                 const dialogRef = this.mdDialog.open(EntityJobComponent, {
                   data: { title: helptext.pool_options_dialog.save_pool_options },
                   disableClose: true,
@@ -526,8 +358,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
         name: 'Export/Disconnect',
         label: helptext.exportAction,
         color: 'warn',
-        onClick: (row1: any) => {
-          const encryptedStatus = row1.encrypt;
+        onClick: (row1: VolumesListPool) => {
           const doDetach = async (): Promise<void> => {
             const sysPool = await this.ws.call('systemdataset.config').pipe(map((res) => res['pool'])).toPromise();
             const title = this.translate.instant(helptext.exportDialog.title);
@@ -535,7 +366,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
             const warningB = this.translate.instant(helptext.exportDialog.warningB);
             const unknownA = this.translate.instant(helptext.exportDialog.unknownStateA);
             const unknownB = this.translate.instant(helptext.exportDialog.unknownStateB);
-            const encrypted = this.translate.instant(helptext.exportDialog.encryptWarning);
             const sysPoolWarning = this.translate.instant(helptext.exportDialog.warningSysDataset);
             const conf: DialogFormConfiguration = {
               title: title + row1.name + "'",
@@ -548,32 +378,27 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 type: 'paragraph',
                 name: 'pool_detach_warning',
                 paraText: warningA + row1.name + warningB,
-                isHidden: rowData.status === 'UNKNOWN',
+                isHidden: rowData.status === PoolStatus.Unknown,
               }, {
                 type: 'paragraph',
                 name: 'unknown_status_detach_warning',
                 paraText: `${unknownA} ${row1.name} ${unknownB}`,
-                isHidden: rowData.status !== 'UNKNOWN',
+                isHidden: rowData.status !== PoolStatus.Unknown,
               }, {
                 type: 'paragraph',
                 name: 'pool_processes',
                 paraText: p1,
                 isHidden: p1 === '',
               }, {
-                type: 'paragraph',
-                name: 'pool_detach_warning',
-                paraText: "'" + row1.name + encrypted,
-                isHidden: !(encryptedStatus > 0),
-              }, {
                 type: 'checkbox',
                 name: 'destroy',
                 value: false,
                 placeholder: helptext.exportDialog.destroy,
-                isHidden: rowData.status === 'UNKNOWN',
+                isHidden: rowData.status === PoolStatus.Unknown,
               }, {
                 type: 'checkbox',
                 name: 'cascade',
-                value: rowData.status !== 'UNKNOWN',
+                value: rowData.status !== PoolStatus.Unknown,
                 placeholder: helptext.exportDialog.cascade,
               }, {
                 type: 'input',
@@ -594,28 +419,12 @@ export class VolumesListTableConfig implements EntityTableConfig {
               }, {
                 type: 'checkbox',
                 name: 'confirm',
-                placeholder: rowData.status === 'UNKNOWN'
+                placeholder: rowData.status === PoolStatus.Unknown
                   ? `${helptext.exportDialog.confirm} ${helptext.exportDialog.unknown_status_alt_text}`
                   : `${helptext.exportDialog.confirm}`,
                 required: true,
               }],
-              isCustActionVisible(actionId: string) {
-                if (actionId == 'download_key' && encryptedStatus === 0) {
-                  return false;
-                }
-                return true;
-              },
               saveButtonText: helptext.exportDialog.saveButton,
-              custActions: [
-                {
-                  id: 'download_key',
-                  name: helptext.downloadKey,
-                  function: () => {
-                    const dialogRef = this.mdDialog.open(DownloadKeyDialogComponent, { disableClose: true });
-                    dialogRef.componentInstance.volumeId = row1.id;
-                    dialogRef.componentInstance.fileName = 'pool_' + row1.name + '_encryption.key';
-                  },
-                }],
               customSubmit: (entityDialog: EntityDialogComponent) => {
                 const value = entityDialog.formValue;
                 const dialogRef = this.mdDialog.open(EntityJobComponent, {
@@ -642,7 +451,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   dialogRef.close(true);
                   this.parentVolumesListComponent.repaintMe();
                 });
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
                   let conditionalErrMessage = '';
                   if (res.error) {
                     if (res.exc_info.extra && res.exc_info.extra['code'] === 'control_services') {
@@ -651,18 +460,18 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       const stopMsg = this.translate.instant(helptext.exportMessages.onfail.stopServices);
                       const restartMsg = this.translate.instant(helptext.exportMessages.onfail.restartServices);
                       const continueMsg = this.translate.instant(helptext.exportMessages.onfail.continueMessage);
-                      if (res.exc_info.extra.stop_services.length > 0) {
+                      if ((res.exc_info.extra.stop_services as string[]).length > 0) {
                         conditionalErrMessage += '<div class="warning-box">' + stopMsg;
-                        res.exc_info.extra.stop_services.forEach((item: string) => {
+                        (res.exc_info.extra.stop_services as string[]).forEach((item) => {
                           conditionalErrMessage += `<br>- ${item}`;
                         });
                       }
-                      if (res.exc_info.extra.restart_services.length > 0) {
-                        if (res.exc_info.extra.stop_services.length > 0) {
+                      if ((res.exc_info.extra.restart_services as string[]).length > 0) {
+                        if ((res.exc_info.extra.stop_services as string[]).length > 0) {
                           conditionalErrMessage += '<br><br>';
                         }
                         conditionalErrMessage += '<div class="warning-box">' + restartMsg;
-                        res.exc_info.extra.restart_services.forEach((item: string) => {
+                        (res.exc_info.extra.restart_services as string[]).forEach((item) => {
                           conditionalErrMessage += `<br>- ${item}`;
                         });
                       }
@@ -679,10 +488,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
                         this.restartServices = true;
                         entityDialog.conf.customSubmit(entityDialog);
                       });
-                    } else if (res.extra && res.extra['code'] === 'unstoppable_processes') {
+                    } else if ((res as any).extra && (res as any).extra['code'] === 'unstoppable_processes') {
                       entityDialog.dialogRef.close(true);
                       const msg = this.translate.instant(helptext.exportMessages.onfail.unableToTerminate);
-                      conditionalErrMessage = msg + res.extra['processes'];
+                      conditionalErrMessage = msg + (res as any).extra['processes'];
                       dialogRef.close(true);
                       this.dialogService.errorReport(helptext.exportError, conditionalErrMessage, res.exception);
                     } else {
@@ -701,7 +510,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
             this.dialogService.dialogFormWide(conf);
           };
 
-          if (rowData.is_decrypted && rowData.status !== 'UNKNOWN') {
+          if (rowData.status !== PoolStatus.Unknown) {
             this.loader.open();
             this.ws.call('pool.attachments', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((attachments) => {
               if (attachments.length > 0) {
@@ -767,22 +576,20 @@ export class VolumesListTableConfig implements EntityTableConfig {
         },
       });
 
-      if (rowData.is_decrypted && rowData.status !== 'OFFLINE') {
+      if (rowData.status !== PoolStatus.Offline) {
         actions.push({
           id: rowData.name,
           name: 'Add Vdevs',
           label: T('Add Vdevs'),
-          onClick: (row1: any) => {
-            this.router.navigate(new Array('/').concat(
-              ['storage', 'manager', row1.id],
-            ));
+          onClick: (row1: VolumesListPool) => {
+            this.router.navigate(['/', 'storage', 'manager', row1.id]);
           },
         });
         actions.push({
           id: rowData.name,
           name: 'Scrub Pool',
           label: T('Scrub Pool'),
-          onClick: (row1: any) => {
+          onClick: (row1: VolumesListPool) => {
             this.getPoolData(row1.id).pipe(untilDestroyed(this, 'destroy')).subscribe((pools) => {
               if (!pools[0]) {
                 return;
@@ -826,7 +633,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   });
                   this.dialogRef.componentInstance.setCall('pool.scrub', [row1.id, PoolScrubAction.Start]);
                   this.dialogRef.componentInstance.submit();
-                  this.dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((jobres: any) => {
+                  this.dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((jobres) => {
                     this.dialogRef.close(false);
                     if (jobres.progress.percent == 100 && jobres.progress.description === 'Scrub finished') {
                       this.dialogService.info(
@@ -858,17 +665,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
           id: rowData.name,
           name: 'Status',
           label: T('Status'),
-          onClick: (row1: any) => {
-            this.router.navigate(new Array('/').concat(
-              ['storage', 'status', row1.id],
-            ));
+          onClick: (row1: VolumesListPool) => {
+            this.router.navigate(['/', 'storage', 'status', row1.id]);
           },
         });
         actions.push({
           id: rowData.name,
           name: T('Expand Pool'),
           label: T('Expand Pool'),
-          onClick: (row1: any) => {
+          onClick: (row1: VolumesListPool) => {
             const conf: DialogFormConfiguration = {
               title: helptext.expand_pool_dialog.title + row1.name,
               fieldConfig: [
@@ -894,7 +699,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
             const doExpand = (entityDialog?: EntityDialogComponent): void => {
               this.loader.open();
-              const payload: [any] = [row1.id];
+              const payload: PoolExpandParams = [row1.id];
               if (entityDialog) {
                 payload.push({ geli: { passphrase: entityDialog.formValue['passphrase'] } });
               }
@@ -927,27 +732,23 @@ export class VolumesListTableConfig implements EntityTableConfig {
               );
             };
 
-            if (row1.encrypt === 0) {
-              this.dialogService.generalDialog({
-                title: this.translate.instant(helptext.expand_pool_dialog.title) + row1.name,
-                message: helptext.expand_pool_dialog.message,
-                confirmBtnMsg: helptext.expand_pool_dialog.save_button,
-              }).pipe(
-                filter(Boolean),
-                untilDestroyed(this, 'destroy'),
-              ).subscribe(() => doExpand());
-            } else {
-              this.dialogService.dialogForm(conf);
-            }
+            this.dialogService.generalDialog({
+              title: this.translate.instant(helptext.expand_pool_dialog.title) + row1.name,
+              message: helptext.expand_pool_dialog.message,
+              confirmBtnMsg: helptext.expand_pool_dialog.save_button,
+            }).pipe(
+              filter(Boolean),
+              untilDestroyed(this, 'destroy'),
+            ).subscribe(() => doExpand());
           },
         });
 
-        if (rowData.is_upgraded === false) {
+        if (!rowData.is_upgraded) {
           actions.push({
             id: rowData.name,
             name: T('Upgrade Pool'),
             label: T('Upgrade Pool'),
-            onClick: (row1: any) => {
+            onClick: (row1: VolumesListPool) => {
               this.dialogService.confirm({
                 title: this.translate.instant('Upgrade Pool'),
                 message: this.translate.instant(helptext.upgradePoolDialog_warning) + row1.name,
@@ -1016,7 +817,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           name: T('View Permissions'),
           label: T('View Permissions'),
           ttposition: 'left',
-          onClick: (row: any) => {
+          onClick: (row: VolumesListDataset) => {
             this.parentVolumesListComponent.viewingPermissionsForDataset = row;
           },
         },
@@ -1025,9 +826,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           name: T('User Quotas'),
           label: T('User Quotas'),
           onClick: () => {
-            this.router.navigate(new Array('/').concat([
-              'storage', 'user-quotas', rowData.id,
-            ]));
+            this.router.navigate(['/', 'storage', 'user-quotas', rowData.id]);
           },
         },
         {
@@ -1035,19 +834,17 @@ export class VolumesListTableConfig implements EntityTableConfig {
           name: T('Group Quotas'),
           label: T('Group Quotas'),
           onClick: () => {
-            this.router.navigate(new Array('/').concat([
-              'storage', 'group-quotas', rowData.id,
-            ]));
+            this.router.navigate(['/', 'storage', 'group-quotas', rowData.id]);
           },
         });
       }
 
-      if (rowData.id.indexOf('/') !== -1) {
+      if (rowData.id.includes('/')) {
         actions.push({
           id: rowData.name,
           name: T('Delete Dataset'),
           label: T('Delete Dataset'),
-          onClick: (row1: any) => {
+          onClick: (row1: VolumesListDataset) => {
             const datasetName = row1.name;
 
             this.loader.open();
@@ -1185,7 +982,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
         id: rowData.name,
         name: T('Delete Zvol'),
         label: T('Delete Zvol'),
-        onClick: (row1: any) => {
+        onClick: (row1: VolumesListDataset) => {
           const zvolName = row1.name;
           this.dialogService.doubleConfirm(
             this.translate.instant('Delete'),
@@ -1229,7 +1026,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
         id: rowData.name,
         name: T('Create Snapshot'),
         label: T('Create Snapshot'),
-        onClick: (row: any) => {
+        onClick: (row: VolumesListDataset) => {
           this.ws.call('vmware.dataset_has_vms', [row.id, false]).pipe(untilDestroyed(this, 'destroy')).subscribe((vmware_res) => {
             this.vmware_res_status = vmware_res;
           });
@@ -1259,9 +1056,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 placeholder: helptext.snapshotDialog_recursive_placeholder,
                 tooltip: helptext.snapshotDialog_recursive_tooltip,
                 parent: this,
-                updater: (parent: any) => {
+                updater: (parent: VolumesListTableConfig) => {
                   parent.recursiveIsChecked = !parent.recursiveIsChecked;
-                  (parent.ws as WebSocketService).call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(parent, 'destroy')).subscribe((vmware_res) => {
+                  parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(parent, 'destroy')).subscribe((vmware_res) => {
                     parent.vmware_res_status = vmware_res;
                     _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' })['isHidden'] = !parent.vmware_res_status;
                   });
@@ -1292,7 +1089,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           id: rowData.name,
           name: T('Promote Dataset'),
           label: T('Promote Dataset'),
-          onClick: (row1: any) => {
+          onClick: (row1: VolumesListDataset) => {
             this.loader.open();
 
             this.ws.call('pool.dataset.promote', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe(() => {
@@ -1310,24 +1107,25 @@ export class VolumesListTableConfig implements EntityTableConfig {
         });
       }
     }
-    return actions;
+    return actions as EntityTableAction[];
   }
 
-  getEncryptedDatasetActions(rowData: any): any[] {
+  getEncryptedDatasetActions(rowData: VolumesListDataset): EntityTableAction[] {
     const encryption_actions = [];
     if (rowData.encrypted) {
       if (rowData.locked) {
-        if (rowData.is_encrypted_root && (!rowData.parent || (rowData.parent && !rowData.parent.locked))) {
+        if (rowData.is_encrypted_root
+          && (!rowData.parent || (rowData.parent && !(rowData.parent as VolumesListDataset).locked))) {
           encryption_actions.push({
             id: rowData.name,
             name: T('Unlock'),
             label: T('Unlock'),
             onClick: () => {
               // unlock
-              this.router.navigate(new Array('/').concat([
-                'storage', 'id', rowData.pool, 'dataset',
+              this.router.navigate([
+                '/', 'storage', 'id', rowData.pool, 'dataset',
                 'unlock', rowData.id,
-              ]));
+              ]);
             },
           });
         }
@@ -1336,11 +1134,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
           id: rowData.name,
           name: T('Encryption Options'),
           label: T('Encryption Options'),
-          onClick: (row: any) => {
+          onClick: (row: VolumesListDataset) => {
             // open encryption options dialog
             let key_child = false;
-            for (let i = 0; i < this.datasetData.length; i++) {
-              const ds = this.datasetData[i];
+            for (const ds of this.datasetData) {
               if (ds['id'].startsWith(row.id) && ds.id !== row.id
                 && ds.encryption_root && (ds.id === ds.encryption_root)
                 && ds.key_format && ds.key_format.value && ds.key_format.value === 'HEX') {
@@ -1348,12 +1145,12 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 break;
               }
             }
-            const can_inherit = (row.parent && row.parent.encrypted);
+            const can_inherit = (row.parent && (row.parent as VolumesListDataset).encrypted);
             const passphrase_parent = row.parent
-              && row.parent.key_format
-              && row.parent.key_format.value === DatasetEncryptionType.Passphrase;
+              && (row.parent as VolumesListDataset).key_format
+              && (row.parent as VolumesListDataset).key_format.value === DatasetEncryptionType.Passphrase;
             const is_key = (passphrase_parent ? false : (key_child ? true : !row.is_passphrase));
-            let pbkdf2iters = 350000; // will pull from row when it has been added to the payload
+            let pbkdf2iters = '350000'; // will pull from row when it has been added to the payload
             if (row.pbkdf2iters && row.pbkdf2iters && row.pbkdf2iters.rawvalue !== '0') {
               pbkdf2iters = row.pbkdf2iters.rawvalue;
             }
@@ -1456,15 +1253,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 const all_encryption_fields = ['encryption_type', 'passphrase', 'confirm_passphrase', 'pbkdf2iters', 'generate_key', 'key'];
 
                 if (inherit_encryption_fg.value) { // if already inheriting show as inherit
-                  for (let i = 0; i < all_encryption_fields.length; i++) {
-                    entityDialog.setDisabled(all_encryption_fields[i], true, true);
-                  }
+                  all_encryption_fields.forEach((field) => {
+                    entityDialog.setDisabled(field, true, true);
+                  });
                 }
                 inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this, 'destroy')).subscribe((inherit) => {
                   if (inherit) {
-                    for (let i = 0; i < all_encryption_fields.length; i++) {
-                      entityDialog.setDisabled(all_encryption_fields[i], inherit, inherit);
-                    }
+                    all_encryption_fields.forEach((field) => {
+                      entityDialog.setDisabled(field, inherit, inherit);
+                    });
                   } else {
                     entityDialog.setDisabled('encryption_type', inherit, inherit);
                     if (passphrase_parent || key_child) { // keep hidden if passphrase parent;
@@ -1507,7 +1304,6 @@ export class VolumesListTableConfig implements EntityTableConfig {
               customSubmit: (entityDialog: EntityDialogComponent) => {
                 const formValue = entityDialog.formValue;
                 let method: ApiMethod = 'pool.dataset.change_key';
-                const body: any = {};
                 if (formValue.inherit_encryption) {
                   if (row.is_encrypted_root) { // only try to change to inherit if not currently inheriting
                     method = 'pool.dataset.inherit_parent_encryption_properties';
@@ -1530,6 +1326,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     entityDialog.dialogRef.close();
                   }
                 } else {
+                  const body = {} as DatasetChangeKeyParams;
                   if (formValue.encryption_type === 'key') {
                     body['generate_key'] = formValue.generate_key;
                     if (!formValue.generate_key) {
@@ -1546,7 +1343,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   dialogRef.componentInstance.setDescription(
                     helptext.encryption_options_dialog.saving_encryption_options,
                   );
-                  dialogRef.componentInstance.setCall(method, [row.id, body]);
+                  dialogRef.componentInstance.setCall(method, [row.id as any, body]);
                   dialogRef.componentInstance.submit();
                   dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((res: any) => {
                     if (res) {
@@ -1579,9 +1376,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
             id: rowData.name,
             name: T('Lock'),
             label: T('Lock'),
-            onClick: (row: any) => {
+            onClick: (row: VolumesListDataset) => {
               const datasetName = row.name;
-              const params = [row.id];
+              const params: DatasetLockParams = [row.id];
               let force_umount = false;
               const ds = this.dialogService.confirm({
                 title: this.translate.instant('Lock Dataset {datasetName}', { datasetName }),
@@ -1685,20 +1482,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
         }
       }
     }
-    return encryption_actions;
-  }
-
-  clickAction(rowData: any): void {
-    const editPermissions = rowData.actions[0].actions.find((o: any) => o.name === 'Edit Permissions');
-    if (!rowData.locked && editPermissions) {
-      if (!rowData.id.includes('/')) {
-        editPermissions.disabled = true;
-        editPermissions.matTooltip = helptext.permissions_edit_msg1;
-      } else {
-        editPermissions.disabled = false;
-        editPermissions.matTooltip = null;
-      }
-    }
+    return encryption_actions as EntityTableAction[];
   }
 
   getTimestamp(): string {
@@ -1706,13 +1490,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
     return format(dateTime, 'yyyy-MM-dd_HH-mm');
   }
 
-  dataHandler(data: any): TreeNode {
+  dataHandler(tempData: any): TreeNode {
+    const data: VolumesListDataset = tempData;
     const node: TreeNode = {};
     node.data = data;
-    parent = data.parent;
-    this.getMoreDatasetInfo(data, parent);
+    this.getMoreDatasetInfo(data, data.parent);
     node.data.group_actions = true;
-    let actions_title = helptext.dataset_actions;
+    let actions_title: string = helptext.dataset_actions;
     if (data.type === DatasetType.Volume) {
       actions_title = helptext.zvol_actions;
     }
@@ -1728,11 +1512,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
     node.children = [];
 
     if (data.children) {
-      for (let i = 0; i < data.children.length; i++) {
-        const child = data.children[i];
+      node.children = data.children.map((child) => {
         child.parent = data;
-        node.children.push(this.dataHandler(child));
-      }
+        return this.dataHandler(child);
+      });
       node.children.sort((a, b) => a.data.id.localeCompare(b.data.id));
     }
     delete node.data.children;
@@ -1740,7 +1523,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
     return node;
   }
 
-  getMoreDatasetInfo(dataObj: any, parent: any): void {
+  getMoreDatasetInfo(dataObj: VolumesListDataset, parent: VolumesListDataset | VolumesListPool): void {
     const inherits = this.translate.instant(T('Inherits'));
     this.datasetData.forEach((dataset) => {
       if (dataset.id === dataObj.id) {
@@ -1760,7 +1543,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
         }
         if (dataset.readonly) {
           if (dataset.readonly.source !== 'INHERITED') {
-            dataObj.readonly = (dataset.readonly.parsed);
+            dataObj.readonly = (dataset.readonly.parsed) as any;
           } else {
             dataObj.readonly = (inherits + ' (' + dataset.readonly.parsed + ')');
           }
@@ -1786,9 +1569,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
       dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
       dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
       if (dataObj.is_encrypted_root) {
-        this.parentVolumesListComponent.has_encrypted_root[parent.pool] = true;
+        this.parentVolumesListComponent.has_encrypted_root[(parent as VolumesListDataset).pool] = true;
       }
-      dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && parent.encrypted);
+      dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && (parent as VolumesListDataset).encrypted);
     });
   }
 }

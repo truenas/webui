@@ -7,8 +7,8 @@ import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/network/configuration/configuration';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { NetworkConfiguration, NetworkConfigurationUpdate } from 'app/interfaces/network-configuration.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
@@ -252,9 +252,9 @@ export class ConfigurationComponent implements FormConfiguration {
     this.entityEdit = entityEdit;
     if ([ProductType.Enterprise, ProductType.ScaleEnterprise].includes(window.localStorage.getItem('product_type') as ProductType)) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => { // fixme, stupid race condition makes me need to call this again
-        for (let i = 0; i < this.failover_fields.length; i++) {
-          entityEdit.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
-        }
+        this.failover_fields.forEach((field) => {
+          entityEdit.setDisabled(field, !is_ha, !is_ha);
+        });
       });
     }
     this.entityEdit.submitFunction = this.submitFunction;

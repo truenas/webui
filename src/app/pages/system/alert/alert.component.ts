@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
@@ -19,7 +20,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AlertDefaults } from 'app/pages/system/alert/alert-defaults.interface';
 import { DialogService, WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { T } from 'app/translate-marker';
 
 /**
  * This form is unlike other forms in the app which make use of EntityForm.
@@ -69,13 +69,14 @@ export class AlertConfigComponent implements OnInit {
     this.loader.open();
     this.ws.call('alert.list_policies').pipe(untilDestroyed(this)).subscribe(
       (policies) => {
-        for (let i = 0; i < policies.length; i++) {
-          let label: string = policies[i];
-          if (policies[i] === AlertPolicy.Immediately) {
-            label = policies[i] + ' (Default)';
+        this.settingOptions = policies.map((policy) => {
+          let label: string = policy;
+          if (policy === AlertPolicy.Immediately) {
+            label = policy + ' (Default)';
           }
-          this.settingOptions.push({ label, value: policies[i] });
-        }
+
+          return { label, value: label };
+        });
       },
       (error) => {
         this.loader.close();
@@ -92,13 +93,12 @@ export class AlertConfigComponent implements OnInit {
         this.addButtons(categories);
         categories.forEach((category) => {
           const config: FieldConfig[] = [];
-          for (let i = 0; i < category.classes.length; i++) {
-            const c = category.classes[i];
+          for (const categoryClass of category.classes) {
             const warningOptions = [];
-            for (let j = 0; j < this.warningOptions.length; j++) {
+            for (const warningOption of this.warningOptions) {
               // apparently this is the proper way to clone an object
-              const option = JSON.parse(JSON.stringify(this.warningOptions[j]));
-              if (option.value === c.level) {
+              const option = JSON.parse(JSON.stringify(warningOption));
+              if (option.value === categoryClass.level) {
                 option.label = option.label + ' (Default)';
               }
               warningOptions.push(option);
@@ -106,16 +106,16 @@ export class AlertConfigComponent implements OnInit {
             config.push(
               {
                 type: 'select',
-                name: c.id + '_level',
-                inlineLabel: c.title,
+                name: categoryClass.id + '_level',
+                inlineLabel: categoryClass.title,
                 placeholder: T('Set Warning Level'),
                 tooltip: helptext.level_tooltip,
                 options: warningOptions,
-                value: c.level,
+                value: categoryClass.level,
               },
               {
                 type: 'select',
-                name: c.id + '_policy',
+                name: categoryClass.id + '_policy',
                 inlineLabel: ' ',
                 placeholder: T('Set Frequency'),
                 tooltip: helptext.policy_tooltip,
@@ -125,8 +125,8 @@ export class AlertConfigComponent implements OnInit {
             );
 
             this.defaults.push({
-              id: c.id,
-              level: c.level,
+              id: categoryClass.id,
+              level: categoryClass.level,
               policy: AlertPolicy.Immediately,
             });
           }

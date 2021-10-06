@@ -5,6 +5,7 @@ import {
 import {
   Router, ActivatedRoute,
 } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -26,7 +27,6 @@ import {
 } from 'app/services';
 import { ErdService } from 'app/services/erd.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { Report } from './components/report/report.component';
 import { ReportsConfigComponent } from './components/reports-config/reports-config.component';
 import { ReportsGlobalControlsComponent } from './components/reports-global-controls/reports-global-controls.component';
@@ -114,9 +114,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
         const allReports: any[] = evt.data.map((report) => {
           const list = [];
           if ((report as any).identifiers) {
-            for (let i = 0; i < (report as any).identifiers.length; i++) {
-              list.push(true);
-            }
+            (report as any).identifiers.forEach(() => list.push(true));
           } else {
             list.push(true);
           }
@@ -188,7 +186,17 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   }
 
   generateTabs(): void {
-    const labels = [T('CPU'), T('Disk'), T('Memory'), T('Network'), T('NFS'), T('Partition'), T('System'), T('Target'), T('ZFS')];
+    const labels: string[] = [
+      T('CPU'),
+      T('Disk'),
+      T('Memory'),
+      T('Network'),
+      T('NFS'),
+      T('Partition'),
+      T('System'),
+      T('Target'),
+      T('ZFS'),
+    ];
     const UPS = this.otherReports.find((report) => report.title.startsWith('UPS'));
 
     if (UPS) {
@@ -461,8 +469,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     const visible: number[] = [];
     this.activeReports.forEach((item, index) => {
-      const deviceMatch = device.indexOf(item.identifiers[0]) !== -1;
-      const metricMatch = metric.indexOf(item.name) !== -1;
+      const deviceMatch = device.includes(item.identifiers[0]);
+      const metricMatch = metric.includes(item.name);
       const condition = (deviceMatch && metricMatch);
       if (condition) {
         visible.push(index);

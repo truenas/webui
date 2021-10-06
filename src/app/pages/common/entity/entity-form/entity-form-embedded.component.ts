@@ -17,6 +17,7 @@ import {
   FormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -26,7 +27,6 @@ import { RelationGroup } from 'app/pages/common/entity/entity-form/models/field-
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { FieldSets } from './classes/field-sets';
 import { FieldConfig, FormArrayConfig } from './models/field-config.interface';
@@ -43,26 +43,15 @@ export interface EmbeddedFormConfig {
   target?: Subject<CoreEvent>;
   resource_name?: string;
   isEntity?: boolean;
-  addCall?: any;
-  editCall?: any;
-  queryCall?: any;
-  queryCallOption?: any;
   isNew?: boolean;
   pk?: number | string;
-  custom_get_query?: any;
   fieldConfig?: FieldConfig[];
-  resourceTransformIncomingRestData?: any;
-  route_usebaseUrl?: any;
   afterInit?: (entityForm: EntityFormEmbeddedComponent) => void;
   initial?: (this: EmbeddedFormConfig, entityForm: EntityFormEmbeddedComponent) => void;
-  dataHandler?: any;
-  dataAttributeHandler?: any;
   route_cancel?: string[];
   route_success?: string[];
   // TODO: Broken
   route_delete?: string[];
-  custom_edit_query?: any;
-  custom_add_query?: any;
   actionButtonsAlign?: string;
   custActions?: any[];
   customFilter?: any[];
@@ -105,7 +94,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   fieldSets: FieldSet[];
   fieldConfig: FieldConfig[];
   hasConf = true;
-  saveSubmitText = T('Save');
+  saveSubmitText: string = T('Save');
   saveSubmitStatus = '';
   actionButtonsAlign = 'center';
 
@@ -319,15 +308,15 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   clearErrors(): void {
-    for (let f = 0; f < this.fieldConfig.length; f++) {
-      this.fieldConfig[f]['errors'] = '';
-      this.fieldConfig[f]['hasErrors'] = false;
-    }
+    this.fieldConfig.forEach((config) => {
+      config['errors'] = '';
+      config['hasErrors'] = false;
+    });
   }
 
   isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
-      if (this.conf.advanced_field.indexOf(id) > -1) {
+      if (this.conf.advanced_field.includes(id)) {
         return false;
       }
     }

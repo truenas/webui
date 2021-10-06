@@ -1771,4 +1771,19 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: 0.38;
   }
 
+  .reset-filter-icon {
+    cursor: pointer;
+    opacity: 0.5;
+    user-select: none;
+
+    mat-icon {
+      font-size: 150%;
+    }
+
+    &.invisible {
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+  }
 } // end of ix theme

@@ -49,7 +49,7 @@ export class FormIpWithNetmaskComponent implements Field, OnInit {
   }
 
   setNetmaskOptions(): void {
-    if (this.address.indexOf(':') === -1) {
+    if (!this.address.includes(':')) {
       this.netmaskOptions = this.ipv4netmaskoptions;
     } else {
       this.netmaskOptions = this.ipv6netmaskoptions;

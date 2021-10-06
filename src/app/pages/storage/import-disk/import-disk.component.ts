@@ -3,13 +3,14 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/storage/import-disk/import-disk';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormRadioConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -21,7 +22,6 @@ import {
   JobService,
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -116,10 +116,10 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     this.msdosfs_locale = _.find(this.fieldConfig, { name: 'msdosfs_locale' }) as FormSelectConfig;
     this.fs_type = entityForm.formGroup.controls['fs_type'] as FormControl;
 
-    this.ws.call('pool.import_disk_msdosfs_locales').pipe(untilDestroyed(this)).subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.msdosfs_locale.options.push({ label: res[i], value: res[i] });
-      }
+    this.ws.call('pool.import_disk_msdosfs_locales').pipe(untilDestroyed(this)).subscribe((locales) => {
+      locales.forEach((locale) => {
+        this.msdosfs_locale.options.push({ label: locale, value: locale });
+      });
     }, (res) => {
       this.dialogService.errorReport(T('Error getting locales'), res.message, res.stack);
       this.initialized = true;
@@ -155,18 +155,18 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   makeList(): void {
     this.volume.options = [];
     this.ws.call('disk.get_unused', [true]).pipe(untilDestroyed(this)).subscribe((data) => {
-      for (let i = 0; i < data.length; i++) {
-        if (data[i].partitions) {
-          for (let p = 0; p < data[i].partitions.length; p++) {
+      data.forEach((disk) => {
+        if (disk.partitions) {
+          disk.partitions.forEach((partition) => {
             this.volume.options.push(
               {
-                label: data[i].partitions[p].path,
-                value: data[i].partitions[p].path,
+                label: partition.path,
+                value: partition.path,
               },
             );
-          }
+          });
         }
-      }
+      });
       this.initialized = true;
     }, (res) => {
       this.dialogService.errorReport(T('Error getting disk data'), res.message, res.stack);

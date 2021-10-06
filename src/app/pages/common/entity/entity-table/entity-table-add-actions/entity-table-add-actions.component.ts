@@ -19,6 +19,7 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
   @ViewChild('filter', { static: false }) filter: ElementRef;
   @Input() entity: EntityTableComponent;
   conf: EntityTableAddActionsConfig;
+  filterValue = '';
 
   actions: EntityTableAction[];
   menuTriggerMessage = 'Click for options';
@@ -56,8 +57,15 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
         distinctUntilChanged(),
       )
         .pipe(untilDestroyed(this)).subscribe(() => {
+          this.filterValue = this.filter.nativeElement.value;
           this.entity.filter(this.filter.nativeElement.value);
         });
     }
+  }
+
+  resetFilter(): void {
+    this.filterValue = '';
+    this.filter.nativeElement.value = '';
+    this.entity.filter('');
   }
 }

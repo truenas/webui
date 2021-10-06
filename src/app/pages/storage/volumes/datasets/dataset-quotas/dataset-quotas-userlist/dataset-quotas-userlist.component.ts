@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -16,7 +17,6 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -94,19 +94,22 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
               {
                 type: 'input',
                 name: 'data_quota',
-                placeholder: helptext.users.data_quota.placeholder,
-                tooltip: `${helptext.users.data_quota.tooltip} bytes.`,
+                placeholder: this.translate.instant(helptext.users.data_quota.placeholder)
+                   + this.translate.instant(globalHelptext.human_readable.suggestion_label),
+                tooltip: this.translate.instant(helptext.users.data_quota.tooltip)
+                + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+                + this.translate.instant(' bytes.'),
                 value: this.storageService.convertBytestoHumanReadable(res[0].quota, 0, null, true),
                 id: 'data-quota_input',
                 blurStatus: true,
-                blurEvent: this.blurEvent,
+                blurEvent: () => this.blurEvent(),
                 parent: this,
                 validation: [
                   (control: FormControl): ValidationErrors => {
                     const config = conf.fieldConfig.find((c) => c.name === 'data_quota');
                     this.quotaValue = control.value;
                     const size = this.storageService.convertHumanStringToNum(control.value);
-                    const errors = control.value && isNaN(size)
+                    const errors = control.value && Number.isNaN(size)
                       ? { invalid_byte_string: true }
                       : null;
 
@@ -182,24 +185,21 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
   }
 
   dataHandler(data: EntityTableComponent): void {
-    this.translate.get(helptext.shared.nameErr).pipe(untilDestroyed(this)).subscribe((msg) => {
-      data.rows.forEach((row: any) => {
-        if (!row.name) {
-          row.name = `*ERR* (${msg}), ID: ${row.id}`;
-        }
-        row.quota = this.storageService.convertBytestoHumanReadable(row.quota, 0);
-        if (row.used_bytes !== 0) {
-          row.used_bytes = this.storageService.convertBytestoHumanReadable(row.used_bytes, 2);
-        }
-        row.used_percent = `${Math.round((row.used_percent) * 100) / 100}%`;
-        row.obj_used_percent = `${Math.round((row.obj_used_percent) * 100) / 100}%`;
-      });
-      return data;
+    data.rows.forEach((row: any) => {
+      if (!row.name) {
+        row.name = `*ERR* (${this.translate.instant(helptext.shared.nameErr)}), ID: ${row.id}`;
+      }
+      row.quota = this.storageService.convertBytestoHumanReadable(row.quota, 0);
+      if (row.used_bytes !== 0) {
+        row.used_bytes = this.storageService.convertBytestoHumanReadable(row.used_bytes, 2);
+      }
+      row.used_percent = `${Math.round((row.used_percent) * 100) / 100}%`;
+      row.obj_used_percent = `${Math.round((row.obj_used_percent) * 100) / 100}%`;
     });
   }
 
-  blurEvent(parent: this): void {
-    (document.getElementById('data-quota_input') as HTMLInputElement).value = parent.storageService.humanReadable;
+  blurEvent(): void {
+    (document.getElementById('data-quota_input') as HTMLInputElement).value = this.storageService.humanReadable;
   }
 
   toggleDisplay(): void {

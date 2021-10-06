@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
@@ -9,6 +10,9 @@ import * as _ from 'lodash';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { Job } from 'app/interfaces/job.interface';
+import { PoolFindResult } from 'app/interfaces/pool-import.interface';
+import { Subs } from 'app/interfaces/subs.interface';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FormInputConfig, FormSelectConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -20,7 +24,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -33,7 +36,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   isLinear = true;
   firstFormGroup: FormGroup;
   summaryTitle = 'Pool Import Summary';
-  subs: any;
+  subs: Subs;
   saveSubmitText = T('Import');
   entityWizard: EntityWizardComponent;
   protected productType: ProductType;
@@ -112,7 +115,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
         tooltip: helptext.key_tooltip,
         fileLocation: '',
         message: this.messageService,
-        updater: this.updater,
+        updater: (uploadComponent: FormUploadComponent) => this.updater(uploadComponent),
         parent: this,
         isHidden: true,
         disabled: true,
@@ -160,10 +163,10 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   },
   ];
 
-  updater(file: FormUploadComponent, parent: this): void {
+  updater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
+      this.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 
@@ -179,7 +182,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   protected passphrase: FormInputConfig;
   protected passphrase_fg: FormGroup;
   protected guid: FormSelectConfig;
-  protected pool: any;
+  protected pool: string;
   hideCancel = true;
 
   constructor(
@@ -248,13 +251,11 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     dialogRef.componentInstance.setDescription(helptext.find_pools_msg);
     dialogRef.componentInstance.setCall('pool.import_find');
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<PoolFindResult[]>) => {
       if (res && res.result) {
-        this.guid.options = [];
-        const result = res.result;
-        for (let i = 0; i < result.length; i++) {
-          this.guid.options.push({ label: result[i].name + ' | ' + result[i].guid, value: result[i].guid });
-        }
+        this.guid.options = res.result.map((pool) => {
+          return { label: pool.name + ' | ' + pool.guid, value: pool.guid };
+        });
       }
       dialogRef.close(false);
     });
@@ -292,8 +293,8 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       this.passphrase_fg = entityWizard.formArray.get([1]).get('passphrase') as FormGroup;
 
       this.ws.call('disk.get_encrypted', [{ unused: true }]).pipe(untilDestroyed(this)).subscribe((res) => {
-        for (let i = 0; i < res.length; i++) {
-          this.devices.options.push({ label: res[i].name, value: res[i].dev });
+        for (const disk of res) {
+          this.devices.options.push({ label: disk.name, value: disk.dev });
         }
       });
     }

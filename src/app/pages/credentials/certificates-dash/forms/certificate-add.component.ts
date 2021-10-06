@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
@@ -20,7 +21,6 @@ import { SystemGeneralService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -32,7 +32,7 @@ export class CertificateAddComponent implements WizardConfiguration {
   addWsCall: 'certificate.create' = 'certificate.create';
   private entityForm: EntityWizardComponent;
   private CSRList: Certificate[] = [];
-  title = helptext_system_certificates.add.title;
+  title: string = helptext_system_certificates.add.title;
   private getType = new Subscription();
   private type: any;
   hideCancel = true;
@@ -996,8 +996,8 @@ export class CertificateAddComponent implements WizardConfiguration {
           }
           if (data[key]) {
             if (type_prop.length === 1) {
-              for (let i = 0; i < data[key].length; i++) {
-                (cert_extensions as any)[type_prop[0]][data[key][i]] = true;
+              for (const item of data[key]) {
+                (cert_extensions as any)[type_prop[0]][item] = true;
               }
             } else {
               (cert_extensions as any)[type_prop[0]][type_prop[1]] = data[key];

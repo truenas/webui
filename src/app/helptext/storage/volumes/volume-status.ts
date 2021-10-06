@@ -1,4 +1,4 @@
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   dialogFormFields: {
@@ -41,7 +41,6 @@ export default {
   offline_disk: {
     title: T('Offline Disk'),
     message: T('Offline disk '),
-    encryptPoolWarning: T('<br><b>Warning: Disks cannot be onlined in encrypted pools.</b></br>'),
     buttonMsg: T('Offline'),
   },
 

@@ -175,7 +175,7 @@ export class StorageService {
 
     // Select strings that Date.parse can turn into a number (ie, that are a legit date)
     } else if (typeof (tempArr[n]) === 'string'
-      && !isNaN(Date.parse(tempArr[n]))) {
+      && !Number.isNaN(Date.parse(tempArr[n]))) {
       let timeArr = [];
       for (const i of tempArr) {
         timeArr.push(Date.parse(i));
@@ -201,7 +201,7 @@ export class StorageService {
       const A = a[key];
       const B = b[key];
       if (sorter.indexOf(A) > sorter.indexOf(B)) {
-        return 1 * v;
+        return v;
       }
       return -1 * v;
     });
@@ -240,7 +240,7 @@ export class StorageService {
     }
   }
 
-  poolUnlockServiceOptions(id: string): Observable<Option[]> {
+  poolUnlockServiceOptions(id: number): Observable<Option[]> {
     return this.ws.call('pool.unlock_services_restart_choices', [id]).pipe(
       map((response: Choices) =>
         Object.keys(response || {}).map((serviceId) => ({
@@ -270,7 +270,7 @@ export class StorageService {
      */
     path = path.indexOf('/') === 0 ? path.substr(1) : path;
 
-    return path.indexOf('/') < 0;
+    return !path.includes('/');
   }
 
   // ----------------------- //

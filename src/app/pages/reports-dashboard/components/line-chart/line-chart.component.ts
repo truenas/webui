@@ -198,11 +198,11 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   makeColumn(data: ReportingData, legendKey: any): number[] {
     const result: any = [];
 
-    for (let i = 0; i < data.data.length; i++) {
+    data.data.forEach((report) => {
       // TODO: Incorrect type
-      const value = (data.data[i] as any)[legendKey];
+      const value = (report as any)[legendKey];
       result.push(value);
-    }
+    });
 
     return result;
   }

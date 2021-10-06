@@ -4,6 +4,7 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -23,6 +24,8 @@ import { Device } from 'app/interfaces/device.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Statfs } from 'app/interfaces/filesystem-stat.interface';
+import { VmDevice } from 'app/interfaces/vm-device.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   FieldConfig, FormParagraphConfig, FormSelectConfig, FormUploadConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -39,7 +42,6 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { VmService } from 'app/services/vm.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -250,7 +252,7 @@ export class VMWizardComponent implements WizardConfiguration {
             this.memoryValidator('memory'),
             (control: FormControl): ValidationErrors => {
               const config = this.wizardConfig.find((c) => c.label === helptext.vcpus_label).fieldConfig.find((c) => c.name === 'memory');
-              const errors = control.value && isNaN(this.storageService.convertHumanStringToNum(control.value))
+              const errors = control.value && Number.isNaN(this.storageService.convertHumanStringToNum(control.value))
                 ? { invalid_byte_string: true }
                 : null;
 
@@ -268,7 +270,7 @@ export class VMWizardComponent implements WizardConfiguration {
           value: '',
           required: true,
           blurStatus: true,
-          blurEvent: this.blurEventForMemory,
+          blurEvent: () => this.blurEventForMemory(),
           parent: this,
           tooltip: helptext.memory_tooltip,
         },
@@ -312,7 +314,7 @@ export class VMWizardComponent implements WizardConfiguration {
           tooltip: helptext.datastore_tooltip,
           placeholder: helptext.datastore_placeholder,
           blurStatus: true,
-          blurEvent: this.blueEventForVolSize,
+          blurEvent: () => this.blueEventForVolSize(),
           options: [],
           isHidden: false,
           validation: [Validators.required],
@@ -326,14 +328,14 @@ export class VMWizardComponent implements WizardConfiguration {
           tooltip: helptext.volsize_tooltip,
           isHidden: false,
           blurStatus: true,
-          blurEvent: this.blueEventForVolSize,
+          blurEvent: () => this.blueEventForVolSize(),
           parent: this,
           validation: [
             ...helptext.volsize_validation,
             this.volSizeValidator('volsize'),
             (control: FormControl): ValidationErrors => {
               const config = this.wizardConfig.find((c) => c.label === helptext.disks_label).fieldConfig.find((c) => c.name === 'volsize');
-              const errors = control.value && isNaN(this.storageService.convertHumanStringToNum(control.value, false, 'mgtp'))
+              const errors = control.value && Number.isNaN(this.storageService.convertHumanStringToNum(control.value, false, 'mgtp'))
                 ? { invalid_byte_string: true }
                 : null;
 
@@ -491,7 +493,7 @@ export class VMWizardComponent implements WizardConfiguration {
     this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((max) => {
       this.maxVCPUs = max;
       const vcpuLimitConf: FormParagraphConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' });
-      vcpuLimitConf.paraText = helptext.vcpus_warning + ` ${this.maxVCPUs} ` + helptext.vcpus_warning_b;
+      vcpuLimitConf.paraText = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVCPUs });
     });
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
@@ -657,7 +659,7 @@ export class VMWizardComponent implements WizardConfiguration {
       }
 
       this.getFormControlFromFieldName('memory').valueChanges.pipe(untilDestroyed(this)).subscribe((memory) => {
-        this.summary[T('Memory')] = isNaN(this.storageService.convertHumanStringToNum(memory))
+        this.summary[T('Memory')] = Number.isNaN(this.storageService.convertHumanStringToNum(memory))
           ? '0 MiB'
           : this.storageService.humanReadable;
       });
@@ -735,12 +737,12 @@ export class VMWizardComponent implements WizardConfiguration {
           if (datastore === '/mnt') {
             this.getFormControlFromFieldName('datastore').setValue(null);
             _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = true;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = T(`Virtual machines cannot be stored in an unmounted mountpoint: ${datastore}`);
+            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = this.translate.instant('Virtual machines cannot be stored in an unmounted mountpoint: {datastore}', { datastore });
           }
           if (datastore === '') {
             this.getFormControlFromFieldName('datastore').setValue(null);
             _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).hasErrors = true;
-            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = T('Please select a valid path');
+            _.find(this.wizardConfig[2].fieldConfig, { name: 'datastore' }).errors = this.translate.instant('Please select a valid path');
           }
         }
         this.getFormControlFromFieldName('NIC_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
@@ -904,9 +906,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
         if (errors) {
           config.hasErrors = true;
-          this.translate.get(helptext.vcpus_warning).pipe(untilDestroyed(this)).subscribe((warning) => {
-            config.warnings = warning + ` ${this.maxVCPUs}.`;
-          });
+          config.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVCPUs });
         } else {
           config.hasErrors = false;
           config.warnings = '';
@@ -939,32 +939,32 @@ export class VMWizardComponent implements WizardConfiguration {
     };
   }
 
-  blurEventForMemory(parent: this): void {
-    const enteredVal = parent.entityWizard.formGroup.value.formArray[1].memory;
-    const vm_memory_requested = parent.storageService.convertHumanStringToNum(enteredVal);
-    if (isNaN(vm_memory_requested)) {
+  blurEventForMemory(): void {
+    const enteredVal = this.entityWizard.formGroup.value.formArray[1].memory;
+    const vm_memory_requested = this.storageService.convertHumanStringToNum(enteredVal);
+    if (Number.isNaN(vm_memory_requested)) {
       console.error(vm_memory_requested); // leaves form in previous error state
     } else if (enteredVal.replace(/\s/g, '').match(/[^0-9]/g) === null) {
-      parent.entityWizard.formArray.get([1]).get('memory')
-        .setValue(parent.storageService.convertBytestoHumanReadable(enteredVal.replace(/\s/g, ''), 0));
+      this.entityWizard.formArray.get([1]).get('memory')
+        .setValue(this.storageService.convertBytestoHumanReadable(enteredVal.replace(/\s/g, ''), 0));
     } else {
-      parent.entityWizard.formArray.get([1]).get('memory').setValue(parent.storageService.humanReadable);
-      _.find(parent.wizardConfig[1].fieldConfig, { name: 'memory' })['hasErrors'] = false;
-      _.find(parent.wizardConfig[1].fieldConfig, { name: 'memory' })['errors'] = '';
+      this.entityWizard.formArray.get([1]).get('memory').setValue(this.storageService.humanReadable);
+      _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' })['hasErrors'] = false;
+      _.find(this.wizardConfig[1].fieldConfig, { name: 'memory' })['errors'] = '';
     }
   }
 
-  blueEventForVolSize(parent: this): void {
-    const enteredVal = (parent.entityWizard.formArray as FormArray).controls[2].value.volsize;
-    const volsize = parent.storageService.convertHumanStringToNum(enteredVal, false, 'mgtp');
+  blueEventForVolSize(): void {
+    const enteredVal = (this.entityWizard.formArray as FormArray).controls[2].value.volsize;
+    const volsize = this.storageService.convertHumanStringToNum(enteredVal, false, 'mgtp');
     if (volsize >= 1048576) {
-      parent.entityWizard.formArray.get([2]).get('volsize').setValue(parent.storageService.humanReadable);
-      _.find(parent.wizardConfig[2].fieldConfig, { name: 'volsize' })['hasErrors'] = false;
-      _.find(parent.wizardConfig[2].fieldConfig, { name: 'volsize' })['errors'] = '';
-    } else if (isNaN(volsize)) {
+      this.entityWizard.formArray.get([2]).get('volsize').setValue(this.storageService.humanReadable);
+      _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['hasErrors'] = false;
+      _.find(this.wizardConfig[2].fieldConfig, { name: 'volsize' })['errors'] = '';
+    } else if (Number.isNaN(volsize)) {
       console.error(volsize); // leaves form in previous error state
     } else {
-      parent.entityWizard.formArray.get([2]).get('volsize').setValue('1 MiB');
+      this.entityWizard.formArray.get([2]).get('volsize').setValue('1 MiB');
     }
   }
 
@@ -1121,25 +1121,7 @@ export class VMWizardComponent implements WizardConfiguration {
           },
           (error) => {
             setTimeout(() => {
-              this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe(
-                () => {
-                  this.loader.close();
-                  this.dialogService.errorReport(
-                    T('Error creating VM.'),
-                    T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason,
-                    error.trace.formatted,
-                  );
-                },
-                (err) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(
-                    T('Error creating VM.'),
-                    T('We ran into an error while trying to create the ') + error.device.dtype + ' device.\n' + error.reason,
-                    error.trace.formatted,
-                  );
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
-                },
-              );
+              this.deleteVm(vm_res.id, error);
             }, 1000);
           },
         );
@@ -1184,31 +1166,7 @@ export class VMWizardComponent implements WizardConfiguration {
           },
           (error) => {
             setTimeout(() => {
-              this.ws.call('vm.delete', [vm_res.id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe(
-                () => {
-                  this.loader.close();
-                  this.dialogService.errorReport(
-                    T('Error creating VM.'),
-                    this.translate.instant(
-                      'Error while creating the {device} device.\n {reason}',
-                      { device: error.device.dtype, reason: error.reason },
-                    ),
-                    error.trace.formatted,
-                  );
-                },
-                (err) => {
-                  this.loader.close();
-                  this.dialogService.errorReport(
-                    T('Error creating VM.'),
-                    this.translate.instant(
-                      'Error while creating the {device} device.\n {reason}',
-                      { device: error.device.dtype, reason: error.reason },
-                    ),
-                    error.trace.formatted,
-                  );
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
-                },
-              );
+              this.deleteVm(vm_res.id, error);
             }, 1000);
           },
         );
@@ -1217,5 +1175,33 @@ export class VMWizardComponent implements WizardConfiguration {
         this.dialogService.errorReport(T('Error creating VM.'), error.reason, error.trace.formatted);
       });
     }
+  }
+
+  deleteVm(id: number, error: WebsocketError & { device: VmDevice }): void {
+    this.ws.call('vm.delete', [id, { zvols: false, force: false }]).pipe(untilDestroyed(this)).subscribe(
+      () => {
+        this.loader.close();
+        this.dialogService.errorReport(
+          this.translate.instant('Error creating VM.'),
+          this.translate.instant(
+            'Error while creating the {device} device.\n {reason}',
+            { device: error.device.dtype, reason: error.reason },
+          ),
+          error.trace.formatted,
+        );
+      },
+      (err) => {
+        this.loader.close();
+        this.dialogService.errorReport(
+          this.translate.instant('Error creating VM.'),
+          this.translate.instant(
+            'Error while creating the {device} device.\n {reason}',
+            { device: error.device.dtype, reason: error.reason },
+          ),
+          error.trace.formatted,
+        );
+        new EntityUtils().handleWSError(this, err, this.dialogService);
+      },
+    );
   }
 }

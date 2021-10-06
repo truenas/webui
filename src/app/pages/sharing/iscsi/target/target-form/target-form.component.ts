@@ -1,19 +1,20 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { IscsiTargetUpdate } from 'app/interfaces/iscsi.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   IscsiService, WebSocketService, AppLoaderService, ModalService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -142,7 +143,7 @@ export class TargetFormComponent implements FormConfiguration {
     },
   ];
   fieldConfig: FieldConfig[];
-  title = T('Add ISCSI Target');
+  title: string = T('Add ISCSI Target');
   pk: number;
   protected entityForm: EntityFormComponent;
   constructor(protected router: Router,
@@ -159,7 +160,7 @@ export class TargetFormComponent implements FormConfiguration {
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
     this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe(
       (systemInfo) => {
-        if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.FibreChannel) > -1) {
+        if (systemInfo.license && systemInfo.license.features.includes(LicenseFeature.FibreChannel)) {
           _.find(basicFieldset.config, { name: 'mode' }).isHidden = false;
         }
       },
@@ -175,13 +176,13 @@ export class TargetFormComponent implements FormConfiguration {
     const promise1 = new Promise((resolve) => {
       this.iscsiService.listPortals().toPromise().then(
         (portals) => {
-          for (let i = 0; i < portals.length; i++) {
-            let label = String(portals[i].tag);
-            if (portals[i].comment) {
-              label += ' (' + portals[i].comment + ')';
+          portals.forEach((portal) => {
+            let label = String(portal.tag);
+            if (portal.comment) {
+              label += ' (' + portal.comment + ')';
             }
-            portalGroupField.options.push({ label, value: portals[i].id });
-          }
+            portalGroupField.options.push({ label, value: portal.id });
+          });
           resolve(true);
         },
         () => {
@@ -193,13 +194,13 @@ export class TargetFormComponent implements FormConfiguration {
       this.iscsiService.listInitiators().toPromise().then(
         (initiatorsRes) => {
           initiatorGroupField.options.push({ label: 'None', value: null });
-          for (let i = 0; i < initiatorsRes.length; i++) {
-            const optionLabel = initiatorsRes[i].id
+          initiatorsRes.forEach((initiator) => {
+            const optionLabel = initiator.id
               + ' ('
-              + (initiatorsRes[i].initiators.length === 0 ? 'ALL Initiators Allowed' : initiatorsRes[i].initiators.toString())
+              + (initiator.initiators.length === 0 ? 'ALL Initiators Allowed' : initiator.initiators.toString())
               + ')';
-            initiatorGroupField.options.push({ label: optionLabel, value: initiatorsRes[i].id });
-          }
+            initiatorGroupField.options.push({ label: optionLabel, value: initiator.id });
+          });
           resolve(true);
         },
         () => {
@@ -234,7 +235,7 @@ export class TargetFormComponent implements FormConfiguration {
     this.title = entityForm.isNew ? T('Add ISCSI Target') : T('Edit ISCSI Target');
   }
 
-  customEditCall(value: any): void {
+  customEditCall(value: IscsiTargetUpdate): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {

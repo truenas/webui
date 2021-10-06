@@ -3,9 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/services/components/service-tftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { TftpConfig } from 'app/interfaces/tftp-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { UserService, WebSocketService } from 'app/services';
@@ -119,14 +118,12 @@ export class ServiceTFTPComponent implements FormConfiguration {
 
   preInit(): void {
     this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
       this.tftp_username = this.fieldSets
         .find((set) => set.name === helptext.tftp_fieldset_conn)
         .config.find((config) => config.name === 'username') as FormComboboxConfig;
-      this.tftp_username.options = users;
+      this.tftp_username.options = items.map((user) => {
+        return { label: user.username, value: user.username };
+      });
     });
   }
 
@@ -136,11 +133,9 @@ export class ServiceTFTPComponent implements FormConfiguration {
 
   updateUserSearchOptions(value = '', parent: this): void {
     parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      parent.tftp_username.searchOptions = users;
+      parent.tftp_username.searchOptions = items.map((user) => {
+        return { label: user.username, value: user.username };
+      });
     });
   }
 }

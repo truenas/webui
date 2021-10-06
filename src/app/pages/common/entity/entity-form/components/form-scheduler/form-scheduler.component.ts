@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { MatMonthView } from '@angular/material/datepicker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as parser from 'cron-parser';
@@ -17,7 +18,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SystemGeneralService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
 
 interface CronPreset {
   label: string;
@@ -105,7 +105,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   get hours(): string { return this._hours; }
   set hours(val) {
-    if (val !== '' && val.indexOf(' ') === -1) {
+    if (val !== '' && !val.includes(' ')) {
       const string = '* * ' + val + ' * * *';
       try {
         parser.parseExpression(string);
@@ -565,12 +565,11 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   private getCalendarCells(): any[] {
     const rows = this.calendar.nativeElement.children[0].children[1].children;
     let cells: any[] = [];
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i].childNodes;
+    for (const row of rows) {
       const tds = [];
-      for (let index = 0; index < row.length; index++) {
-        if (row[index].tagName == 'TD') {
-          tds.push(row[index]);
+      for (const node of row.childNodes) {
+        if (node.tagName == 'TD') {
+          tds.push(node);
         }
       }
       cells = cells.concat(tds);

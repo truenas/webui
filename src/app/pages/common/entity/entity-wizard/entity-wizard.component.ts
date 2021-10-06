@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { MatStep, MatStepper } from '@angular/material/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -14,7 +15,6 @@ import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { T } from 'app/translate-marker';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
@@ -37,7 +37,7 @@ export class EntityWizardComponent implements OnInit {
   summaryValue: any;
   summaryFieldConfigs: FieldConfig[] = [];
 
-  saveSubmitText = T('Save');
+  saveSubmitText: string = T('Save');
   customNextText = T('Next');
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
@@ -81,12 +81,11 @@ export class EntityWizardComponent implements OnInit {
 
         /* Temp patch to support both FieldSet approaches */
         const fieldSets = config.fieldSets;
-        for (let j = 0; j < fieldSets.length; j++) {
-          const fieldset = fieldSets[j];
+        fieldSets.forEach((fieldset) => {
           if (fieldset.config) {
             fieldConfig = fieldConfig.concat(fieldset.config);
           }
-        }
+        });
         config.fieldConfig = fieldConfig;
       } else {
         // const fieldConfig = this.conf.wizardConfig[i].fieldConfig;
@@ -123,7 +122,7 @@ export class EntityWizardComponent implements OnInit {
 
   isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
-      if (this.conf.advanced_field.indexOf(id) > -1) {
+      if (this.conf.advanced_field.includes(id)) {
         return false;
       }
     }
@@ -204,11 +203,7 @@ export class EntityWizardComponent implements OnInit {
 
   isFieldsetAvailabel(fieldset: FieldSet): boolean {
     if (fieldset.config) {
-      for (let i = 0; i < fieldset.config.length; i++) {
-        if (!fieldset.config[i].isHidden) {
-          return true;
-        }
-      }
+      return fieldset.config.some((config) => !config.isHidden);
     }
     return false;
   }

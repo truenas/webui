@@ -197,10 +197,10 @@ export class PreferencesService {
     const currentKeys = Object.keys(this.preferences);
 
     // Find Deprecated
-    const oldKeys = savedKeys.filter((key) => currentKeys.indexOf(key) == -1);
+    const oldKeys = savedKeys.filter((key) => !currentKeys.includes(key));
 
     // Find New
-    const newKeys = currentKeys.filter((key) => savedKeys.indexOf(key) == -1);
+    const newKeys = currentKeys.filter((key) => !savedKeys.includes(key));
 
     const report: PropertyReport = {
       middlewareProperties: savedKeys, // Inbound from Middleware

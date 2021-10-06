@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
@@ -23,7 +24,6 @@ import {
   SystemGeneralService, WebSocketService, DialogService, StorageService, ModalServiceMessage,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
 import { CertificateAuthorityEditComponent } from './forms/ca-edit.component';
 import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.component';
@@ -291,7 +291,6 @@ export class CertificatesDashComponent implements OnInit {
               new EntityUtils().handleWSError(this, err, this.dialogService);
             },
           );
-          event.stopPropagation();
         },
       },
     ];
@@ -333,7 +332,6 @@ export class CertificatesDashComponent implements OnInit {
       matTooltip: T('Create ACME Certificate'),
       onClick: (rowinner: Certificate) => {
         this.modalService.openInSlideIn(CertificateAcmeAddComponent, rowinner.id);
-        event.stopPropagation();
       },
     };
 
@@ -350,7 +348,6 @@ export class CertificatesDashComponent implements OnInit {
       onClick: (rowinner: CertificateAuthority) => {
         this.dialogService.dialogForm(this.signCSRFormConf);
         this.caId = rowinner.id;
-        event.stopPropagation();
       },
     };
 

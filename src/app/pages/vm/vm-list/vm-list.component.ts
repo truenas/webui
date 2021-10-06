@@ -4,6 +4,7 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -16,7 +17,7 @@ import helptext from 'app/helptext/vm/vm-list';
 import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { VmDisplayAttributes, VmDisplayDevice } from 'app/interfaces/vm-device.interface';
+import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
@@ -30,7 +31,6 @@ import {
   WebSocketService, StorageService, AppLoaderService, DialogService, VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
 
 @UntilDestroy()
@@ -53,20 +53,20 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
-    { name: T('Name'), prop: 'name', always_display: true },
+    { name: T('Name') as string, prop: 'name', always_display: true },
     {
-      name: T('State'), prop: 'state', always_display: true, toggle: true,
+      name: T('State') as string, prop: 'state', always_display: true, toggle: true,
     },
-    { name: T('Autostart'), prop: 'autostart', checkbox: true },
-    { name: T('Virtual CPUs'), prop: 'vcpus', hidden: true },
-    { name: T('Cores'), prop: 'cores', hidden: true },
-    { name: T('Threads'), prop: 'threads', hidden: true },
-    { name: T('Memory Size'), prop: 'memory', hidden: true },
-    { name: T('Boot Loader Type'), prop: 'bootloader', hidden: true },
-    { name: T('System Clock'), prop: 'time', hidden: true },
-    { name: T('Display Port'), prop: 'port', hidden: true },
-    { name: T('Description'), prop: 'description', hidden: true },
-    { name: T('Shutdown Timeout'), prop: 'shutdown_timeout', hidden: true },
+    { name: T('Autostart') as string, prop: 'autostart', checkbox: true },
+    { name: T('Virtual CPUs') as string, prop: 'vcpus', hidden: true },
+    { name: T('Cores') as string, prop: 'cores', hidden: true },
+    { name: T('Threads') as string, prop: 'threads', hidden: true },
+    { name: T('Memory Size') as string, prop: 'memory', hidden: true },
+    { name: T('Boot Loader Type') as string, prop: 'bootloader', hidden: true },
+    { name: T('System Clock') as string, prop: 'time', hidden: true },
+    { name: T('Display Port') as string, prop: 'port', hidden: true },
+    { name: T('Description') as string, prop: 'description', hidden: true },
+    { name: T('Shutdown Timeout') as string, prop: 'shutdown_timeout', hidden: true },
   ];
   config = {
     paging: true,
@@ -108,6 +108,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private systemGeneralService: SystemGeneralService,
   ) {
     if (this.productType !== ProductType.Scale) {
+      // TODO: Check if it can be removed
       this.columns.push({ name: T('Com Port'), prop: 'com_port', hidden: true });
     }
   }
@@ -186,8 +187,8 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     if (this.productType !== ProductType.Scale && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
       return false;
     }
-    for (let i = 0; i < devices.length; i++) {
-      if (devices && devices[i].dtype === VmDeviceType.Display) {
+    for (const device of devices) {
+      if (devices && device.dtype === VmDeviceType.Display) {
         return true;
       }
     }
@@ -201,9 +202,9 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     if (this.productType !== ProductType.Scale && ([VmBootloader.Grub, VmBootloader.UefiCsm].includes(vm.bootloader))) {
       return false;
     }
-    for (let i = 0; i < devices.length; i++) {
-      if (devices && devices[i].dtype === VmDeviceType.Display) {
-        return (devices[i].attributes as VmDisplayAttributes).port;
+    for (const device of devices) {
+      if (devices && device.dtype === VmDeviceType.Display) {
+        return (device.attributes).port;
       }
     }
   }
@@ -213,7 +214,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     if (row['status']['state'] === ServiceStatus.Running) {
       method = this.wsMethods.stop;
       const stopDialog: DialogFormConfiguration = {
-        title: T('Stop ' + row.name + '?'),
+        title: this.translate.instant('Stop {vmName}?', { vmName: row.name }),
         fieldConfig: [
           {
             type: 'checkbox',
@@ -265,7 +266,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   extractHostname(url: string): string {
     let hostname: string;
-    if (url.indexOf('//') > -1) {
+    if (url.includes('//')) {
       hostname = url.split('/')[2];
     } else {
       hostname = url.split('/')[0];
@@ -289,9 +290,13 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           this.updateRows([row]);
         }
         this.dialogRef.close(false);
-        this.dialogService.info(T('Finished'), T('If ' + row.name + T(' is still running, \
- the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop \
- After Timeout</i> option to stop the VM.')), '450px', 'info', true);
+        this.dialogService.info(
+          T('Finished'),
+          this.translate.instant('If {vmName} is still running, the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop After Timeout</i> option to stop the VM.', { vmName: row.name }),
+          '450px',
+          'info',
+          true,
+        );
         this.checkMemory();
       });
       this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {

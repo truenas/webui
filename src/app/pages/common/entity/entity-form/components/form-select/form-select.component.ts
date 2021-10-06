@@ -4,6 +4,7 @@ import {
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -14,7 +15,6 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
 import { FormSelectOption } from 'app/pages/common/entity/entity-form/models/form-select-option.interface';
 import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -102,14 +102,13 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
             }
             return item;
           });
-          const newStates = this.config.options.map((item) => this.selectedValues.indexOf(item.value) !== -1);
-          const triggerValue = [];
-          for (let i = 0; i < this.config.options.length; i++) {
-            const item = this.config.options[i];
-            if (this.selectedValues.indexOf(item.value) !== -1) {
-              triggerValue.push(item.label);
+          const newStates = this.config.options.map((item) => this.selectedValues.includes(item.value));
+          const triggerValue: string[] = [];
+          this.config.options.forEach((option) => {
+            if (this.selectedValues.includes(option.value)) {
+              triggerValue.push(option.label);
             }
-          }
+          });
           this.selectStates = newStates;
           this.customTriggerValue = triggerValue;
         }
@@ -119,7 +118,7 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
 
   ngAfterViewChecked(): void {
     if (!this.formReady && typeof this.config.options !== 'undefined' && this.config.options && this.config.options.length > 0) {
-      const newStates = this.config.options.map((item) => item && this.selectedValues.indexOf(item.value) !== -1);
+      const newStates = this.config.options.map((item) => item && this.selectedValues.includes(item.value));
       this.selectStates = newStates;
       this.updateValues();
       this.formReady = true;

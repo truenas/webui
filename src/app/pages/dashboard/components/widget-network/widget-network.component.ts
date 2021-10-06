@@ -2,6 +2,7 @@ import {
   Component, AfterViewInit, OnDestroy, Input,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
@@ -19,9 +20,8 @@ import { TableService } from 'app/pages/common/entity/table/table.service';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
-import { WebSocketService } from 'app/services';
+import { StorageService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from 'app/translate-marker';
 
 interface NicInfo {
   ip: string;
@@ -134,6 +134,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     private tableService: TableService,
     public translate: TranslateService,
     private dialog: DialogService,
+    private storage: StorageService,
   ) {
     super(translate);
     this.configurable = false;
@@ -172,8 +173,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
           const received = this.utils.convert(evt.data.received_bytes_rate);
 
           const nicInfo = this.nicInfoMap[nicName];
-          nicInfo.in = received.value + ' ' + received.units + '/s';
-          nicInfo.out = sent.value + ' ' + sent.units + '/s';
+          nicInfo.in = `${received.value} ${received.units}/s`;
+          nicInfo.out = `${sent.value} ${sent.units}/s`;
 
           if (evt.data.sent_bytes - nicInfo.lastSent > this.minSizeToActiveTrafficArrowIcon) {
             nicInfo.lastSent = evt.data.sent_bytes;
@@ -225,32 +226,34 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   updateGridInfo(): void {
     const nicsCount = this.availableNics.length;
     let maxTicksLimit = 5;
+    this.paddingTop = 16;
+    this.paddingBottom = 16;
 
     if (nicsCount <= 3) {
       this.rows = nicsCount;
       if (nicsCount == 3) {
-        this.paddingTop = 0;
-        this.paddingBottom = 4;
-        this.gap = 8;
-        this.aspectRatio = 336 / 100;
+        this.gap = 4;
+        this.aspectRatio = 304 / 100;
         maxTicksLimit = 3;
       } else {
-        this.paddingTop = 16;
-        this.paddingBottom = 16;
-        this.gap = 16;
+        this.gap = 8;
+        this.aspectRatio = 474 / 188;
 
         if (nicsCount == 2) {
-          this.aspectRatio = 304 / 124;
+          this.gap = 16;
+          this.aspectRatio = 304 / 148;
           maxTicksLimit = 3;
-        } else {
-          this.aspectRatio = 474 / 200;
         }
       }
     } else {
       this.rows = 2;
-      this.paddingTop = 16;
-      this.paddingBottom = 16;
-      this.gap = 16;
+      this.gap = 8;
+      if (nicsCount == 4) {
+        this.gap = 16;
+      }
+      if (nicsCount >= 5) {
+        this.paddingTop = 0;
+      }
     }
 
     if (this.rows < 1) {
@@ -371,7 +374,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
       type: EmptyType.Errors,
       large: false,
       compact: true,
-      title: this.translate.instant(T('Error getting chart data')),
+      title: this.translate.instant('Error getting chart data'),
     };
   }
 
@@ -390,5 +393,16 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     }
 
     return classes;
+  }
+
+  showInOutInfo(nic: BaseNetworkInterface): string {
+    const lastSent = this.storage.convertBytestoHumanReadable(this.nicInfoMap[nic.state.name].lastSent);
+    const lastReceived = this.storage.convertBytestoHumanReadable(this.nicInfoMap[nic.state.name].lastReceived);
+
+    return `${this.translate.instant('Sent')}: ${lastSent} ${this.translate.instant('Received')}: ${lastReceived}`;
+  }
+
+  getIpAddressTooltip(nic: BaseNetworkInterface): string {
+    return `${this.translate.instant('IP Address')}: ${this.getIpAddress(nic)}`;
   }
 }

@@ -5,6 +5,7 @@ import { MediaObserver } from '@angular/flex-layout';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -46,7 +47,6 @@ import { NotificationAlert, NotificationsService } from 'app/services/notificati
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
 import { AboutDialogComponent } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
@@ -554,17 +554,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     if (this.ha_disabled_reasons.length > 0) {
       ha_status = helptext.ha_status_text_disabled;
       ha_icon = 'warning';
-      for (let i = 0; i < this.ha_disabled_reasons.length; i++) {
-        const reason_text = helptext.ha_disabled_reasons[this.ha_disabled_reasons[i]];
-        this.translate.get(reason_text).pipe(untilDestroyed(this)).subscribe(() => {
-          reasons = reasons + '<li>' + reason_text + '</li>\n';
-        });
-      }
+      this.ha_disabled_reasons.forEach((reason) => {
+        const reason_text = helptext.ha_disabled_reasons[reason];
+        reasons = reasons + '<li>' + this.translate.instant(reason_text) + '</li>\n';
+      });
     } else {
       ha_status = helptext.ha_status_text_enabled;
-      this.translate.get(helptext.ha_is_enabled).pipe(untilDestroyed(this)).subscribe((ha_is_enabled) => {
-        reasons = reasons + '<li>' + ha_is_enabled + '</li>\n';
-      });
+      reasons = reasons + '<li>' + this.translate.instant(helptext.ha_is_enabled) + '</li>\n';
     }
     reasons = reasons + '</ul>';
 

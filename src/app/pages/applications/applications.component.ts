@@ -181,8 +181,8 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
       label: helptext.settings,
       type: 'menu',
       options: [
-        { label: helptext.choose, value: 'select_pool' },
-        { label: helptext.advanced, value: 'advanced_settings' },
+        { label: helptext.choose as string, value: 'select_pool' },
+        { label: helptext.advanced as string, value: 'advanced_settings' },
       ],
     };
 

@@ -3,7 +3,7 @@ import { FieldSet } from '../models/fieldset.interface';
 
 export class FieldSets {
   readonly advancedDividers = this._init
-    .filter((set) => !set.divider && set.name.indexOf('divider') > -1)
+    .filter((set) => !set.divider && set.name.includes('divider'))
     .map((set) => set.name);
 
   readonly advancedFields = this._init
@@ -13,7 +13,7 @@ export class FieldSets {
     .map((config) => config.name);
 
   readonly advancedSets = this._init
-    .filter((set) => !set.label && set.name.indexOf('divider') === -1)
+    .filter((set) => !set.label && !set.name.includes('divider'))
     .map((set) => set.class);
 
   /* Make a local copy of our initial state */

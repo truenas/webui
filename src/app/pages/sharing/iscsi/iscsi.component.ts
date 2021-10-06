@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { WebSocketService, IscsiService } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -14,31 +14,31 @@ import { T } from 'app/translate-marker';
 export class IscsiComponent implements OnInit {
   activedTab = 'configuration';
   navLinks = [{
-    label: T('Target Global Configuration'),
+    label: T('Target Global Configuration') as string,
     path: '/sharing/iscsi/configuration',
   },
   {
-    label: T('Portals'),
+    label: T('Portals') as string,
     path: '/sharing/iscsi/portals',
   },
   {
-    label: T('Initiators Groups'),
+    label: T('Initiators Groups') as string,
     path: '/sharing/iscsi/initiator',
   },
   {
-    label: T('Authorized Access'),
+    label: T('Authorized Access') as string,
     path: '/sharing/iscsi/auth',
   },
   {
-    label: T('Targets'),
+    label: T('Targets') as string,
     path: '/sharing/iscsi/target',
   },
   {
-    label: T('Extents'),
+    label: T('Extents') as string,
     path: '/sharing/iscsi/extent',
   },
   {
-    label: T('Associated Targets'),
+    label: T('Associated Targets') as string,
     path: '/sharing/iscsi/associatedtarget',
   },
   ];
@@ -49,7 +49,7 @@ export class IscsiComponent implements OnInit {
   ngOnInit(): void {
     this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe(
       (systemInfo) => {
-        if (systemInfo.license && systemInfo.license.features.indexOf(LicenseFeature.FibreChannel) > -1) {
+        if (systemInfo.license && systemInfo.license.features.includes(LicenseFeature.FibreChannel)) {
           this.fcEnabled = true;
           this.navLinks.push({
             label: T('Fibre Channel Ports'),

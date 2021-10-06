@@ -10,7 +10,7 @@ import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormButtonConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -28,8 +28,8 @@ export class CertificateEditComponent implements FormConfiguration {
   queryCall: 'certificate.query' = 'certificate.query';
   editCall: 'certificate.update' = 'certificate.update';
   isEntity = true;
-  title = helptext_system_certificates.edit.title;
-  private viewButtonText = helptext_system_certificates.viewButton.certificate;
+  title: string = helptext_system_certificates.edit.title;
+  private viewButtonText: string = helptext_system_certificates.viewButton.certificate;
   protected isCSR: boolean;
   queryCallOption: [QueryFilter<Certificate>];
 

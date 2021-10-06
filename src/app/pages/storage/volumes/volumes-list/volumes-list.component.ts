@@ -1,7 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef, Component, OnDestroy, OnInit,
+} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
@@ -12,21 +15,22 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
-import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
+import {
+  VolumesListDataset,
+  VolumesListPool,
+} from 'app/pages/storage/volumes/volumes-list/volumes-list-pool.interface';
 import { VolumesListTableConfig } from 'app/pages/storage/volumes/volumes-list/volumes-list-table-config';
-import { ZfsPoolData } from 'app/pages/storage/volumes/volumes-list/zfs-pool-data.interface';
 import { JobService, ValidationService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from '../../../../translate-marker';
 import { DatasetFormComponent } from '../datasets/dataset-form/dataset-form.component';
 import { ZvolFormComponent } from '../zvol/zvol-form/zvol-form.component';
 
@@ -38,7 +42,7 @@ import { ZvolFormComponent } from '../zvol/zvol-form/zvol-form.component';
 })
 export class VolumesListComponent extends EntityTableComponent implements OnInit, OnDestroy {
   title = T('Pools');
-  zfsPoolRows: ZfsPoolData[] = [];
+  zfsPoolRows: VolumesListPool[] = [];
   conf = new VolumesListTableConfig(
     this,
     this.router,
@@ -50,20 +54,20 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     this.loader,
     this.translate,
     this.storage,
-    {},
+    {} as VolumesListPool,
     this.messageService,
     this.http,
     this.validationService,
   );
 
-  viewingPermissionsForDataset: Dataset;
+  viewingPermissionsForDataset: VolumesListDataset;
 
   actionComponent = {
-    getActions: (row: Pool) => {
-      const actions: any[] = [
+    getActions: (row: VolumesListPool) => {
+      const actions = [
         {
           name: 'pool_actions',
-          title: helptext.pool_actions_title,
+          title: helptext.pool_actions_title as string,
           actions: this.conf.getActions(row),
         },
       ];
@@ -90,7 +94,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.loader,
       this.translate,
       this.storage,
-      {},
+      {} as VolumesListPool,
       this.messageService,
       this.http,
       this.validationService,
@@ -157,8 +161,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     protected http: HttpClient,
     modalService: ModalService,
     protected validationService: ValidationService,
+    public cdr: ChangeDetectorRef,
   ) {
-    super(core, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService);
+    super(core, router, ws, dialogService, loader, translate, sorter, job, pref, mdDialog, modalService, cdr);
 
     this.actionsConfig = { actionType: VolumesListControlsComponent, actionConfig: this };
     this.core.emit({ name: 'GlobalActions', data: this.actionsConfig, sender: this });
@@ -203,83 +208,77 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     }
 
     combineLatest([
-      this.ws.call('pool.query', []),
+      this.ws.call('pool.query'),
       this.ws.call(this.datasetQuery, this.datasetQueryOptions),
-    ]).pipe(untilDestroyed(this)).subscribe(async ([pools, datasets]: [any[], any[]]) => {
-      // TODO: Additional fields added on frontend.
-      if (pools.length > 0) {
-        for (const pool of pools) {
-          pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();
-          if (!pool.is_decrypted) {
-            pool.status = PoolStatus.Locked;
-          }
+    ]).pipe(untilDestroyed(this)).subscribe(async ([pools, datasets]) => {
+      this.zfsPoolRows = await Promise.all(pools.map(async (originalPool) => {
+        const pool = { ...originalPool } as VolumesListPool;
+        pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();
 
-          /* Filter out system datasets */
-          const pChild = datasets.find((set) => set.name === pool.name);
-          if (pChild) {
-            pChild.children = pChild.children.filter((child: Dataset) => {
-              return child.name.indexOf(`${pool.name}/.system`) === -1 && child.name.indexOf(`${pool.name}/.glusterfs`) === -1;
-            });
-          }
-          pool.children = pChild ? [pChild] : [];
-
-          pool.volumesListTableConfig = new VolumesListTableConfig(
-            this,
-            this.router,
-            pool.id,
-            datasets,
-            this.mdDialog,
-            this.ws,
-            this.dialogService,
-            this.loader,
-            this.translate,
-            this.storage,
-            pool,
-            this.messageService,
-            this.http,
-            this.validationService,
-          );
-          pool.type = 'zpool';
-
-          if (pool.children && pool.children[0]) {
-            try {
-              pool.children[0].is_encrypted_root = (pool.children[0].id === pool.children[0].encryption_root);
-              if (pool.children[0].is_encrypted_root) {
-                this.has_encrypted_root[pool.name] = true;
-              }
-              pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(
-                pool.children[0].available.parsed || 0,
-              );
-              pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(
-                pool.children[0].used.parsed || 0,
-              );
-              pool.availStr = filesize(pool.children[0].available.parsed, { standard: 'iec' });
-              pool.children[0].has_encrypted_children = false;
-              for (let i = 0; i < datasets.length; i++) {
-                const ds = datasets[i];
-                if (ds['id'].startsWith(pool.children[0].id) && ds.id !== pool.children[0].id && ds.encrypted) {
-                  pool.children[0].has_encrypted_children = true;
-                  break;
-                }
-              }
-            } catch (error: unknown) {
-              pool.availStr = '' + pool.children[0].available.parsed;
-              pool.children[0].available_parsed = 'Unknown';
-              pool.children[0].used_parsed = 'Unknown';
-            }
-
-            try {
-              const used_pct = pool.children[0].used.parsed
-                / (pool.children[0].used.parsed + pool.children[0].available.parsed);
-              pool.usedStr = '' + filesize(pool.children[0].used.parsed, { standard: 'iec' }) + ' (' + Math.round(used_pct * 100) + '%)';
-            } catch (error: unknown) {
-              pool.usedStr = '' + pool.children[0].used.parsed;
-            }
-          }
-
-          this.zfsPoolRows.push(pool);
+        /* Filter out system datasets */
+        const pChild = datasets.find((set) => set.name === pool.name);
+        if (pChild) {
+          pChild.children = pChild.children.filter((child: Dataset) => {
+            return !child.name.includes(`${pool.name}/.system`) && !child.name.includes(`${pool.name}/.glusterfs`);
+          });
         }
-      }
+        pool.children = pChild ? [{ ...pChild } as unknown as VolumesListDataset] : [];
+
+        pool.volumesListTableConfig = new VolumesListTableConfig(
+          this,
+          this.router,
+          String(pool.id),
+          datasets,
+          this.mdDialog,
+          this.ws,
+          this.dialogService,
+          this.loader,
+          this.translate,
+          this.storage,
+          pool,
+          this.messageService,
+          this.http,
+          this.validationService,
+        );
+        pool.type = 'zpool';
+
+        if (pool.children && pool.children[0]) {
+          try {
+            pool.children[0].is_encrypted_root = (pool.children[0].id === pool.children[0].encryption_root);
+            if (pool.children[0].is_encrypted_root) {
+              this.has_encrypted_root[pool.name] = true;
+            }
+            pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(
+              pool.children[0].available.parsed || 0,
+            );
+            pool.children[0].used_parsed = this.storage.convertBytestoHumanReadable(
+              pool.children[0].used.parsed || 0,
+            );
+            pool.availStr = filesize(pool.children[0].available.parsed, { standard: 'iec' });
+            pool.children[0].has_encrypted_children = false;
+            for (const ds of datasets) {
+              if (ds['id'].startsWith(pool.children[0].id) && ds.id !== pool.children[0].id && ds.encrypted) {
+                pool.children[0].has_encrypted_children = true;
+                break;
+              }
+            }
+          } catch (error: unknown) {
+            pool.availStr = '' + pool.children[0].available.parsed;
+            pool.children[0].available_parsed = 'Unknown';
+            pool.children[0].used_parsed = 'Unknown';
+          }
+
+          try {
+            const used_pct = pool.children[0].used.parsed
+              / (pool.children[0].used.parsed + pool.children[0].available.parsed);
+            pool.usedStr = '' + filesize(pool.children[0].used.parsed, { standard: 'iec' }) + ' (' + Math.round(used_pct * 100) + '%)';
+          } catch (error: unknown) {
+            pool.usedStr = '' + pool.children[0].used.parsed;
+          }
+        }
+
+        return pool;
+      }));
 
       this.zfsPoolRows = this.sorter.tableSorter(this.zfsPoolRows, 'name', 'asc');
 
@@ -305,7 +304,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     addZvolComponent.isNew = isNew;
   }
 
-  addDataset(pool: any, id: string): void {
+  addDataset(pool: string, id: string): void {
     const addDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent, id);
     addDatasetComponent.setParent(id);
     addDatasetComponent.setVolId(pool);

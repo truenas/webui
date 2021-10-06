@@ -66,6 +66,8 @@ export class CatalogComponent implements OnInit {
     title: helptext.catalogMessage.loading,
   };
 
+  readonly officialCatalog = officialCatalog;
+
   choosePool: DialogFormConfiguration = {
     title: helptext.choosePool.title,
     fieldConfig: [
@@ -130,8 +132,7 @@ export class CatalogComponent implements OnInit {
 
     this.appService.getAllCatalogItems().pipe(untilDestroyed(this)).subscribe((catalogs) => {
       this.noAvailableCatalog = true;
-      for (let i = 0; i < catalogs.length; i++) {
-        const catalog = catalogs[i];
+      catalogs.forEach((catalog) => {
         if (!catalog.cached) {
           if (catalog.caching_job) {
             this.catalogSyncJobs.push({
@@ -140,7 +141,7 @@ export class CatalogComponent implements OnInit {
               progress: catalog.caching_job.progress.percent,
             });
           }
-          continue;
+          return;
         }
 
         if (!catalog.error) {
@@ -160,7 +161,7 @@ export class CatalogComponent implements OnInit {
             }
           });
         }
-      }
+      });
 
       this.refreshToolbarMenus();
       this.filterApps();
@@ -301,10 +302,13 @@ export class CatalogComponent implements OnInit {
         this.dialogService.closeAllDialogs();
         this.selectedPool = null;
         this.refreshToolbarMenus();
-        this.translate.get(helptext.choosePool.unsetPool.label).pipe(untilDestroyed(this)).subscribe((msg) => {
-          this.dialogService.info(helptext.choosePool.success, msg,
-            '500px', 'info', true);
-        });
+        this.dialogService.info(
+          helptext.choosePool.success,
+          this.translate.instant(helptext.choosePool.unsetPool.label),
+          '500px',
+          'info',
+          true,
+        );
       });
 
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
@@ -331,10 +335,13 @@ export class CatalogComponent implements OnInit {
       this.selectedPool = pool;
       this.refreshToolbarMenus();
       this.dialogService.closeAllDialogs();
-      this.translate.get(helptext.choosePool.message).pipe(untilDestroyed(this)).subscribe((msg: string) => {
-        this.dialogService.info(helptext.choosePool.success, msg + res.result.pool,
-          '500px', 'info', true);
-      });
+      this.dialogService.info(
+        helptext.choosePool.success,
+        this.translate.instant(helptext.choosePool.message) + res.result.pool,
+        '500px',
+        'info',
+        true,
+      );
     });
   }
 
@@ -360,7 +367,7 @@ export class CatalogComponent implements OnInit {
   filterApps(): void {
     if (this.filterString) {
       this.filteredCatalogApps = this.catalogApps.filter((app) => {
-        return app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1;
+        return app.name.toLowerCase().includes(this.filterString.toLocaleLowerCase());
       });
     } else {
       this.filteredCatalogApps = this.catalogApps;

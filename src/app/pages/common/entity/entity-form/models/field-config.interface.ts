@@ -31,6 +31,9 @@ export interface BaseFieldConfig<P = any> {
   id?: string;
   isHidden?: boolean;
   name: string;
+  /**
+   * @deprecated Capture parent with an arrow function instead.
+   */
   parent?: P;
   placeholder?: string;
   readonly?: boolean;
@@ -124,7 +127,7 @@ export interface FormExplorerConfig<P = any> extends BaseFieldConfig<P> {
 }
 
 export interface FormInputConfig<P = any> extends BaseFieldConfig<P> {
-  blurEvent?: (parent: P) => void;
+  blurEvent?: () => void;
   blurStatus?: boolean;
   fileType?: string;
   hideButton?: boolean;
@@ -231,7 +234,7 @@ export interface FormTaskConfig<P = any> extends BaseFieldConfig<P> {
 }
 
 export interface FormTextareaConfig<P = any> extends BaseFieldConfig<P> {
-  blurEvent?: (parent: P) => void;
+  blurEvent?: () => void;
   blurStatus?: boolean;
   filereader?: boolean;
   fileType: string;
