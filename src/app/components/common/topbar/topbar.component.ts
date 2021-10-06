@@ -515,9 +515,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.dirServicesMonitor = this.dialog.open(DirectoryServicesMonitorComponent, {
         width: '400px',
         hasBackdrop: true,
+        panelClass: 'topbar-panel',
         position: {
           top: '48px',
-          right: '0px',
+          right: '16px',
         },
       });
     }
