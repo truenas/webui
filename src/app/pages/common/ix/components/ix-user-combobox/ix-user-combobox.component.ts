@@ -86,7 +86,7 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
     ).subscribe((changedValue: string) => {
       this.filterValue = changedValue;
       this.currentOffset = 0;
-      this.loadMoreUsers();
+      this.loadMoreUsers(this.filterValue, this.currentOffset);
     });
 
     this.userService.userQueryDSCache().pipe(
@@ -122,25 +122,25 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
             const { scrollTop, scrollHeight, clientHeight: elementHeight } = this.autoCompleteRef.panel.nativeElement;
             const atBottom = scrollHeight === scrollTop + elementHeight;
             if (atBottom) {
-              this.loadMoreUsers();
+              this.loadMoreUsers(this.filterValue, this.currentOffset);
             }
           });
       }
     });
   }
 
-  loadMoreUsers(): void {
-    this.userService.userQueryDSCache(this.filterValue, this.currentOffset)
+  loadMoreUsers(filterValue: string, offset: number): void {
+    this.userService.userQueryDSCache(filterValue, offset)
       .pipe(
         map(this.userQueryResToOptions),
         untilDestroyed(this),
       )
       .subscribe((options) => {
         this.syncOptions = options;
-        this.filteredOptions = this.currentOffset === 0 ? of(options)
+        this.filteredOptions = offset === 0 ? of(options)
           : zip(this.filteredOptions, of(options))
             .pipe(map((optionsList) => optionsList[0].concat(optionsList[1])));
-        this.currentOffset += options.length;
+        this.currentOffset = offset + options.length;
       });
   }
 
