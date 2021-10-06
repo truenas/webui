@@ -86,8 +86,28 @@ def create_wheeldataset_and_set_permissions(driver, dataset_name):
 
 @then('add the user to group root for later tests')
 def add_the_user_to_group_root_for_later_tests(driver):
-    """add the user to group root for later tests""""
-
+    """add the user to group root for later tests."""
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
+    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
+    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
+    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    element = driver.find_element_by_xpath('//h4[contains(text(),Directories and Permissions"')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    assert wait_on_element(driver, 10, '//mat-select[@ix-auto="select__Auxiliary Groups"]')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
+    assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').send_keys(Keys.TAB)
+    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
 @then('The Windows Shares(SMB) page should open, Click Add')
