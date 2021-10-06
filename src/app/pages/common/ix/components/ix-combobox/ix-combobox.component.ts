@@ -4,7 +4,6 @@ import {
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import {
   fromEvent, Observable, of, Subject,
 } from 'rxjs';
@@ -36,7 +35,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
   @Output() scrollEnd: EventEmitter<string> = new EventEmitter<string>();
-  placeholder = this.translate.instant('Search');
+  placeholder = 'Search';
   getDisplayWith = this.displayWith.bind(this);
 
   @Input() filter: (options: Option[], filterValue: string) => Observable<Option[]> =
@@ -59,8 +58,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
-
-  constructor(private translate: TranslateService) {}
 
   writeValue(value: string | number): void {
     this.value = value;
