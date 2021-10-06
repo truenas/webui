@@ -21,7 +21,7 @@
       <input
         matInput
         [type]="config.inputType ? config.inputType : 'text'"
-        [placeholder]="config.placeholder"
+        [placeholder]="config.placeholder | translate"
         [attr.value]="config.value"
         [formControlName]="config.name"
       >
