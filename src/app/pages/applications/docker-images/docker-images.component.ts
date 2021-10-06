@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { latestVersion } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
@@ -21,7 +22,7 @@ import { PullImageFormComponent } from '../forms/pull-image-form.component';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class DockerImagesComponent implements EntityTableConfig {
-  title = 'Docker Images';
+  title = this.translate.instant('Docker Images');
 
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
@@ -50,6 +51,7 @@ export class DockerImagesComponent implements EntityTableConfig {
     protected dialogService: DialogService,
     private modalService: ModalService,
     private matDialog: MatDialog,
+    private translate: TranslateService,
   ) {}
 
   chooseTag: DialogFormConfiguration = {
