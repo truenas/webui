@@ -36,7 +36,7 @@
       <mat-autocomplete #autoComplete="matAutocomplete" (opened)="onOpenDropdown()">
         <mat-option *ngFor="let option of config.searchOptions" [value]="option.value"
           ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}" [class.text-wrap]="config.enableTextWrapForOptions" class="{{option.sticky ? 'sticky-' + option.sticky : ''}}">
-          <span>{{ option.label }}</span>
+          <span>{{ option.label | translate }}</span>
         </mat-option>
       </mat-autocomplete>
     </mat-form-field>
@@ -50,7 +50,7 @@
           ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}"
           [class.text-wrap]="config.enableTextWrapForOptions"
           class="{{option.sticky ? 'sticky-' + option.sticky : ''}}">
-          <span>{{ option.label }}</span>
+          <span>{{ option.label | translate }}</span>
         </button>
       </ng-container>
     </mat-menu>

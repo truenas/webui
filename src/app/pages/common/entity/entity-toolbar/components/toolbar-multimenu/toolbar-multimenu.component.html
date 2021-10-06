@@ -2,32 +2,32 @@
   <div>
 
     <!-- TRIGGER -->
-    <button mat-button [matMenuTriggerFor]="menu" color="default" 
+    <button mat-button [matMenuTriggerFor]="menu" color="default"
     ix-auto ix-auto-type="button" [ix-auto-identifier]="id + '_' + config.label" class="menu-toggle">
       {{config.label}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
     </button>
     <mat-menu #menu="matMenu" multiple overlapTrigger="false">
-  
+
       <!-- SELECT ALL -->
       <div (click)="$event.stopPropagation()">
         <button mat-menu-item (click)="checkAll()" ix-auto ix-auto-type="option" [ix-auto-identifier]="id + '_SELECT_ALL'">
           <span>
-            <mat-icon *ngIf="checkLength()">check_circle</mat-icon> 
-            <mat-icon *ngIf="!checkLength()">remove</mat-icon> 
-          </span> 
+            <mat-icon *ngIf="checkLength()">check_circle</mat-icon>
+            <mat-icon *ngIf="!checkLength()">remove</mat-icon>
+          </span>
           <span>Select All</span>
         </button>
       </div>
 
       <!-- OPTIONS-->
       <div (click)="$event.stopPropagation()">
-        <button mat-menu-item *ngFor="let option of config.options; let i=index;" 
+        <button mat-menu-item *ngFor="let option of config.options; let i=index;"
         ix-auto ix-auto-type="option" [ix-auto-identifier]="id + '_' +  option.label" (click)="onClick(option,i);">
           <span>
             <mat-icon *ngIf="selectStates[i]">check_circle</mat-icon>
             <mat-icon *ngIf="!selectStates[i]">remove</mat-icon>
           </span>
-          <span>{{option.label}}</span>
+          <span>{{option.label | translate}}</span>
           <span *ngIf="option.labelIcon" class="icon-suffix {{option.labelIconType}}">
             &nbsp;
             <mat-icon *ngIf="!option.labelIconType || option.labelIconType == 'default'">{{option.labelIcon}}</mat-icon>

@@ -63,7 +63,7 @@
                   </div>
                 </div>
                 <button mat-menu-item *ngFor="let action of actionGroup.actions" (click)="action.onClick(element.data)">
-                  {{action.label}}
+                  {{action.label | translate}}
                 </button>
               </ng-container>
             </mat-menu>

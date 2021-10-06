@@ -4,8 +4,8 @@
       headerCustomContent
       *ngTemplateOutlet="webdavServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { status: webdavServiceStatus, count: webdavHasItems }"
     ></ng-container>
-    <ng-container 
-      headerCustomActions 
+    <ng-container
+      headerCustomActions
       *ngTemplateOutlet="extraAction; context:{ tableExtraActions: webdavTableConf?.tableExtraActions}"
     ></ng-container>
   </app-expandable-table>
@@ -14,8 +14,8 @@
       headerCustomContent
       *ngTemplateOutlet="nfsServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { status: nfsServiceStatus, count: nfsHasItems }"
     ></ng-container>
-    <ng-container 
-      headerCustomActions 
+    <ng-container
+      headerCustomActions
       *ngTemplateOutlet="extraAction; context:{ tableExtraActions: nfsTableConf?.tableExtraActions}"
     ></ng-container>
   </app-expandable-table>
@@ -24,8 +24,8 @@
       headerCustomContent
       *ngTemplateOutlet="smbServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { status: smbServiceStatus, count: smbHasItems }"
     ></ng-container>
-    <ng-container 
-      headerCustomActions 
+    <ng-container
+      headerCustomActions
       *ngTemplateOutlet="extraAction; context:{ tableExtraActions: smbTableConf?.tableExtraActions}"
     ></ng-container>
   </app-expandable-table>
@@ -34,8 +34,8 @@
       headerCustomContent
       *ngTemplateOutlet="iscsiServiceStatus === ServiceStatus.Loading ? statusLoading : statusButton; context: { status: iscsiServiceStatus, count: iscsiHasItems }"
     ></ng-container>
-    <ng-container 
-      headerCustomActions 
+    <ng-container
+      headerCustomActions
       *ngTemplateOutlet="extraAction; context:{ tableExtraActions: iscsiTableConf?.tableExtraActions}"
     ></ng-container>
   </app-expandable-table>
@@ -64,7 +64,7 @@
       </button>
       <mat-menu #rowActions="matMenu">
         <button mat-menu-item *ngFor="let action of tableExtraActions" (click)="action.onClick()">
-          {{action.label}}
+          {{action.label | translate}}
         </button>
       </mat-menu>
     </div>

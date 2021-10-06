@@ -51,7 +51,7 @@
         >
           <mat-option *ngFor="let option of netmaskOptions" [value]="option.value"
             ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
-            {{option.label}}
+            {{ option.label | translate }}
           </mat-option>
         </mat-select>
       </mat-form-field>

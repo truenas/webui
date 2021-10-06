@@ -18,7 +18,7 @@
           </div>
           <div class="badge-area" [class.badge-official]="item.catalog.label === officialCatalog">
             <div class="capitalized-text">
-              {{ item.catalog.label }}
+              {{ item.catalog.label | translate }}
             </div>
             <div class="train-badge capitalized-text">
               {{ item.catalog.train }}
