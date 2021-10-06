@@ -37,6 +37,7 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
   placeholder = T('Search');
+  getDisplayWith = this.displayWith.bind(this);
 
   filter: (options: Option[], filterValue: string) => Observable<Option[]> =
   (options: Option[], value: string): Observable<Option[]> => {
