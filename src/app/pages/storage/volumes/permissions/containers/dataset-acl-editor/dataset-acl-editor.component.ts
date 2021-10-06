@@ -160,8 +160,8 @@ export class DatasetAclEditorComponent implements OnInit {
 
   onSavePressed(): void {
     this.store.saveAcl({
-      recursive: this.recursiveFieldConfig.value,
-      traverse: this.recursiveFieldConfig.value && this.traverseFieldConfig.value,
+      recursive: !!(this.saveParameters.get('recursive').value),
+      traverse: !!(this.saveParameters.get('recursive').value && this.saveParameters.get('traverse').value),
       owner: this.ownerFormGroup.get('owner').value,
       ownerGroup: this.ownerFormGroup.get('ownerGroup').value,
     });
