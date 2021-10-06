@@ -4,6 +4,7 @@ import {
 import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import {
   fromEvent, Observable, of, Subject,
 } from 'rxjs';
@@ -11,7 +12,6 @@ import {
   debounceTime, distinctUntilChanged, map, takeUntil,
 } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +36,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
   @ViewChild('auto') autoCompleteRef: MatAutocomplete;
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
   @Output() scrollEnd: EventEmitter<string> = new EventEmitter<string>();
-  placeholder = T('Search');
+  placeholder = this.translate.instant('Search');
+  getDisplayWith = this.displayWith.bind(this);
 
   @Input() filter: (options: Option[], filterValue: string) => Observable<Option[]> =
   (options: Option[], value: string): Observable<Option[]> => {
@@ -59,13 +60,15 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
+  constructor(private translate: TranslateService) {}
+
   writeValue(value: string | number): void {
     this.value = value;
     if (this.value && this.syncOptions) {
       this.selectedOption = { ...(this.syncOptions.find((option: Option) => option.value === this.value)) };
     }
     if (this.selectedOption) {
-      this.filterValue = '';
+      this.filterChanged$.next('');
     }
   }
 
@@ -93,6 +96,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
       ) {
         fromEvent(this.autoCompleteRef.panel.nativeElement, 'scroll')
           .pipe(
+            debounceTime(300),
             map(() => this.autoCompleteRef.panel.nativeElement.scrollTop),
             takeUntil(this.autocompleteTrigger.panelClosingActions),
             untilDestroyed(this),
@@ -113,8 +117,10 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
   }
 
   resetInput(): void {
-    this.filterValue = '';
-    this.inputElementRef.nativeElement.value = '';
+    this.filterChanged$.next('');
+    if (this.inputElementRef && this.inputElementRef.nativeElement) {
+      this.inputElementRef.nativeElement.value = '';
+    }
     this.selectedOption = null;
     this.onChange('');
   }
@@ -129,7 +135,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
 
   optionSelected(option: Option): void {
     this.selectedOption = { ...option };
-    this.filterValue = '';
+    this.filterChanged$.next('');
     this.onChange(this.selectedOption.value);
   }
 
@@ -146,7 +152,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
           const setOption = this.syncOptions.find((option: Option) => option.value === this.value);
           this.selectedOption = setOption ? { ...setOption } : null;
           if (this.selectedOption) {
-            this.filterValue = '';
+            this.filterChanged$.next('');
           }
         });
       }
@@ -158,6 +164,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
   }
 
   hasValue(): boolean {
-    return this.inputElementRef?.nativeElement?.value && this.inputElementRef.nativeElement.value > 0;
+    return this.inputElementRef?.nativeElement?.value && this.inputElementRef.nativeElement.value.length > 0;
   }
 }
