@@ -354,7 +354,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       .subscribe((seconds) => {
         if (seconds != null) {
           if (seconds > 0 && this.checkin_remaining == null) {
-            this.checkin_remaining = seconds;
+            this.checkin_remaining = Math.round(seconds);
             this.checkin_interval = setInterval(() => {
               if (this.checkin_remaining > 0) {
                 this.checkin_remaining -= 1;
