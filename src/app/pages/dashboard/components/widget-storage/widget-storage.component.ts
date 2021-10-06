@@ -72,27 +72,21 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
 
   updateGridInfo(): void {
     const poolCount = this.pools.length;
+    this.paddingTop = 16;
+    this.paddingRight = 16;
+    this.paddingBottom = 16;
+    this.paddingLeft = 16;
+
     if (poolCount <= 2) {
       this.cols = 1;
-      this.paddingTop = 24;
-      this.paddingRight = 24;
-      this.paddingBottom = 42;
-      this.paddingLeft = 24;
-      this.gap = 24;
+      this.gap = 16;
     } else if (poolCount <= 4) {
       this.cols = 2;
       this.gap = 16;
-      this.paddingTop = 5;
-      this.paddingRight = 16;
-      this.paddingBottom = 26;
-      this.paddingLeft = 16;
     } else {
       this.cols = 2;
       this.gap = 8;
       this.paddingTop = 0;
-      this.paddingRight = 16;
-      this.paddingBottom = 12;
-      this.paddingLeft = 16;
     }
 
     this.rows = Math.round(poolCount / this.cols);
@@ -160,7 +154,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     let value;
 
     if (!volume || !volume.used_pct) {
-      value = T('Unknown');
+      value = this.translate.instant('Unknown');
       level = 'warn';
       icon = 'mdi-alert-circle';
     } else {

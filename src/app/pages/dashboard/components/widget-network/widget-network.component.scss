@@ -1,19 +1,13 @@
 .widget {
   height: 400px;
   width: 600px;
-}
 
-.widget mat-card-content {
-  width: 100%;
-}
-
-.card-body {
-  padding: 10px;
+  mat-card-content {
+    width: 100%;
+  }
 }
 
 .tile {
-  border-radius: 2px;
-  opacity: 0.7;
   padding: 16px;
 }
 
@@ -28,16 +22,27 @@
   top: 0;
 }
 
+mat-grid-tile {
+  border-radius: 2px;
+  opacity: 0.7;
+}
+
 mat-grid-list {
-  &:not(.nics-1) .tile {
+  &:not(.nics-1) mat-grid-tile {
     background-color: var(--bg1);
   }
 
   &.nics-1 .tile {
-    padding: 12px 16px;
+    padding: 0;
 
-    .info-body ul {
-      width: auto;
+    .nic-info {
+      padding: 0 16px;
+    }
+
+    .info-body {
+      ul {
+        width: auto;
+      }
     }
 
     .detail-info li {
@@ -46,7 +51,11 @@ mat-grid-list {
   }
 
   &.nics-2 .tile {
-    padding: 12px 16px;
+    padding: 0 16px;
+
+    .info-header {
+      padding-top: 8px;
+    }
 
     .nic-info {
       width: 175px;
@@ -54,68 +63,72 @@ mat-grid-list {
   }
 
   &.nics-3 .tile {
-    padding: 4px 4px 4px 16px;
+    padding: 0 4px 0 12px;
 
     .nic-info {
       width: 175px;
     }
 
-    .info-header {
-      margin-bottom: 4px;
+    .info-header-title {
+      font-size: 24px;
+      line-height: 1.25;
     }
 
     .info-body {
       font-size: 12px;
+      padding-bottom: 0;
 
       span.icon {
-        height: 18px;
-        min-width: 24px;
-        width: 24px;
+        font-size: 16px;
+        height: 16px;
+        min-width: 16px;
+        width: 16px;
 
-        .mat-icon {
-          font-size: 18px;
-          height: 22px;
-          line-height: 18px;
-          width: 22px;
+        mat-icon {
+          font-size: 16px;
+          height: 16px;
+          line-height: 16px;
+          min-width: 16px;
+          width: 16px;
         }
       }
 
-      .line-state {
-        padding: 0;
-      }
-
       ul li {
-        line-height: 15px;
+        line-height: 16px;
       }
     }
   }
 
   &.nics-4 .tile {
-    padding: 12px 16px;
+    padding: 0 12px;
+
+    .info-header {
+      padding-top: 8px;
+    }
+
+    .info-body {
+      padding-bottom: 13px;
+    }
   }
 
   &.nics-5 {
-    .tile-0 .tile,
-    .tile-1 .tile {
-      padding: 12px 16px;
-    }
-
-    .tile-2 .tile .info-body,
-    .tile-3 .tile .info-body,
-    .tile-4 .tile .info-body {
-      font-size: 12px;
-
-      .line-state {
-        padding: 0;
-      }
+    .tile {
+      padding: 0 12px;
     }
   }
 
-  &.nics-6 .info-body {
-    font-size: 12px;
+  &.nics-6 {
+    .tile {
+      padding: 0 16px;
+    }
 
-    .line-state {
-      padding: 0;
+    .info-body {
+      span.icon {
+        font-size: 18px;
+        height: 18px;
+        min-width: 18px;
+        width: 18px;
+      }
     }
   }
 }
@@ -131,44 +144,38 @@ mat-grid-list {
   }
 }
 
-.info-header {
-  margin-bottom: 10px;
-
-  .info-header-title {
-    font-size: 24px;
-    line-height: 1.25;
-  }
-
-  .mat-icon-button {
-    height: 30px;
-    line-height: 30px;
-    margin-left: 18px;
-    width: 30px;
-  }
+.info-header-title {
+  font-size: 24px;
+  line-height: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .info-body {
-  font-size: 14px;
+  padding-bottom: 10px;
 
   .line-state {
-    padding: 4px 0;
+    padding: 0;
   }
 
   .detail-info {
     border-left: solid 1px var(--lines);
     font-size: 12px;
-    padding-bottom: 2px;
+    padding-bottom: 0;
     padding-left: 20px;
   }
 
   span.icon {
     cursor: default;
     display: inline-flex;
-    height: 22px;
+    height: 20px;
     justify-content: center;
-    min-width: 26px;
+    margin-right: 4px;
+    min-width: 20px;
     text-align: center;
-    width: 26px;
+    user-select: none;
+    width: 20px;
 
     &.up {
       color: var(--green);
@@ -179,28 +186,26 @@ mat-grid-list {
     }
 
     &.state {
-      height: 24px;
+      align-items: center;
+      height: 40px;
+      line-height: 40px;
 
       .mat-icon {
-        font-size: 24px;
-        height: 24px;
+        font-size: 28px;
+        height: 28px;
       }
     }
 
     &.address {
       .mat-icon {
-        font-size: 20px;
-        line-height: 20px;
-        position: relative;
-        top: 1px;
+        font-size: 16px;
       }
     }
   }
 
   .mat-icon {
-    font-size: 22px;
-    line-height: 22px;
-    margin: 0;
+    font-size: 16px;
+    line-height: 20px;
 
     &.mdi-set {
       margin-top: 0;
@@ -215,7 +220,7 @@ mat-grid-list {
     width: 100%;
 
     li {
-      line-height: 18px;
+      line-height: 20px;
       min-width: 0;
 
       span:nth-child(2) {
