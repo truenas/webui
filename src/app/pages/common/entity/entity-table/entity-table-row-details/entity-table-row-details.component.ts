@@ -33,7 +33,7 @@ export class EntityTableRowDetailsComponent implements OnInit, OnChanges {
     if (val === undefined || val === null) {
       val = 'N/A';
     }
-    return isCronTime ? (val !== 'N/A' ? cronstrue.toString(val) : val) : val;
+    return isCronTime ? (val !== 'N/A' && val !== 'Disabled' ? cronstrue.toString(val) : val) : val;
   }
 
   buildColumns(): void {

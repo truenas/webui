@@ -414,11 +414,12 @@ export class DataProtectionDashboardComponent implements OnInit {
 
   cloudsyncDataSourceHelper(data: CloudSyncTaskUi[]): CloudSyncTaskUi[] {
     const cloudsyncData = data.map((task) => {
+      const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.credential = task.credentials.name;
-      task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.frequency = this.parent.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.parent.taskService.getTaskNextRun(task.cron_schedule);
-      task.next_run_time = this.parent.taskService.getTaskNextTime(task.cron_schedule);
+      task.cron_schedule = task.enabled ? formattedCronSchedule : T('Disabled');
+      task.frequency = this.parent.taskService.getTaskCronDescription(formattedCronSchedule);
+      task.next_run = task.enabled ? this.parent.taskService.getTaskNextRun(formattedCronSchedule) : T('Disabled');
+      task.next_run_time = task.enabled ? this.parent.taskService.getTaskNextTime(formattedCronSchedule) : T('Disabled');
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
@@ -437,6 +438,8 @@ export class DataProtectionDashboardComponent implements OnInit {
     });
 
     cloudsyncData.sort((first, second) => {
+      if (typeof first.next_run_time === 'string') return 1;
+      if (typeof second.next_run_time === 'string') return -1;
       return first.next_run_time.getTime() - second.next_run_time.getTime();
     });
 
