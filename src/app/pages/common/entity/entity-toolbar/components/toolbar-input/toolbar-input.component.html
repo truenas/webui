@@ -1,8 +1,8 @@
 <div class="toolbar-input form-element" id="row-filter">
-  <div class="toolbar-input-placeholder" *ngIf="isShowPlaceholder()">{{ config.placeholder }}</div>
+  <div class="toolbar-input-placeholder" *ngIf="isShowPlaceholder()">{{ config.placeholder | translate }}</div>
   <mat-form-field>
     <span matPrefix style="cursor: default; user-select: none;"><mat-icon>search</mat-icon></span>
-    <mat-label>{{config.placeholder}}</mat-label>
+    <mat-label>{{ config.placeholder | translate }}</mat-label>
     <input
       matInput
       #filter
@@ -12,7 +12,7 @@
       ix-auto ix-auto-type="input"
       (change)="onChange()"
       (input)="onChange()"
-      [placeholder]="config.placeholder"
+      [placeholder]="config.placeholder | translate"
       (blur)="onBlur()"
     >
     <span

@@ -37,7 +37,7 @@
         class="form-checkbox"
         ix-auto ix-auto-type="list-option" ix-auto-identifier="{{config.name}}_{{option.label}}"
       >
-        {{ option.label }}
+        {{ option.label | translate }}
       </mat-list-option>
 
       <tooltip class="list-option-tooltip" *ngIf="option.tooltip" [header]="config.placeholder" [message]="option.tooltip"></tooltip>

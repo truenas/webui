@@ -14,7 +14,7 @@
         class="table-action-button"
         (click)="$event.stopPropagation(); action.onClick()"
       >
-        {{ action.label }}
+        {{ action.label | translate }}
       </button>
       <button mat-button color="default" class="action-icon" *ngIf="_tableConf.add" (click)="_tableConf.add()"
         ix-auto ix-auto-type="button" ix-auto-identifier="{{_tableConf.name}}-add"
@@ -29,7 +29,7 @@
       <!-- Simple Info Column -->
       <ng-template #simple>
         <ng-container [matColumnDef]="column.name" *ngFor="let column of _tableConf.columns">
-          <th mat-header-cell *matHeaderCellDef [attr.width]="column?.width" class="text-overflow-ellipsis" [matTooltip]="column?.tooltip">{{column.name}}</th>
+          <th mat-header-cell *matHeaderCellDef [attr.width]="column?.width" class="text-overflow-ellipsis" [matTooltip]="column?.tooltip">{{ column.name | translate }}</th>
           <td mat-cell *matCellDef="let element" [attr.width]="column?.width">
             <div class="table-cell">
               <ng-container [ngSwitch]="determineColumnType(column)">
@@ -75,7 +75,7 @@
       <!-- Complex Info Column -->
       <ng-template #complex>
         <ng-container [matColumnDef]="column.name" *ngFor="let column of _tableConf.columns">
-          <th mat-header-cell *matHeaderCellDef [attr.width]="column?.width" class="text-overflow-ellipsis">{{column.name}}</th>
+          <th mat-header-cell *matHeaderCellDef [attr.width]="column?.width" class="text-overflow-ellipsis">{{ column.name | translate }}</th>
           <td mat-cell *matCellDef="let element" [attr.width]="column?.width">
             <div class="table-cell">
               <ng-container>
@@ -117,7 +117,7 @@
     </table>
     <entity-empty *ngIf="!_tableConf.hideEntityEmpty && (!dataSource || (dataSource && dataSource.length === 0))" [conf]="emptyConf" fxFlex fxLayoutAlign="center"></entity-empty>
   </div>
-  <div class="view-more-row" *ngIf="showViewMore && !_tableConf.alwaysHideViewMore" (click)="openViewMore()">View More</div>
-  <div class="view-more-row" *ngIf="showCollapse && !_tableConf.alwaysHideViewMore" (click)="collapse()">Collapse</div>
+  <div class="view-more-row" *ngIf="showViewMore && !_tableConf.alwaysHideViewMore" (click)="openViewMore()">{{ 'View More' | translate }}</div>
+  <div class="view-more-row" *ngIf="showCollapse && !_tableConf.alwaysHideViewMore" (click)="collapse()">{{ 'Collapse' | translate }}</div>
 </mat-card-content>
 </mat-card>

@@ -151,7 +151,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
     controls = [
       {
         name: 'fontsize',
-        label: 'Set font size',
+        label: this.translate.instant('Set font size'),
         type: 'slider',
         min: 10,
         max: 20,
@@ -160,13 +160,13 @@ export class PodLogsComponent implements OnInit, OnDestroy {
       },
       {
         name: 'reconnect',
-        label: 'Reconnect',
+        label: this.translate.instant('Reconnect'),
         type: 'button',
         color: 'secondary',
       },
       {
         name: 'download',
-        label: 'Download Logs',
+        label: this.translate.instant('Download Logs'),
         type: 'button',
         color: 'primary',
       },
