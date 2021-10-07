@@ -192,7 +192,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
 
     this.has_key_dataset = {};
     this.has_encrypted_root = {};
-    this.ws.call('pool.dataset.query_encrypted_roots_keys').pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.call('pool.dataset.query_encrypted_roots_keys').pipe(untilDestroyed(this)).subscribe((res: any) => {
+      res.myUndefinedFunction();
       for (const key in res) {
         if (res.hasOwnProperty(key)) {
           const pool = key.split('/')[0];

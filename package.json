@@ -63,6 +63,8 @@
     "@pixi/filter-advanced-bloom": "~2.7.0",
     "@pixi/filter-outline": "~2.7.0",
     "@popperjs/core": "^2.9.3",
+    "@sentry/angular": "~6.13.3",
+    "@sentry/tracing": "~6.13.3",
     "@swimlane/ngx-datatable": "~19.0.0",
     "@testing-library/dom": "~8.1.0",
     "@types/dygraphs": "^2.1.2",
