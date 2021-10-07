@@ -68,7 +68,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   helptext = helptext;
 
   interfaceTableConf: AppTableConfig<NetworkComponent> = {
-    title: T('Interfaces'),
+    title: this.translate.instant('Interfaces'),
     queryCall: 'interface.query',
     deleteCall: 'interface.delete',
     name: 'interfaces',
@@ -122,7 +122,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   };
 
   staticRoutesTableConf: AppTableConfig<NetworkComponent> = {
-    title: T('Static Routes'),
+    title: this.translate.instant('Static Routes'),
     queryCall: 'staticroute.query',
     deleteCall: 'staticroute.delete',
     name: 'staticRoutes',
@@ -144,7 +144,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   };
 
   globalSettingsWidget: CardWidgetConf<NetworkComponent> = {
-    title: T('Global Configuration'),
+    title: this.translate.instant('Global Configuration'),
     data: {},
     parent: this,
     icon: 'router',
@@ -156,7 +156,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   };
 
   openvpnTableConf: AppTableConfig<NetworkComponent> = {
-    title: T('OpenVPN'),
+    title: this.translate.instant('OpenVPN'),
     queryCall: 'service.query',
     name: 'openVPN',
     columns: [

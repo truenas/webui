@@ -162,7 +162,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           },
           tableActions: [
             {
-              label: T('Adjust Priority'),
+              label: this.translate.instant('Adjust Priority'),
               onClick: () => {
                 this.router.navigate(['/data-protection/scrub/priority']);
               },

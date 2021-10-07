@@ -9,11 +9,11 @@
   <div class="categories" fxLayout="row" fxLayoutAlign="space-between center">
     <div>
       <span>{{ 'Catalog' | translate }}:</span>
-      <div class="value capitalized-text" textLimiter threshold="20" content="{{ catalogApp.catalog.label }}"></div>
+      <div class="value capitalized-text" textLimiter threshold="20" [content]="catalogApp.catalog.label"></div>
     </div>
     <div>
       <span>{{ 'Train' | translate }}:</span>
-      <div class="value capitalized-text" textLimiter threshold="20" content="{{ catalogApp.catalog.train }}"></div>
+      <div class="value capitalized-text" textLimiter threshold="20" [content]="catalogApp.catalog.train"></div>
     </div>
   </div>
   <div class="categories">

@@ -13,11 +13,11 @@
         (change)="onChangeOption($event)"
         >
         <mat-option *ngFor="let preset of presets" [value]="preset.value">
-          {{ preset.label }} <em class="crontab">({{preset.value}})</em>
+          {{ preset.label | translate }} <em class="crontab">({{preset.value}})</em>
           <span class="text-small preset-description" *ngIf="preset.description"> {{preset.description}}</span>
         </mat-option>
         <mat-option #trigger="cdkOverlayOrigin" cdkOverlayOrigin (click)="togglePopup()" [value]="customOption.value">
-          Custom <em class="crontab">({{customOption.value}})</em>
+          {{ 'Custom' | translate }} <em class="crontab">({{customOption.value}})</em>
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -64,9 +64,9 @@
             <h4 class="preview-label">{{"Presets" | translate}}</h4>
             <div class="form-element">
               <mat-form-field class="cron-presets">
-                <mat-select placeholder="Choose a preset" [(ngModel)]="preset" [ngModelOptions]="{standalone: true}">
+                <mat-select [placeholder]="'Choose a preset' | translate" [(ngModel)]="preset" [ngModelOptions]="{standalone: true}">
                   <mat-option *ngFor="let preset of presets" [value]="preset">
-                    {{ preset.label }}
+                    {{ preset.label | translate }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
@@ -78,7 +78,7 @@
             <div class="preview-label">
               <h4 class="preview-label"><span *ngIf="!config.noMinutes">
                   Minutes/</span>Hours/Days
-                <tooltip [header]="config.noMinutes ? helptext.scheduler.general.headerWithoutMinutes : helptext.scheduler.general.header" [message]="helptext.scheduler.general.tooltip"></tooltip>
+                <tooltip [header]="config.noMinutes ? helptext.scheduler.general.headerWithoutMinutes : helptext.scheduler.general.header" [message]="helptext.scheduler.general.tooltip | translate"></tooltip>
               </h4>
             </div>
             <div id="no-spaces">({{"Separate values with commas, and without spaces." | translate}})</div>
@@ -89,7 +89,7 @@
                 <tooltip [header]="helptext.scheduler.minutes.header" [message]="helptext.scheduler.minutes.tooltip"></tooltip>
               </div>
               <mat-form-field>
-                <input matInput [(ngModel)]="minutes" [ngModelOptions]="{standalone: true}" [value]="minutes" placeholder="Minutes" required [ngClass]=" {'invalid' : validMinutes === false}">
+                <input matInput [(ngModel)]="minutes" [ngModelOptions]="{standalone: true}" [value]="minutes" [placeholder]="'Minutes' | translate" required [ngClass]=" {'invalid' : validMinutes === false}">
               </mat-form-field>
             </div>
 
@@ -99,17 +99,17 @@
                 <tooltip [header]="helptext.scheduler.hours.header" [message]="helptext.scheduler.hours.tooltip"></tooltip>
               </div>
               <mat-form-field>
-                <input matInput [(ngModel)]="hours" [ngModelOptions]="{standalone: true}" [value]="hours" placeholder="Hours" required [ngClass]="{'invalid': validHours === false}">
+                <input matInput [(ngModel)]="hours" [ngModelOptions]="{standalone: true}" [value]="hours" [placeholder]="'Hours' | translate" required [ngClass]="{'invalid': validHours === false}">
               </mat-form-field>
             </div>
 
             <div class="form-element">
               <div class="label-container">
                 <mat-label class="label input-text">Days</mat-label>
-                <tooltip [header]="helptext.scheduler.days.header" [message]="helptext.scheduler.days.tooltip"></tooltip>
+                <tooltip [header]="helptext.scheduler.days.header" [message]="helptext.scheduler.days.tooltip | translate"></tooltip>
               </div>
               <mat-form-field>
-                <input matInput [(ngModel)]="days" [ngModelOptions]="{standalone: true}" [value]="days" placeholder="Days" required [ngClass]="{'invalid': validDays === false}">
+                <input matInput [(ngModel)]="days" [ngModelOptions]="{standalone: true}" [value]="days" [placeholder]="'Days' | translate" required [ngClass]="{'invalid': validDays === false}">
               </mat-form-field>
             </div>
           </section>
