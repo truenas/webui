@@ -53,7 +53,7 @@
             <!-- Without Labels -->
             <ng-container>
               <button (click)="doMultiDelete(this.selection.selected);" mat-button
-              matTooltip="{{ 'Delete selections'  | translate }}" matTooltipPosition="below">
+              matTooltip="{{ 'Delete selections' | translate }}" matTooltipPosition="below">
                 <mat-icon>delete</mat-icon>
               </button>
             </ng-container>
@@ -82,7 +82,7 @@
             [sticky]="isLeftStickyColumnNo(i)"
             matColumnDef="{{column}}"
           >
-            <th [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" class="data-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
+            <th [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" class="data-column" mat-header-cell *matHeaderCellDef>{{ currentColumns[i].name | translate }}</th>
             <td [ngClass]="{'sticky-left-offset': shouldApplyStickyOffset(i), 'sticky-border-right': isLeftStickyColumnNo(i) && isTableOverflow()}" [ngStyle]="{'cursor': (checkLength() && !conf.onRowClick) ? 'auto' : 'pointer'}" class="data-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" mat-cell *matCellDef="let element">
               <div class="text-overflow-ellipsis" [matTooltip]="currentColumns[i].enableMatTooltip ? element[column] : null">{{element[column]}}</div>
             </td>
@@ -138,7 +138,7 @@
 
           <!-- Interactive Toggle Column -->
           <ng-container *ngIf="column == 'state' && isInteractive(column)" matColumnDef="{{column}}">
-            <th class="toggle-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
+            <th class="toggle-column" mat-header-cell *matHeaderCellDef>{{ currentColumns[i].name | translate }}</th>
             <td class="toggle-column" mat-cell *matCellDef="let element" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
               <mat-spinner [diameter]='40' *ngIf="element['onChanging']; else actionButtons"></mat-spinner>
               <ng-template #actionButtons>
@@ -173,7 +173,7 @@
 
           <!-- Interactive Checkbox Column -->
           <ng-container *ngIf="['enabled', 'enable', 'autostart'].includes(column) && isInteractive(column)" matColumnDef="{{column}}">
-            <th class="toggle-column" mat-header-cell *matHeaderCellDef>{{currentColumns[i].name}}</th>
+            <th class="toggle-column" mat-header-cell *matHeaderCellDef>{{ currentColumns[i].name | translate }}</th>
             <td class="toggle-column" mat-cell *matCellDef="let element" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
               <mat-checkbox
               color="primary"
@@ -190,7 +190,7 @@
             *ngIf="['path', 'paths'].includes(column) && isInteractive(column)"
             matColumnDef="{{column}}"
           >
-            <th mat-header-cell *matHeaderCellDef>{{ currentColumns[i].name }}</th>
+            <th mat-header-cell *matHeaderCellDef>{{ currentColumns[i].name | translate }}</th>
             <td mat-cell *matCellDef="let element" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
               <div class="path-locked-status">
                 <div class="text-overflow-ellipsis">{{ element[column] }}</div>

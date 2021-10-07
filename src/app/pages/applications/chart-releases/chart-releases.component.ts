@@ -68,7 +68,7 @@ export class ChartReleasesComponent implements OnInit {
     large: true,
     title: helptext.message.loading,
     button: {
-      label: 'View Catalog',
+      label: this.translate.instant('View Catalog'),
       action: this.viewCatalog.bind(this),
     },
   };

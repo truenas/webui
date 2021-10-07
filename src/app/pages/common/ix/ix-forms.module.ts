@@ -13,6 +13,7 @@ import { IxInputComponent } from 'app/pages/common/ix/components/ix-input/ix-inp
 import { IxModalComponent } from 'app/pages/common/ix/components/ix-modal/ix-modal.component';
 import { IxModalDirective } from 'app/pages/common/ix/components/ix-modal/ix-modal.directive';
 import { IxSelectComponent } from 'app/pages/common/ix/components/ix-select/ix-select.component';
+import { IxUserComboboxComponent } from 'app/pages/common/ix/components/ix-user-combobox/ix-user-combobox.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 
 @NgModule({
@@ -35,6 +36,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxFieldsetComponent,
     IxModalComponent,
     IxModalDirective,
+    IxUserComboboxComponent,
   ],
   exports: [
     IxInputComponent,
@@ -43,6 +45,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxModalComponent,
     IxFieldsetComponent,
     IxModalDirective,
+    IxUserComboboxComponent,
   ],
 })
 export class IxFormsModule {}
