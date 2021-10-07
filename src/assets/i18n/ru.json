@@ -928,6 +928,7 @@
   "Scrub Tasks": "",
   "Scrub complete on pool <i>{poolName}</i>.": "",
   "Scrub interval set to {scrubIntervalValue} days": "",
+  "Search": "",
   "Search For Connected Groups": "",
   "Search For Connected Users": "",
   "Search Installed Applications": "",

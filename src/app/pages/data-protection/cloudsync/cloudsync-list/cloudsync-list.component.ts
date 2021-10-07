@@ -98,10 +98,11 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   resourceTransformIncomingRestData(data: CloudSyncTask[]): CloudSyncTaskUi[] {
     return data.map((task) => {
       const transformed = { ...task } as CloudSyncTaskUi;
+      const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       transformed.credential = task.credentials.name;
-      transformed.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      transformed.frequency = this.taskService.getTaskCronDescription(transformed.cron_schedule);
-      transformed.next_run = this.taskService.getTaskNextRun(transformed.cron_schedule);
+      transformed.cron_schedule = task.enabled ? formattedCronSchedule : T('Disabled');
+      transformed.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
+      transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : T('Disabled');
 
       if (task.job === null) {
         transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };

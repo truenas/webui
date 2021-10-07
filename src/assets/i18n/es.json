@@ -2604,6 +2604,7 @@
   "Scrub complete on pool <i>{poolName}</i>.": "",
   "Scrub interval (in days)": "",
   "Scrub interval set to {scrubIntervalValue} days": "",
+  "Search": "",
   "Search Available Applications": "",
   "Search Catalogs": "",
   "Search Docker Images": "",
