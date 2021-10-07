@@ -6,7 +6,7 @@
     name="name"
     placeholder="{{optionPlaceHolder}}"
     [(ngModel)]="displaySelection"
-    (change)=switchSelection()
+    (selectionChange)="switchSelection()"
     ix-auto ix-auto-type="select" ix-auto-identifier="{{optionPlaceHolder}}"
   >
     <mat-option
@@ -35,6 +35,7 @@
     mat-button
     class="mat-button mat-primary"
     (click)="dialogRef.close(true)"
+    [disabled]="displaySelection === undefined"
     ix-auto
     ix-auto-type="button"
     ix-auto-identifier="OK"

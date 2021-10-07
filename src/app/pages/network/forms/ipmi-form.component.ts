@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -8,7 +9,6 @@ import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/ipmi/ipmi';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -18,36 +18,34 @@ import { ipv4Validator } from 'app/pages/common/entity/entity-form/validators/ip
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { IpmiService } from 'app/services/ipmi.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-ipmi',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class IPMIFromComponent implements FormConfiguration {
+export class IpmiFormComponent implements FormConfiguration {
   title = T('IPMI');
   queryCall: 'ipmi.query' = 'ipmi.query';
 
   protected entityEdit: EntityFormComponent;
-  is_ha = false;
+  isHa = false;
   controllerName = globalHelptext.Ctrlr;
   currentControllerLabel: string;
   failoverControllerLabel: string;
   managementIP: string;
-  options: Option[] = helptext.ipmiOptions;
   custActions = [
     {
       id: 'ipmi_identify',
-      name: T('Identify Light'),
+      name: this.translate.instant('Identify Light'),
       function: () => {
-        this.dialog.select(
-          'IPMI Identify', this.options, 'IPMI flash duration', 'ipmi.identify', 'seconds',
-        );
+        this.ipmiService.showIdentifyDialog();
       },
     },
     {
       id: 'connect',
-      name: T('Manage'),
+      name: this.translate.instant('Manage'),
       function: () => {
         window.open(`http://${this.managementIP}`);
       },
@@ -158,15 +156,17 @@ export class IPMIFromComponent implements FormConfiguration {
     protected ws: WebSocketService,
     protected dialog: DialogService,
     protected loader: AppLoaderService,
+    private translate: TranslateService,
+    private ipmiService: IpmiService,
   ) { }
 
   async prerequisite(): Promise<boolean> {
     return new Promise(async (resolve) => {
       if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-        await this.ws.call('failover.licensed').toPromise().then((is_ha) => {
-          this.is_ha = is_ha;
+        await this.ws.call('failover.licensed').toPromise().then((isHa) => {
+          this.isHa = isHa;
         });
-        if (this.is_ha) {
+        if (this.isHa) {
           await this.ws.call('failover.node').toPromise().then((node) => {
             this.currentControllerLabel = (node === 'A') ? '1' : '2';
             this.failoverControllerLabel = (node === 'A') ? '2' : '1';

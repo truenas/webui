@@ -4,7 +4,6 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
@@ -127,33 +126,13 @@ export class DialogService {
     title: string,
     options: Option[],
     optionPlaceHolder: string,
-    method: ApiMethod,
-    params?: any,
-  ): void {
-    let data: any;
+  ): MatDialogRef<SelectDialogComponent> {
     const dialogRef = this.dialog.open(SelectDialogComponent, { width: '300px' });
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.options = options;
     dialogRef.componentInstance.optionPlaceHolder = optionPlaceHolder;
-    dialogRef.componentInstance.method = method;
-
-    dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection) => {
-      if (selection === 'force') {
-        data = { [selection]: true };
-      } else {
-        data = { [params]: selection };
-      }
-      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res) {
-          // TODO: The whole block seems to be doing nothing.
-          // eslint-disable-next-line unused-imports/no-unused-vars
-          this.ws.call(method, [data]).pipe(untilDestroyed(this)).subscribe((out) => {
-            // this.snackBar.open(message, 'close', { duration: 5000 });
-          });
-        }
-      });
-    });
+    return dialogRef;
   }
 
   dialogForm(conf: DialogFormConfiguration, disableClose = false): Observable<boolean> {
