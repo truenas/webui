@@ -49,7 +49,6 @@
   font-size: x-small;
 }
 
-
 .reset-input {
   align-items: center;
   bottom: 0;
@@ -67,4 +66,12 @@
   font-size: 1rem;
   height: auto;
   width: auto;
+}
+
+.ix-selected {
+  background: var(--primary) !important;
+}
+
+.ix-unselected {
+  background: var(--bg2) !important;
 }

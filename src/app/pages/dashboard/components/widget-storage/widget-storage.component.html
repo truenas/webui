@@ -52,34 +52,37 @@
                   fxFlexFill
                   fxLayout="column"
                   fxLayoutAlign="start stretch"
+                  [class.rows-2]="rows === 2"
                   [class.rows-3]="rows === 3"
                   [class.rows-2-2]="rows === 2 && cols == 2"
                 >
-                  <h4 class="tile-header-title">{{ pool.name }}</h4>
-                  <div class="tile-header-button">
-                    <button
-                      mat-icon-button
-                      (click)="router.navigate(['storage/status/' + pool.id.toString()])"
-                      ix-auto
-                      ix-auto-type="button"
-                      ix-auto-identifier="poolStatus"
-                    >
-                      <mat-icon
-                        role="img"
-                        fontSet="mdi-set"
-                        fontIcon="mdi-database"
-                        matTooltip="{{ 'Pool Status' | translate }}"
-                        matTooltipPosition="above"
-                        aria-label="Configure Pools"
+                  <div class="tile-header" fxLayout="row" fxLayoutAlign="start center">
+                    <h4 class="tile-header-title">{{ pool.name }}</h4>
+                    <div class="tile-header-button">
+                      <button
+                        mat-icon-button
+                        (click)="router.navigate(['storage/status/' + pool.id.toString()])"
+                        ix-auto
+                        ix-auto-type="button"
+                        ix-auto-identifier="poolStatus"
                       >
-                      </mat-icon>
-                    </button>
+                        <mat-icon
+                          role="img"
+                          fontSet="mdi-set"
+                          fontIcon="mdi-database"
+                          matTooltip="{{ 'Pool Status' | translate }}"
+                          matTooltipPosition="above"
+                          aria-label="Configure Pools"
+                        >
+                        </mat-icon>
+                      </button>
+                    </div>
                   </div>
                   <div class="tile-content" fxFlex fxLayout="row" fxLayoutAlign="space-between center">
                     <ul fxLayout="column" [fxFlex]="cols === 1 ? 31 : 100">
                       <li fxLayout="row">
-                        <span class="icon {{ poolInfoMap[pool.name]?.status?.level }}"
-                          ><mat-icon
+                        <span class="icon {{ poolInfoMap[pool.name]?.status?.level }}">
+                          <mat-icon
                             role="img"
                             fontSet="mdi-set"
                             fontIcon="{{ poolInfoMap[pool.name]?.status?.icon }}"
@@ -89,31 +92,31 @@
                         <span class="storage-value">{{ poolInfoMap[pool.name]?.status?.value }}</span>
                       </li>
                       <li fxLayout="row">
-                        <span class="icon {{ poolInfoMap[pool.name]?.usedSpace?.level }}"
-                          ><mat-icon
+                        <span class="icon {{ poolInfoMap[pool.name]?.usedSpace?.level }}">
+                          <mat-icon
                             role="img"
                             fontSet="mdi-set"
                             fontIcon="{{ poolInfoMap[pool.name]?.usedSpace?.icon }}"
                           ></mat-icon
                         ></span>
                         <span class="label">{{ 'Used Space' | translate }}:</span>
-                        <span class="storage-value">{{
-                          poolInfoMap[pool.name]?.usedSpace?.value
-                        }}</span>
+                        <span class="storage-value" textLimiter threshold="25" [content]="poolInfoMap[pool.name]?.usedSpace?.value"></span>
                       </li>
                       <li fxLayout="row">
-                        <span class="icon {{ poolInfoMap[pool.name]?.disksWithError?.level }}"
-                          ><mat-icon
+                        <span class="icon {{ poolInfoMap[pool.name]?.disksWithError?.level }}">
+                          <mat-icon
                             role="img"
                             fontSet="mdi-set"
                             fontIcon="{{ poolInfoMap[pool.name]?.disksWithError?.icon }}"
-                          ></mat-icon
-                        ></span>
+                          ></mat-icon>
+                        </span>
                         <span class="label">{{ 'Disks with Errors' | translate }}:</span>
                         <span class="storage-value">{{ poolInfoMap[pool.name]?.disksWithError?.value }}</span>
                       </li>
                       <li fxLayout="row" *ngIf="cols === 2 && rows === 2">
-                        <span class="icon"></span>
+                        <span class="icon safe">
+                          <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-arrow-right-circle"></mat-icon>
+                        </span>
                         <span class="label">{{ 'Path' | translate }}:</span>
                         <span class="storage-value" textLimiter threshold="32" content="{{ pool.path }}"></span>
                       </li>
@@ -123,7 +126,7 @@
                       <ul fxLayout="column" fxFlex="31">
                         <li fxLayout="row">
                           <span class="label">{{ 'Path' | translate }}:</span>
-                          <span class="storage-value" textLimiter threshold="22" content="{{ pool.path }}"></span>
+                          <span class="storage-value" textLimiter threshold="17" content="{{ pool.path }}"></span>
                         </li>
                         <li fxLayout="row">
                           <span class="label">{{ 'Free Space' | translate }}:</span>
