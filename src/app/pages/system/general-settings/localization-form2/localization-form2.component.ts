@@ -116,6 +116,7 @@ export class LocalizationForm2Component implements OnInit {
       timezone: [this.configData?.timezone],
       date_format: [this.localeService.getPreferredDateFormat()],
       time_format: [this.localeService.getPreferredTimeFormat()],
+      user: ['root'],
     });
   }
 
