@@ -18,7 +18,7 @@ import { ApiService } from 'app/core/services/api.service';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { ProductType, ProducTypetReadableText } from 'app/enums/product-type.enum';
+import { ProductType, ProductTypeReadableText } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
@@ -43,7 +43,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   failed = false;
   product_type: ProductType;
-  product_type_readable_label: string;
+  productTypeReadableText: string;
   logo_ready = false;
   product = productText.product;
   ha_info_ready = false;
@@ -122,7 +122,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
         this.logo_ready = true;
         this.product_type = res as ProductType;
-        this.product_type_readable_label = ProducTypetReadableText[this.product_type];
+        this.productTypeReadableText = ProductTypeReadableText.get(this.product_type);
         if (this.interval) {
           clearInterval(this.interval);
         }
