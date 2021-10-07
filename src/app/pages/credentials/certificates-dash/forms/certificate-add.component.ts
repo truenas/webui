@@ -774,10 +774,10 @@ export class CertificateAddComponent implements WizardConfiguration {
           this.hideField('ec_curve', false);
         }
       } else if (res == 'CERTIFICATE_CREATE_CSR') {
-        this.csrFields.forEach((field) => this.hideField(field, false));
         this.importFields.forEach((field) => this.hideField(field, true));
         this.importCSRFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
+        this.csrFields.forEach((field) => this.hideField(field, false));
         this.extensionFields.forEach((field) => this.hideField(field, false));
 
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
@@ -790,9 +790,9 @@ export class CertificateAddComponent implements WizardConfiguration {
         }
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
         this.csrFields.forEach((field) => this.hideField(field, true));
-        this.importFields.forEach((field) => this.hideField(field, false));
         this.importCSRFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
+        this.importFields.forEach((field) => this.hideField(field, false));
         this.extensionFields.forEach((field) => this.hideField(field, true));
 
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
@@ -808,8 +808,8 @@ export class CertificateAddComponent implements WizardConfiguration {
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED_CSR') {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importFields.forEach((field) => this.hideField(field, true));
-        this.importCSRFields.forEach((field) => this.hideField(field, false));
         this.internalFields.forEach((field) => this.hideField(field, true));
+        this.importCSRFields.forEach((field) => this.hideField(field, false));
         this.extensionFields.forEach((field) => this.hideField(field, true));
 
         this.wizardConfig[2].skip = true;
