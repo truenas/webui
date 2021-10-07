@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  margin-bottom: 12px;
+}
+
 .full-width {
   color: var(--fg1);
   width: 100%;
@@ -18,6 +23,16 @@
   font-size: 12px;
   padding: 7px;
   position: relative;
+
+
+  &.disabled {
+    opacity: 0.38;
+
+    ::ng-deep .mat-select-value {
+      cursor: not-allowed;
+      opacity: 1;
+    }
+  }
 }
 
 .label-container {

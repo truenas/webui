@@ -1,7 +1,9 @@
 import {
-  Component, forwardRef, Input,
+  Component, Input,
 } from '@angular/core';
-import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  ControlValueAccessor, FormControl, NgControl,
+} from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -9,13 +11,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   selector: 'ix-input',
   styleUrls: ['./ix-input.component.scss'],
   templateUrl: './ix-input.component.html',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => IxInputComponent),
-      multi: true,
-    },
-  ],
 })
 export class IxInputComponent implements ControlValueAccessor {
   @Input() label: string;
@@ -28,10 +23,16 @@ export class IxInputComponent implements ControlValueAccessor {
   formControl = new FormControl(this).value as FormControl;
 
   value = '';
-  touched = false;
+  isDisabled = false;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
+
+  constructor(
+    public controlDirective: NgControl,
+  ) {
+    this.controlDirective.valueAccessor = this;
+  }
 
   writeValue(value: string): void {
     this.value = value;
@@ -56,5 +57,9 @@ export class IxInputComponent implements ControlValueAccessor {
   resetInput(): void {
     this.value = '';
     this.onChange('');
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
   }
 }

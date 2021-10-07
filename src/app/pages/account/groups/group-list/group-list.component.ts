@@ -9,6 +9,7 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/group-list';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -16,9 +17,8 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { ModalService } from 'app/services/modal.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { GroupFormComponent } from '../group-form/group-form.component';
 
 @UntilDestroy()
 @Component({
@@ -29,9 +29,6 @@ export class GroupListComponent implements EntityTableConfig<Group> {
   title = 'Groups';
   queryCall: 'group.query' = 'group.query';
   wsDelete: 'group.delete' = 'group.delete';
-  route_add = ['account', 'groups', 'add'];
-  route_add_tooltip = T('Add Group');
-  route_edit: string[] = ['account', 'groups', 'edit'];
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
   globalConfig = {
@@ -66,7 +63,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
     protected ws: WebSocketService,
     protected prefService: PreferencesService,
     private translate: TranslateService,
-    private modalService: ModalService,
+    private modalService: IxModalService,
   ) {}
 
   resourceTransformIncomingRestData(data: Group[]): Group[] {
@@ -91,7 +88,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
       }
     }, 2000);
 
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -120,8 +117,9 @@ export class GroupListComponent implements EntityTableConfig<Group> {
         icon: 'edit',
         label: helptext.group_list_actions_label_edit,
         name: helptext.group_list_actions_id_edit,
-        onClick: (members_edit: Group) => {
-          this.modalService.openInSlideIn(GroupFormComponent, members_edit.id);
+        onClick: (group: Group) => {
+          const modal = this.modalService.open(GroupFormComponent, this.translate.instant('Edit Group'));
+          modal.setupForm(group);
         },
       });
       actions.push({
@@ -231,6 +229,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(GroupFormComponent);
+    const modal = this.modalService.open(GroupFormComponent, this.translate.instant('Add Group'));
+    modal.setupForm();
   }
 }

@@ -9,10 +9,13 @@
   </div>
 
 
-  <div class="outlined input-container">
-    <input #ixInput matInput
+  <div class="outlined input-container" [class.disabled]="isDisabled">
+    <input
+      #ixInput
+      matInput
       [value]="selectedOption?.label"
       [placeholder]="'Search'"
+      [disabled]="isDisabled"
       (input)="onChanged($event.target.value)"
       (blur)="onTouch()"
       [matAutocomplete]="auto"
@@ -26,6 +29,7 @@
       </mat-option>
     </mat-autocomplete>
   </div>
+  <ix-form-errors [control]="controlDirective.control" [label]="label"></ix-form-errors>
   <mat-hint *ngIf="hint">{{hint}}</mat-hint>
 
 </div>

@@ -1,7 +1,9 @@
 import {
-  Component, ElementRef, forwardRef, Input, OnChanges, SimpleChanges, ViewChild,
+  Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild,
 } from '@angular/core';
-import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  ControlValueAccessor, FormControl, NgControl,
+} from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, of } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
@@ -11,13 +13,6 @@ import { Option } from 'app/interfaces/option.interface';
   selector: 'ix-combobox',
   templateUrl: './ix-combobox.component.html',
   styleUrls: ['./ix-combobox.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => IxComboboxComponent),
-      multi: true,
-    },
-  ],
 })
 export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
   @Input() label: string;
@@ -40,13 +35,19 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
 
   formControl = new FormControl(this);
   value: string | number = '';
+  isDisabled = false;
   filterValue = '';
-  touched = false;
   selectedOption: Option = null;
   syncOptions: Option[];
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
+
+  constructor(
+    public controlDirective: NgControl,
+  ) {
+    this.controlDirective.valueAccessor = this;
+  }
 
   writeValue(value: string | number): void {
     this.value = value;
@@ -108,10 +109,14 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges {
   }
 
   shouldShowResetInput(): boolean {
-    return this.hasValue();
+    return this.hasValue() && !this.isDisabled;
   }
 
   hasValue(): boolean {
     return this.filterValue && this.filterValue.length > 0;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
   }
 }
