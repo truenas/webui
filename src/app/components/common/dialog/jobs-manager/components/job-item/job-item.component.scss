@@ -1,6 +1,6 @@
 :host {
   display: block;
-  padding: 8px 24px;
+  padding: 8px 12px 8px 24px;
 
   &:not(:last-child) {
     border-bottom: 1px solid var(--lines);
@@ -18,8 +18,8 @@
 }
 
 .job-item {
-  &.abortable {
-    max-width: calc(100% - 32px);
+  &.abortable .job-clickable {
+    max-width: calc(100% - 48px) !important;
   }
 }
 
