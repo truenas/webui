@@ -130,7 +130,7 @@ import { WebSocketService } from './services/ws.service';
     {
       provide: ErrorHandler,
       useValue: Sentry.createErrorHandler({
-        showDialog: true,
+        showDialog: false,
       }),
     },
     {
