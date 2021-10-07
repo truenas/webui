@@ -35,10 +35,6 @@
           [options]="timeFormat.options"
           [formControlName]="timeFormat.fcName"
         ></ix-select>
-        <ix-user-combobox
-          [formControlName]="'user'"
-          [label]="'User'"
-        ></ix-user-combobox>
       </ix-fieldset>
       <div class="form-actions">
         <button mat-button type="submit" [disabled]="formGroup.invalid || formIsLoading" color="primary">{{ 'Save' | translate }}</button>
