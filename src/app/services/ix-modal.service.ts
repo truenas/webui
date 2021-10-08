@@ -2,7 +2,9 @@ import { Injectable, Type } from '@angular/core';
 import { Subject } from 'rxjs';
 import { IxModalComponent } from 'app/pages/common/ix/components/ix-modal/ix-modal.component';
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class IxModalService {
   private modalComponent: IxModalComponent;
   private modalClosed$ = new Subject<unknown>();

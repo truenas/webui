@@ -1,16 +1,15 @@
 import {
-  Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
-import {
-  ControlValueAccessor, FormControl, NgControl,
-} from '@angular/forms';
+import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
   selector: 'ix-input',
-  styleUrls: ['./ix-input.component.scss'],
   templateUrl: './ix-input.component.html',
+  styleUrls: ['./ix-input.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxInputComponent implements ControlValueAccessor {
   @Input() label: string;
@@ -30,12 +29,14 @@ export class IxInputComponent implements ControlValueAccessor {
 
   constructor(
     public controlDirective: NgControl,
+    private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
   }
 
   writeValue(value: string): void {
     this.value = value;
+    this.cdr.markForCheck();
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
@@ -61,5 +62,6 @@ export class IxInputComponent implements ControlValueAccessor {
 
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
+    this.cdr.markForCheck();
   }
 }

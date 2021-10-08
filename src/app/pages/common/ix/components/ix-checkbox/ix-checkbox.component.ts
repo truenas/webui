@@ -1,9 +1,10 @@
 import {
-  ChangeDetectionStrategy, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl,
 } from '@angular/forms';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -24,6 +25,7 @@ export class IxCheckboxComponent implements ControlValueAccessor {
 
   constructor(
     public controlDirective: NgControl,
+    private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -33,6 +35,7 @@ export class IxCheckboxComponent implements ControlValueAccessor {
 
   writeValue(value: boolean): void {
     this.value = value;
+    this.cdr.markForCheck();
   }
 
   registerOnChange(onChange: (value: boolean) => void): void {
@@ -45,5 +48,10 @@ export class IxCheckboxComponent implements ControlValueAccessor {
 
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
+    this.cdr.markForCheck();
+  }
+
+  onCheckboxChanged(event: MatCheckboxChange): void {
+    this.onChange(event.checked);
   }
 }
