@@ -8,16 +8,24 @@
     <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
   </div>
 
-
-  <div class="outlined input-container">
+  <div class="outlined input-container" [class.disabled]="isDisabled">
     <span *ngIf="prefixIcon" class="prefix-icon">
       <mat-icon>{{prefixIcon}}</mat-icon>
     </span>
-    <input matInput [class.prefix-padding]="prefixIcon" [required]="required" [(ngModel)]="value" (ngModelChange)="onChange($event)" (blur)="onTouch()">
+    <input
+      matInput
+      [class.prefix-padding]="prefixIcon"
+      [required]="required"
+      [disabled]="isDisabled"
+      [(ngModel)]="value"
+      (ngModelChange)="onChange($event)"
+      (blur)="onTouch()"
+    >
     <span *ngIf="shouldShowResetInput()" class="reset-input">
       <mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
     </span>
   </div>
+  <ix-form-errors [control]="controlDirective.control" [label]="label"></ix-form-errors>
   <mat-hint *ngIf="hint">{{hint}}</mat-hint>
 
 </div>

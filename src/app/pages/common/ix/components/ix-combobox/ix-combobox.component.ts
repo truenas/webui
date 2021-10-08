@@ -1,7 +1,9 @@
 import {
-  Component, ElementRef, EventEmitter, forwardRef, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild,
+  Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild,
 } from '@angular/core';
-import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  ControlValueAccessor, FormControl, NgControl,
+} from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -18,13 +20,6 @@ import { Option } from 'app/interfaces/option.interface';
   selector: 'ix-combobox',
   templateUrl: './ix-combobox.component.html',
   styleUrls: ['./ix-combobox.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => IxComboboxComponent),
-      multi: true,
-    },
-  ],
 })
 export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnInit {
   @Input() label: string;
@@ -52,15 +47,20 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
   filterChanged$ = new Subject<string>();
   formControl = new FormControl(this);
   value: string | number = '';
+  isDisabled = false;
   filterValue = '';
-  touched = false;
   selectedOption: Option = null;
   syncOptions: Option[];
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
-  constructor(private translate: TranslateService) {}
+  constructor(
+    private translate: TranslateService,
+    public controlDirective: NgControl,
+  ) {
+    this.controlDirective.valueAccessor = this;
+  }
 
   writeValue(value: string | number): void {
     this.value = value;
@@ -160,10 +160,14 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
   }
 
   shouldShowResetInput(): boolean {
-    return this.hasValue();
+    return this.hasValue() && !this.isDisabled;
   }
 
   hasValue(): boolean {
     return this.inputElementRef?.nativeElement?.value && this.inputElementRef.nativeElement.value.length > 0;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
   }
 }

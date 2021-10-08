@@ -1,7 +1,9 @@
 import {
-  Component, forwardRef, Input,
+  Component, Input,
 } from '@angular/core';
-import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  ControlValueAccessor, FormControl, NgControl,
+} from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
@@ -11,13 +13,6 @@ import { Option } from 'app/interfaces/option.interface';
   selector: 'ix-select',
   styleUrls: ['./ix-select.component.scss'],
   templateUrl: './ix-select.component.html',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      multi: true,
-      useExisting: forwardRef(() => IxSelectComponent),
-    },
-  ],
 })
 export class IxSelectComponent implements ControlValueAccessor {
   @Input() label: string;
@@ -27,9 +22,14 @@ export class IxSelectComponent implements ControlValueAccessor {
   @Input() required: boolean;
   @Input() tooltip: string;
 
-  formControl = new FormControl(this).value as FormControl;
+  constructor(
+    public controlDirective: NgControl,
+  ) {
+    this.controlDirective.valueAccessor = this;
+  }
 
-  touched = false;
+  formControl = new FormControl(this).value as FormControl;
+  isDisabled = false;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -44,5 +44,9 @@ export class IxSelectComponent implements ControlValueAccessor {
 
   registerOnTouched(onTouched: () => void): void {
     this.onTouch = onTouched;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
   }
 }

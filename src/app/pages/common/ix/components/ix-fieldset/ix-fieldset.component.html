@@ -1,8 +1,8 @@
 <fieldset>
   <div *ngIf="title" class="title-container">
-    <label class="title">
+    <legend class="title">
       {{title}}
-    </label>
+    </legend>
   </div>
   <ng-content></ng-content>
   <mat-divider *ngIf="divider" class="divider" inset></mat-divider>

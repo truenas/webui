@@ -1,129 +1,121 @@
-import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+} from '@angular/core';
+import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { Observable } from 'rxjs';
 import helptext from 'app/helptext/account/groups';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Group } from 'app/interfaces/group.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { WebSocketService, UserService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { UserService, WebSocketService } from 'app/services';
+import { IxModalService } from 'app/services/ix-modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-group-form',
-  template: '<entity-form [conf]="this"></entity-form>',
+  templateUrl: 'group-form.component.html',
+  styleUrls: ['./group-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GroupFormComponent implements FormConfiguration {
-  isEntity = true;
-  protected namesInUse: string[] = [];
-  queryCall: 'group.query' = 'group.query';
-  addCall: 'group.create' = 'group.create';
-  editCall: 'group.update' = 'group.update';
-  queryKey = 'id';
-  title: string;
-  protected isOneColumnForm = true;
-  fieldConfig: FieldConfig[] = [];
+export class GroupFormComponent {
+  private editingGroup: Group;
+  get isNew(): boolean {
+    return !this.editingGroup;
+  }
 
-  fieldSetDisplay = 'default';
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.fieldset_name,
-      class: 'group-configuration-form',
-      label: true,
-      config: [
-        {
-          type: 'input',
-          name: 'gid',
-          placeholder: helptext.bsdgrp_gid_placeholder,
-          tooltip: helptext.bsdgrp_gid_tooltip,
-          validation: helptext.bsdgrp_gid_validation,
-          required: true,
-        },
-        {
-          type: 'input',
-          name: 'name',
-          placeholder: helptext.bsdgrp_group_placeholder,
-          tooltip: helptext.bsdgrp_group_tooltip,
-          validation: [
-            Validators.required,
-            Validators.pattern(UserService.VALIDATOR_NAME),
-            forbiddenValues(this.namesInUse),
-          ],
-          required: true,
-        },
-        {
-          type: 'checkbox',
-          name: 'sudo',
-          placeholder: helptext.bsdgrp_sudo_placeholder,
-          tooltip: helptext.bsdgrp_sudo_tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'smb',
-          placeholder: helptext.smb_placeholder,
-          tooltip: helptext.smb_tooltip,
-          value: true,
-        },
-        {
-          type: 'checkbox',
-          name: 'allow_duplicate_gid',
-          placeholder: helptext.allow_placeholder,
-          tooltip: helptext.allow_tooltip,
-          disabled: false,
-        },
-      ],
-    },
-  ];
+  isFormLoading = false;
 
-  private bsdgrp_gid: FieldConfig;
+  form = this.fb.group({
+    gid: ['', [Validators.required, regexValidator(/^\d+$/)]],
+    name: ['', [Validators.required, Validators.pattern(UserService.VALIDATOR_NAME)]],
+    sudo: [false],
+    smb: [false],
+    allowDuplicateGid: [false],
+  });
+
+  readonly tooltips = {
+    gid: helptext.bsdgrp_gid_tooltip,
+    name: helptext.bsdgrp_group_tooltip,
+    sudo: helptext.bsdgrp_sudo_tooltip,
+    smb: helptext.smb_tooltip,
+    allowDuplicateGid: helptext.allow_tooltip,
+  };
 
   constructor(
-    protected router: Router,
-    protected ws: WebSocketService,
-    private modalService: ModalService,
+    private fb: FormBuilder,
+    private ws: WebSocketService,
+    private modalService: IxModalService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
-  resourceTransformIncomingRestData(data: Group): Group & { name: string } {
-    this.getNamesInUse(data.group);
-    return {
-      ...data,
-      name: data.group,
-    };
-  }
-
-  getNamesInUse(currentName?: string): void {
-    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
-      if (currentName) {
-        _.remove(groups, (group) => group.group == currentName);
-      }
-      this.namesInUse.push(...groups.map((group) => group.group));
-    });
-  }
-
-  afterInit(entityForm: EntityFormComponent): void {
-    this.bsdgrp_gid = _.find(this.fieldSets[0].config, { name: 'gid' });
-
-    if (!entityForm.isNew) {
-      entityForm.setDisabled('gid', true);
-
-      entityForm.formGroup.controls['allow_duplicate_gid'].setValue(true);
-      _.find(this.fieldSets[0].config, { name: 'allow_duplicate_gid' }).isHidden = true;
-      this.title = helptext.title_edit;
-    } else {
-      this.title = helptext.title_add;
-      this.getNamesInUse();
-      this.ws.call('group.get_next_gid').pipe(untilDestroyed(this)).subscribe((res) => {
-        entityForm.formGroup.controls['gid'].setValue(res);
+  /**
+   * @param group Skip argument to add new group.
+   */
+  setupForm(group?: Group): void {
+    this.editingGroup = group;
+    if (this.isNew) {
+      this.ws.call('group.get_next_gid').pipe(untilDestroyed(this)).subscribe((nextId) => {
+        this.form.patchValue({
+          gid: nextId,
+        });
+        this.cdr.markForCheck();
       });
+      this.setNamesInUseValidator();
+    } else {
+      this.form.get('gid').disable();
+      this.form.patchValue({
+        gid: this.editingGroup.gid,
+        name: this.editingGroup.group,
+        sudo: this.editingGroup.sudo,
+        smb: this.editingGroup.smb,
+        allowDuplicateGid: true,
+      });
+      this.setNamesInUseValidator(this.editingGroup.group);
     }
   }
 
-  afterSubmit(): void {
-    this.modalService.refreshTable();
+  private setNamesInUseValidator(currentName?: string): void {
+    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
+      let forbiddenNames = groups.map((group) => group.group);
+      if (currentName) {
+        forbiddenNames = _.remove(forbiddenNames, currentName);
+      }
+      this.form.get('name').addValidators(forbiddenValues(forbiddenNames));
+    });
+  }
+
+  onSubmit(): void {
+    const values = this.form.value;
+    const commonBody = {
+      name: values.name,
+      smb: values.smb,
+      sudo: values.sudo,
+      allow_duplicate_gid: values.allowDuplicateGid,
+    };
+
+    this.isFormLoading = true;
+    let request$: Observable<unknown>;
+    if (this.isNew) {
+      request$ = this.ws.call('group.create', [{
+        ...commonBody,
+        gid: values.gid,
+      }]);
+    } else {
+      request$ = this.ws.call('group.update', [
+        this.editingGroup.id,
+        commonBody,
+      ]);
+    }
+
+    request$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.isFormLoading = false;
+      this.modalService.close();
+    }, (error) => {
+      this.isFormLoading = false;
+      this.modalService.close();
+      new EntityUtils().handleWSError(this, error);
+    });
   }
 }

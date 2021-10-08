@@ -1,3 +1,10 @@
+:host {
+  display: block;
+
+  margin-bottom: 12px;
+  margin-top: 18px;
+}
+
 .full-width {
   color: var(--fg1);
   width: 100%;
@@ -17,12 +24,21 @@
   border-radius: 2px;
   display: flex;
   flex-direction: row;
-  font-size: 12px;
-  padding: 6px;
+  font-size: 13px;
+  padding: 6px 8px;
   position: relative;
 
   &:focus-within {
     border-color: var(--primary);
+  }
+
+  &.disabled {
+    opacity: 0.38;
+
+    input {
+      cursor: not-allowed;
+      opacity: 1;
+    }
   }
 }
 

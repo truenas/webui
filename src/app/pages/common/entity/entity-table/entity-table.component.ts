@@ -783,15 +783,17 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         }
       });
 
-      return this.rows.map((row) => {
-        const index = _.findIndex(rows, { id: ((row) as any).id });
+      const newRows: any[] = [];
+      this.rows.forEach((row) => {
+        const index = _.findIndex(rows, { id: (row as any).id });
         if (index < 0) {
           return;
         }
         const updatedItem = rows[index];
         rows.splice(index, 1);
-        return updatedItem;
+        newRows.push(updatedItem);
       });
+      return newRows.concat(rows);
     }
     return rows;
   }

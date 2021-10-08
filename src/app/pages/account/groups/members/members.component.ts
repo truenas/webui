@@ -73,7 +73,7 @@ export class MembersComponent implements OnInit {
     this.loading.open(this.translate.instant(helptext.update_users_message));
 
     const userIds = this.selectedMembers.map((user) => user.id);
-    this.ws.call('group.update', [this.groupId, { users: userIds }]).pipe(untilDestroyed(this)).subscribe(() => {
+    this.ws.call('group.update', [Number(this.groupId), { users: userIds }]).pipe(untilDestroyed(this)).subscribe(() => {
       this.router.navigate(['/', 'credentials', 'groups']);
       this.loading.close();
     });

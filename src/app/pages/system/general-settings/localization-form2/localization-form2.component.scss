@@ -1,10 +1,11 @@
 .ix-form-container {
   display: flex;
   flex-direction: column;
-}
+  padding: 0 8px;
 
-.ix-form-container > * {
-  width: 100%;
+  > * {
+    width: 100%;
+  }
 }
 
 .form-actions {
@@ -17,8 +18,4 @@
 
 .divider {
   margin: 16px 0 !important;
-}
-
-.ix-form-container {
-  padding: 0 8px;
 }
