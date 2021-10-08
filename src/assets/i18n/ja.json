@@ -3560,7 +3560,6 @@
   "Apply": "適用",
   "Apply Pending Updates": "保留中の更新を適用",
   "Apply Pending update": "保留中の更新を適用",
-  "Apply Permissions Recursively": "再帰的にアクセス許可を適用します",
   "Apply Update": "アップデートを適用します",
   "Apply permissions recursively": "再帰的に権限を適用",
   "Apply permissions recursively to all child datasets of the current dataset.": "現在のデータセットのすべての子データセットにアクセス許可を再帰的に適用します。",
