@@ -1,9 +1,8 @@
-import {
-  animate, state, style, transition, trigger,
-} from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
+import { MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { take } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { WebSocketService } from 'app/services';
 
@@ -18,40 +17,37 @@ interface DirectoryServicesMonitorRow {
   selector: 'app-directory-services-monitor',
   templateUrl: './directory-services-monitor.component.html',
   styleUrls: ['./directory-services-monitor.component.scss'],
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed, void', style({ height: '0px', minHeight: '0', display: 'none' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-      transition('expanded <=> void', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
 })
 export class DirectoryServicesMonitorComponent implements OnInit {
   displayedColumns: string[] = ['icon', 'name', 'state'];
   dataSource: DirectoryServicesMonitorRow[] = [];
-  showSpinner = false;
+  isLoading = false;
 
   readonly DirectoryServiceState = DirectoryServiceState;
 
-  constructor(private ws: WebSocketService, private router: Router) {}
+  constructor(
+    private ws: WebSocketService,
+    private router: Router,
+    private dialogRef: MatDialogRef<DirectoryServicesMonitorComponent>,
+  ) {}
 
   ngOnInit(): void {
     this.getStatus();
   }
 
   getStatus(): void {
-    const tempArray: DirectoryServicesMonitorRow[] = [];
-    this.showSpinner = true;
-    this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.showSpinner = false;
-      tempArray.push({ name: 'Active Directory', state: res.activedirectory, id: 'activedirectory' });
-      tempArray.push({ name: 'LDAP', state: res.ldap, id: 'ldap' });
-      this.dataSource = tempArray;
+    this.isLoading = true;
+    this.ws.call('directoryservices.get_state').pipe(take(1), untilDestroyed(this)).subscribe((state) => {
+      this.isLoading = false;
+      this.dataSource = [
+        { name: 'Active Directory', state: state.activedirectory, id: 'activedirectory' },
+        { name: 'LDAP', state: state.ldap, id: 'ldap' },
+      ];
     });
   }
 
   goTo(el: string): void {
+    this.dialogRef.close();
     this.router.navigate([`/directoryservice/${el}`]);
   }
 }

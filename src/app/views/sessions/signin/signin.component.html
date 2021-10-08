@@ -22,7 +22,7 @@
                       required
                       [(ngModel)]="signinData.username"
                       #username="ngModel"
-                      placeholder="{{'Username' | translate}}"
+                      [placeholder]="'Username' | translate"
                       value=""
                       autocorrect="off" autocapitalize="none" autocomplete="off"
                     >
@@ -38,7 +38,7 @@
                   </div>
                   <mat-form-field class="full-width">
                     <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:4px;">lock</mat-icon>&nbsp;&nbsp;</span>
-                    <input type="password" name="password" required matInput [(ngModel)]="signinData.password" #password="ngModel" placeholder="{{'Password' | translate}}" value="">
+                    <input type="password" name="password" required matInput [(ngModel)]="signinData.password" #password="ngModel" [placeholder]="'Password' | translate" value="">
                     <mat-error *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)">
                       <span *ngIf="!failed">{{"Please enter your password" | translate}}</span>
                       <span *ngIf="failed">{{"Please enter your password again" | translate}}</span>
@@ -53,7 +53,7 @@
                       #otp="ngModel"
                       required
                       autocomplete="off"
-                      placeholder="{{'Two-Factor Authentication Code' | translate}}"
+                      [placeholder]="'Two-Factor Authentication Code' | translate"
                       >
                     <mat-error>
                       <span *ngIf="!failed">{{"Please enter your 2FA code" | translate}}</span>
@@ -73,7 +73,7 @@
                       <label class="label input-text">{{'Password' | translate}}</label>
                     </div>
                     <mat-form-field class="full-width">
-                      <input matInput type="password" id="password" formControlName="password" required placeholder="{{'Password' | translate}}">
+                      <input matInput type="password" id="password" formControlName="password" required [placeholder]="'Password' | translate">
                       <mat-error *ngIf="password.errors && (password.dirty || password.touched)">
                         <span *ngIf="password.errors.required">{{"This field is required" | translate}}</span>
                       </mat-error>
@@ -84,7 +84,7 @@
                       <label class="label input-text">{{'Reenter Password' | translate}}</label>
                     </div>
                     <mat-form-field class="full-width">
-                      <input matInput type="password" name="password2" formControlName="password2" required placeholder="{{'Confirm Password' | translate}}">
+                      <input matInput type="password" name="password2" formControlName="password2" required [placeholder]="'Confirm Password' | translate">
                       <mat-error *ngIf="password2.errors && (password2.dirty || password2.touched)">
                         <span *ngIf="password2.errors">{{"Passwords do not match" | translate}}</span>
                       </mat-error>
@@ -124,7 +124,7 @@
             </div>
 
             <div class="copyright-line">
-              <span  class="copyright-txt">TrueNAS {{product_type}} ® © {{copyrightYear}} </span>
+              <span  class="copyright-txt">TrueNAS {{productTypeReadableText}} ® © {{copyrightYear}} </span>
               <img id="full-logo" (click)="openIX()" src="assets/images/ix_logo_full.png">
             </div>
           </div>

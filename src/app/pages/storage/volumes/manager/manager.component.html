@@ -13,7 +13,7 @@
                 <label class="label input-text">
                   {{ 'Name' | translate }}*
                 </label>
-                <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
+                <tooltip class="volumeTooltip" [message]="name_tooltip | translate"></tooltip>
               </div>
 
               <div class="full-width">
@@ -31,7 +31,7 @@
               >
                 {{"Encryption" | translate}}
               </mat-checkbox>
-              <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
+              <tooltip class="volumeTooltip" [message]="encryption_tooltip | translate"></tooltip>
             </div>
 
             <div *ngIf="isEncrypted" fxFlex="30%" class="inline form-element encryption-select" style="padding-top: 4px;">
@@ -46,11 +46,11 @@
                   id="pool-manager__encryption_algorithm-select"
                   [(ngModel)]="encryption_algorithm"
                   class="form-control"
-                  placeholder="{{'Encryption Algorithm' | translate}}"
+                  [placeholder]="'Encryption Algorithm' | translate"
                 >
                   <mat-option *ngFor="let option of encryption_algorithm_options" [value]="option.value"
                     id="encryption_algorithm_option_{{option.label}}">
-                    {{ option.label }}
+                    {{ option.label | translate }}
                   </mat-option>
 
                 </mat-select>
@@ -152,7 +152,7 @@
         <ng-template #extend>
           <div>
             <mat-form-field>
-              <input id="pool-manager__extend-name-input-field" matInput placeholder="Name" [value]="name" disabled>
+              <input id="pool-manager__extend-name-input-field" matInput [placeholder]="'Name' | translate" [value]="name" disabled>
             </mat-form-field>
             <mat-error *ngIf="isEncrypted" class="adjust-upward">{{"Adding Vdevs to an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
             <div>
@@ -330,7 +330,7 @@
                 id="pool-manager__nameFilter"
                 type='text'
                 [(ngModel)]="nameFilterField"
-                placeholder="{{ 'Filter disks by name' | translate }}"
+                [placeholder]="'Filter disks by name' | translate"
                 (keyup)='updateFilter($event)'
               />
             </mat-form-field>
@@ -341,7 +341,7 @@
                 id="pool-manager__capacityFilter"
                 type='text'
                 [(ngModel)]="capacityFilterField"
-                placeholder="{{ 'Filter disks by capacity' | translate }}"
+                [placeholder]="'Filter disks by capacity' | translate"
                 (keyup)='updateFilter($event)'
               />
             </mat-form-field>

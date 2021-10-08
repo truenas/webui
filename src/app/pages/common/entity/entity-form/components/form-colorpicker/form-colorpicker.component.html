@@ -11,7 +11,7 @@
   <mat-form-field class="full-width">
     <input
       matInput
-      [placeholder]="config.placeholder"
+      [placeholder]="config.placeholder | translate"
       [(value)]="colorProxy"
       (input)="colorProxy=$event.target.value"
     >
@@ -33,7 +33,7 @@
   <tooltip
     *ngIf="config.tooltip"
     [header]="config.placeholder"
-    [message]="config.tooltip"
+    [message]="config.tooltip | translate"
   ></tooltip>
   <mat-error *ngIf="config['hasErrors']">{{config['errors']}}</mat-error>
 </div>

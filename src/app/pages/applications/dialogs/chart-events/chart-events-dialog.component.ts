@@ -48,7 +48,7 @@ export class ChartEventsDialogComponent implements OnInit {
         this.catalogApp = charts[0];
       }
       if (events) {
-        this.chartEvents = events;
+        this.chartEvents = events.reverse();
       }
     });
   }
@@ -91,7 +91,7 @@ export class ChartEventsDialogComponent implements OnInit {
     this.loader.open();
     this.appService.getChartReleaseEvents(this.catalogApp.name).pipe(untilDestroyed(this)).subscribe((evt) => {
       this.loader.close();
-      this.chartEvents = evt;
+      this.chartEvents = evt.reverse();
       this.eventsPannel.open();
     });
   }

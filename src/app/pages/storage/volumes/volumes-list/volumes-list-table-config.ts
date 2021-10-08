@@ -1496,15 +1496,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
     node.data = data;
     this.getMoreDatasetInfo(data, data.parent);
     node.data.group_actions = true;
-    let actions_title: string = helptext.dataset_actions;
+    let actions_title: string = this.translate.instant(helptext.dataset_actions);
     if (data.type === DatasetType.Volume) {
-      actions_title = helptext.zvol_actions;
+      actions_title = this.translate.instant(helptext.zvol_actions);
     }
     const actions = [{ title: actions_title, actions: this.getActions(data) }];
     if (data.type === DatasetType.Filesystem || data.type === DatasetType.Volume) {
       const encryption_actions = this.getEncryptedDatasetActions(data);
       if (encryption_actions.length > 0) {
-        actions.push({ title: helptext.encryption_actions_title, actions: encryption_actions });
+        actions.push({ title: this.translate.instant(helptext.encryption_actions_title), actions: encryption_actions });
       }
     }
     node.data.actions = actions;
