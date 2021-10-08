@@ -309,6 +309,7 @@ def click_save_the_box_tasks_should_save_without_error(driver):
 def verify_all_files_are_moved_from_the_box_test_folder_to_the_dataset(driver, nas_ip):
     """verify all files are moved from the Box test folder to the dataset."""
     driver.switch_to.window(driver.window_handles[1])
+    time.sleep(1)
     driver.refresh()
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="music"]', 'clickable')
@@ -354,6 +355,7 @@ def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
 def verify_all_files_are_moved_from_the_dataset_to_the_box_test_folder(driver, nas_ip):
     """verify all files are moved from the dataset to the Box test folder."""
     driver.switch_to.window(driver.window_handles[1])
+    time.sleep(1)
     driver.refresh()
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="Explaining_BSD.pdf"]', 'clickable')
@@ -413,6 +415,7 @@ def verify_all_files_are_sync_to_the_dataset_folder(driver, nas_ip):
 def on_the_box_test_folder_tab_delete_one_file(driver):
     """on the Box test folder tab, delete one file."""
     driver.switch_to.window(driver.window_handles[1])
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
     action = ActionChains(driver)
@@ -430,6 +433,7 @@ def on_the_box_test_folder_tab_delete_one_file(driver):
 def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     """on the NAS cloud sync task tab, click Run Now."""
     driver.switch_to.window(driver.window_handles[0])
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//div[contains(text(),"My BOX Cloud task")]')
     assert wait_on_element(driver, 5, '//button[@id="action_button___run_now"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="action_button___run_now"]').click()
@@ -461,6 +465,7 @@ def verify_the_file_is_removed_from_the_dataset_folder(driver, nas_ip):
 def on_the_box_test_folder_tab_delete_all_file(driver):
     """on the Box test folder tab, delete all file."""
     driver.switch_to.window(driver.window_handles[1])
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
     action = ActionChains(driver)
     assert wait_on_element(driver, 5, '//a[text()="music"]')
