@@ -46,9 +46,12 @@ def the_browser_is_open_navigate_to_the_scale_url(driver, nas_ip, root_password)
 def on_the_dashboard_verify_the_welcome_box_is_loaded_click_close(driver):
     """on the dashboard, verify the Welcome box is loaded, click Close."""
     time.sleep(2)
-    assert wait_on_element(driver, 5, '//div[contains(.,"Welcome to your new NAS")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
+        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+    #assert wait_on_element(driver, 5, '//div[contains(.,"Welcome to your new NAS")]')
+    #assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    #driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('on the dashboard click on the System Settings side menu, then click services')
@@ -117,7 +120,7 @@ def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver
 @then('the service should be enabled with no errors')
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
-    wait_for_value = wait_for_attribute_value(driver, 7, '//mat-slide-toggle[@ix-auto="slider__state__SSH"]', 'class', 'mat-checked')
+    wait_for_value = wait_for_attribute_value(driver, 20, '//mat-slide-toggle[@ix-auto="slider__state__SSH"]', 'class', 'mat-checked')
     assert wait_for_value
 
 
