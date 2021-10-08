@@ -120,8 +120,7 @@ def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver
 @then('the service should be enabled with no errors')
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
-    wait_for_value = wait_for_attribute_value(driver, 20, '//mat-slide-toggle[@ix-auto="slider__state__SSH"]', 'class', 'mat-checked')
-    assert wait_for_value
+    assert wait_on_element(driver, 20, '//mat-slide-toggle[@ix-auto="slider__state__SSH"]', 'class', 'mat-checked')
 
 
 @then('ssh to a NAS with root and the root password should work')
