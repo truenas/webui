@@ -28,7 +28,7 @@ import { EncryptionService } from 'app/services/encryption.service';
 export class VolumeAddkeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Add Recovery Key');
 
-  queryCall: 'pool.query' = 'pool.query';
+  queryCall = 'pool.query' as const;
   queryKey = 'id';
   route_return: string[] = ['storage', 'pools'];
   isNew = false;

@@ -21,7 +21,7 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class ProactiveComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
-  queryCall: 'support.config' = 'support.config';
+  queryCall = 'support.config' as const;
   controls: { [key: string]: AbstractControl };
   save_button_enabled: boolean;
   title = helptext.proactive.title;

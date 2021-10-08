@@ -20,10 +20,9 @@ import { WebSocketService } from 'app/services/ws.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class AuthorizedAccessFormComponent implements FormConfiguration {
-  addCall: 'iscsi.auth.create' = 'iscsi.auth.create';
-  queryCall: 'iscsi.auth.query' = 'iscsi.auth.query';
-  editCall: 'iscsi.auth.update' = 'iscsi.auth.update';
-  // protected resource_name: string = 'services/iscsi/authcredential';
+  addCall = 'iscsi.auth.create' as const;
+  queryCall = 'iscsi.auth.query' as const;
+  editCall = 'iscsi.auth.update' as const;
   route_success: string[] = ['sharing', 'iscsi', 'auth'];
   isEntity = true;
   customFilter: [[Partial<QueryFilter<IscsiAuthAccess>>]] = [[['id', '=']]];

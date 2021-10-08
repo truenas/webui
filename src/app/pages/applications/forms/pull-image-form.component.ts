@@ -26,8 +26,8 @@ interface PullImageFormValues {
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class PullImageFormComponent implements FormConfiguration {
-  queryCall: 'container.image.query' = 'container.image.query';
-  addCall: 'container.image.pull' = 'container.image.pull';
+  queryCall = 'container.image.query' as const;
+  addCall = 'container.image.pull' as const;
   isEntity = true;
   protected entityForm: EntityFormComponent;
   title = helptext.pullImageForm.title;

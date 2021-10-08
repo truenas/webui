@@ -30,8 +30,8 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class ActiveDirectoryComponent implements FormConfiguration {
   title: string = helptext.title;
-  queryCall: 'activedirectory.config' = 'activedirectory.config';
-  updateCall: 'activedirectory.update' = 'activedirectory.update';
+  queryCall = 'activedirectory.config' as const;
+  updateCall = 'activedirectory.update' as const;
   isEntity = false;
   isBasicMode = true;
   protected kerberos_realm: FormSelectConfig;

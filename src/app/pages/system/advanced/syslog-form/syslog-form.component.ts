@@ -29,8 +29,8 @@ import { ModalService } from 'app/services/modal.service';
   providers: [],
 })
 export class SyslogFormComponent implements FormConfiguration {
-  queryCall: 'system.advanced.config' = 'system.advanced.config';
-  updateCall = 'system.advanced.update';
+  queryCall = 'system.advanced.config' as const;
+  updateCall = 'system.advanced.update' as const;
   protected isOneColumnForm = true;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

@@ -15,8 +15,8 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SMBAclComponent implements FormConfiguration {
-  queryCall: 'smb.sharesec.query' = 'smb.sharesec.query';
-  editCall: 'smb.sharesec.update' = 'smb.sharesec.update';
+  queryCall = 'smb.sharesec.query' as const;
+  editCall = 'smb.sharesec.update' as const;
 
   route_success: string[] = ['sharing', 'smb'];
   isEntity = true;

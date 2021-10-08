@@ -32,9 +32,9 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class CloudCredentialsFormComponent implements FormConfiguration {
   isEntity = true;
-  addCall: 'cloudsync.credentials.create' = 'cloudsync.credentials.create';
-  queryCall: 'cloudsync.credentials.query' = 'cloudsync.credentials.query';
-  editCall: 'cloudsync.credentials.update' = 'cloudsync.credentials.update';
+  addCall = 'cloudsync.credentials.create' as const;
+  queryCall = 'cloudsync.credentials.query' as const;
+  editCall = 'cloudsync.credentials.update' as const;
   queryCallOption: QueryFilter<CloudsyncCredential>[];
   protected formGroup: FormGroup;
   protected id: number;

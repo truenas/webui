@@ -953,7 +953,7 @@ export type ApiDirectory = {
 /**
  * Prefer typing like this:
  * ```
- * queryCall: 'user.query' = 'user.query'
+ * queryCall: 'user.query' as const
  * ```
  * instead of using ApiMethod.
  */

@@ -15,7 +15,7 @@ import { ServicesService } from 'app/services';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class OpenvpnClientComponent implements FormConfiguration {
-  queryCall: 'openvpn.client.config' = 'openvpn.client.config';
+  queryCall = 'openvpn.client.config' as const;
   title = helptext.client.formTitle;
 
   fieldConfig: FieldConfig[] = [];

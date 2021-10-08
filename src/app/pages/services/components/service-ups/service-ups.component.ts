@@ -24,7 +24,7 @@ export class ServiceUPSComponent implements FormConfiguration {
   protected ups_port: FormComboboxConfig;
   protected entityForm: EntityFormComponent;
 
-  queryCall: 'ups.config' = 'ups.config';
+  queryCall = 'ups.config' as const;
   route_success: string[] = ['services'];
   title = helptext.formTitle;
 

@@ -26,7 +26,7 @@ import {
   styleUrls: ['./dataset-trivial-permissions.component.scss'],
 })
 export class DatasetTrivialPermissionsComponent implements FormConfiguration {
-  protected updateCall: 'pool.dataset.permission' = 'pool.dataset.permission';
+  protected updateCall = 'pool.dataset.permission' as const;
 
   datasetPath: string;
   aclType: AclType;

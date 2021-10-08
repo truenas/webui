@@ -18,8 +18,8 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class ScrubListComponent implements EntityTableConfig {
   title = T('Scrub Tasks');
-  queryCall: 'pool.scrub.query' = 'pool.scrub.query';
-  wsDelete: 'pool.scrub.delete' = 'pool.scrub.delete';
+  queryCall = 'pool.scrub.query' as const;
+  wsDelete = 'pool.scrub.delete' as const;
   route_add: string[] = ['tasks', 'scrub', 'add'];
   route_add_tooltip = this.translate.instant(T('Add Scrub Task'));
   route_edit: string[] = ['tasks', 'scrub', 'edit'];

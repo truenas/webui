@@ -34,8 +34,8 @@ import { DialogService } from 'app/services/dialog.service';
 export class VmwareSnapshotFormComponent implements FormConfiguration {
   route_success: string[] = ['storage', 'vmware-snapshots'];
   isEntity = true;
-  queryCall: 'vmware.query' = 'vmware.query';
-  addCall: 'vmware.create' = 'vmware.create';
+  queryCall = 'vmware.query' as const;
+  addCall = 'vmware.create' as const;
   pk: any;
   formGroup: FormGroup;
 

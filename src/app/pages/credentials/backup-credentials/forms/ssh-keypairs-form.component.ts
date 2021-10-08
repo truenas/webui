@@ -24,10 +24,10 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SshKeypairsFormComponent implements FormConfiguration {
-  queryCall: 'keychaincredential.query' = 'keychaincredential.query';
+  queryCall = 'keychaincredential.query' as const;
   queryCallOption: [QueryFilter<KeychainCredential>];
-  addCall: 'keychaincredential.create' = 'keychaincredential.create';
-  editCall: 'keychaincredential.update' = 'keychaincredential.update';
+  addCall = 'keychaincredential.create' as const;
+  editCall = 'keychaincredential.update' as const;
   isEntity = true;
   protected entityForm: EntityFormComponent;
   protected isOneColumnForm = true;

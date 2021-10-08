@@ -26,8 +26,8 @@ export class DockerImagesComponent implements EntityTableConfig {
 
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
-  queryCall: 'container.image.query' = 'container.image.query';
-  wsDelete: 'container.image.delete' = 'container.image.delete';
+  queryCall = 'container.image.query' as const;
+  wsDelete = 'container.image.delete' as const;
   disableActionsConfig = true;
 
   columns = [

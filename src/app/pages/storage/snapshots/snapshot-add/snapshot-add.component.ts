@@ -31,7 +31,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
   isEntity = true;
   isNew = true;
   initialized = true;
-  addCall: 'zfs.snapshot.create' = 'zfs.snapshot.create';
+  addCall = 'zfs.snapshot.create' as const;
   private entityForm: EntityFormComponent;
   private nameValidator: ValidatorFn;
 

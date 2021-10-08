@@ -26,8 +26,8 @@ import { ApplicationsService } from '../applications.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class KubernetesSettingsComponent implements FormConfiguration {
-  queryCall: 'kubernetes.config' = 'kubernetes.config';
-  editCall: 'kubernetes.update' = 'kubernetes.update';
+  queryCall = 'kubernetes.config' as const;
+  editCall = 'kubernetes.update' as const;
   isEditJob = true;
   private newEnableContainerImageUpdate = true;
   title = helptext.kubForm.title;

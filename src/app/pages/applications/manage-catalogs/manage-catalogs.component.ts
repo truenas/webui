@@ -26,8 +26,8 @@ import { CatalogEditFormComponent } from '../forms/catalog-edit-form.component';
 })
 export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnInit {
   title = 'Catalogs';
-  queryCall: 'catalog.query' = 'catalog.query';
-  wsDelete: 'catalog.delete' = 'catalog.delete';
+  queryCall = 'catalog.query' as const;
+  wsDelete = 'catalog.delete' as const;
   queryCallOption: CatalogQueryParams = [[], { extra: { item_details: true } }];
   disableActionsConfig = true;
 

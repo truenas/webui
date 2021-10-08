@@ -23,8 +23,8 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class RsyncListComponent implements EntityTableConfig {
   title = T('Rsync Tasks');
-  queryCall: 'rsynctask.query' = 'rsynctask.query';
-  wsDelete: 'rsynctask.delete' = 'rsynctask.delete';
+  queryCall = 'rsynctask.query' as const;
+  wsDelete = 'rsynctask.delete' as const;
   route_add: string[] = ['tasks', 'rsync', 'add'];
   route_add_tooltip = T('Add Rsync Task');
   route_edit: string[] = ['tasks', 'rsync', 'edit'];

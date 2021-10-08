@@ -33,11 +33,10 @@ import {
   selector: 'app-vm',
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [StorageService],
-
 })
 export class VmFormComponent implements FormConfiguration {
-  queryCall: 'vm.query' = 'vm.query';
-  editCall: 'vm.update' = 'vm.update';
+  queryCall = 'vm.query' as const;
+  editCall = 'vm.update' as const;
   isEntity = true;
   route_success: string[] = ['vm'];
   protected entityForm: EntityFormComponent;

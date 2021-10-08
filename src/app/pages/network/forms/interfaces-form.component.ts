@@ -28,9 +28,9 @@ import { NetworkService, DialogService, WebSocketService } from 'app/services';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class InterfacesFormComponent extends ViewControllerComponent implements FormConfiguration, OnDestroy {
-  queryCall: 'interface.query' = 'interface.query';
-  addCall: 'interface.create' = 'interface.create';
-  editCall: 'interface.update' = 'interface.update';
+  queryCall = 'interface.query' as const;
+  addCall = 'interface.create' as const;
+  editCall = 'interface.update' as const;
   queryKey = 'id';
   isEntity = true;
   protected is_ha = false;

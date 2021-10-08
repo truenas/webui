@@ -29,7 +29,7 @@ import { ModalService } from 'app/services/modal.service';
   providers: [SystemGeneralService],
 })
 export class CertificateAddComponent implements WizardConfiguration {
-  addWsCall: 'certificate.create' = 'certificate.create';
+  addWsCall = 'certificate.create' as const;
   private entityForm: EntityWizardComponent;
   private CSRList: Certificate[] = [];
   title: string = helptext_system_certificates.add.title;

@@ -35,11 +35,11 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi> {
   title = T('Cloud Sync Tasks');
-  queryCall: 'cloudsync.query' = 'cloudsync.query';
+  queryCall = 'cloudsync.query' as const;
   route_add: string[] = ['tasks', 'cloudsync', 'add'];
   route_add_tooltip = 'Add Cloud Sync Task';
   route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
-  wsDelete: 'cloudsync.delete' = 'cloudsync.delete';
+  wsDelete = 'cloudsync.delete' as const;
   entityList: EntityTableComponent;
   asyncView = true;
 

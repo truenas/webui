@@ -20,10 +20,10 @@ import { AppLoaderService, DialogService, WebSocketService } from 'app/services'
 })
 
 export class WebdavFormComponent implements FormConfiguration {
-  queryCall: 'sharing.webdav.query' = 'sharing.webdav.query';
+  queryCall = 'sharing.webdav.query' as const;
   queryKey = 'id';
-  addCall: 'sharing.webdav.create' = 'sharing.webdav.create';
-  editCall: 'sharing.webdav.update' = 'sharing.webdav.update';
+  addCall = 'sharing.webdav.create' as const;
+  editCall = 'sharing.webdav.update' as const;
   isEntity = true;
   title: string = T('Add WebDAV');
   confirmSubmit = true;

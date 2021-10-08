@@ -17,7 +17,7 @@ import { DialogService, WebSocketService } from 'app/services';
   styleUrls: ['reports-config.component.scss'],
 })
 export class ReportsConfigComponent implements FormConfiguration {
-  queryCall: 'reporting.config' = 'reporting.config';
+  queryCall = 'reporting.config' as const;
   title: string;
   isOneColumnForm: boolean;
   entityForm: EntityFormComponent;

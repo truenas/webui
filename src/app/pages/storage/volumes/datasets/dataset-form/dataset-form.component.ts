@@ -45,7 +45,7 @@ export class DatasetFormComponent implements FormConfiguration {
   isBasicMode = true;
   pk: string;
   customFilter: any[] = [];
-  queryCall: 'pool.dataset.query' = 'pool.dataset.query';
+  queryCall = 'pool.dataset.query' as const;
   isEntity = true;
   isNew = false;
   parent_dataset: Dataset;

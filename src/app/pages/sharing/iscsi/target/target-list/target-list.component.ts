@@ -24,8 +24,8 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   @Input() fcEnabled: boolean;
 
   title = T('Targets');
-  queryCall: 'iscsi.target.query' = 'iscsi.target.query';
-  wsDelete: 'iscsi.target.delete' = 'iscsi.target.delete';
+  queryCall = 'iscsi.target.query' as const;
+  wsDelete = 'iscsi.target.delete' as const;
   route_add: string[] = ['sharing', 'iscsi', 'target', 'add'];
   route_add_tooltip = T('Add Target');
   route_edit: string[] = ['sharing', 'iscsi', 'target', 'edit'];

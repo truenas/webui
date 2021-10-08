@@ -21,7 +21,7 @@ import { WebSocketService, DialogService } from 'app/services';
 export class BootEnvAttachFormComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot', 'status'];
   isEntity = true;
-  addCall: 'boot.attach' = 'boot.attach';
+  addCall = 'boot.attach' as const;
   pk: string;
   isNew = true;
   protected dialogRef: MatDialogRef<EntityJobComponent>;

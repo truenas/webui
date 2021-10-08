@@ -12,10 +12,10 @@ import { NetworkService, WebSocketService } from 'app/services';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class StaticRouteFormComponent implements FormConfiguration {
-  queryCall: 'staticroute.query' = 'staticroute.query';
+  queryCall = 'staticroute.query' as const;
   queryKey = 'id';
-  addCall: 'staticroute.create' = 'staticroute.create';
-  editCall: 'staticroute.update' = 'staticroute.update';
+  addCall = 'staticroute.create' as const;
+  editCall = 'staticroute.update' as const;
 
   isEntity = true;
   protected isOneColumnForm = true;

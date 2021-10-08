@@ -24,8 +24,8 @@ import { TooltipsService, WebSocketService } from 'app/services';
   providers: [TooltipsService],
 })
 export class ConfigurationComponent implements FormConfiguration {
-  queryCall: 'network.configuration.config' = 'network.configuration.config';
-  updateCall: 'network.configuration.update' = 'network.configuration.update';
+  queryCall = 'network.configuration.config' as const;
+  updateCall = 'network.configuration.update' as const;
   isEntity = false;
   fieldConfig: FieldConfig[] = [];
   fieldSets = new FieldSets([

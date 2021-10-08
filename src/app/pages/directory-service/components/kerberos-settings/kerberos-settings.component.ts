@@ -11,9 +11,9 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
 
 export class KerberosSettingsComponent implements FormConfiguration {
   title = helptext.ks_label;
-  queryCall: 'kerberos.config' = 'kerberos.config';
-  addCall: 'kerberos.update' = 'kerberos.update';
-  editCall: 'kerberos.update' = 'kerberos.update';
+  queryCall = 'kerberos.config' as const;
+  addCall = 'kerberos.update' as const;
+  editCall = 'kerberos.update' as const;
   protected isOneColumnForm = true;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

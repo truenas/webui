@@ -19,8 +19,8 @@ import {
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class GlobalconfigurationComponent implements FormConfiguration {
-  queryCall: 'iscsi.global.config' = 'iscsi.global.config';
-  editCall: 'iscsi.global.update' = 'iscsi.global.update';
+  queryCall = 'iscsi.global.config' as const;
+  editCall = 'iscsi.global.update' as const;
 
   fieldSets: FieldSet[] = [
     {

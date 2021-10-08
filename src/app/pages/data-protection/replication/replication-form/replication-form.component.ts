@@ -51,10 +51,10 @@ export class ReplicationFormComponent implements FormConfiguration {
     type: 'notice',
     content: '',
   };
-  queryCall: 'replication.query' = 'replication.query';
+  queryCall = 'replication.query' as const;
   queryCallOption: [QueryFilter<ReplicationTask>];
-  addCall: 'replication.create' = 'replication.create';
-  editCall: 'replication.update' = 'replication.update';
+  addCall = 'replication.create' as const;
+  editCall = 'replication.update' as const;
   isEntity = true;
   protected entityForm: EntityFormComponent;
   protected queryRes: ReplicationTask;

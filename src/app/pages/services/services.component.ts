@@ -28,7 +28,7 @@ interface ServiceRow extends Service {
 export class ServicesComponent implements EntityTableConfig, OnInit {
   title = T('Services');
   isFooterConsoleOpen: boolean;
-  queryCall: 'service.query' = 'service.query';
+  queryCall = 'service.query' as const;
   queryCallOption: QueryParams<Service> = [[], { order_by: ['service'] }];
   rowIdentifier = 'name';
   entityList: EntityTableComponent;

@@ -27,11 +27,11 @@ import { WebSocketService, AppLoaderService, DialogService } from 'app/services/
   providers: [EntityFormService],
 })
 export class AlertServiceComponent implements FormConfiguration {
-  addCall: 'alertservice.create' = 'alertservice.create';
-  queryCall: 'alertservice.query' = 'alertservice.query';
+  addCall = 'alertservice.create' as const;
+  queryCall = 'alertservice.query' as const;
   queryCallOption: [Partial<QueryFilter<AlertService>>] = [['id', '=']];
-  editCall: 'alertservice.update' = 'alertservice.update';
-  testCall: 'alertservice.test' = 'alertservice.test';
+  editCall = 'alertservice.update' as const;
+  testCall = 'alertservice.test' as const;
   route_success: string[] = ['system', 'alertservice'];
 
   isEntity = true;

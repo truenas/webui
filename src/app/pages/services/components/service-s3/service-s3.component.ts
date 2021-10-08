@@ -25,9 +25,8 @@ import {
 })
 
 export class ServiceS3Component implements FormConfiguration {
-  // protected resource_name: string = 'services/s3';
-  queryCall: 's3.config' = 's3.config';
-  updateCall = 's3.update';
+  queryCall = 's3.config' as const;
+  updateCall = 's3.update' as const;
   route_success: string[] = ['services'];
   private certificate: FormSelectConfig;
   private initial_path: string;

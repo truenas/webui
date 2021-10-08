@@ -21,11 +21,11 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 export class ExtentListComponent implements EntityTableConfig {
   tableTitle = 'Extents';
   protected entityTable: EntityTableComponent;
-  queryCall: 'iscsi.extent.query' = 'iscsi.extent.query';
+  queryCall = 'iscsi.extent.query' as const;
   route_add: string[] = ['sharing', 'iscsi', 'extent', 'add'];
   route_add_tooltip = 'Add Extent';
   route_edit: string[] = ['sharing', 'iscsi', 'extent', 'edit'];
-  wsDelete: 'iscsi.extent.delete' = 'iscsi.extent.delete';
+  wsDelete = 'iscsi.extent.delete' as const;
 
   columns = [
     {

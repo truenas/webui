@@ -14,8 +14,8 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class KerberosRealmsListComponent implements EntityTableConfig {
   title = 'Kerberos Realms';
-  queryCall: 'kerberos.realm.query' = 'kerberos.realm.query';
-  wsDelete: 'kerberos.realm.delete' = 'kerberos.realm.delete';
+  queryCall = 'kerberos.realm.query' as const;
+  wsDelete = 'kerberos.realm.delete' as const;
   keyList = ['admin_server', 'kdc', 'kpasswd_server'];
   protected entityList: EntityTableComponent;
 

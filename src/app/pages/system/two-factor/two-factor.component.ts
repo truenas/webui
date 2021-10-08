@@ -17,7 +17,7 @@ import { WebSocketService, DialogService, AppLoaderService } from 'app/services/
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class TwoFactorComponent implements FormConfiguration {
-  queryCall: 'auth.twofactor.config' = 'auth.twofactor.config';
+  queryCall = 'auth.twofactor.config' as const;
   private entityEdit: EntityFormComponent;
   private TwoFactorEnabled: boolean;
   qrInfo: string;

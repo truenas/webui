@@ -21,7 +21,7 @@ import { EncryptionService } from 'app/services/encryption.service';
 export class VolumeRekeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Reset Encryption');
 
-  queryCall: 'pool.query' = 'pool.query';
+  queryCall = 'pool.query' as const;
   queryKey = 'id';
   route_success: string[] = ['storage', 'pools'];
   isNew = false;

@@ -13,8 +13,8 @@ import { InitshutdownFormComponent } from '../initshutdown-form/initshutdown-for
 })
 export class InitshutdownListComponent implements EntityTableConfig {
   title = 'Init/Shutdown Scripts';
-  queryCall: 'initshutdownscript.query' = 'initshutdownscript.query';
-  wsDelete: 'initshutdownscript.delete' = 'initshutdownscript.delete';
+  queryCall = 'initshutdownscript.query' as const;
+  wsDelete = 'initshutdownscript.delete' as const;
   route_add: string[] = ['tasks', 'initshutdown', 'add'];
   route_add_tooltip = 'Add Init/Shutdown Scripts';
   route_edit: string[] = ['tasks', 'initshutdown', 'edit'];

@@ -102,8 +102,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   numberOfRunningJobs$: Observable<number> = this.jobsManagerStore.numberOfRunningJobs$;
 
   protected tcConnected = false;
-  protected tc_queryCall: 'truecommand.config' = 'truecommand.config';
-  protected tc_updateCall: 'truecommand.update' = 'truecommand.update';
+  protected tc_queryCall = 'truecommand.config' as const;
+  protected tc_updateCall = 'truecommand.update' as const;
   protected isTcStatusOpened = false;
   protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
   tcStatus: TrueCommandConfig;

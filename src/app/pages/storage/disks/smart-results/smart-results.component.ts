@@ -14,7 +14,7 @@ import { PageTitleService } from 'app/services/page-title.service';
   template: '<entity-table [conf]="this"></entity-table>',
 })
 export class SmartResultsComponent implements EntityTableConfig {
-  queryCall: 'smart.test.results' = 'smart.test.results';
+  queryCall = 'smart.test.results' as const;
   queryCallOption: QueryParams<SmartTestResults> = [];
 
   emptyTableConfigMessages = {

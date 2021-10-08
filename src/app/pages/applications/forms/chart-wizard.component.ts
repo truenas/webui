@@ -24,7 +24,7 @@ import { ApplicationsService } from '../applications.service';
 })
 
 export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
-  protected addCall: 'chart.release.create' = 'chart.release.create';
+  protected addCall = 'chart.release.create' as const;
   protected utils: CommonUtils;
   summary = {};
   isAutoSummary = true;

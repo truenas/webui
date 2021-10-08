@@ -11,8 +11,8 @@ import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-t
 })
 export class AuthorizedAccessListComponent implements EntityTableConfig {
   tableTitle = 'Authorized Access';
-  queryCall: 'iscsi.auth.query' = 'iscsi.auth.query';
-  wsDelete: 'iscsi.auth.delete' = 'iscsi.auth.delete';
+  queryCall = 'iscsi.auth.query' as const;
+  wsDelete = 'iscsi.auth.delete' as const;
   route_add: string[] = ['sharing', 'iscsi', 'auth', 'add'];
   route_edit: string[] = ['sharing', 'iscsi', 'auth', 'edit'];
   route_add_tooltip = 'Add Authorized Access';

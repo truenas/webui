@@ -40,10 +40,10 @@ interface DialogData {
 })
 export class SnapshotListComponent implements EntityTableConfig {
   title = 'Snapshots';
-  queryCall: 'zfs.snapshot.query' = 'zfs.snapshot.query';
+  queryCall = 'zfs.snapshot.query' as const;
   route_add: string[] = ['storage', 'snapshots', 'add'];
   route_add_tooltip = 'Add Snapshot';
-  wsDelete: 'zfs.snapshot.delete' = 'zfs.snapshot.delete';
+  wsDelete = 'zfs.snapshot.delete' as const;
   protected loaderOpen = false;
   protected entityList: EntityTableComponent;
   protected rollback: ZfsSnapshot;
@@ -96,7 +96,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     },
   };
 
-  wsMultiDelete: 'core.bulk' = 'core.bulk';
+  wsMultiDelete = 'core.bulk' as const;
   multiActions = [
     {
       id: 'mdelete',

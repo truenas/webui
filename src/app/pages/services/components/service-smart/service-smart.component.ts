@@ -15,7 +15,7 @@ import { WebSocketService } from 'app/services';
 })
 
 export class ServiceSMARTComponent implements FormConfiguration {
-  queryCall: 'smart.config' = 'smart.config';
+  queryCall = 'smart.config' as const;
   route_success: string[] = ['services'];
   title = helptext.formTitle;
 

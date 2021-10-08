@@ -50,7 +50,7 @@ import { VmService } from 'app/services/vm.service';
   providers: [VmService],
 })
 export class VMWizardComponent implements WizardConfiguration {
-  addWsCall: 'vm.create' = 'vm.create';
+  addWsCall = 'vm.create' as const;
   summary: any = {};
   isLinear = true;
   firstFormGroup: FormGroup;

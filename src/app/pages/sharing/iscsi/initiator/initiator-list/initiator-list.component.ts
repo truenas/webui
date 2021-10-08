@@ -11,10 +11,10 @@ import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-t
 })
 export class InitiatorListComponent implements EntityTableConfig {
   tableTitle = T('Initiators Groups');
-  queryCall: 'iscsi.initiator.query' = 'iscsi.initiator.query';
+  queryCall = 'iscsi.initiator.query' as const;
   route_add: string[] = ['sharing', 'iscsi', 'initiators', 'add'];
   route_edit: string[] = ['sharing', 'iscsi', 'initiators', 'edit'];
-  wsDelete: 'iscsi.initiator.delete' = 'iscsi.initiator.delete';
+  wsDelete = 'iscsi.initiator.delete' as const;
 
   route_add_tooltip = 'Add Initiator';
 

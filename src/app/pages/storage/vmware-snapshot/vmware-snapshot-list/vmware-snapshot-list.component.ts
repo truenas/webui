@@ -10,11 +10,11 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 })
 export class VmwareSnapshotListComponent implements EntityTableConfig {
   title = 'VMware Snapshots';
-  queryCall: 'vmware.query' = 'vmware.query';
+  queryCall = 'vmware.query' as const;
   route_add: string[] = ['storage', 'vmware-snapshots', 'add'];
   route_add_tooltip = 'Add VMware Snapshot';
   protected entityList: EntityTableComponent;
-  wsDelete: 'vmware.delete' = 'vmware.delete';
+  wsDelete = 'vmware.delete' as const;
 
   columns = [
     { name: 'Hostname', prop: 'hostname', always_display: true }, { name: 'Username', prop: 'username' },

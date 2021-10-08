@@ -33,7 +33,7 @@ import { LocaleService } from 'app/services/locale.service';
 })
 export class DiskListComponent implements EntityTableConfig<Disk> {
   title = T('Disks');
-  queryCall: 'disk.query' = 'disk.query';
+  queryCall = 'disk.query' as const;
   queryCallOption: QueryParams<Disk, { extra: { pools: true } }> = [[], { extra: { pools: true } }];
   noAdd = true;
 

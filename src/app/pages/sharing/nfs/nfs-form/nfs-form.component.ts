@@ -27,9 +27,9 @@ import {
   providers: [NetworkService],
 })
 export class NFSFormComponent implements FormConfiguration {
-  queryCall: 'sharing.nfs.query' = 'sharing.nfs.query';
-  editCall: 'sharing.nfs.update' = 'sharing.nfs.update';
-  addCall: 'sharing.nfs.create' = 'sharing.nfs.create';
+  queryCall = 'sharing.nfs.query' as const;
+  editCall = 'sharing.nfs.update' as const;
+  addCall = 'sharing.nfs.create' as const;
   pk: number;
   queryKey = 'id';
   isEntity = true;

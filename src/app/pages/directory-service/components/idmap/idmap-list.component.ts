@@ -29,9 +29,9 @@ import { IdmapFormComponent } from './idmap-form.component';
 })
 export class IdmapListComponent implements EntityTableConfig {
   title = 'Idmap';
-  queryCall: 'idmap.query' = 'idmap.query';
+  queryCall = 'idmap.query' as const;
   queryCallOption: QueryParams<Idmap>;
-  wsDelete: 'idmap.delete' = 'idmap.delete';
+  wsDelete = 'idmap.delete' as const;
   protected entityList: EntityTableComponent;
   protected idmapFormComponent: IdmapFormComponent;
 

@@ -15,9 +15,9 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class KerberosKeytabsFormComponent implements FormConfiguration {
   title: string;
-  addCall: 'kerberos.keytab.create' = 'kerberos.keytab.create';
-  editCall: 'kerberos.keytab.update' = 'kerberos.keytab.update';
-  queryCall: 'kerberos.keytab.query' = 'kerberos.keytab.query';
+  addCall = 'kerberos.keytab.create' as const;
+  editCall = 'kerberos.keytab.update' as const;
+  queryCall = 'kerberos.keytab.query' as const;
   pk: any;
   queryKey = 'id';
   isEntity = true;

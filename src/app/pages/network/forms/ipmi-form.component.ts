@@ -26,7 +26,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 })
 export class IPMIFromComponent implements FormConfiguration {
   title = T('IPMI');
-  queryCall: 'ipmi.query' = 'ipmi.query';
+  queryCall = 'ipmi.query' as const;
 
   protected entityEdit: EntityFormComponent;
   is_ha = false;

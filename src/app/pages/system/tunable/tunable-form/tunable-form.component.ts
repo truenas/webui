@@ -17,10 +17,10 @@ import { SystemGeneralService, WebSocketService } from 'app/services';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class TunableFormComponent implements FormConfiguration {
-  queryCall: 'tunable.query' = 'tunable.query';
+  queryCall = 'tunable.query' as const;
   queryKey = 'id';
-  editCall: 'tunable.update' = 'tunable.update';
-  addCall: 'tunable.create' = 'tunable.create';
+  editCall = 'tunable.update' as const;
+  addCall = 'tunable.create' as const;
   title: string;
   protected isOneColumnForm = true;
 

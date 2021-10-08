@@ -12,7 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CconfigureRYSNCComponent implements FormConfiguration {
-  queryCall: 'rsyncd.config' = 'rsyncd.config';
+  queryCall = 'rsyncd.config' as const;
   title = helptext.configureFormTitle;
 
   route_success: string[] = ['services'];

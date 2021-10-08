@@ -20,13 +20,13 @@ import { UserService, WebSocketService } from 'app/services';
 })
 
 export class RYSNCConfigurationFormComponent implements FormConfiguration {
-  queryCall: 'rsyncmod.query' = 'rsyncmod.query';
+  queryCall = 'rsyncmod.query' as const;
   route_success: string[] = ['services', 'rsync', 'rsync-module'];
   isEntity = true;
   formGroup: FormGroup;
   pk: number;
   title = helptext.moduleFormTitle;
-  addCall: 'rsyncmod.create' = 'rsyncmod.create';
+  addCall = 'rsyncmod.create' as const;
   isNew: boolean;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

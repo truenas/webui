@@ -27,8 +27,8 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class GroupListComponent implements EntityTableConfig<Group> {
   title = 'Groups';
-  queryCall: 'group.query' = 'group.query';
-  wsDelete: 'group.delete' = 'group.delete';
+  queryCall = 'group.query' as const;
+  wsDelete = 'group.delete' as const;
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
   globalConfig = {

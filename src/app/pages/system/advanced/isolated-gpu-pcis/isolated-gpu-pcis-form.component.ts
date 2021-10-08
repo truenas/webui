@@ -20,8 +20,8 @@ import { ModalService } from 'app/services/modal.service';
   providers: [],
 })
 export class IsolatedGpuPcisFormComponent implements FormConfiguration {
-  queryCall: 'system.advanced.config' = 'system.advanced.config';
-  updateCall: 'system.advanced.update' = 'system.advanced.update';
+  queryCall = 'system.advanced.config' as const;
+  updateCall = 'system.advanced.update' as const;
   isOneColumnForm = true;
   gpus: Device[];
   private isolatedGpuPciIds: string[];

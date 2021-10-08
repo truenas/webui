@@ -14,7 +14,7 @@ import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class StorageService {
-  protected diskResource: 'disk.query' = 'disk.query';
+  protected diskResource = 'disk.query' as const;
 
   ids: string[];
   diskNames: string[];

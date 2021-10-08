@@ -15,7 +15,7 @@ import { UserService, WebSocketService } from 'app/services';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ServiceTFTPComponent implements FormConfiguration {
-  queryCall: 'tftp.config' = 'tftp.config';
+  queryCall = 'tftp.config' as const;
   route_success: string[] = ['services'];
   title = helptext.formTitle;
 

@@ -19,8 +19,8 @@ import { WebSocketService } from 'app/services';
 })
 export class DiskFormComponent implements FormConfiguration {
   route_success: string[] = ['storage', 'disks'];
-  queryCall: 'disk.query' = 'disk.query';
-  editCall: 'disk.update' = 'disk.update';
+  queryCall = 'disk.query' as const;
+  editCall = 'disk.update' as const;
   customFilter: any[] = [[['identifier', '=']]];
   isEntity = true;
 

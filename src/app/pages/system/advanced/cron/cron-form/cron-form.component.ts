@@ -20,10 +20,10 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class CronFormComponent implements FormConfiguration {
   title: string;
-  queryCall: 'cronjob.query' = 'cronjob.query';
+  queryCall = 'cronjob.query' as const;
   queryKey = 'id';
-  editCall: 'cronjob.update' = 'cronjob.update';
-  addCall: 'cronjob.create' = 'cronjob.create';
+  editCall = 'cronjob.update' as const;
+  addCall = 'cronjob.create' as const;
   pk: number;
   protected user_field: FormComboboxConfig;
   protected isOneColumnForm = true;

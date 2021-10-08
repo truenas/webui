@@ -16,8 +16,8 @@ import { WebSocketService } from 'app/services';
 export class TunableListComponent implements EntityTableConfig {
   title: string = T('Tunables');
   title_scale: string = T('Sysctl');
-  wsDelete: 'tunable.delete' = 'tunable.delete';
-  queryCall: 'tunable.query' = 'tunable.query';
+  wsDelete = 'tunable.delete' as const;
+  queryCall = 'tunable.query' as const;
 
   route_edit: string[] = ['system', 'tunable', 'edit'];
   protected route_success: string[] = ['system', 'tunable'];
@@ -33,7 +33,7 @@ export class TunableListComponent implements EntityTableConfig {
 
   protected entityList: EntityTableComponent;
 
-  wsMultiDelete: 'core.bulk' = 'core.bulk';
+  wsMultiDelete = 'core.bulk' as const;
   multiActions = [
     {
       id: 'mdelete',

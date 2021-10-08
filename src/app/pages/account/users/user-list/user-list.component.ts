@@ -41,8 +41,8 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
   protected usr_lst: [User[]?] = [];
   protected grp_lst: [Group[]?] = [];
   hasDetails = true;
-  queryCall: 'user.query' = 'user.query';
-  wsDelete: 'user.delete' = 'user.delete';
+  queryCall = 'user.query' as const;
+  wsDelete = 'user.delete' as const;
   globalConfig = {
     id: 'config',
     tooltip: helptext.globalConfigTooltip,

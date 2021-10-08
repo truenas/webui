@@ -28,8 +28,8 @@ import {
   providers: [SystemGeneralService],
 })
 export class ServiceFTPComponent implements FormConfiguration, OnInit {
-  editCall: 'ftp.update' = 'ftp.update';
-  queryCall: 'ftp.config' = 'ftp.config';
+  editCall = 'ftp.update' as const;
+  queryCall = 'ftp.config' as const;
   route_success: string[] = ['services'];
 
   isBasicMode = true;

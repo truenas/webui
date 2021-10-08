@@ -14,8 +14,8 @@ import { IscsiService } from 'app/services';
 })
 export class PortalListComponent implements EntityTableConfig {
   tableTitle = 'Portals';
-  queryCall: 'iscsi.portal.query' = 'iscsi.portal.query';
-  wsDelete: 'iscsi.portal.delete' = 'iscsi.portal.delete';
+  queryCall = 'iscsi.portal.query' as const;
+  wsDelete = 'iscsi.portal.delete' as const;
   route_add: string[] = ['sharing', 'iscsi', 'portals', 'add'];
   route_add_tooltip = 'Add Portal';
   route_edit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];

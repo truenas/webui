@@ -15,9 +15,8 @@ import { WebSocketService, ValidationService } from 'app/services';
   selector: 'dynamicdns-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-
 export class ServiceDDNSComponent implements FormConfiguration {
-  addCall: 'dyndns.update' = 'dyndns.update';
+  addCall = 'dyndns.update' as const;
   title = helptext.formTitle;
   route_success: string[] = ['services'];
 

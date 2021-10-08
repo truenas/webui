@@ -30,8 +30,8 @@ import { ModalService } from 'app/services/modal.service';
 export class LdapComponent implements FormConfiguration {
   title: string = helptext.title;
   isEntity = false;
-  queryCall: 'ldap.config' = 'ldap.config';
-  updateCall = 'ldap.update';
+  queryCall = 'ldap.config' as const;
+  updateCall = 'ldap.update' as const;
   isBasicMode = true;
   protected ldap_kerberos_realm: FormSelectConfig;
   protected ldap_kerberos_principal: FormSelectConfig;

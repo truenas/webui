@@ -21,7 +21,7 @@ import {
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class OpenvpnServerComponent implements FormConfiguration {
-  queryCall: 'openvpn.server.config' = 'openvpn.server.config';
+  queryCall = 'openvpn.server.config' as const;
   protected certID: number;
   protected serverAddress: string;
   protected entityEdit: EntityFormComponent;

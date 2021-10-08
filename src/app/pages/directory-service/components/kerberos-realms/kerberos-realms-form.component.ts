@@ -15,9 +15,9 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class KerberosRealmsFormComponent implements FormConfiguration {
   title: string;
-  addCall: 'kerberos.realm.create' = 'kerberos.realm.create';
-  editCall: 'kerberos.realm.update' = 'kerberos.realm.update';
-  queryCall: 'kerberos.realm.query' = 'kerberos.realm.query';
+  addCall = 'kerberos.realm.create' as const;
+  editCall = 'kerberos.realm.update' as const;
+  queryCall = 'kerberos.realm.query' as const;
   pk: number;
   queryKey = 'id';
   isEntity = true;

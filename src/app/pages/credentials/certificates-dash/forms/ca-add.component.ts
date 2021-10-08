@@ -22,9 +22,8 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [SystemGeneralService],
 })
-
 export class CertificateAuthorityAddComponent implements WizardConfiguration {
-  addWsCall: 'certificateauthority.create' = 'certificateauthority.create';
+  addWsCall = 'certificateauthority.create' as const;
   private title: string;
   hideCancel = true;
 

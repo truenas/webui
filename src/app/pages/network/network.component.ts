@@ -50,8 +50,8 @@ import { StaticRouteFormComponent } from './forms/staticroute-form.component';
   styleUrls: ['./network.component.scss'],
 })
 export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
-  protected summaryCall: 'network.general.summary' = 'network.general.summary';
-  protected configCall: 'network.configuration.config' = 'network.configuration.config';
+  protected summaryCall = 'network.general.summary' as const;
+  protected configCall = 'network.configuration.config' as const;
   formEvent$: Subject<CoreEvent>;
 
   ha_enabled = false;

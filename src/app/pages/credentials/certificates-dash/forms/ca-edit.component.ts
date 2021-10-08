@@ -27,8 +27,8 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CertificateAuthorityEditComponent implements FormConfiguration {
-  queryCall: 'certificateauthority.query' = 'certificateauthority.query';
-  editCall: 'certificateauthority.update' = 'certificateauthority.update';
+  queryCall = 'certificateauthority.query' as const;
+  editCall = 'certificateauthority.update' as const;
   isEntity = true;
   queryCallOption: [QueryFilter<CertificateAuthority>];
   private getRow = new Subscription();

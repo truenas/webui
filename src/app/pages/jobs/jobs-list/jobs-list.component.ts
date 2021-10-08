@@ -33,7 +33,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   paginationPageSize = 10;
   paginationPageSizeOptions: number[] = [10, 50, 100];
   paginationShowFirstLastButtons = true;
-  queryCall: 'core.get_jobs' = 'core.get_jobs';
+  queryCall = 'core.get_jobs' as const;
   queryCallOption: QueryParams<Job> = [[], { limit: this.paginationPageSize, order_by: ['-id'] }];
   @ViewChild('taskTable', { static: false }) taskTable: MatTable<Job[]>;
   @ViewChild(MatSort, { static: false }) sort: MatSort;

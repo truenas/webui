@@ -23,11 +23,11 @@ import { ApiKeysRow } from './api-keys-row.interface';
 })
 export class ApiKeysComponent implements EntityTableConfig {
   title = helptext.title;
-  queryCall: 'api_key.query' = 'api_key.query';
-  wsDelete: 'api_key.delete' = 'api_key.delete';
+  queryCall = 'api_key.query' as const;
+  wsDelete = 'api_key.delete' as const;
   route_add_tooltip = helptext.route_add_tooltip;
-  addCall: 'api_key.create' = 'api_key.create';
-  editCall: 'api_key.update' = 'api_key.update';
+  addCall = 'api_key.create' as const;
+  editCall = 'api_key.update' as const;
 
   currItem: ApiKeysRow;
   entityList: EntityTableComponent;

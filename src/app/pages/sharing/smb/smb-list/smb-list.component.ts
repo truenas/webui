@@ -21,9 +21,9 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class SMBListComponent implements EntityTableConfig {
   title = 'Samba';
-  queryCall: 'sharing.smb.query' = 'sharing.smb.query';
-  updateCall: 'sharing.smb.update' = 'sharing.smb.update';
-  wsDelete: 'sharing.smb.delete' = 'sharing.smb.delete';
+  queryCall = 'sharing.smb.query' as const;
+  updateCall = 'sharing.smb.update' as const;
+  wsDelete = 'sharing.smb.delete' as const;
   route_add: string[] = ['sharing', 'smb', 'add'];
   route_add_tooltip = 'Add Windows (SMB) Share';
   protected route_delete: string[] = ['sharing', 'smb', 'delete'];
