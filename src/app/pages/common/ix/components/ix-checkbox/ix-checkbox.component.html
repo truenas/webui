@@ -1,13 +1,13 @@
 <mat-checkbox
   color="primary"
-  [(ngModel)]="value"
+  [checked]="value"
   [required]="required"
   [disabled]="isDisabled"
-  (ngModelChange)="onChange($event)"
+  (change)="onCheckboxChanged($event)"
   (blur)="onTouch()"
 >
   {{ label }}
-  <span *ngIf="required">*</span>
+  <span *ngIf="required" class="required">*</span>
 </mat-checkbox>
 <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
 <ix-form-errors [control]="controlDirective.control" [label]="label"></ix-form-errors>

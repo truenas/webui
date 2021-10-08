@@ -14,7 +14,7 @@ import { WebSocketService } from 'app/services';
  * @example
  * providers: [
  *   mockWebsocket([
- *     mockCall('filesystem.stat': of({ gid: 0 } as FileSystemStat)),
+ *     mockCall('filesystem.stat': { gid: 0 } as FileSystemStat),
  *     mockJob('filesystem.setacl', fakeSuccessfulJob()),
  *     ...
  *   }),
@@ -63,7 +63,7 @@ export function mockWebsocket(
 
 export function mockCall<M extends ApiMethod>(
   method: M,
-  response: ApiDirectory[M]['response'],
+  response: ApiDirectory[M]['response'] = undefined,
 ): MockWebsocketCallResponse {
   return {
     response,
