@@ -49,6 +49,9 @@ def the_browser_is_open_on_the_truenas_url_and_logged_in(driver, nas_ip, root_pa
 def on_the_dashboard_click_on_storage_on_the_side_menu_click_on_pools(driver):
     """on the dashboard, click on Storage on the side menu, click on Pools."""
     assert wait_on_element(driver, 10, '//li[contains(.,"Dashboard")]')
+    if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
+        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Pools"]', 'clickable')
@@ -252,7 +255,7 @@ def input_user_name_and_password_click_sign_in(driver, user_name, password):
         while len(driver.window_handles) != 2:
             time.sleep(1)
         driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 15, '//h2[text()="Dropbox"]')
+    assert wait_on_element(driver, 15, '//nav[contains(.,"Dropbox")]//span[text()="Dropbox"]')
 
 
 @then(parsers.parse('click on {folder1} then click on the test folder'))
@@ -260,7 +263,7 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     """click on {folder1} then click on the test folder."""
     assert wait_on_element(driver, 5, f'//span[text()="{folder1}"]', 'clickable')
     driver.find_element_by_xpath(f'//span[text()="{folder1}"]').click()
-    assert wait_on_element(driver, 5, f'//h2[text()="{folder1}"]')
+    assert wait_on_element(driver, 5, f'//nav[contains(.,"{folder1}")]//span[text()="{folder1}"]')
     assert wait_on_element(driver, 5, '//span[text()="test"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="test"]').click()
 
@@ -268,15 +271,15 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
 @then('verify all files are in the test folder')
 def verify_all_files_are_in_the_test_folder(driver):
     """verify all files are in the test folder."""
-    assert wait_on_element(driver, 5, '//h2[text()="test"]')
+    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
     assert wait_on_element(driver, 5, '//span[text()="Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[text()="music"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="music"]').click()
-    assert wait_on_element(driver, 5, '//h2[text()="music"]')
+    assert wait_on_element(driver, 5, '//nav[contains(.,"music")]//span[text()="music"]')
     assert wait_on_element(driver, 5, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
-    assert wait_on_element(driver, 5, '//a[text()="test"]', 'clickable')
-    driver.find_element_by_xpath('//a[text()="test"]').click()
+    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//a[contains(.,"test")]', 'clickable')
+    driver.find_element_by_xpath('//nav[contains(.,"test")]//a[contains(.,"test")]').click()
 
 
 @then('remove all files from the dataset')
@@ -326,15 +329,15 @@ def verify_all_files_are_moved_from_the_dropbox_test_folder_to_the_dataset(drive
     time.sleep(0.5)
     driver.refresh()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//h2[text()="test"]')
+    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
     assert wait_on_element(driver, 7, '//span[text()="music"]')
     assert not is_element_present(driver, '//span[text()="Explaining_BSD.pdf"]')
     assert not is_element_present(driver, '//span[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
     driver.find_element_by_xpath('//span[text()="music"]').click()
-    assert wait_on_element(driver, 5, '//h2[text()="music"]')
+    assert wait_on_element(driver, 5, '//nav[contains(.,"music")]//span[text()="music"]')
     assert not is_element_present(driver, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]')
-    assert wait_on_element(driver, 5, '//a[text()="test"]', 'clickable')
-    driver.find_element_by_xpath('//a[text()="test"]').click()
+    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//a[contains(.,"test")]', 'clickable')
+    driver.find_element_by_xpath('//nav[contains(.,"test")]//a[contains(.,"test")]').click()
     cmd = 'test -f /mnt/system/dropbox_cloud/Gloomy_Forest_wallpaper_ForWallpapercom.jpg'
     results = ssh_cmd(cmd, 'root', 'testing', nas_ip)
     assert results['result'] is True, results['output']
@@ -383,15 +386,15 @@ def verify_all_files_are_moved_from_the_dataset_to_the_dropbox_test_folder(drive
     time.sleep(1)
     driver.refresh()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//h2[text()="test"]')
+    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
     assert wait_on_element(driver, 7, '//span[text()="Explaining_BSD.pdf"]')
     assert wait_on_element(driver, 7, '//span[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
     assert wait_on_element(driver, 7, '//span[text()="music"]')
     driver.find_element_by_xpath('//span[text()="music"]').click()
-    assert wait_on_element(driver, 5, '//h2[text()="music"]')
+    assert wait_on_element(driver, 5, '//nav[contains(.,"music")]//span[text()="music"]')
     assert wait_on_element(driver, 5, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]')
-    assert wait_on_element(driver, 5, '//a[text()="test"]', 'clickable')
-    driver.find_element_by_xpath('//a[text()="test"]').click()
+    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//a[contains(.,"test")]', 'clickable')
+    driver.find_element_by_xpath('//nav[contains(.,"test")]//a[contains(.,"test")]').click()
 
 
 @then('select PULL as the Direction then under Transfer Mode, select SYNC')
@@ -434,7 +437,7 @@ def on_the_dropbox_test_folder_tab_delete_one_file(driver):
     """on the Dropbox test folder tab, delete one file."""
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//h2[text()="test"]')
+    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
     assert wait_on_element(driver, 5, '//span[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[text()="music"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[text()="Explaining_BSD.pdf"]', 'clickable')
@@ -486,7 +489,7 @@ def on_the_dropbox_test_folder_tab_delete_all_file(driver):
     """on the Dropbox test folder tab, delete all file."""
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//h2[text()="test"]')
+    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
     assert wait_on_element(driver, 5, '//span[text()="music"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[text()="Explaining_BSD.pdf"]', 'clickable')
     action = ActionChains(driver)
@@ -539,14 +542,14 @@ def verify_all_files_are_sync_to_the_Dropbox_test_folder_tab(driver):
     time.sleep(0.5)
     driver.refresh()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//h2[text()="test"]')
+    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
     assert wait_on_element(driver, 7, '//span[text()="Explaining_BSD.pdf"]')
     assert wait_on_element(driver, 5, '//span[text()="music"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="music"]').click()
-    assert wait_on_element(driver, 5, '//h2[text()="music"]')
+    assert wait_on_element(driver, 5, '//nav[contains(.,"music")]//span[text()="music"]')
     assert wait_on_element(driver, 5, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
-    assert wait_on_element(driver, 5, '//a[text()="test"]', 'clickable')
-    driver.find_element_by_xpath('//a[text()="test"]').click()
+    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//a[contains(.,"test")]', 'clickable')
+    driver.find_element_by_xpath('//nav[contains(.,"test")]//a[contains(.,"test")]').click()
 
 
 @then('on the dataset folder, delete a file')
@@ -564,7 +567,7 @@ def verify_the_file_is_removed_from_the_dropbox_test_folder_tab(driver):
     time.sleep(1)
     driver.refresh()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//h2[text()="test"]')
+    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
     assert wait_on_element(driver, 7, '//span[text()="Explaining_BSD.pdf"]')
     assert not is_element_present(driver, '//span[text()="music"]')
     # clean the test folder on box tab before closing the tab.
