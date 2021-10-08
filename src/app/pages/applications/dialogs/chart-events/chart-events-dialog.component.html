@@ -71,7 +71,7 @@
       </mat-expansion-panel-header>
       <div class="expansion-content">
         <div *ngIf="chartEvents.length > 0;else no_event">
-          <div fxLayout="row" fxLayoutAlign="start start" *ngFor="let event of chartEvents.reverse(); let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
+          <div fxLayout="row" fxLayoutAlign="start start" *ngFor="let event of chartEvents; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
             <div class="event-time">{{ event.first_timestamp?.$date | date: 'yyyy-MM-dd H:mm:ss' }}</div>
             <div class="event-message">{{ event.message }}</div>
           </div>
