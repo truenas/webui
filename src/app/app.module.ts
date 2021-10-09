@@ -2,9 +2,12 @@ import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { NgModule, Injector } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
+import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RouterModule } from '@angular/router';
+import {
+  ActivatedRoute, NavigationEnd, Router, RouterModule,
+} from '@angular/router';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
@@ -14,6 +17,7 @@ import {
   TranslateMessageFormatCompiler,
 } from 'ngx-translate-messageformat-compiler';
 import { NgxWebstorageModule } from 'ngx-webstorage';
+import { filter, map } from 'rxjs/operators';
 import { MaterialModule } from 'app/app-material.module';
 import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
@@ -58,6 +62,7 @@ import { NavigationService } from './services/navigation/navigation.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { WebSocketService } from './services/ws.service';
 
+@UntilDestroy()
 @NgModule({
   imports: [
     BrowserModule,
@@ -124,6 +129,7 @@ import { WebSocketService } from './services/ws.service';
     ErdService,
     JobsManagerStore,
     IxModalService,
+    Title,
   ],
   bootstrap: [
     AppComponent,
@@ -156,7 +162,29 @@ export class AppModule {
    * This is good to prevent injecting the service as constructor parameter.
    * */
   static injector: Injector;
-  constructor(injector: Injector) {
+  constructor(
+    injector: Injector,
+    private titleService: Title,
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+  ) {
     setCoreServiceInjector(injector);
+    const appTitle = this.titleService.getTitle();
+    this.router
+      .events.pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map(() => {
+          let child = this.activatedRoute.firstChild;
+          while (child.firstChild) {
+            child = child.firstChild;
+          }
+          if (child.snapshot.data['title']) {
+            return child.snapshot.data['title'];
+          }
+          return appTitle;
+        }),
+      ).subscribe((ttl: string) => {
+        this.titleService.setTitle(ttl + ' - ' + window.location.hostname);
+      });
   }
 }
