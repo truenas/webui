@@ -178,7 +178,7 @@ export class AppModule {
   static injector: Injector;
   constructor(injector: Injector, private sysGeneralService: SystemGeneralService) {
     this.sysGeneralService.getSysInfo().subscribe((data) => {
-      Sentry.setTag('nas_version', data.version);
+      Sentry.setTag('nas.version', data.version);
     });
     setCoreServiceInjector(injector);
   }
