@@ -43,3 +43,13 @@
 .label {
   font-size: x-small;
 }
+
+.mat-option.mat-option-multiple.mat-selected {
+  background: var(--primary);
+
+  &:hover,
+  &:focus,
+  &:active {
+    background: var(--primary) !important; /* sync with single option */
+  }
+}
