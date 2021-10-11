@@ -697,12 +697,12 @@ export class ApiService {
       cloneDef.apiCall.args = evt.data;
 
       if (def.preProcessor && !async_calls.includes(def.apiCall.namespace)) {
-        cloneDef.apiCall = def.preProcessor(def.apiCall, this);
+        cloneDef.apiCall = def.preProcessor(cloneDef.apiCall, this);
       }
 
       // PreProcessor: ApiDefinition manipulates call to be sent out.
       if (def.preProcessor && async_calls.includes(def.apiCall.namespace)) {
-        cloneDef.apiCall = await def.preProcessor(def.apiCall, this);
+        cloneDef.apiCall = await def.preProcessor(cloneDef.apiCall, this);
         if (!cloneDef.apiCall) {
           this.core.emit({ name: 'VmStopped', data: { id: evt.data[0] } });
           return;
