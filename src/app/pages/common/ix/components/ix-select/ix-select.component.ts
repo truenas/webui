@@ -21,6 +21,7 @@ export class IxSelectComponent implements ControlValueAccessor {
   @Input() options: Observable<Option[]>;
   @Input() required: boolean;
   @Input() tooltip: string;
+  @Input() multiple: boolean;
 
   constructor(
     public controlDirective: NgControl,
