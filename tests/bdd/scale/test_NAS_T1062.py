@@ -120,8 +120,15 @@ def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver
 @then('the service should be enabled with no errors')
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
-    assert wait_on_element(driver, 30, '//mat-spinner[@role="progressbar"]')
-    wait_on_element_disappear(driver, 30, '//mat-spinner[@role="progressbar"]')
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
+    time.sleep(1)
+    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
+    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
+    #assert wait_on_element(driver, 30, '//mat-spinner[@role="progressbar"]')
+    #wait_on_element_disappear(driver, 30, '//mat-spinner[@role="progressbar"]')
     assert wait_for_attribute_value(driver, 20, '//mat-slide-toggle[@ix-auto="slider__state__SSH"]', 'class', 'mat-checked')
 
 
