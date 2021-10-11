@@ -87,6 +87,10 @@ export class SystemProfileService extends BaseService {
       }
     });
 
+    this.websocket.call('failover.disabled_reasons').subscribe((res) => {
+      this.updateHA(res);
+    });
+
     // HA Status change events
     this.websocket.subscribe('failover.disabled_reasons').subscribe((res) => {
       this.updateHA(res.fields.disabled_reasons);
@@ -160,11 +164,6 @@ export class SystemProfileService extends BaseService {
     // HIGH AVAILABILITY SUPPORT
     if ((profile.license && profile.license.system_serial_ha) || profile.system_product == 'BHYVE') {
       this.features.HA = true;
-
-      // HA Status Change Call
-      this.websocket.call('failover.disabled_reasons').subscribe((res) => {
-        this.updateHA(res);
-      });
     }
 
     return this.features;
