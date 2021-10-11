@@ -180,6 +180,28 @@ export class SystemGeneralService {
     );
   }
 
+  uiCertificateOptions(): Observable<Option[]> {
+    return this.ws.call('system.general.ui_certificate_choices').pipe(
+      map((choices) => {
+        return Object.keys(choices || {}).map((key) => ({
+          label: choices[parseInt(key)],
+          value: key,
+        }));
+      }),
+    );
+  }
+
+  uiHttpsProtocolsOptions(): Observable<Option[]> {
+    return this.ws.call('system.general.ui_httpsprotocols_choices').pipe(
+      map((choices) => {
+        return Object.keys(choices || {}).map((key) => ({
+          label: choices[key],
+          value: key,
+        }));
+      }),
+    );
+  }
+
   refreshDirServicesCache(): Observable<void> {
     return this.ws.call('directoryservices.cache_refresh');
   }
