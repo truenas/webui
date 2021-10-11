@@ -47,9 +47,9 @@ interface ZvolFormData {
   template: '<entity-wizard [conf]="this"></entity-wizard>',
 })
 export class ZvolWizardComponent implements WizardConfiguration {
-  addWsCall: 'pool.dataset.create' = 'pool.dataset.create';
+  addWsCall = 'pool.dataset.create' as const;
   protected path: string;
-  queryCall: 'pool.dataset.query' = 'pool.dataset.query';
+  queryCall = 'pool.dataset.query' as const;
   advanced_field = ['volblocksize'];
   isBasicMode = true;
   protected isNew = true;

@@ -39,11 +39,11 @@ import { ModalService } from 'app/services/modal.service';
   providers: [CloudCredentialService, JobService],
 })
 export class CloudsyncFormComponent implements FormConfiguration {
-  addCall: 'cloudsync.create' = 'cloudsync.create';
-  editCall: 'cloudsync.update' = 'cloudsync.update';
+  addCall = 'cloudsync.create' as const;
+  editCall = 'cloudsync.update' as const;
   entityForm: EntityFormComponent;
   isEntity = true;
-  queryCall: 'cloudsync.query' = 'cloudsync.query';
+  queryCall = 'cloudsync.query' as const;
   queryPayload: any[] = [];
   customFilter: any[] = [];
   title: string;

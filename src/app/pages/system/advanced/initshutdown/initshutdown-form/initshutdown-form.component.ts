@@ -20,9 +20,9 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class InitshutdownFormComponent implements FormConfiguration {
   title: string;
-  queryCall: 'initshutdownscript.query' = 'initshutdownscript.query';
-  addCall: 'initshutdownscript.create' = 'initshutdownscript.create';
-  editCall: 'initshutdownscript.update' = 'initshutdownscript.update';
+  queryCall = 'initshutdownscript.query' as const;
+  addCall = 'initshutdownscript.create' as const;
+  editCall = 'initshutdownscript.update' as const;
   customFilter: QueryParams<InitShutdownScript> = [];
   protected entityForm: EntityFormComponent;
   isEntity = true;

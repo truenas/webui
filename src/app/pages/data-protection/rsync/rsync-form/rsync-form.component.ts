@@ -21,9 +21,9 @@ import { ModalService } from 'app/services/modal.service';
   providers: [TaskService, UserService],
 })
 export class RsyncFormComponent implements FormConfiguration {
-  addCall: 'rsynctask.create' = 'rsynctask.create';
-  editCall: 'rsynctask.update' = 'rsynctask.update';
-  queryCall: 'rsynctask.query' = 'rsynctask.query';
+  addCall = 'rsynctask.create' as const;
+  editCall = 'rsynctask.update' as const;
+  queryCall = 'rsynctask.query' as const;
   queryKey = 'id';
   protected entityForm: EntityFormComponent;
   pk: number;

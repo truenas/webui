@@ -14,8 +14,8 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CatalogAddFormComponent implements FormConfiguration {
-  queryCall: 'catalog.query' = 'catalog.query';
-  addCall: 'catalog.create' = 'catalog.create';
+  queryCall = 'catalog.query' as const;
+  addCall = 'catalog.create' as const;
   isCreateJob = true;
   isEntity = true;
   protected entityForm: EntityFormComponent;

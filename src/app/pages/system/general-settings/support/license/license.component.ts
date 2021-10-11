@@ -15,7 +15,7 @@ import { ModalService } from 'app/services/modal.service';
   providers: [],
 })
 export class LicenseComponent implements FormConfiguration {
-  updateCall: 'system.license_update' = 'system.license_update';
+  updateCall = 'system.license_update' as const;
   protected isOneColumnForm = true;
   fieldSets: FieldSet[] = [
     {

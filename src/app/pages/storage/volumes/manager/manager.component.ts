@@ -53,10 +53,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   temp: ManagerDisk[] = [];
 
   name: string;
-  addCall: 'pool.create' = 'pool.create';
-  editCall: 'pool.update' = 'pool.update';
-  queryCall: 'pool.query' = 'pool.query';
-  datasetQueryCall: 'pool.dataset.query' = 'pool.dataset.query';
+  addCall = 'pool.create' as const;
+  editCall = 'pool.update' as const;
+  queryCall = 'pool.query' as const;
+  datasetQueryCall = 'pool.dataset.query' as const;
   pk: number;
   isNew = true;
   vol_encrypt = 0;

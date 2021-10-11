@@ -20,9 +20,9 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SmartFormComponent implements FormConfiguration {
-  queryCall: 'smart.test.query' = 'smart.test.query';
-  addCall: 'smart.test.create' = 'smart.test.create';
-  editCall: 'smart.test.update' = 'smart.test.update';
+  queryCall = 'smart.test.query' as const;
+  addCall = 'smart.test.create' as const;
+  editCall = 'smart.test.update' as const;
   customFilter: any[] = [];
   protected entityForm: EntityFormComponent;
   isEntity = true;

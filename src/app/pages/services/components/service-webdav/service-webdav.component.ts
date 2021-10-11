@@ -21,9 +21,8 @@ import { SystemGeneralService, WebSocketService, ValidationService } from 'app/s
   providers: [SystemGeneralService],
 })
 export class ServiceWebdavComponent implements FormConfiguration {
-  // protected resource_name: string = 'services/webdav';
-  queryCall: 'webdav.config' = 'webdav.config';
-  editCall: 'webdav.update' = 'webdav.update';
+  queryCall = 'webdav.config' as const;
+  editCall = 'webdav.update' as const;
   route_success: string[] = ['services'];
   title = helptext.formTitle;
 

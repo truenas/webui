@@ -15,7 +15,7 @@ import { WebSocketService, ServicesService } from 'app/services';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ServiceLLDPComponent implements FormConfiguration {
-  queryCall: 'lldp.config' = 'lldp.config';
+  queryCall = 'lldp.config' as const;
   route_success: string[] = ['services'];
   title = helptext.formTitle;
 

@@ -24,7 +24,7 @@ import { DialogService } from 'app/services/dialog.service';
   styleUrls: ['./device-edit.component.scss'],
 })
 export class DeviceEditComponent implements OnInit {
-  protected updateCall: 'vm.device.update' = 'vm.device.update';
+  protected updateCall = 'vm.device.update' as const;
   route_success: string[];
   deviceid: number;
   vmname: string;

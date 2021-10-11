@@ -46,8 +46,8 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class ReplicationListComponent implements EntityTableConfig {
   title = T('Replication Tasks');
-  queryCall: 'replication.query' = 'replication.query';
-  wsDelete: 'replication.delete' = 'replication.delete';
+  queryCall = 'replication.query' as const;
+  wsDelete = 'replication.delete' as const;
   route_add: string[] = ['tasks', 'replication', 'wizard'];
   route_edit: string[] = ['tasks', 'replication', 'edit'];
   route_success: string[] = ['tasks', 'replication'];

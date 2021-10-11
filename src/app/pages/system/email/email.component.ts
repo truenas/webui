@@ -38,8 +38,8 @@ interface OAuthData {
   `,
 })
 export class EmailComponent implements FormConfiguration {
-  queryCall: 'mail.config' = 'mail.config';
-  updateCall: 'mail.update' = 'mail.update';
+  queryCall = 'mail.config' as const;
+  updateCall = 'mail.update' as const;
   entityEdit: EntityFormComponent;
   rootEmail: string;
   private oauthCreds$: BehaviorSubject<OAuthData> = new BehaviorSubject({});

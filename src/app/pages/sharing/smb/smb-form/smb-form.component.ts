@@ -30,9 +30,9 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SMBFormComponent implements FormConfiguration {
-  queryCall: 'sharing.smb.query' = 'sharing.smb.query';
-  addCall: 'sharing.smb.create' = 'sharing.smb.create';
-  editCall: 'sharing.smb.update' = 'sharing.smb.update';
+  queryCall = 'sharing.smb.query' as const;
+  addCall = 'sharing.smb.create' as const;
+  editCall = 'sharing.smb.update' as const;
   pk: number;
   queryKey = 'id';
   isEntity = true;

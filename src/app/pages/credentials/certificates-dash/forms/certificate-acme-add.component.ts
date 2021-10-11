@@ -28,8 +28,8 @@ import { ModalService } from 'app/services/modal.service';
   providers: [EntityFormService],
 })
 export class CertificateAcmeAddComponent implements FormConfiguration {
-  addCall: 'certificate.create' = 'certificate.create';
-  queryCall: 'certificate.query' = 'certificate.query';
+  addCall = 'certificate.create' as const;
+  queryCall = 'certificate.query' as const;
   isEntity = true;
   isNew = true;
   private csrOrg: Certificate;

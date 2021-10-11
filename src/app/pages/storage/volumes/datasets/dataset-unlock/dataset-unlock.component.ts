@@ -38,8 +38,8 @@ import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DatasetUnlockComponent implements FormConfiguration {
-  queryCall: 'pool.dataset.encryption_summary' = 'pool.dataset.encryption_summary';
-  updateCall: 'pool.dataset.unlock' = 'pool.dataset.unlock';
+  queryCall = 'pool.dataset.encryption_summary' as const;
+  updateCall = 'pool.dataset.unlock' as const;
   route_success: string[] = ['storage'];
   isEntity = true;
   isNew = true;

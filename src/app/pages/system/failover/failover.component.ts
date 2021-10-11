@@ -25,8 +25,8 @@ import { DialogService } from 'app/services/dialog.service';
   providers: [],
 })
 export class FailoverComponent implements FormConfiguration {
-  queryCall: 'failover.config' = 'failover.config';
-  updateCall = 'failover.update';
+  queryCall = 'failover.config' as const;
+  updateCall = 'failover.update' as const;
   entityForm: EntityFormComponent;
   alreadyDisabled = false;
   confirmSubmit = false;

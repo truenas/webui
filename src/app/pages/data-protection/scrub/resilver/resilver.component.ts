@@ -16,8 +16,8 @@ import { TaskService } from 'app/services';
   providers: [TaskService],
 })
 export class ResilverComponent implements FormConfiguration {
-  queryCall: 'pool.resilver.config' = 'pool.resilver.config';
-  editCall: 'pool.resilver.update' = 'pool.resilver.update';
+  queryCall = 'pool.resilver.config' as const;
+  editCall = 'pool.resilver.update' as const;
   route_success: string[] = ['data-protection'];
 
   fieldSets: FieldSet[] = [

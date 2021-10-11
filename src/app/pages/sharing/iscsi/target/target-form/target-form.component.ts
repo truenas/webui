@@ -23,9 +23,9 @@ import {
   providers: [IscsiService],
 })
 export class TargetFormComponent implements FormConfiguration {
-  queryCall: 'iscsi.target.query' = 'iscsi.target.query';
-  addCall: 'iscsi.target.create' = 'iscsi.target.create';
-  editCall: 'iscsi.target.update' = 'iscsi.target.update';
+  queryCall = 'iscsi.target.query' as const;
+  addCall = 'iscsi.target.create' as const;
+  editCall = 'iscsi.target.update' as const;
   customFilter: any[] = [[['id', '=']]];
   isEntity = true;
 

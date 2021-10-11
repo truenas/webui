@@ -17,9 +17,9 @@ import { NFSFormComponent } from '../nfs-form/nfs-form.component';
 })
 export class NFSListComponent implements EntityTableConfig<NfsShare> {
   title = T('NFS');
-  queryCall: 'sharing.nfs.query' = 'sharing.nfs.query';
-  updateCall: 'sharing.nfs.update' = 'sharing.nfs.update';
-  wsDelete: 'sharing.nfs.delete' = 'sharing.nfs.delete';
+  queryCall = 'sharing.nfs.query' as const;
+  updateCall = 'sharing.nfs.update' as const;
+  wsDelete = 'sharing.nfs.delete' as const;
   route_add: string[] = ['sharing', 'nfs', 'add'];
   route_add_tooltip = 'Add Unix (NFS) Share';
   route_edit: string[] = ['sharing', 'nfs', 'edit'];

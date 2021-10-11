@@ -30,7 +30,7 @@ interface PoolDiskInfo {
 })
 export class BootStatusListComponent implements OnInit {
   title = T('Boot Pool Status');
-  protected queryCall: 'boot.get_state' = 'boot.get_state';
+  protected queryCall = 'boot.get_state' as const;
   protected pk: number;
   poolScan: {
     function: string;

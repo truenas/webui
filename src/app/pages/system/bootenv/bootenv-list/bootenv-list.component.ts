@@ -32,14 +32,14 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
 
   title = T('Boot Environments');
   resource_name = 'system/bootenv';
-  queryCall: 'bootenv.query' = 'bootenv.query';
+  queryCall = 'bootenv.query' as const;
   route_add: string[] = ['system', 'boot', 'create'];
   protected route_delete: string[] = ['system', 'boot', 'delete'];
-  wsDelete: 'bootenv.delete' = 'bootenv.delete';
-  wsMultiDelete: 'core.bulk' = 'core.bulk';
+  wsDelete = 'bootenv.delete' as const;
+  wsMultiDelete = 'core.bulk' as const;
   protected entityList: EntityTableComponent;
-  protected wsActivate: 'bootenv.activate' = 'bootenv.activate';
-  protected wsKeep: 'bootenv.set_attribute' = 'bootenv.set_attribute';
+  protected wsActivate = 'bootenv.activate' as const;
+  protected wsKeep = 'bootenv.set_attribute' as const;
   protected loaderOpen = false;
   size_consumed: string;
   condition: string;

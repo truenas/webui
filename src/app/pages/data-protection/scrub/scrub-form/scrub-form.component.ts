@@ -16,11 +16,11 @@ import { ModalService } from 'app/services/modal.service';
   providers: [TaskService],
 })
 export class ScrubFormComponent implements FormConfiguration {
-  queryCall: 'pool.scrub.query' = 'pool.scrub.query';
+  queryCall = 'pool.scrub.query' as const;
   queryKey = 'id';
   pk: number;
-  editCall: 'pool.scrub.update' = 'pool.scrub.update';
-  addCall: 'pool.scrub.create' = 'pool.scrub.create';
+  editCall = 'pool.scrub.update' as const;
+  addCall = 'pool.scrub.create' as const;
   protected entityForm: EntityFormComponent;
   isEntity = true;
   protected preTaskName = 'scrub';

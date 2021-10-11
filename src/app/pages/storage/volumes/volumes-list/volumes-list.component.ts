@@ -118,7 +118,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   };
   protected aroute: ActivatedRoute;
   private refreshTableSubscription: Subscription;
-  private datasetQuery: 'pool.dataset.query' = 'pool.dataset.query';
+  private datasetQuery = 'pool.dataset.query' as const;
   /*
    * Please note that extra options are special in that they are passed directly to ZFS.
    * This is why 'encryptionroot' is included in order to get 'encryption_root' in the response

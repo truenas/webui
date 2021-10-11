@@ -20,9 +20,9 @@ import { TaskService } from 'app/services/task.service';
 })
 export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshotTaskUi> {
   title = T('Periodic Snapshot Tasks');
-  queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
-  updateCall: 'pool.snapshottask.update' = 'pool.snapshottask.update';
-  wsDelete: 'pool.snapshottask.delete' = 'pool.snapshottask.delete';
+  queryCall = 'pool.snapshottask.query' as const;
+  updateCall = 'pool.snapshottask.update' as const;
+  wsDelete = 'pool.snapshottask.delete' as const;
   route_add: string[] = ['tasks', 'snapshot', 'add'];
   route_add_tooltip = 'Add Periodic Snapshot Task';
   route_edit: string[] = ['tasks', 'snapshot', 'edit'];

@@ -27,9 +27,9 @@ export class IdmapFormComponent implements FormConfiguration {
   title: string;
   isEntity = true;
   protected namesInUse: string[] = [];
-  queryCall: 'idmap.query' = 'idmap.query';
-  addCall: 'idmap.create' = 'idmap.create';
-  editCall: 'idmap.update' = 'idmap.update';
+  queryCall = 'idmap.query' as const;
+  addCall = 'idmap.create' as const;
+  editCall = 'idmap.update' as const;
   pk: number;
   queryKey = 'id';
   private getRow = new Subscription();

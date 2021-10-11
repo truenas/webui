@@ -27,8 +27,8 @@ import { CronFormComponent } from '../cron-form/cron-form.component';
 })
 export class CronListComponent implements EntityTableConfig<CronjobRow> {
   title = 'Cron Jobs';
-  wsDelete: 'cronjob.delete' = 'cronjob.delete';
-  queryCall: 'cronjob.query' = 'cronjob.query';
+  wsDelete = 'cronjob.delete' as const;
+  queryCall = 'cronjob.query' as const;
   route_add: string[] = ['tasks', 'cron', 'add'];
   route_add_tooltip = 'Add Cron Job';
   route_edit: string[] = ['tasks', 'cron', 'edit'];

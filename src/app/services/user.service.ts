@@ -11,10 +11,10 @@ import { WebSocketService } from './ws.service';
 @Injectable({ providedIn: 'root' })
 export class UserService {
   static VALIDATOR_NAME = /^[a-zA-Z0-9_][a-zA-Z0-9_\.-]*[$]?$/;
-  protected uncachedUserQuery: 'dscache.get_uncached_user' = 'dscache.get_uncached_user';
-  protected uncachedGroupQuery: 'dscache.get_uncached_group' = 'dscache.get_uncached_group';
-  protected userQuery: 'user.query' = 'user.query';
-  protected groupQuery: 'group.query' = 'group.query';
+  protected uncachedUserQuery = 'dscache.get_uncached_user' as const;
+  protected uncachedGroupQuery = 'dscache.get_uncached_group' as const;
+  protected userQuery = 'user.query' as const;
+  protected groupQuery = 'group.query' as const;
   protected queryOptions = { extra: { search_dscache: true }, limit: 50 };
 
   constructor(protected ws: WebSocketService) {}

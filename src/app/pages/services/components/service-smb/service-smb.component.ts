@@ -27,7 +27,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 })
 
 export class ServiceSMBComponent implements FormConfiguration {
-  queryCall: 'smb.config' = 'smb.config';
+  queryCall = 'smb.config' as const;
   route_success: string[] = ['services'];
   error: string;
   protected idmap_type = 'tdb';

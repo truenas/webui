@@ -12,9 +12,9 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class NtpServerFormComponent implements FormConfiguration {
-  addCall: 'system.ntpserver.create' = 'system.ntpserver.create';
-  editCall: 'system.ntpserver.update' = 'system.ntpserver.update';
-  queryCall: 'system.ntpserver.query' = 'system.ntpserver.query';
+  addCall = 'system.ntpserver.create' as const;
+  editCall = 'system.ntpserver.update' as const;
+  queryCall = 'system.ntpserver.query' as const;
   isEntity = true;
   title = helptext.header;
   protected isOneColumnForm = true;

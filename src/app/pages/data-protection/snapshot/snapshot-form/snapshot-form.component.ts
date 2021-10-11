@@ -20,9 +20,9 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class SnapshotFormComponent implements FormConfiguration {
   queryKey = 'id';
-  queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
-  addCall: 'pool.snapshottask.create' = 'pool.snapshottask.create';
-  editCall: 'pool.snapshottask.update' = 'pool.snapshottask.update';
+  queryCall = 'pool.snapshottask.query' as const;
+  addCall = 'pool.snapshottask.create' as const;
+  editCall = 'pool.snapshottask.update' as const;
   isEntity = true;
   pk: number;
   protected dataset: string;

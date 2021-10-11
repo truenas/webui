@@ -20,9 +20,9 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
   providers: [IscsiService],
 })
 export class AssociatedTargetFormComponent implements FormConfiguration {
-  addCall: 'iscsi.targetextent.create' = 'iscsi.targetextent.create';
-  queryCall: 'iscsi.targetextent.query' = 'iscsi.targetextent.query';
-  editCall: 'iscsi.targetextent.update' = 'iscsi.targetextent.update';
+  addCall = 'iscsi.targetextent.create' as const;
+  queryCall = 'iscsi.targetextent.query' as const;
+  editCall = 'iscsi.targetextent.update' as const;
   route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
   isEntity = true;
   customFilter: [[Partial<QueryFilter<IscsiTargetExtent>>]] = [[['id', '=']]];

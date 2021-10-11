@@ -32,10 +32,10 @@ import { ModalService } from 'app/services/modal.service';
   providers: [KeychainCredentialService, ReplicationService],
 })
 export class SshConnectionsFormComponent implements FormConfiguration {
-  queryCall: 'keychaincredential.query' = 'keychaincredential.query';
+  queryCall = 'keychaincredential.query' as const;
   queryCallOption: [QueryFilter<KeychainCredential>];
-  addCall: 'keychaincredential.setup_ssh_connection' = 'keychaincredential.setup_ssh_connection';
-  editCall: 'keychaincredential.update' = 'keychaincredential.update';
+  addCall = 'keychaincredential.setup_ssh_connection' as const;
+  editCall = 'keychaincredential.update' as const;
   isEntity = true;
   protected namesInUseConnection: string[] = [];
   protected namesInUse: string[] = [];

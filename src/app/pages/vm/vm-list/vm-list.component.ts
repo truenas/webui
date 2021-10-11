@@ -42,8 +42,8 @@ import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
 })
 export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit {
   title = T('Virtual Machines');
-  queryCall: 'vm.query' = 'vm.query';
-  wsDelete: 'vm.delete' = 'vm.delete';
+  queryCall = 'vm.query' as const;
+  wsDelete = 'vm.delete' as const;
   route_add: string[] = ['vm', 'wizard'];
   route_edit: string[] = ['vm', 'edit'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;

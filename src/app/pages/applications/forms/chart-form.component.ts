@@ -23,10 +23,10 @@ import { ApplicationsService } from '../applications.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ChartFormComponent implements FormConfiguration {
-  queryCall: 'chart.release.query' = 'chart.release.query';
+  queryCall = 'chart.release.query' as const;
   customFilter: CatalogQueryParams;
-  addCall: 'chart.release.create' = 'chart.release.create';
-  editCall: 'chart.release.update' = 'chart.release.update';
+  addCall = 'chart.release.create' as const;
+  editCall = 'chart.release.update' as const;
   isEntity = true;
   protected utils: CommonUtils;
 

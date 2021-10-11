@@ -17,7 +17,7 @@ import { WebSocketService } from 'app/services';
 export class BootEnvReplaceFormComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot', 'status'];
   isEntity = true;
-  addCall: 'boot.replace' = 'boot.replace';
+  addCall = 'boot.replace' as const;
   pk: string;
   isNew = true;
 

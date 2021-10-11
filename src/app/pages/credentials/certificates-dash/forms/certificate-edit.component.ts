@@ -25,8 +25,8 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CertificateEditComponent implements FormConfiguration {
-  queryCall: 'certificate.query' = 'certificate.query';
-  editCall: 'certificate.update' = 'certificate.update';
+  queryCall = 'certificate.query' as const;
+  editCall = 'certificate.update' as const;
   isEntity = true;
   title: string = helptext_system_certificates.edit.title;
   private viewButtonText: string = helptext_system_certificates.viewButton.certificate;

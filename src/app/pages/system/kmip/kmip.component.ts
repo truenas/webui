@@ -19,8 +19,8 @@ import { SystemGeneralService, DialogService, WebSocketService } from 'app/servi
   styleUrls: ['./kmip.component.scss'],
 })
 export class KmipComponent implements FormConfiguration {
-  queryCall: 'kmip.config' = 'kmip.config';
-  editCall: 'kmip.update' = 'kmip.update';
+  queryCall = 'kmip.config' as const;
+  editCall = 'kmip.update' as const;
   isEntity = false;
 
   entityForm: EntityFormComponent;

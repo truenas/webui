@@ -28,7 +28,7 @@ import { EncryptionService } from 'app/services/encryption.service';
 export class VolumeCreatekeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Create Passphrase');
 
-  queryCall: 'pool.query' = 'pool.query';
+  queryCall = 'pool.query' as const;
   queryKey = 'id';
   route_return: string[] = ['storage', 'pools'];
   isNew = false;

@@ -15,8 +15,8 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class KerberosKeytabsListComponent implements EntityTableConfig {
   title = 'Kerberos Keytabs';
-  queryCall: 'kerberos.keytab.query' = 'kerberos.keytab.query';
-  wsDelete: 'kerberos.keytab.delete' = 'kerberos.keytab.delete';
+  queryCall = 'kerberos.keytab.query' as const;
+  wsDelete = 'kerberos.keytab.delete' as const;
   protected entityList: EntityTableComponent;
 
   columns = [

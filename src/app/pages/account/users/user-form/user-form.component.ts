@@ -25,9 +25,9 @@ import { ModalService } from 'app/services/modal.service';
   providers: [UserService],
 })
 export class UserFormComponent implements FormConfiguration {
-  queryCall: 'user.query' = 'user.query';
-  addCall: 'user.create' = 'user.create';
-  editCall: 'user.update' = 'user.update';
+  queryCall = 'user.query' as const;
+  addCall = 'user.create' as const;
+  editCall = 'user.update' as const;
   pk: number;
   queryKey = 'id';
   isEntity = true;

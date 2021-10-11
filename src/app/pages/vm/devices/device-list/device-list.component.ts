@@ -33,8 +33,8 @@ export class DeviceListComponent implements EntityTableConfig {
   protected pk: string;
   vm: string;
   private entityList: EntityTableComponent;
-  wsDelete: 'datastore.delete' = 'datastore.delete';
-  queryCall: 'vm.device.query' = 'vm.device.query';
+  wsDelete = 'datastore.delete' as const;
+  queryCall = 'vm.device.query' as const;
   queryCallOption: [[Partial<QueryFilter<VmDevice>>]] = [[['vm', '=']]];
   protected loaderOpen = false;
   columns = [

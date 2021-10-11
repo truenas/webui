@@ -26,9 +26,9 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
   providers: [IscsiService, StorageService],
 })
 export class ExtentFormComponent implements FormConfiguration {
-  addCall: 'iscsi.extent.create' = 'iscsi.extent.create';
-  queryCall: 'iscsi.extent.query' = 'iscsi.extent.query';
-  editCall: 'iscsi.extent.update' = 'iscsi.extent.update';
+  addCall = 'iscsi.extent.create' as const;
+  queryCall = 'iscsi.extent.query' as const;
+  editCall = 'iscsi.extent.update' as const;
   customFilter: any[] = [[['id', '=']]];
   // protected resource_name: string = 'services/iscsi/extent';
   route_success: string[] = ['sharing', 'iscsi', 'extent'];

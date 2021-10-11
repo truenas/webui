@@ -26,7 +26,7 @@ import { EncryptionService } from 'app/services/encryption.service';
 export class VolumeChangekeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Change Passphrase');
 
-  queryCall: 'pool.query' = 'pool.query';
+  queryCall = 'pool.query' as const;
   queryKey = 'id';
   route_return: string[] = ['storage', 'pools'];
   isNew = false;

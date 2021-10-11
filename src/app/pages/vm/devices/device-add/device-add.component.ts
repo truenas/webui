@@ -34,7 +34,7 @@ import { ModalService } from 'app/services/modal.service';
   styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
 })
 export class DeviceAddComponent implements OnInit, OnDestroy {
-  protected addCall: 'vm.device.create' = 'vm.device.create';
+  protected addCall = 'vm.device.create' as const;
   route_success: string[];
   vmid: number;
   vmname: string;

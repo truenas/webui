@@ -16,8 +16,8 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CatalogEditFormComponent implements FormConfiguration {
-  queryCall: 'catalog.query' = 'catalog.query';
-  editCall: 'catalog.update' = 'catalog.update';
+  queryCall = 'catalog.query' as const;
+  editCall = 'catalog.update' as const;
   customFilter: CatalogQueryParams;
   isEntity = true;
   isEditJob = false;

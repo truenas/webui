@@ -18,9 +18,9 @@ import { WebSocketService } from 'app/services/ws.service';
 })
 export class WebdavListComponent implements EntityTableConfig {
   title = T('WebDAV');
-  queryCall: 'sharing.webdav.query' = 'sharing.webdav.query';
-  updateCall: 'sharing.webdav.update' = 'sharing.webdav.update';
-  wsDelete: 'sharing.webdav.delete' = 'sharing.webdav.delete';
+  queryCall = 'sharing.webdav.query' as const;
+  updateCall = 'sharing.webdav.update' as const;
+  wsDelete = 'sharing.webdav.delete' as const;
   route_delete: string[] = ['sharing', 'webdav', 'delete'];
   rowIdentifier = helptext_sharing_webdav.column_name;
 

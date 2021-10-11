@@ -26,9 +26,9 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
   providers: [FieldRelationService, NetworkService],
 })
 export class InitiatorFormComponent implements OnInit {
-  protected addCall: 'iscsi.initiator.create' = 'iscsi.initiator.create';
-  protected queryCall: 'iscsi.initiator.query' = 'iscsi.initiator.query';
-  protected editCall: 'iscsi.initiator.update' = 'iscsi.initiator.update';
+  protected addCall = 'iscsi.initiator.create' as const;
+  protected queryCall = 'iscsi.initiator.query' as const;
+  protected editCall = 'iscsi.initiator.update' as const;
   protected customFilter: any[] = [[['id', '=']]];
   route_success: string[] = ['sharing', 'iscsi', 'initiator'];
   protected pk: number;

@@ -20,9 +20,8 @@ import { WebSocketService, DialogService } from 'app/services';
   selector: 'nfs-edit',
   template: ' <entity-form [conf]="this"></entity-form>',
 })
-
 export class ServiceNFSComponent implements FormConfiguration {
-  queryCall: 'nfs.config' = 'nfs.config';
+  queryCall = 'nfs.config' as const;
   route_success: string[] = ['services'];
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];
