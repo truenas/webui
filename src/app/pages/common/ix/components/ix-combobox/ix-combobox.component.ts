@@ -1,9 +1,16 @@
 import {
-  Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnInit,
+  Output,
+  SimpleChanges,
+  ViewChild,
 } from '@angular/core';
-import {
-  ControlValueAccessor, FormControl, NgControl,
-} from '@angular/forms';
+import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,6 +27,7 @@ import { Option } from 'app/interfaces/option.interface';
   selector: 'ix-combobox',
   templateUrl: './ix-combobox.component.html',
   styleUrls: ['./ix-combobox.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnInit {
   @Input() label: string;
@@ -58,6 +66,7 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
   constructor(
     private translate: TranslateService,
     public controlDirective: NgControl,
+    private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -70,6 +79,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
     if (this.selectedOption) {
       this.filterChanged$.next('');
     }
+
+    this.cdr.markForCheck();
   }
 
   ngOnInit(): void {
@@ -84,6 +95,8 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
       } else {
         this.filteredOptions = of(this.syncOptions);
       }
+
+      this.cdr.markForCheck();
     });
   }
 
@@ -169,5 +182,6 @@ export class IxComboboxComponent implements ControlValueAccessor, OnChanges, OnI
 
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
+    this.cdr.markForCheck();
   }
 }

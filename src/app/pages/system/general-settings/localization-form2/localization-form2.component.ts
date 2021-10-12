@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
@@ -8,9 +10,7 @@ import { helptext_system_general as helptext } from 'app/helptext/system/general
 import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import {
-  LanguageService, SystemGeneralService, WebSocketService,
-} from 'app/services';
+import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
 
@@ -19,6 +19,7 @@ import { LocaleService } from 'app/services/locale.service';
   selector: 'localization-form2',
   templateUrl: './localization-form2.component.html',
   styleUrls: ['./localization-form2.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LocalizationForm2Component implements OnInit {
   fieldsetTitle = helptext.localeTitle;
@@ -98,6 +99,7 @@ export class LocalizationForm2Component implements OnInit {
     protected ws: WebSocketService,
     protected langService: LanguageService,
     private modalService: IxModalService,
+    private cdr: ChangeDetectorRef,
   ) {
     this.sysGeneralService.getGeneralConfig$
       .pipe(untilDestroyed(this)).subscribe((res) => {
@@ -106,6 +108,7 @@ export class LocalizationForm2Component implements OnInit {
         this.formGroup.get('kbdmap').setValue(this.configData?.kbdmap);
         this.formGroup.get('timezone').setValue(this.configData?.timezone);
         this.setTimeOptions(this.configData.timezone);
+        this.cdr.markForCheck();
       });
   }
 

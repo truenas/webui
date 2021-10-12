@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component, Input,
 } from '@angular/core';
 import {
@@ -13,6 +14,7 @@ import { Option } from 'app/interfaces/option.interface';
   selector: 'ix-select',
   styleUrls: ['./ix-select.component.scss'],
   templateUrl: './ix-select.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxSelectComponent implements ControlValueAccessor {
   @Input() label: string;
@@ -24,6 +26,7 @@ export class IxSelectComponent implements ControlValueAccessor {
 
   constructor(
     public controlDirective: NgControl,
+    private cdr: ChangeDetectorRef,
   ) {
     this.controlDirective.valueAccessor = this;
   }
@@ -36,6 +39,7 @@ export class IxSelectComponent implements ControlValueAccessor {
 
   writeValue(val: string | number): void {
     this.value = val;
+    this.cdr.markForCheck();
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
@@ -48,5 +52,6 @@ export class IxSelectComponent implements ControlValueAccessor {
 
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
+    this.cdr.markForCheck();
   }
 }
