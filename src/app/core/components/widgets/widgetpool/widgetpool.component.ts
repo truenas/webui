@@ -210,7 +210,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   title: string = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
-  voldataavail = false;
   displayValue: any;
   diskSize: any;
   diskSizeLabel: string;
@@ -325,14 +324,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       // When Locked, Bail before we try to get details.
       // (errors start after this...)
       return 0;
-    }
-
-    let availableValue;
-    if (isNaN(this.volumeData.avail)) {
-      availableValue = this.volumeData.avail;
-    } else {
-      const availableObj = (<any>window).filesize(this.volumeData.avail, { output: 'object', exponent: 3 });
-      this.voldataavail = true;
     }
 
     this.displayValue = (<any>window).filesize(this.volumeData.avail, { standard: 'iec' });
