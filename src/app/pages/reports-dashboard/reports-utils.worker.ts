@@ -175,7 +175,7 @@ function optimizeLegend(input: any): any {
       break;
     case 'interface':
       output.legend = output.legend.map((label) => label.replace(/if_/, ''));
-      output.legend = output.legend.map((label) => label.replace(/octets_/, 'octets '));
+      output.legend = output.legend.map((label) => label.replace(/octets_/, ''));
       break;
     case 'nfsstat':
       output.legend = output.legend.map((label) => label.replace(/nfsstat-/, ''));
