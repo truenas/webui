@@ -108,6 +108,7 @@
   "Connecting to {product}": "",
   "Console": "",
   "Contact": "",
+  "Create Boot Environment": "",
   "Create a new account": "",
   "Create {vdevs} new {vdevType} data vdevs using {used} ({size}) {type}s and leaving {remaining} of those drives unused.": "",
   "Credential": "",

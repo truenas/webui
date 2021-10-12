@@ -50,6 +50,7 @@
   "Cloud sync <i>{taskName}</i> stopped.": "",
   "Collapse": "",
   "Connecting to {product}": "",
+  "Create Boot Environment": "",
   "Create a new account": "",
   "Create {vdevs} new {vdevType} data vdevs using {used} ({size}) {type}s and leaving {remaining} of those drives unused.": "",
   "DELETE DATASET": "",
