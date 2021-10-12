@@ -122,6 +122,9 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
+  /**
+   * @deprecated
+   */
   select(
     title: string,
     options: Option[],
