@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { RouterNavigationAction, ROUTER_NAVIGATION } from '@ngrx/router-store';
+import { routerNavigationAction, RouterNavigationAction } from '@ngrx/router-store';
 import { TranslateService } from '@ngx-translate/core';
 import { tap } from 'rxjs/operators';
 import { CustomRouterState } from 'app/store/serializers/custom-router-serializer';
@@ -13,9 +13,11 @@ export class RouterEffects {
   navigate$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(ROUTER_NAVIGATION),
+        ofType<RouterNavigationAction<CustomRouterState>>(routerNavigationAction),
         tap((data: RouterNavigationAction<CustomRouterState>) => {
-          this.titleService.setTitle(this.translateService.instant(data.payload.routerState.title) + ' - ' + window.location.hostname);
+          this.titleService.setTitle(
+            this.translateService.instant(data.payload.routerState.title) + ' - ' + window.location.hostname,
+          );
         }),
       ),
     { dispatch: false },
