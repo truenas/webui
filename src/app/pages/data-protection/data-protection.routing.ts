@@ -17,7 +17,7 @@ import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.co
 
 export const DataProtectionRoutes: Routes = [{
   path: '',
-  data: { title: 'Calendar' },
+  data: { title: 'Data Protection' },
   children: [
     {
       path: '',

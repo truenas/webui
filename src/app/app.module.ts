@@ -5,6 +5,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
+import { EffectsModule } from '@ngrx/effects';
+import { StoreRouterConnectingModule } from '@ngrx/router-store';
+import { StoreModule } from '@ngrx/store';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
@@ -31,6 +34,9 @@ import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import { ErdService } from 'app/services/erd.service';
 import { IxModalService } from 'app/services/ix-modal.service';
 import { NotificationsService } from 'app/services/notifications.service';
+import { RouterEffects } from 'app/store/effects/router-effects';
+import { reducers } from 'app/store/reducers';
+import { CustomRouterStateSerializer } from 'app/store/serializers/custom-router-serializer';
 import { AppComponent } from './app.component';
 import { rootRouterConfig } from './app.routes';
 import { AppCommonModule } from './components/common/app-common.module';
@@ -96,6 +102,11 @@ import { WebSocketService } from './services/ws.service';
     TerminalModule,
     CommonDirectivesModule,
     NgxWebstorageModule.forRoot(),
+    StoreModule.forRoot(reducers),
+    StoreRouterConnectingModule.forRoot({
+      serializer: CustomRouterStateSerializer,
+    }),
+    EffectsModule.forRoot([RouterEffects]),
   ],
   declarations: [
     AppComponent,
