@@ -67,8 +67,8 @@ def create_wheeldataset_and_set_permissions(driver, dataset_name):
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_SMB"]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, f'//div[contains(text(),"{dataset_name}")]')
     ## now set permissions
@@ -146,8 +146,8 @@ def set_path_to_the_ldap_dataset_mnttankwheel_dataset_input_wheelsmbshare_as_nam
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     
 
-@then(parsers.parse('smb should be added'))
-def test_wheel_smb_share_should_be_added(driver, smbname):
+@then('parsers.parse(''smb should be added')
+def test_wheel_smb_share_should_be_added(driver):
     """"{smbname}" should be added."""
     assert wait_on_element(driver, 5, '//div[contains(.,"Windows (SMB) Shares")]')
     assert wait_on_element(driver, 5, f'//div[contains(.,"test wheel SMB share")]')
