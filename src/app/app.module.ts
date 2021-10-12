@@ -34,7 +34,7 @@ import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import { ErdService } from 'app/services/erd.service';
 import { IxModalService } from 'app/services/ix-modal.service';
 import { NotificationsService } from 'app/services/notifications.service';
-import { RouterEffects } from 'app/store/effects/router-effects';
+import { RouterEffects } from 'app/store/effects/router.effects';
 import { reducers } from 'app/store/reducers';
 import { CustomRouterStateSerializer } from 'app/store/serializers/custom-router-serializer';
 import { AppComponent } from './app.component';
