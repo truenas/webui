@@ -51,7 +51,7 @@ def you_should_be_on_the_dashboard_click_on_Storage(driver):
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
 
-@when('create {dataset_name} and set permissions')
+@then(parsers.parse('create {dataset_name} and set permissions'))
 def create_wheeldataset_and_set_permissions(driver, dataset_name):
     """create wheeldataset and set permissions."""
     assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
@@ -81,7 +81,7 @@ def create_wheeldataset_and_set_permissions(driver, dataset_name):
     driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
     assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
 
-### NEED TO SET GROUP FOR ERICBSD TO ROOT AND SET DATASET TO ROOT
+
 
 
 @then('add the user to group root for later tests')
@@ -146,11 +146,11 @@ def set_path_to_the_ldap_dataset_mnttankwheel_dataset_input_wheelsmbshare_as_nam
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     
 
-@then(parsers.parse('"{smbname}" should be added'))
+@then(parsers.parse('smb should be added'))
 def test_wheel_smb_share_should_be_added(driver, smbname):
     """"{smbname}" should be added."""
     assert wait_on_element(driver, 5, '//div[contains(.,"Windows (SMB) Shares")]')
-    assert wait_on_element(driver, 5, f'//div[contains(.,"{smbname}")]')
+    assert wait_on_element(driver, 5, f'//div[contains(.,"test wheel SMB share")]')
     
 
 @then(parsers.parse('Send a file to the share with nas_ip/"{wheelshare}" and "{user}" and "{password}"'))
