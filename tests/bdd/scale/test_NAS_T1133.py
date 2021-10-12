@@ -146,10 +146,10 @@ def set_path_to_the_ldap_dataset_mnttankwheel_dataset_input_wheelsmbshare_as_nam
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     
 
-@then('parsers.parse(''mb should be added')
+@then('parsers.parse('smb should be added')
 def test_wheel_smb_share_should_be_added(driver):
     """"{smbname}" should be added."""
-    assert wait_on_element(driver, 5, '//a[contains(.,"Windows (SMB) Shares")]')
+    assert wait_on_element(driver, 5, '//a[contains(.,"(SMB)")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"test wheel SMB share")]')
     
 
