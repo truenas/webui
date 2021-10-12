@@ -16,7 +16,7 @@ export class RouterEffects {
         ofType<RouterNavigationAction<CustomRouterState>>(routerNavigationAction),
         tap((data: RouterNavigationAction<CustomRouterState>) => {
           this.titleService.setTitle(
-            this.translateService.instant(data.payload.routerState.title) + ' - ' + window.location.hostname,
+            data.payload.routerState.title + ' - ' + window.location.hostname,
           );
         }),
       ),
