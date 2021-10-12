@@ -8,6 +8,8 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { Option } from 'app/interfaces/option.interface';
 
+type IxSelectValue = string | number | string[] | number[];
+
 @UntilDestroy()
 @Component({
   selector: 'ix-select',
@@ -16,7 +18,7 @@ import { Option } from 'app/interfaces/option.interface';
 })
 export class IxSelectComponent implements ControlValueAccessor {
   @Input() label: string;
-  @Input() value: string | number;
+  @Input() value: IxSelectValue;
   @Input() hint: string;
   @Input() options: Observable<Option[]>;
   @Input() required: boolean;
@@ -32,14 +34,14 @@ export class IxSelectComponent implements ControlValueAccessor {
   formControl = new FormControl(this).value as FormControl;
   isDisabled = false;
 
-  onChange: (value: string | number) => void = (): void => {};
+  onChange: (value: IxSelectValue) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
-  writeValue(val: string | number): void {
+  writeValue(val: IxSelectValue): void {
     this.value = val;
   }
 
-  registerOnChange(onChange: (value: string | number) => void): void {
+  registerOnChange(onChange: (value: IxSelectValue) => void): void {
     this.onChange = onChange;
   }
 
