@@ -25,7 +25,7 @@ export const routes: Routes = [
       {
         path: '',
         component: SharesDashboardComponent,
-        data: { title: 'Dashboard', breadcrumb: 'Dashboard' },
+        data: { title: 'Sharing', breadcrumb: 'Dashboard' },
       },
       {
         path: 'nfs',
