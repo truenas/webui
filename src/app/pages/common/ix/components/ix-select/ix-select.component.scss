@@ -1,3 +1,6 @@
+@import 'assets/iconfont/variables';
+@import 'assets/iconfont/mixins';
+
 :host {
   display: block;
   margin-bottom: 12px;
@@ -42,4 +45,36 @@
 
 .label {
   font-size: x-small;
+}
+
+::ng-deep .mat-select-panel-wrap *:not(.mat-selection-list) {
+  /*
+    Note: asterisk to ignore doubled icons on form-select
+    TODO: remove that once form-select is updated
+   */
+  .mat-option-pseudo-checkbox.mat-pseudo-checkbox {
+    @include material-icons();
+    @include material-icon('remove', 'after');
+
+    background: transparent;
+    border: 0;
+    height: 24px;
+    margin-right: 16px;
+    width: 24px;
+
+    &::after {
+      /* reset pseudo checkbox styles */
+      border: unset;
+      height: unset;
+      left: unset;
+      opacity: 1;
+      top: unset;
+      transform: unset;
+      width: unset;
+    }
+
+    &.mat-pseudo-checkbox-checked {
+      @include material-icon('check_circle', 'after');
+    }
+  }
 }
