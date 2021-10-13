@@ -16,9 +16,10 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -44,7 +45,7 @@ export class DatasetFormComponent implements FormConfiguration {
   volid: string;
   isBasicMode = true;
   pk: string;
-  customFilter: any[] = [];
+  customFilter: QueryParams<Dataset, ExtraDatasetQueryOptions> = [];
   queryCall = 'pool.dataset.query' as const;
   isEntity = true;
   isNew = false;
@@ -80,7 +81,7 @@ export class DatasetFormComponent implements FormConfiguration {
   protected size_fields: SizeField[] = [
     'quota', 'refquota', 'reservation', 'refreservation', 'special_small_block_size',
   ];
-  protected OrigSize: { [field in SizeField]?: any } = {};
+  protected OrigSize: { [field in SizeField]?: string } = {};
   protected OrigHuman: { [field in SizeField]?: any } = {};
 
   protected warning = 80;
@@ -801,8 +802,8 @@ export class DatasetFormComponent implements FormConfiguration {
     _.find(this.fieldSets, { name: 'quota_divider' }).divider = !basic_mode;
   }
 
-  convertHumanStringToNum(hstr: any, field: SizeField): number {
-    let num = 0;
+  convertHumanStringToNum(hstr: string | number, field: SizeField): number {
+    let num: number | string = 0;
     let unit = '';
 
     // empty value is evaluated as null
@@ -819,8 +820,9 @@ export class DatasetFormComponent implements FormConfiguration {
     hstr = hstr.replace(/\s+/g, '');
 
     // get leading number
-    if (num = hstr.match(/^(\d+(\.\d+)?)/)) {
-      num = (num as any)[1];
+    const matches = hstr.match(/^(\d+(\.\d+)?)/);
+    if (matches) {
+      num = matches[1];
     } else {
       // leading number is required
       this.humanReadable[field] = '';
@@ -838,7 +840,7 @@ export class DatasetFormComponent implements FormConfiguration {
     const spacer = (unit) ? ' ' : '';
 
     this.humanReadable[field] = num.toString() + spacer + unit;
-    return num * this.storageService.convertUnitToNum(unit);
+    return Number(num) * this.storageService.convertUnitToNum(unit);
   }
 
   sendAsBasicOrAdvanced(data: any): DatasetFormData {

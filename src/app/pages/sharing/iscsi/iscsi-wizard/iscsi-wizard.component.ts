@@ -53,7 +53,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     comment: null,
     target: null,
   };
-  summary: any;
+  summary: Record<string, unknown>;
   protected namesInUse: string[] = [];
 
   wizardConfig: Wizard[] = [

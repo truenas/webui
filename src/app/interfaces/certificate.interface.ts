@@ -8,6 +8,7 @@ export interface Certificate {
   CA_type_internal: boolean;
   CSR: any;
   DN: string;
+  can_be_revoked: boolean;
   cert_type: string; // Enum? "CERTIFICATE"
   cert_type_CSR: boolean;
   cert_type_existing: boolean;
@@ -27,7 +28,7 @@ export interface Certificate {
   from: string;
   id: number;
   internal: string;
-  issuer: string;
+  issuer: string | { name: string };
   key_length: number;
   key_type: string; // Enum RSA
   lifetime: number;

@@ -73,7 +73,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
   getActions(row: any): EntityTableAction[] {
     const actions = [];
     actions.push({
-      id: row.path,
+      id: row.id,
       icon: 'edit',
       label: T('Edit'),
       name: 'edit',
@@ -185,13 +185,16 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
   }
 
   dataHandler(data: EntityTableComponent): void {
-    data.rows.forEach((row: any) => {
-      if (!row.name) {
-        row.name = `*ERR* (${this.translate.instant(helptext.shared.nameErr)}), ID: ${row.id}`;
-      }
-      row.quota = this.storageService.convertBytestoHumanReadable(row.quota, 0);
-      row.used_percent = `${Math.round((row.used_percent) * 100) / 100}%`;
-      row.obj_used_percent = `${Math.round((row.obj_used_percent) * 100) / 100}%`;
+    data.rows = data.rows.map((row: DatasetQuota) => {
+      return {
+        ...row,
+        name: row.name
+          ? row.name
+          : `*ERR* (${this.translate.instant(helptext.shared.nameErr)}), ID: ${row.id}`,
+        quota: this.storageService.convertBytestoHumanReadable(row.quota, 0),
+        used_percent: `${Math.round((row.used_percent) * 100) / 100}%`,
+        obj_used_percent: `${Math.round((row.obj_used_percent) * 100) / 100}%`,
+      };
     });
   }
 

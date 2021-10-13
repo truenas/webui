@@ -34,10 +34,10 @@ export class CertificateAddComponent implements WizardConfiguration {
   private CSRList: Certificate[] = [];
   title: string = helptext_system_certificates.add.title;
   private getType = new Subscription();
-  private type: any;
+  private type: string;
   hideCancel = true;
   isLinear = true;
-  summary: any = {};
+  summary: Record<string, unknown> = {};
 
   entityWizard: EntityWizardComponent;
   private currentStep = 0;
@@ -641,7 +641,7 @@ export class CertificateAddComponent implements WizardConfiguration {
   constructor(protected ws: WebSocketService, protected dialog: MatDialog,
     protected systemGeneralService: SystemGeneralService, private modalService: ModalService,
     protected loader: AppLoaderService, private dialogService: DialogService) {
-    this.getType = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getType = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: string) => {
       this.type = rowId;
     });
   }

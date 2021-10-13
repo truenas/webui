@@ -144,7 +144,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
 
   get themeAccentColors(): string[] {
     const theme = this.themeService.currentTheme();
-    this._themeAccentColors = theme.accentColors.map((color) => (theme as any)[color]);
+    this._themeAccentColors = theme.accentColors.map((color) => theme[color]);
     return this._themeAccentColors;
   }
 

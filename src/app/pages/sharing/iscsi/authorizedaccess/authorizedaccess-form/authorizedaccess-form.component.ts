@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
+import { IscsiAuthAccess, IscsiAuthAccessUpdate } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -190,12 +190,12 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(value: any): void {
+  beforeSubmit(value: IscsiAuthAccessUpdate & { secret_confirm: string; peersecret_confirm: string }): void {
     delete value['secret_confirm'];
     delete value['peersecret_confirm'];
   }
 
-  customEditCall(value: any): void {
+  customEditCall(value: IscsiAuthAccessUpdate): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
