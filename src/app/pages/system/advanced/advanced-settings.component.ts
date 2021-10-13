@@ -39,6 +39,7 @@ import {
   WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { ModalService } from 'app/services/modal.service';
 import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
 import { ConsoleFormComponent } from './console-form/console-form.component';
@@ -211,7 +212,8 @@ export class AdvancedSettingsComponent implements OnInit {
     public datePipe: DatePipe,
     protected userService: UserService,
     private translate: TranslateService,
-  ) {}
+    private ixModalService: IxModalService,
+  ) { }
 
   ngOnInit(): void {
     this.getDatasetData();
@@ -452,15 +454,25 @@ export class AdvancedSettingsComponent implements OnInit {
             this.sysGeneralService.sendConfigData(this.configData as any);
           }
 
-          this.modalService.openInSlideIn(addComponent, id);
+          if ([CardId.Kernel].includes(name)) {
+            const modal = this.ixModalService.open(KernelFormComponent, T('Kernel'));
+            modal.setupForm(this.configData);
+          } else {
+            this.modalService.openInSlideIn(addComponent, id);
+          }
           this.isFirstTime = false;
         });
     } else {
       if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
         this.sysGeneralService.sendConfigData(this.configData as any);
       }
-
-      this.modalService.openInSlideIn(addComponent, id);
+      if ([CardId.Kernel].includes(name)) {
+        const modal = this.ixModalService.open(KernelFormComponent, T('Kernel'));
+        modal.setupForm(this.configData);
+      } else {
+        this.modalService.openInSlideIn(addComponent, id);
+      }
+      // this.modalService.openInSlideIn(addComponent, id);
     }
   }
 
