@@ -180,13 +180,8 @@ export const helptext_system_general = {
   dialog_error_title: T('Error restarting web service'),
 
   snackbar_download_success: {
-    title: T('Download Sucessful'),
+    title: T('Download Successful'),
     action: T('Success'),
-  },
-
-  validation_errors: {
-    ui_address: T('Select <samp>0.0.0.0</samp> to include all addresses. When this has been chosen, additional addresses cannot be selected.'),
-    ui_v6address: T('Select <samp>::</samp> to include all addresses. When this has been chosen, additional addresses cannot be selected.'),
   },
 
   config_download: {
