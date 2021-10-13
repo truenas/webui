@@ -87,17 +87,18 @@ describe('GuiFormComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    /*
-      TODO: Update when ix-select will be supported
-    */
     expect(values).toEqual(
       {
         'Crash reporting': true,
+        'GUI SSL Certificate': 'freenas_default',
+        'HTTPS Protocols': ['TLSv1.2', 'TLSv1.3'],
         'Show Console Messages': false,
         'Usage collection': false,
         'Web Interface HTTP -> HTTPS Redirect': false,
         'Web Interface HTTP Port': '80',
         'Web Interface HTTPS Port': '443',
+        'Web Interface IPv4 Address': ['0.0.0.0'],
+        'Web Interface IPv6 Address': ['::'],
       },
     );
   });
