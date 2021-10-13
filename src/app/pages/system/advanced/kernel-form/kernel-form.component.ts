@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy,
+  Component, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -33,6 +33,7 @@ export class KernelFormComponent {
     private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService,
     private modalService: IxModalService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   setupForm(group: AdvancedConfig): void {
@@ -40,6 +41,7 @@ export class KernelFormComponent {
       autotune: group?.autotune,
       debugkernel: group?.debugkernel,
     });
+    this.cdr.markForCheck();
   }
 
   onSubmit(): void {
