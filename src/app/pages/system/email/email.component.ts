@@ -4,7 +4,6 @@ import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { MatRadioChange } from '@angular/material/radio/radio';
-import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
@@ -33,9 +32,7 @@ interface OAuthData {
 @UntilDestroy()
 @Component({
   selector: 'app-email',
-  template: `
-  <entity-form [conf]="this"></entity-form>
-  `,
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class EmailComponent implements FormConfiguration {
   queryCall = 'mail.config' as const;
@@ -93,20 +90,6 @@ export class EmailComponent implements FormConfiguration {
       label: true,
       config: [
         {
-          type: 'input',
-          name: 'fromemail',
-          placeholder: helptext_system_email.fromemail.placeholder,
-          tooltip: helptext_system_email.fromemail.tooltip,
-          validation: helptext_system_email.fromemail.validation,
-          required: true,
-        },
-        {
-          type: 'input',
-          name: 'fromname',
-          placeholder: helptext_system_email.fromname.placeholder,
-          tooltip: helptext_system_email.fromname.tooltip,
-        },
-        {
           type: 'radio',
           name: 'send_mail_method',
           onChange: (data: { event: MatRadioChange }) => {
@@ -128,6 +111,20 @@ export class EmailComponent implements FormConfiguration {
             },
           ],
           value: true,
+        },
+        {
+          type: 'input',
+          name: 'fromemail',
+          placeholder: helptext_system_email.fromemail.placeholder,
+          tooltip: helptext_system_email.fromemail.tooltip,
+          validation: helptext_system_email.fromemail.validation,
+          required: true,
+        },
+        {
+          type: 'input',
+          name: 'fromname',
+          placeholder: helptext_system_email.fromname.placeholder,
+          tooltip: helptext_system_email.fromname.tooltip,
         },
         {
           type: 'input',
@@ -237,11 +234,10 @@ export class EmailComponent implements FormConfiguration {
   private pass: FormInputConfig;
 
   constructor(
-    protected router: Router,
-    protected ws: WebSocketService,
+    private ws: WebSocketService,
     private dialogservice: DialogService,
-    protected dialog: MatDialog,
-    protected loader: AppLoaderService,
+    private dialog: MatDialog,
+    private loader: AppLoaderService,
   ) {}
 
   resourceTransformIncomingRestData(data: MailConfig): MailConfig {
@@ -301,6 +297,8 @@ export class EmailComponent implements FormConfiguration {
   }
 
   toggleSmtpControls(): void {
+    this.entityEdit.setDisabled('fromemail', !this.sendMailMethod.value, !this.sendMailMethod.value);
+    this.entityEdit.setDisabled('fromname', !this.sendMailMethod.value, !this.sendMailMethod.value);
     this.entityEdit.setDisabled('outgoingserver', !this.sendMailMethod.value, !this.sendMailMethod.value);
     this.entityEdit.setDisabled('port', !this.sendMailMethod.value, !this.sendMailMethod.value);
     this.entityEdit.setDisabled('security', !this.sendMailMethod.value, !this.sendMailMethod.value);
