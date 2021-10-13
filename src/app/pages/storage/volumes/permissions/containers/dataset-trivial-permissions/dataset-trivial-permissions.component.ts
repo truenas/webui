@@ -52,7 +52,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
           options: [],
           searchOptions: [],
           parent: this,
-          updater: this.updateUserSearchOptions,
+          updater: (value: string) => this.updateUserSearchOptions(value),
           loadMoreOptions: this.loadMoreOptions,
         },
         {
@@ -70,7 +70,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
           options: [],
           searchOptions: [],
           parent: this,
-          updater: this.updateGroupSearchOptions,
+          updater: (value: string) => this.updateGroupSearchOptions(value),
           loadMoreOptions: this.loadMoreGroupOptions,
         },
         {
@@ -233,17 +233,17 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     });
   }
 
-  updateGroupSearchOptions(value = '', parent: this): void {
-    parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((groups) => {
-      parent.groupField.searchOptions = groups.map((group) => {
+  updateGroupSearchOptions(value = ''): void {
+    this.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+      this.groupField.searchOptions = groups.map((group) => {
         return { label: group.group, value: group.group };
       });
     });
   }
 
-  updateUserSearchOptions(value = '', parent: this): void {
-    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((items) => {
-      parent.userField.searchOptions = items.map((user) => {
+  updateUserSearchOptions(value = ''): void {
+    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+      this.userField.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });
     });

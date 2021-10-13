@@ -17,7 +17,7 @@ export class ToolbarButtonComponent extends IxAbstractObject {
     super();
   }
 
-  onClick(value: any): void {
+  onClick(value: true): void {
     this.config.value = value;
     this.controller.next({ name: this.config.name, value: this.config.value });
   }

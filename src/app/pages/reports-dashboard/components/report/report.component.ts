@@ -18,6 +18,7 @@ import { filter, take } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
+import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -46,14 +47,8 @@ interface TimeAxisData {
   culling: number;
 }
 
-export interface Report {
-  name: string;
-  title: string;
-  vertical_label: string;
-  identifiers?: string[];
+export interface Report extends ReportingGraph {
   isRendered?: boolean[];
-  stacked: boolean;
-  stacked_show_total: boolean;
   errorConf?: EmptyConfig;
 }
 

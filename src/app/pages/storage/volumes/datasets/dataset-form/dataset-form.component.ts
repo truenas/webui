@@ -12,6 +12,7 @@ import { DatasetAclType } from 'app/enums/dataset-acl-type.enum';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -150,8 +151,8 @@ export class DatasetFormComponent implements FormConfiguration {
           placeholder: helptext.dataset_form_atime_placeholder,
           tooltip: helptext.dataset_form_atime_tooltip,
           options: [
-            { label: 'on', value: 'ON' },
-            { label: 'off', value: 'OFF' },
+            { label: 'on', value: OnOff.On },
+            { label: 'off', value: OnOff.Off },
           ],
         }],
     },
@@ -548,8 +549,8 @@ export class DatasetFormComponent implements FormConfiguration {
           placeholder: helptext.dataset_form_readonly_placeholder,
           tooltip: helptext.dataset_form_readonly_tooltip,
           options: [
-            { label: 'On', value: 'ON' },
-            { label: 'Off', value: 'OFF' },
+            { label: 'On', value: OnOff.On },
+            { label: 'Off', value: OnOff.Off },
           ],
         },
         {
@@ -558,8 +559,8 @@ export class DatasetFormComponent implements FormConfiguration {
           placeholder: helptext.dataset_form_exec_placeholder,
           tooltip: helptext.dataset_form_exec_tooltip,
           options: [
-            { label: 'On', value: 'ON' },
-            { label: 'Off', value: 'OFF' },
+            { label: 'On', value: OnOff.On },
+            { label: 'Off', value: OnOff.Off },
           ],
         },
         {

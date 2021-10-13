@@ -9,6 +9,7 @@ import { Multipath } from 'app/interfaces/multipath.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebSocketService } from 'app/services/ws.service';
@@ -159,23 +160,10 @@ export class ApiService {
         responseEvent: 'UpdateChecked',
       },
     },
-    VmStop: {
-      apiCall: {
-        namespace: 'vm.stop',
-        args: [] as any,
-        responseEvent: 'VmProfiles',
-        errorResponseEvent: 'VmStopFailure',
-      },
-      postProcessor(res: any, callArgs: any) {
-        let cloneRes = { ...res };
-        cloneRes = { id: callArgs[0] }; // res:boolean
-        return cloneRes;
-      },
-    },
     ReportingGraphsRequest: {
       apiCall: {
         namespace: 'reporting.graphs',
-        args: [] as any,
+        args: [] as QueryParams<ReportingGraph>,
         responseEvent: 'ReportingGraphs',
       },
     },

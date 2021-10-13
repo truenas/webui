@@ -6,14 +6,21 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { DatasetQuotaType } from 'app/enums/dataset-quota-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormChipConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
-  DialogService, StorageService, WebSocketService, AppLoaderService, UserService,
+  FieldConfig,
+  FormChipConfig,
+  FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { QuotaFormValues } from 'app/pages/storage/volumes/datasets/dataset-quotas/quota-form-values.interface';
+import {
+  AppLoaderService, DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';
 
 @UntilDestroy()
@@ -93,7 +100,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
           autocomplete: true,
           searchOptions: [],
           parent: this,
-          updater: this.updateSearchOptions,
+          updater: (value: string) => this.updateSearchOptions(value),
         },
       ],
     },
@@ -206,16 +213,16 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
     }
   }
 
-  updateSearchOptions(value = '', parent: this): void {
-    parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
-      parent.entryField.searchOptions = groups.map((group) => {
+  updateSearchOptions(value = ''): void {
+    this.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+      this.entryField.searchOptions = groups.map((group) => {
         return { label: group.group, value: group.group };
       });
     });
   }
 
-  customSubmit(data: any): void {
-    const payload: any[] = [];
+  customSubmit(data: QuotaFormValues): void {
+    const payload: SetDatasetQuota[] = [];
     if (!data.system_entries) {
       data.system_entries = [];
     }
@@ -228,20 +235,20 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
     }
 
     if (data.system_entries) {
-      data.system_entries.forEach((entry: any) => {
+      data.system_entries.forEach((entry) => {
         if (data.data_quota) {
           const dq = this.storageService.convertHumanStringToNum(data.data_quota);
           if (dq >= 0) {
             payload.push({
-              quota_type: 'GROUP',
+              quota_type: DatasetQuotaType.Group,
               id: entry.toString(),
               quota_value: this.storageService.convertHumanStringToNum(data.data_quota),
             });
           }
         }
-        if (data.obj_quota && data.obj_quota >= 0) {
+        if (data.obj_quota && Number(data.obj_quota) >= 0) {
           payload.push({
-            quota_type: 'GROUPOBJ',
+            quota_type: DatasetQuotaType.GroupObj,
             id: entry.toString(),
             quota_value: parseInt(data.obj_quota, 10),
           });

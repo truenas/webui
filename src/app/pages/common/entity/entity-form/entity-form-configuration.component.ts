@@ -2,7 +2,6 @@ import { Component, ViewChild } from '@angular/core';
 import { Subject } from 'rxjs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { TooltipsService } from 'app/services';
 import { FieldSets } from './classes/field-sets';
 import { EntityFormEmbeddedComponent } from './entity-form-embedded.component';
 import { EntityFormComponent } from './entity-form.component';
@@ -11,7 +10,6 @@ import { FieldConfig } from './models/field-config.interface';
 @Component({
   selector: 'entity-form-configuration',
   template: '',
-  providers: [TooltipsService],
 })
 export class EntityFormConfigurationComponent implements FormConfiguration {
   @ViewChild('embeddedForm', { static: false }) embeddedForm: EntityFormEmbeddedComponent;

@@ -1015,7 +1015,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     return deleteMsg;
   }
 
-  doMultiDelete(selected: any): void {
+  doMultiDelete(selected: any[]): void {
     const multiDeleteMsg = this.getMultiDeleteMessage(selected);
     this.dialogService.confirm({
       title: 'Delete',

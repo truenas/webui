@@ -10,6 +10,7 @@ import { filter } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -231,8 +232,8 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_readonly_placeholder,
         tooltip: helptext.zvol_readonly_tooltip,
         options: [
-          { label: T('On'), value: 'ON' },
-          { label: T('Off'), value: 'OFF' },
+          { label: T('On'), value: OnOff.On },
+          { label: T('Off'), value: OnOff.Off },
         ],
       },
       {
@@ -387,7 +388,7 @@ export class ZvolFormComponent implements FormConfiguration {
     }
 
     if (this.origHuman !== data.volsize) {
-      data.volsize = this.storageService.convertHumanStringToNum(data.volsize, true);
+      data.volsize = this.storageService.convertHumanStringToNum(data.volsize as any, true);
     } else {
       delete data.volsize;
     }

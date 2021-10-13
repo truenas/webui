@@ -153,12 +153,13 @@ import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { CreatePoolScrub, PoolScrub, PoolScrubParams } from 'app/interfaces/pool-scrub.interface';
 import { PoolUnlockQuery, PoolUnlockResult } from 'app/interfaces/pool-unlock-query.interface';
 import {
-  CreatePool, Pool, PoolAttachParams, PoolExpandParams, PoolReplaceParams,
+  CreatePool, Pool, PoolAttachParams, PoolExpandParams, PoolReplaceParams, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import {
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
+import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import {
   ReportingConfig,
   ReportingConfigUpdate,
@@ -687,7 +688,7 @@ export type ApiDirectory = {
   'pool.snapshottask.update': { params: [id: number, update: PeriodSnapshotTaskUpdate]; response: PeriodicSnapshotTask };
   'pool.unlock': { params: PoolUnlockQuery; response: PoolUnlockResult };
   'pool.unlock_services_restart_choices': { params: [id: number]; response: Choices };
-  'pool.update': { params: any; response: Pool };
+  'pool.update': { params: [id: number, update: UpdatePool]; response: Pool };
   'pool.upgrade': { params: [id: number]; response: boolean };
 
   // Replication
@@ -726,7 +727,7 @@ export type ApiDirectory = {
   'reporting.get_data': { params: ReportingQueryParams; response: ReportingData[] };
   'reporting.update': { params: [ReportingConfigUpdate]; response: ReportingConfig };
   'reporting.config': { params: void; response: ReportingConfig };
-  'reporting.graphs': { params: any; response: any };
+  'reporting.graphs': { params: QueryParams<ReportingGraph>; response: ReportingGraph[] };
   'reporting.clear': { params: void; response: void };
 
   // S3

@@ -288,7 +288,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
 
     // TODO: Incorrect type comparison, probably a bug.
     if (this.origHuman !== (data.volsize as any)) {
-      data.volsize = this.storageService.convertHumanStringToNum(data.volsize, true);
+      data.volsize = this.storageService.convertHumanStringToNum(data.volsize as any, true);
     } else {
       delete data.volsize;
     }

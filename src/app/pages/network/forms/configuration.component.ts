@@ -13,7 +13,7 @@ import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-fo
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { ipv4Validator, ipv6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-import { TooltipsService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +21,6 @@ import { TooltipsService, WebSocketService } from 'app/services';
   template: `
   <entity-form [conf]="this"></entity-form>
   `,
-  providers: [TooltipsService],
 })
 export class ConfigurationComponent implements FormConfiguration {
   queryCall = 'network.configuration.config' as const;

@@ -78,7 +78,7 @@ export class GeneralSettingsComponent implements OnInit {
       tooltip: helptext.upload_config_form.tooltip,
       validation: helptext.upload_config_form.validation,
       fileLocation: '',
-      updater: this.updater,
+      updater: (file: FormUploadComponent) => this.updater(file),
       parent: this,
       hideButton: true,
     },
@@ -324,10 +324,10 @@ export class GeneralSettingsComponent implements OnInit {
     });
   }
 
-  updater(file: FormUploadComponent, parent: this): void {
+  updater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
+      this.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 

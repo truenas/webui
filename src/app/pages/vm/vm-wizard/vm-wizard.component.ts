@@ -982,7 +982,6 @@ export class VMWizardComponent implements WizardConfiguration {
   customSubmit(value: any): void {
     let hdd;
     const vmPayload: any = {};
-    const zvolPayload: any = {};
 
     if (value.datastore) {
       value.datastore = value.datastore.replace('/mnt/', '');
@@ -990,9 +989,11 @@ export class VMWizardComponent implements WizardConfiguration {
     }
 
     // zvol_payload only applies if the user is creating one
-    zvolPayload['create_zvol'] = true;
-    zvolPayload['zvol_name'] = hdd;
-    zvolPayload['zvol_volsize'] = this.storageService.convertHumanStringToNum(value.volsize);
+    const zvolPayload = {
+      create_zvol: true,
+      zvol_name: hdd,
+      zvol_volsize: this.storageService.convertHumanStringToNum(value.volsize),
+    };
 
     if (this.productType.includes(ProductType.Scale)) {
       vmPayload['cpu_mode'] = value.cpu_mode;

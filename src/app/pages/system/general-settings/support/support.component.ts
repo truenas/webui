@@ -6,6 +6,8 @@ import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-j
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
+import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { LicenseComponent } from './license/license.component';
@@ -24,9 +26,9 @@ export class SupportComponent implements OnInit {
   isProductImageRack = false;
   extraMargin = true;
   serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];
-  systemInfo: any;
+  systemInfo: SystemInfoInSupport;
   hasLicense = false;
-  licenseInfo: any = null;
+  licenseInfo: LicenseInfoInSupport = null;
   links = [helptext.docHub, helptext.forums, helptext.licensing];
   licenseButtonText: string;
   ticketText = helptext.ticket;
