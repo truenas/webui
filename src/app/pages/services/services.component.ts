@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -22,10 +22,12 @@ interface ServiceRow extends Service {
 @Component({
   selector: 'services',
   styleUrls: ['./services.component.scss'],
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  template: '<entity-table #servicetable [title]="title" [conf]="this"></entity-table>',
   providers: [IscsiService],
 })
 export class ServicesComponent implements EntityTableConfig, OnInit {
+  @ViewChild('servicetable', { static: false }) serviceTable: EntityTableComponent;
+
   title = T('Services');
   isFooterConsoleOpen: boolean;
   queryCall = 'service.query' as const;
@@ -175,7 +177,12 @@ export class ServicesComponent implements EntityTableConfig, OnInit {
   }
 
   updateService(rpc: 'service.start' | 'service.stop', service: ServiceRow): void {
-    service.onChanging = true;
+    let waiting = true;
+    // Delay spinner for fast API responses
+    setTimeout(() => {
+      if (waiting) service.onChanging = true;
+    }, 1000);
+
     const serviceName = this.getServiceName(service);
     this.ws.call(rpc, [service.service]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
@@ -187,6 +194,8 @@ export class ServicesComponent implements EntityTableConfig, OnInit {
         }
         service.state = ServiceStatus.Running;
         service.onChanging = false;
+        this.serviceTable.changeDetectorRef.detectChanges();
+        waiting = false;
       } else {
         if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
           this.dialog.info(
@@ -196,6 +205,8 @@ export class ServicesComponent implements EntityTableConfig, OnInit {
         }
         service.state = ServiceStatus.Stopped;
         service.onChanging = false;
+        this.serviceTable.changeDetectorRef.detectChanges();
+        waiting = false;
       }
     }, (res) => {
       let message = this.translate.instant('Error starting service {serviceName}.', { serviceName });
@@ -204,6 +215,8 @@ export class ServicesComponent implements EntityTableConfig, OnInit {
       }
       this.dialog.errorReport(message, res.message, res.stack);
       service.onChanging = false;
+      this.serviceTable.changeDetectorRef.detectChanges();
+      waiting = false;
     });
   }
 
