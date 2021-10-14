@@ -13,7 +13,7 @@ import { EntityModule } from '../common/entity/entity.module';
 import { CardWidgetComponent } from './card-widget/card-widget.component';
 import { ConfigurationComponent } from './forms/configuration.component';
 import { InterfacesFormComponent } from './forms/interfaces-form.component';
-import { IPMIFromComponent } from './forms/ipmi-form.component';
+import { IpmiFormComponent } from './forms/ipmi-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
 import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
 import { StaticRouteFormComponent } from './forms/staticroute-form.component';
@@ -30,7 +30,7 @@ import { routing } from './network.routing';
     StaticRouteFormComponent,
     InterfacesFormComponent,
     ConfigurationComponent,
-    IPMIFromComponent,
+    IpmiFormComponent,
     NetworkComponent,
     CardWidgetComponent,
     OpenvpnClientComponent,

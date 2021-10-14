@@ -1,6 +1,5 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { TranslateService } from '@ngx-translate/core';
 import { Option } from 'app/interfaces/option.interface';
 
 @Component({
@@ -12,12 +11,10 @@ export class SelectDialogComponent {
   title: string;
   options: Option[];
   optionPlaceHolder: string;
-  method: string;
-  params: string;
   displaySelection: string;
-  @Output() switchSelectionEmitter = new EventEmitter<string>();
+  @Output() switchSelectionEmitter = new EventEmitter<string | number>();
 
-  constructor(public dialogRef: MatDialogRef<SelectDialogComponent>, protected translate: TranslateService) {}
+  constructor(public dialogRef: MatDialogRef<SelectDialogComponent>) {}
 
   switchSelection(): void {
     this.switchSelectionEmitter.emit(this.displaySelection);
