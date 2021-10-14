@@ -92,8 +92,8 @@ def change_the_Domain_for_ad_domain_and_click_Save(driver, ad_domain):
 @then('"Please wait" should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """"Please wait" should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, f'//span[text()="{nameserver_1}"]')
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, f'//span[text()="{nameserver_1}"]')
 
 
 @then('after, click on Credentials on the left sidebar, then Directory Services')
@@ -215,7 +215,8 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    assert wait_on_element(driver, 180, '//input[@data-placeholder="Username"]')
+    assert wait_on_element(driver, 240, '//input[@data-placeholder="Username"]')
+    assert wait_on_element(driver, 240, '//p[text()="HA is enabled."]')
 
 
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))
@@ -231,22 +232,28 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
     time.sleep(2)
 
 
-@then('on the Dashboard, wait 5 second')
-def on_the_dashboard_wait_5_second(driver):
-    """on the Dashboard, wait 5 second."""
+@then('on the Dashboard, wait for the Active Directory service')
+def on_the_dashboard_wait_for_the_active_directory_service(driver):
+    """on the Dashboard, wait for the Active Directory service."""
     assert wait_on_element(driver, 60, '//h1[text()="Dashboard"]')
-    # make sure HA is enable before going forward
+    assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
+    # Make sure HA is enable before going forward
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    # Wait for the directories service manager button
+    assert wait_on_element(driver, 60, '//button[@id="dirservices-manager"]')
+    # Wait for the badge of the task-manager to go away before going forward
+    no_badge = '//span[contains(@id,"mat-badge-content") and not(contains(text(),"0"))]'
+    assert wait_on_element_disappear(driver, 60, f'//button[@id="task-manager"]{no_badge}')
     if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-    assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
-    time.sleep(20)
+    time.sleep(5)
 
 
 @then('after click Storage on the left sidebar Storage')
 def after_click_storage_on_the_left_sidebar_storage(driver):
     """after click Storage on the left sidebar Storage."""
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
+    assert wait_on_element(driver, 20, '//h1[text()="Dashboard"]')
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
 
 
