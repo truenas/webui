@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -21,9 +21,9 @@ import { IxModalService } from 'app/services/ix-modal.service';
 })
 export class BootEnvironmentFormComponent {
   private rename = false;
-  private currentName?: string;
+  currentName?: string;
 
-  form = this.formBuilder.group({
+  formGroup: FormGroup = this.formBuilder.group({
     name: ['', [Validators.required, regexValidator(this.bootEnvService.bootenv_name_regex)]],
   });
 
@@ -41,19 +41,21 @@ export class BootEnvironmentFormComponent {
     private modalService: IxModalService,
   ) {}
 
-  setupForm(name?: string): void {
+  setupForm(name?: string): FormGroup {
     if (name) {
       this.rename = true;
       this.currentName = name;
-      this.form.patchValue({
+      this.formGroup.patchValue({
         name,
       });
     }
+
+    return this.formGroup;
   }
 
   onSubmit(): void {
     const fields = {
-      name: this.form.value.name,
+      name: this.formGroup.value.name,
     };
 
     if (this.rename) {
