@@ -14,7 +14,7 @@ import {
 } from 'app/interfaces/acl.interface';
 import { ActiveDirectoryConfig, LeaveActiveDirectory } from 'app/interfaces/active-directory-config.interface';
 import { ActiveDirectoryUpdate } from 'app/interfaces/active-directory.interface';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { AdvancedConfig, AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { AlertService, AlertServiceCreate } from 'app/interfaces/alert-service.interface';
 import {
   Alert, AlertCategory, AlertClasses, AlertClassesUpdate,
@@ -662,7 +662,7 @@ export type ApiDirectory = {
   'pool.import_disk_autodetect_fs_type': { params: [path: string]; response: string };
   'pool.import_disk_msdosfs_locales': { params: void; response: string[] };
   'pool.import_find': { params: void; response: PoolFindResult[] };
-  'pool.import_pool': { params: PoolImportParams; response: boolean };
+  'pool.import_pool': { params: [PoolImportParams]; response: boolean };
   'pool.is_upgraded': { params: [poolId: number]; response: boolean };
   'pool.lock': { params: any; response: any };
   'pool.offline': { params: [id: number, params: { label: string }]; response: boolean };
@@ -750,7 +750,7 @@ export type ApiDirectory = {
 
   // System
   'system.feature_enabled': { params: [feature: string]; response: boolean };
-  'system.advanced.update': { params: any; response: any };
+  'system.advanced.update': { params: [Partial<AdvancedConfigUpdate>]; response: AdvancedConfig };
   'system.reboot': { params: { delay?: number }; response: void };
   'system.shutdown': { params: { delay?: number }; response: void };
   'system.advanced.serial_port_choices': { params: void; response: Choices };

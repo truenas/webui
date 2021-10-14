@@ -28,7 +28,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   hideCancel = true;
 
   isLinear = true;
-  summary: any = {};
+  summary: Record<string, unknown> = {};
   entityWizard: EntityWizardComponent;
   private currentStep = 0;
 

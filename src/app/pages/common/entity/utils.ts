@@ -3,6 +3,7 @@ import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { EntityErrorHandler } from 'app/pages/common/entity/entity-form/interfaces/entity-error-handler.interface';
 import {
   FieldConfig,
   FormCheckboxConfig,
@@ -41,7 +42,7 @@ export class EntityUtils {
     }
   }
 
-  handleObjError(entity: any, res: any): void {
+  handleObjError(entity: EntityErrorHandler, res: any): void {
     let scroll = false;
     entity.error = '';
     for (const i in res.error) {
@@ -203,7 +204,7 @@ export class EntityUtils {
     return cronArray.join(' ');
   }
 
-  filterArrayFunction(item: any): boolean {
+  filterArrayFunction(item: unknown): boolean {
     /**
      * This function is for validation.
      * If the value of a control is invaild, we ignore it during sending payload
@@ -244,8 +245,8 @@ export class EntityUtils {
     return value;
   }
 
-  changeNullString2Null(data: any): any {
-    let result: any;
+  changeNullString2Null(data: unknown): unknown {
+    let result: unknown;
     if (data === undefined || data === null || data === '') {
       result = data;
     } else if (Array.isArray(data)) {
@@ -254,8 +255,8 @@ export class EntityUtils {
     } else if (typeof data === 'object') {
       result = {};
       Object.keys(data).forEach((key) => {
-        const value = this.changeNullString2Null(data[key]);
-        result[key] = value;
+        const value = this.changeNullString2Null((data as Record<string, unknown>)[key]);
+        (result as Record<string, unknown>)[key] = value;
       });
     } else if (data === NULL_VALUE) {
       result = null;
@@ -447,73 +448,6 @@ export class EntityUtils {
     }
 
     return results;
-  }
-
-  remapAppSubmitData(data: any): any {
-    let result: any;
-    if (data === undefined || data === null || data === '') {
-      result = data;
-    } else if (Array.isArray(data)) {
-      result = data.map((item) => {
-        if (Object.keys(item).length > 1) {
-          return this.remapAppSubmitData(item);
-        }
-        return this.remapAppSubmitData(item[Object.keys(item)[0]]);
-      });
-    } else if (typeof data === 'object') {
-      result = {};
-      Object.keys(data).forEach((key) => {
-        result[key] = this.remapAppSubmitData(data[key]);
-      });
-    } else {
-      result = data;
-    }
-
-    return result;
-  }
-
-  remapOneConfigData(data: any, fieldConfig: FieldConfig): any {
-    let result;
-    if (!fieldConfig || data === undefined || data === null || data === '') {
-      result = data;
-    } else if (Array.isArray(data)) {
-      result = [];
-      data.forEach((item) => {
-        const listConfig = fieldConfig as FormListConfig;
-        let value = item;
-        const subFieldConfig = listConfig.templateListField[0];
-        if (subFieldConfig.type === 'dict') {
-          value = this.remapOneConfigData(item, subFieldConfig);
-        }
-        result.push({
-          [subFieldConfig.name]: value,
-        });
-      });
-    } else if (typeof data === 'object') {
-      result = {} as any;
-      for (const key in data) {
-        const dictConfig = fieldConfig as FormDictConfig;
-        const subValue = data[key];
-        const subFieldConfig = dictConfig.subFields.find((fg) => fg.name === key);
-        const newValue = this.remapOneConfigData(subValue, subFieldConfig);
-        result[key] = newValue;
-      }
-    } else {
-      result = data;
-    }
-
-    return result;
-  }
-
-  remapAppConfigData(data: any, fieldConfigs: FieldConfig[]): any {
-    const result = {} as any;
-    for (const key in data) {
-      const value = data[key];
-      const fieldConfig = fieldConfigs.find((fg) => fg.name === key);
-      const newValue = this.remapOneConfigData(value, fieldConfig);
-      result[key] = newValue;
-    }
-    return result;
   }
 
   snakeToPascal(str: string): string {

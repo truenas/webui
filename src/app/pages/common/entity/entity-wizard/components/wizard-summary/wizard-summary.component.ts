@@ -13,7 +13,7 @@ export class WizardSummaryComponent {
   @Input() fieldConfigs: FieldConfig[];
   @Input() value: any;
   @Input() isRoot: boolean;
-  @Input() summary: any;
+  @Input() summary: Record<string, unknown>;
 
   isAutoSummary(): boolean {
     if (this.summary && Object.keys(this.summary).length > 0) {

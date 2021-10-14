@@ -55,7 +55,6 @@ import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quota
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock/dataset-unlock.component';
 import { UnlockDialogComponent } from './volumes/datasets/dataset-unlock/unlock-dialog/unlock-dialog.component';
-import { DiskComponent } from './volumes/manager/disk/disk.component';
 import { ManagerComponent } from './volumes/manager/manager.component';
 import { VdevComponent } from './volumes/manager/vdev/vdev.component';
 import { VolumeImportWizardComponent } from './volumes/volume-import-wizard/volume-import-wizard.component';
@@ -76,7 +75,6 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     VolumesListComponent,
     VolumesListControlsComponent,
     ManagerComponent,
-    DiskComponent,
     VdevComponent,
     DatasetFormComponent,
     VolumeRekeyFormComponent,

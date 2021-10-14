@@ -6,7 +6,6 @@ import {
   OnInit,
   QueryList,
   TemplateRef,
-  ViewChildren,
   AfterViewInit,
   OnChanges,
   ChangeDetectorRef,
@@ -20,7 +19,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -80,13 +79,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.formGroup.value;
   }
 
-  templateTop: TemplateRef<any>;
+  templateTop: TemplateRef<unknown>;
   @ContentChildren(EntityTemplateDirective)
   templates: QueryList<EntityTemplateDirective>;
 
-  @ViewChildren('component') components: any[];
-
-  sub: any;
+  sub: Subscription;
   error: string;
   success = false;
   data: any = {};

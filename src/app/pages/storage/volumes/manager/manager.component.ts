@@ -26,7 +26,6 @@ import { ManagerDisk } from 'app/pages/storage/volumes/manager/manager-disk.inte
 import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { StorageService } from 'app/services/storage.service';
-import { DiskComponent } from './disk/disk.component';
 import { VdevComponent } from './vdev/vdev.component';
 
 @UntilDestroy()
@@ -48,7 +47,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   orig_suggestable_disks: ManagerDisk[];
   error: string;
   @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent> ;
-  @ViewChildren(DiskComponent) diskComponents: QueryList<DiskComponent> ;
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
   temp: ManagerDisk[] = [];
 

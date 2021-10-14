@@ -2,9 +2,12 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { CoreService } from 'app/core/services/core-service/core.service';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { Multipath } from 'app/interfaces/multipath.interface';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -30,7 +33,7 @@ export class ApiService {
     UserAttributesRequest: {
       apiCall: {
         namespace: 'user.query',
-        args: [] as any[], // eg. [["id", "=", "foo"]]
+        args: [] as QueryParams<User>[],
         responseEvent: 'UserAttributes',
       },
       preProcessor(def: ApiCall) {
@@ -46,7 +49,7 @@ export class ApiService {
     UserDataRequest: {
       apiCall: {
         namespace: 'user.query',
-        args: [] as any[], // eg. [["id", "=", "foo"]]
+        args: [] as QueryParams<User>[],
         responseEvent: 'UserData',
       },
     },
@@ -85,7 +88,7 @@ export class ApiService {
     },
     MultipathRequest: {
       apiCall: {
-        args: [] as any[],
+        args: [] as QueryParams<Multipath>[],
         namespace: 'multipath.query',
         responseEvent: 'MultipathData',
       },
@@ -114,14 +117,14 @@ export class ApiService {
     },
     SetEnclosureSlotStatus: {
       apiCall: {
-        args: [] as any[],
+        args: [] as unknown as ApiDirectory['enclosure.set_slot_status']['params'],
         namespace: 'enclosure.set_slot_status',
         responseEvent: 'EnclosureSlotStatusChanged',
       },
     },
     PoolDataRequest: {
       apiCall: {
-        args: [] as any[],
+        args: [] as QueryParams<Pool>[],
         namespace: 'pool.query',
         responseEvent: 'PoolData',
       },
@@ -129,7 +132,7 @@ export class ApiService {
     PoolDisksRequest: {
       apiCall: {
         namespace: 'pool.get_disks',
-        args: [] as any[],
+        args: [] as string[],
         responseEvent: 'PoolDisks',
       },
       preProcessor(def: ApiCall) {
@@ -146,14 +149,13 @@ export class ApiService {
     NicInfoRequest: {
       apiCall: {
         namespace: 'interface.query',
-        args: [] as any[],
+        args: [] as QueryParams<NetworkInterface>[],
         responseEvent: 'NicInfo',
       },
     },
     UpdateCheck: {
       apiCall: {
         namespace: 'update.check_available',
-        args: [] as any[],
         responseEvent: 'UpdateChecked',
       },
     },

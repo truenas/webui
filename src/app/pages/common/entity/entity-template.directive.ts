@@ -4,5 +4,5 @@ import { Directive, Input, TemplateRef } from '@angular/core';
 export class EntityTemplateDirective {
   @Input() type: string | null = null;
 
-  constructor(public templateRef: TemplateRef<void>) {}
+  constructor(public templateRef: TemplateRef<unknown>) {}
 }

@@ -112,7 +112,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     return data;
   }
 
-  pk: any;
+  pk: string;
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
@@ -158,7 +158,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
       success_msg = 'changed for';
     }
 
-    const params = [this.pk];
+    const params: any = [this.pk];
     const payload = {
       passphrase: value.passphrase,
       admin_password: value.adminpw,

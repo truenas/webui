@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
@@ -30,7 +31,7 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
     },
   };
 
-  constructor(private _router: Router) {}
+  constructor(private router: Router) {}
 
   isActionVisible(actionId: string): boolean {
     if (actionId == 'edit' || actionId == 'add') {
@@ -39,14 +40,14 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
     return true;
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: VmwareSnapshot): EntityTableAction[] {
     return [
       {
         id: row.hostname,
         icon: 'delete',
         name: 'delete',
         label: T('Delete'),
-        onClick: (row: any) => {
+        onClick: (row: VmwareSnapshot) => {
           this.entityList.doDelete(row);
         },
       },
@@ -55,8 +56,8 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
         icon: 'edit',
         name: 'edit',
         label: T('Edit'),
-        onClick: (row: any) => {
-          this._router.navigate(['/', 'storage', 'vmware-snapshots', 'edit', row.id]);
+        onClick: (row: VmwareSnapshot) => {
+          this.router.navigate(['/', 'storage', 'vmware-snapshots', 'edit', row.id]);
         },
       },
     ] as EntityTableAction[];

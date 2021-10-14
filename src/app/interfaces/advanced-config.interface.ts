@@ -26,5 +26,9 @@ export interface AdvancedConfig {
   traceback: boolean;
   uploadcrash: boolean;
   sed_passwd: string;
+  syslog_tls_certificate_authority: number;
+  kernel_extra_options: string;
   legacy_ui?: boolean;
 }
+
+export type AdvancedConfigUpdate = Omit<AdvancedConfig, 'id'>;

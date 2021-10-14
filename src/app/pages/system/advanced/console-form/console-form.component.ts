@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -143,7 +144,7 @@ export class ConsoleFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(body: any): Subscription {
+  customSubmit(body: Partial<AdvancedConfigUpdate>): Subscription {
     this.loader.open();
     return this.ws.call('system.advanced.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();

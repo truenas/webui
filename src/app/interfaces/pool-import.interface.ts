@@ -7,9 +7,12 @@ export interface PoolFindResult {
   status: PoolStatus;
 }
 
-export type PoolImportParams = [
-  { guid: string },
-];
+export interface PoolImportParams {
+  guid: string;
+  name?: string;
+  passphrase?: string;
+  enable_attachments?: boolean;
+}
 
 export type ImportDiskParams = [
   device: string,

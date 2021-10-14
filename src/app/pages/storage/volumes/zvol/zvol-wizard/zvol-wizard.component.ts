@@ -62,7 +62,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   namesInUse: string[] = [];
   title: string;
   isLinear = true;
-  summary: any = {};
+  summary: Record<string, unknown> = {};
   summaryTitle = 'Zvol Summary';
 
   protected origVolSize: number;

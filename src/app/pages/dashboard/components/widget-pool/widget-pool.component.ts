@@ -31,7 +31,7 @@ interface Slide {
   name: string;
   index?: string;
   dataSource?: any;
-  template: TemplateRef<any>;
+  template: TemplateRef<void>;
   topology?: PoolTopologyCategory;
 }
 
@@ -101,7 +101,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return '';
   }
 
-  get unhealthyDisks(): { totalErrors: number | string; disks: any[] } {
+  get unhealthyDisks(): { totalErrors: number | string; disks: string[] } {
     if (this.poolState && this.poolState.topology) {
       const unhealthy: any[] = []; // Disks with errors
       this.poolState.topology.data.forEach((item: any) => {
@@ -123,7 +123,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       });
       return { totalErrors: unhealthy.length/* errors.toString() */, disks: unhealthy };
     }
-    return { totalErrors: 'Unknown', disks: [] as any[] };
+    return { totalErrors: 'Unknown', disks: [] };
   }
 
   get allDiskNames(): string[] {

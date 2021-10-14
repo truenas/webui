@@ -9,6 +9,7 @@ import { UUID } from 'angular2-uuid';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ChartData } from 'app/core/components/view-chart/view-chart.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { Theme } from 'app/services/theme/theme.service';
 
 export interface TimeData {
   start: number;
@@ -61,7 +62,7 @@ export class WidgetChartComponent extends WidgetComponent implements OnDestroy {
     }, 5000);
     const theme = this.themeService.currentTheme();
     this.utils = new ThemeUtils();
-    this.widgetColorCssVar = (theme as any)[this.utils.colorFromMeta(theme.primary)];
+    this.widgetColorCssVar = theme[this.utils.colorFromMeta(theme.primary) as keyof Theme] as string;
   }
 
   ngOnDestroy(): void {

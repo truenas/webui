@@ -53,7 +53,7 @@ describe('CoreService', () => {
 
     expect(dispatchTable.length).toEqual(1);
     expect(dispatchTable[0].eventName).toMatch('TestEvent2');
-    expect(dispatchTable[0].observerClass.name).toMatch('Observer2');
+    expect(dispatchTable[0].observerClass).toHaveProperty('name', 'Observer2');
   });
 
   it('should remove all of an observers registrations from dispatch table', () => {

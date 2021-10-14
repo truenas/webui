@@ -478,7 +478,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
       adjusted = dateFns.subSeconds(this.minDate, 1);
     }
 
-    const options: any = {
+    const options = {
       currentDate: this.formatDateToTz(adjusted, this.timezone),
       endDate: this.maxDate, // max
       iterator: true,

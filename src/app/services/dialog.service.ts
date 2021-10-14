@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -98,7 +99,7 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  errorReport(title: string, message: string, backtrace = '', logs?: any): Observable<boolean> {
+  errorReport(title: string, message: string, backtrace = '', logs?: Job): Observable<boolean> {
     const dialogRef = this.dialog.open(ErrorDialogComponent);
 
     dialogRef.componentInstance.title = title;

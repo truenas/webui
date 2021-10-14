@@ -14,7 +14,7 @@ import {
 } from '@angular/core';
 import {
   FormArray,
-  FormBuilder, FormControl, FormGroup,
+  FormBuilder, FormControl, FormGroup, NgForm,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -111,16 +111,16 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   get valid(): boolean { return this.formGroup.valid; }
   get value(): boolean { return this.formGroup.value; }
 
-  templateTop: TemplateRef<any>;
+  templateTop: TemplateRef<unknown>;
   @ContentChildren(EntityTemplateDirective)
   templates: QueryList<EntityTemplateDirective>;
 
   @ViewChildren('component') components: any;
-  @ViewChild('entityForm', { static: false }) entityForm: any;
+  @ViewChild('entityForm', { static: false }) entityForm: NgForm;
 
   busy: Subscription;
 
-  sub: any;
+  sub: Subscription;
   error: string;
   success = false;
 

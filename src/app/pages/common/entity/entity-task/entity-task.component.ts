@@ -75,7 +75,7 @@ export class EntityTaskComponent implements OnInit {
         }
       }
       this.formGroup = this.entityFormService.createFormGroup(this.conf.fieldConfig);
-      this.formGroup.controls[this.preTaskName + '_repeat'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+      this.formGroup.controls[this.preTaskName + '_repeat'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
         if (res == 'none') {
           this.month_field['isHidden'] = false;
           this.day_field['isHidden'] = false;
