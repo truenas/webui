@@ -85,10 +85,18 @@ export class ModalComponent implements OnInit, OnDestroy {
   // close modal
   close(): Promise<boolean> {
     return new Promise((resolve) => {
-      this.modal.classList.remove('open');
-      this.background.classList.remove('open');
+      if (this.modal) {
+        this.modal.classList.remove('open');
+      }
+
+      if (this.background) {
+        this.background.classList.remove('open');
+      }
+
       document.body.classList.remove('jw-modal-open');
-      this.slideIn.classList.remove('wide');
+      if (this.slideIn) {
+        this.slideIn.classList.remove('wide');
+      }
       this.formOpen = false;
       this.modalService.refreshForm();
       this.wizard = false;

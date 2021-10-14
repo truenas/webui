@@ -7,9 +7,12 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
+import { ContextMenuComponent } from 'app/core/components/context-menu/context-menu.component';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
+import { HtmlTooltipDirective } from 'app/core/components/directives/html-tooltip/html-tooltip.directive';
+import { TextLimiterTooltipComponent } from 'app/core/components/directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
+import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
 import { DisplayComponent } from 'app/core/components/display/display.component';
-import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { ViewButtonComponent } from 'app/core/components/view-button/view-button.component';
 import { ViewChartAreaComponent } from 'app/core/components/view-chart-area/view-chart-area.component';
 import { ViewChartBarComponent } from 'app/core/components/view-chart-bar/view-chart-bar.component';
@@ -21,14 +24,12 @@ import { ViewChartComponent } from 'app/core/components/view-chart/view-chart.co
 import { ViewControlComponent } from 'app/core/components/view-control/view-control.component';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { ViewComponent } from 'app/core/components/view/view.component';
+import { ConvertPipe } from 'app/core/pipes/convert.pipe';
+import { FormatDateTimePipe } from 'app/core/pipes/format-datetime.pipe';
+import { MapValuePipe } from 'app/core/pipes/map-value.pipe';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { StorageService } from 'app/services/storage.service';
-import { ContextMenuComponent } from './context-menu/context-menu.component';
-import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.directive';
-import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
-import { TextLimiterDirective } from './directives/text-limiter/text-limiter.directive';
-import { ConvertPipe } from './pipes/convert.pipe';
 /*
  *
  * This is the Core Module. By importing this module you'll
@@ -68,6 +69,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     HtmlTooltipDirective,
     TextLimiterTooltipComponent,
     ConvertPipe,
+    MapValuePipe,
     FormatDateTimePipe,
     CopyButtonComponent,
   ],
@@ -95,6 +97,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     TextLimiterTooltipComponent,
     CopyButtonComponent,
     FormatDateTimePipe,
+    MapValuePipe,
   ],
   entryComponents: [
     ContextMenuComponent,

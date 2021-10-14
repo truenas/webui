@@ -440,6 +440,7 @@ export type ApiDirectory = {
   'filesystem.setacl': { params: [SetAcl]; response: any };
 
   // Failover
+  'failover.become_passive': { params: void; response: void };
   'failover.licensed': { params: void; response: boolean };
   'failover.upgrade_pending': { params: void; response: boolean };
   'failover.sync_from_peer': { params: void; response: void };

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ProductType } from 'app/enums/product-type.enum';
+import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -17,14 +17,14 @@ import { LocaleService } from 'app/services/locale.service';
   selector: 'app-config-reset',
   templateUrl: './config-reset.component.html',
   styleUrls: ['./config-reset.component.scss'],
-  providers: [],
 })
 export class ConfigResetComponent implements OnInit {
-  product_type: ProductType;
+  productType: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   dialogRef: MatDialogRef<EntityJobComponent>;
 
   readonly ProductType = ProductType;
+  readonly productTypeLabels = productTypeLabels;
 
   constructor(protected ws: WebSocketService, protected router: Router,
     protected loader: AppLoaderService, public translate: TranslateService,
@@ -32,7 +32,7 @@ export class ConfigResetComponent implements OnInit {
     private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
     this.ws = ws;
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.product_type = res as ProductType;
+      this.productType = res as ProductType;
     });
   }
 
@@ -49,7 +49,7 @@ export class ConfigResetComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.product_type = window.localStorage.getItem('product_type') as ProductType;
+    this.productType = window.localStorage.getItem('product_type') as ProductType;
 
     this.dialog.closeAll();
     this.resetConfigSubmit();

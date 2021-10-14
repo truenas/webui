@@ -1,13 +1,15 @@
 <div id="wrapper">
   <mat-card id="shutdown-card">
     <mat-card-content id="message"></mat-card-content>
-    <mat-icon svgIcon="truenas_core_logo_full" *ngIf="product_type === ProductType.Core; else isTruenas" class="logo" alt="TrueNAS CORE logo"></mat-icon>
+    <mat-icon svgIcon="truenas_core_logo_full" *ngIf="productType === ProductType.Core; else isTruenas" class="logo" alt="TrueNAS CORE logo"></mat-icon>
     <ng-template #isTruenas>
-      <mat-icon *ngIf="product_type === ProductType.Enterprise" class="logo" svgIcon="truenas_enterprise_logo_full" alt="TrueNAS ENTERPRISE logo"></mat-icon>
-      <mat-icon *ngIf="product_type === ProductType.Scale || product_type == ProductType.ScaleEnterprise" class="logo" svgIcon="truenas_scale_logo_full" alt="TrueNAS SCALE logo"></mat-icon>
+      <mat-icon *ngIf="productType === ProductType.Enterprise" class="logo" svgIcon="truenas_enterprise_logo_full" alt="TrueNAS ENTERPRISE logo"></mat-icon>
+      <mat-icon *ngIf="productType === ProductType.Scale || productType == ProductType.ScaleEnterprise" class="logo" svgIcon="truenas_scale_logo_full" alt="TrueNAS SCALE logo"></mat-icon>
     </ng-template>
     <div>
-      <span fxFlex class="copyright-txt">TrueNAS {{product_type}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
+      <span fxFlex class="copyright-txt">
+        TrueNAS {{productType | mapValue: productTypeLabels}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
+      </span>
     </div>
   </mat-card>
 </div>

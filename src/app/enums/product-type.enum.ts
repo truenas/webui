@@ -5,7 +5,7 @@ export enum ProductType {
   Enterprise = 'ENTERPRISE',
 }
 
-export const ProductTypeReadableText = new Map<ProductType, string>([
+export const productTypeLabels = new Map<ProductType, string>([
   [ProductType.Scale, 'SCALE'],
   [ProductType.ScaleEnterprise, 'SCALE ENTERPRISE'],
   [ProductType.Core, 'CORE'],

@@ -36,7 +36,7 @@ export class WebSocketService {
 
   subscriptions: Map<string, any[]> = new Map<string, any[]>();
 
-  constructor(private _router: Router) {
+  constructor(private router: Router) {
     this.authStatus$ = new Subject<boolean>();
     this.onOpenSubject$ = new Subject();
     this.onCloseSubject$ = new Subject();
@@ -94,7 +94,7 @@ export class WebSocketService {
     this.onCloseSubject$.next(true);
     setTimeout(() => this.connect(), 5000);
     if (!this.shuttingdown) {
-      this._router.navigate(['/sessions/signin']);
+      this.router.navigate(['/sessions/signin']);
     }
   }
 
@@ -119,8 +119,8 @@ export class WebSocketService {
 
       this.pendingCalls.delete(data.id);
       if (data.error) {
-        console.error('Error: ', data.error);
-        call.observer.error(data.error);
+        console.error('Error: ', data.id, data.error);
+        call?.observer?.error(data.error);
       }
       if (call && call.observer) {
         call.observer.next(data.result);
@@ -312,7 +312,7 @@ export class WebSocketService {
     this.call('auth.logout').pipe(untilDestroyed(this)).subscribe(() => {
       this.clearCredentials();
       this.socket.close();
-      this._router.navigate(['/sessions/signin']);
+      this.router.navigate(['/sessions/signin']);
       window.location.reload();
     });
   }

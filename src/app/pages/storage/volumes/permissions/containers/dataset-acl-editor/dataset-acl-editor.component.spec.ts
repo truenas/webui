@@ -8,7 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { CoreComponents } from 'app/core/components/core-components.module';
+import { CoreComponents } from 'app/core/core-components.module';
 import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { byButton } from 'app/core/testing/utils/by-button.utils';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
