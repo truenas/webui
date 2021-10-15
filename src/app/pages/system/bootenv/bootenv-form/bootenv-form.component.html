@@ -4,20 +4,20 @@
     <form [formGroup]="formGroup" class="ix-form-container" (submit)="onSubmit()">
       <ix-fieldset [title]="'Settings' | translate">
         <ix-input
-            formControlName="name"
-            [label]="'Name' | translate"
-            [required]="true"
-            [tooltip]="tooltips.name"
+          formControlName="name"
+          [label]="'Name' | translate"
+          [required]="true"
+          [tooltip]="tooltips.name"
           ></ix-input>
       </ix-fieldset>
 
       <div class="form-actions">
         <button
-              mat-button
-              type="submit"
-              [disabled]="formGroup.invalid || isFormLoading"
-              color="primary"
-            >{{ 'Save' | translate }}</button>
+          mat-button
+          type="submit"
+          [disabled]="formGroup.invalid || isFormLoading"
+          color="primary"
+          >{{ 'Save' | translate }}</button>
       </div>
     </form>
   </mat-card-content>
