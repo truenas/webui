@@ -25,7 +25,7 @@ export class IxModalService {
     this.modalComponent.closeModal();
   }
 
-  get onClose(): Subject<unknown> {
+  get onClose$(): Subject<unknown> {
     return this.modalClosed$;
   }
 }

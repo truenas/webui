@@ -830,8 +830,8 @@ export type ApiDirectory = {
   // Tunable
   'tunable.tunable_type_choices': { params: void; response: Choices };
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable };
-  'tunable.update': { params: TunableUpdate; response: Tunable };
-  'tunable.create': { params: TunableUpdate; response: Tunable };
+  'tunable.update': { params: [id: number, update: TunableUpdate]; response: Tunable };
+  'tunable.create': { params: [TunableUpdate]; response: Tunable };
   'tunable.delete': { params: [id: number]; response: true };
 
   // TFTP
