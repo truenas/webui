@@ -85,7 +85,7 @@ export class CertificatesDashComponent implements OnInit {
           complex: true,
           dataSourceHelper: this.certificatesDataSourceHelper,
           getActions: this.certificateActions.bind(this),
-          isActionVisible: (actionId: string, certificate: any) => {
+          isActionVisible: (actionId: string, certificate: Certificate) => {
             if (actionId === 'revoke') {
               return certificate.can_be_revoked;
             }
@@ -225,7 +225,7 @@ export class CertificatesDashComponent implements OnInit {
     ];
   }
 
-  certificatesDataSourceHelper(res: any[]): any[] {
+  certificatesDataSourceHelper(res: Certificate[]): Certificate[] {
     res.forEach((certificate) => {
       if (_.isObject(certificate.issuer)) {
         certificate.issuer = certificate.issuer.name;
@@ -238,7 +238,7 @@ export class CertificatesDashComponent implements OnInit {
     return res.filter((item) => item.CSR !== null);
   }
 
-  caDataSourceHelper(res: any[]): any[] {
+  caDataSourceHelper(res: CertificateAuthority[]): CertificateAuthority[] {
     res.forEach((row) => {
       if (_.isObject(row.issuer)) {
         row.issuer = row.issuer.name;

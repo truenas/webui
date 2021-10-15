@@ -50,7 +50,6 @@ export class KernelFormComponent {
       autotune: values.autotune,
       debugkernel: values.debugkernel,
     };
-
     this.isFormLoading = true;
     this.ws.call('system.advanced.update', [commonBody]).pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;

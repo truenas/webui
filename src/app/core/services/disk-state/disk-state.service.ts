@@ -1,16 +1,10 @@
 import { Injectable } from '@angular/core';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { ResilverJob } from 'app/interfaces/resilver-job.interface';
+import { Disk } from 'app/interfaces/storage.interface';
 import { WebSocketService } from 'app/services/ws.service';
 import { BaseService } from '../base.service';
 import { CoreService } from '../core-service/core.service';
-
-export interface Temperature {
-  keys: string[];
-  values: any;
-  unit: string;
-  symbolText: string;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -24,7 +18,7 @@ export class DiskStateService extends BaseService {
     this.authenticated = true;
 
     // Check for Disk Presence
-    this.ws.sub('disk.query').subscribe((res: any) => {
+    this.ws.sub('disk.query').subscribe((res: Disk) => {
       this.core.emit({ name: 'DisksChanged', data: res, sender: this });
     });
 

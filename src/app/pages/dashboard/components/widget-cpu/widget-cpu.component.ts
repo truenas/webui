@@ -362,7 +362,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         color = this.stripVar(this.currentTheme[cssVar]);
       }
 
-      const bgRGB = this.utils.convertToRGB((this.currentTheme as any)[color]).rgb;
+      const bgRGB = this.utils.convertToRGB((this.currentTheme[color as keyof Theme]) as string).rgb;
 
       ds.backgroundColor = this.rgbToString(bgRGB as any, 0.85);
       ds.borderColor = this.rgbToString(bgRGB as any);
@@ -373,7 +373,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   private processThemeColors(theme: Theme): string[] {
-    return theme.accentColors.map((color) => (theme as any)[color]);
+    return theme.accentColors.map((color) => theme[color]);
   }
 
   rgbToString(rgb: string[], alpha?: number): string {

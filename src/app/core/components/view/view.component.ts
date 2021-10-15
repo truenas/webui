@@ -38,9 +38,6 @@ export class ViewComponent extends View {
 
   colorsFromTheme(): string[] {
     const theme = this.themeService.currentTheme();
-    // [theme.magenta, theme.cyan, theme.red, theme.blue, theme.green, theme.orange, theme.yellow, theme.violet]
-    return theme.accentColors.map((color) => {
-      return (theme as any)[color];
-    });
+    return theme.accentColors.map((color) => theme[color]);
   }
 }

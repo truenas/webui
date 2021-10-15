@@ -51,7 +51,7 @@ import { VmService } from 'app/services/vm.service';
 })
 export class VMWizardComponent implements WizardConfiguration {
   addWsCall = 'vm.create' as const;
-  summary: any = {};
+  summary: Record<string, unknown> = {};
   isLinear = true;
   firstFormGroup: FormGroup;
   summaryTitle = T('VM Summary');

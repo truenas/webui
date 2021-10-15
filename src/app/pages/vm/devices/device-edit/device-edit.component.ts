@@ -13,6 +13,7 @@ import helptext from 'app/helptext/vm/devices/device-add-edit';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { VmDeviceFieldSet } from 'app/pages/vm/vm-device-field-set.interface';
 import { WebSocketService, NetworkService, VmService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -28,7 +29,7 @@ export class DeviceEditComponent implements OnInit {
   route_success: string[];
   deviceid: number;
   vmname: string;
-  fieldSets: any;
+  fieldSets: VmDeviceFieldSet[];
   isCustActionVisible = false;
   protected ipAddress: FormSelectConfig;
   selectedType = VmDeviceType.Cdrom;
@@ -47,7 +48,7 @@ export class DeviceEditComponent implements OnInit {
   error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 
-  custActions: any[];
+  custActions: { id?: string; name: string; function: () => void }[];
 
   fieldConfig: FieldConfig[] = [
     {

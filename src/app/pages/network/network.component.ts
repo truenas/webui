@@ -13,7 +13,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
-import ipmiHelptext from 'app/helptext/network/ipmi/ipmi';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
@@ -33,12 +32,13 @@ import {
   StorageService,
   WebSocketService,
 } from 'app/services';
+import { IpmiService } from 'app/services/ipmi.service';
 import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../common/entity/utils';
 import { CardWidgetConf } from './card-widget/card-widget.component';
 import { ConfigurationComponent } from './forms/configuration.component';
 import { InterfacesFormComponent } from './forms/interfaces-form.component';
-import { IPMIFromComponent } from './forms/ipmi-form.component';
+import { IpmiFormComponent } from './forms/ipmi-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
 import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
 import { StaticRouteFormComponent } from './forms/staticroute-form.component';
@@ -197,12 +197,12 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
     edit(row: IpmiRow) {
-      this.parent.modalService.openInSlideIn(IPMIFromComponent, row.id);
+      this.parent.modalService.openInSlideIn(IpmiFormComponent, row.id);
     },
   };
 
   networkSummary: NetworkSummary;
-  impiEnabled: boolean;
+  ipmiEnabled: boolean;
 
   hasConsoleFooter = false;
   constructor(
@@ -214,6 +214,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private modalService: ModalService,
     private translate: TranslateService,
     private tableService: TableService,
+    private ipmiService: IpmiService,
   ) {
     super();
     this.getGlobalSettings();
@@ -284,7 +285,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       .call('ipmi.is_loaded')
       .pipe(untilDestroyed(this))
       .subscribe((isIpmiLoaded) => {
-        this.impiEnabled = isIpmiLoaded;
+        this.ipmiEnabled = isIpmiLoaded;
       });
   }
 
@@ -612,13 +613,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       name: 'identify',
       matTooltip: T('Identify Light'),
       onClick: () => {
-        this.dialog.select(
-          this.translate.instant(T('IPMI Identify')),
-          ipmiHelptext.ipmiOptions,
-          this.translate.instant(T('IPMI flash duration')),
-          'ipmi.identify',
-          'seconds',
-        );
+        this.ipmiService.showIdentifyDialog();
       },
     }, {
       icon: 'launch',

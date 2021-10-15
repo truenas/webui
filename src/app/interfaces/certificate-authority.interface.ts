@@ -108,7 +108,7 @@ export interface CertificateAuthority {
   from: string;
   id: number;
   internal: string;
-  issuer: string;
+  issuer: string | { name: string };
   key_length: number;
   key_type: string;
   lifetime: number;

@@ -20,6 +20,7 @@ import {
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
+import { VmDeviceFieldSet } from 'app/pages/vm/vm-device-field-set.interface';
 import {
   WebSocketService, NetworkService, VmService, StorageService,
 } from 'app/services';
@@ -38,7 +39,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   route_success: string[];
   vmid: number;
   vmname: string;
-  fieldSets: any;
+  fieldSets: VmDeviceFieldSet[];
   isCustActionVisible = false;
   selectedType = VmDeviceType.Cdrom;
   formGroup: FormGroup;
@@ -51,7 +52,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   displayFormGroup: FormGroup;
   rootpwd: FieldConfig;
   boot: FieldConfig;
-  custActions: any[];
+  custActions: { id?: string; name: string; function: () => void }[];
   error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 

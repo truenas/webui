@@ -232,7 +232,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   private processThemeColors(theme: Theme): string[] {
-    return theme.accentColors.map((color) => (theme as any)[color]);
+    return theme.accentColors.map((color) => theme[color]);
   }
 
   rgbToString(rgb: number[], alpha?: number): string {

@@ -112,20 +112,6 @@ export class EntityCardComponent extends IxObject implements OnInit, AfterViewIn
     }
   }
 
-  onChangeTable(
-    config: any,
-    page: any = { page: this.page, itemsPerPage: this.itemsPerPage },
-  ): void {
-    if (config.filtering) {
-      Object.assign(this.config.filtering, config.filtering);
-    }
-    if (config.sorting) {
-      Object.assign(this.config.sorting, config.sorting);
-    }
-    this.page = page.page;
-    this.getData();
-  }
-
   trClass(row: any): string {
     const classes = [];
     classes.push('treegrid-' + row.id);
