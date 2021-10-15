@@ -16,8 +16,10 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
 import { BootenvRow } from './bootenv-row.interface';
@@ -33,7 +35,6 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   title = T('Boot Environments');
   resource_name = 'system/bootenv';
   queryCall = 'bootenv.query' as const;
-  route_add: string[] = ['system', 'boot', 'create'];
   protected route_delete: string[] = ['system', 'boot', 'delete'];
   wsDelete = 'bootenv.delete' as const;
   wsMultiDelete = 'core.bulk' as const;
@@ -58,6 +59,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     protected localeService: LocaleService,
     private sysGeneralService: SystemGeneralService,
     protected translate: TranslateService,
+    private modalService: IxModalService,
   ) {}
 
   columns = [
@@ -113,6 +115,10 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
+
+    this.modalService.onClose.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   isActionVisible(actionId: string): boolean {
@@ -146,7 +152,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: T('Rename'),
       id: 'rename',
       onClick: (row: BootenvRow) => {
-        this._router.navigate(['/', 'system', 'boot', 'rename', row.id]);
+        const modal = this.modalService.open(BootEnvironmentFormComponent, this.translate.instant('Create Boot Environment'));
+        modal.setupForm(row.id);
       },
     });
 
@@ -312,6 +319,12 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
 
   getAddActions(): EntityTableAction[] {
     return [{
+      label: T('Add'),
+      onClick: () => {
+        const modal = this.modalService.open(BootEnvironmentFormComponent, this.translate.instant('Create Boot Environment'));
+        modal.setupForm();
+      },
+    }, {
       label: T('Stats/Settings'),
       onClick: () => {
         this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
