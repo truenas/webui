@@ -847,10 +847,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' }) as FormSelectConfig;
     this.keychainCredentialService.getSSHKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
-      privateKeyField.options = keyPairs.map((keypair) => ({
+      const keypairOptions = keyPairs.map((keypair) => ({
         label: keypair.name,
         value: String(keypair.id),
       }));
+      privateKeyField.options = privateKeyField.options.concat(keypairOptions);
     });
 
     const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
