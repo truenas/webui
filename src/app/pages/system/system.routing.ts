@@ -15,7 +15,6 @@ import { AlertServiceComponent } from './alert-service/alert-service/alert-servi
 import { AlertConfigComponent } from './alert/alert.component';
 import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach/bootenv-attach-form.component';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/bootenv-clone.component';
-import { BootEnvironmentFormComponent } from './bootenv/bootenv-form/bootenv-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace/bootenv-replace-form.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
@@ -60,10 +59,6 @@ export const routes: Routes = [
         path: 'clone/:pk',
         component: BootEnvironmentCloneComponent,
         data: { title: T('Clone'), breadcrumb: T('Clone') },
-      }, {
-        path: 'create',
-        component: BootEnvironmentFormComponent,
-        data: { title: T('Add'), breadcrumb: T('Add') },
       }, {
         path: 'status',
         component: BootStatusListComponent,

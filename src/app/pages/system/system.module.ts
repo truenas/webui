@@ -15,7 +15,6 @@ import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-
 import { LocalizationForm2Component } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
-import { BootEnvService } from 'app/services';
 import { CoreComponents } from '../../core/components/core-components.module';
 import { EntityModule } from '../common/entity/entity.module';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
@@ -106,7 +105,6 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     SystemDatasetPoolComponent,
   ],
   providers: [
-    BootEnvService,
     TranslateService,
   ],
   entryComponents: [QrDialogComponent],
