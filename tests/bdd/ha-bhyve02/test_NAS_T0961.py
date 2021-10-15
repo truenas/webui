@@ -123,7 +123,7 @@ def click_create_click_on_confirm_checkbox_and_click_create_pool(driver):
 @then('Create Pool should appear while the pool is being created')
 def create_pool_should_appear_while_the_pool_is_being_created(driver):
     """Create Pool should appear while the pool is being created."""
-    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Create Pool")]')
+    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Create Pool")]')
 
 
 @then('you should be returned to the list of Pools')
