@@ -472,7 +472,6 @@ export class AdvancedSettingsComponent implements OnInit {
       } else {
         this.modalService.openInSlideIn(addComponent, id);
       }
-      // this.modalService.openInSlideIn(addComponent, id);
     }
   }
 

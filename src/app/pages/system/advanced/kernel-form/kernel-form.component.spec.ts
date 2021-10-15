@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IxFormsModule } from 'app/pages/common/ix/ix-forms.module';
 import { IxFormHarness } from 'app/pages/common/ix/testing/ix-form.harness';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel-form/kernel-form.component';
@@ -22,7 +23,6 @@ describe('KernelFormComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('system.advanced.config'),
         mockCall('system.advanced.update'),
       ]),
       mockProvider(IxModalService),
@@ -33,42 +33,37 @@ describe('KernelFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
+    spectator.component.setupForm({
+      autotune: true,
+      debugkernel: false,
+    } as AdvancedConfig);
   });
 
-  describe('editing a system advanced kernel', () => {
-    beforeEach(() => {
-      spectator.component.setupForm({
-        autotune: true,
-        debugkernel: false,
-      } as any);
+  it('shows current system advanced kernel values when form is being edited', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    const values = await form.getValues();
+
+    expect(values).toEqual({
+      'Enable Autotune': true,
+      'Enable Debug Kernel': false,
+    });
+  });
+
+  it('sends an update payload to websocket and closes modal when save is pressed', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Enable Autotune': false,
+      'Enable Debug Kernel': true,
     });
 
-    it('shows current system advanced kernel values when form is being edited', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
 
-      expect(values).toEqual({
-        'Enable Autotune': true,
-        'Enable Debug Kernel': false,
-      });
-    });
-
-    it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      await form.fillForm({
-        'Enable Autotune': false,
-        'Enable Debug Kernel': true,
-      });
-
-      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
-      await saveButton.click();
-
-      expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [
-        {
-          autotune: false,
-          debugkernel: true,
-        },
-      ]);
-    });
+    expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [
+      {
+        autotune: false,
+        debugkernel: true,
+      },
+    ]);
   });
 });
