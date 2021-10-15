@@ -288,7 +288,6 @@ export class ThemeService {
   ];
 
   savedUserTheme = '';
-  private loggedIn: boolean;
   globalPreview = false;
   globalPreviewData: any;
   private utils: ThemeUtils;

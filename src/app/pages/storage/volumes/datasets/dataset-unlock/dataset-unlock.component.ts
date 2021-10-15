@@ -98,7 +98,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
             },
           ],
           width: '100%',
-          updater: this.keyFileUpdater,
+          updater: (file: FormUploadComponent) => this.keyFileUpdater(file),
           parent: this,
         },
       ],
@@ -449,10 +449,10 @@ export class DatasetUnlockComponent implements FormConfiguration {
     this.router.navigate(this.route_success);
   }
 
-  keyFileUpdater(file: FormUploadComponent, parent: this): void {
+  keyFileUpdater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
+      this.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 }

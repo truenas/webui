@@ -134,7 +134,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any): void {
+  customSubmit(value: { name: string; adminpw: string; passphrase: string }): void {
     this.ws.call('auth.check_user', ['root', value.adminpw]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,

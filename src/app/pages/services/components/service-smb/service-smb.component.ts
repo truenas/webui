@@ -30,7 +30,6 @@ export class ServiceSMBComponent implements FormConfiguration {
   queryCall = 'smb.config' as const;
   route_success: string[] = ['services'];
   error: string;
-  protected idmap_type = 'tdb';
   protected targetDS = '5';
   isBasicMode = true;
 
@@ -192,7 +191,7 @@ export class ServiceSMBComponent implements FormConfiguration {
           options: [],
           searchOptions: [],
           parent: this,
-          updater: this.updateGroupSearchOptions,
+          updater: (value: string) => this.updateGroupSearchOptions(value),
         },
       ],
     },
@@ -358,9 +357,9 @@ export class ServiceSMBComponent implements FormConfiguration {
     entityEdit.submitFunction = (body) => this.ws.call('smb.update', [body]);
   }
 
-  updateGroupSearchOptions(value = '', parent: this): void {
-    parent.userService.groupQueryDSCache(value, true).pipe(untilDestroyed(this)).subscribe((items) => {
-      parent.cifs_srv_admin_group.searchOptions = items.map((group) => {
+  updateGroupSearchOptions(value = ''): void {
+    this.userService.groupQueryDSCache(value, true).pipe(untilDestroyed(this)).subscribe((items) => {
+      this.cifs_srv_admin_group.searchOptions = items.map((group) => {
         return { label: group.group, value: group.group };
       });
     });

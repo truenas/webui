@@ -70,7 +70,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   large = 'lg';
   medium = 'md';
   small = 'sm';
-  zPoolFlex = '100';
   noteFlex = '23';
 
   statsDataEvent$: Subject<CoreEvent> = new Subject<CoreEvent>();

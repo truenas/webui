@@ -326,12 +326,6 @@ export class SystemProfiler {
     return capacity;
   }
 
-  getEnclosureLabel(key: number): string {
-    return this.enclosures[key].label == this.enclosures[key].name
-      ? this.enclosures[key].label
-      : this.enclosures[key].model;
-  }
-
   getDiskByID(id: string): Disk {
     return this.diskData ? this.diskData.find((disk) => disk.identifier == id) : null;
   }

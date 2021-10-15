@@ -5,7 +5,8 @@ import { take } from 'rxjs/operators';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import helptext from 'app/helptext/data-protection/smart/smart';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { SmartTestUi } from 'app/interfaces/smart-test.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
+import { SmartTest, SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -23,7 +24,7 @@ export class SmartFormComponent implements FormConfiguration {
   queryCall = 'smart.test.query' as const;
   addCall = 'smart.test.create' as const;
   editCall = 'smart.test.update' as const;
-  customFilter: any[] = [];
+  customFilter: QueryParams<SmartTest> = [];
   protected entityForm: EntityFormComponent;
   isEntity = true;
   isNew = false;

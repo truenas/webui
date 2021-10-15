@@ -3629,7 +3629,6 @@
   "Bug": "バグ",
   "By default, all data disks are created with the amount of swap specified. Changing the value does not affect the amount of swap on existing disks, only disks added after the change. Does not affect log or cache devices as they are created without swap. Setting to <i>0</i> disables swap creation completely. <b>STRONGLY DISCOURAGED</b>": "デフォルトでは、指定されたスワップサイズですべてのデータディスクが作成されます。値を変更しても、既存のディスクのスワップサイズには影響せず、変更後に追加されたディスクのみに影響します。ログまたはキャッシュデバイスはスワップなしで作成されるため影響を受けません。 <i>0</i> に設定すると、スワップの作成が完全に無効になります。<b>強く非推奨</b>",
   "CPU Details": "CPUの詳細",
-  "CPU Usage": "CPU使用率",
   "CPU and Memory": "CPUとメモリ",
   "Cancel": "キャンセル",
   "Case Sensitivity": "大文字・小文字の区別",

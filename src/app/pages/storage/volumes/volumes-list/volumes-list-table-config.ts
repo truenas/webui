@@ -14,6 +14,7 @@ import { filter, map, switchMap } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
@@ -28,7 +29,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { PoolUnlockQuery } from 'app/interfaces/pool-unlock-query.interface';
-import { Pool, PoolExpandParams } from 'app/interfaces/pool.interface';
+import { Pool, PoolExpandParams, UpdatePool } from 'app/interfaces/pool.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -161,10 +162,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
     return actions as EntityTableAction[];
   }
 
-  keyFileUpdater(file: FormUploadComponent, parent: this): void {
+  keyFileUpdater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
+      this.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 
@@ -189,7 +190,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           {
             type: 'upload',
             message: this.messageService,
-            updater: this.keyFileUpdater,
+            updater: (file: FormUploadComponent) => this.keyFileUpdater(file),
             parent: this,
             hideButton: true,
             name: 'key',
@@ -316,17 +317,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
               },
               customSubmit: (entityDialog: EntityDialogComponent) => {
                 const formValue = entityDialog.formValue;
-                const method = 'pool.update';
-                const payload = [
-                  row.id,
-                  { autotrim: formValue.autotrim ? 'ON' : 'OFF' },
-                ];
                 const dialogRef = this.mdDialog.open(EntityJobComponent, {
                   data: { title: helptext.pool_options_dialog.save_pool_options },
                   disableClose: true,
                 });
                 dialogRef.componentInstance.setDescription(helptext.pool_options_dialog.saving_pool_options);
-                dialogRef.componentInstance.setCall(method, payload);
+                dialogRef.componentInstance.setCall('pool.update', [
+                  row.id,
+                  { autotrim: formValue.autotrim ? OnOff.On : OnOff.Off } as UpdatePool,
+                ]);
                 dialogRef.componentInstance.submit();
                 dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((res: Job<Pool>) => {
                   if (res) {

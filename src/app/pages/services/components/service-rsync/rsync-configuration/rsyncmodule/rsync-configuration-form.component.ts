@@ -93,7 +93,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
           options: [],
           searchOptions: [],
           parent: this,
-          updater: this.updateUserSearchOptions,
+          updater: (value: string) => this.updateUserSearchOptions(value),
         },
         {
           type: 'combobox',
@@ -103,7 +103,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
           options: [],
           searchOptions: [],
           parent: this,
-          updater: this.updateGroupSearchOptions,
+          updater: (value: string) => this.updateGroupSearchOptions(value),
         },
         {
           type: 'chip',
@@ -189,17 +189,17 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     }
   }
 
-  updateGroupSearchOptions(value = '', parent: this): void {
-    parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
-      parent.rsyncmod_group.searchOptions = groups.map((group) => {
+  updateGroupSearchOptions(value = ''): void {
+    this.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+      this.rsyncmod_group.searchOptions = groups.map((group) => {
         return { label: group.group, value: group.group };
       });
     });
   }
 
-  updateUserSearchOptions(value = '', parent: this): void {
-    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      parent.rsyncmod_user.searchOptions = items.map((user) => {
+  updateUserSearchOptions(value = ''): void {
+    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+      this.rsyncmod_user.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });
     });
