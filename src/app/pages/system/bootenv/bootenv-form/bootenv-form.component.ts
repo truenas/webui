@@ -16,7 +16,6 @@ import { IxModalService } from 'app/services/ix-modal.service';
   selector: 'app-bootenv-form',
   templateUrl: './bootenv-form.component.html',
   styleUrls: ['./bootenv-form.component.scss'],
-  providers: [BootEnvService, TranslateService],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootEnvironmentFormComponent {

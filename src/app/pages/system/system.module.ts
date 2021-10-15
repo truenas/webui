@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { QRCodeModule } from 'angular2-qrcode';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxUploaderModule } from 'ngx-uploader';
@@ -15,6 +15,7 @@ import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-
 import { LocalizationForm2Component } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
+import { BootEnvService } from 'app/services';
 import { CoreComponents } from '../../core/components/core-components.module';
 import { EntityModule } from '../common/entity/entity.module';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
@@ -103,6 +104,10 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     CronFormComponent,
     CronListComponent,
     SystemDatasetPoolComponent,
+  ],
+  providers: [
+    BootEnvService,
+    TranslateService,
   ],
   entryComponents: [QrDialogComponent],
 })
