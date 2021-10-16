@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, Type } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -127,6 +127,7 @@ export class GeneralSettingsComponent implements OnInit {
     private ixModalService: IxModalService,
     private storage: StorageService,
     private http: HttpClient,
+    private translateService: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -249,7 +250,7 @@ export class GeneralSettingsComponent implements OnInit {
         addComponent = NtpServerFormComponent;
         break;
       default:
-        const localizationFormModal = this.ixModalService.open(LocalizationForm2Component, T('Localization Settings'));
+        const localizationFormModal = this.ixModalService.open(LocalizationForm2Component, this.translateService.instant('Localization Settings'));
         localizationFormModal.setupForm(this.localizationSettings);
     }
     this.sysGeneralService.sendConfigData(this.configData);
