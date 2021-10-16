@@ -9,6 +9,7 @@ import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
+import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
@@ -48,6 +49,7 @@ export class GeneralSettingsComponent implements OnInit {
   subs: Subs;
   dataSource: NtpServer[];
   formEvent$: Subject<CoreEvent>;
+  localizationSettings: LocalizationSettings;
 
   // Dialog forms and info for saving, uploading, resetting config
   protected saveConfigFieldConf: FieldConfig[] = [
@@ -212,16 +214,24 @@ export class GeneralSettingsComponent implements OnInit {
       this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((languages) => {
         this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapchoices) => {
           const keyboardMap = mapchoices.find((x) => x.value === this.configData.kbdmap);
+          const dateTime = this.localeService.getDateAndTime(res.timezone);
           this.localeData = {
             title: helptext.localeTitle,
             id: 'localization',
             items: [
               { label: helptext.stg_language.placeholder, value: languages[res.language] },
-              { label: helptext.date_format.placeholder, value: this.localeService.getDateAndTime(res.timezone)[0] },
-              { label: helptext.time_format.placeholder, value: this.localeService.getDateAndTime(res.timezone)[1] },
+              { label: helptext.date_format.placeholder, value: dateTime[0] },
+              { label: helptext.time_format.placeholder, value: dateTime[1] },
               { label: helptext.stg_timezone.placeholder, value: res.timezone },
               { label: helptext.stg_kbdmap.placeholder, value: res.kbdmap ? keyboardMap.label : helptext.default },
             ],
+          };
+          this.localizationSettings = {
+            language: res.language,
+            kbdMap: res.kbdmap,
+            timezone: res.timezone,
+            dateFormat: dateTime[0],
+            timeFormat: dateTime[1],
           };
           this.dataCards.push(this.localeData);
         });
@@ -239,7 +249,8 @@ export class GeneralSettingsComponent implements OnInit {
         addComponent = NtpServerFormComponent;
         break;
       default:
-        this.ixModalService.open(LocalizationForm2Component, T('Localization Settings'));
+        const localizationFormModal = this.ixModalService.open(LocalizationForm2Component, T('Localization Settings'));
+        localizationFormModal.setupForm(this.localizationSettings);
     }
     this.sysGeneralService.sendConfigData(this.configData);
     if (addComponent) {

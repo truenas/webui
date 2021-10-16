@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -7,8 +7,8 @@ import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
@@ -21,14 +21,20 @@ import { LocaleService } from 'app/services/locale.service';
   styleUrls: ['./localization-form2.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LocalizationForm2Component implements OnInit {
+export class LocalizationForm2Component {
   fieldsetTitle = helptext.localeTitle;
 
   formIsLoading = false;
 
   sortLanguagesByName = true;
 
-  formGroup: FormGroup;
+  formGroup: FormGroup = this.fb.group({
+    language: [''],
+    kbdmap: [''],
+    timezone: [''],
+    date_format: [''],
+    time_format: [''],
+  });
 
   language: {
     readonly fcName: 'language';
@@ -90,8 +96,6 @@ export class LocalizationForm2Component implements OnInit {
     tooltip: helptext.time_format.tooltip,
   };
 
-  private configData: SystemGeneralConfig;
-
   constructor(
     private sysGeneralService: SystemGeneralService,
     private fb: FormBuilder,
@@ -100,34 +104,24 @@ export class LocalizationForm2Component implements OnInit {
     protected langService: LanguageService,
     private modalService: IxModalService,
     private cdr: ChangeDetectorRef,
-  ) {
-    this.sysGeneralService.getGeneralConfig$
-      .pipe(untilDestroyed(this)).subscribe((res) => {
-        this.configData = res;
-        this.formGroup.get('language').setValue(this.configData?.language);
-        this.formGroup.get('kbdmap').setValue(this.configData?.kbdmap);
-        this.formGroup.get('timezone').setValue(this.configData?.timezone);
-        this.setTimeOptions(this.configData.timezone);
-        this.cdr.markForCheck();
-      });
-  }
-
-  ngOnInit(): void {
-    this.formGroup = this.fb.group({
-      language: [this.configData?.language],
-      kbdmap: [this.configData?.kbdmap],
-      timezone: [this.configData?.timezone],
-      date_format: [this.localeService.getPreferredDateFormat()],
-      time_format: [this.localeService.getPreferredTimeFormat()],
-    });
-  }
+  ) { }
 
   setTimeOptions(tz: string): void {
     const timeOptions = this.localeService.getTimeFormatOptions(tz);
     this.timeFormat.options = of(timeOptions);
-
     const dateOptions = this.localeService.getDateFormatOptions(tz);
     this.dateFormat.options = of(dateOptions);
+  }
+
+  setupForm(localizationSettings: LocalizationSettings): void {
+    this.setTimeOptions(localizationSettings.timezone);
+    this.formGroup.patchValue({
+      language: localizationSettings.language,
+      kbdmap: localizationSettings.kbdMap,
+      timezone: localizationSettings.timezone,
+      date_format: this.localeService.getPreferredDateFormat(),
+      time_format: this.localeService.getPreferredTimeFormat(),
+    });
   }
 
   submit(): void {
