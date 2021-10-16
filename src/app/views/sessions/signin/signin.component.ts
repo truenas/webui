@@ -55,7 +55,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private interval: Interval;
-  exposeLegacyUI = false;
   tokenObservable: Subscription;
   HAInterval: Interval;
   isTwoFactor = false;
@@ -139,9 +138,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           this.loginToken();
         }
         window.localStorage.setItem('product_type', res);
-        if (this.product_type === ProductType.Enterprise && window.localStorage.exposeLegacyUI === 'true') {
-          this.exposeLegacyUI = true;
-        }
       });
     }
   }
@@ -412,17 +408,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.ws.token = null;
     }
     this.snackBar.open(this.translate.instant(message), this.translate.instant('close'), { duration: 4000 });
-  }
-
-  onGoToLegacy(): void {
-    this.dialogService.confirm({
-      title: T('Warning'),
-      message: globalHelptext.legacyUIWarning,
-      hideCheckBox: true,
-      buttonMsg: T('Continue to Legacy UI'),
-    }).pipe(untilDestroyed(this)).subscribe(() => {
-      window.location.href = '/legacy/';
-    });
   }
 
   openIX(): void {

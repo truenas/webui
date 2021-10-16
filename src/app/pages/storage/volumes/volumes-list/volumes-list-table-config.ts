@@ -20,6 +20,7 @@ import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -1527,36 +1528,36 @@ export class VolumesListTableConfig implements EntityTableConfig {
     this.datasetData.forEach((dataset) => {
       if (dataset.id === dataObj.id) {
         if (dataset.compression) {
-          if (dataset.compression.source !== 'INHERITED') {
+          if (dataset.compression.source !== ZfsPropertySource.Inherited) {
             dataObj.compression = (dataset.compression.parsed);
           } else {
             dataObj.compression = (inherits + ' (' + dataset.compression.parsed + ')');
           }
         }
         if (dataset.compressratio) {
-          if (dataset.compressratio.source !== 'INHERITED') {
+          if (dataset.compressratio.source !== ZfsPropertySource.Inherited) {
             dataObj.compressratio = (dataset.compressratio.parsed);
           } else {
             dataObj.compressratio = (inherits + ' (' + dataset.compressratio.parsed + ')');
           }
         }
         if (dataset.readonly) {
-          if (dataset.readonly.source !== 'INHERITED') {
+          if (dataset.readonly.source !== ZfsPropertySource.Inherited) {
             dataObj.readonly = (dataset.readonly.parsed) as any;
           } else {
             dataObj.readonly = (inherits + ' (' + dataset.readonly.parsed + ')');
           }
         }
         if (dataset.deduplication) {
-          if (dataset.deduplication.source !== 'INHERITED') {
+          if (dataset.deduplication.source !== ZfsPropertySource.Inherited) {
             dataObj.dedup = (dataset.deduplication.parsed);
           } else {
             dataObj.dedup = (inherits + ' (' + dataset.deduplication.parsed + ')');
           }
         }
         if (dataset.comments) {
-          if (dataset.comments.source !== 'INHERITED') {
-            dataObj.comments = (dataset.comments.parsed);
+          if (dataset.comments.source !== ZfsPropertySource.Inherited) {
+            dataObj.comments = dataset.comments.parsed;
           } else {
             dataObj.comments = ('');
           }

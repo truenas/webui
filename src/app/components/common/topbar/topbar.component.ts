@@ -79,7 +79,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
   dirServicesStatus: DirectoryServiceState[] = [];
   showDirServicesIcon = false;
-  exposeLegacyUI = false;
   ha_status_text: string;
   ha_disabled_reasons: FailoverDisabledReason[] = [];
   is_ha = false;
@@ -152,7 +151,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.sysName = 'TrueNAS ENTERPRISE';
     } else {
       window.localStorage.setItem('alias_ips', '0');
-      this.checkLegacyUISetting();
     }
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       if (event && event.fields.method === 'update.update' || event.fields.method === 'failover.upgrade') {
@@ -282,15 +280,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     if (this.showWelcome) {
       this.onShowAbout();
     }
-  }
-
-  checkLegacyUISetting(): void {
-    this.sysGenService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res.legacy_ui) {
-        this.exposeLegacyUI = res.legacy_ui;
-        window.localStorage.setItem('exposeLegacyUI', res.legacy_ui as any);
-      }
-    });
   }
 
   ngOnDestroy(): void {
@@ -471,17 +460,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   showResilveringDetails(): void {
     this.dialog.open(ResilverProgressDialogComponent);
-  }
-
-  onGoToLegacy(): void {
-    this.dialogService.confirm({
-      title: T('Warning'),
-      message: helptext.legacyUIWarning,
-      hideCheckBox: true,
-      buttonMsg: T('Continue to Legacy UI'),
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      window.location.href = '/legacy/';
-    });
   }
 
   onShowTaskManager(): void {

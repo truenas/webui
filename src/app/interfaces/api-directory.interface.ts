@@ -42,8 +42,8 @@ import {
   CertificateAuthorityUpdate,
 } from 'app/interfaces/certificate-authority.interface';
 import {
-  Certificate,
-  CertificateProfiles,
+  Certificate, CertificateCreate,
+  CertificateProfiles, CertificateUpdate,
   ExtendedKeyUsageChoices,
 } from 'app/interfaces/certificate.interface';
 import { ChartReleaseEvent, ChartRollbackParams, ChartScaleResult } from 'app/interfaces/chart-release-event.interface';
@@ -59,7 +59,12 @@ import {
   CloudSyncTask,
   CloudSyncTaskUpdate,
 } from 'app/interfaces/cloud-sync-task.interface';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import {
+  CloudsyncBucket,
+  CloudsyncCredential,
+  CloudsyncCredentialUpdate,
+  CloudsyncCredentialVerify, CloudsyncOneDriveDrive, CloudsyncOneDriveParams,
+} from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider, CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
 import { ContainerConfig, ContainerConfigUpdate } from 'app/interfaces/container-config.interface';
@@ -113,7 +118,7 @@ import {
   IscsiGlobalSession,
 } from 'app/interfaces/iscsi-global-config.interface';
 import {
-  IscsiAuthAccess, IscsiAuthAccessUpdate, IscsiExtent,
+  IscsiAuthAccess, IscsiAuthAccessUpdate, IscsiExtent, IscsiExtentUpdate,
   IscsiInitiatorGroup, IscsiInitiatorGroupUpdate,
   IscsiPortal, IscsiPortalUpdate,
   IscsiTarget, IscsiTargetExtent, IscsiTargetExtentUpdate, IscsiTargetUpdate,
@@ -126,7 +131,12 @@ import {
   KerberosKeytabUpdate,
 } from 'app/interfaces/kerberos-config.interface';
 import { KerberosRealm, KerberosRealmUpdate } from 'app/interfaces/kerberos-realm.interface';
-import { KeychainCredential, KeychainSshCredentials, SshKeyPair } from 'app/interfaces/keychain-credential.interface';
+import {
+  KeychainCredential,
+  KeychainCredentialCreate, KeychainCredentialUpdate,
+  KeychainSshCredentials,
+  SshKeyPair,
+} from 'app/interfaces/keychain-credential.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
@@ -190,7 +200,7 @@ import {
 } from 'app/interfaces/ssh-connection-setup.interface';
 import { StaticRoute, UpdateStaticRoute } from 'app/interfaces/static-route.interface';
 import {
-  Disk, DiskQueryOptions, DiskUpdate, DiskWipeParams, UnusedDisk,
+  Disk, DiskQueryOptions, DiskTemperatures, DiskUpdate, DiskWipeParams, UnusedDisk,
 } from 'app/interfaces/storage.interface';
 import {
   FetchSupportParams,
@@ -219,11 +229,11 @@ import { UpsConfig, UpsConfigUpdate } from 'app/interfaces/ups-config.interface'
 import { DeleteUserParams, User, UserUpdate } from 'app/interfaces/user.interface';
 import {
   VirtualizationDetails,
-  VirtualMachine, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
+  VirtualMachine, VirtualMachineUpdate, VmCloneParams, VmDeleteParams, VmDisplayWebUri,
   VmDisplayWebUriParams, VmPortWizardResult,
   VmStopParams,
 } from 'app/interfaces/virtual-machine.interface';
-import { VmDevice, VmDisplayDevice } from 'app/interfaces/vm-device.interface';
+import { VmDevice, VmDeviceUpdate, VmDisplayDevice } from 'app/interfaces/vm-device.interface';
 import {
   MatchDatastoresWithDatasets,
   MatchDatastoresWithDatasetsParams,
@@ -231,7 +241,12 @@ import {
 } from 'app/interfaces/vmware.interface';
 import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
 import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
-import { CloneZfsSnapshot, ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import {
+  CloneZfsSnapshot,
+  CreateZfsSnapshot,
+  ZfsRollbackParams,
+  ZfsSnapshot,
+} from 'app/interfaces/zfs-snapshot.interface';
 import { PoolRemoveParams } from './pool-remove.interface';
 
 /**
@@ -318,9 +333,9 @@ export type ApiDirectory = {
   'catalog.get_item_details': { params: [name: string, params: GetItemDetailsParams]; response: CatalogApp };
 
   // Certificate
-  'certificate.create': { params: any; response: any };
+  'certificate.create': { params: [CertificateCreate]; response: Certificate };
   'certificate.query': { params: QueryParams<Certificate>; response: Certificate[] };
-  'certificate.update': { params: any; response: any };
+  'certificate.update': { params: [id: number, update: CertificateUpdate]; response: Certificate };
   'certificate.delete': { params: [id: number, force?: boolean]; response: boolean };
   'certificate.ec_curve_choices': { params: void; response: Choices };
   'certificate.country_choices': { params: void; response: Choices };
@@ -372,12 +387,15 @@ export type ApiDirectory = {
   // Cloudsync
   'cloudsync.providers': { params: void; response: CloudsyncProvider[] };
   'cloudsync.credentials.query': { params: QueryParams<CloudsyncCredential>; response: CloudsyncCredential[] };
-  'cloudsync.credentials.create': { params: any; response: any };
-  'cloudsync.credentials.update': { params: any; response: any };
+  'cloudsync.credentials.create': { params: [CloudsyncCredentialUpdate]; response: CloudsyncCredential };
+  'cloudsync.credentials.update': {
+    params: [id: number, update: CloudsyncCredentialUpdate];
+    response: CloudsyncCredential;
+  };
   'cloudsync.credentials.delete': { params: [id: number]; response: boolean };
-  'cloudsync.credentials.verify': { params: any; response: any };
-  'cloudsync.onedrive_list_drives': { params: any; response: any };
-  'cloudsync.list_buckets': { params: [id: number]; response: any };
+  'cloudsync.credentials.verify': { params: [CloudsyncCredentialVerify]; response: any };
+  'cloudsync.onedrive_list_drives': { params: [CloudsyncOneDriveParams]; response: CloudsyncOneDriveDrive[] };
+  'cloudsync.list_buckets': { params: [id: number]; response: CloudsyncBucket[] };
   'cloudsync.list_directory': { params: [CloudSyncListDirectoryParams]; response: CloudSyncDirectoryListing[] };
   'cloudsync.update': { params: [id: number, task: CloudSyncTaskUpdate]; response: CloudSyncTask };
   'cloudsync.create': { params: [CloudSyncTaskUpdate]; response: CloudSyncTask };
@@ -392,7 +410,7 @@ export type ApiDirectory = {
   'container.config': { params: void; response: ContainerConfig };
   'container.update': { params: [ContainerConfigUpdate]; response: ContainerConfig };
   'container.image.query': { params: void; response: ContainerImage[] };
-  'container.image.pull': { params: [PullContainerImageParams]; response: any };
+  'container.image.pull': { params: [PullContainerImageParams]; response: { status: string } };
   'container.image.delete': { params: [id: string, params?: { force: boolean }]; response: void };
 
   // DynDNS
@@ -411,7 +429,7 @@ export type ApiDirectory = {
   'disk.update': { params: [string, DiskUpdate]; response: Disk };
   'disk.get_unused': { params: [joinPartitions?: boolean]; response: UnusedDisk[] };
   'disk.get_encrypted': { params: any; response: any };
-  'disk.temperatures': { params: any; response: any };
+  'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.wipe': { params: DiskWipeParams; response: void };
 
   // Directory Services
@@ -420,7 +438,7 @@ export type ApiDirectory = {
 
   // Enclosure
   'enclosure.query': { params: void; response: Enclosure[] };
-  'enclosure.update': { params: any; response: any };
+  'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: Enclosure };
   'enclosure.set_slot_status': { params: [id: string, slot: number, status: EnclosureSlotStatus ]; response: any };
 
   // Filesystem
@@ -465,9 +483,12 @@ export type ApiDirectory = {
   'dscache.get_uncached_user': { params: [username: string]; response: DsUncachedUser };
 
   // Keychain Credential
-  'keychaincredential.create': { params: any; response: any };
+  'keychaincredential.create': { params: [KeychainCredentialCreate]; response: KeychainCredential };
   'keychaincredential.query': { params: QueryParams<KeychainCredential>; response: KeychainCredential[] };
-  'keychaincredential.update': { params: any; response: any };
+  'keychaincredential.update': {
+    params: [id: number, credential: KeychainCredentialUpdate];
+    response: KeychainCredential;
+  };
   'keychaincredential.generate_ssh_key_pair': { params: void; response: SshKeyPair };
   'keychaincredential.remote_ssh_host_key_scan': { params: [RemoteSshScanParams]; response: string };
   'keychaincredential.delete': { params: [id: number]; response: void };
@@ -523,8 +544,8 @@ export type ApiDirectory = {
   'iscsi.target.query': { params: QueryParams<IscsiTarget>; response: IscsiTarget[] };
   'iscsi.extent.disk_choices': { params: void; response: Choices };
   'iscsi.extent.query': { params: QueryParams<IscsiExtent>; response: IscsiExtent[] };
-  'iscsi.extent.create': { params: any; response: any };
-  'iscsi.extent.update': { params: any; response: any };
+  'iscsi.extent.create': { params: [IscsiExtentUpdate]; response: IscsiExtent };
+  'iscsi.extent.update': { params: [id: number, update: IscsiExtentUpdate]; response: IscsiExtentUpdate };
   'iscsi.extent.delete': { params: [id: number, remove: number, force: boolean]; response: boolean };
   'iscsi.auth.query': { params: QueryParams<IscsiAuthAccess>; response: IscsiAuthAccess[] };
   'iscsi.auth.delete': { params: [id: number]; response: boolean };
@@ -631,7 +652,7 @@ export type ApiDirectory = {
   'pool.dataset.attachments': { params: [datasetId: string]; response: PoolAttachment[] };
   'pool.dataset.change_key': { params: [id: number, params: DatasetChangeKeyParams]; response: any };
   'pool.dataset.compression_choices': { params: void; response: Choices };
-  'pool.dataset.create': { params: any; response: any };
+  'pool.dataset.create': { params: any; response: Dataset };
   'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };
   'pool.dataset.encryption_algorithm_choices': { params: void; response: Choices };
   'pool.dataset.encryption_summary': {
@@ -652,7 +673,7 @@ export type ApiDirectory = {
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
   'pool.dataset.unlock': { params: DatasetUnlockParams; response: DatasetUnlockResult };
   'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
-  'pool.dataset.update': { params: any; response: any };
+  'pool.dataset.update': { params: any; response: Dataset };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.download_encryption_key': { params: any; response: any };
   'pool.expand': { params: PoolExpandParams; response: null };
@@ -814,7 +835,7 @@ export type ApiDirectory = {
 
   // Sharing
   'sharing.smb.query': { params: QueryParams<SmbShare>; response: SmbShare[] };
-  'sharing.smb.create': { params: any; response: any };
+  'sharing.smb.create': { params: [SmbShareUpdate]; response: SmbShare };
   'sharing.smb.update': { params: [id: number, update: SmbShareUpdate]; response: SmbShare };
   'sharing.smb.delete': { params: [id: number]; response: boolean };
   'sharing.smb.presets': { params: void; response: SmbPresets };
@@ -863,21 +884,21 @@ export type ApiDirectory = {
   'vm.bootloader_options': { params: void; response: Choices };
   'vm.device.nic_attach_choices': { params: void; response: Choices };
   'vm.device.bind_choices': { params: void; response: Choices };
-  'vm.create': { params: any; response: any };
+  'vm.create': { params: [VirtualMachineUpdate]; response: VirtualMachine };
   'vm.delete': { params: VmDeleteParams; response: boolean };
   'vm.resolution_choices': { params: void; response: Choices };
   'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: { [id: number]: VmDisplayWebUri } };
   'vm.device.passthrough_device_choices': { params: void; response: Choices };
-  'vm.device.create': { params: any; response: any };
+  'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
   'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
   'vm.stop': { params: VmStopParams; response: any };
   'vm.maximum_supported_vcpus': { params: void; response: number };
-  'vm.device.update': { params: any; response: any };
+  'vm.device.update': { params: [id: number, update: VmDeviceUpdate]; response: VmDevice };
   'vm.port_wizard': { params: void; response: VmPortWizardResult };
   'vm.get_available_memory': { params: void; response: number };
   'vm.clone': { params: VmCloneParams; response: boolean };
-  'vm.update': { params: any; response: any };
+  'vm.update': { params: [id: number, update: VirtualMachineUpdate]; response: VirtualMachine };
   'vm.poweroff': { params: [id: number]; response: void };
   'vm.restart': { params: [id: number]; response: void };
   'vm.get_display_devices': { params: [id: number]; response: VmDisplayDevice[] };
@@ -924,7 +945,7 @@ export type ApiDirectory = {
   'update.update': { params: [UpdateParams]; response: void };
 
   // ZFS
-  'zfs.snapshot.create': { params: any; response: any };
+  'zfs.snapshot.create': { params: [CreateZfsSnapshot]; response: ZfsSnapshot };
   'zfs.snapshot.query': { params: QueryParams<ZfsSnapshot>; response: ZfsSnapshot[] };
   'zfs.snapshot.delete': { params: [id: string, params?: { defer?: boolean; recursive?: boolean }]; response: boolean };
   'zfs.snapshot.clone': { params: [CloneZfsSnapshot]; response: boolean };

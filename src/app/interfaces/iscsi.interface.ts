@@ -77,6 +77,8 @@ export interface IscsiExtent {
   xen: boolean;
 }
 
+export type IscsiExtentUpdate = Omit<IscsiExtent, 'id'>;
+
 export interface IscsiTargetExtent {
   extent: number;
   id: number;

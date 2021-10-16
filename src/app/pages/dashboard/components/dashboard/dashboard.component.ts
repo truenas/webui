@@ -40,7 +40,7 @@ type DashboardNetworkInterface = NetworkInterface & {
 };
 
 export type DashboardNicState = NetworkInterfaceState & {
-  vlans: any[];
+  vlans: (NetworkInterfaceState & { interface?: string })[];
   lagg_ports: string[];
 };
 
