@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component,
+  ChangeDetectionStrategy, Component,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -103,7 +103,6 @@ export class LocalizationForm2Component {
     protected ws: WebSocketService,
     protected langService: LanguageService,
     private modalService: IxModalService,
-    private cdr: ChangeDetectorRef,
   ) { }
 
   setTimeOptions(tz: string): void {
@@ -119,8 +118,8 @@ export class LocalizationForm2Component {
       language: localizationSettings.language,
       kbdmap: localizationSettings.kbdMap,
       timezone: localizationSettings.timezone,
-      date_format: this.localeService.getPreferredDateFormat(),
-      time_format: this.localeService.getPreferredTimeFormat(),
+      date_format: localizationSettings.dateFormat,
+      time_format: localizationSettings.timeFormat,
     });
   }
 
