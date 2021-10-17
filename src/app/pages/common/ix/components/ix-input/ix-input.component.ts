@@ -52,7 +52,7 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   hasValue(): boolean {
-    return this.value && this.value.length > 0;
+    return this.value && this.value.toString().length > 0;
   }
 
   resetInput(): void {
