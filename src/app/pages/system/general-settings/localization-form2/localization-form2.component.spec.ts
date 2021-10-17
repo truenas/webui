@@ -16,7 +16,6 @@ describe('LocalizationFormComponent', () => {
   let spectator: Spectator<LocalizationForm2Component>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  let localeService: LocaleService;
   const createComponent = createComponentFactory({
     component: LocalizationForm2Component,
     imports: [
@@ -83,7 +82,6 @@ describe('LocalizationFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
-    localeService = spectator.inject(LocaleService);
   });
 
   describe('saving localization settings', () => {
@@ -122,12 +120,10 @@ describe('LocalizationFormComponent', () => {
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(localeService.saveDateTimeFormat).toHaveBeenCalledWith('yyyy-MM-dd', 'HH:mm:ss');
-      expect(ws.call).toHaveBeenCalledWith('system.general.update', [{
-        'Console Keyboard Map': 'us',
-        Language: 'en',
-        Timezone: 'America/Los_Angeles',
-      }]);
+      expect(spectator.inject(LocaleService).saveDateTimeFormat).toHaveBeenCalledWith('yyyy-MM-dd', 'HH:mm:ss');
+      expect(ws.call).toHaveBeenCalledWith('system.general.update', [{ language: 'en', kbdmap: 'us', timezone: 'America/Los_Angeles' }]);
+      expect(spectator.inject(IxModalService).close).toHaveBeenCalled();
+      expect(spectator.inject(LanguageService).setLanguage).toHaveBeenCalledWith('en');
     });
   });
 });
