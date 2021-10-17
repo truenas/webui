@@ -36,6 +36,8 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
    * @param optionLabel label of the option that is to be assigned
    */
   async setValue(optionLabel: string): Promise<void> {
-    return (await this.getSelectHarness()).clickOptions({ text: optionLabel });
+    const harness = (await this.getSelectHarness());
+    await harness.open();
+    await harness.clickOptions({ text: optionLabel });
   }
 }

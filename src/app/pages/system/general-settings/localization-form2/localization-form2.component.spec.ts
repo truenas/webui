@@ -58,26 +58,6 @@ describe('LocalizationFormComponent', () => {
             label: '16 October, 2021',
             value: 'd MMMM, yyyy',
           },
-          {
-            label: 'Oct 16, 2021',
-            value: 'MMM d, yyyy',
-          },
-          {
-            label: '16 Oct 2021',
-            value: 'd MMM yyyy',
-          },
-          {
-            label: '10/16/2021',
-            value: 'MM/dd/yyyy',
-          },
-          {
-            label: '16/10/2021',
-            value: 'dd/MM/yyyy',
-          },
-          {
-            label: '16.10.2021',
-            value: 'dd.MM.yyyy',
-          },
         ],
         getTimeFormatOptions: () => [
           {
@@ -131,15 +111,14 @@ describe('LocalizationFormComponent', () => {
     });
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-      // const form = await loader.getHarness(IxFormHarness);
-      // await form.fillForm({
-      //   'Date Format': '2021-10-16',
-      //   'Time Format': '16:22:14 (24 Hours)',
-      //   'Console Keyboard Map': 'Ukrainian (Win keys)',
-      //   Language: 'English',
-      //   Timezone: 'America/Los_Angeles',
-      // });
-
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        'Date Format': '2021-10-16',
+        'Time Format': '16:22:14 (24 Hours)',
+        'Console Keyboard Map': 'English (US) (us)',
+        Language: 'English (en)',
+        Timezone: 'America/Los_Angeles',
+      });
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 

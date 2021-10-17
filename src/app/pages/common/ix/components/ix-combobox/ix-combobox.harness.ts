@@ -15,7 +15,7 @@ export class IxComboboxHarness extends ComponentHarness implements IxFormControl
         (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }
 
-  getMatInputHarness = this.locatorFor(MatAutocompleteHarness);
+  getAutoCompleteHarness = this.locatorFor(MatAutocompleteHarness);
 
   async getLabelText(): Promise<string> {
     const label = await this.locatorFor('label')();
@@ -28,7 +28,7 @@ export class IxComboboxHarness extends ComponentHarness implements IxFormControl
   }
 
   async getValue(): Promise<string> {
-    return (await this.getMatInputHarness()).getValue();
+    return (await this.getAutoCompleteHarness()).getValue();
   }
 
   /**
@@ -36,7 +36,8 @@ export class IxComboboxHarness extends ComponentHarness implements IxFormControl
    * @param optionLabel label of the option that is to be assigned
    */
   async setValue(optionLabel: string): Promise<void> {
-    const harness = (await this.getMatInputHarness());
-    return harness.selectOption({ text: optionLabel });
+    const harness = (await this.getAutoCompleteHarness());
+    await harness.focus();
+    await harness.selectOption({ text: optionLabel });
   }
 }
