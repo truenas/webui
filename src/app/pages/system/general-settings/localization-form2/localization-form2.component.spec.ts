@@ -16,6 +16,7 @@ describe('LocalizationFormComponent', () => {
   let spectator: Spectator<LocalizationForm2Component>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
+  let localeService: LocaleService;
   const createComponent = createComponentFactory({
     component: LocalizationForm2Component,
     imports: [
@@ -43,7 +44,56 @@ describe('LocalizationFormComponent', () => {
           'America/Maceio': 'America/Maceio',
         }),
       ]),
-      mockProvider(LocaleService),
+      mockProvider(LocaleService, {
+        getDateFormatOptions: () => [
+          {
+            label: '2021-10-16',
+            value: 'yyyy-MM-dd',
+          },
+          {
+            label: 'October 16, 2021',
+            value: 'MMMM d, yyyy',
+          },
+          {
+            label: '16 October, 2021',
+            value: 'd MMMM, yyyy',
+          },
+          {
+            label: 'Oct 16, 2021',
+            value: 'MMM d, yyyy',
+          },
+          {
+            label: '16 Oct 2021',
+            value: 'd MMM yyyy',
+          },
+          {
+            label: '10/16/2021',
+            value: 'MM/dd/yyyy',
+          },
+          {
+            label: '16/10/2021',
+            value: 'dd/MM/yyyy',
+          },
+          {
+            label: '16.10.2021',
+            value: 'dd.MM.yyyy',
+          },
+        ],
+        getTimeFormatOptions: () => [
+          {
+            label: '16:22:14 (24 Hours)',
+            value: 'HH:mm:ss',
+          },
+          {
+            label: '04:22:14 pm',
+            value: "hh:mm:ss aaaaa'm'",
+          },
+          {
+            label: '04:22:14 PM',
+            value: 'hh:mm:ss aa',
+          },
+        ],
+      }),
       mockProvider(IxModalService),
       mockProvider(LanguageService),
     ],
@@ -53,15 +103,16 @@ describe('LocalizationFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
+    localeService = spectator.inject(LocaleService);
   });
 
   describe('saving localization settings', () => {
     beforeEach(() => {
       spectator.component.setupForm({
-        dateFormat: '2021-10-16',
+        dateFormat: 'yyyy-MM-dd',
         kbdMap: 'us',
         language: 'en',
-        timeFormat: '05:27:54',
+        timeFormat: 'HH:mm:ss',
         timezone: 'America/Los_Angeles',
       } as LocalizationSettings);
     });
@@ -74,26 +125,30 @@ describe('LocalizationFormComponent', () => {
         'Date Format': '2021-10-16',
         'Console Keyboard Map': 'English (US) (us)',
         Language: 'English (en)',
-        'Time Format': '05:27:54',
+        'Time Format': '16:22:14 (24 Hours)',
         Timezone: 'America/Los_Angeles',
       });
     });
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const body = {
-        'Console Keyboard Map': 'us',
-        Language: 'en',
-        'Time Format': '05:27:54',
-        'Date Format': '2021-10-17',
-        Timezone: 'America/Los_Angeles',
-      };
-      await form.fillForm(body);
+      // const form = await loader.getHarness(IxFormHarness);
+      // await form.fillForm({
+      //   'Date Format': '2021-10-16',
+      //   'Time Format': '16:22:14 (24 Hours)',
+      //   'Console Keyboard Map': 'Ukrainian (Win keys)',
+      //   Language: 'English',
+      //   Timezone: 'America/Los_Angeles',
+      // });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();
 
-      expect(ws.call).toHaveBeenCalledWith('system.general.update', [body]);
+      expect(localeService.saveDateTimeFormat).toHaveBeenCalledWith('yyyy-MM-dd', 'HH:mm:ss');
+      expect(ws.call).toHaveBeenCalledWith('system.general.update', [{
+        'Console Keyboard Map': 'us',
+        Language: 'en',
+        Timezone: 'America/Los_Angeles',
+      }]);
     });
   });
 });
