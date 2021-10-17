@@ -7,17 +7,17 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { IxFormsModule } from 'app/pages/common/ix/ix-forms.module';
 import { IxFormHarness } from 'app/pages/common/ix/testing/ix-form.harness';
-import { LocalizationForm2Component } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
+import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
 import { LanguageService, WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
 
 describe('LocalizationFormComponent', () => {
-  let spectator: Spectator<LocalizationForm2Component>;
+  let spectator: Spectator<LocalizationFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
   const createComponent = createComponentFactory({
-    component: LocalizationForm2Component,
+    component: LocalizationFormComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
