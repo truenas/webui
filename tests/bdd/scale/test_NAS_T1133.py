@@ -71,17 +71,6 @@ def create_wheeldataset_and_set_permissions(driver, dataset_name):
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, f'//div[contains(text(),"{dataset_name}")]')
-    ## now set permissions
-
-    driver.find_element_by_xpath('//tr[contains(.,"wheel_dataset")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
-    driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    time.sleep(2)
-    assert wait_on_element(driver, 5, '//mat-icon[normalize-space(text())="edit"]')
-    driver.find_element_by_xpath('//mat-icon[normalize-space(text())="edit"]').click()
-    assert wait_on_element(driver, 5, '//h1[text()="Edit ACL"]')
-
-
 
 
 @then('add the user to group root for later tests')
@@ -97,7 +86,7 @@ def add_the_user_to_group_root_for_later_tests(driver):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    element = driver.find_element_by_xpath('//h4[contains(text(),Directories and Permissions"')
+    element = driver.find_element_by_xpath('//h4[text()="Directories and Permissions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 10, '//mat-select[@ix-auto="select__Auxiliary Groups"]')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
@@ -108,7 +97,7 @@ def add_the_user_to_group_root_for_later_tests(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-
+       
 
 @then('The Windows Shares(SMB) page should open, Click Add')
 def the_windows_sharessmb_page_should_open_click_add(driver):
@@ -146,6 +135,7 @@ def set_path_to_the_ldap_dataset_mnttankwheel_dataset_input_wheelsmbshare_as_nam
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     
 
+
 @then('smb should be added')
 def smb_should_be_added(driver):
     """"smbname should be added."""
@@ -160,6 +150,8 @@ def send_a_file_to_the_share_with_nas_ipwheelshare_and_administrator_and_abcd123
     results = run_cmd(f'smbclient //{nas_ip}/{wheelshare} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']
+    run_cmd('rm testfile.txt')
+
 
 
 @then('Verify that the is on nas_ip with root and password')
@@ -173,7 +165,7 @@ def verify_that_the_is_on_nas_ip_with_root_and_password(driver, root_password, s
 def send_a_file_to_the_share_should_fail_with_nas_ipwheelshare_and_footesting(driver, wheelshare, user, password):
     """send a file to the share should fail with NAS IP/"{wheelshare}" and {user}%{password}."""
     run_cmd('touch testfile2.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{wheelshare} -W AD01 -U {user}%{password} -c "put testfile2.txt testfile2.txt"')
+    results = run_cmd(f'smbclient //{nas_ip}/{wheelshare} -U {user}%{password} -c "put testfile2.txt testfile2.txt"')
     time.sleep(1)
     run_cmd('rm testfile2.txt')
     assert results['result'], results['output']
