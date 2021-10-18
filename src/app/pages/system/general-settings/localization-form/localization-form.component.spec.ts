@@ -3,12 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Observable, of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { IxFormsModule } from 'app/pages/common/ix/ix-forms.module';
 import { IxFormHarness } from 'app/pages/common/ix/testing/ix-form.harness';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
-import { LanguageService, WebSocketService } from 'app/services';
+import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
 
@@ -25,52 +27,42 @@ describe('LocalizationFormComponent', () => {
     providers: [
       mockWebsocket([
         mockCall('system.general.update'),
-        mockCall('system.general.language_choices', {
-          dsb: 'Lower Sorbian',
-          el: 'Greek',
-          en: 'English',
-          'en-au': 'Australian English',
-          'en-gb': 'British English',
-        }),
-        mockCall('system.general.kbdmap_choices', {
-          'ua.winkeys': 'Ukrainian (Win keys)',
-          us: 'English (US)',
-          'us.alt-intl': 'English (US, alt. intl.)',
-        }),
-        mockCall('system.general.timezone_choices', {
-          'America/Lima': 'America/Lima',
-          'America/Los_Angeles': 'America/Los_Angeles',
-          'America/Maceio': 'America/Maceio',
-        }),
       ]),
+      mockProvider(SystemGeneralService, {
+        languageOptions(): Observable<Option[]> {
+          return of([
+            { value: 'dsb', label: 'Lower Sorbian (dsb)' },
+            { value: 'el', label: 'Greek (el)' },
+            { value: 'en', label: 'English (en)' },
+            { value: 'en-au', label: 'Australian English (en-au)' },
+            { value: 'en-gb', label: 'British English (en-gb)' },
+          ]);
+        },
+        kbdMapChoices(): Observable<Option[]> {
+          return of([
+            { value: 'ua.winkeys', label: 'Ukrainian (Win keys) (ua.winkeys)' },
+            { value: 'us', label: 'English (US) (us)' },
+            { value: 'us.alt-intl', label: 'English (US, alt. intl.) (us.alt-intl)' },
+          ]);
+        },
+        timezoneChoices(): Observable<Option[]> {
+          return of([
+            { label: 'America/Lima', value: 'America/Lima' },
+            { label: 'America/Los_Angeles', value: 'America/Los_Angeles' },
+            { label: 'America/Maceio', value: 'America/Maceio' },
+          ]);
+        },
+      }),
       mockProvider(LocaleService, {
         getDateFormatOptions: () => [
-          {
-            label: '2021-10-16',
-            value: 'yyyy-MM-dd',
-          },
-          {
-            label: 'October 16, 2021',
-            value: 'MMMM d, yyyy',
-          },
-          {
-            label: '16 October, 2021',
-            value: 'd MMMM, yyyy',
-          },
+          { label: '2021-10-16', value: 'yyyy-MM-dd' },
+          { label: 'October 16, 2021', value: 'MMMM d, yyyy' },
+          { label: '16 October, 2021', value: 'd MMMM, yyyy' },
         ],
         getTimeFormatOptions: () => [
-          {
-            label: '16:22:14 (24 Hours)',
-            value: 'HH:mm:ss',
-          },
-          {
-            label: '04:22:14 pm',
-            value: "hh:mm:ss aaaaa'm'",
-          },
-          {
-            label: '04:22:14 PM',
-            value: 'hh:mm:ss aa',
-          },
+          { label: '16:22:14 (24 Hours)', value: 'HH:mm:ss' },
+          { label: '04:22:14 pm', value: "hh:mm:ss aaaaa'm'" },
+          { label: '04:22:14 PM', value: 'hh:mm:ss aa' },
         ],
       }),
       mockProvider(IxModalService),
