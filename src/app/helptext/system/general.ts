@@ -2,21 +2,20 @@ import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptext_system_general = {
-  stg_fieldset_gui: T('GUI'),
+  fieldset_gui: T('GUI'),
+  fieldset_other: T('Other Options'),
   stg_fieldset_loc: T('Localization'),
-  stg_fieldset_other: T('Other Options'),
 
-  stg_guicertificate: {
-    placeholder: T('GUI SSL Certificate'),
+  ui_certificate: {
+    label: T('GUI SSL Certificate'),
     tooltip: T('The system uses a self-signed certificate \
  to enable encrypted web interface connections. To change \
  the default certificate, select a different certificate \
  that was created or imported in the <b>Certificates</b> menu.'),
-    validation: [Validators.required],
   },
 
-  stg_guiaddress: {
-    placeholder: T('Web Interface IPv4 Address'),
+  ui_address: {
+    label: T('Web Interface IPv4 Address'),
     tooltip: T(
       'Choose a recent IP address to limit the usage when\
  accessing the administrative GUI. The built-in HTTP\
@@ -26,8 +25,8 @@ export const helptext_system_general = {
     ),
   },
 
-  stg_guiv6address: {
-    placeholder: T('Web Interface IPv6 Address'),
+  ui_v6address: {
+    label: T('Web Interface IPv6 Address'),
     tooltip: T(
       'Choose a recent IPv6 address to limit the usage when\
  accessing the administrative GUI. The built-in HTTP\
@@ -37,8 +36,8 @@ export const helptext_system_general = {
     ),
   },
 
-  stg_guiport: {
-    placeholder: T('Web Interface HTTP Port'),
+  ui_port: {
+    label: T('Web Interface HTTP Port'),
     tooltip: T(
       'Allow configuring a non-standard port to access the GUI\
  over <i>HTTP</i>. Changing this setting might require\
@@ -46,27 +45,25 @@ export const helptext_system_general = {
  href="https://www.redbrick.dcu.ie/~d_fens/articles/Firefox:_This_Address_is_Restricted"\
  target="_blank">Firefox configuration setting</a>.',
     ),
-    validation: [Validators.required],
   },
 
-  stg_guihttpsport: {
-    placeholder: T('Web Interface HTTPS Port'),
+  ui_httpsport: {
+    label: T('Web Interface HTTPS Port'),
     tooltip: T(
       'Allow configuring a non-standard port to access the GUI\
  over <i>HTTPS</i>.',
     ),
-    validation: [Validators.required],
   },
 
-  stg_guihttpsprotocols: {
-    placeholder: T('HTTPS Protocols'),
+  ui_httpsprotocols: {
+    label: T('HTTPS Protocols'),
     tooltip: T('Cryptographic protocols for securing client/server connections. Select which\
  <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank">Transport Layer Security (TLS)</a>\
  versions TrueNAS can use for connection security.'),
   },
 
-  stg_guihttpsredirect: {
-    placeholder: T('Web Interface HTTP -> HTTPS Redirect'),
+  ui_httpsredirect: {
+    label: T('Web Interface HTTP -> HTTPS Redirect'),
     tooltip: T(
       'Redirect <i>HTTP</i> connections to <i>HTTPS</i>. A \
  <i>GUI SSL Certificate</i> is required for <i>HTTPS</i>. Activating \
@@ -110,15 +107,20 @@ export const helptext_system_general = {
   },
 
   crash_reporting: {
-    placeholder: T('Crash reporting'),
+    label: T('Crash reporting'),
     tooltip: T('Send failed HTTP request data which can include client\
  and server IP addresses, failed method call tracebacks, and\
  middleware log file contents to iXsystems.'),
   },
 
   usage_collection: {
-    placeholder: T('Usage collection'),
+    label: T('Usage collection'),
     tooltip: T('Enable sending anonymous usage statistics to iXsystems.'),
+  },
+
+  ui_consolemsg: {
+    label: T('Show Console Messages'),
+    tooltip: T('Display console messages in real time at the bottom of the browser.'),
   },
 
   save_config_form: {
@@ -173,23 +175,13 @@ export const helptext_system_general = {
   },
 
   dialog_confirm_title: T('Restart Web Service'),
-
-  dialog_confirm_message: T(
-    'The web service must restart \
- for the protocol changes to take effect. The UI will be \
- temporarily unavailable. Restart the service?',
-  ),
+  dialog_confirm_message: T('The web service must restart for the protocol changes to take effect. The UI will be temporarily unavailable. Restart the service?'),
 
   dialog_error_title: T('Error restarting web service'),
 
   snackbar_download_success: {
-    title: T('Download Sucessful'),
+    title: T('Download Successful'),
     action: T('Success'),
-  },
-
-  validation_errors: {
-    ui_address: T('Select <samp>0.0.0.0</samp> to include all addresses. When this has been chosen, additional addresses cannot be selected.'),
-    ui_v6address: T('Select <samp>::</samp> to include all addresses. When this has been chosen, additional addresses cannot be selected.'),
   },
 
   config_download: {
@@ -213,7 +205,4 @@ export const helptext_system_general = {
     title: T('Delete Server'),
     message: T('Delete'),
   },
-
-  consolemsg_placeholder: T('Show Console Messages'),
-  consolemsg_tooltip: T('Display console messages in real time at the bottom of the browser.'),
 };

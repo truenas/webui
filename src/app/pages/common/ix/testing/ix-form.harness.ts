@@ -1,15 +1,17 @@
 import { ComponentHarness } from '@angular/cdk/testing';
 import { IxCheckboxHarness } from 'app/pages/common/ix/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/pages/common/ix/components/ix-input/ix-input.harness';
+import { IxSelectHarness } from 'app/pages/common/ix/components/ix-select/ix-select.harness';
 import { IxFormControlHarness } from 'app/pages/common/ix/interfaces/ix-form-control-harness.interface';
 
 const childSelectors = [
   IxInputHarness,
   IxCheckboxHarness,
+  IxSelectHarness,
 ] as const;
 
 type SupportedFormControlHarness = InstanceType<(typeof childSelectors)[number]>;
-
+type IxFormBasicValueType = string | number | boolean | string[] | number[];
 /**
  * This class provides sugar syntax to make it easier to work with forms.
  * When possibilities of this class are not enough, use individual harnesses such as IxInputHarness, etc.
@@ -35,14 +37,14 @@ export class IxFormHarness extends ComponentHarness {
     return result;
   }
 
-  async getValues(): Promise<{ [label: string]: string | number | boolean }> {
+  async getValues(): Promise<{ [label: string]: IxFormBasicValueType }> {
     const controlsDict = await this.getControlHarnessesDict();
 
-    const result: { [label: string]: string | number | boolean } = {};
+    const result: { [label: string]: IxFormBasicValueType } = {};
     for (const label in controlsDict) {
       const control = controlsDict[label] as IxFormControlHarness;
 
-      result[label] = await control.getValue() as string | number | boolean;
+      result[label] = await control.getValue() as IxFormBasicValueType;
     }
 
     return result;

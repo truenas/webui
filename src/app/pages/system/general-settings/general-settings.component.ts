@@ -1,9 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, Type } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -125,6 +126,7 @@ export class GeneralSettingsComponent implements OnInit {
     private ixModalService: IxModalService,
     private storage: StorageService,
     private http: HttpClient,
+    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -185,21 +187,28 @@ export class GeneralSettingsComponent implements OnInit {
           title: helptext.guiTitle,
           id: 'gui',
           items: [
-            { label: helptext.stg_guicertificate.placeholder, value: res.ui_certificate.name },
-            { label: helptext.stg_guiaddress.placeholder, value: res.ui_address.join(', ') },
-            { label: helptext.stg_guiv6address.placeholder, value: res.ui_v6address.join(', ') },
-            { label: helptext.stg_guihttpsport.placeholder, value: res.ui_httpsport },
-            { label: helptext.stg_guihttpsprotocols.placeholder, value: res.ui_httpsprotocols.join(', ') },
-            { label: helptext.stg_guihttpsredirect.placeholder, value: res.ui_httpsredirect as any },
+            { label: helptext.ui_certificate.label, value: res.ui_certificate.name },
+            { label: helptext.ui_address.label, value: res.ui_address.join(', ') },
+            { label: helptext.ui_v6address.label, value: res.ui_v6address.join(', ') },
+            { label: helptext.ui_port.label, value: res.ui_port },
+            { label: helptext.ui_httpsport.label, value: res.ui_httpsport },
+            { label: helptext.ui_httpsprotocols.label, value: res.ui_httpsprotocols.join(', ') },
             {
-              label: helptext.crash_reporting.placeholder,
+              label: helptext.ui_httpsredirect.label,
+              value: res.ui_httpsredirect ? helptext.enabled : helptext.disabled,
+            },
+            {
+              label: helptext.crash_reporting.label,
               value: res.crash_reporting ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext.usage_collection.placeholder,
+              label: helptext.usage_collection.label,
               value: res.usage_collection ? helptext.enabled : helptext.disabled,
             },
-            { label: helptext.consolemsg_placeholder, value: res.ui_consolemsg ? helptext.enabled : helptext.disabled },
+            {
+              label: helptext.ui_consolemsg.label,
+              value: res.ui_consolemsg ? helptext.enabled : helptext.disabled,
+            },
           ],
           actions: [
             { label: helptext.actions.save_config, value: 'saveConfig', icon: 'save_alt' },
@@ -230,21 +239,18 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   doAdd(name: string, id?: number): void {
-    let addComponent: Type<GuiFormComponent | NtpServerFormComponent>;
     switch (name) {
       case 'gui':
-        addComponent = GuiFormComponent;
+        this.ixModalService.open(GuiFormComponent, this.translate.instant('GUI'));
         break;
       case 'ntp':
-        addComponent = NtpServerFormComponent;
+        this.modalService.openInSlideIn(NtpServerFormComponent, id);
         break;
       default:
         this.ixModalService.open(LocalizationForm2Component, T('Localization Settings'));
+        break;
     }
     this.sysGeneralService.sendConfigData(this.configData);
-    if (addComponent) {
-      this.modalService.openInSlideIn(addComponent, id);
-    }
   }
 
   doNTPDelete(server: NtpServer): void {

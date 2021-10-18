@@ -18,6 +18,7 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;
+  @Input() type: string;
 
   formControl = new FormControl(this).value as FormControl;
 
