@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { QRCodeModule } from 'angular2-qrcode';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxUploaderModule } from 'ngx-uploader';
@@ -30,9 +30,8 @@ import { AlertServiceComponent } from './alert-service/alert-service/alert-servi
 import { AlertConfigComponent } from './alert/alert.component';
 import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach/bootenv-attach-form.component';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/bootenv-clone.component';
-import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create/bootenv-create.component';
+import { BootEnvironmentFormComponent } from './bootenv/bootenv-form/bootenv-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
-import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/bootenv-rename.component';
 import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace/bootenv-replace-form.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
 import { EmailComponent } from './email/email.component';
@@ -68,8 +67,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     LocalizationForm2Component,
     BootEnvironmentListComponent,
     BootEnvironmentCloneComponent,
-    BootEnvironmentRenameComponent,
-    BootEnvironmentCreateComponent,
+    BootEnvironmentFormComponent,
     BootStatusListComponent,
     BootEnvAttachFormComponent,
     BootEnvReplaceFormComponent,
@@ -105,6 +103,9 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     CronFormComponent,
     CronListComponent,
     SystemDatasetPoolComponent,
+  ],
+  providers: [
+    TranslateService,
   ],
   entryComponents: [QrDialogComponent],
 })

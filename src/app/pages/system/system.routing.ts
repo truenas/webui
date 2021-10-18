@@ -15,9 +15,7 @@ import { AlertServiceComponent } from './alert-service/alert-service/alert-servi
 import { AlertConfigComponent } from './alert/alert.component';
 import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach/bootenv-attach-form.component';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/bootenv-clone.component';
-import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create/bootenv-create.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
-import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/bootenv-rename.component';
 import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace/bootenv-replace-form.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
 import { EmailComponent } from './email/email.component';
@@ -60,28 +58,15 @@ export const routes: Routes = [
         path: 'clone/:pk',
         component: BootEnvironmentCloneComponent,
         data: { title: T('Clone'), breadcrumb: T('Clone') },
-      },
-      {
-        path: 'rename/:pk',
-        component: BootEnvironmentRenameComponent,
-        data: { title: T('Rename'), breadcrumb: T('Rename') },
-      },
-      {
-        path: 'create',
-        component: BootEnvironmentCreateComponent,
-        data: { title: T('Add'), breadcrumb: T('Add') },
-      },
-      {
+      }, {
         path: 'status',
         component: BootStatusListComponent,
         data: { title: T('Status'), breadcrumb: T('Status') },
-      },
-      {
+      }, {
         path: 'attach/:pk',
         component: BootEnvAttachFormComponent,
         data: { title: T('Attach'), breadcrumb: ('Attach') },
-      },
-      {
+      }, {
         path: 'replace/:pk',
         component: BootEnvReplaceFormComponent,
         data: { title: T('Replace'), breadcrumb: T('Replace') },
@@ -112,8 +97,7 @@ export const routes: Routes = [
           path: '',
           component: UpdateComponent,
           data: { title: T('Update'), breadcrumb: T('Update') },
-        },
-        {
+        }, {
           path: 'manualupdate',
           data: { title: T('Manual Update'), breadcrumb: T('Manual Update') },
           children: [
@@ -130,13 +114,11 @@ export const routes: Routes = [
       path: 'email',
       component: EmailComponent,
       data: { title: T('Email'), breadcrumb: T('Email'), icon: 'email' },
-    },
-    {
+    }, {
       path: 'alertsettings',
       component: AlertConfigComponent,
       data: { title: T('Alert Settings'), breadcrumb: T('Alert Settings'), icon: 'notifications_active' },
-    },
-    {
+    }, {
       path: 'alertservice',
       data: { title: T('Alert Services'), breadcrumb: T('Alert Services'), icon: 'notifications' },
       children: [{
@@ -157,8 +139,7 @@ export const routes: Routes = [
       path: 'failover',
       component: FailoverComponent,
       data: { title: T('Failover'), breadcrumb: T('Failover'), icon: 'device_hub' },
-    },
-    {
+    }, {
       path: 'support',
       data: { title: T('Support'), breadcrumb: T('Support'), icon: 'perm_phone_msg' },
       children: [
@@ -166,30 +147,25 @@ export const routes: Routes = [
           path: '',
           component: SupportComponent,
           data: { title: T('Support'), breadcrumb: T('Support') },
-        },
-        {
+        }, {
           path: 'eula',
           component: EulaComponent,
           data: { title: T('EULA'), breadcrumb: T('EULA') },
         },
       ],
-    },
-    {
+    }, {
       path: 'two-factor',
       component: TwoFactorComponent,
       data: { title: T('Two-Factor Auth'), breadcrumb: T('Two-Factor Auth') },
-    },
-    {
+    }, {
       path: 'services',
       component: ServicesComponent,
       data: { title: T('Services'), breadcrumb: T('Services') },
-    },
-    {
+    }, {
       path: 'shell',
       component: ShellComponent,
       data: { title: T('Shell'), breadcrumb: T('Shell') },
-    },
-    {
+    }, {
       path: 'cron',
       data: { title: 'Cron Jobs', breadcrumb: 'Cron Jobs', icon: 'event_note' },
       children: [{
