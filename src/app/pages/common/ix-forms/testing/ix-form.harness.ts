@@ -1,8 +1,9 @@
 import { ComponentHarness } from '@angular/cdk/testing';
-import { IxCheckboxHarness } from 'app/pages/common/ix/components/ix-checkbox/ix-checkbox.harness';
-import { IxInputHarness } from 'app/pages/common/ix/components/ix-input/ix-input.harness';
-import { IxSelectHarness } from 'app/pages/common/ix/components/ix-select/ix-select.harness';
-import { IxFormControlHarness } from 'app/pages/common/ix/interfaces/ix-form-control-harness.interface';
+import { IxCheckboxHarness } from 'app/pages/common/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxInputHarness } from 'app/pages/common/ix-forms/components/ix-input/ix-input.harness';
+import { IxSelectHarness } from 'app/pages/common/ix-forms/components/ix-select/ix-select.harness';
+import { IxTextareaHarness } from 'app/pages/common/ix-forms/components/ix-textarea/ix-textarea.harness';
+import { IxFormControlHarness } from 'app/pages/common/ix-forms/interfaces/ix-form-control-harness.interface';
 
 const childSelectors = [
   IxInputHarness,

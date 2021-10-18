@@ -11,7 +11,6 @@ export class FormErrorHandlerService {
     private dialog: DialogService,
   ) {}
 
-  // TODO: Add support for jobs.
   handleWsFormError(error: WebsocketError, formGroup: FormGroup): void {
     if (error.type === ResponseErrorType.Validation && error.extra) {
       this.handleValidationError(error, formGroup);

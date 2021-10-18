@@ -24,12 +24,11 @@ export class TunableFormComponent {
   isFormLoading = false;
 
   form = this.fb.group({
-    var: ['', Validators.required], // TODO Pattern and explanation for it
+    var: ['', Validators.required], // TODO Add pattern and explanation for it
     value: ['', Validators.required],
     comment: [''],
     enabled: [true],
   });
-  // TODO: Check error handling
 
   readonly tooltips = {
     var: helptext.var.tooltip,
