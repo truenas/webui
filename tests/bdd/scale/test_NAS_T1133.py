@@ -69,6 +69,7 @@ def create_wheeldataset_and_set_permissions(driver, dataset_name):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
+    time.sleep(2)
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, f'//div[contains(text(),"{dataset_name}")]')
 
