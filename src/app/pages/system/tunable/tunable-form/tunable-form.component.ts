@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { TunableType } from 'app/enums/tunable-type.enum';
 import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
 import { Tunable, TunableUpdate } from 'app/interfaces/tunable.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
 
@@ -42,6 +42,8 @@ export class TunableFormComponent {
     private fb: FormBuilder,
     private ws: WebSocketService,
     private modalService: IxModalService,
+    private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   setTunableForEdit(tunable: Tunable): void {
@@ -73,8 +75,8 @@ export class TunableFormComponent {
       this.modalService.close();
     }, (error) => {
       this.isFormLoading = false;
-      this.modalService.close();
-      new EntityUtils().handleWSError(this, error);
+      this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
     });
   }
 }

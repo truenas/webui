@@ -1,7 +1,7 @@
 import {
   Component, ComponentFactoryResolver, ElementRef, Input, OnDestroy, OnInit, Type, ViewChild,
 } from '@angular/core';
-import { IxModalDirective } from 'app/pages/common/ix/components/ix-modal/ix-modal.directive';
+import { IxModalDirective } from 'app/pages/common/ix-forms/components/ix-modal/ix-modal.directive';
 import { IxModalService } from 'app/services/ix-modal.service';
 
 @Component({

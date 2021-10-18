@@ -116,7 +116,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
-    this.modalService.onClose.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
