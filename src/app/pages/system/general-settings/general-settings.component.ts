@@ -231,8 +231,8 @@ export class GeneralSettingsComponent implements OnInit {
             language: res.language,
             kbdMap: res.kbdmap,
             timezone: res.timezone,
-            dateFormat: dateTime[0],
-            timeFormat: dateTime[1],
+            dateFormat: this.localeService.getPreferredDateFormat(),
+            timeFormat: this.localeService.getPreferredTimeFormat(),
           };
           this.dataCards.push(this.localeData);
         });
