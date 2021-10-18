@@ -3,7 +3,7 @@
   <div *ngIf="label" class="label-container">
     <label class="label">
       {{label}}
-      <span *ngIf="required">*</span>
+      <span *ngIf="required" class="required">*</span>
     </label>
     <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
   </div>
