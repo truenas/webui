@@ -1,0 +1,93 @@
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="formGroup" class="ix-form-container" (submit)="onSubmit()">
+      <ix-fieldset [title]="helptext.fieldset_gui | translate">
+        <ix-select
+          formControlName="ui_certificate"
+          [label]="helptext.ui_certificate.label | translate"
+          [tooltip]="helptext.ui_certificate.tooltip | translate"
+          [options]="options.ui_certificate"
+          [required]="true"
+        ></ix-select>
+
+        <ix-select
+          formControlName="ui_address"
+          [label]="helptext.ui_address.label | translate"
+          [tooltip]="helptext.ui_address.tooltip | translate"
+          [options]="options.ui_address"
+          [required]="true"
+          [multiple]="true"
+        ></ix-select>
+
+        <ix-select
+          formControlName="ui_v6address"
+          [label]="helptext.ui_v6address.label | translate"
+          [tooltip]="helptext.ui_v6address.tooltip | translate"
+          [options]="options.ui_v6address"
+          [required]="true"
+          [multiple]="true"
+        ></ix-select>
+
+        <ix-input
+          formControlName="ui_port"
+          [label]="helptext.ui_port.label | translate"
+          [tooltip]="helptext.ui_port.tooltip | translate"
+          type="number"
+        ></ix-input>
+
+        <ix-input
+          formControlName="ui_httpsport"
+          [label]="helptext.ui_httpsport.label | translate"
+          [tooltip]="helptext.ui_httpsport.tooltip | translate"
+          type="number"
+        ></ix-input>
+
+        <ix-select
+          formControlName="ui_httpsprotocols"
+          [label]="helptext.ui_httpsprotocols.label | translate"
+          [tooltip]="helptext.ui_httpsprotocols.tooltip | translate"
+          [options]="options.ui_httpsprotocols"
+          [required]="true"
+          [multiple]="true"
+        ></ix-select>
+
+        <ix-checkbox
+          formControlName="ui_httpsredirect"
+          [label]="helptext.ui_httpsredirect.label | translate"
+          [tooltip]="helptext.ui_httpsredirect.tooltip | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <ix-fieldset [title]="helptext.fieldset_other | translate">
+        <ix-checkbox
+          formControlName="crash_reporting"
+          [label]="helptext.crash_reporting.label | translate"
+          [tooltip]="helptext.crash_reporting.tooltip | translate"
+        ></ix-checkbox>
+
+        <ix-checkbox
+          formControlName="usage_collection"
+          [label]="helptext.usage_collection.label | translate"
+          [tooltip]="helptext.usage_collection.tooltip | translate"
+        ></ix-checkbox>
+
+        <ix-checkbox
+          formControlName="ui_consolemsg"
+          [label]="helptext.ui_consolemsg.label | translate"
+          [tooltip]="helptext.ui_consolemsg.tooltip | translate"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="formGroup.invalid || isFormLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+
+    <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
+  </mat-card-content>
+</mat-card>

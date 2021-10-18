@@ -11,6 +11,9 @@
   <mat-error *ngIf="control.hasError('min')">
     {{ 'Minimum value is {value}.' | translate: { value: control.errors.min.min } }}
   </mat-error>
+  <mat-error *ngIf="control.hasError('max')">
+    {{ 'Maximum value is {value}.' | translate: { value: control.errors.max.max } }}
+  </mat-error>
   <mat-error *ngIf="control.hasError('atLeastOne')">
     {{control.errors.fields[0]}} {{" and " | translate}} {{control.errors.fields[1]}} {{". At least one is required." | translate}}
   </mat-error>

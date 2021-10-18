@@ -27,7 +27,17 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
     return label?.text() || '';
   }
 
-  async getValue(): Promise<string> {
+  async getValue(): Promise<string | string[]> {
+    const select = await this.getSelectHarness();
+    await select.open();
+
+    if (await select.isMultiple()) {
+      const options = await select.getOptions({ isSelected: true });
+      const optionTexts = options.map((option) => option.getText());
+
+      return Promise.all(optionTexts);
+    }
+
     return (await this.getSelectHarness()).getValueText();
   }
 
