@@ -58,15 +58,15 @@ describe('GuiFormComponent', () => {
       mockProvider(IxModalService),
       mockProvider(SystemGeneralService, {
         getGeneralConfig$: of(mockSystemGeneralConfig),
-        uiCertificateOptions: () => of([{ label: 'freenas_default', value: '1' }]),
-        ipChoicesv4: () => of([{ label: '0.0.0.0', value: '0.0.0.0' }]),
-        ipChoicesv6: () => of([{ label: '::', value: '::' }]),
-        uiHttpsProtocolsOptions: () => of([
-          { label: 'TLSv1', value: 'TLSv1' },
-          { label: 'TLSv1.1', value: 'TLSv1.1' },
-          { label: 'TLSv1.2', value: 'TLSv1.2' },
-          { label: 'TLSv1.3', value: 'TLSv1.3' },
-        ]),
+        uiCertificateOptions: () => of({ 1: 'freenas_default' }),
+        ipChoicesv4: () => of({ '0.0.0.0': '0.0.0.0' }),
+        ipChoicesv6: () => of({ '::': '::' }),
+        uiHttpsProtocolsOptions: () => of({
+          TLSv1: 'TLSv1',
+          'TLSv1.1': 'TLSv1.1',
+          'TLSv1.2': 'TLSv1.2',
+          'TLSv1.3': 'TLSv1.3',
+        }),
       }),
     ],
   });
