@@ -90,7 +90,6 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     TwoFactorComponent,
     QrDialogComponent,
     GeneralSettingsComponent,
-    LocalizationFormComponent,
     GuiFormComponent,
     LicenseComponent,
     ConsoleFormComponent,
