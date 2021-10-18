@@ -9,8 +9,8 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
-import { IxFormsModule } from 'app/pages/common/ix/ix-forms.module';
-import { IxFormHarness } from 'app/pages/common/ix/testing/ix-form.harness';
+import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui-form/gui-form.component';
 import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
