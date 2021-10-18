@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
+import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/directory-service/active-directory';
 import global_helptext from 'app/helptext/global-helptext';
@@ -97,14 +98,20 @@ export class ActiveDirectoryComponent implements FormConfiguration {
             customSubmit: (entityDialog: EntityDialogComponent) => {
               const value = entityDialog.formValue;
               entityDialog.loader.open();
-              entityDialog.ws.call('activedirectory.leave', [{ username: value.username, password: value.password }])
-                .pipe(untilDestroyed(this)).subscribe(() => {
+              this.ws.job('activedirectory.leave', [{ username: value.username, password: value.password }])
+                .pipe(untilDestroyed(this)).subscribe((job) => {
+                  if (job.state !== JobState.Success) {
+                    return;
+                  }
+
                   entityDialog.loader.close();
                   entityDialog.dialogRef.close(true);
                   _.find(this.fieldConfig, { name: 'enable' })['value'] = false;
                   this.entityEdit.formGroup.controls['enable'].setValue(false);
                   this.adStatus = false;
                   this.isCustActionVisible('leave_domain');
+                  this.modalService.refreshTable();
+                  this.modalService.close('slide-in-form');
                   this.dialogservice.info(helptext.ad_leave_domain_dialog.success,
                     helptext.ad_leave_domain_dialog.success_msg, '400px', 'info', true);
                 },
