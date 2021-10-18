@@ -120,24 +120,12 @@ export class SystemGeneralService {
     return this.ws.call('system.info');
   }
 
-  ipChoicesv4(): Observable<Option[]> {
-    return this.ws.call('system.general.ui_address_choices').pipe(
-      map((response) =>
-        Object.keys(response || {}).map((key) => ({
-          label: response[key],
-          value: response[key],
-        }))),
-    );
+  ipChoicesv4(): Observable<Choices> {
+    return this.ws.call('system.general.ui_address_choices');
   }
 
-  ipChoicesv6(): Observable<Option[]> {
-    return this.ws.call('system.general.ui_v6address_choices').pipe(
-      map((response) =>
-        Object.keys(response || {}).map((key) => ({
-          label: response[key],
-          value: response[key],
-        }))),
-    );
+  ipChoicesv6(): Observable<Choices> {
+    return this.ws.call('system.general.ui_v6address_choices');
   }
 
   kbdMapChoices(): Observable<Option[]> {
@@ -180,26 +168,12 @@ export class SystemGeneralService {
     );
   }
 
-  uiCertificateOptions(): Observable<Option[]> {
-    return this.ws.call('system.general.ui_certificate_choices').pipe(
-      map((choices) => {
-        return Object.keys(choices || {}).map((key) => ({
-          label: choices[parseInt(key)],
-          value: key,
-        }));
-      }),
-    );
+  uiCertificateOptions(): Observable<Choices> {
+    return this.ws.call('system.general.ui_certificate_choices');
   }
 
-  uiHttpsProtocolsOptions(): Observable<Option[]> {
-    return this.ws.call('system.general.ui_httpsprotocols_choices').pipe(
-      map((choices) => {
-        return Object.keys(choices || {}).map((key) => ({
-          label: choices[key],
-          value: key,
-        }));
-      }),
-    );
+  uiHttpsProtocolsOptions(): Observable<Choices> {
+    return this.ws.call('system.general.ui_httpsprotocols_choices');
   }
 
   refreshDirServicesCache(): Observable<void> {

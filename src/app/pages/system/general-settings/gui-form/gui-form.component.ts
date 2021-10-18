@@ -9,6 +9,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -46,10 +47,10 @@ export class GuiFormComponent {
   });
 
   options = {
-    ui_certificate: this.sysGeneralService.uiCertificateOptions(),
-    ui_address: this.sysGeneralService.ipChoicesv4(),
-    ui_v6address: this.sysGeneralService.ipChoicesv6(),
-    ui_httpsprotocols: this.sysGeneralService.uiHttpsProtocolsOptions(),
+    ui_certificate: this.sysGeneralService.uiCertificateOptions().pipe(choicesToOptions()),
+    ui_address: this.sysGeneralService.ipChoicesv4().pipe(choicesToOptions()),
+    ui_v6address: this.sysGeneralService.ipChoicesv6().pipe(choicesToOptions()),
+    ui_httpsprotocols: this.sysGeneralService.uiHttpsProtocolsOptions().pipe(choicesToOptions()),
   };
 
   readonly helptext = helptext;
@@ -126,29 +127,35 @@ export class GuiFormComponent {
     });
   }
 
-  handleServiceRestart(changed: SystemGeneralConfigUpdate): void {
-    const {
-      ui_port, ui_httpsport, ui_httpsredirect, ui_certificate, ui_address, ui_v6address,
-    } = this.configData;
-    const uiCertificateChanged = ui_certificate?.id !== changed.ui_certificate;
-    const httpPortChanged = ui_port !== changed.ui_port;
-    const httpsPortChanged = ui_httpsport !== changed.ui_httpsport;
-    const redirectChanged = ui_httpsredirect !== changed.ui_httpsredirect;
-    const v4AddressesChanged = !(ui_address.length === changed.ui_address.length
-      && ui_address.every((val, index) => val === changed.ui_address[index]));
-    const v6AddressesChanged = !(ui_v6address.length === changed.ui_v6address.length
-      && ui_v6address.every((val, index) => val === changed.ui_v6address[index]));
+  getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {
+    const uiCertificateChanged = current.ui_certificate?.id !== next.ui_certificate;
+    const httpPortChanged = current.ui_port !== next.ui_port;
+    const httpsPortChanged = current.ui_httpsport !== next.ui_httpsport;
+    const redirectChanged = current.ui_httpsredirect !== next.ui_httpsredirect;
+    const v4AddressesChanged = !(current.ui_address.length === next.ui_address.length
+      && current.ui_address.every((val, index) => val === next.ui_address[index]));
+    const v6AddressesChanged = !(current.ui_v6address.length === next.ui_v6address.length
+      && current.ui_v6address.every((val, index) => val === next.ui_v6address[index]));
 
-    this.sysGeneralService.refreshSysGeneral();
-
-    if ([
+    return [
       uiCertificateChanged,
       httpPortChanged,
       httpsPortChanged,
       redirectChanged,
       v4AddressesChanged,
       v6AddressesChanged,
-    ].includes(true)) {
+    ].includes(true);
+  }
+
+  handleServiceRestart(changed: SystemGeneralConfigUpdate): void {
+    const current: SystemGeneralConfig = { ...this.configData };
+    const httpPortChanged = current.ui_port !== changed.ui_port;
+    const httpsPortChanged = current.ui_httpsport !== changed.ui_httpsport;
+    const isServiceRestartRequired = this.getIsServiceRestartRequired(current, changed);
+
+    this.sysGeneralService.refreshSysGeneral();
+
+    if (isServiceRestartRequired) {
       this.dialog.confirm({
         title: this.translate.instant(helptext.dialog_confirm_title),
         message: this.translate.instant(helptext.dialog_confirm_message),
