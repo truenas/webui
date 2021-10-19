@@ -126,7 +126,7 @@ export class GeneralSettingsComponent implements OnInit {
       this.getDataCardData();
     });
 
-    this.ixModalService.onClose.pipe(untilDestroyed(this)).subscribe(() => {
+    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.ntpServersData?.tableConf?.tableComponent.getData();
     });
 
