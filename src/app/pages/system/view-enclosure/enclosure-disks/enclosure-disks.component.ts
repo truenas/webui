@@ -1123,7 +1123,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       value = enclosure.name;
     }
 
-    const args: any = { index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value };
+    const args = { index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value };
     this.controllerEvent$.next({ name: 'SetEnclosureLabel', data: args, sender: this });
   }
 

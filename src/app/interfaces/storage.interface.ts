@@ -177,3 +177,7 @@ export type DiskWipeParams = [
   disk: string,
   method: DiskWipeMethod,
 ];
+
+export interface DiskTemperatures {
+  [disk: string]: number | null;
+}

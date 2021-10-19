@@ -18,7 +18,6 @@ export default {
     [FailoverDisabledReason.MismatchDisks]: T('The TrueNAS controllers do not have the same quantity of disks.'),
     [FailoverDisabledReason.NoCriticalInterfaces]: T('No network interfaces are marked critical for failover.'),
   },
-  legacyUIWarning: globalHelptext.legacyUIWarning,
   updateRunning_dialog: {
     title: T('Update in Progress'),
     message: globalHelptext.sysUpdateMessage,

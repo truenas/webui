@@ -364,7 +364,7 @@ export class CertificateEditComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any): void {
+  customSubmit(value: { name: string }): void {
     this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: 'Updating Identifier' } });
     this.dialogRef.componentInstance.setCall(this.editCall, [this.rowNum, { name: value['name'] }]);
     this.dialogRef.componentInstance.submit();

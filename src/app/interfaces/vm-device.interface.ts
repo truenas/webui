@@ -1,3 +1,4 @@
+import { Overwrite } from 'utility-types';
 import { VmDeviceType } from 'app/enums/vm.enum';
 
 interface VmPciPassthroughAttributes {
@@ -87,3 +88,7 @@ export type VmDevice =
   | VmDisplayDevice
   | VmDiskDevice
   | VmCdRomDevice;
+
+export type VmDeviceUpdate = Overwrite<Partial<Omit<VmDevice, 'id'>>, {
+  attributes?: Partial<VmDevice['attributes']>;
+}>;

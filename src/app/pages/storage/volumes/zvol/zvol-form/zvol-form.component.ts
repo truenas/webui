@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Validators, ValidationErrors, FormControl } from '@angular/forms';
+import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -11,16 +11,22 @@ import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { OnOff } from 'app/enums/on-off.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormCheckboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig,
+  FormCheckboxConfig,
+  FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { WebSocketService, StorageService } from 'app/services';
+import { StorageService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -582,7 +588,10 @@ export class ZvolFormComponent implements FormConfiguration {
         readonly_value = 'INHERIT';
       } else {
         readonly_value = pk_dataset[0].readonly.value;
-        if (pk_dataset[0].readonly.source === 'DEFAULT' || pk_dataset[0].readonly.source === 'INHERITED') {
+        if (
+          pk_dataset[0].readonly.source === ZfsPropertySource.Default
+          || pk_dataset[0].readonly.source === ZfsPropertySource.Inherited
+        ) {
           readonly_value = 'INHERIT';
         }
       }
@@ -628,15 +637,9 @@ export class ZvolFormComponent implements FormConfiguration {
           volblocksize.isHidden = true;
 
           this.customFilter = [[['id', '=', this.parent]]];
-          let sync_collection: Option[] = [{ label: pk_dataset[0].sync.value, value: pk_dataset[0].sync.value }];
-          let compression_collection: Option[] = [{
-            label: pk_dataset[0].compression.value,
-            value: pk_dataset[0].compression.value,
-          }];
-          let deduplication_collection: Option[] = [{
-            label: pk_dataset[0].deduplication.value,
-            value: pk_dataset[0].deduplication.value,
-          }];
+          let sync_collection: Option[];
+          let compression_collection: Option[];
+          let deduplication_collection: Option[];
 
           const volumesize = pk_dataset[0].volsize.parsed;
 
@@ -656,7 +659,10 @@ export class ZvolFormComponent implements FormConfiguration {
 
           entityForm.formGroup.controls['volsize'].setValue(humansize);
 
-          if (pk_dataset[0].sync.source === 'INHERITED' || pk_dataset[0].sync.source === 'DEFAULT') {
+          if (
+            pk_dataset[0].sync.source === ZfsPropertySource.Inherited
+            || pk_dataset[0].sync.source === ZfsPropertySource.Default
+          ) {
             sync_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].sync.rawvalue})`, value: parent_dataset_res[0].sync.value }];
           } else {
             sync_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].sync.rawvalue})`, value: 'INHERIT' }];
@@ -664,20 +670,23 @@ export class ZvolFormComponent implements FormConfiguration {
           }
           sync.options = sync_collection.concat(sync.options);
 
-          if (pk_dataset[0].compression.source === 'DEFAULT') {
+          if (pk_dataset[0].compression.source === ZfsPropertySource.Default) {
             compression_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: parent_dataset_res[0].compression.value }];
           } else {
             compression_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: 'INHERIT' }];
           }
           compression.options = compression_collection.concat(compression.options);
 
-          if (pk_dataset[0].compression.source === 'INHERITED') {
+          if (pk_dataset[0].compression.source === ZfsPropertySource.Inherited) {
             entityForm.formGroup.controls['compression'].setValue('INHERIT');
           } else {
             entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
           }
 
-          if (pk_dataset[0].deduplication.source === 'INHERITED' || pk_dataset[0].deduplication.source === 'DEFAULT') {
+          if (
+            pk_dataset[0].deduplication.source === ZfsPropertySource.Inherited
+            || pk_dataset[0].deduplication.source === ZfsPropertySource.Default
+          ) {
             deduplication_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].deduplication.rawvalue})`, value: parent_dataset_res[0].deduplication.value }];
           } else {
             deduplication_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].deduplication.rawvalue})`, value: 'INHERIT' }];
@@ -701,7 +710,7 @@ export class ZvolFormComponent implements FormConfiguration {
     }
   }
 
-  addSubmit(body: any): Observable<any> {
+  addSubmit(body: any): Observable<Dataset> {
     const data: any = this.sendAsBasicOrAdvanced(body);
 
     if (data.sync === 'INHERIT') {

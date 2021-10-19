@@ -237,7 +237,7 @@ to determine snapshots creation order.'),
   retention_policy_tooltip: T('When replicated snapshots are deleted \
  from the destination system:<ul> \
  <li><i>Same as Source</i>: use the <b>Snapshot Lifetime</b> \
- from from the source periodic snapshot task.</li> \
+ from the source periodic snapshot task.</li> \
  <li><i>Custom</i>: define a <b>Snapshot Lifetime</b> for the \
  destination system.</li> \
  <li><i>None</i>: never delete snapshots from the destination \

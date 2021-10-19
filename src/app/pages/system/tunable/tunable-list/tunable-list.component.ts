@@ -86,8 +86,8 @@ export class TunableListComponent implements EntityTableConfig {
     }
   }
 
-  wsMultiDeleteParams(selected: Tunable[]): any {
-    const params: any[] = [this.wsDelete];
+  wsMultiDeleteParams(selected: Tunable[]): [string, number[][]?] {
+    const params: [string, number[][]?] = [this.wsDelete];
     const selectedId = selected.map((tunable) => [tunable.id]);
     params.push(selectedId);
     return params;
