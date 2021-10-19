@@ -3371,7 +3371,7 @@
   "Start time for the replication task.": "复制任务的开始时间。",
   "Started": "已启动",
   "Starting": "正在启动",
-  "State": "州",
+  "State": "状态",
   "State: ": "状态：",
   "Static IP": "静态IP",
   "Static IP addresses which SMB listens on for connections.  Leaving all unselected defaults to listening on all active interfaces.": "SMB侦听连接的静态IP地址。将所有未选中的默认值保留为侦听所有活动接口。",
