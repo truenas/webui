@@ -1104,7 +1104,7 @@ export class VMWizardComponent implements WizardConfiguration {
       const devices = [...vmPayload['devices']];
       delete vmPayload['devices'];
       this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((vm_res) => {
-        const observables: Observable<void>[] = [];
+        const observables: Observable<unknown>[] = [];
         for (const device of devices) {
           device.vm = vm_res.id;
           observables.push(this.ws.call('vm.device.create', [device]).pipe(
@@ -1149,7 +1149,7 @@ export class VMWizardComponent implements WizardConfiguration {
       const devices = [...vmPayload['devices']];
       delete vmPayload['devices'];
       this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((vm_res) => {
-        const observables: Observable<void>[] = [];
+        const observables: Observable<unknown>[] = [];
         for (const device of devices) {
           device.vm = vm_res.id;
           observables.push(this.ws.call('vm.device.create', [device]).pipe(

@@ -25,7 +25,11 @@ export interface VirtualMachine {
   threads: number;
   time: VmTime;
   vcpus: number;
+  arch_type: string;
+  machine_type: string;
 }
+
+export type VirtualMachineUpdate = Omit<VirtualMachine, 'status' | 'id'>;
 
 export type VmStopParams = [
   id: number,

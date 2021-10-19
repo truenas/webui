@@ -2,7 +2,7 @@ import { AnimateEvent } from 'app/interfaces/events/animate-event.interface';
 import { AuthenticatedEvent } from 'app/interfaces/events/authenticated-event.interface';
 import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { DisksDataEvent, DisksRequestEvent } from 'app/interfaces/events/disks-data-event.interface';
-import { EnclosureDataEvent } from 'app/interfaces/events/enclosure-data-event.interface';
+import { EnclosureDataEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
 import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
@@ -67,4 +67,5 @@ export type CoreEvent =
   | LabelDrivesEvent
   | MemoryStatsEvent
   | MultipathRequestEvent
-  | MultipathDataEvent;
+  | MultipathDataEvent
+  | EnclosureLabelChangedEvent;

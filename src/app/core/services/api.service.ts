@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Multipath } from 'app/interfaces/multipath.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
@@ -102,7 +103,6 @@ export class ApiService {
     },
     SetEnclosureLabel: {
       apiCall: {
-        args: [] as any[],
         namespace: 'enclosure.update',
         responseEvent: 'EnclosureLabelChanged',
       },
@@ -112,7 +112,7 @@ export class ApiService {
         redef.args = args;
         return redef;
       },
-      postProcessor(res: any, callArgs: any) {
+      postProcessor(res: Enclosure, callArgs: { index: number }) {
         return { label: res.label, index: callArgs.index, id: res.id };
       },
     },

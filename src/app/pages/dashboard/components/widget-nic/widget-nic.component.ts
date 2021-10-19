@@ -146,27 +146,11 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     this.title = this.currentSlide == '0' ? 'Interface' : this.nicState.name;
   }
 
-  vlanAliases(vlanIndex: string | number): any[] {
+  vlanAliases(vlanIndex: string | number): NetworkInterfaceAlias[] {
     if (typeof vlanIndex == 'string') { vlanIndex = parseInt(vlanIndex); }
     const vlan = this.nicState.vlans[vlanIndex];
-    return vlan.aliases.filter((item: any) =>
+    return vlan.aliases.filter((item) =>
       [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
-  }
-
-  getMbps(arr: number[]): number | string {
-    // NOTE: Stat is in bytes so we convert
-    // no average
-    const result = arr[0] / 1024 / 1024;
-    if (result > 999) {
-      return result.toFixed(1);
-    } if (result < 1000 && result > 99) {
-      return result.toFixed(2);
-    } if (result > 9 && result < 100) {
-      return result.toFixed(3);
-    } if (result < 10) {
-      return result.toFixed(4);
-    }
-    return -1;
   }
 
   manageInterface(nicState: DashboardNicState): void {

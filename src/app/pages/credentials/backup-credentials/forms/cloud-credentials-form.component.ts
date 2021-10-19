@@ -1598,7 +1598,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       client_secret: data.client_secret,
       token: data.token,
     }]).pipe(untilDestroyed(this)).subscribe(
-      (drives: any[]) => {
+      (drives) => {
         drives.forEach((drive) => {
           drivesConfig.options.push({ label: drive.drive_type + ' - ' + drive.drive_id, value: drive });
         });

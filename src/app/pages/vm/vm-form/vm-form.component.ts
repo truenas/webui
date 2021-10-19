@@ -461,6 +461,7 @@ export class VmFormComponent implements FormConfiguration {
     this.loader.open();
     observables.push(this.ws.call('vm.update', [this.rawVmData.id, updatedVmData]));
 
+    // TODO: Potential error - forkJoin may be needed.
     combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();

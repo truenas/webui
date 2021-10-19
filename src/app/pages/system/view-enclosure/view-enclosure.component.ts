@@ -10,7 +10,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { DisksDataEvent } from 'app/interfaces/events/disks-data-event.interface';
-import { EnclosureDataEvent } from 'app/interfaces/events/enclosure-data-event.interface';
+import { EnclosureDataEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SensorDataEvent } from 'app/interfaces/events/sensor-data-event.interface';
@@ -135,7 +135,7 @@ export class ViewEnclosureComponent implements OnDestroy {
       core.emit({ name: 'SensorDataRequest', sender: this });
     });
 
-    core.register({ observerClass: this, eventName: 'EnclosureLabelChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'EnclosureLabelChanged' }).pipe(untilDestroyed(this)).subscribe((evt: EnclosureLabelChangedEvent) => {
       this.system.enclosures[evt.data.index].label = evt.data.label;
       this.events.next(evt);
     });
