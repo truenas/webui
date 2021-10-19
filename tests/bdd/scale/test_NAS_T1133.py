@@ -127,14 +127,16 @@ def smb_should_be_added(driver):
     element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SNMP"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(1)
-    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
-    if not value_exist:
-        driver.find_element_by_xpath('//div[@ix-auto="overlay__stateSMB"]').click()
-    time.sleep(2)
     value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__enable__SMB"]', 'class', 'mat-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SMB"]').click()
     time.sleep(2)
+    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
+    if not value_exist:
+        driver.find_element_by_xpath('//div[@ix-auto="overlay__stateSMB"]').click()
+    time.sleep(2)
+    assert wait_for_attribute_value(driver, 20, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
+
 
 @then(parsers.parse('Send a file to the share with nas_ip/"{wheelshare}" and "{user}" and "{password}"'))
 def send_a_file_to_the_share_with_nas_ipwheelshare_and_administrator_and_abcd1234(driver, nas_ip, wheelshare, user, password):
