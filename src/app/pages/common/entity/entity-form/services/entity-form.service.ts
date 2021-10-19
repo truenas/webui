@@ -249,11 +249,11 @@ export class EntityFormService {
     // get unit and return phrased string
     unit = value.replace(num, '');
     if (unit === '') {
-      unit = config.default
-        ? config.default
-        : (config.allowUnits
-          ? config.allowUnits[0]
-          : this.defaultUnit[config.type]);
+      if (config.default) {
+        unit = config.default;
+      } else {
+        unit = config.allowUnits ? config.allowUnits[0] : this.defaultUnit[config.type];
+      }
     }
     if (config.allowUnits !== undefined) {
       config.allowUnits.forEach((item) => item.toUpperCase());

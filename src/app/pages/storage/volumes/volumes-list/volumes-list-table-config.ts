@@ -1148,7 +1148,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
             const passphrase_parent = row.parent
               && (row.parent as VolumesListDataset).key_format
               && (row.parent as VolumesListDataset).key_format.value === DatasetEncryptionType.Passphrase;
-            const is_key = (passphrase_parent ? false : (key_child ? true : !row.is_passphrase));
+            let is_key = false;
+            if (!passphrase_parent) {
+              is_key = key_child ? true : !row.is_passphrase;
+            }
             let pbkdf2iters = '350000'; // will pull from row when it has been added to the payload
             if (row.pbkdf2iters && row.pbkdf2iters && row.pbkdf2iters.rawvalue !== '0') {
               pbkdf2iters = row.pbkdf2iters.rawvalue;

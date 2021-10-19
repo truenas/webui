@@ -4,12 +4,14 @@ import { IxInputHarness } from 'app/pages/common/ix-forms/components/ix-input/ix
 import { IxSelectHarness } from 'app/pages/common/ix-forms/components/ix-select/ix-select.harness';
 import { IxTextareaHarness } from 'app/pages/common/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxFormControlHarness } from 'app/pages/common/ix-forms/interfaces/ix-form-control-harness.interface';
+import { IxComboboxHarness } from 'app/pages/common/ix/components/ix-combobox/ix-combobox.harness';
 
 const childSelectors = [
   IxInputHarness,
   IxCheckboxHarness,
   IxSelectHarness,
   IxTextareaHarness,
+  IxComboboxHarness,
 ] as const;
 
 type SupportedFormControlHarness = InstanceType<(typeof childSelectors)[number]>;
