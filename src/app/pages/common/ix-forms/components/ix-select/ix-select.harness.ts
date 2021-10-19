@@ -1,6 +1,6 @@
 import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { MatSelectHarness, SelectHarnessFilters } from '@angular/material/select/testing';
-import { IxFormControlHarness } from 'app/pages/common/ix/interfaces/ix-form-control-harness.interface';
+import { IxFormControlHarness } from 'app/pages/common/ix-forms/interfaces/ix-form-control-harness.interface';
 
 export interface IxSelectHarnessFilters extends SelectHarnessFilters {
   label: string;

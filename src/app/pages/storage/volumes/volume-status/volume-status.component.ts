@@ -453,7 +453,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     } else if (category == 'spare') {
       _.find(actions, { id: 'online' }).isHidden = true;
       _.find(actions, { id: 'offline' }).isHidden = true;
-      _.find(actions, { id: 'Replace' }).isHidden = true;
+      _.find(actions, { id: 'replace' }).isHidden = true;
     } else if (category == 'cache') {
       _.find(actions, { id: 'online' }).isHidden = true;
       _.find(actions, { id: 'offline' }).isHidden = true;
