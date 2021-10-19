@@ -70,6 +70,8 @@ def add_the_user_to_group_root_for_later_tests(driver):
     driver.execute_script("arguments[0].scrollIntoView();", element)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
        
 
 @then('The Windows Shares(SMB) page should open, Click Add')
