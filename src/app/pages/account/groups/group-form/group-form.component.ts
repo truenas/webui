@@ -1,7 +1,8 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
@@ -28,7 +29,7 @@ export class GroupFormComponent {
   isFormLoading = false;
 
   form = this.fb.group({
-    gid: ['', [Validators.required, regexValidator(/^\d+$/)]],
+    gid: [null as number, [Validators.required, regexValidator(/^\d+$/)]],
     name: ['', [Validators.required, Validators.pattern(UserService.VALIDATOR_NAME)]],
     sudo: [false],
     smb: [false],

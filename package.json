@@ -55,6 +55,7 @@
     "@angular/platform-browser-dynamic": "~12.2.2",
     "@angular/router": "~12.2.2",
     "@biesbjerg/ngx-translate-extract-marker": "~1.0.0",
+    "@ngneat/reactive-forms": "~3.1.0",
     "@ngneat/spectator": "~8.0.4",
     "@ngneat/until-destroy": "~8.1.1",
     "@ngrx/component-store": "~12.4.0",
