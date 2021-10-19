@@ -1397,11 +1397,9 @@ export class DatasetFormComponent implements FormConfiguration {
       acltype: this.getFieldValueOrRaw(wsResponse.acltype),
       aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
       casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
-      comments: wsResponse.comments === undefined
-        ? undefined
-        : (wsResponse.comments.source === ZfsPropertySource.Local
-          ? wsResponse.comments.value
-          : undefined),
+      comments: wsResponse.comments?.source === ZfsPropertySource.Local
+        ? wsResponse.comments.value
+        : undefined,
       compression: this.getFieldValueOrRaw(wsResponse.compression),
       copies: this.getFieldValueOrRaw(wsResponse.copies),
       deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),

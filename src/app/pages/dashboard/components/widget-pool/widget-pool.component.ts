@@ -223,13 +223,14 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
     this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
       const currentPath = this.path[this.currentSlideIndex];
-      const currentName = currentPath && currentPath.dataSource
-        ? this.currentMultipathDetails
-          ? this.checkMultipathLabel(currentPath.dataSource.disk)
-          : currentPath.dataSource.disk
-            ? currentPath.dataSource.disk
-            : 'unknown'
-        : 'unknown';
+      let currentName = 'unknown';
+      if (currentPath?.dataSource) {
+        if (this.currentMultipathDetails) {
+          currentName = this.checkMultipathLabel(currentPath.dataSource.disk);
+        } else if (currentPath.dataSource.disk) {
+          currentName = currentPath.dataSource.disk;
+        }
+      }
 
       if ((!currentName || currentName === 'unknown') && evt.data.length == 0) {
         this.currentDiskDetails = null;

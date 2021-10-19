@@ -6,25 +6,25 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-input',
-  templateUrl: './ix-input.component.html',
-  styleUrls: ['./ix-input.component.scss'],
+  selector: 'ix-textarea',
+  templateUrl: './ix-textarea.component.html',
+  styleUrls: ['./ix-textarea.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxInputComponent implements ControlValueAccessor {
+export class IxTextareaComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() placeholder: string;
-  @Input() prefixIcon: string;
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;
+  @Input() rows = 4;
 
   formControl = new FormControl(this).value as FormControl;
 
   value = '';
   isDisabled = false;
 
-  onChange: (value: string | number) => void = (): void => {};
+  onChange: (value: string) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
   constructor(
@@ -39,20 +39,12 @@ export class IxInputComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  registerOnChange(onChange: (value: string | number) => void): void {
+  registerOnChange(onChange: (value: string) => void): void {
     this.onChange = onChange;
   }
 
   registerOnTouched(onTouched: () => void): void {
     this.onTouch = onTouched;
-  }
-
-  shouldShowResetInput(): boolean {
-    return this.hasValue();
-  }
-
-  hasValue(): boolean {
-    return this.value && this.value.length > 0;
   }
 
   resetInput(): void {

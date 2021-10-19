@@ -847,10 +847,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' }) as FormSelectConfig;
     this.keychainCredentialService.getSSHKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
-      privateKeyField.options = keyPairs.map((keypair) => ({
+      const keypairOptions = keyPairs.map((keypair) => ({
         label: keypair.name,
         value: String(keypair.id),
       }));
+      privateKeyField.options = privateKeyField.options.concat(keypairOptions);
     });
 
     const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
@@ -1258,11 +1259,14 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       };
       if (payload.encryption) {
         payload['encryption_key_format'] = data['encryption_key_format'];
-        payload['encryption_key'] = data['encryption_key_format'] === ReplicationEncryptionKeyFormat.Passphrase
-          ? data['encryption_key_passphrase']
-          : (data['encryption_key_generate']
+        if (data['encryption_key_format'] === ReplicationEncryptionKeyFormat.Passphrase) {
+          payload['encryption_key'] = data['encryption_key_passphrase'];
+        } else {
+          payload['encryption_key'] = data['encryption_key_generate']
             ? this.replicationService.generateEncryptionHexKey(64)
-            : data['encryption_key_hex']);
+            : data['encryption_key_hex'];
+        }
+
         payload['encryption_key_location'] = data['encryption_key_location_truenasdb'] ? '$TrueNAS' : data['encryption_key_location'];
       }
 

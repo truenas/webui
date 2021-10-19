@@ -1,6 +1,6 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
-import { IxFormControlHarness } from 'app/pages/common/ix/interfaces/ix-form-control-harness.interface';
+import { IxFormControlHarness } from 'app/pages/common/ix-forms/interfaces/ix-form-control-harness.interface';
 
 export interface IxCheckboxHarnessFilters extends BaseHarnessFilters {
   label: string;

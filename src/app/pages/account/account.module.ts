@@ -7,7 +7,7 @@ import { NgxDualListboxModule } from 'app/components/common/dual-list/dual-list.
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
-import { IxFormsModule } from 'app/pages/common/ix/ix-forms.module';
+import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { StorageService } from 'app/services/storage.service';
 import { EntityModule } from '../common/entity/entity.module';
 import { routing } from './account.routing';

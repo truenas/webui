@@ -88,7 +88,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
       }
     }, 2000);
 
-    this.modalService.onClose.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }

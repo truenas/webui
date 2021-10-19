@@ -778,7 +778,7 @@ export type ApiDirectory = {
   'system.advanced.serial_port_choices': { params: void; response: Choices };
   'system.info': { params: void; response: SystemInfo };
   'system.advanced.config': { params: void; response: AdvancedConfig };
-  'system.general.update': { params: [SystemGeneralConfigUpdate]; response: any };
+  'system.general.update': { params: [SystemGeneralConfigUpdate]; response: SystemGeneralConfig };
   'system.ntpserver.delete': { params: [id: number]; response: boolean };
   'system.ntpserver.query': { params: QueryParams<NtpServer>; response: NtpServer[] };
   'system.ntpserver.create': { params: [CreateNtpServer]; response: NtpServer };
@@ -851,8 +851,8 @@ export type ApiDirectory = {
   // Tunable
   'tunable.tunable_type_choices': { params: void; response: Choices };
   'tunable.query': { params: QueryParams<Tunable>; response: Tunable };
-  'tunable.update': { params: TunableUpdate; response: Tunable };
-  'tunable.create': { params: TunableUpdate; response: Tunable };
+  'tunable.update': { params: [id: number, update: TunableUpdate]; response: Tunable };
+  'tunable.create': { params: [TunableUpdate]; response: Tunable };
   'tunable.delete': { params: [id: number]; response: true };
 
   // TFTP

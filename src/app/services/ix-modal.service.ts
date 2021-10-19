@@ -1,6 +1,6 @@
 import { Injectable, Type } from '@angular/core';
 import { Subject } from 'rxjs';
-import { IxModalComponent } from 'app/pages/common/ix/components/ix-modal/ix-modal.component';
+import { IxModalComponent } from 'app/pages/common/ix-forms/components/ix-modal/ix-modal.component';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class IxModalService {
     this.modalComponent.closeModal();
   }
 
-  get onClose(): Subject<unknown> {
+  get onClose$(): Subject<unknown> {
     return this.modalClosed$;
   }
 }

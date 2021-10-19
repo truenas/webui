@@ -9,23 +9,17 @@
   </div>
 
   <div class="outlined input-container" [class.disabled]="isDisabled">
-    <span *ngIf="prefixIcon" class="prefix-icon">
-      <mat-icon>{{prefixIcon}}</mat-icon>
-    </span>
-    <input
-      matInput
-      [class.prefix-padding]="prefixIcon"
+    <mat-select
+      [(ngModel)]="value"
       [required]="required"
       [disabled]="isDisabled"
-      [(ngModel)]="value"
-      (ngModelChange)="onChange($event)"
+      [multiple]="multiple"
       (blur)="onTouch()"
+      (ngModelChange)="onChange($event)"
     >
-    <span *ngIf="shouldShowResetInput()" class="reset-input">
-      <mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-    </span>
+      <mat-option *ngFor="let option of options | async" [value]="option.value">{{option.label}}</mat-option>
+    </mat-select>
   </div>
   <ix-form-errors [control]="controlDirective.control" [label]="label"></ix-form-errors>
-  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
 
 </div>
