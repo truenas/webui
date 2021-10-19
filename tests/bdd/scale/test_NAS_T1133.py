@@ -9,6 +9,7 @@ from function import (
     attribute_value_exist,
     wait_on_element_disappear,
     run_cmd,
+    ssh_cmd,
     post
 )
 from pytest_bdd import (
@@ -81,23 +82,23 @@ def add_the_user_to_group_root_for_later_tests(driver):
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
-    assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
-    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    element = driver.find_element_by_xpath('//h4[text()="Directories and Permissions"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 10, '//mat-select[@ix-auto="select__Auxiliary Groups"]')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').send_keys(Keys.TAB)
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    #assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
+    #assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
+    #driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
+    #assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
+    #driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    #assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    #element = driver.find_element_by_xpath('//h4[text()="Directories and Permissions"]')
+    #driver.execute_script("arguments[0].scrollIntoView();", element)
+    #assert wait_on_element(driver, 10, '//mat-select[@ix-auto="select__Auxiliary Groups"]')
+    #driver.find_element_by_xpath('//mat-select[@ix-auto="select__Auxiliary Groups"]').click()
+    #assert wait_on_element(driver, 10, '//span[contains(.,"root")]')
+    #driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').click()
+    #driver.find_element_by_xpath('//mat-option[@ix-auto="option__Auxiliary Groups_root"]').send_keys(Keys.TAB)
+    #element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
+    #driver.execute_script("arguments[0].scrollIntoView();", element)
+    #assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    #driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
        
 
 @then('The Windows Shares(SMB) page should open, Click Add')
@@ -136,34 +137,53 @@ def set_path_to_the_ldap_dataset_mnttankwheel_dataset_input_wheelsmbshare_as_nam
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     
 
-
 @then('smb should be added')
 def smb_should_be_added(driver):
     """"smbname should be added."""
     assert wait_on_element(driver, 5, '//mat-panel-title//h5//a[contains(.,"(SMB)")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"test wheel SMB share")]')
-    
+    ## Make sure SMB is started
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
+    time.sleep(1)
+    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
+    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
+    assert wait_on_element(driver, 7, '//services')
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__enable__SNMP"]')
+    # Scroll to SMB service
+    element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SNMP"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(1)
+    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
+    if not value_exist:
+        driver.find_element_by_xpath('//div[@ix-auto="overlay__stateSMB"]').click()
+    time.sleep(2)
+    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__enable__SMB"]', 'class', 'mat-checkbox-checked')
+    if not value_exist:
+        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SMB"]').click()
+    time.sleep(2)
 
 @then(parsers.parse('Send a file to the share with nas_ip/"{wheelshare}" and "{user}" and "{password}"'))
 def send_a_file_to_the_share_with_nas_ipwheelshare_and_administrator_and_abcd1234(driver, nas_ip, wheelshare, user, password):
     """Send a file to the share with nas_IP/"{wheelshare}" and "{user}" and "{password}"."""
     run_cmd('touch testfile.txt')
-    results = run_cmd(f'smbclient //{nas_ip}/{wheelshare} -W AD01 -U {user}%{password} -c "put testfile.txt testfile.txt"')
-    run_cmd('rm testfile.txt')
+    results = run_cmd(f'smbclient //{nas_ip}/{wheelshare} -U {user}%{password} -c "put testfile.txt testfile.txt"')
     assert results['result'], results['output']
     run_cmd('rm testfile.txt')
 
 
-
 @then('Verify that the is on nas_ip with root and password')
-def verify_that_the_is_on_nas_ip_with_root_and_password(driver, root_password, smb_path):
+def verify_that_the_is_on_nas_ip_with_root_and_password(driver, root_password, nas_ip):
     """Verify that the is on nas_ip with root and password."""
-    results = post(nas_url, 'filesystem/stat/', ("root", root_password), f'{smb_path}/testfile.txt')
-    assert results.status_code == 200, results.text
+    global results
+    cmd = 'ls -la /mnt/tank/wheel_dataset/'
+    results = ssh_cmd(cmd, 'root', root_password, nas_ip)
+    assert results['result'], results['output']
+    assert 'testfile' in results['output'], results['output']
 
 
 @then(parsers.parse('send a file to the share should fail with NAS IP/{wheelname} and {user}%{password}'))
-def send_a_file_to_the_share_should_fail_with_nas_ipwheelshare_and_footesting(driver, wheelshare, user, password):
+def send_a_file_to_the_share_should_fail_with_nas_ipwheelshare_and_footesting(driver, nas_ip, wheelshare, user, password):
     """send a file to the share should fail with NAS IP/"{wheelshare}" and {user}%{password}."""
     run_cmd('touch testfile2.txt')
     results = run_cmd(f'smbclient //{nas_ip}/{wheelshare} -U {user}%{password} -c "put testfile2.txt testfile2.txt"')
@@ -173,11 +193,13 @@ def send_a_file_to_the_share_should_fail_with_nas_ipwheelshare_and_footesting(dr
 
 
 @then('verify that the file is not on the NAS')
-def verify_that_the_file_is_not_on_the_nas(driver, root_password, smb_path):
+def verify_that_the_file_is_not_on_the_nas(driver, root_password, nas_ip):
     """verify that the file is not on the NAS."""
-    results = post(nas_url, 'filesystem/stat/', ("root", root_password), f'{smb_path}/testfile2.txt')
-    assert results.status_code == 200, results.text is False
-
+    global results
+    cmd = 'ls -la /mnt/tank/wheel_dataset/'
+    results = ssh_cmd(cmd, 'root', root_password, nas_ip)
+    assert results['result'], results['output']
+    assert 'testfile' in results['output'], results['output'] is False
 
     ## return to dashboard
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
