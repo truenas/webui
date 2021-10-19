@@ -1,10 +1,8 @@
 <mat-card class="prefs-card">
   <mat-card-content>
-    <general-preferences-form  class="prefs-form"></general-preferences-form>
+    <div class="prefs-form">
+      <entity-form-embedded *ngIf="preferences" #embeddedForm fxFlex="100" [target]="target" [data]="values" [conf]="this"></entity-form-embedded>
+    </div>
   </mat-card-content>
   <mat-divider></mat-divider>
-  <mat-card-content *ngIf="themeService && themeService.customThemes && themeService.customThemes.length > 0">
-    <custom-theme-manager-form  class="prefs-form"></custom-theme-manager-form>
-  </mat-card-content>
-
 </mat-card>

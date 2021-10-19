@@ -413,7 +413,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.vmid = params['pk'];
+      this.vmid = Number(params['pk']);
       this.vmname = params['name'];
       this.route_success = ['vm', String(this.vmid), 'devices', this.vmname];
     });

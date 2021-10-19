@@ -88,7 +88,6 @@ export class EntityWizardComponent implements OnInit {
         });
         config.fieldConfig = fieldConfig;
       } else {
-        // const fieldConfig = this.conf.wizardConfig[i].fieldConfig;
         config.fieldSets = [
           {
             name: 'FallBack',
