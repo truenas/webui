@@ -450,7 +450,7 @@ export class VmFormComponent implements FormConfiguration {
     }
 
     for (const deviceId of vmPciDeviceIdsToRemove) {
-      observables.push(this.ws.call('datastore.delete', ['vm.device', deviceId]));
+      observables.push(this.ws.call('vm.device.delete', [deviceId]));
     }
 
     for (const device of pciDevicesToCreate) {

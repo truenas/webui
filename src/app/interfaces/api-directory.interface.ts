@@ -418,9 +418,6 @@ export type ApiDirectory = {
   'dyndns.update': { params: [DynamicDnsUpdate]; response: DynamicDnsConfig };
   'dyndns.config': { params: void; response: DynamicDnsConfig };
 
-  // Datastore
-  'datastore.delete': { params: any; response: any };
-
   // Device
   'device.get_info': { params: [DeviceType]; response: Device[] };
 
@@ -890,6 +887,7 @@ export type ApiDirectory = {
   'vm.get_display_web_uri': { params: VmDisplayWebUriParams; response: { [id: number]: VmDisplayWebUri } };
   'vm.device.passthrough_device_choices': { params: void; response: Choices };
   'vm.device.create': { params: [VmDeviceUpdate]; response: VmDevice };
+  'vm.device.delete': { params: [id: number]; response: boolean };
   'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
   'vm.stop': { params: VmStopParams; response: any };
