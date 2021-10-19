@@ -8,6 +8,7 @@ from function import (
     is_element_present,
     attribute_value_exist,
     wait_on_element_disappear,
+    wait_for_attribute_value,
     run_cmd,
     ssh_cmd,
     post
