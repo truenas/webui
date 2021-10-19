@@ -1,16 +1,21 @@
-import { ComponentHarness } from '@angular/cdk/testing';
-import { OptionHarnessFilters } from '@angular/material/core/testing';
-import { MatSelectHarness } from '@angular/material/select/testing';
+import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import { MatSelectHarness, SelectHarnessFilters } from '@angular/material/select/testing';
 import { IxFormControlHarness } from 'app/pages/common/ix-forms/interfaces/ix-form-control-harness.interface';
 
-export interface IxSelectHarnessFilters extends OptionHarnessFilters {
-  label: string | RegExp;
+export interface IxSelectHarnessFilters extends SelectHarnessFilters {
+  label: string;
 }
 
 export class IxSelectHarness extends ComponentHarness implements IxFormControlHarness {
   static hostSelector = 'ix-select';
 
-  getMatSelectHarness = this.locatorFor(MatSelectHarness);
+  static with(options: IxSelectHarnessFilters): HarnessPredicate<IxSelectHarness> {
+    return new HarnessPredicate(IxSelectHarness, options)
+      .addOption('label', options.label,
+        (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+  }
+
+  getSelectHarness = this.locatorFor(MatSelectHarness);
 
   async getLabelText(): Promise<string> {
     const label = await this.locatorFor('label')();
@@ -23,7 +28,7 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
   }
 
   async getValue(): Promise<string | string[]> {
-    const select = await this.getMatSelectHarness();
+    const select = await this.getSelectHarness();
     await select.open();
 
     if (await select.isMultiple()) {
@@ -33,11 +38,16 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
       return Promise.all(optionTexts);
     }
 
-    return (await this.getMatSelectHarness()).getValueText();
+    return (await this.getSelectHarness()).getValueText();
   }
 
-  async setValue(filter: IxSelectHarnessFilters): Promise<void> {
-    const select = await this.getMatSelectHarness();
-    return select.clickOptions({ text: filter.label });
+  /**
+   *
+   * @param optionLabel label of the option that is to be assigned
+   */
+  async setValue(optionLabel: string): Promise<void> {
+    const harness = (await this.getSelectHarness());
+    await harness.open();
+    await harness.clickOptions({ text: optionLabel });
   }
 }

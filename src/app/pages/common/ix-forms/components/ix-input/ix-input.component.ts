@@ -49,11 +49,11 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   shouldShowResetInput(): boolean {
-    return this.hasValue();
+    return !this.isDisabled && this.hasValue();
   }
 
   hasValue(): boolean {
-    return this.value && this.value.length > 0;
+    return this.value && this.value.toString().length > 0;
   }
 
   resetInput(): void {

@@ -428,13 +428,12 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       this.isTableEmpty = false;
     } else {
       this.isTableEmpty = true;
-      this.configureEmptyTable(
-        this.dataSource.filter
-          ? EmptyType.NoSearchResults
-          : this.firstUse
-            ? EmptyType.FirstUse
-            : EmptyType.NoPageData,
-      );
+      let emptyType: EmptyType = this.firstUse ? EmptyType.FirstUse : EmptyType.NoPageData;
+      if (this.dataSource.filter) {
+        emptyType = EmptyType.NoSearchResults;
+      }
+
+      this.configureEmptyTable(emptyType);
     }
 
     if (this.dataSource.paginator && this.conf.config.paging) {

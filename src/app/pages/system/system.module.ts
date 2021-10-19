@@ -12,7 +12,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
-import { LocalizationForm2Component } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
+import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { CoreComponents } from '../../core/components/core-components.module';
@@ -38,7 +38,6 @@ import { EmailComponent } from './email/email.component';
 import { FailoverComponent } from './failover/failover.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { GuiFormComponent } from './general-settings/gui-form/gui-form.component';
-import { LocalizationFormComponent } from './general-settings/localization-form/localization-form.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { LicenseComponent } from './general-settings/support/license/license.component';
 import { ProactiveComponent } from './general-settings/support/proactive/proactive.component';
@@ -64,7 +63,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
   ],
   declarations: [
     AdvancedSettingsComponent,
-    LocalizationForm2Component,
+    LocalizationFormComponent,
     BootEnvironmentListComponent,
     BootEnvironmentCloneComponent,
     BootEnvironmentFormComponent,
@@ -91,7 +90,6 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     TwoFactorComponent,
     QrDialogComponent,
     GeneralSettingsComponent,
-    LocalizationFormComponent,
     GuiFormComponent,
     LicenseComponent,
     ConsoleFormComponent,
