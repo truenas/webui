@@ -7,15 +7,16 @@ import { MarkdownModule } from 'ngx-markdown';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { IxCheckboxComponent } from 'app/pages/common/ix/components/ix-checkbox/ix-checkbox.component';
-import { IxComboboxComponent } from 'app/pages/common/ix/components/ix-combobox/ix-combobox.component';
-import { IxFieldsetComponent } from 'app/pages/common/ix/components/ix-fieldset/ix-fieldset.component';
-import { IxFormErrorsComponent } from 'app/pages/common/ix/components/ix-form-errors/ix-form-errors.component';
-import { IxInputComponent } from 'app/pages/common/ix/components/ix-input/ix-input.component';
-import { IxModalComponent } from 'app/pages/common/ix/components/ix-modal/ix-modal.component';
-import { IxModalDirective } from 'app/pages/common/ix/components/ix-modal/ix-modal.directive';
-import { IxSelectComponent } from 'app/pages/common/ix/components/ix-select/ix-select.component';
-import { IxUserComboboxComponent } from 'app/pages/common/ix/components/ix-user-combobox/ix-user-combobox.component';
+import { IxCheckboxComponent } from 'app/pages/common/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxComboboxComponent } from 'app/pages/common/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxFieldsetComponent } from 'app/pages/common/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFormErrorsComponent } from 'app/pages/common/ix-forms/components/ix-form-errors/ix-form-errors.component';
+import { IxInputComponent } from 'app/pages/common/ix-forms/components/ix-input/ix-input.component';
+import { IxModalComponent } from 'app/pages/common/ix-forms/components/ix-modal/ix-modal.component';
+import { IxModalDirective } from 'app/pages/common/ix-forms/components/ix-modal/ix-modal.directive';
+import { IxSelectComponent } from 'app/pages/common/ix-forms/components/ix-select/ix-select.component';
+import { IxTextareaComponent } from 'app/pages/common/ix-forms/components/ix-textarea/ix-textarea.component';
+import { IxUserComboboxComponent } from 'app/pages/common/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 
 @NgModule({
@@ -41,6 +42,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxCheckboxComponent,
     IxFormErrorsComponent,
     IxUserComboboxComponent,
+    IxTextareaComponent,
   ],
   exports: [
     IxInputComponent,
@@ -52,6 +54,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxUserComboboxComponent,
     IxCheckboxComponent,
     IxFormErrorsComponent,
+    IxTextareaComponent,
   ],
 })
 export class IxFormsModule {}

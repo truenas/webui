@@ -1,6 +1,6 @@
 import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { MatAutocompleteHarness, AutocompleteHarnessFilters } from '@angular/material/autocomplete/testing';
-import { IxFormControlHarness } from 'app/pages/common/ix/interfaces/ix-form-control-harness.interface';
+import { IxFormControlHarness } from 'app/pages/common/ix-forms/interfaces/ix-form-control-harness.interface';
 
 export interface IxComboboxHarnessFilters extends AutocompleteHarnessFilters {
   label: string;

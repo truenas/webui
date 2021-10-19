@@ -22,7 +22,6 @@ import { EmailComponent } from './email/email.component';
 import { FailoverComponent } from './failover/failover.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { SupportComponent } from './general-settings/support/support.component';
-import { TunableFormComponent } from './tunable/tunable-form/tunable-form.component';
 import { TunableListComponent } from './tunable/tunable-list/tunable-list.component';
 import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { UpdateComponent } from './update/update.component';
@@ -80,17 +79,7 @@ export const routes: Routes = [
         path: '',
         component: TunableListComponent,
         data: { title: T('Tunables'), breadcrumb: T('Tunables') },
-      }, {
-        path: 'add',
-        component: TunableFormComponent,
-        data: { title: T('Add'), breadcrumb: T('Add') },
-      },
-      {
-        path: 'edit/:pk',
-        component: TunableFormComponent,
-        data: { title: T('Edit'), breadcrumb: T('Edit') },
-      },
-      ],
+      }],
     }, {
       path: 'sysctl',
       data: { title: T('Sysctl'), breadcrumb: T('Sysctl'), icon: 'settings_overscan' },
@@ -98,16 +87,7 @@ export const routes: Routes = [
         path: '',
         component: TunableListComponent,
         data: { title: T('Sysctl'), breadcrumb: T('Sysctl') },
-      }, {
-        path: 'add',
-        component: TunableFormComponent,
-        data: { title: T('Add'), breadcrumb: T('Add') },
-      }, {
-        path: 'edit/:pk',
-        component: TunableFormComponent,
-        data: { title: T('Edit'), breadcrumb: T('Edit') },
-      },
-      ],
+      }],
     },
     {
       path: 'update',
