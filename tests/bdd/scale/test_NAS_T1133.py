@@ -45,39 +45,10 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
-@when('you should be on the dashboard, click on Storage')
-def you_should_be_on_the_dashboard_click_on_Storage(driver):
-    """you should be on the dashboard, click on storage."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
-
-@then(parsers.parse('create {dataset_name} and set permissions'))
-def create_wheeldataset_and_set_permissions(driver, dataset_name):
-    """create wheeldataset and set permissions."""
-    assert wait_on_element(driver, 7, '//h1[text()="Storage"]')
-    assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
-    assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
-    driver.find_element_by_xpath('//button[normalize-space(text())="Add Dataset"]').click()
-    assert wait_on_element(driver, 5, '//h3[text()="Add Dataset"]')
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Share Type"]')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
-    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_SMB"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
-    time.sleep(2)
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, f'//div[contains(text(),"{dataset_name}")]')
-
-
-@then('add the user to group root for later tests')
+@when('add the user to group root for later tests')
 def add_the_user_to_group_root_for_later_tests(driver):
     """add the user to group root for later tests."""
+    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
