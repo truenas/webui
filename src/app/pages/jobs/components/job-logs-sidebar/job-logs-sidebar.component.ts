@@ -17,8 +17,9 @@ export class JobLogsSidebarComponent implements OnChanges {
   constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnChanges(): void {
-    if (document.getElementById('argument')) {
-      (document.getElementById('argument').textContent = JSON.stringify(this.job.arguments, undefined, 2));
+    const argument = document.getElementById('argument') as HTMLInputElement;
+    if (argument) {
+      argument.textContent = JSON.stringify(this.job.arguments, undefined, 2);
     }
     this.cdr.markForCheck();
   }

@@ -10,9 +10,8 @@
 
     <div class="logs-information" >
       <ng-container
-              *ngIf="viewType === 'log'; then viewLogsTemplate; else viewArgumentsTemplate"
-            ></ng-container>
-      
+        *ngIf="viewType === 'log'; then viewLogsTemplate; else viewArgumentsTemplate"
+      ></ng-container>
     </div>
 
     <ng-template #viewLogsTemplate>
