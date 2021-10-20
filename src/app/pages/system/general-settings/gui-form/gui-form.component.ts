@@ -3,8 +3,9 @@ import {
   ChangeDetectorRef, Component,
 } from '@angular/core';
 import {
-  FormBuilder, FormGroup, Validators,
+  Validators,
 } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -33,13 +34,13 @@ export class GuiFormComponent {
   isFormLoading = true;
   configData: SystemGeneralConfig;
 
-  formGroup: FormGroup = this.fb.group({
+  formGroup = this.fb.group({
     ui_certificate: ['', [Validators.required]],
-    ui_address: [[], [ipValidator('ipv4')]],
-    ui_v6address: [[], [ipValidator('ipv6')]],
-    ui_port: ['', [Validators.required, Validators.min(1), Validators.max(65535)]],
-    ui_httpsport: ['', [Validators.required, Validators.min(1), Validators.max(65535)]],
-    ui_httpsprotocols: [[], [Validators.required]],
+    ui_address: [[] as string[], [ipValidator('ipv4')]],
+    ui_v6address: [[] as string[], [ipValidator('ipv6')]],
+    ui_port: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_httpsport: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
     crash_reporting: [false, [Validators.required]],
     usage_collection: [false, [Validators.required]],
