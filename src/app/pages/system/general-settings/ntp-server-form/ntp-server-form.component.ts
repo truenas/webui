@@ -10,7 +10,6 @@ import { IxModalService } from 'app/services/ix-modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-ntpserver-form',
   templateUrl: './ntp-server-form.component.html',
   styleUrls: ['./ntp-server-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
