@@ -104,7 +104,7 @@ def the_edit_permissions_page_should_open_select_root_for_user_click_on_the_appl
     time.sleep(1)
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Who"]/div/div/span[contains(.,"User")]').click()
     assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Who_Group"]')
-    ##driver.find_element_by_xpath('//mat-option[@ix-auto="Group"]').click()
+    driver.find_element_by_xpath('//mat-option[@ix-auto="Group"]').click()
     assert wait_on_element(driver, 5, '(//div[@ix-auto="combobox__Group"]//mat-form-field//input[@data-placeholder="Group"])')
     driver.find_element_by_xpath('(//div[@ix-auto="Group"]//mat-form-field//input[@data-placeholder="Group"])').send_keys("root")
     time.sleep(1)
