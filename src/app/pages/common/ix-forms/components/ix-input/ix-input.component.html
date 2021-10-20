@@ -14,6 +14,10 @@
     </span>
     <input
       matInput
+      [matInputMasked]="isInputMasked()"
+      [formatValue]="formatInput?.formatValue"
+      [unformatValue]="formatInput?.unformatValue"
+      [value]="value"
       [class.prefix-padding]="prefixIcon"
       [required]="required"
       [disabled]="isDisabled"

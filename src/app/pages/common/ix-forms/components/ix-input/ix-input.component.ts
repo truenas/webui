@@ -19,6 +19,7 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() type: string;
+  @Input() formatInput: { formatValue: (value: string) => string; unformatValue: (value: string) => string };
 
   formControl = new FormControl(this).value as FormControl;
 
@@ -35,8 +36,19 @@ export class IxInputComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
+  isInputMasked(): boolean {
+    if (this.formatInput && this.formatInput.formatValue && this.formatInput.unformatValue) {
+      return true;
+    }
+    if (this.formatInput && (this.formatInput.formatValue || this.formatInput.unformatValue)) {
+      console.error('`' + this.label, '` : Provide both formatValue and unformatValue to mask the input.');
+    }
+    return false;
+  }
+
   writeValue(value: string): void {
     this.value = value;
+    this.onChange(value);
     this.cdr.markForCheck();
   }
 

@@ -11,6 +11,7 @@ import { IxCheckboxComponent } from 'app/pages/common/ix-forms/components/ix-che
 import { IxComboboxComponent } from 'app/pages/common/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/pages/common/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFormErrorsComponent } from 'app/pages/common/ix-forms/components/ix-form-errors/ix-form-errors.component';
+import { MatInputMaskedDirective } from 'app/pages/common/ix-forms/components/ix-input/ix-input-masked.directive';
 import { IxInputComponent } from 'app/pages/common/ix-forms/components/ix-input/ix-input.component';
 import { IxModalComponent } from 'app/pages/common/ix-forms/components/ix-modal/ix-modal.component';
 import { IxModalDirective } from 'app/pages/common/ix-forms/components/ix-modal/ix-modal.directive';
@@ -41,6 +42,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxModalDirective,
     IxCheckboxComponent,
     IxFormErrorsComponent,
+    MatInputMaskedDirective,
     IxUserComboboxComponent,
     IxTextareaComponent,
   ],

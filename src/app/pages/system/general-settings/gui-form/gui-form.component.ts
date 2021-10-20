@@ -87,6 +87,15 @@ export class GuiFormComponent {
     });
   }
 
+  formatInput = {
+    formatValue: (value: string) => {
+      return value + '9';
+    },
+    unformatValue: (value: string) => {
+      return value.replace('9', '');
+    },
+  };
+
   reconnect(href: string): void {
     if (this.ws.connected) {
       this.loader.close();
