@@ -11,7 +11,6 @@ import { IxModalService } from 'app/services/ix-modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-kernel-form',
   templateUrl: 'kernel-form.component.html',
   styleUrls: ['./kernel-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
