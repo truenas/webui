@@ -241,7 +241,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     this.entityEdit.formGroup.reset();
     this.entityEdit.formGroup.controls['type'].setValue(NewTicketType.Bug);
     this.subs = [];
-    this.modalService.close('slide-in-form');
+    this.modalService.closeSlideIn();
   }
 
   updater(file: FormUploadComponent): void {

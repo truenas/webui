@@ -111,7 +111,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
                   this.adStatus = false;
                   this.isCustActionVisible('leave_domain');
                   this.modalService.refreshTable();
-                  this.modalService.close('slide-in-form');
+                  this.modalService.closeSlideIn();
                   this.dialogservice.info(helptext.ad_leave_domain_dialog.success,
                     helptext.ad_leave_domain_dialog.success_msg, '400px', 'info', true);
                 },

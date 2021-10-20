@@ -633,8 +633,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.dashState = clone;
-    this.modalService.close('slide-in-form');/* .then( closed => {
-    }); */
+    this.modalService.closeSlideIn();
 
     // Save
     this.ws.call('user.set_attribute', [1, 'dashState', clone]).pipe(untilDestroyed(this)).subscribe((res) => {

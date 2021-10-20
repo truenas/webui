@@ -817,7 +817,7 @@ export class ZvolFormComponent implements FormConfiguration {
       if (!this.edit_data.volsize || this.edit_data.volsize >= rounded_vol_size) {
         this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).pipe(untilDestroyed(this)).subscribe(() => {
           this.loader.close();
-          this.modalService.close('slide-in-form');
+          this.modalService.closeSlideIn();
           this.modalService.refreshTable();
         }, (eres) => {
           this.loader.close();
@@ -826,7 +826,7 @@ export class ZvolFormComponent implements FormConfiguration {
       } else {
         this.loader.close();
         this.dialogService.info(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg);
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
       }
     });
   }
@@ -837,7 +837,7 @@ export class ZvolFormComponent implements FormConfiguration {
     if (this.isNew) {
       this.addSubmit(body).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         this.modalService.refreshTable();
       }, (res) => {
         this.loader.close();
