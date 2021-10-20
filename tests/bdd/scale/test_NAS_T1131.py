@@ -126,19 +126,12 @@ def you_should_be_returned_to_the_pool_list_page_click_on_the_wheel_dataset_thre
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//mat-icon[text()="edit"]')
-    driver.find_element_by_xpath('//mat-icon[text()="edit"]').click()
 
 
 @then('verify that the user is root and the group is wheel')
 def verify_that_the_user_is_root_and_the_group_is_wheel(driver):
     """verify that the user is root and the group is wheel."""
-    element1 = driver.find_element_by_xpath('//input[@data-placeholder="User"]')
-    assert element1.get_attribute('value') != '', element1.get_attribute('root')
-    element2 = driver.find_element_by_xpath('//input[@data-placeholder="Group"]')
-    assert element2.get_attribute('value') != '', element2.get_attribute('root')
-
+    assert wait_on_element(driver, 5, '//div[contains(text(),"Group - root")]')
 
     ## return to dashboard
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
