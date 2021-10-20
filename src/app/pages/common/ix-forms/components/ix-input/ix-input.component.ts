@@ -1,7 +1,8 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
+import { MAT_INPUT_VALUE_ACCESSOR } from '@angular/material/input';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -10,6 +11,9 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   templateUrl: './ix-input.component.html',
   styleUrls: ['./ix-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [
+    { provide: MAT_INPUT_VALUE_ACCESSOR, useExisting: IxInputComponent },
+  ],
 })
 export class IxInputComponent implements ControlValueAccessor {
   @Input() label: string;
@@ -20,6 +24,8 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() required: boolean;
   @Input() type: string;
   @Input() formatInput: { formatValue: (value: string) => string; unformatValue: (value: string) => string };
+
+  @ViewChild('ixInput') elementRef: ElementRef;
 
   formControl = new FormControl(this).value as FormControl;
 
@@ -49,6 +55,7 @@ export class IxInputComponent implements ControlValueAccessor {
   writeValue(value: string): void {
     this.value = value;
     this.onChange(value);
+    this.handleFormatValue(value);
     this.cdr.markForCheck();
   }
 
@@ -75,6 +82,40 @@ export class IxInputComponent implements ControlValueAccessor {
 
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
+    this.cdr.markForCheck();
+  }
+
+  focus(): void {
+    this.onTouch();
+    if (this.isInputMasked()) {
+      this.handleUnformatValue();
+    }
+  }
+
+  input(value: string): void {
+    this.value = value;
+    this.onChange(value);
+  }
+
+  blur(): void {
+    this.onTouch();
+    if (this.isInputMasked()) {
+      this.handleFormatValue(this.value);
+    }
+  }
+
+  private handleFormatValue(value: string | null): void {
+    if (value !== null && this.formatInput?.formatValue && this.elementRef?.nativeElement) {
+      this.elementRef.nativeElement.value = this.formatInput.formatValue(value);
+    }
+    this.cdr.markForCheck();
+  }
+
+  private handleUnformatValue(value: string = this.elementRef.nativeElement.value): void {
+    if (value && this.formatInput?.unformatValue && this.elementRef?.nativeElement) {
+      this.value = this.formatInput.unformatValue(value);
+      this.elementRef.nativeElement.value = this.value;
+    }
     this.cdr.markForCheck();
   }
 }

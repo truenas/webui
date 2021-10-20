@@ -13,18 +13,15 @@
       <mat-icon>{{prefixIcon}}</mat-icon>
     </span>
     <input
-      matInput
-      [matInputMasked]="isInputMasked()"
-      [formatValue]="formatInput?.formatValue"
-      [unformatValue]="formatInput?.unformatValue"
-      [value]="value"
+      matInput #ixInput
       [class.prefix-padding]="prefixIcon"
       [required]="required"
       [disabled]="isDisabled"
       [type]="type"
-      [(ngModel)]="value"
+      (focus)="focus()"
+      (input)="input($event.target.value)"
       (ngModelChange)="onChange($event)"
-      (blur)="onTouch()"
+      (blur)="blur()"
     >
     <span *ngIf="shouldShowResetInput()" class="reset-input">
       <mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
