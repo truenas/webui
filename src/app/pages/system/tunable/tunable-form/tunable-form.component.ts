@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { TunableType } from 'app/enums/tunable-type.enum';
@@ -38,11 +39,11 @@ export class TunableFormComponent {
   };
 
   constructor(
-    private fb: FormBuilder,
     private ws: WebSocketService,
     private modalService: IxModalService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
+    private fb: FormBuilder,
   ) {}
 
   setTunableForEdit(tunable: Tunable): void {

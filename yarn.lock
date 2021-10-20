@@ -1860,6 +1860,13 @@
   resolved "https://registry.yarnpkg.com/@mattlewis92/dom-autoscroller/-/dom-autoscroller-2.4.2.tgz#ccb753fbcf6b3672b0273e0c3bda7924fe238013"
   integrity sha512-YbrUWREPGEjE/FU6foXcAT1YbVwqD/jkYnY1dFb0o4AxtP3s4xKBthlELjndZih8uwsDWgQZx1eNskRNe2BgZQ==
 
+"@ngneat/reactive-forms@~3.1.0":
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/@ngneat/reactive-forms/-/reactive-forms-3.1.0.tgz#df1ceae8f6ec95875eb028101f36062f314a64e0"
+  integrity sha512-F8DcYJ0aE9X2xfPtPnznSHpn0yDrDJBZMtSbaHE2/VPK4lmINvbh4ZdUVifb23hNLahGtv5biA/WRt3MzZy7FQ==
+  dependencies:
+    tslib "^2.3.0"
+
 "@ngneat/spectator@~8.0.4":
   version "8.0.4"
   resolved "https://registry.yarnpkg.com/@ngneat/spectator/-/spectator-8.0.4.tgz#4201a3b3b7077157cff649aa077f0ddc202bf79f"
