@@ -1,7 +1,7 @@
 import { FormControl, ValidatorFn } from '@angular/forms';
-import * as ipRegex from 'ip-regex';
-import * as isCidr from 'is-cidr';
-import * as _ from 'lodash';
+import ipRegex from 'ip-regex';
+import isCidr from 'is-cidr';
+import _ from 'lodash';
 
 // Accepts ipv4 or ipv6 addresses with no CIDR (ie, /24)
 export function ipv4or6Validator(): ValidatorFn {

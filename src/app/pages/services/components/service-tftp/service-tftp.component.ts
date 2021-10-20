@@ -58,7 +58,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
           options: [],
           searchOptions: [],
           parent: this,
-          updater: this.updateUserSearchOptions,
+          updater: (value: string) => this.updateUserSearchOptions(value),
         },
       ],
     },
@@ -131,9 +131,9 @@ export class ServiceTFTPComponent implements FormConfiguration {
     entityEdit.submitFunction = (body) => this.ws.call('tftp.update', [body]);
   }
 
-  updateUserSearchOptions(value = '', parent: this): void {
-    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      parent.tftp_username.searchOptions = items.map((user) => {
+  updateUserSearchOptions(value = ''): void {
+    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+      this.tftp_username.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });
     });

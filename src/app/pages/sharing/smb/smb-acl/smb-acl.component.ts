@@ -5,6 +5,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
+import { SmbSharesec } from 'app/interfaces/smb-share.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormListConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -20,7 +22,7 @@ export class SMBAclComponent implements FormConfiguration {
 
   route_success: string[] = ['sharing', 'smb'];
   isEntity = true;
-  customFilter: any[] = [[['id', '=']]];
+  customFilter: QueryParams<SmbSharesec>;
 
   fieldSets: FieldSet[] = [
     {
@@ -133,7 +135,7 @@ export class SMBAclComponent implements FormConfiguration {
   preInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
-        this.customFilter[0][0].push(parseInt(params['pk'], 10));
+        this.customFilter = [[['id', '=', parseInt(params['pk'], 10)]]];
       }
     });
   }

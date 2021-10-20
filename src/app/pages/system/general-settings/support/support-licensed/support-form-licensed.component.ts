@@ -145,7 +145,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           placeholder: helptext.screenshot.placeholder,
           tooltip: helptext.screenshot.tooltip,
           fileLocation: '',
-          updater: this.updater,
+          updater: (file: FormUploadComponent) => this.updater(file),
           parent: this,
           hideButton: true,
           hasErrors: true,
@@ -266,10 +266,10 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     });
   }
 
-  updater(file: FormUploadComponent, parent: this): void {
-    parent.subs = [];
+  updater(file: FormUploadComponent): void {
+    this.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
-    this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });
+    this.screenshot = _.find(this.fieldConfig, { name: 'screenshot' });
     this.screenshot['hasErrors'] = false;
     if (fileBrowser.files && fileBrowser.files[0]) {
       for (const browserFile of fileBrowser.files) {
@@ -277,7 +277,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           this.screenshot['hasErrors'] = true;
           this.screenshot['errors'] = 'File size is limited to 50 MiB.';
         } else {
-          parent.subs.push({ apiEndPoint: file.apiEndPoint, file: browserFile });
+          this.subs.push({ apiEndPoint: file.apiEndPoint, file: browserFile });
         }
       }
     }

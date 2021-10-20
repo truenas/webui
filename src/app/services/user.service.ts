@@ -19,14 +19,6 @@ export class UserService {
 
   constructor(protected ws: WebSocketService) {}
 
-  listUsers(): Observable<User[]> {
-    return this.ws.call(this.userQuery, { limit: 50 } as any);
-  }
-
-  listGroups(): Observable<Group[]> {
-    return this.ws.call(this.groupQuery, { limit: 50 } as any);
-  }
-
   groupQueryDSCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
     // TODO: Proper type for query API.
     let queryArgs: any[] = [];

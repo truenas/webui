@@ -1,3 +1,5 @@
+import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -76,7 +78,14 @@ export interface CreatePool {
     [key in PoolTopologyCategory]: { type: string; disks: string[] }[];
   };
   checksum?: string;
-  deduplication?: string;
+  deduplication?: DeduplicationSetting;
+}
+
+export interface UpdatePool {
+  topology: {
+    [key in PoolTopologyCategory]: { type: string; disks?: string[] }[];
+  };
+  autotrim: OnOff;
 }
 
 export interface PoolAttachParams {

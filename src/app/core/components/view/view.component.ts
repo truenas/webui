@@ -5,14 +5,6 @@ import { CoreServiceInjector } from 'app/core/services/core-service-injector';
 import { CoreEvent } from 'app/interfaces/events';
 import { ThemeService } from 'app/services/theme/theme.service';
 
-// This makes the metadata available globally
-// Deal Breaker: Angular injects the component's
-// directory path forcing relative paths
-export const ViewComponentMetadata = {
-  selector: 'view',
-  templateUrl: './view.component.html',
-};
-
 @Component({
   selector: 'view',
   templateUrl: './view.component.html',

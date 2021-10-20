@@ -1,17 +1,26 @@
-import { Component, DoCheck, IterableDiffers } from '@angular/core';
+import {
+  Component, DoCheck, IterableDiffer, IterableDiffers,
+} from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { DatasetQuotaType } from 'app/enums/dataset-quota-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
+import { SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormChipConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
-  DialogService, StorageService, WebSocketService, AppLoaderService, UserService,
+  FieldConfig,
+  FormChipConfig,
+  FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { QuotaFormValues } from 'app/pages/storage/volumes/datasets/dataset-quotas/quota-form-values.interface';
+import {
+  AppLoaderService, DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';
 
 @UntilDestroy()
@@ -34,7 +43,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   private entryErrs: HTMLCollectionOf<Element>;
   private entryErrBool = false;
   save_button_enabled = false;
-  private differ: any;
+  private differ: IterableDiffer<string>;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet<this>[] = [
     {
@@ -91,7 +100,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
           autocomplete: true,
           searchOptions: [],
           parent: this,
-          updater: this.updateSearchOptions,
+          updater: (value: string) => this.updateSearchOptions(value),
         },
       ],
     },
@@ -185,7 +194,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
       }
     });
 
-    entityEdit.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    entityEdit.formGroup.controls['data_quota'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       const formField = _.find(this.fieldConfig, { name: 'data_quota' });
       const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
       formField['hasErrors'] = false;
@@ -204,16 +213,16 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
     }
   }
 
-  updateSearchOptions(value = '', parent: this): void {
-    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      parent.entryField.searchOptions = items.map((user) => {
+  updateSearchOptions(value = ''): void {
+    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+      this.entryField.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });
     });
   }
 
-  customSubmit(data: any): void {
-    const payload: any[] = [];
+  customSubmit(data: QuotaFormValues): void {
+    const payload: SetDatasetQuota[] = [];
     if (!data.system_entries) {
       data.system_entries = [];
     }
@@ -226,20 +235,20 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
     }
 
     if (data.system_entries) {
-      data.system_entries.forEach((entry: any) => {
+      data.system_entries.forEach((entry) => {
         if (data.data_quota) {
           const dq = this.storageService.convertHumanStringToNum(data.data_quota);
           if (dq >= 0) {
             payload.push({
-              quota_type: 'USER',
+              quota_type: DatasetQuotaType.User,
               id: entry.toString(),
               quota_value: this.storageService.convertHumanStringToNum(data.data_quota),
             });
           }
         }
-        if (data.obj_quota && data.obj_quota >= 0) {
+        if (data.obj_quota && Number(data.obj_quota) >= 0) {
           payload.push({
-            quota_type: 'USEROBJ',
+            quota_type: DatasetQuotaType.UserObj,
             id: entry.toString(),
             quota_value: parseInt(data.obj_quota, 10),
           });

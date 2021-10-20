@@ -38,11 +38,6 @@ td.expansion-chevrons-column {
   padding-right: 24px !important;
 }
 
-.multiselect-column {
-  //border-right: solid 1px var(--lines);
-  //box-shadow: 1px 0 1px rgba(0,0,0,0.5);
-}
-
 td.mat-cell.data-column {
   max-width: 150px !important;
 }
@@ -336,6 +331,15 @@ button div.label-warning-icon .mat-icon {
 
     &.append {
       margin-left: 4px;
+    }
+  }
+}
+
+.mat-card-table {
+  &.is-empty {
+    .mat-card-footer,
+    .mat-header-row {
+      display: none !important;
     }
   }
 }

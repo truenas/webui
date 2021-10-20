@@ -65,7 +65,7 @@ export class CronFormComponent implements FormConfiguration {
           validation: helptext.cron_user_validation,
           searchOptions: [],
           parent: this,
-          updater: this.updateUserSearchOptions,
+          updater: (value: string) => this.updateUserSearchOptions(value),
         },
         {
           type: 'scheduler',
@@ -109,9 +109,9 @@ export class CronFormComponent implements FormConfiguration {
 
   constructor(protected userService: UserService, protected modalService: ModalService) {}
 
-  updateUserSearchOptions(value = '', parent: this): void {
-    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((users) => {
-      parent.user_field.searchOptions = users.map((user) => {
+  updateUserSearchOptions(value = ''): void {
+    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((users) => {
+      this.user_field.searchOptions = users.map((user) => {
         return { label: user.username, value: user.username };
       });
     });

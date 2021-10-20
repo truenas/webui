@@ -1,14 +1,15 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit, Type } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
+import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
@@ -20,7 +21,7 @@ import { FormUploadComponent } from 'app/pages/common/entity/entity-form/compone
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { LocalizationForm2Component } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
+import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
@@ -48,6 +49,7 @@ export class GeneralSettingsComponent implements OnInit {
   subs: Subs;
   dataSource: NtpServer[];
   formEvent$: Subject<CoreEvent>;
+  localizationSettings: LocalizationSettings;
 
   // Dialog forms and info for saving, uploading, resetting config
   protected saveConfigFieldConf: FieldConfig[] = [
@@ -78,7 +80,7 @@ export class GeneralSettingsComponent implements OnInit {
       tooltip: helptext.upload_config_form.tooltip,
       validation: helptext.upload_config_form.validation,
       fileLocation: '',
-      updater: this.updater,
+      updater: (file: FormUploadComponent) => this.updater(file),
       parent: this,
       hideButton: true,
     },
@@ -125,6 +127,7 @@ export class GeneralSettingsComponent implements OnInit {
     private ixModalService: IxModalService,
     private storage: StorageService,
     private http: HttpClient,
+    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -185,21 +188,28 @@ export class GeneralSettingsComponent implements OnInit {
           title: helptext.guiTitle,
           id: 'gui',
           items: [
-            { label: helptext.stg_guicertificate.placeholder, value: res.ui_certificate.name },
-            { label: helptext.stg_guiaddress.placeholder, value: res.ui_address.join(', ') },
-            { label: helptext.stg_guiv6address.placeholder, value: res.ui_v6address.join(', ') },
-            { label: helptext.stg_guihttpsport.placeholder, value: res.ui_httpsport },
-            { label: helptext.stg_guihttpsprotocols.placeholder, value: res.ui_httpsprotocols.join(', ') },
-            { label: helptext.stg_guihttpsredirect.placeholder, value: res.ui_httpsredirect as any },
+            { label: helptext.ui_certificate.label, value: res.ui_certificate.name },
+            { label: helptext.ui_address.label, value: res.ui_address.join(', ') },
+            { label: helptext.ui_v6address.label, value: res.ui_v6address.join(', ') },
+            { label: helptext.ui_port.label, value: res.ui_port },
+            { label: helptext.ui_httpsport.label, value: res.ui_httpsport },
+            { label: helptext.ui_httpsprotocols.label, value: res.ui_httpsprotocols.join(', ') },
             {
-              label: helptext.crash_reporting.placeholder,
+              label: helptext.ui_httpsredirect.label,
+              value: res.ui_httpsredirect ? helptext.enabled : helptext.disabled,
+            },
+            {
+              label: helptext.crash_reporting.label,
               value: res.crash_reporting ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext.usage_collection.placeholder,
+              label: helptext.usage_collection.label,
               value: res.usage_collection ? helptext.enabled : helptext.disabled,
             },
-            { label: helptext.consolemsg_placeholder, value: res.ui_consolemsg ? helptext.enabled : helptext.disabled },
+            {
+              label: helptext.ui_consolemsg.label,
+              value: res.ui_consolemsg ? helptext.enabled : helptext.disabled,
+            },
           ],
           actions: [
             { label: helptext.actions.save_config, value: 'saveConfig', icon: 'save_alt' },
@@ -212,16 +222,24 @@ export class GeneralSettingsComponent implements OnInit {
       this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((languages) => {
         this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapchoices) => {
           const keyboardMap = mapchoices.find((x) => x.value === this.configData.kbdmap);
+          const dateTime = this.localeService.getDateAndTime(res.timezone);
           this.localeData = {
             title: helptext.localeTitle,
             id: 'localization',
             items: [
               { label: helptext.stg_language.placeholder, value: languages[res.language] },
-              { label: helptext.date_format.placeholder, value: this.localeService.getDateAndTime(res.timezone)[0] },
-              { label: helptext.time_format.placeholder, value: this.localeService.getDateAndTime(res.timezone)[1] },
+              { label: helptext.date_format.placeholder, value: dateTime[0] },
+              { label: helptext.time_format.placeholder, value: dateTime[1] },
               { label: helptext.stg_timezone.placeholder, value: res.timezone },
               { label: helptext.stg_kbdmap.placeholder, value: res.kbdmap ? keyboardMap.label : helptext.default },
             ],
+          };
+          this.localizationSettings = {
+            language: res.language,
+            kbdMap: res.kbdmap,
+            timezone: res.timezone,
+            dateFormat: this.localeService.getPreferredDateFormat(),
+            timeFormat: this.localeService.getPreferredTimeFormat(),
           };
           this.dataCards.push(this.localeData);
         });
@@ -230,21 +248,19 @@ export class GeneralSettingsComponent implements OnInit {
   }
 
   doAdd(name: string, id?: number): void {
-    let addComponent: Type<GuiFormComponent | NtpServerFormComponent>;
     switch (name) {
       case 'gui':
-        addComponent = GuiFormComponent;
+        this.ixModalService.open(GuiFormComponent, this.translate.instant('GUI'));
         break;
       case 'ntp':
-        addComponent = NtpServerFormComponent;
+        this.modalService.openInSlideIn(NtpServerFormComponent, id);
         break;
       default:
-        this.ixModalService.open(LocalizationForm2Component, T('Localization Settings'));
+        const localizationFormModal = this.ixModalService.open(LocalizationFormComponent, this.translate.instant('Localization Settings'));
+        localizationFormModal.setupForm(this.localizationSettings);
+        break;
     }
     this.sysGeneralService.sendConfigData(this.configData);
-    if (addComponent) {
-      this.modalService.openInSlideIn(addComponent, id);
-    }
   }
 
   doNTPDelete(server: NtpServer): void {
@@ -324,10 +340,10 @@ export class GeneralSettingsComponent implements OnInit {
     });
   }
 
-  updater(file: FormUploadComponent, parent: this): void {
+  updater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
+      this.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 

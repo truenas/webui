@@ -128,7 +128,7 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any): void {
+  customSubmit(value: { name: string; password: string }): void {
     this.ws.call('auth.check_user', ['root', value.password]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_return);

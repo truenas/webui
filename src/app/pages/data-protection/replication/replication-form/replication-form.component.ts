@@ -1502,11 +1502,14 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
     delete data['encryption_key_location_truenasdb'];
 
-    data['encryption_key'] = data['encryption_key_format'] === ReplicationEncryptionKeyFormat.Passphrase
-      ? data['encryption_key_passphrase']
-      : data['encryption_key_generate']
+    if (data['encryption_key_format'] === ReplicationEncryptionKeyFormat.Passphrase) {
+      data['encryption_key'] = data['encryption_key_passphrase'];
+    } else {
+      data['encryption_key'] = data['encryption_key_generate']
         ? this.replicationService.generateEncryptionHexKey(64)
         : data['encryption_key_hex'];
+    }
+
     delete data['encryption_key_passphrase'];
     delete data['encryption_key_generate'];
     delete data['encryption_key_hex'];

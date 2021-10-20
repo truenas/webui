@@ -111,10 +111,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
     this.core.register({ observerClass: this, eventName: 'ReportingGraphs' }).pipe(untilDestroyed(this)).subscribe((evt: ReportingGraphsEvent) => {
       if (evt.data) {
-        const allReports: any[] = evt.data.map((report) => {
+        const allReports = evt.data.map((report) => {
           const list = [];
-          if ((report as any).identifiers) {
-            (report as any).identifiers.forEach(() => list.push(true));
+          if (report.identifiers) {
+            report.identifiers.forEach(() => list.push(true));
           } else {
             list.push(true);
           }

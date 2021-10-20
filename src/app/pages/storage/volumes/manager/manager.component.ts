@@ -15,7 +15,7 @@ import { DownloadKeyDialogComponent } from 'app/components/common/dialog/downloa
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { CreatePool, Pool, UpdatePool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -595,23 +595,23 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           }
         });
 
-        let body: any = {};
+        let body: CreatePool | UpdatePool;
         if (this.isNew) {
-          body = { name: this.name, encryption: this.isEncrypted, topology: layout };
+          body = { name: this.name, encryption: this.isEncrypted, topology: layout } as CreatePool;
           if (this.isEncrypted) {
             body['encryption_options'] = { generate_key: true, algorithm: this.encryption_algorithm };
           }
         } else {
-          body = { topology: layout };
+          body = { topology: layout } as UpdatePool;
         }
 
         const dialogRef = this.mdDialog.open(EntityJobComponent, {
           data: { title: confirmButton, disableClose: true },
         });
         if (this.pk) {
-          dialogRef.componentInstance.setCall(this.editCall, [this.pk, body]);
+          dialogRef.componentInstance.setCall(this.editCall, [this.pk, body as UpdatePool]);
         } else {
-          dialogRef.componentInstance.setCall(this.addCall, [body]);
+          dialogRef.componentInstance.setCall(this.addCall, [body as CreatePool]);
         }
         dialogRef.componentInstance.success
           .pipe(

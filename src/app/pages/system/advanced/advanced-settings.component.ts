@@ -8,7 +8,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
 import { Subject } from 'rxjs';
-import { filter, switchMap, take } from 'rxjs/operators';
+import {
+  filter, switchMap, take, tap,
+} from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
@@ -18,6 +20,7 @@ import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
+import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -187,11 +190,14 @@ export class AdvancedSettingsComponent implements OnInit {
       { name: T('Enabled'), prop: 'enabled' },
       { name: T('Description'), prop: 'comment' },
     ],
-    add() {
-      this.parent.onSettingsPressed(CardId.Sysctl);
+    add: async () => {
+      await this.showFirstTimeWarningIfNeeded();
+      this.ixModal.open(TunableFormComponent, this.translate.instant('Add Sysctl'));
     },
-    edit(row) {
-      this.parent.onSettingsPressed(CardId.Sysctl, row.id);
+    edit: async (tunable: Tunable) => {
+      await this.showFirstTimeWarningIfNeeded();
+      const dialog = this.ixModal.open(TunableFormComponent, this.translate.instant('Edit Sysctl'));
+      dialog.setTunableForEdit(tunable);
     },
   };
 
@@ -212,8 +218,8 @@ export class AdvancedSettingsComponent implements OnInit {
     public datePipe: DatePipe,
     protected userService: UserService,
     private translate: TranslateService,
-    private ixModalService: IxModalService,
-  ) { }
+    private ixModal: IxModalService,
+  ) {}
 
   ngOnInit(): void {
     this.getDatasetData();
@@ -228,6 +234,10 @@ export class AdvancedSettingsComponent implements OnInit {
     });
 
     this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.refreshTables();
+    });
+
+    this.ixModal.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
@@ -258,6 +268,17 @@ export class AdvancedSettingsComponent implements OnInit {
     this.actionsConfig = actionsConfig;
 
     this.core.emit({ name: 'GlobalActions', data: actionsConfig, sender: this });
+  }
+
+  async showFirstTimeWarningIfNeeded(): Promise<unknown> {
+    if (!this.isFirstTime) {
+      return;
+    }
+
+    return this.dialog
+      .info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
+      .pipe(tap(() => this.isFirstTime = false))
+      .toPromise();
   }
 
   afterInit(entityForm: EntityFormComponent): void {
@@ -406,7 +427,7 @@ export class AdvancedSettingsComponent implements OnInit {
     });
   }
 
-  onSettingsPressed(name: CardId, id?: number): void {
+  async onSettingsPressed(name: CardId, id?: number): Promise<void> {
     let addComponent: Type<ConsoleFormComponent
     | KernelFormComponent
     | SyslogFormComponent
@@ -446,33 +467,12 @@ export class AdvancedSettingsComponent implements OnInit {
         break;
     }
 
-    if (this.isFirstTime) {
-      this.dialog
-        .info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
-        .pipe(untilDestroyed(this)).subscribe(() => {
-          if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
-            this.sysGeneralService.sendConfigData(this.configData as any);
-          }
-
-          if ([CardId.Kernel].includes(name)) {
-            const modal = this.ixModalService.open(KernelFormComponent, T('Kernel'));
-            modal.setupForm(this.configData);
-          } else {
-            this.modalService.openInSlideIn(addComponent, id);
-          }
-          this.isFirstTime = false;
-        });
-    } else {
-      if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
-        this.sysGeneralService.sendConfigData(this.configData as any);
-      }
-      if ([CardId.Kernel].includes(name)) {
-        const modal = this.ixModalService.open(KernelFormComponent, T('Kernel'));
-        modal.setupForm(this.configData);
-      } else {
-        this.modalService.openInSlideIn(addComponent, id);
-      }
+    await this.showFirstTimeWarningIfNeeded();
+    if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
+      this.sysGeneralService.sendConfigData(this.configData as any);
     }
+
+    this.modalService.openInSlideIn(addComponent, id);
   }
 
   saveDebug(): void {

@@ -119,7 +119,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       value: '',
       searchOptions: [],
       parent: this,
-      updater: this.updateZvolSearchOptions,
+      updater: (value: string) => this.updateZvolSearchOptions(value),
     },
     {
       name: 'type',
@@ -413,7 +413,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.vmid = params['pk'];
+      this.vmid = Number(params['pk']);
       this.vmname = params['name'];
       this.route_success = ['vm', String(this.vmid), 'devices', this.vmname];
     });
@@ -592,8 +592,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.modalService.openInSlideIn(ZvolWizardComponent);
   }
 
-  updateZvolSearchOptions(value = '', parent: this): void {
-    parent.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume], ['id', '^', value]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
+  updateZvolSearchOptions(value = ''): void {
+    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume], ['id', '^', value]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       const searchedZvols: FormComboboxOption[] = [];
       zvols.forEach((zvol) => {
         searchedZvols.push(
@@ -605,7 +605,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       searchedZvols.push({
         label: 'Add New', value: 'new', sticky: 'bottom',
       });
-      const config = _.find(parent.diskFieldConfig, { name: 'path' }) as FormComboboxConfig;
+      const config = _.find(this.diskFieldConfig, { name: 'path' }) as FormComboboxConfig;
       config.searchOptions = searchedZvols;
     });
   }

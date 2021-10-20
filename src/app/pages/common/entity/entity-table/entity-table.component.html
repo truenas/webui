@@ -1,4 +1,4 @@
-<div fxLayout="column" id="entity-table-component" class="material mat-card mat-card-table">
+<div fxLayout="column" id="entity-table-component" class="material mat-card mat-card-table" [class.is-empty]="isTableEmpty">
 
   <ng-container>
 
@@ -216,12 +216,14 @@
 
 
         <tr mat-header-row *matHeaderRowDef="columnsProps"></tr>
-        <tr mat-row class="element-row" id="{{element[getFirstKey()]}}"
-        ix-auto ix-auto-type="expander" ix-auto-identifier="{{element[getFirstKey()]}}"
-        *matRowDef="let element; columns: columnsProps; let i = dataIndex;"
-        (click)="doRowClick(element)"
-        [ngClass]="{'expanded-row': expandedElement === element}">
-        </tr>
+        <tr
+          mat-row class="element-row"
+          id="{{element[getFirstKey()]}}"
+          ix-auto ix-auto-type="expander" ix-auto-identifier="{{element[getFirstKey()]}}"
+          *matRowDef="let element; columns: columnsProps; let i = dataIndex;"
+          (click)="doRowClick(element)"
+          [ngClass]="{'expanded-row': expandedElement === element}"
+        ></tr>
 
         <ng-container *ngIf="hasDetails() === true">
           <tr mat-row class="details-row" *matRowDef="let row; columns: ['expandedDetail'];"></tr>
@@ -231,12 +233,12 @@
 
     <mat-card-footer style="padding: 0 !important" *ngIf="conf.config.paging">
       <mat-paginator
-      (page)="pageChanged()"
-      [pageIndex]="paginationPageIndex"
-      [pageSize]="paginationPageSize"
-      [pageSizeOptions]="paginationPageSizeOptions"
-      [showFirstLastButtons]="paginationShowFirstLastButtons"
-    ></mat-paginator>
+        (page)="pageChanged()"
+        [pageIndex]="paginationPageIndex"
+        [pageSize]="paginationPageSize"
+        [pageSizeOptions]="paginationPageSizeOptions"
+        [showFirstLastButtons]="paginationShowFirstLastButtons"
+      ></mat-paginator>
     </mat-card-footer>
   </ng-container>
   <ng-container *ngIf="isTableEmpty">

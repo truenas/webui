@@ -14,11 +14,13 @@ import { filter, map, switchMap } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import dataset_helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
 import helptext from 'app/helptext/storage/volumes/volume-list';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -28,7 +30,7 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolProcess } from 'app/interfaces/pool-process.interface';
 import { PoolUnlockQuery } from 'app/interfaces/pool-unlock-query.interface';
-import { Pool, PoolExpandParams } from 'app/interfaces/pool.interface';
+import { Pool, PoolExpandParams, UpdatePool } from 'app/interfaces/pool.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -161,10 +163,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
     return actions as EntityTableAction[];
   }
 
-  keyFileUpdater(file: FormUploadComponent, parent: this): void {
+  keyFileUpdater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
+      this.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 
@@ -189,7 +191,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           {
             type: 'upload',
             message: this.messageService,
-            updater: this.keyFileUpdater,
+            updater: (file: FormUploadComponent) => this.keyFileUpdater(file),
             parent: this,
             hideButton: true,
             name: 'key',
@@ -316,17 +318,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
               },
               customSubmit: (entityDialog: EntityDialogComponent) => {
                 const formValue = entityDialog.formValue;
-                const method = 'pool.update';
-                const payload = [
-                  row.id,
-                  { autotrim: formValue.autotrim ? 'ON' : 'OFF' },
-                ];
                 const dialogRef = this.mdDialog.open(EntityJobComponent, {
                   data: { title: helptext.pool_options_dialog.save_pool_options },
                   disableClose: true,
                 });
                 dialogRef.componentInstance.setDescription(helptext.pool_options_dialog.saving_pool_options);
-                dialogRef.componentInstance.setCall(method, payload);
+                dialogRef.componentInstance.setCall('pool.update', [
+                  row.id,
+                  { autotrim: formValue.autotrim ? OnOff.On : OnOff.Off } as UpdatePool,
+                ]);
                 dialogRef.componentInstance.submit();
                 dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((res: Job<Pool>) => {
                   if (res) {
@@ -1149,7 +1149,10 @@ export class VolumesListTableConfig implements EntityTableConfig {
             const passphrase_parent = row.parent
               && (row.parent as VolumesListDataset).key_format
               && (row.parent as VolumesListDataset).key_format.value === DatasetEncryptionType.Passphrase;
-            const is_key = (passphrase_parent ? false : (key_child ? true : !row.is_passphrase));
+            let is_key = false;
+            if (!passphrase_parent) {
+              is_key = key_child ? true : !row.is_passphrase;
+            }
             let pbkdf2iters = '350000'; // will pull from row when it has been added to the payload
             if (row.pbkdf2iters && row.pbkdf2iters && row.pbkdf2iters.rawvalue !== '0') {
               pbkdf2iters = row.pbkdf2iters.rawvalue;
@@ -1528,36 +1531,36 @@ export class VolumesListTableConfig implements EntityTableConfig {
     this.datasetData.forEach((dataset) => {
       if (dataset.id === dataObj.id) {
         if (dataset.compression) {
-          if (dataset.compression.source !== 'INHERITED') {
+          if (dataset.compression.source !== ZfsPropertySource.Inherited) {
             dataObj.compression = (dataset.compression.parsed);
           } else {
             dataObj.compression = (inherits + ' (' + dataset.compression.parsed + ')');
           }
         }
         if (dataset.compressratio) {
-          if (dataset.compressratio.source !== 'INHERITED') {
+          if (dataset.compressratio.source !== ZfsPropertySource.Inherited) {
             dataObj.compressratio = (dataset.compressratio.parsed);
           } else {
             dataObj.compressratio = (inherits + ' (' + dataset.compressratio.parsed + ')');
           }
         }
         if (dataset.readonly) {
-          if (dataset.readonly.source !== 'INHERITED') {
+          if (dataset.readonly.source !== ZfsPropertySource.Inherited) {
             dataObj.readonly = (dataset.readonly.parsed) as any;
           } else {
             dataObj.readonly = (inherits + ' (' + dataset.readonly.parsed + ')');
           }
         }
         if (dataset.deduplication) {
-          if (dataset.deduplication.source !== 'INHERITED') {
+          if (dataset.deduplication.source !== ZfsPropertySource.Inherited) {
             dataObj.dedup = (dataset.deduplication.parsed);
           } else {
             dataObj.dedup = (inherits + ' (' + dataset.deduplication.parsed + ')');
           }
         }
         if (dataset.comments) {
-          if (dataset.comments.source !== 'INHERITED') {
-            dataObj.comments = (dataset.comments.parsed);
+          if (dataset.comments.source !== ZfsPropertySource.Inherited) {
+            dataObj.comments = dataset.comments.parsed;
           } else {
             dataObj.comments = ('');
           }

@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { LocalStorage } from 'ngx-webstorage';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { ShellConnectedEvent } from '../interfaces/shell.interface';
 
@@ -31,8 +31,6 @@ export class ShellService {
   private shellCmdOutput: ArrayBuffer;
   shellOutput = new EventEmitter<ArrayBuffer>();
   shellConnected = new EventEmitter<ShellConnectedEvent>();
-
-  subscriptions = new Map <string, any[]>();
 
   constructor(private _router: Router) {
     this.onOpenSubject$ = new Subject();
@@ -119,27 +117,5 @@ export class ShellService {
     } else {
       this.pendingMessages.push(payload);
     }
-  }
-
-  subscribe(name: string): Observable < any > {
-    const source = Observable.create((observer: any) => {
-      if (this.subscriptions.has(name)) {
-        this.subscriptions.get(name).push(observer);
-      } else {
-        this.subscriptions.set(name, [observer]);
-      }
-    });
-    return source;
-  }
-
-  unsubscribe(observer: any): void {
-    // FIXME: just does not have a good performance :)
-    this.subscriptions.forEach((v) => {
-      v.forEach((item) => {
-        if (item === observer) {
-          v.splice(v.indexOf(item), 1);
-        }
-      });
-    });
   }
 }

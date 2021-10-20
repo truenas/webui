@@ -12,6 +12,7 @@ import { DatasetAclType } from 'app/enums/dataset-acl-type.enum';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -150,8 +151,8 @@ export class DatasetFormComponent implements FormConfiguration {
           placeholder: helptext.dataset_form_atime_placeholder,
           tooltip: helptext.dataset_form_atime_tooltip,
           options: [
-            { label: 'on', value: 'ON' },
-            { label: 'off', value: 'OFF' },
+            { label: 'on', value: OnOff.On },
+            { label: 'off', value: OnOff.Off },
           ],
         }],
     },
@@ -548,8 +549,8 @@ export class DatasetFormComponent implements FormConfiguration {
           placeholder: helptext.dataset_form_readonly_placeholder,
           tooltip: helptext.dataset_form_readonly_tooltip,
           options: [
-            { label: 'On', value: 'ON' },
-            { label: 'Off', value: 'OFF' },
+            { label: 'On', value: OnOff.On },
+            { label: 'Off', value: OnOff.Off },
           ],
         },
         {
@@ -558,8 +559,8 @@ export class DatasetFormComponent implements FormConfiguration {
           placeholder: helptext.dataset_form_exec_placeholder,
           tooltip: helptext.dataset_form_exec_tooltip,
           options: [
-            { label: 'On', value: 'ON' },
-            { label: 'Off', value: 'OFF' },
+            { label: 'On', value: OnOff.On },
+            { label: 'Off', value: OnOff.Off },
           ],
         },
         {
@@ -1348,7 +1349,12 @@ export class DatasetFormComponent implements FormConfiguration {
     if (!field) {
       return true;
     }
-    if (!value || !field.source || field.source === 'INHERITED' || field.source === 'DEFAULT') {
+    if (
+      !value
+      || !field.source
+      || field.source === ZfsPropertySource.Inherited
+      || field.source === ZfsPropertySource.Default
+    ) {
       return true;
     }
     return false;
@@ -1391,7 +1397,9 @@ export class DatasetFormComponent implements FormConfiguration {
       acltype: this.getFieldValueOrRaw(wsResponse.acltype),
       aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
       casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
-      comments: wsResponse.comments === undefined ? undefined : (wsResponse.comments.source === 'LOCAL' ? wsResponse.comments.value : undefined),
+      comments: wsResponse.comments?.source === ZfsPropertySource.Local
+        ? wsResponse.comments.value
+        : undefined,
       compression: this.getFieldValueOrRaw(wsResponse.compression),
       copies: this.getFieldValueOrRaw(wsResponse.copies),
       deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
@@ -1437,7 +1445,7 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   // TODO: Similar to addSubmit.
-  editSubmit(body: any): Observable<any> {
+  editSubmit(body: any): Observable<Dataset> {
     const data: any = this.sendAsBasicOrAdvanced(body);
     if (data['special_small_block_size'] === 0) {
       delete data.special_small_block_size;
@@ -1484,7 +1492,7 @@ export class DatasetFormComponent implements FormConfiguration {
     return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
 
-  addSubmit(body: any): Observable<any> {
+  addSubmit(body: any): Observable<Dataset> {
     const data: any = this.sendAsBasicOrAdvanced(body);
     if (data['special_small_block_size'] === 0) {
       delete data.special_small_block_size;

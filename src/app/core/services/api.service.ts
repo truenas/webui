@@ -4,11 +4,13 @@ import * as _ from 'lodash';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
+import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Multipath } from 'app/interfaces/multipath.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebSocketService } from 'app/services/ws.service';
@@ -101,7 +103,6 @@ export class ApiService {
     },
     SetEnclosureLabel: {
       apiCall: {
-        args: [] as any[],
         namespace: 'enclosure.update',
         responseEvent: 'EnclosureLabelChanged',
       },
@@ -111,7 +112,7 @@ export class ApiService {
         redef.args = args;
         return redef;
       },
-      postProcessor(res: any, callArgs: any) {
+      postProcessor(res: Enclosure, callArgs: { index: number }) {
         return { label: res.label, index: callArgs.index, id: res.id };
       },
     },
@@ -159,23 +160,10 @@ export class ApiService {
         responseEvent: 'UpdateChecked',
       },
     },
-    VmStop: {
-      apiCall: {
-        namespace: 'vm.stop',
-        args: [] as any,
-        responseEvent: 'VmProfiles',
-        errorResponseEvent: 'VmStopFailure',
-      },
-      postProcessor(res: any, callArgs: any) {
-        let cloneRes = { ...res };
-        cloneRes = { id: callArgs[0] }; // res:boolean
-        return cloneRes;
-      },
-    },
     ReportingGraphsRequest: {
       apiCall: {
         namespace: 'reporting.graphs',
-        args: [] as any,
+        args: [] as QueryParams<ReportingGraph>,
         responseEvent: 'ReportingGraphs',
       },
     },

@@ -30,8 +30,6 @@ export class EntityDialogComponent<P = any> implements OnInit {
   formGroup: FormGroup;
   saveButtonText: string;
   cancelButtonText = 'Cancel';
-  detachButtonText: string;
-  getKeyButtonText: string;
   error: string;
   formValue: any;
   showPassword = false;

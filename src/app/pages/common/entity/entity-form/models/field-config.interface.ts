@@ -80,7 +80,7 @@ export interface FormChipConfig<P = any> extends BaseFieldConfig<P> {
   searchOptions?: Option[];
   type: 'chip';
   updateLocal?: boolean;
-  updater?: (value: any, parent: P, config?: FormChipConfig) => void;
+  updater?: (value: string, parent: P, config?: FormChipConfig) => void;
   togglePw?: boolean;
 }
 

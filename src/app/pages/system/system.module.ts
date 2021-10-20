@@ -2,17 +2,17 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { QRCodeModule } from 'angular2-qrcode';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
-import { IxFormsModule } from 'app/pages/common/ix/ix-forms.module';
+import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
-import { LocalizationForm2Component } from 'app/pages/system/general-settings/localization-form2/localization-form2.component';
+import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { CoreComponents } from '../../core/components/core-components.module';
@@ -30,16 +30,14 @@ import { AlertServiceComponent } from './alert-service/alert-service/alert-servi
 import { AlertConfigComponent } from './alert/alert.component';
 import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach/bootenv-attach-form.component';
 import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/bootenv-clone.component';
-import { BootEnvironmentCreateComponent } from './bootenv/bootenv-create/bootenv-create.component';
+import { BootEnvironmentFormComponent } from './bootenv/bootenv-form/bootenv-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
-import { BootEnvironmentRenameComponent } from './bootenv/bootenv-rename/bootenv-rename.component';
 import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace/bootenv-replace-form.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
 import { EmailComponent } from './email/email.component';
 import { FailoverComponent } from './failover/failover.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { GuiFormComponent } from './general-settings/gui-form/gui-form.component';
-import { LocalizationFormComponent } from './general-settings/localization-form/localization-form.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { LicenseComponent } from './general-settings/support/license/license.component';
 import { ProactiveComponent } from './general-settings/support/proactive/proactive.component';
@@ -65,11 +63,10 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
   ],
   declarations: [
     AdvancedSettingsComponent,
-    LocalizationForm2Component,
+    LocalizationFormComponent,
     BootEnvironmentListComponent,
     BootEnvironmentCloneComponent,
-    BootEnvironmentRenameComponent,
-    BootEnvironmentCreateComponent,
+    BootEnvironmentFormComponent,
     BootStatusListComponent,
     BootEnvAttachFormComponent,
     BootEnvReplaceFormComponent,
@@ -93,7 +90,6 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     TwoFactorComponent,
     QrDialogComponent,
     GeneralSettingsComponent,
-    LocalizationFormComponent,
     GuiFormComponent,
     LicenseComponent,
     ConsoleFormComponent,
@@ -105,6 +101,9 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     CronFormComponent,
     CronListComponent,
     SystemDatasetPoolComponent,
+  ],
+  providers: [
+    TranslateService,
   ],
   entryComponents: [QrDialogComponent],
 })

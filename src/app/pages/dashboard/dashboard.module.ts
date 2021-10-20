@@ -7,7 +7,6 @@ import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
-import { WidgetChartComponent } from 'app/pages/dashboard/components/widget-chart/widget-chart.component';
 import { WidgetControllerComponent } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WidgetCpuComponent } from 'app/pages/dashboard/components/widget-cpu/widget-cpu.component';
 import { WidgetMemoryComponent } from 'app/pages/dashboard/components/widget-memory/widget-memory.component';
@@ -40,7 +39,6 @@ import { routing } from './dashboard.routing';
     DashboardComponent,
 
     WidgetComponent,
-    WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNicComponent,
     WidgetCpuComponent,
@@ -54,7 +52,6 @@ import { routing } from './dashboard.routing';
   ],
   entryComponents: [
     WidgetComponent,
-    WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNicComponent,
     WidgetCpuComponent,
