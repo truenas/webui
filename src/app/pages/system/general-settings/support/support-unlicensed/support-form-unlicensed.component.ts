@@ -14,11 +14,12 @@ import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-j
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
-  FieldConfig, FormButtonConfig, FormSelectConfig, FormInputConfig,
+  FieldConfig, FormButtonConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { DialogService, WebSocketService } from 'app/services/';
 import { ModalService } from 'app/services/modal.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()
 @Component({
@@ -50,6 +51,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           validation: helptext.token.validation,
           value: null,
           required: true,
+          readonly: true,
         },
         {
           type: 'button',
@@ -131,10 +133,15 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     protected dialog: DialogService,
     private modalService: ModalService,
     private translate: TranslateService,
+    private sysGeneralService: SystemGeneralService,
   ) { }
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
+    const oauthToken = this.sysGeneralService.getTokenForJira();
+    if (oauthToken) {
+      this.applyToken(oauthToken);
+    }
   }
 
   customSubmit(entityEdit: any): void {
@@ -240,15 +247,19 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
   }
 
   doAuth(message: OauthJiraMessage): void {
-    this.token = message.data as string;
+    const token = message.data as string;
+    this.sysGeneralService.setTokenForJira(token);
+    this.applyToken(token);
+  }
+
+  applyToken(token: string): void {
+    this.token = token;
+    this.entityEdit.formGroup.get('token').setValue(this.token);
 
     const jiraButton = _.find(this.fieldConfig, { name: 'oauth-jira' }) as FormButtonConfig;
     jiraButton.customEventActionLabel = this.translate.instant('Logged in to JIRA');
     jiraButton.disabled = true;
 
-    const tokenField = _.find(this.fieldConfig, { name: 'token' }) as FormInputConfig;
-    tokenField.readonly = true;
-    this.entityEdit.formGroup.get('token').setValue(this.token);
     this.getCategories();
   }
 }
