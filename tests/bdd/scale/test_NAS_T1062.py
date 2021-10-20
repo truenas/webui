@@ -127,8 +127,7 @@ def the_service_should_be_enabled_with_no_errors(driver):
     time.sleep(1)
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
-    #assert wait_on_element(driver, 30, '//mat-spinner[@role="progressbar"]')
-    #wait_on_element_disappear(driver, 30, '//mat-spinner[@role="progressbar"]')
+    wait_on_element_disappear(driver, 30, '//mat-spinner[@role="progressbar"]') 
     assert wait_for_attribute_value(driver, 20, '//mat-slide-toggle[@ix-auto="slider__state__SSH"]', 'class', 'mat-checked')
 
 
