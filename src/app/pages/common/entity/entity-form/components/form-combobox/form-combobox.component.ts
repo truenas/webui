@@ -4,8 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { FieldConfig } from '../../models/field-config.interface';
 import { Field } from '../../models/field.interface';
-import { TooltipComponent } from '../tooltip/tooltip.component';
-
+import { Subject } from 'rxjs/Subject';
 import * as _ from 'lodash';
 
 @Component({
@@ -17,14 +16,20 @@ export class FormComboboxComponent implements Field {
   config: FieldConfig;
   group: FormGroup;
   fieldShow: string;
-
-  constructor(public translate: TranslateService) {}
+  textChanged: Subject<KeyboardEvent> = new Subject<KeyboardEvent>();
+  constructor(public translate: TranslateService) {
+    this.textChanged
+      .debounceTime(500)
+      .distinctUntilChanged()
+      .subscribe((value) => this.updateSearchOptions(value));
+  }
 
   onChangeOption(value) {
     this.group.controls[this.config.name].setValue(value);
   }
 
-  updateSearchOptions(value) {
+  updateSearchOptions(event) {
+    let value = event.target.value;
     if (this.config.updater && this.config.parent) {
       if (this.config.updateLocal) {
         this.config.updater(value, this.config.parent, this.config);
@@ -41,5 +46,9 @@ export class FormComboboxComponent implements Field {
       }
       this.config.searchOptions = searchOptions;
     }
+  }
+
+  searchChanged(text: KeyboardEvent) {
+    this.textChanged.next(text);
   }
 }

@@ -109,6 +109,7 @@ export class GeneralComponent implements OnDestroy {
         {
           type: 'combobox',
           name: 'language',
+          label: helptext.stg_language.label,
           placeholder: helptext.stg_language.placeholder,
           tooltip: helptext.stg_language.tooltip,
           options: [],
@@ -144,6 +145,7 @@ export class GeneralComponent implements OnDestroy {
         {
           type: 'combobox',
           name: 'timezone',
+          label: helptext.stg_timezone.label,
           placeholder: helptext.stg_timezone.placeholder,
           tooltip: helptext.stg_timezone.tooltip,
           options: [{ label: '---', value: null }],

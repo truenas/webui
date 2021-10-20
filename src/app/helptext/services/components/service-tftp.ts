@@ -22,7 +22,8 @@ export default {
   tftp_port_placeholder: T('Port'),
   tftp_port_tooltip: T('The UDP port number that listens for TFTP requests. Example: 8050'),
 
-  tftp_username_placeholder: T('Username'),
+  tftp_username_label: T('Username'),
+  tftp_username_placeholder: T('Type to search'),
   tftp_username_tooltip: T('Select the account to use for TFTP requests. This\
  account must have permission to the <b>Directory</b>.'),
 

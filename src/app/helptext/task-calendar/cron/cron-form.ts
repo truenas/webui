@@ -11,7 +11,8 @@ export default {
   cron_command_tooltip: T('Enter the full path to the command or script to\
                 be run.'),
 
-  cron_user_placeholder: T('Run As User'),
+  cron_user_label: T('Run As User'),
+  cron_user_placeholder: T('Type to search'),
   cron_user_tooltip: T('Select a user account to run the command. The\
                 user must have permissions allowing them to run\
                 the command or script.'),

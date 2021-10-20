@@ -56,6 +56,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
         {
           type: 'combobox',
           name: 'user',
+          label: helptext.dataset_permissions_user_label,
           placeholder: helptext.dataset_permissions_user_placeholder,
           tooltip: helptext.dataset_permissions_user_tooltip,
           options: [],
@@ -73,6 +74,7 @@ export class DatasetPermissionsComponent implements OnDestroy {
         {
           type: 'combobox',
           name: 'group',
+          label: helptext.dataset_permissions_group_label,
           placeholder: helptext.dataset_permissions_group_placeholder,
           tooltip: helptext.dataset_permissions_group_tooltip,
           options: [],

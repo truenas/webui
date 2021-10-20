@@ -86,6 +86,7 @@ export class DatasetAclComponent implements OnDestroy {
           type: 'combobox',
           name: 'uid',
           width: '100%',
+          label: helptext.dataset_acl_uid_label,
           placeholder: helptext.dataset_acl_uid_placeholder,
           tooltip: helptext.dataset_acl_uid_tooltip,
           updateLocal: true,
@@ -104,6 +105,7 @@ export class DatasetAclComponent implements OnDestroy {
         {
           type: 'combobox',
           name: 'gid',
+          label: helptext.dataset_acl_gid_label,
           placeholder: helptext.dataset_acl_gid_placeholder,
           tooltip: helptext.dataset_acl_gid_tooltip,
           updateLocal: true,
@@ -145,6 +147,7 @@ export class DatasetAclComponent implements OnDestroy {
             {
               type: 'combobox',
               name: 'user',
+              label: helptext.dataset_acl_user_label,
               placeholder: helptext.dataset_acl_user_placeholder,
               tooltip: helptext.dataset_acl_user_tooltip,
               updateLocal: true,
@@ -157,6 +160,7 @@ export class DatasetAclComponent implements OnDestroy {
             {
               type: 'combobox',
               name: 'group',
+              label: helptext.dataset_acl_group_label,
               placeholder: helptext.dataset_acl_group_placeholder,
               tooltip: helptext.dataset_acl_group_tooltip,
               updateLocal: true,

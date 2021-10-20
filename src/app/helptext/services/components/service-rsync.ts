@@ -48,11 +48,13 @@ field to deactivate the module without completely removing it.'),
   rsyncmod_maxconn_tooltip: T('Maximum number of connections to this module. <i>0</i> \
  is unlimited.'),
 
-  rsyncmod_user_placeholder: T('User'),
+  rsyncmod_user_label: T('User'),
+  rsyncmod_user_placeholder: T('Type to search'),
   rsyncmod_user_tooltip: T('User to run as during file transfers to and from \
  this module.'),
 
-  rsyncmod_group_placeholder: T('Group'),
+  rsyncmod_group_label: T('Group'),
+  rsyncmod_group_placeholder: T('Type to search'),
   rsyncmod_group_tooltip: T('Group to run as during file transfers to and \
  from this module.'),
 

@@ -42,14 +42,17 @@ export default {
     { label: T('Advanced'), value: 'ADVANCED' },
   ],
 
-  dataset_acl_user_placeholder: T('User'),
+  dataset_acl_user_label: T('User'),
+  dataset_acl_user_placeholder: T('Type to search'),
   dataset_acl_user_tooltip: T('User account to which this ACL entry\
  applies.'),
 
-  dataset_acl_group_placeholder: T('Group'),
+  dataset_acl_group_label: T('Group'),
+  dataset_acl_group_placeholder: T('Type to search'),
   dataset_acl_group_tooltip: T('Group to which this ACL entry applies.'),
 
-  dataset_acl_uid_placeholder: T('User'),
+  dataset_acl_uid_label: T('User'),
+  dataset_acl_uid_placeholder: T('Type to search'),
   dataset_acl_uid_tooltip: T('User who controls the dataset. This user\
  always has permissions to read or write the ACL and read or write\
  attributes. Users created manually or imported from a directory service\
@@ -61,7 +64,8 @@ export default {
  are submitted only when this box is set.'),
   },
 
-  dataset_acl_gid_placeholder: T('Group'),
+  dataset_acl_gid_label: T('Group'),
+  dataset_acl_gid_placeholder: T('Type to search'),
   dataset_acl_gid_tooltip: T('The group which controls the dataset. This\
  group has the same permissions as granted to the <i>group@</i>\
  <i>Who</i>. Groups created manually or imported from a directory\
