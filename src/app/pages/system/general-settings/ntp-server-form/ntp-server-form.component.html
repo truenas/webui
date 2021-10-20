@@ -1,7 +1,7 @@
 <mat-card>
   <mat-card-content>
     <form [formGroup]="formGroup" class="ix-form-container" (submit)="onSubmit()">
-      <ix-fieldset>
+      <ix-fieldset [title]="helptext.fieldset | translate">
         <ix-input
           formControlName="address"
           [label]="helptext.address.label | translate"

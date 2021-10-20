@@ -15,7 +15,6 @@ import { IxModalService } from 'app/services/ix-modal.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NtpServerFormComponent {
-  title = helptext.header;
   isFormLoading = false;
 
   formGroup = this.fb.group({
