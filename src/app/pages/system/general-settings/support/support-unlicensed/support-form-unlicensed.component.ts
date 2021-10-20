@@ -13,7 +13,9 @@ import { CreateNewTicket, NewTicketResponse, OauthJiraMessage } from 'app/interf
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormButtonConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormButtonConfig, FormSelectConfig, FormInputConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { DialogService, WebSocketService } from 'app/services/';
 import { ModalService } from 'app/services/modal.service';
@@ -41,6 +43,15 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
       label: false,
       config: [
         {
+          type: 'input',
+          name: 'token',
+          placeholder: helptext.token.placeholder,
+          tooltip: helptext.token.tooltip,
+          validation: helptext.token.validation,
+          value: null,
+          required: true,
+        },
+        {
           type: 'button',
           name: 'oauth-jira',
           parent: this,
@@ -51,15 +62,6 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
             window.open('https://support-proxy.ixsystems.com/oauth/initiate?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
             window.addEventListener('message', authFn, false);
           },
-        },
-        {
-          type: 'input',
-          name: 'token',
-          placeholder: helptext.token.placeholder,
-          tooltip: helptext.token.tooltip,
-          validation: helptext.token.validation,
-          value: null,
-          required: true,
         },
         {
           type: 'select',
@@ -141,17 +143,18 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
       title: entityEdit.title,
       body: entityEdit.body,
       type: entityEdit.type,
-      token: this.token,
+      token: entityEdit.token,
     } as CreateNewTicket;
 
     if (entityEdit.attach_debug) {
       payload.attach_debug = entityEdit.attach_debug;
     }
+
     this.openDialog(payload);
   }
 
   openDialog(payload: CreateNewTicket): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Ticket'), closeOnClickOutside: true } });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Ticket') }, disableClose: true });
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
@@ -243,8 +246,9 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     jiraButton.customEventActionLabel = this.translate.instant('Logged in to JIRA');
     jiraButton.disabled = true;
 
+    const tokenField = _.find(this.fieldConfig, { name: 'token' }) as FormInputConfig;
+    tokenField.readonly = true;
     this.entityEdit.formGroup.get('token').setValue(this.token);
-    this.entityEdit.formGroup.get('token').disable();
     this.getCategories();
   }
 }
