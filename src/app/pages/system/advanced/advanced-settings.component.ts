@@ -472,7 +472,12 @@ export class AdvancedSettingsComponent implements OnInit {
       this.sysGeneralService.sendConfigData(this.configData as any);
     }
 
-    this.modalService.openInSlideIn(addComponent, id);
+    if ([CardId.Kernel].includes(name)) {
+      const modal = this.ixModal.open(KernelFormComponent, T('Kernel'));
+      modal.setupForm(this.configData);
+    } else {
+      this.modalService.openInSlideIn(addComponent, id);
+    }
   }
 
   saveDebug(): void {
