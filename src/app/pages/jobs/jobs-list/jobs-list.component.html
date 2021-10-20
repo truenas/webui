@@ -125,6 +125,14 @@
             element.time_finished?.$date ? (element.time_finished.$date | formatDateTime) : '–'
           }}</mat-cell>
         </ng-container>
+        <ng-container matColumnDef="arguments">
+          <mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="Arguments">
+            {{ 'Arguments' | translate }}
+          </mat-header-cell>
+          <mat-cell *matCellDef="let element">
+            <button mat-button type="button" (click)="viewLogs(element, 'argument')">{{ 'View' | translate }}</button>
+          </mat-cell>
+        </ng-container>
         <ng-container matColumnDef="logs_excerpt">
           <mat-header-cell *matHeaderCellDef ix-auto ix-auto-type="tab" ix-auto-identifier="LogsErrors">
             {{ 'Logs/Errors' | translate }}
@@ -139,7 +147,7 @@
             </ng-template>
 
             <ng-template #viewLogsTemplate>
-              <button mat-button type="button" (click)="viewLogs(element)">{{ 'View Logs' | translate }}</button>
+              <button mat-button type="button" (click)="viewLogs(element, 'log')">{{ 'View Logs' | translate }}</button>
             </ng-template>
           </mat-cell>
         </ng-container>
@@ -158,6 +166,7 @@
         *ngIf="viewingLogsForJob"
         class="job-logs-sidebar"
         [job]="viewingLogsForJob"
+        [viewType]="viewType"
         (closed)="onLogsSidebarClosed()"
       ></app-job-logs-sidebar>
     </div>

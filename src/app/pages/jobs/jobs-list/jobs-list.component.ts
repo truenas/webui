@@ -42,8 +42,9 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
   dataSource: MatTableDataSource<Job> = new MatTableDataSource<Job>([]);
-  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs_excerpt'];
+  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'arguments', 'logs_excerpt'];
   viewingLogsForJob: Job;
+  viewType: string;
   isLoading: boolean;
   toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
@@ -133,8 +134,9 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
 
-  viewLogs(job: Job): void {
+  viewLogs(job: Job, viewType: string): void {
     this.viewingLogsForJob = job;
+    this.viewType = viewType;
   }
 
   onLogsSidebarClosed(): void {

@@ -27,6 +27,7 @@
   "Add Target": "",
   "Allow initiator to discover paths to both TrueNAS controllers on the target and increase storage traffic efficiency. Requires ALUA-capable, High Availability (HA) hardware.": "",
   "Are you sure you want to abort the <b>{task}</b> task?": "",
+  "Arguments": "",
   "Attach Device": "",
   "Attention": "",
   "Automatic update check failed. Please check system network settings.": "",

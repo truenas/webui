@@ -100,6 +100,7 @@
   "Applications you install will automatically appear here. Click below and browse the TrueNAS catalog to get started.": "",
   "Are you sure you want to abort the <b>{task}</b> task?": "",
   "Are you sure you want to delete this idmap?": "",
+  "Arguments": "",
   "Associated Targets": "",
   "At least one pod must be available": "",
   "At least one pool must be available to use apps": "",

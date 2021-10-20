@@ -382,6 +382,7 @@
   "Are you sure you want to sync from peer?": "",
   "Are you sure you want to sync to peer?": "",
   "Are you sure?": "",
+  "Arguments": "",
   "Arrange the disks according to capacity, redundancy, and  performance considerations. More types become available as more disks are added to the vdev.<br>  A <i>Stripe</i> uses the entire capacity of the disks for storage and <b>has no redundancy</b>.  Failed or degraded disks in a stripe can result in data loss!<br> A <i>Mirror</i> requires at  least two disks and mirrors the data from one disk onto each other disk in the vdev, which can  limit the total capacity.<br><i>Raid-Z</i> configurations offer different balances of data  redundancy and total capacity for the selected disks.": "",
   "Associated Target": "",
   "Associated Targets": "",
