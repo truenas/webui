@@ -965,6 +965,7 @@
   "Download Public Key": "",
   "Download Recovery Key": "",
   "Download SSH Public Key": "",
+  "Download actions": "",
   "Drive reserved for inserting into DATA pool vdevs when an active drive has failed.": "",
   "Drives List": "",
   "Drives and IDs registered to the Microsoft account.  Selecting a drive also fills the <i>Drive ID</i> field.": "",

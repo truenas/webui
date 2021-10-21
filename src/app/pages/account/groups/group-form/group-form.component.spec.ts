@@ -8,6 +8,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { IxInputHarness } from 'app/pages/common/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
@@ -30,6 +31,7 @@ describe('GroupFormComponent', () => {
         mockCall('group.get_next_gid', 1234),
       ]),
       mockProvider(IxModalService),
+      mockProvider(FormErrorHandlerService),
     ],
   });
 

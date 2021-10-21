@@ -10,7 +10,7 @@ import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { UserService, WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
 
@@ -49,6 +49,7 @@ export class GroupFormComponent {
     private ws: WebSocketService,
     private modalService: IxModalService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   /**
@@ -115,8 +116,7 @@ export class GroupFormComponent {
       this.modalService.close();
     }, (error) => {
       this.isFormLoading = false;
-      this.modalService.close();
-      new EntityUtils().handleWSError(this, error);
+      this.errorHandler.handleWsFormError(error, this.form);
     });
   }
 }

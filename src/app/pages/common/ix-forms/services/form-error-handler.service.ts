@@ -21,22 +21,26 @@ export class FormErrorHandlerService {
     (new EntityUtils()).errorReport(error, this.dialog);
   }
 
+  // TODO: Add support for api fields having different names than formgroup fields, i.e. private_key => privateKey
+  // TODO: Same for nested API objects.
   private handleValidationError(error: WebsocketError, formGroup: FormGroup): void {
-    error.extra.forEach((extraItem) => {
+    for (const extraItem of error.extra) {
       const field = extraItem[0].split('.')[1];
-      const error = extraItem[1];
+      const errorMessage = extraItem[1];
 
       const control = formGroup.get(field);
       if (!control) {
-        console.error(`Could not find control ${field}`);
+        console.error(`Could not find control ${field}.`);
+        // Fallback to default modal error message.
+        (new EntityUtils()).errorReport(error, this.dialog);
         return;
       }
 
       control.setErrors({
         manualValidateError: true,
-        manualValidateErrorMsg: error,
+        manualValidateErrorMsg: errorMessage,
       });
       control.markAsTouched();
-    });
+    }
   }
 }

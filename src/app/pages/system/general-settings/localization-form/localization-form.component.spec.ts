@@ -8,6 +8,7 @@ import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.u
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
@@ -67,6 +68,7 @@ describe('LocalizationFormComponent', () => {
       }),
       mockProvider(IxModalService),
       mockProvider(LanguageService),
+      mockProvider(FormErrorHandlerService),
     ],
   });
 
