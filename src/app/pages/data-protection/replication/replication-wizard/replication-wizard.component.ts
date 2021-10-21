@@ -72,7 +72,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     id: 'advanced_add',
     name: T('Advanced Replication Creation'),
     function: () => {
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       const message = { action: 'open', component: 'replicationForm', row: this.pk };
       this.modalService.message(message);
     },
@@ -1391,7 +1391,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     this.loader.close();
     if (!toStop) {
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
     }
   }
 

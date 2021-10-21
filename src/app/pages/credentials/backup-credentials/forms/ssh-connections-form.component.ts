@@ -415,7 +415,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
 
   responseOnSubmit(): void {
     this.loader.close();
-    this.modalService.close('slide-in-form');
+    this.modalService.closeSlideIn();
     this.modalService.refreshTable();
   }
 

@@ -174,7 +174,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
         id: 'eula',
         name: helptext.update_license.eula_button,
         function: () => {
-          this.modalService.close('slide-in-form');
+          this.modalService.closeSlideIn();
           this.router.navigate(['/system/support/eula']);
         },
       },
@@ -289,6 +289,6 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     this.entityEdit.formGroup.controls['environment'].setValue('production');
     this.entityEdit.formGroup.controls['criticality'].setValue('inquiry');
     this.subs = [];
-    this.modalService.close('slide-in-form');
+    this.modalService.closeSlideIn();
   }
 }

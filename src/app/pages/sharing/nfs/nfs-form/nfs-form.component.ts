@@ -381,7 +381,7 @@ export class NFSFormComponent implements FormConfiguration {
   }
 
   afterSave(): void {
-    this.modalService.close('slide-in-form');
+    this.modalService.closeSlideIn();
     this.modalService.refreshTable();
     this.ws
       .call('service.query', [[]])

@@ -513,7 +513,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     formComponent.title = T('Reports Configuration');
     formComponent.isOneColumnForm = true;
     formComponent.afterModalFormSaved = () => {
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
     };
   }
 }

@@ -192,7 +192,7 @@ export class KubernetesSettingsComponent implements FormConfiguration {
         ]).pipe(
           tap(() => {
             this.loader.close();
-            this.modalService.close('slide-in-form');
+            this.modalService.closeSlideIn();
             this.modalService.refreshTable();
           }),
           catchError((err) => {
