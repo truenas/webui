@@ -121,3 +121,17 @@ body.jw-modal-open .slide-in-form .jw-modal-body {
     width: auto;
   }
 }
+
+.control-group {
+  color: var(--fg2);
+
+  .control-group-inner {
+    margin: 0 8px;
+  }
+
+  toolbar-menu {
+    max-height: 36px;
+  }
+}
+
+

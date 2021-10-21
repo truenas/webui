@@ -1,14 +1,14 @@
-<div class={{id}} [ngClass]="id!=='slide-in-form' ? 'jw-modal' : ''">
+<div class={{id}} [ngClass]="id !=='slide-in-form' ? 'jw-modal' : ''">
   <div class="jw-modal-body">
-    <div class="slidein-title-bar" fxLayout="row" >
+    <div class="slidein-title-bar" fxLayout="row">
       <div fxFlex="90%" fxLayout="row" fxLayoutAlign="start center">
-        <h3 class="formtitle">{{title | translate}}</h3>
-        <div style="color:var(--fg2);" *ngIf="conf && conf.titleBarControls" class="control-group" fxLayout="row" fxLayoutAlign="start center">
-          <div *ngFor="let control of conf.titleBarControls" style="margin: 0 8px;">
+        <h3 class="formtitle">{{ title | translate }}</h3>
+        <div *ngIf="conf && conf.titleBarControls" class="control-group" fxLayout="row" fxLayoutAlign="start center">
+          <div *ngFor="let control of conf.titleBarControls" class="control-group-inner">
             <toolbar-button *ngIf="control.type == 'button'" [config]="control" [controller]="conf.controller" ></toolbar-button>
             <toolbar-slider *ngIf="control.type == 'slider'" [config]="control" [controller]="conf.controller" ></toolbar-slider>
             <toolbar-input *ngIf="control.type == 'input'" [config]="control" [controller]="conf.controller" ></toolbar-input>
-            <toolbar-menu *ngIf="control.type == 'menu'" [config]="control" [controller]="conf.controller" style="max-height:36px;"></toolbar-menu>
+            <toolbar-menu *ngIf="control.type == 'menu'" [config]="control" [controller]="conf.controller"></toolbar-menu>
             <toolbar-checkbox *ngIf="control.type == 'checkbox'" [config]="control" [controller]="conf.controller"></toolbar-checkbox>
           </div>
         </div>
@@ -16,10 +16,10 @@
       <mat-icon fxFlex="10%" id="close-icon" (click)="close()">cancel</mat-icon>
     </div>
     <ng-container *ngIf="!wizard; else wizardBlock">
-      <ng-container *ngIf="(formOpen && conf && !conf.formType) || (formOpen && conf && conf.formType == 'EntityFormComponent') ">
+      <ng-container *ngIf="(formOpen && conf && !conf.formType) || (formOpen && conf && conf.formType == 'EntityFormComponent')">
         <entity-form *ngIf="conf.fieldSets" [conf]="conf" class="slidein-entity-form"></entity-form>
       </ng-container>
-      <ng-container *ngIf="formOpen && conf && conf.formType && conf.formType == 'EntityFormEmbeddedComponent' ">
+      <ng-container *ngIf="formOpen && conf && conf.formType && conf.formType == 'EntityFormEmbeddedComponent'">
         <entity-form-embedded *ngIf="conf.fieldSets && conf.target && conf.data" [target]="conf.target" [data]="conf.values" [conf]="conf" class="slidein-entity-form"></entity-form-embedded>
       </ng-container>
     </ng-container>
