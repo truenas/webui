@@ -15,7 +15,7 @@ import { helptext_system_general as helptext } from 'app/helptext/system/general
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
@@ -24,7 +24,6 @@ import { IxModalService } from 'app/services/ix-modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-gui-form',
   templateUrl: './gui-form.component.html',
   styleUrls: ['./gui-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -65,6 +64,7 @@ export class GuiFormComponent {
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
+    private errorHandler: FormErrorHandlerService,
   ) {
     this.sysGeneralService.getGeneralConfig$.pipe(
       untilDestroyed(this),
@@ -123,8 +123,7 @@ export class GuiFormComponent {
       this.handleServiceRestart(body);
     }, (error) => {
       this.isFormLoading = false;
-      this.modalService.close();
-      new EntityUtils().handleWSError(this, error);
+      this.errorHandler.handleWsFormError(error, this.formGroup);
     });
   }
 
