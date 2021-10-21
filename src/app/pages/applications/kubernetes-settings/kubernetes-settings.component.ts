@@ -8,9 +8,11 @@ import {
 import {
   catchError, filter, map, switchMap, tap,
 } from 'rxjs/operators';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/apps/apps';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
 import { ApplicationsService } from 'app/pages/applications/applications.service';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import {
   AppLoaderService, DialogService, WebSocketService,
@@ -49,13 +51,7 @@ export class KubernetesSettingsComponent implements OnInit {
 
   readonly reInitHelpText = helptext.kubForm.reInit.formWarning;
 
-  // TODO:
-  readonly nodeIpOptions$ = this.appService.getBindIPChoices().pipe(
-    map((ips) => Object.entries(ips).map(([label, value]) => ({
-      label,
-      value,
-    }))),
-  );
+  readonly nodeIpOptions$ = this.appService.getBindIPChoices().pipe(choicesToOptions());
 
   readonly routeInterfaceOptions$ = this.appService.getInterfaces().pipe(
     map((interfaces) => {
@@ -84,19 +80,25 @@ export class KubernetesSettingsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    // TODO: Handle error.
-    // TODO: Loading indicator.
+    this.isFormLoading = true;
     forkJoin([
       this.ws.call('kubernetes.config'),
       this.appService.getContainerConfig(),
-    ]).pipe(untilDestroyed(this)).subscribe(([kubernetesConfig, containerConfig]) => {
-      this.form.patchValue({
-        ...kubernetesConfig,
-        enable_container_image_update: containerConfig.enable_image_updates,
-      });
+    ]).pipe(untilDestroyed(this)).subscribe(
+      ([kubernetesConfig, containerConfig]) => {
+        this.form.patchValue({
+          ...kubernetesConfig,
+          enable_container_image_update: containerConfig.enable_image_updates,
+        });
 
-      this.oldConfig = kubernetesConfig;
-    });
+        this.oldConfig = kubernetesConfig;
+        this.isFormLoading = false;
+      },
+      (error) => {
+        this.isFormLoading = false;
+        new EntityUtils().handleWSError(null, error, this.dialogService);
+      },
+    );
   }
 
   onSubmit(): void {
