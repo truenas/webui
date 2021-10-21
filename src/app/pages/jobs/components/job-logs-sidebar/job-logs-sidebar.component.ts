@@ -1,6 +1,7 @@
 import {
-  Component, ChangeDetectionStrategy, EventEmitter, Input, Output, ChangeDetectorRef, OnChanges,
+  Component, ChangeDetectionStrategy, EventEmitter, Input, Output,
 } from '@angular/core';
+import { JobViewLogState } from 'app/enums/job-view-log-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 
 @Component({
@@ -9,20 +10,12 @@ import { Job } from 'app/interfaces/job.interface';
   styleUrls: ['./job-logs-sidebar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class JobLogsSidebarComponent implements OnChanges {
+export class JobLogsSidebarComponent {
   @Input() job: Job;
-  @Input() viewType: string;
+  @Input() viewType: JobViewLogState;
   @Output() closed = new EventEmitter<void>();
 
-  constructor(private cdr: ChangeDetectorRef) {}
-
-  ngOnChanges(): void {
-    const argument = document.getElementById('argument') as HTMLInputElement;
-    if (argument) {
-      argument.textContent = JSON.stringify(this.job.arguments, undefined, 2);
-    }
-    this.cdr.markForCheck();
-  }
+  readonly JobViewLogState = JobViewLogState;
 
   onCloseClicked(): void {
     this.closed.emit();

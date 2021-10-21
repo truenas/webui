@@ -12,6 +12,7 @@ import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
+import { JobViewLogState } from 'app/enums/job-view-log-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -44,7 +45,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   dataSource: MatTableDataSource<Job> = new MatTableDataSource<Job>([]);
   displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'arguments', 'logs_excerpt'];
   viewingLogsForJob: Job;
-  viewType: string;
+  viewType: JobViewLogState;
   isLoading: boolean;
   toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
@@ -62,6 +63,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     title: T('Loading...'),
   };
   readonly JobState = JobState;
+  readonly JobViewLogState = JobViewLogState;
   private paginator: MatPaginator;
 
   constructor(
@@ -134,7 +136,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
 
-  viewLogs(job: Job, viewType: string): void {
+  viewLogs(job: Job, viewType: JobViewLogState): void {
     this.viewingLogsForJob = job;
     this.viewType = viewType;
   }

@@ -1,7 +1,7 @@
 <mat-card class="card mat-elevation-z0">
   <div class="sidebar-sticky">
     <div class="sidebar-header">
-      <div class="sidebar-title">{{ viewType === 'log' ? ("Logs/Errors" | translate) : ("Arguments" | translate) }}</div>
+      <div class="sidebar-title">{{ viewType === JobViewLogState.Logs ? ("Logs/Errors" | translate) : ("Arguments" | translate) }}</div>
 
       <span class="action" [attr.title]="'Close' | translate" (click)="onCloseClicked()">
         <mat-icon>cancel</mat-icon>
@@ -10,7 +10,7 @@
 
     <div class="logs-information" >
       <ng-container
-        *ngIf="viewType === 'log'; then viewLogsTemplate; else viewArgumentsTemplate"
+        *ngIf="viewType === JobViewLogState.Logs; then viewLogsTemplate; else viewArgumentsTemplate"
       ></ng-container>
     </div>
 
@@ -33,7 +33,7 @@
 
     <ng-template #viewArgumentsTemplate>
       <div class="list-item">
-        <pre id="argument"></pre>
+        <pre>{{ job.arguments.length > 0 ? (job.arguments | json) : ('No arguments are passed' | translate) }}</pre>
       </div>
     </ng-template>
   </div>
