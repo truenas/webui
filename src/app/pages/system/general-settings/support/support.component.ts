@@ -19,6 +19,7 @@ import { SupportFormUnlicensedComponent } from './support-unlicensed/support-for
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
+  styleUrls: ['./support.component.scss'],
 })
 export class SupportComponent implements OnInit {
   isProduction: boolean;
