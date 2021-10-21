@@ -5,9 +5,9 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { helptext_system_ntpservers as helptext_ntp } from 'app/helptext/system/ntp-servers';
 import { CoreEvent } from 'app/interfaces/events';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
@@ -22,16 +22,11 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
-import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
+import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
-import {
-  WebSocketService, SystemGeneralService, DialogService, StorageService,
-}
-  from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { SystemGeneralService, DialogService, StorageService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
-import { ModalService } from 'app/services/modal.service';
 import { GuiFormComponent } from './gui-form/gui-form.component';
 
 @UntilDestroy()
@@ -42,12 +37,10 @@ import { GuiFormComponent } from './gui-form/gui-form.component';
 export class GeneralSettingsComponent implements OnInit {
   dataCards: DataCard[] = [];
   supportTitle = helptext.supportTitle;
-  ntpTitle = helptext.ntpTitle;
   localeData: DataCard;
+  ntpServersData: DataCard;
   configData: SystemGeneralConfig;
-  displayedColumns: string[];
   subs: Subs;
-  dataSource: NtpServer[];
   formEvent$: Subject<CoreEvent>;
   localizationSettings: LocalizationSettings;
 
@@ -115,12 +108,9 @@ export class GeneralSettingsComponent implements OnInit {
   };
 
   constructor(
-    private ws: WebSocketService,
     private localeService: LocaleService,
     private sysGeneralService: SystemGeneralService,
-    private modalService: ModalService,
     private dialog: DialogService,
-    private loader: AppLoaderService,
     private router: Router,
     public mdDialog: MatDialog,
     private core: CoreService,
@@ -135,9 +125,9 @@ export class GeneralSettingsComponent implements OnInit {
     this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getDataCardData();
     });
-    this.getNTPData();
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getNTPData();
+
+    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.ntpServersData?.tableConf?.tableComponent.getData();
     });
 
     this.formEvent$ = new Subject();
@@ -244,16 +234,43 @@ export class GeneralSettingsComponent implements OnInit {
           this.dataCards.push(this.localeData);
         });
       });
+
+      this.ntpServersData = {
+        id: 'ntp',
+        title: helptext.ntpTitle,
+        tableConf: {
+          title: helptext.ntpTitle,
+          queryCall: 'system.ntpserver.query',
+          deleteCall: 'system.ntpserver.delete',
+          deleteMsg: {
+            title: '',
+            key_props: ['address'],
+          },
+          parent: this,
+          columns: [
+            { name: helptext_ntp.address.label, prop: 'address' },
+            { name: helptext_ntp.burst.label, prop: 'burst', width: '40px' },
+            { name: helptext_ntp.iburst.label, prop: 'iburst', width: '40px' },
+            { name: helptext_ntp.prefer.label, prop: 'prefer', width: '40px' },
+            { name: helptext_ntp.minpoll.label, prop: 'minpoll', width: '60px' },
+            { name: helptext_ntp.maxpoll.label, prop: 'maxpoll', width: '60px' },
+          ],
+          add: () => {
+            this.ixModalService.open(NtpServerFormComponent, this.translate.instant('Add NTP Server'));
+          },
+          edit: (server: NtpServer) => {
+            const modal = this.ixModalService.open(NtpServerFormComponent, this.translate.instant('Edit NTP Server'));
+            modal.setupForm(server);
+          },
+        },
+      };
     });
   }
 
-  doAdd(name: string, id?: number): void {
+  doAdd(name: string): void {
     switch (name) {
       case 'gui':
         this.ixModalService.open(GuiFormComponent, this.translate.instant('GUI'));
-        break;
-      case 'ntp':
-        this.modalService.openInSlideIn(NtpServerFormComponent, id);
         break;
       default:
         const localizationFormModal = this.ixModalService.open(LocalizationFormComponent, this.translate.instant('Localization Settings'));
@@ -261,33 +278,6 @@ export class GeneralSettingsComponent implements OnInit {
         break;
     }
     this.sysGeneralService.sendConfigData(this.configData);
-  }
-
-  doNTPDelete(server: NtpServer): void {
-    this.dialog.confirm({
-      title: helptext.deleteServer.title,
-      message: `${helptext.deleteServer.message} ${server.address}?`,
-      buttonMsg: helptext.deleteServer.message,
-    }).pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.loader.open();
-      this.ws.call('system.ntpserver.delete', [server.id]).pipe(untilDestroyed(this)).subscribe(() => {
-        this.loader.close();
-        this.getNTPData();
-      }, (err) => {
-        this.loader.close();
-        this.dialog.errorReport('Error', err.reason, err.trace.formatted);
-      });
-    });
-  }
-
-  getNTPData(): void {
-    this.ws.call('system.ntpserver.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.dataSource = res;
-      this.displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll', 'actions'];
-    });
   }
 
   saveConfigSubmit(entityDialog: EntityDialogComponent): void {
