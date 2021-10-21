@@ -1,6 +1,7 @@
 .mat-card.error {
   margin: 16px auto 0;
   padding: 0 16px;
+  top: 0;
   width: 600px;
 }
 
@@ -24,7 +25,6 @@ nav.view-nav-bar {
 }
 
 .view-nav-btn-icon,
- 
 .view-nav-btn-label {
   display: inline-block;
 }
@@ -92,7 +92,6 @@ nav.view-nav-bar {
 }
 
 .main-content {
-  /*height:100%;*/
   overflow: auto;
   position: relative;
 }
@@ -106,4 +105,8 @@ nav.view-nav-bar {
 
 .lt-lg.enclosure-selector {
   color: var(--red);
+}
+
+.enclosure-disks-wrapper {
+  padding: 16px 64px;
 }
