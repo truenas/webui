@@ -3,8 +3,8 @@
   <div class="icon-menu" *ngIf="hasIconTypeMenuItem">
     <!-- Icon menu separator -->
     <div class="mt-1 mb-1 icon-menu-separator">
-      <mat-divider [style.margin]="'0 -24px'"></mat-divider>
-      <span [ngStyle]="{paddingLeft: 0, marginLeft: '-6px'}" class="nav-section-title text-muted">{{iconTypeMenuTitle}}</span>
+      <mat-divider class="nav-section-divider"></mat-divider>
+      <span class="nav-section-title text-muted">{{iconTypeMenuTitle}}</span>
     </div>
     <!-- Icon menu items -->
     <div class="icon-menu-item" *ngFor="let item of menuItems">
@@ -25,8 +25,8 @@
         <span class="menu-item-tooltip" [matTooltip]="item.tooltip" id="{{item.name}}" matTooltipPosition="right"></span>
         <!--<mat-icon>{{item.icon}}</mat-icon>-->
         <mat-icon *ngIf="item.icon !== 'jail_icon' && item.icon !== 'console-line'">{{item.icon}}</mat-icon>
-        <mat-icon *ngIf="item.icon === 'jail_icon'" svgIcon="{{item.icon}}" style="max-width:28px; margin:0 16px 0 10px;"></mat-icon>
-        <mat-icon *ngIf="item.icon === 'console-line'" role="img" fontSet="mdi-set" fontIcon="mdi-{{item.icon}}" style="font-size:24px;"></mat-icon>
+        <mat-icon *ngIf="item.icon === 'jail_icon'" svgIcon="{{item.icon}}" class="icon jail"></mat-icon>
+        <mat-icon *ngIf="item.icon === 'console-line'" role="img" fontSet="mdi-set" fontIcon="mdi-{{item.icon}}" class="icon console-line"></mat-icon>
         <span>{{item.name | translate}}</span>
       </a>
       <a *ngIf="item.type === 'slideOut'" name="{{item.name.replace(' ', '_')}}-menu" (click)="toggleMenu(item.state, item.sub)" class="sidenav-link">
@@ -42,7 +42,7 @@
         <mat-icon>{{item.icon}}</mat-icon>
         <span>{{item.name | translate}}</span>
       </a>
-      <a mat-button style="height: 0; position: absolute;">
+      <a mat-button class="absorbs-focus">
         <!-- 'absorbs' the focus behavior -->
       </a>
     </mat-list-item>
