@@ -1,6 +1,7 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
+import pytest
 import time
 from function import wait_on_element, is_element_present, wait_on_element_disappear
 from pytest_bdd import (
@@ -10,6 +11,9 @@ from pytest_bdd import (
     when,
     parsers
 )
+
+# Comment pytestmark to stop skipping this test
+# pytestmark = pytest.mark.skip('Skip for testing')
 
 
 @scenario('features/NAS-T961.feature', 'Creating new pool and set it as System Dataset')

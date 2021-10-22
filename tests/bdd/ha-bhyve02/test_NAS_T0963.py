@@ -1,6 +1,6 @@
 # coding=utf-8
 """SCALE High Availability (tn-bhyve01) feature tests."""
-
+import pytest
 from function import (
     wait_on_element,
     is_element_present,
@@ -13,6 +13,9 @@ from pytest_bdd import (
     when,
     parsers
 )
+
+# Comment pytestmark to stop skipping this test
+pytestmark = pytest.mark.skip('Skip for testing')
 
 
 @scenario('features/NAS-T963.feature', 'Add an ACL Item and verify is preserve')
