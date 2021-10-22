@@ -18,9 +18,7 @@
       [required]="required"
       [disabled]="isDisabled"
       [type]="type"
-      (focus)="focus()"
       (input)="input($event.target.value)"
-      (ngModelChange)="onChange($event)"
       (blur)="blur()"
     >
     <span *ngIf="shouldShowResetInput()" class="reset-input">

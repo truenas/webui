@@ -33,7 +33,13 @@
           [label]="helptext.ui_port.label | translate"
           [tooltip]="helptext.ui_port.tooltip | translate"
           type="number"
-          [formatInput]="formatInput"
+        ></ix-input>
+
+        <ix-input
+          formControlName="ui_port2"
+          [label]="'Formatted Input'"
+          [tooltip]="helptext.ui_port.tooltip | translate"
+          [parseAndFormatInput]="parseAndFormatInput"
         ></ix-input>
 
         <ix-input

@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
@@ -15,7 +16,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
     { provide: MAT_INPUT_VALUE_ACCESSOR, useExisting: IxInputComponent },
   ],
 })
-export class IxInputComponent implements ControlValueAccessor {
+export class IxInputComponent implements ControlValueAccessor, AfterViewInit {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() prefixIcon: string;
@@ -23,13 +24,14 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() type: string;
-  @Input() formatInput: { formatValue: (value: string) => string; unformatValue: (value: string) => string };
+  @Input() parseAndFormatInput: (value: string) => { parsed: string; formatted: string };
 
-  @ViewChild('ixInput') elementRef: ElementRef;
+  @ViewChild('ixInput') elementRef: ElementRef<HTMLInputElement>;
 
   formControl = new FormControl(this).value as FormControl;
 
   value = '';
+  formatted = '';
   isDisabled = false;
 
   onChange: (value: string | number) => void = (): void => {};
@@ -42,21 +44,30 @@ export class IxInputComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
-  isInputMasked(): boolean {
-    if (this.formatInput && this.formatInput.formatValue && this.formatInput.unformatValue) {
-      return true;
-    }
-    if (this.formatInput && (this.formatInput.formatValue || this.formatInput.unformatValue)) {
-      console.error('`' + this.label, '` : Provide both formatValue and unformatValue to mask the input.');
-    }
-    return false;
+  get isInputMasked(): boolean {
+    return !!this.parseAndFormatInput;
   }
 
   writeValue(value: string): void {
-    this.value = value;
-    this.onChange(value);
-    this.handleFormatValue(value);
+    let parsed = value;
+    let formatted = value;
+    if (this.isInputMasked && value) {
+      const parsedAndFormatted = this.parseAndFormatInput(value);
+      parsed = parsedAndFormatted.parsed;
+      formatted = parsedAndFormatted.formatted;
+      if (this.elementRef && this.elementRef.nativeElement) {
+        this.elementRef.nativeElement.value = formatted;
+      }
+    }
+    this.value = parsed;
+    this.formatted = formatted;
+    this.onChange(this.value);
     this.cdr.markForCheck();
+  }
+
+  ngAfterViewInit(): void {
+    this.elementRef.nativeElement.value = this.formatted;
+    this.onChange(this.value);
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
@@ -75,8 +86,20 @@ export class IxInputComponent implements ControlValueAccessor {
     return this.value && this.value.toString().length > 0;
   }
 
+  input(value: string): void {
+    this.value = value;
+    this.formatted = value;
+    if (this.isInputMasked && !!value) {
+      const { parsed, formatted } = this.parseAndFormatInput(value);
+      this.value = parsed;
+      this.formatted = formatted;
+    }
+    this.onChange(this.value);
+  }
+
   resetInput(): void {
     this.value = '';
+    this.formatted = '';
     this.onChange('');
   }
 
@@ -85,37 +108,14 @@ export class IxInputComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  focus(): void {
-    this.onTouch();
-    if (this.isInputMasked()) {
-      this.handleUnformatValue();
-    }
-  }
-
-  input(value: string): void {
-    this.value = value;
-    this.onChange(value);
-  }
-
   blur(): void {
     this.onTouch();
-    if (this.isInputMasked()) {
-      this.handleFormatValue(this.value);
+    if (this.isInputMasked && !!this.value) {
+      const { parsed, formatted } = this.parseAndFormatInput(this.value);
+      this.value = parsed;
+      this.elementRef.nativeElement.value = formatted;
     }
-  }
-
-  private handleFormatValue(value: string | null): void {
-    if (value !== null && this.formatInput?.formatValue && this.elementRef?.nativeElement) {
-      this.elementRef.nativeElement.value = this.formatInput.formatValue(value);
-    }
-    this.cdr.markForCheck();
-  }
-
-  private handleUnformatValue(value: string = this.elementRef.nativeElement.value): void {
-    if (value && this.formatInput?.unformatValue && this.elementRef?.nativeElement) {
-      this.value = this.formatInput.unformatValue(value);
-      this.elementRef.nativeElement.value = this.value;
-    }
+    this.onChange(this.value);
     this.cdr.markForCheck();
   }
 }

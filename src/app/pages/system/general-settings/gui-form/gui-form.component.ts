@@ -17,7 +17,7 @@ import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  DialogService, SystemGeneralService, WebSocketService,
+  DialogService, StorageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { IxModalService } from 'app/services/ix-modal.service';
@@ -45,6 +45,7 @@ export class GuiFormComponent {
     crash_reporting: [false, [Validators.required]],
     usage_collection: [false, [Validators.required]],
     ui_consolemsg: [false, [Validators.required]],
+    ui_port2: ['2 mib'],
   });
 
   options = {
@@ -65,6 +66,7 @@ export class GuiFormComponent {
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
+    private storageService: StorageService,
   ) {
     this.sysGeneralService.getGeneralConfig$.pipe(
       untilDestroyed(this),
@@ -87,13 +89,23 @@ export class GuiFormComponent {
     });
   }
 
-  formatInput = {
-    formatValue: (value: string) => {
-      return value + '9';
-    },
-    unformatValue: (value: string) => {
-      return value.replace('9', '');
-    },
+  parseAndFormatInput = (value: string): { parsed: string; formatted: string } => {
+    value = value.toString();
+    if (!value) {
+      return { parsed: '', formatted: '' };
+    }
+    let parsed = '';
+    let formatted = '';
+    const vm_memory_requested = this.storageService.convertHumanStringToNum(value);
+    if (Number.isNaN(vm_memory_requested)) {
+      console.error(vm_memory_requested); // leaves form in previous error state
+    } else if (value.replace(/\s/g, '').match(/[^0-9]/g) === null) {
+      formatted = this.storageService.convertBytestoHumanReadable(value.replace(/\s/g, ''), 0);
+    } else {
+      formatted = this.storageService.humanReadable;
+    }
+    parsed = vm_memory_requested.toString();
+    return { parsed, formatted };
   };
 
   reconnect(href: string): void {
