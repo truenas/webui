@@ -237,15 +237,15 @@ def on_the_dashboard_wait_for_the_active_directory_service(driver):
     """on the Dashboard, wait for the Active Directory service."""
     assert wait_on_element(driver, 60, '//h1[text()="Dashboard"]')
     assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
+    if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
+        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
     # Wait for the directories service manager button
-    assert wait_on_element(driver, 60, '//button[@id="dirservices-manager"]')
+    assert wait_on_element(driver, 120, '//button[@id="dirservices-manager"]')
     # Wait for the badge of the task-manager to go away before going forward
     no_badge = '//span[contains(@id,"mat-badge-content") and not(contains(text(),"0"))]'
     assert wait_on_element_disappear(driver, 60, f'//button[@id="task-manager"]{no_badge}')
-    if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     time.sleep(5)
 
 
