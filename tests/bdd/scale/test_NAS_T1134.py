@@ -67,8 +67,8 @@ def the_add_datasetpage_should_open_input_ericbsd_dataset_for_the_naem_and_click
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element(driver, 5, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    #assert wait_on_element(driver, 5, '//h6[contains(.,"Please wait")]')
+    #assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
     
 @then(parsers.parse('the {dataset_name} should be created, click the dataset three dots and select View Permissions, then click the pencil to Edit'))
