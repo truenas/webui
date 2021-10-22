@@ -229,7 +229,7 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
     driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
     assert wait_on_element(driver, 4, '//button[@name="signin_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    time.sleep(2)
+    time.sleep(1)
 
 
 @then('on the Dashboard, wait for the Active Directory service')
@@ -241,12 +241,11 @@ def on_the_dashboard_wait_for_the_active_directory_service(driver):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
-    # Wait for the directories service manager button
-    assert wait_on_element(driver, 120, '//button[@id="dirservices-manager"]')
     # Wait for the badge of the task-manager to go away before going forward
     no_badge = '//span[contains(@id,"mat-badge-content") and not(contains(text(),"0"))]'
-    assert wait_on_element_disappear(driver, 60, f'//button[@id="task-manager"]{no_badge}')
-    time.sleep(5)
+    assert wait_on_element_disappear(driver, 120, f'//button[@id="task-manager"]{no_badge}')
+    # Wait for the directories service manager button
+    assert wait_on_element(driver, 120, '//button[@id="dirservices-manager"]')
 
 
 @then('after click Storage on the left sidebar Storage')
