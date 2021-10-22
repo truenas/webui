@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
-import { MAT_INPUT_VALUE_ACCESSOR } from '@angular/material/input';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -11,9 +10,6 @@ import { UntilDestroy } from '@ngneat/until-destroy';
   templateUrl: './ix-input.component.html',
   styleUrls: ['./ix-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [
-    { provide: MAT_INPUT_VALUE_ACCESSOR, useExisting: IxInputComponent },
-  ],
 })
 export class IxInputComponent implements ControlValueAccessor {
   @Input() label: string;
@@ -31,6 +27,7 @@ export class IxInputComponent implements ControlValueAccessor {
   value = '';
   formatted = '';
   isDisabled = false;
+  shouldUpdateValueAsap = false;
 
   onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -53,6 +50,10 @@ export class IxInputComponent implements ControlValueAccessor {
       const parsedAndFormatted = this.parseAndFormatInput(value);
       parsed = parsedAndFormatted.parsed;
       formatted = parsedAndFormatted.formatted;
+      /** This flag exists because when default value is used, onChange is not registered yet
+       * So parsed value isn't immediately updated
+       */
+      this.shouldUpdateValueAsap = true;
     }
     this.value = parsed;
     this.formatted = formatted;
@@ -62,6 +63,9 @@ export class IxInputComponent implements ControlValueAccessor {
 
   registerOnChange(onChange: (value: string | number) => void): void {
     this.onChange = onChange;
+    if (this.shouldUpdateValueAsap) {
+      this.onChange(this.value);
+    }
   }
 
   registerOnTouched(onTouched: () => void): void {
