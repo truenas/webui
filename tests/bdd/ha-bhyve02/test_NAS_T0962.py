@@ -229,7 +229,7 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
     driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(password)
     assert wait_on_element(driver, 4, '//button[@name="signin_button"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    time.sleep(1)
+    time.sleep(2)
 
 
 @then('on the Dashboard, wait for the Active Directory service')
@@ -237,10 +237,10 @@ def on_the_dashboard_wait_for_the_active_directory_service(driver):
     """on the Dashboard, wait for the Active Directory service."""
     assert wait_on_element(driver, 60, '//h1[text()="Dashboard"]')
     assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
-    if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    if wait_on_element(driver, 3, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
+        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Wait for the badge of the task-manager to go away before going forward
     no_badge = '//span[contains(@id,"mat-badge-content") and not(contains(text(),"0"))]'
     assert wait_on_element_disappear(driver, 120, f'//button[@id="task-manager"]{no_badge}')
