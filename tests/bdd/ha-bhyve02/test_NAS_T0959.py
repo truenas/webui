@@ -22,8 +22,6 @@ from pytest_bdd import (
     parsers
 )
 
-# Comment pytestmark to stop skipping this test
-pytestmark = pytest.mark.skip('Skip for testing')
 
 localHome = os.path.expanduser('~')
 dotsshPath = localHome + '/.ssh'

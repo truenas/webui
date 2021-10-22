@@ -1,7 +1,6 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
-import pytest
 import time
 from function import (
     wait_on_element,
@@ -15,9 +14,6 @@ from pytest_bdd import (
     when,
     parsers
 )
-
-# Comment pytestmark to stop skipping this test
-pytestmark = pytest.mark.skip('Skip for testing')
 
 
 @scenario('features/NAS-T952.feature', 'Edit user home directory')

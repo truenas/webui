@@ -1,7 +1,6 @@
 # coding=utf-8
 """High Availability (tn-bhyve01) feature tests."""
 
-import pytest
 import time
 from function import (
     wait_on_element,
@@ -16,9 +15,6 @@ from pytest_bdd import (
     when,
     parsers
 )
-
-# Comment pytestmark to stop skipping this test
-# pytestmark = pytest.mark.skip('Skip for testing')
 
 
 @scenario('features/NAS-T961.feature', 'Creating new pool and set it as System Dataset')
@@ -221,9 +217,16 @@ def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
     assert results.json()['pool'] == 'dozer', results.text
 
 
-@then('press Initiate Failover')
-def press_Initiate_Failover(driver):
-    """press Initiate Failover."""
+@then('press Initiate Failover and confirm')
+def press_Initiate_Failover_and_confirm(driver):
+    """press Initiate Failover and confirm."""
+    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 10, '//span[text()="(Standby)"]')
+    assert wait_on_element(driver, 10, '//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]', 'clickable')
+    driver.find_element_by_xpath('//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[contains(@class,"confirm-checkbox")]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
     assert wait_on_element(driver, 5, '//button[.//text()="Failover"]', 'clickable')
     driver.find_element_by_xpath('//button[.//text()="Failover"]').click()
 
