@@ -47,7 +47,7 @@ export class NotificationsService {
         this.subject$.next(this.notifications);
       });
 
-      this.ws.sub<Alert>('alert.list').pipe(untilDestroyed(this)).subscribe((alert) => {
+      this.ws.sub('alert.list').pipe(untilDestroyed(this)).subscribe((alert) => {
         // check for updates to alerts
         const notification = this.alertsArrivedHandler([alert])[0];
         if (!_.find(this.notifications, { id: notification.id })) {

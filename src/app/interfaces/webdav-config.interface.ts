@@ -1,5 +1,5 @@
 export interface WebdavConfig {
-  certssl: any;
+  certssl: number;
   htauth: string;
   id: number;
   password: string;

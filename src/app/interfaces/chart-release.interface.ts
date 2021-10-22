@@ -98,7 +98,7 @@ export interface ChartSchemaNodeConf {
   type: string;
   attrs?: ChartSchemaNode[];
   items?: ChartSchemaNode[];
-  default?: any;
+  default?: boolean;
   enum?: ChartSchemaEnum[];
   required?: boolean;
   value?: string;

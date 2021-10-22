@@ -6,3 +6,16 @@ export interface FailoverConfig {
 }
 
 export type FailoverUpdate = Omit<FailoverConfig, 'id'>;
+
+export type FailoverRemoteCall = [
+  method: string,
+  arguments?: unknown,
+  params?: FailoverRemoteCallParams,
+];
+
+export interface FailoverRemoteCallParams {
+  timeout?: number;
+  job?: boolean;
+  job_return?: boolean;
+  callback?: unknown;
+}

@@ -1,3 +1,4 @@
+import { Alert } from 'app/interfaces/alert.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { DirectoryServicesState } from 'app/interfaces/directory-services-state.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -7,7 +8,7 @@ import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface'
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 
 export type ApiEventDirectory = {
-  'alert.list': { response: any };
+  'alert.list': { response: Alert };
   'chart.release.query': { response: ChartRelease };
   'core.get_jobs': { response: Job };
   'directoryservices.status': { response: DirectoryServicesState };
