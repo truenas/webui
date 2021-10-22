@@ -24,6 +24,7 @@ export class IxInputComponent implements ControlValueAccessor, AfterViewInit {
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() type: string;
+  /** If formatted value returned is a string and input type is a number, the input will stay empty */
   @Input() parseAndFormatInput: (value: string) => { parsed: string; formatted: string };
 
   @ViewChild('ixInput') elementRef: ElementRef<HTMLInputElement>;
