@@ -166,7 +166,7 @@ def run_cmd_on_the_nas_with_ssh(driver, cmd):
     """run "cmd" on the NAS with ssh."""
     global results
     results = ssh_cmd(cmd, 'root', 'testing', host)
-    assert results['result'], results['output']
+    assert results['result'], f'STDOUT: {results["output"]}, STDERR: {results["stderr"]}'
 
 
 @then(parsers.parse('verify that "{ad_object}" is in  wbinfo -u output'))
