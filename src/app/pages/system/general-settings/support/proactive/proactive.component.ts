@@ -254,7 +254,7 @@ export class ProactiveComponent implements FormConfiguration {
     this.loader.open();
     this.ws.call('support.update', [data]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.dialogService.info(helptext.proactive.dialog_title,
         helptext.proactive.dialog_mesage, '350px', 'info', true);
     },

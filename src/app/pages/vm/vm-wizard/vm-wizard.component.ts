@@ -1118,7 +1118,7 @@ export class VMWizardComponent implements WizardConfiguration {
         combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.loader.close();
-            this.modalService.close('slide-in-form');
+            this.modalService.closeSlideIn();
           },
           (error) => {
             setTimeout(() => {
@@ -1163,7 +1163,7 @@ export class VMWizardComponent implements WizardConfiguration {
         combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.loader.close();
-            this.modalService.close('slide-in-form');
+            this.modalService.closeSlideIn();
           },
           (error) => {
             setTimeout(() => {

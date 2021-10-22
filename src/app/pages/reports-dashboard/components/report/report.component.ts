@@ -391,12 +391,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   handleError(evt: CoreEvent): void {
-    if (evt.data?.name === 'FetchingError'
-      && [
-        ReportingDatabaseError.FailedExport,
-        ReportingDatabaseError.InvalidTimestamp,
-      ].includes(evt.data?.data?.error)
-    ) {
+    if (evt.data?.name === 'FetchingError' && evt.data?.data?.error === ReportingDatabaseError.InvalidTimestamp) {
       const err = evt.data.data;
       this.report.errorConf = {
         type: EmptyType.Errors,

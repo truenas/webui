@@ -147,7 +147,7 @@ export class ChartFormComponent implements FormConfiguration {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.modalService.refreshTable();
     });
   }

@@ -10,6 +10,7 @@ import { Certificate } from 'app/interfaces/certificate.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui-form/gui-form.component';
 import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
@@ -68,6 +69,7 @@ describe('GuiFormComponent', () => {
           'TLSv1.3': 'TLSv1.3',
         }),
       }),
+      mockProvider(FormErrorHandlerService),
     ],
   });
 

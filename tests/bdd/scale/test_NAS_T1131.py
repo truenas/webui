@@ -69,6 +69,10 @@ def the_add_datasetpage_should_open_input_wheel_dataset_for_the_naem_and_click_s
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(dataset_name)
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Share Type"]')
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Share Type"]').click()
+    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Share Type_SMB"]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
@@ -94,17 +98,21 @@ def the_wheel_dataset_should_be_created_click_the_dataset_three_dots_and_select_
 def the_edit_permissions_page_should_open_select_root_for_user_click_on_the_apply_user_checkbox_select_wheel_for_group_name_click_on_the_apply_group_checkbox_click_on_group_write_access_and_click_the_save_button(driver):
     """the Edit Permissions page should open, select root for User, click on the Apply User checkbox, select wheel for Group name, click on the Apply Group checkbox, click on Group Write Access, and click the Save button."""
     time.sleep(1)
-    driver.find_element_by_xpath('//input[@data-placeholder="User"]').clear()
-    driver.find_element_by_xpath('//input[@data-placeholder="User"]').send_keys('root')
-    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').click()
-    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@data-placeholder="Group"]').send_keys('root')
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Apply User"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply User"]').click()
-    assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Add Item")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Add Item")]').click()
+    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Who"]/div/div/span[contains(.,"User")]')
+    time.sleep(1)
+    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Who"]/div/div/span[contains(.,"User")]').click()
+    assert wait_on_element(driver, 5, '//mat-option[@ix-auto="option__Who_Group"]')
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Who_Group"]').click()
+    assert wait_on_element(driver, 5, '(//div[@ix-auto="combobox__Group"]//mat-form-field//input[@data-placeholder="Group"])')
+    driver.find_element_by_xpath('(//div[@ix-auto="combobox__Group"]//mat-form-field//input[@data-placeholder="Group"])').send_keys("root")
+    time.sleep(1)
+    driver.find_element_by_xpath('(//div[@ix-auto="combobox__Group"]//mat-form-field//input[@data-placeholder="Group"])').click()
+    assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__root"]')
+    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__root"]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save Access Control List")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save Access Control List")]').click()
 
 
 @then('you should be returned to the pool list page, click on the wheel_dataset three dots button, view and edit Permissions, and the Edit Permissions page should open')
@@ -118,19 +126,12 @@ def you_should_be_returned_to_the_pool_list_page_click_on_the_wheel_dataset_thre
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//mat-icon[text()="edit"]')
-    driver.find_element_by_xpath('//mat-icon[text()="edit"]').click()
 
 
 @then('verify that the user is root and the group is wheel')
 def verify_that_the_user_is_root_and_the_group_is_wheel(driver):
     """verify that the user is root and the group is wheel."""
-    element1 = driver.find_element_by_xpath('//input[@data-placeholder="User"]')
-    assert element1.get_attribute('value') != '', element1.get_attribute('root')
-    element2 = driver.find_element_by_xpath('//input[@data-placeholder="Group"]')
-    assert element2.get_attribute('value') != '', element2.get_attribute('root')
-
+    assert wait_on_element(driver, 5, '//div[contains(text(),"Group - root")]')
 
     ## return to dashboard
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')

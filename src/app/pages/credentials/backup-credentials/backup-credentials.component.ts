@@ -1,20 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
-import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import {
-  WebSocketService, KeychainCredentialService, AppLoaderService,
-  DialogService, ReplicationService, StorageService, CloudCredentialService,
+  KeychainCredential,
+  KeychainSshCredentials,
+  KeychainSshKeyPair,
+} from 'app/interfaces/keychain-credential.interface';
+import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
+import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
+import {
+  KeychainCredentialService, ReplicationService, StorageService, CloudCredentialService,
 } from 'app/services';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { ModalService } from 'app/services/modal.service';
 import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
 import { SshConnectionsFormComponent } from './forms/ssh-connections-form.component';
-import { SshKeypairsFormComponent } from './forms/ssh-keypairs-form.component';
 
 @UntilDestroy()
 @Component({
@@ -25,25 +29,23 @@ import { SshKeypairsFormComponent } from './forms/ssh-keypairs-form.component';
 export class BackupCredentialsComponent implements OnInit {
   cards: { name: string; tableConf: AppTableConfig }[];
 
-  // Components included in this dashboard
-  protected sshConnections: SshConnectionsFormComponent;
-  protected sshKeypairs: SshKeypairsFormComponent;
-  protected cloudCredentials: CloudCredentialsFormComponent;
   protected providers: CloudsyncProvider[];
 
-  constructor(private aroute: ActivatedRoute, private keychainCredentialService: KeychainCredentialService,
-    private ws: WebSocketService, private loader: AppLoaderService, private dialogService: DialogService,
-    private replicationService: ReplicationService, private storage: StorageService,
-    private cloudCredentialsService: CloudCredentialService, private router: Router,
-    private modalService: ModalService) {}
+  constructor(
+    private storage: StorageService,
+    private cloudCredentialsService: CloudCredentialService,
+    private modalService: ModalService,
+    private ixModalService: IxModalService,
+    private translate: TranslateService,
+  ) {}
 
   ngOnInit(): void {
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getCards();
     });
-    this.refreshForms();
-    this.modalService.refreshForm$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshForms();
+
+    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.getCards();
     });
 
     this.cloudCredentialsService.getProviders().pipe(untilDestroyed(this)).subscribe(
@@ -69,11 +71,11 @@ export class BackupCredentialsComponent implements OnInit {
           ],
           hideHeader: false,
           parent: this,
-          add() {
-            this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials);
+          add: () => {
+            this.modalService.openInSlideIn(CloudCredentialsFormComponent);
           },
-          edit(row: CloudsyncCredential) {
-            this.parent.modalService.open('slide-in-form', this.parent.cloudCredentials, row.id);
+          edit: (row: CloudsyncCredential) => {
+            this.modalService.openInSlideIn(CloudCredentialsFormComponent, row.id);
           },
           dataSourceHelper: this.cloudCredentialsDataSourceHelper.bind(this),
         },
@@ -90,11 +92,11 @@ export class BackupCredentialsComponent implements OnInit {
           ],
           hideHeader: true,
           parent: this,
-          add() {
-            this.parent.modalService.open('slide-in-form', this.parent.sshConnections);
+          add: () => {
+            this.modalService.openInSlideIn(SshConnectionsFormComponent);
           },
-          edit(row: KeychainCredential) {
-            this.parent.modalService.open('slide-in-form', this.parent.sshConnections, row.id);
+          edit: (row: KeychainCredential) => {
+            this.modalService.openInSlideIn(SshConnectionsFormComponent, row.id);
           },
         },
       }, {
@@ -111,11 +113,12 @@ export class BackupCredentialsComponent implements OnInit {
           ],
           hideHeader: true,
           parent: this,
-          add() {
-            this.parent.modalService.open('slide-in-form', this.parent.sshKeypairs);
+          add: () => {
+            this.ixModalService.open(SshKeypairFormComponent, this.translate.instant('SSH Keypairs'));
           },
-          edit(row: KeychainCredential) {
-            this.parent.modalService.open('slide-in-form', this.parent.sshKeypairs, row.id);
+          edit: (row: KeychainSshKeyPair) => {
+            const modal = this.ixModalService.open(SshKeypairFormComponent, this.translate.instant('SSH Keypairs'));
+            modal.setKeypairForEditing(row);
           },
         },
       },
@@ -134,12 +137,16 @@ export class BackupCredentialsComponent implements OnInit {
     });
   }
 
-  sshConnectionsDataSourceHelper(res: KeychainCredential[]): KeychainCredential[] {
-    return res.filter((item) => item.type === KeychainCredentialType.SshCredentials);
+  sshConnectionsDataSourceHelper(res: KeychainCredential[]): KeychainSshCredentials[] {
+    return res.filter((item) => {
+      return item.type === KeychainCredentialType.SshCredentials;
+    }) as KeychainSshCredentials[];
   }
 
-  sshKeyPairsDataSourceHelper(res: KeychainCredential[]): KeychainCredential[] {
-    return res.filter((item) => item.type === KeychainCredentialType.SshKeyPair);
+  sshKeyPairsDataSourceHelper(res: KeychainCredential[]): KeychainSshKeyPair[] {
+    return res.filter((item) => {
+      return item.type === KeychainCredentialType.SshKeyPair;
+    }) as KeychainSshKeyPair[];
   }
 
   sshKeyPairActions(): AppTableAction<KeychainCredential>[] {
@@ -156,14 +163,5 @@ export class BackupCredentialsComponent implements OnInit {
         }
       },
     }];
-  }
-
-  refreshForms(): void {
-    this.sshConnections = new SshConnectionsFormComponent(this.aroute, this.keychainCredentialService,
-      this.ws, this.loader, this.dialogService, this.replicationService, this.modalService);
-    this.sshKeypairs = new SshKeypairsFormComponent(this.aroute, this.ws, this.loader,
-      this.dialogService, this.storage, this.modalService);
-    this.cloudCredentials = new CloudCredentialsFormComponent(this.router, this.aroute, this.ws,
-      this.cloudCredentialsService, this.dialogService, this.replicationService, this.modalService);
   }
 }

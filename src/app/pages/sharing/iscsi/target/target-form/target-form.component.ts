@@ -240,7 +240,7 @@ export class TargetFormComponent implements FormConfiguration {
     this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
       },
       (res) => {
         this.loader.close();
@@ -250,6 +250,6 @@ export class TargetFormComponent implements FormConfiguration {
   }
 
   afterSubmit(): void {
-    this.modalService.close('slide-in-form');
+    this.modalService.closeSlideIn();
   }
 }
