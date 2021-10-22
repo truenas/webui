@@ -1536,7 +1536,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     this.entityForm.submitFunction(value).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.entityForm.loader.close();
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         this.modalService.refreshTable();
       },
       (err: WebsocketError) => {

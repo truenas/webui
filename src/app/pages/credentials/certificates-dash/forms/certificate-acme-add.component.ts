@@ -221,7 +221,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialog.closeAll();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.modalService.refreshTable();
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {

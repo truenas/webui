@@ -8,7 +8,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { BootEnvService, WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
 
@@ -39,6 +39,7 @@ export class BootEnvironmentFormComponent {
     private ws: WebSocketService,
     private bootEnvService: BootEnvService,
     private modalService: IxModalService,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   setupForm(name?: string): void {
@@ -56,33 +57,24 @@ export class BootEnvironmentFormComponent {
       name: this.formGroup.value.name,
     };
 
+    let request$: Observable<unknown>;
+
     if (this.rename) {
-      const update$: Observable<unknown> = this.ws.call('bootenv.update', [
+      request$ = this.ws.call('bootenv.update', [
         this.currentName,
         fields,
       ]);
-
-      update$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.isFormLoading = false;
-        this.modalService.close();
-      }, (error) => {
-        this.isFormLoading = false;
-        this.modalService.close();
-        new EntityUtils().handleWSError(this, error);
-      });
     } else {
-      const create$: Observable<unknown> = this.ws.call('bootenv.create', [fields]);
-
-      create$.pipe(untilDestroyed(this)).subscribe(() => {
-        this.isFormLoading = false;
-        this.modalService.close();
-      }, (error) => {
-        this.isFormLoading = false;
-        this.modalService.close();
-        new EntityUtils().handleWSError(this, error);
-      });
+      request$ = this.ws.call('bootenv.create', [fields]);
     }
 
     this.isFormLoading = true;
+    request$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.isFormLoading = false;
+      this.modalService.close();
+    }, (error) => {
+      this.isFormLoading = false;
+      this.errorHandler.handleWsFormError(error, this.formGroup);
+    });
   }
 }

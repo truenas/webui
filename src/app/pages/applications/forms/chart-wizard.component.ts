@@ -159,7 +159,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.modalService.refreshTable();
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {

@@ -9,7 +9,7 @@ import { map } from 'rxjs/operators';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -103,6 +103,7 @@ export class LocalizationFormComponent {
     protected ws: WebSocketService,
     protected langService: LanguageService,
     private modalService: IxModalService,
+    private errorHandler: FormErrorHandlerService,
   ) { }
 
   setTimeOptions(tz: string): void {
@@ -135,10 +136,9 @@ export class LocalizationFormComponent {
       this.modalService.close();
       this.setTimeOptions(body.timezone);
       this.langService.setLanguage(body.language);
-    }, (res) => {
+    }, (error) => {
       this.formIsLoading = false;
-      this.modalService.close();
-      new EntityUtils().handleWSError(this, res);
+      this.errorHandler.handleWsFormError(error, this.formGroup);
     });
   }
 }
