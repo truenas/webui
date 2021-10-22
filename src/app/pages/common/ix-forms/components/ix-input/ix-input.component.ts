@@ -1,6 +1,5 @@
 import {
-  AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, ViewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { MAT_INPUT_VALUE_ACCESSOR } from '@angular/material/input';
@@ -16,7 +15,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
     { provide: MAT_INPUT_VALUE_ACCESSOR, useExisting: IxInputComponent },
   ],
 })
-export class IxInputComponent implements ControlValueAccessor, AfterViewInit {
+export class IxInputComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() prefixIcon: string;
@@ -26,8 +25,6 @@ export class IxInputComponent implements ControlValueAccessor, AfterViewInit {
   @Input() type: string;
   /** If formatted value returned is a string and input type is a number, the input will stay empty */
   @Input() parseAndFormatInput: (value: string) => { parsed: string; formatted: string };
-
-  @ViewChild('ixInput') elementRef: ElementRef<HTMLInputElement>;
 
   formControl = new FormControl(this).value as FormControl;
 
@@ -56,19 +53,11 @@ export class IxInputComponent implements ControlValueAccessor, AfterViewInit {
       const parsedAndFormatted = this.parseAndFormatInput(value);
       parsed = parsedAndFormatted.parsed;
       formatted = parsedAndFormatted.formatted;
-      if (this.elementRef && this.elementRef.nativeElement) {
-        this.elementRef.nativeElement.value = formatted;
-      }
     }
     this.value = parsed;
     this.formatted = formatted;
     this.onChange(this.value);
     this.cdr.markForCheck();
-  }
-
-  ngAfterViewInit(): void {
-    this.elementRef.nativeElement.value = this.formatted;
-    this.onChange(this.value);
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
@@ -91,9 +80,8 @@ export class IxInputComponent implements ControlValueAccessor, AfterViewInit {
     this.value = value;
     this.formatted = value;
     if (this.isInputMasked && !!value) {
-      const { parsed, formatted } = this.parseAndFormatInput(value);
+      const { parsed } = this.parseAndFormatInput(value);
       this.value = parsed;
-      this.formatted = formatted;
     }
     this.onChange(this.value);
   }
@@ -114,7 +102,7 @@ export class IxInputComponent implements ControlValueAccessor, AfterViewInit {
     if (this.isInputMasked && !!this.value) {
       const { parsed, formatted } = this.parseAndFormatInput(this.value);
       this.value = parsed;
-      this.elementRef.nativeElement.value = formatted;
+      this.formatted = formatted;
     }
     this.onChange(this.value);
     this.cdr.markForCheck();
