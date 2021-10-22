@@ -22,7 +22,6 @@ from pytest_bdd import (
     parsers
 )
 
-
 localHome = os.path.expanduser('~')
 dotsshPath = localHome + '/.ssh'
 keyPath = localHome + '/.ssh/ui_test_id_rsa'
