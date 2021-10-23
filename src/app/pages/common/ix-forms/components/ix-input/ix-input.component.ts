@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
+import { ParseAndFormatIxInput } from 'app/interfaces/parsed-and-formatted.interface';
 
 @UntilDestroy()
 @Component({
@@ -19,8 +20,10 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() type: string;
-  /** If formatted value returned is a string and input type is a number, the input will stay empty */
-  @Input() parseAndFormatInput: (value: string) => { parsed: string; formatted: string };
+
+  /** If formatted value returned by parseAndFormatInput has non-numeric letters
+   * and input 'type' is a number, the input will stay empty on the form */
+  @Input() parseAndFormatInput: ParseAndFormatIxInput;
 
   formControl = new FormControl(this).value as FormControl;
 

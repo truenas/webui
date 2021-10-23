@@ -16,6 +16,7 @@ import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/s
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { IxUtilsService } from 'app/pages/common/ix-forms/services/ix-utils.service';
 import {
   DialogService, StorageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
@@ -57,6 +58,7 @@ export class GuiFormComponent {
   readonly helptext = helptext;
 
   constructor(
+    private ixUtilsService: IxUtilsService,
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
     private modalService: IxModalService,
@@ -89,25 +91,7 @@ export class GuiFormComponent {
     });
   }
 
-  parseAndFormatInput = (value: string): { parsed: string; formatted: string } => {
-    value = value.toString();
-    if (!value) {
-      return { parsed: '', formatted: '' };
-    }
-    let parsed = '';
-    let formatted = '';
-    const vm_memory_requested = this.storageService.convertHumanStringToNum(value);
-    if (Number.isNaN(vm_memory_requested)) {
-      console.error(vm_memory_requested); // leaves form in previous error state
-    } else if (value.replace(/\s/g, '').match(/[^0-9]/g) === null) {
-      formatted = this.storageService.convertBytestoHumanReadable(value.replace(/\s/g, ''), 0);
-    } else {
-      formatted = this.storageService.humanReadable;
-    }
-    parsed = vm_memory_requested.toString();
-    return { parsed, formatted };
-  };
-
+  parseAndFormatInput = this.ixUtilsService.memorySizeParsingAndFormatting;
   reconnect(href: string): void {
     if (this.ws.connected) {
       this.loader.close();
