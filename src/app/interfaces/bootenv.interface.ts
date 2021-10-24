@@ -19,7 +19,7 @@ export type SetBootenvAttributeParams = [
   attributes: Partial<Bootenv>,
 ];
 
-export interface CloneBootenvParams {
+export interface CreateBootenvParams {
   name: string;
   source?: string;
 }
@@ -28,3 +28,8 @@ export type UpdateBootenvParams = [
   name: string,
   updates:{ name: string },
 ];
+
+export type BootenvTooltip = {
+  name: string;
+  source?: string;
+};
