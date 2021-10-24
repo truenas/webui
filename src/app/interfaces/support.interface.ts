@@ -4,10 +4,9 @@ export interface CreateNewTicket {
   attach_debug: boolean;
   body: string;
   category: string;
-  password: string;
   title: string;
   type: NewTicketType;
-  username: string;
+  token: string;
 }
 
 export interface SupportConfig {
@@ -26,11 +25,16 @@ export interface SupportConfig {
 export type SupportConfigUpdate = Omit<SupportConfig, 'id'>;
 
 export type FetchSupportParams = [
-  username: string,
-  password: string,
+  token: string,
 ];
 
 export interface NewTicketResponse {
   ticket: number;
   url: string;
 }
+
+export type OauthJiraMessage<T = any> = MessageEvent<{
+  error?: string;
+  result?: T;
+  data?: string;
+}>;

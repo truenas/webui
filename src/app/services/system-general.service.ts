@@ -94,6 +94,12 @@ export class SystemGeneralService {
     }, 5000);
   });
 
+  /**
+   * OAuth token for JIRA access
+   * used on `support.new_ticket`, `support.get_categories` and `support.attach_ticket` endpoints
+   */
+  private jiraToken: string;
+
   constructor(protected ws: WebSocketService) {}
 
   getCA(): Observable<CertificateAuthority[]> {
@@ -194,5 +200,21 @@ export class SystemGeneralService {
 
   checkRootPW(password: string): Observable<boolean> {
     return this.ws.call('auth.check_user', ['root', password]);
+  }
+
+  /**
+   *
+   * @returns OAuth Token for JIRA
+   */
+  getTokenForJira(): string {
+    return this.jiraToken;
+  }
+
+  /**
+   * Accepts string and set it as token
+   * @param token
+   */
+  setTokenForJira(token: string): void {
+    this.jiraToken = token;
   }
 }
