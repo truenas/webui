@@ -29,7 +29,6 @@ import { SyslogFormComponent } from './advanced/syslog-form/syslog-form.componen
 import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach/bootenv-attach-form.component';
-import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/bootenv-clone.component';
 import { BootEnvironmentFormComponent } from './bootenv/bootenv-form/bootenv-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace/bootenv-replace-form.component';
@@ -65,7 +64,6 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     AdvancedSettingsComponent,
     LocalizationFormComponent,
     BootEnvironmentListComponent,
-    BootEnvironmentCloneComponent,
     BootEnvironmentFormComponent,
     BootStatusListComponent,
     BootEnvAttachFormComponent,
