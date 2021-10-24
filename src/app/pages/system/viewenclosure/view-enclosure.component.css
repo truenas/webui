@@ -116,3 +116,12 @@ nav.view-nav-bar{
 .lt-lg.enclosure-selector{
   color: var(--red);
 }
+
+.enclosure-disks {
+  padding: 64px;
+}
+
+.enclosure-disks.rackmount {
+  height: calc(100vh - 88px);
+  overflow: auto;
+}

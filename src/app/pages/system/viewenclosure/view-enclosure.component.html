@@ -19,7 +19,7 @@
     </div>
   
     <ng-container *ngIf="supportedHardware">
-      <div *ngIf="!system.platform.includes('MINI'); else mini" style="padding:64px;">
+      <div *ngIf="!system.platform.includes('MINI'); else mini" class="enclosure-disks rackmount">
         <enclosure-disks style.padding="32px 0 0 0"  
           *ngIf="events && system && system.pools && selectedEnclosure" 
           [controller-events]="events" 
@@ -30,7 +30,7 @@
       </div>
   
       <ng-template #mini>
-        <div style="padding:64px;">
+        <div class="enclosure-disks">
           <enclosure-disks-mini style.padding="32px 0 0 0"  
             *ngIf="events && system && system.pools && selectedEnclosure" 
             [controller-events]="events" 
