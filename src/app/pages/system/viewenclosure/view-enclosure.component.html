@@ -13,7 +13,7 @@
     </div>
   
   <!-- Persistent Visualizer -->
-  <div class="main-content" fxFlex="calc(100% - {{ (system.enclosures.length * 240).toString() }}px )"> 
+  <div class="main-content" fxFlex="calc(100% - 240px)"> 
     <div>
       <mat-spinner [diameter]="40" *ngIf="spinner" class="spinner"></mat-spinner>
     </div>
@@ -44,7 +44,7 @@
   </div>
   
   <!-- Enclosure Selector -->
-  <div fxFlex="240px" fxFlex.lt-lg="180px" #navigation  *ngIf="showEnclosureSelector" class="enclosure-selector" [ngClass.lt-lg]="lt-lg">
+  <div fxFlex="240px" fxFlex.lt-lg="180px" #navigation  *ngIf="showEnclosureSelector" class="enclosure-selector" [ngClass.lt-lg]="'lt-lg'">
     <ng-container *ngFor="let enclosure of system.profile; let i = index">
       <div *ngIf="enclosure.enclosureKey != system.rearIndex" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
         <div *ngIf="system.enclosures[enclosure.enclosureKey].label == system.enclosures[enclosure.enclosureKey].name">{{enclosure.model}} ({{i}})</div>

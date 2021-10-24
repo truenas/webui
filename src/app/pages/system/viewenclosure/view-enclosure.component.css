@@ -94,6 +94,7 @@ nav.view-nav-bar{
 .page-viewport{
   width:100%;
   overflow-x:auto;
+  overflow-y: hidden;
   height: calc(100vh - 88px);
   position:absolute;
   top:0;
@@ -101,7 +102,6 @@ nav.view-nav-bar{
 }
 
 .main-content{
-  /*height:100%;*/
   overflow:auto;
   position:relative;
 }
