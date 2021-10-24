@@ -200,6 +200,7 @@
   "Recovery key deleted from pool <i>{poolName}</i>": "",
   "Refresh Events": "",
   "Remote Controller": "",
+  "Rename Boot Environment": "",
   "Replication <i>{name}</i> has started.": "",
   "Report history is cleared when <i>Graph Age</i>, or <i>Graph Points</i> are changed.": "",
   "Resetting. Please wait...": "",

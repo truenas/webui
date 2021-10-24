@@ -1881,6 +1881,7 @@
   "Remove the ACL and permissions from child datasets of the current dataset": "",
   "Remove the existing API key and generate a new random key. A dialog shows the new key and has an option to copy the key. Back up and secure the API key! The key string is displayed only one time, at creation.": "",
   "Removes the ACL and permissions recursively  from all child datasets of the current dataset, including all directories and files contained within those child datasets. This can make data inaccessible until new permissions are created.": "",
+  "Rename Boot Environment": "",
   "Rename this Boot Environment": "",
   "Renew": "",
   "Renew Certificate Days": "",
