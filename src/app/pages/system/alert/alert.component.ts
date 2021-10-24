@@ -70,10 +70,7 @@ export class AlertConfigComponent implements OnInit {
     this.ws.call('alert.list_policies').pipe(untilDestroyed(this)).subscribe(
       (policies) => {
         this.settingOptions = policies.map((policy) => {
-          let label: string = policy;
-          if (policy === AlertPolicy.Immediately) {
-            label = policy + ' (Default)';
-          }
+          const label: string = policy;
 
           return { label, value: label };
         });
