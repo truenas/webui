@@ -78,7 +78,7 @@ export function mockCall<M extends ApiMethod>(
  */
 export function mockJob<M extends ApiMethod>(
   method: M,
-  response: Job<ApiDirectory[M]['response']>,
+  response: Job<ApiDirectory[M]['response']> = undefined,
 ): MockWebsocketJobResponse {
   return {
     response,

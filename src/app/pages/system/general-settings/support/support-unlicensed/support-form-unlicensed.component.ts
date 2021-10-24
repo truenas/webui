@@ -2,21 +2,24 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { NewTicketType } from 'app/enums/new-ticket-type.enum';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Subs } from 'app/interfaces/subs.interface';
-import { CreateNewTicket, NewTicketResponse } from 'app/interfaces/support.interface';
-import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { CreateNewTicket, NewTicketResponse, OauthJiraMessage } from 'app/interfaces/support.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig, FormButtonConfig, FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { WebSocketService } from 'app/services/';
+import { DialogService, WebSocketService } from 'app/services/';
 import { ModalService } from 'app/services/modal.service';
+import { SystemGeneralService } from 'app/services/system-general.service';
 
 @UntilDestroy()
 @Component({
@@ -25,17 +28,14 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class SupportFormUnlicensedComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
-  password: string;
-  username: string;
   category: FormSelectConfig;
   screenshot: FieldConfig;
-  password_fc: FieldConfig;
-  username_fc: FieldConfig;
   subs: Subs[];
   saveSubmitText = helptext.submitBtn;
   isEntity = true;
   title = helptext.ticket;
   protected isOneColumnForm = true;
+  private token: string;
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet<this>[] = [
@@ -44,35 +44,26 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
       label: false,
       config: [
         {
-          type: 'paragraph',
-          name: 'FN_jira-info',
-          paraText: helptext.FN_Jira_message,
+          type: 'input',
+          name: 'token',
+          placeholder: helptext.token.placeholder,
+          tooltip: helptext.token.tooltip,
+          validation: helptext.token.validation,
+          value: null,
+          required: true,
+          readonly: true,
         },
         {
-          type: 'input',
-          name: 'username',
-          placeholder: helptext.username.placeholder,
-          tooltip: helptext.username.tooltip,
-          required: true,
-          validation: helptext.username.validation,
-          blurStatus: true,
-          blurEvent: () => this.usernameOrPasswordBlur(),
+          type: 'button',
+          name: 'oauth-jira',
           parent: this,
-          value: '',
-        },
-        {
-          type: 'input',
-          name: 'password',
-          inputType: 'password',
-          placeholder: helptext.password.placeholder,
-          tooltip: helptext.password.tooltip,
-          required: true,
-          validation: helptext.password.validation,
-          blurStatus: true,
-          blurEvent: () => this.usernameOrPasswordBlur(),
-          parent: this,
-          togglePw: true,
-          value: '',
+          customEventActionLabel: this.translate.instant('Login to JIRA'),
+          customEventMethod: () => {
+            const authFn = (message: OauthJiraMessage): void => this.doAuth(message);
+
+            window.open('https://support-proxy.ixsystems.com/oauth/initiate?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
+            window.addEventListener('message', authFn, false);
+          },
         },
         {
           type: 'select',
@@ -136,71 +127,41 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     },
   ];
 
-  constructor(protected ws: WebSocketService, protected dialog: MatDialog,
-    private modalService: ModalService) { }
+  constructor(
+    protected ws: WebSocketService,
+    protected matDialog: MatDialog,
+    protected dialog: DialogService,
+    private modalService: ModalService,
+    private translate: TranslateService,
+    private sysGeneralService: SystemGeneralService,
+  ) { }
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-  }
-
-  usernameOrPasswordBlur(): void {
-    this.password_fc = _.find(this.fieldConfig, { name: 'password' });
-    this.username_fc = _.find(this.fieldConfig, { name: 'username' });
-    this.category = _.find(this.fieldConfig, { name: 'category' }) as FormSelectConfig;
-    if (this.entityEdit) {
-      this.username = this.entityEdit.formGroup.controls['username'].value;
-      this.password = this.entityEdit.formGroup.controls['password'].value;
-      this.password_fc['hasErrors'] = false;
-      this.password_fc['errors'] = '';
-      this.username_fc['hasErrors'] = false;
-      this.username_fc['errors'] = '';
-
-      if (this.category.options.length > 0) {
-        this.category.options = [];
-      }
-      if (this.category.options.length === 0 && this.username !== '' && this.password !== '') {
-        this.category.isLoading = true;
-        this.ws.call('support.fetch_categories', [this.username, this.password]).pipe(untilDestroyed(this)).subscribe((res) => {
-          this.category.isLoading = false;
-          this.entityEdit.setDisabled('category', false);
-          const options = [];
-          for (const property in res) {
-            if (res.hasOwnProperty(property)) {
-              options.push({ label: property, value: res[property] });
-            }
-            this.category.options = _.sortBy(options, ['label']);
-          }
-        }, (error: WebsocketError) => {
-          if (error.reason[0] === '[') {
-            while (error.reason[0] !== ' ') {
-              error.reason = error.reason.slice(1);
-            }
-          }
-          this.entityEdit.setDisabled('category', true);
-          this.category.isLoading = false;
-          this.password_fc['hasErrors'] = true;
-          this.password_fc['errors'] = error.reason;
-        });
-      }
+    const oauthToken = this.sysGeneralService.getTokenForJira();
+    if (oauthToken) {
+      this.applyToken(oauthToken);
     }
   }
 
   customSubmit(entityEdit: any): void {
-    const payload = {} as CreateNewTicket;
-    payload['username'] = entityEdit.username;
-    payload['password'] = entityEdit.password;
-    payload['category'] = entityEdit.category;
-    payload['title'] = entityEdit.title;
-    payload['body'] = entityEdit.body;
-    payload['type'] = entityEdit.type;
+    const payload = {
+      category: entityEdit.category,
+      title: entityEdit.title,
+      body: entityEdit.body,
+      type: entityEdit.type,
+      token: entityEdit.token,
+    } as CreateNewTicket;
+
     if (entityEdit.attach_debug) {
-      payload['attach_debug'] = entityEdit.attach_debug;
+      payload.attach_debug = entityEdit.attach_debug;
     }
+
     this.openDialog(payload);
   }
 
   openDialog(payload: CreateNewTicket): void {
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Ticket'), closeOnClickOutside: true } });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Ticket'), closeOnClickOutside: true } });
     let url: string;
     dialogRef.componentInstance.setCall('support.new_ticket', [payload]);
     dialogRef.componentInstance.submit();
@@ -214,7 +175,9 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
           formData.append('data', JSON.stringify({
             method: 'support.attach_ticket',
             params: [{
-              ticket: (res.result.ticket), filename: item.file.name, username: payload['username'], password: payload['password'],
+              ticket: res.result.ticket,
+              filename: item.file.name,
+              token: payload.token,
             }],
           }));
           formData.append('file', item.file, item.apiEndPoint);
@@ -241,7 +204,7 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
     this.entityEdit.formGroup.reset();
     this.entityEdit.formGroup.controls['type'].setValue(NewTicketType.Bug);
     this.subs = [];
-    this.modalService.close('slide-in-form');
+    this.modalService.closeSlideIn();
   }
 
   updater(file: FormUploadComponent): void {
@@ -253,11 +216,50 @@ export class SupportFormUnlicensedComponent implements FormConfiguration {
       for (const browserFile of fileBrowser.files) {
         if (browserFile.size >= 52428800) {
           this.screenshot['hasErrors'] = true;
-          this.screenshot['errors'] = 'File size is limited to 50 MiB.';
+          this.screenshot['errors'] = this.translate.instant('File size is limited to 50 MiB.');
         } else {
           this.subs.push({ apiEndPoint: file.apiEndPoint, file: browserFile });
         }
       }
     }
+  }
+
+  getCategories(): void {
+    const categoryField = _.find(this.fieldConfig, { name: 'category' }) as FormSelectConfig;
+    categoryField.options = [];
+    categoryField.isLoading = true;
+
+    this.ws.call('support.fetch_categories', [this.token]).pipe(
+      untilDestroyed(this),
+    ).subscribe((choices) => {
+      for (const property in choices) {
+        if (choices.hasOwnProperty(property)) {
+          categoryField.options.push({ label: property, value: choices[property] });
+        }
+        categoryField.options = _.sortBy(categoryField.options, ['label']);
+      }
+      categoryField.disabled = false;
+      categoryField.isLoading = false;
+      this.entityEdit.formGroup.get('category').enable();
+    }, () => {
+      categoryField.isLoading = false;
+    });
+  }
+
+  doAuth(message: OauthJiraMessage): void {
+    const token = message.data as string;
+    this.sysGeneralService.setTokenForJira(token);
+    this.applyToken(token);
+  }
+
+  applyToken(token: string): void {
+    this.token = token;
+    this.entityEdit.formGroup.get('token').setValue(this.token);
+
+    const jiraButton = _.find(this.fieldConfig, { name: 'oauth-jira' }) as FormButtonConfig;
+    jiraButton.customEventActionLabel = this.translate.instant('Logged in to JIRA');
+    jiraButton.disabled = true;
+
+    this.getCategories();
   }
 }

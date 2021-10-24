@@ -333,7 +333,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close(false);
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         this.modalService.refreshTable();
       });
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
@@ -348,7 +348,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close(false);
         if (this.pool) {
-          this.modalService.close('slide-in-form');
+          this.modalService.closeSlideIn();
           this.modalService.refreshTable();
         } else {
           console.error('Something went wrong. No pool found!');

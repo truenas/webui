@@ -78,7 +78,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     id: 'wizard_add',
     name: T('Switch to Wizard'),
     function: () => {
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       const message = { action: 'open', component: 'replicationWizard', row: this.pk };
       this.modalService.message(message);
     },

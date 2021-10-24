@@ -1046,7 +1046,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       this.loader.open();
       this.ws.call(this.addCall, [value]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
       }, (err) => {
         this.loader.close();
         new EntityUtils().handleWSError(this, err);
@@ -1056,7 +1056,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
-          this.modalService.close('slide-in-form');
+          this.modalService.closeSlideIn();
         },
         (err) => {
           this.loader.close();
