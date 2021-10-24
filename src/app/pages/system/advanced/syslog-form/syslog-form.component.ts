@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
@@ -9,7 +10,7 @@ import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -69,8 +70,8 @@ export class SyslogFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'syslog_tls_certificate',
-          placeholder:
-            helptext_system_advanced.syslog_tls_certificate.placeholder,
+          placeholder: helptext_system_advanced.syslog_tls_certificate.placeholder,
+          required: true,
           tooltip: helptext_system_advanced.syslog_tls_certificate.tooltip,
           options: [],
           relation: [
@@ -129,6 +130,15 @@ export class SyslogFormComponent implements FormConfiguration {
         this.reconnect(href);
       }, 5000);
     }
+  }
+
+  preInit(): void {
+    const syslog_tls_certificate_field = _.find(this.fieldSets[0].config, { name: 'syslog_tls_certificate' }) as FormSelectConfig;
+    this.ws.call('certificate.query').pipe(untilDestroyed(this)).subscribe((certs) => {
+      for (const cert of certs) {
+        syslog_tls_certificate_field.options.push({ label: cert.name, value: cert.id });
+      }
+    });
   }
 
   afterInit(entityEdit: EntityFormComponent): void {
