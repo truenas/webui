@@ -63,7 +63,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       fileLocation: '',
       message: this.messageService,
       acceptedFiles: '.tar,.update',
-      updater: this.updater,
+      updater: (file: FormUploadComponent) => this.updater(file),
       parent: this,
       hideButton: true,
     },
@@ -220,12 +220,12 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     });
   }
 
-  updater(file: FormUploadComponent, parent: this): void {
+  updater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.save_button_enabled = true;
+      this.save_button_enabled = true;
       const formData: FormData = new FormData();
-      if (parent.isHA) {
+      if (this.isHA) {
         formData.append('data', JSON.stringify({
           method: 'failover.upgrade',
         }));
@@ -236,9 +236,9 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
         }));
       }
       formData.append('file', fileBrowser.files[0]);
-      parent.subs = { apiEndPoint: file.apiEndPoint, formData };
+      this.subs = { apiEndPoint: file.apiEndPoint, formData };
     } else {
-      parent.save_button_enabled = false;
+      this.save_button_enabled = false;
     }
   }
 

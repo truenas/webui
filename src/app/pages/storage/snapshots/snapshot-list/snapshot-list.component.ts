@@ -55,9 +55,15 @@ export class SnapshotListComponent implements EntityTableConfig {
   };
 
   // Variables to show or hide the extra columns
-  queryCallOption: any[] = [];
-  protected queryCallOptionShow = [[['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']], { select: ['name', 'properties'], order_by: ['name'] }];
-  protected queryCallOptionHide = [[['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']], { select: ['name'], order_by: ['name'] }];
+  queryCallOption: QueryParams<ZfsSnapshot> = [];
+  protected queryCallOptionShow: QueryParams<ZfsSnapshot> = [
+    [['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']],
+    { select: ['name', 'properties'], order_by: ['name'] },
+  ];
+  protected queryCallOptionHide: QueryParams<ZfsSnapshot> = [
+    [['pool', '!=', 'freenas-boot'], ['pool', '!=', 'boot-pool']],
+    { select: ['name'], order_by: ['name'] },
+  ];
   hasDetails: boolean;
   columnFilter = false;
   rowDetailComponent: Type<SnapshotDetailsComponent>;

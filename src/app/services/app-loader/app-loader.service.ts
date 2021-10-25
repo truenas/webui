@@ -4,7 +4,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Observable } from 'rxjs';
 import { AppLoaderComponent } from './app-loader.component';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AppLoaderService {
   dialogRef: MatDialogRef<AppLoaderComponent>;
 

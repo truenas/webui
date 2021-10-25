@@ -52,7 +52,7 @@ export class LicenseComponent implements FormConfiguration {
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         document.location.reload(true);
       });
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
     }, (err) => {
       this.loader.close();
       this.dialog.errorReport('Error', err.reason);

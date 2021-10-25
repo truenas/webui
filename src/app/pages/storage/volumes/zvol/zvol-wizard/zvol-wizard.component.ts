@@ -1,28 +1,29 @@
 import { Component } from '@angular/core';
 import {
-  Validators, FormControl, ValidationErrors, FormGroup,
+  FormControl, FormGroup, ValidationErrors, Validators,
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import {
-  UntilDestroy, untilDestroyed,
-} from '@ngneat/until-destroy';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { EntityWizardAction, WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { WebSocketService, StorageService } from 'app/services';
+import { StorageService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
@@ -56,13 +57,13 @@ export class ZvolWizardComponent implements WizardConfiguration {
   protected isEntity = true;
   parent: string;
   volid: string;
-  customFilter: any[] = [];
+  customFilter: QueryParams<Dataset> = [];
   protected entityWizard: EntityWizardComponent;
   minimum_recommended_zvol_volblocksize: keyof ZvolWizardComponent['reverseZvolBlockSizeMap'];
   namesInUse: string[] = [];
   title: string;
   isLinear = true;
-  summary: any = {};
+  summary: Record<string, unknown> = {};
   summaryTitle = 'Zvol Summary';
 
   protected origVolSize: number;
@@ -288,7 +289,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
 
     // TODO: Incorrect type comparison, probably a bug.
     if (this.origHuman !== (data.volsize as any)) {
-      data.volsize = this.storageService.convertHumanStringToNum(data.volsize, true);
+      data.volsize = this.storageService.convertHumanStringToNum(data.volsize as any, true);
     } else {
       delete data.volsize;
     }
@@ -390,7 +391,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
           zvolEntityForm.controls['volsize'].setValue(humansize);
 
           let sync_collection: Option[];
-          if (pk_dataset[0].sync.source === 'INHERITED' || pk_dataset[0].sync.source === 'DEFAULT') {
+          if (
+            pk_dataset[0].sync.source === ZfsPropertySource.Inherited
+            || pk_dataset[0].sync.source === ZfsPropertySource.Default
+          ) {
             sync_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].sync.rawvalue})`, value: parent_dataset_res[0].sync.value }];
           } else {
             sync_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].sync.rawvalue})`, value: 'INHERIT' }];
@@ -400,7 +404,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
           sync.options = sync_collection.concat(sync.options);
 
           let compression_collection: Option[];
-          if (pk_dataset[0].compression.source === 'INHERITED' || pk_dataset[0].compression.source === 'DEFAULT') {
+          if (
+            pk_dataset[0].compression.source === ZfsPropertySource.Inherited
+            || pk_dataset[0].compression.source === ZfsPropertySource.Default
+          ) {
             compression_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: parent_dataset_res[0].compression.value }];
           } else {
             compression_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: 'INHERIT' }];
@@ -410,7 +417,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
           compression.options = compression_collection.concat(compression.options);
 
           let deduplication_collection: Option[];
-          if (pk_dataset[0].deduplication.source === 'INHERITED' || pk_dataset[0].deduplication.source === 'DEFAULT') {
+          if (
+            pk_dataset[0].deduplication.source === ZfsPropertySource.Inherited
+            || pk_dataset[0].deduplication.source === ZfsPropertySource.Default
+          ) {
             deduplication_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].deduplication.rawvalue})`, value: parent_dataset_res[0].deduplication.value }];
           } else {
             deduplication_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].deduplication.rawvalue})`, value: 'INHERIT' }];
@@ -492,7 +502,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
     }
   }
 
-  addSubmit(body: any): Observable<any> {
+  addSubmit(body: any): Observable<Dataset> {
     delete body.path;
     const data: any = this.sendAsBasicOrAdvanced(body);
 
@@ -541,13 +551,11 @@ export class ZvolWizardComponent implements WizardConfiguration {
     if (this.isNew) {
       this.addSubmit(body).pipe(untilDestroyed(this)).subscribe((restPostResp) => {
         this.loader.close();
-        this.modalService.close('slide-in-form').then(
-          (closed) => {
-            if (closed) {
-              this.parent = null;
-            }
-          },
-        );
+        this.modalService.closeSlideIn().then((closed) => {
+          if (closed) {
+            this.parent = null;
+          }
+        });
         this.core.emit({ name: 'zvolCreated', sender: this, data: restPostResp });
         this.modalService.refreshTable();
       }, (res) => {
@@ -562,12 +570,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
   }
 
   customCancel(): void {
-    this.modalService.close('slide-in-form').then(
-      (closed) => {
-        if (closed) {
-          this.parent = null;
-        }
-      },
-    );
+    this.modalService.closeSlideIn().then((closed) => {
+      if (closed) {
+        this.parent = null;
+      }
+    });
   }
 }

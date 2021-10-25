@@ -54,7 +54,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private interval: Interval;
-  exposeLegacyUI = false;
   tokenObservable: Subscription;
   haInterval: Interval;
   isTwoFactor = false;
@@ -138,9 +137,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           this.loginToken();
         }
         window.localStorage.setItem('product_type', res);
-        if (this.productType === ProductType.Enterprise && window.localStorage.exposeLegacyUI === 'true') {
-          this.exposeLegacyUI = true;
-        }
       });
     }
   }
@@ -204,10 +200,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   loginToken(): void {
     let middleware_token;
-    if ((window as any)['MIDDLEWARE_TOKEN']) {
-      middleware_token = (window as any)['MIDDLEWARE_TOKEN'];
-      (window as any)['MIDDLEWARE_TOKEN'] = null;
-    } else if (window.localStorage.getItem('middleware_token')) {
+    if (window.localStorage.getItem('middleware_token')) {
       middleware_token = window.localStorage.getItem('middleware_token');
       window.localStorage.removeItem('middleware_token');
     }
@@ -411,17 +404,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.ws.token = null;
     }
     this.snackBar.open(this.translate.instant(message), this.translate.instant('close'), { duration: 4000 });
-  }
-
-  onGoToLegacy(): void {
-    this.dialogService.confirm({
-      title: T('Warning'),
-      message: globalHelptext.legacyUIWarning,
-      hideCheckBox: true,
-      buttonMsg: T('Continue to Legacy UI'),
-    }).pipe(untilDestroyed(this)).subscribe(() => {
-      window.location.href = '/legacy/';
-    });
   }
 
   openIX(): void {

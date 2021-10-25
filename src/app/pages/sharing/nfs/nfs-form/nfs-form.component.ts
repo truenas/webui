@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -14,7 +13,7 @@ import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormComboboxConfig, FormListConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import {
   DialogService, NetworkService, WebSocketService, UserService, ModalService,
@@ -279,19 +278,7 @@ export class NFSFormComponent implements FormConfiguration {
     private dialog: DialogService,
     public networkService: NetworkService,
     private translate: TranslateService,
-  ) {
-    const paths = this.fieldSets.config('paths') as FormListConfig;
-    const pathsTemplate = paths.templateListField;
-    if (this.productType.includes(ProductType.Scale)) {
-      pathsTemplate.push({
-        type: 'input',
-        name: 'alias',
-        placeholder: helptext_sharing_nfs.placeholder_alias,
-        tooltip: helptext_sharing_nfs.tooltip_alias,
-        validation: [Validators.pattern(/^\/.*/)],
-      });
-    }
-  }
+  ) {}
 
   preInit(): void {
     this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((id: number) => {
@@ -354,20 +341,6 @@ export class NFSFormComponent implements FormConfiguration {
         this.entityForm.setDisabled(name, true, true);
       });
     }
-
-    entityForm.formGroup.controls['paths'].valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe((res: { alias: string; path: string }[]) => {
-        const aliases = res.filter((p) => !!p.alias);
-
-        if (aliases.length > 0 && aliases.length !== res.length) {
-          this.fieldSets.config('paths').hasErrors = true;
-          this.fieldSets.config('paths').errors = helptext_sharing_nfs.error_alias;
-        } else {
-          this.fieldSets.config('paths').hasErrors = false;
-          this.fieldSets.config('paths').errors = '';
-        }
-      });
   }
 
   isCustActionVisible(actionId: string): boolean {
@@ -408,7 +381,7 @@ export class NFSFormComponent implements FormConfiguration {
   }
 
   afterSave(): void {
-    this.modalService.close('slide-in-form');
+    this.modalService.closeSlideIn();
     this.modalService.refreshTable();
     this.ws
       .call('service.query', [[]])

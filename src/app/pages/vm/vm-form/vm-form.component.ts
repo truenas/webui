@@ -450,7 +450,7 @@ export class VmFormComponent implements FormConfiguration {
     }
 
     for (const deviceId of vmPciDeviceIdsToRemove) {
-      observables.push(this.ws.call('datastore.delete', ['vm.device', deviceId]));
+      observables.push(this.ws.call('vm.device.delete', [deviceId]));
     }
 
     for (const device of pciDevicesToCreate) {
@@ -461,6 +461,7 @@ export class VmFormComponent implements FormConfiguration {
     this.loader.open();
     observables.push(this.ws.call('vm.update', [this.rawVmData.id, updatedVmData]));
 
+    // TODO: Potential error - forkJoin may be needed.
     combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();

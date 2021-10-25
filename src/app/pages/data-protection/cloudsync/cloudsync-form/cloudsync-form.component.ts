@@ -17,6 +17,7 @@ import { CloudsyncBucket, CloudsyncCredential } from 'app/interfaces/cloudsync-c
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -44,8 +45,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
   entityForm: EntityFormComponent;
   isEntity = true;
   queryCall = 'cloudsync.query' as const;
-  queryPayload: any[] = [];
-  customFilter: any[] = [];
+  customFilter: QueryParams<CloudSyncTask> = [];
   title: string;
 
   fieldSets: FieldSets = new FieldSets([
@@ -303,12 +303,13 @@ export class CloudsyncFormComponent implements FormConfiguration {
           tooltip: helptext.storage_class_tooltip,
           options: [
             { label: '---------', value: '' },
-            { label: 'STANDARD', value: 'STANDARD' },
-            { label: 'REDUCED_REDUNDANCY', value: 'REDUCED_REDUNDANCY' },
-            { label: 'STANDARD_IA', value: 'STANDARD_IA' },
-            { label: 'ONEZONE_IA', value: 'ONEZONE_IA' },
-            { label: 'GLACIER', value: 'GLACIER' },
-            { label: 'DEEP_ARCHIVE', value: 'DEEP_ARCHIVE' },
+            { label: 'Standard', value: 'STANDARD' },
+            { label: 'Reduced Redundancy', value: 'REDUCED_REDUNDANCY' },
+            { label: 'Standard-IA', value: 'STANDARD_IA' },
+            { label: 'One Zone-IA', value: 'ONEZONE_IA' },
+            { label: 'Intelligent-Tiering', value: 'INTELLIGENT_TIERING' },
+            { label: 'Glacier', value: 'GLACIER' },
+            { label: 'Glacier Deep Archive', value: 'DEEP_ARCHIVE' },
           ],
           value: '',
           isHidden: true,
@@ -420,7 +421,6 @@ export class CloudsyncFormComponent implements FormConfiguration {
   error: string;
   pk: number;
   isNew = false;
-  protected data: any;
 
   protected providers: CloudsyncProvider[];
   protected taskSchemas = ['encryption', 'fast_list', 'chunk_size', 'storage_class'];
@@ -896,11 +896,13 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
   resourceTransformIncomingRestData(data: CloudSyncTask): any {
     const transformed: any = { ...data };
-    transformed.cloudsync_picker = data.schedule.minute + ' '
-                          + data.schedule.hour + ' '
-                          + data.schedule.dom + ' '
-                          + data.schedule.month + ' '
-                          + data.schedule.dow;
+    transformed.cloudsync_picker = [
+      data.schedule.minute,
+      data.schedule.hour,
+      data.schedule.dom,
+      data.schedule.month,
+      data.schedule.dow,
+    ].join(' ');
 
     if (data.bwlimit) {
       transformed.bwlimit = data.bwlimit.map((bwlimit) => {
@@ -917,7 +919,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
     return transformed;
   }
 
-  handleBwlimit(bwlimit: string): any[] {
+  handleBwlimit(bwlimit: string): { time: string; bandwidth: string }[] {
     const bwlimtArr = [];
 
     for (const limit of bwlimit) {
@@ -1044,7 +1046,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       this.loader.open();
       this.ws.call(this.addCall, [value]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
       }, (err) => {
         this.loader.close();
         new EntityUtils().handleWSError(this, err);
@@ -1054,7 +1056,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
       this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
-          this.modalService.close('slide-in-form');
+          this.modalService.closeSlideIn();
         },
         (err) => {
           this.loader.close();

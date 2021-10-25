@@ -91,7 +91,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   @Input('controller-events') controllerEvent$: Subject<CoreEvent>;
 
   app: Application;
-  private loader = PIXI.loader;
   private resources = PIXI.loader.resources;
   container: Container;
   system_product = 'unknown';
@@ -810,13 +809,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
   }
 
-  setDisksHealthState(disk?: any): void { // Give it a disk and it will only change that slot
+  setDisksHealthState(): void {
     const selectedEnclosure = this.getSelectedEnclosure();
-
-    if (disk || typeof disk !== 'undefined') {
-      this.setDiskHealthState(disk);
-      return;
-    }
 
     selectedEnclosure.disks.forEach((disk) => {
       this.setDiskHealthState(disk);
@@ -1129,7 +1123,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       value = enclosure.name;
     }
 
-    const args: any = { index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value };
+    const args = { index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value };
     this.controllerEvent$.next({ name: 'SetEnclosureLabel', data: args, sender: this });
   }
 

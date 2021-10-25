@@ -1,218 +1,144 @@
-import { Component } from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { helptext_system_general as helptext } from 'app/helptext/system/general';
-import { Choices } from 'app/interfaces/choices.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  DialogService, LanguageService, SystemGeneralService, WebSocketService,
-} from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+  ChangeDetectionStrategy, Component,
+} from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import _ from 'lodash';
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
-import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-localization-form',
-  template: '<entity-form [conf]="this"></entity-form>',
-  providers: [],
+  selector: 'localization-form',
+  templateUrl: './localization-form.component.html',
+  styleUrls: ['./localization-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LocalizationFormComponent implements FormConfiguration {
-  protected updateCall = 'system.general.update';
+export class LocalizationFormComponent {
+  fieldsetTitle = helptext.localeTitle;
+
+  formIsLoading = false;
+
   sortLanguagesByName = true;
-  languageList: Choices;
-  languageKey: string;
-  title = helptext.localeTitle;
-  protected isOneColumnForm = true;
-  fieldConfig: FieldConfig[] = [];
 
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.stg_fieldset_loc,
-      label: true,
-      config: [
-        {
-          type: 'combobox',
-          name: 'language',
-          placeholder: helptext.stg_language.placeholder,
-          tooltip: helptext.stg_language.tooltip,
-          options: [],
-        },
-        {
-          type: 'select',
-          name: 'kbdmap',
-          placeholder: helptext.stg_kbdmap.placeholder,
-          tooltip: helptext.stg_kbdmap.tooltip,
-          options: [{ label: '---', value: null }],
-        },
-        {
-          type: 'combobox',
-          name: 'timezone',
-          placeholder: helptext.stg_timezone.placeholder,
-          tooltip: helptext.stg_timezone.tooltip,
-          options: [{ label: '---', value: null }],
-        },
-        {
-          type: 'select',
-          name: 'date_format',
-          placeholder: helptext.date_format.placeholder,
-          tooltip: helptext.date_format.tooltip,
-          options: [],
-          isLoading: true,
-        },
-        {
-          type: 'select',
-          name: 'time_format',
-          placeholder: helptext.time_format.placeholder,
-          tooltip: helptext.time_format.tooltip,
-          options: [],
-          isLoading: true,
-        },
-      ],
-    },
-  ];
+  formGroup: FormGroup = this.fb.group({
+    language: [''],
+    kbdmap: [''],
+    timezone: [''],
+    date_format: [''],
+    time_format: [''],
+  });
 
-  private entityForm: EntityFormComponent;
-  private configData: SystemGeneralConfig;
+  language: {
+    readonly fcName: 'language';
+    label: string;
+    tooltip: string;
+    options: Observable<Option[]>;
+  } = {
+    fcName: 'language',
+    label: helptext.stg_language.placeholder,
+    tooltip: helptext.stg_language.tooltip,
+    options: this.sysGeneralService.languageOptions(this.sortLanguagesByName),
+  };
+
+  kbdMap: {
+    readonly fcName: 'kbdmap';
+    label: string;
+    tooltip: string;
+    options: Observable<Option[]>;
+  } = {
+    fcName: 'kbdmap',
+    label: helptext.stg_kbdmap.placeholder,
+    tooltip: helptext.stg_kbdmap.tooltip,
+    options: this.sysGeneralService.kbdMapChoices(),
+  };
+
+  timezone: {
+    readonly fcName: 'timezone';
+    label: string;
+    tooltip: string;
+    options: Observable<Option[]>;
+  } = {
+    fcName: 'timezone',
+    label: helptext.stg_timezone.placeholder,
+    tooltip: helptext.stg_timezone.tooltip,
+    options: this.sysGeneralService.timezoneChoices().pipe(
+      map((tzChoices) => _.sortBy(tzChoices, [(o) => o.label.toLowerCase()])),
+    ),
+  };
+
+  dateFormat: {
+    readonly fcName: 'date_format';
+    label: string;
+    tooltip: string;
+    options?: Observable<Option[]>;
+  } = {
+    fcName: 'date_format',
+    label: helptext.date_format.placeholder,
+    tooltip: helptext.date_format.tooltip,
+  };
+
+  timeFormat: {
+    readonly fcName: 'time_format';
+    label: string;
+    tooltip: string;
+    options?: Observable<Option[]>;
+  } = {
+    fcName: 'time_format',
+    label: helptext.time_format.placeholder,
+    tooltip: helptext.time_format.tooltip,
+  };
 
   constructor(
-    protected language: LanguageService,
-    protected ws: WebSocketService,
-    protected dialog: DialogService,
-    protected loader: AppLoaderService,
     private sysGeneralService: SystemGeneralService,
+    private fb: FormBuilder,
     public localeService: LocaleService,
-    private modalService: ModalService,
-  ) {}
-
-  prerequisite(): Promise<boolean> {
-    return this.sysGeneralService.getGeneralConfig$.pipe(
-      map((configData) => {
-        this.configData = configData;
-        return true;
-      }),
-      take(1),
-      untilDestroyed(this),
-    ).toPromise();
-  }
-
-  afterInit(entityEdit: EntityFormComponent): void {
-    this.entityForm = entityEdit;
-    this.setTimeOptions(this.configData.timezone);
-    this.makeLanguageList();
-
-    this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapChoices) => {
-      const config = this.fieldSets
-        .find((set) => set.name === helptext.stg_fieldset_loc)
-        .config.find((config: FormSelectConfig) => config.name === 'kbdmap') as FormSelectConfig;
-      config.options = mapChoices;
-      this.entityForm.formGroup.controls['kbdmap'].setValue(this.configData.kbdmap);
-    });
-
-    this.sysGeneralService.timezoneChoices().pipe(untilDestroyed(this)).subscribe((tzChoices) => {
-      tzChoices = _.sortBy(tzChoices, [(o) => o.label.toLowerCase()]);
-      const config = this.fieldSets
-        .find((set) => set.name === helptext.stg_fieldset_loc)
-        .config.find((config) => config.name === 'timezone') as FormComboboxConfig;
-      config.options = tzChoices;
-      this.entityForm.formGroup.controls['timezone'].setValue(this.configData.timezone);
-    });
-
-    this.getDateTimeFormats();
-    this.localeService.dateTimeFormatChange$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getDateTimeFormats();
-    });
-
-    entityEdit.formGroup.controls['language'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      this.languageKey = this.getKeyByValue(this.languageList, res);
-      if (this.languageList[res]) {
-        entityEdit.formGroup.controls['language'].setValue(`${this.languageList[res]}`);
-      }
-    });
-  }
+    protected ws: WebSocketService,
+    protected langService: LanguageService,
+    private modalService: IxModalService,
+    private errorHandler: FormErrorHandlerService,
+  ) { }
 
   setTimeOptions(tz: string): void {
     const timeOptions = this.localeService.getTimeFormatOptions(tz);
-    const timeConfig = this.fieldSets
-      .find((set) => set.name === helptext.stg_fieldset_loc)
-      .config.find((config) => config.name === 'time_format') as FormSelectConfig;
-    timeConfig.options = timeOptions;
-
+    this.timeFormat.options = of(timeOptions);
     const dateOptions = this.localeService.getDateFormatOptions(tz);
-    const dateConfig = this.fieldSets
-      .find((set) => set.name === helptext.stg_fieldset_loc)
-      .config.find((config) => config.name === 'date_format') as FormSelectConfig;
-    dateConfig.options = dateOptions;
+    this.dateFormat.options = of(dateOptions);
   }
 
-  getDateTimeFormats(): void {
-    this.entityForm.formGroup.controls['date_format'].setValue(this.localeService.getPreferredDateFormat());
-
-    const dateFormatConfig = _.find(this.fieldConfig, { name: 'date_format' }) as FormSelectConfig;
-    dateFormatConfig.isLoading = false;
-
-    this.entityForm.formGroup.controls['time_format'].setValue(this.localeService.getPreferredTimeFormat());
-    const timeFormatConfig = _.find(this.fieldConfig, { name: 'time_format' }) as FormSelectConfig;
-    timeFormatConfig.isLoading = false;
-  }
-
-  makeLanguageList(): void {
-    this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.languageList = res;
-      const options: Option[] = Object.keys(this.languageList || {}).map((key) => ({
-        label: this.sortLanguagesByName
-          ? `${this.languageList[key]} (${key})`
-          : `${key} (${this.languageList[key]})`,
-        value: key,
-      }));
-      const config = this.fieldSets
-        .find((set) => set.name === helptext.stg_fieldset_loc)
-        .config.find((config) => config.name === 'language') as FormComboboxConfig;
-      config.options = _.sortBy(
-        options,
-        this.sortLanguagesByName ? 'label' : 'value',
-      );
-      this.entityForm.formGroup.controls['language'].setValue(this.configData.language);
+  setupForm(localizationSettings: LocalizationSettings): void {
+    this.setTimeOptions(localizationSettings.timezone);
+    this.formGroup.patchValue({
+      language: localizationSettings.language,
+      kbdmap: localizationSettings.kbdMap,
+      timezone: localizationSettings.timezone,
+      date_format: localizationSettings.dateFormat,
+      time_format: localizationSettings.timeFormat,
     });
   }
 
-  beforeSubmit(value: any): void {
-    value.language = this.languageKey;
-  }
-
-  afterSubmit(value: any): void {
-    this.setTimeOptions(value.timezone);
-    this.language.setLanguage(value.language);
-  }
-
-  customSubmit(body: any): Subscription {
+  submit(): void {
+    const body = this.formGroup.value;
+    this.formIsLoading = true;
     this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
     delete body.date_format;
     delete body.time_format;
-    this.loader.open();
-    return this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
+    this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.sysGeneralService.refreshSysGeneral();
-      this.loader.close();
-      this.entityForm.success = true;
-      this.entityForm.formGroup.markAsPristine();
-      this.modalService.close('slide-in-form');
-      this.afterSubmit(body);
-    }, (res) => {
-      this.loader.close();
-      this.modalService.close('slide-in-form');
-      new EntityUtils().handleWSError(this.entityForm, res);
+      this.formIsLoading = false;
+      this.modalService.close();
+      this.setTimeOptions(body.timezone);
+      this.langService.setLanguage(body.language);
+    }, (error) => {
+      this.formIsLoading = false;
+      this.errorHandler.handleWsFormError(error, this.formGroup);
     });
-  }
-
-  getKeyByValue(object: { [key: string]: unknown }, value: unknown): string {
-    return Object.keys(object).find((key) => object[key] === value);
   }
 }

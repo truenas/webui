@@ -5,6 +5,7 @@ import { TooltipPosition } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Tunable } from 'app/interfaces/tunable.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { WebSocketService } from 'app/services';
@@ -41,7 +42,7 @@ export class TunableListComponent implements EntityTableConfig {
       icon: 'delete',
       enable: true,
       ttpos: 'above' as TooltipPosition,
-      onClick: (selected: any) => {
+      onClick: (selected: Tunable[]) => {
         this.entityList.doMultiDelete(selected);
       },
     },
@@ -85,12 +86,9 @@ export class TunableListComponent implements EntityTableConfig {
     }
   }
 
-  wsMultiDeleteParams(selected: any): any {
-    const params: any[] = [this.wsDelete];
-    const selectedId = [];
-    for (const i in selected) {
-      selectedId.push([selected[i].id]);
-    }
+  wsMultiDeleteParams(selected: Tunable[]): [string, number[][]?] {
+    const params: [string, number[][]?] = [this.wsDelete];
+    const selectedId = selected.map((tunable) => [tunable.id]);
     params.push(selectedId);
     return params;
   }

@@ -45,7 +45,7 @@ enum ShareType {
   WebDAV = 'webdav',
 }
 
-type ShareTableRow = Partial<SmbShare & WebDavShare & NfsShare>;
+type ShareTableRow = Partial<SmbShare> | Partial<WebDavShare> | Partial<NfsShare>;
 
 @UntilDestroy()
 @Component({
@@ -483,7 +483,7 @@ export class SharesDashboardComponent implements AfterViewInit {
     this.dialog.dialogForm(conf);
   }
 
-  onCheckboxToggle(card: ShareType, row: ShareTableRow, param: keyof ShareTableRow): void {
+  onCheckboxToggle(card: ShareType, row: ShareTableRow, param: 'enabled' | 'ro'): void {
     let updateCall: keyof ApiDirectory;
     switch (card) {
       case ShareType.SMB:
@@ -501,10 +501,10 @@ export class SharesDashboardComponent implements AfterViewInit {
 
     this.ws.call(updateCall, [row.id, { [param]: row[param] }]).pipe(untilDestroyed(this)).subscribe(
       (updatedEntity) => {
-        (row as any)[param] = (updatedEntity as any)[param];
+        row[param] = updatedEntity[param];
       },
       (err: WebsocketError) => {
-        (row as any)[param] = !row[param];
+        row[param] = !row[param];
         new EntityUtils().handleWSError(this, err, this.dialog);
       },
     );

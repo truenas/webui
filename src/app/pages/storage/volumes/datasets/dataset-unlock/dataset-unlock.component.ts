@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import {
-  DatasetEncryptionSummary,
+  DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams,
 } from 'app/interfaces/dataset-encryption-summary.interface';
 import { DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -98,7 +98,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
             },
           ],
           width: '100%',
-          updater: this.keyFileUpdater,
+          updater: (file: FormUploadComponent) => this.keyFileUpdater(file),
           parent: this,
         },
       ],
@@ -338,7 +338,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
         datasets.push(ds);
       }
     }
-    const payload = { key_file: body.key_file, datasets };
+    const payload: DatasetEncryptionSummaryQueryParams = { key_file: body.key_file, datasets };
     const dialogRef = this.dialog.open(EntityJobComponent, {
       data: { title: helptext.fetching_encryption_summary_title },
       disableClose: true,
@@ -449,10 +449,10 @@ export class DatasetUnlockComponent implements FormConfiguration {
     this.router.navigate(this.route_success);
   }
 
-  keyFileUpdater(file: FormUploadComponent, parent: this): void {
+  keyFileUpdater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
+      this.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 }

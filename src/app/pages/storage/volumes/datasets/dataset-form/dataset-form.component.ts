@@ -12,13 +12,15 @@ import { DatasetAclType } from 'app/enums/dataset-acl-type.enum';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
+import { OnOff } from 'app/enums/on-off.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-form';
-import { Dataset } from 'app/interfaces/dataset.interface';
+import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -44,7 +46,7 @@ export class DatasetFormComponent implements FormConfiguration {
   volid: string;
   isBasicMode = true;
   pk: string;
-  customFilter: any[] = [];
+  customFilter: QueryParams<Dataset, ExtraDatasetQueryOptions> = [];
   queryCall = 'pool.dataset.query' as const;
   isEntity = true;
   isNew = false;
@@ -80,7 +82,7 @@ export class DatasetFormComponent implements FormConfiguration {
   protected size_fields: SizeField[] = [
     'quota', 'refquota', 'reservation', 'refreservation', 'special_small_block_size',
   ];
-  protected OrigSize: { [field in SizeField]?: any } = {};
+  protected OrigSize: { [field in SizeField]?: string } = {};
   protected OrigHuman: { [field in SizeField]?: any } = {};
 
   protected warning = 80;
@@ -149,8 +151,8 @@ export class DatasetFormComponent implements FormConfiguration {
           placeholder: helptext.dataset_form_atime_placeholder,
           tooltip: helptext.dataset_form_atime_tooltip,
           options: [
-            { label: 'on', value: 'ON' },
-            { label: 'off', value: 'OFF' },
+            { label: 'on', value: OnOff.On },
+            { label: 'off', value: OnOff.Off },
           ],
         }],
     },
@@ -547,8 +549,8 @@ export class DatasetFormComponent implements FormConfiguration {
           placeholder: helptext.dataset_form_readonly_placeholder,
           tooltip: helptext.dataset_form_readonly_tooltip,
           options: [
-            { label: 'On', value: 'ON' },
-            { label: 'Off', value: 'OFF' },
+            { label: 'On', value: OnOff.On },
+            { label: 'Off', value: OnOff.Off },
           ],
         },
         {
@@ -557,8 +559,8 @@ export class DatasetFormComponent implements FormConfiguration {
           placeholder: helptext.dataset_form_exec_placeholder,
           tooltip: helptext.dataset_form_exec_tooltip,
           options: [
-            { label: 'On', value: 'ON' },
-            { label: 'Off', value: 'OFF' },
+            { label: 'On', value: OnOff.On },
+            { label: 'Off', value: OnOff.Off },
           ],
         },
         {
@@ -801,8 +803,8 @@ export class DatasetFormComponent implements FormConfiguration {
     _.find(this.fieldSets, { name: 'quota_divider' }).divider = !basic_mode;
   }
 
-  convertHumanStringToNum(hstr: any, field: SizeField): number {
-    let num = 0;
+  convertHumanStringToNum(hstr: string | number, field: SizeField): number {
+    let num: number | string = 0;
     let unit = '';
 
     // empty value is evaluated as null
@@ -819,8 +821,9 @@ export class DatasetFormComponent implements FormConfiguration {
     hstr = hstr.replace(/\s+/g, '');
 
     // get leading number
-    if (num = hstr.match(/^(\d+(\.\d+)?)/)) {
-      num = (num as any)[1];
+    const matches = hstr.match(/^(\d+(\.\d+)?)/);
+    if (matches) {
+      num = matches[1];
     } else {
       // leading number is required
       this.humanReadable[field] = '';
@@ -838,7 +841,7 @@ export class DatasetFormComponent implements FormConfiguration {
     const spacer = (unit) ? ' ' : '';
 
     this.humanReadable[field] = num.toString() + spacer + unit;
-    return num * this.storageService.convertUnitToNum(unit);
+    return Number(num) * this.storageService.convertUnitToNum(unit);
   }
 
   sendAsBasicOrAdvanced(data: any): DatasetFormData {
@@ -1346,7 +1349,12 @@ export class DatasetFormComponent implements FormConfiguration {
     if (!field) {
       return true;
     }
-    if (!value || !field.source || field.source === 'INHERITED' || field.source === 'DEFAULT') {
+    if (
+      !value
+      || !field.source
+      || field.source === ZfsPropertySource.Inherited
+      || field.source === ZfsPropertySource.Default
+    ) {
       return true;
     }
     return false;
@@ -1389,7 +1397,9 @@ export class DatasetFormComponent implements FormConfiguration {
       acltype: this.getFieldValueOrRaw(wsResponse.acltype),
       aclmode: this.getFieldValueOrRaw(wsResponse.aclmode),
       casesensitivity: this.getFieldValueOrRaw(wsResponse.casesensitivity),
-      comments: wsResponse.comments === undefined ? undefined : (wsResponse.comments.source === 'LOCAL' ? wsResponse.comments.value : undefined),
+      comments: wsResponse.comments?.source === ZfsPropertySource.Local
+        ? wsResponse.comments.value
+        : undefined,
       compression: this.getFieldValueOrRaw(wsResponse.compression),
       copies: this.getFieldValueOrRaw(wsResponse.copies),
       deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
@@ -1435,7 +1445,7 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   // TODO: Similar to addSubmit.
-  editSubmit(body: any): Observable<any> {
+  editSubmit(body: any): Observable<Dataset> {
     const data: any = this.sendAsBasicOrAdvanced(body);
     if (data['special_small_block_size'] === 0) {
       delete data.special_small_block_size;
@@ -1482,7 +1492,7 @@ export class DatasetFormComponent implements FormConfiguration {
     return this.ws.call('pool.dataset.update', [this.pk, data]);
   }
 
-  addSubmit(body: any): Observable<any> {
+  addSubmit(body: any): Observable<Dataset> {
     const data: any = this.sendAsBasicOrAdvanced(body);
     if (data['special_small_block_size'] === 0) {
       delete data.special_small_block_size;
@@ -1567,7 +1577,7 @@ export class DatasetFormComponent implements FormConfiguration {
     const operation$ = this.isNew ? this.addSubmit(body) : this.editSubmit(body);
     return operation$.pipe(untilDestroyed(this)).subscribe((restPostResp) => {
       this.loader.close();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       const parentPath = `/mnt/${this.parent}`;
       this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((res) => {
         if (!res) {
@@ -1593,11 +1603,11 @@ export class DatasetFormComponent implements FormConfiguration {
                 }
               });
             } else {
-              this.modalService.close('slide-in-form');
+              this.modalService.closeSlideIn();
             }
           });
         } else {
-          this.modalService.close('slide-in-form');
+          this.modalService.closeSlideIn();
         }
         this.modalService.refreshTable();
       });

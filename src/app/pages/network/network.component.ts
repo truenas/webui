@@ -13,7 +13,6 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
-import ipmiHelptext from 'app/helptext/network/ipmi/ipmi';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
@@ -27,21 +26,23 @@ import { AppTableAction, AppTableConfig, TableComponent } from 'app/pages/common
 import { TableService } from 'app/pages/common/entity/table/table.service';
 import { IpmiRow } from 'app/pages/network/network-dashboard.interface';
 import { NetworkInterfaceUi } from 'app/pages/network/network-interface-ui.interface';
+import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
 import {
   AppLoaderService,
   DialogService,
   StorageService,
   WebSocketService,
 } from 'app/services';
+import { IpmiService } from 'app/services/ipmi.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../common/entity/utils';
 import { CardWidgetConf } from './card-widget/card-widget.component';
 import { ConfigurationComponent } from './forms/configuration.component';
 import { InterfacesFormComponent } from './forms/interfaces-form.component';
-import { IPMIFromComponent } from './forms/ipmi-form.component';
+import { IpmiFormComponent } from './forms/ipmi-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
 import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
-import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 
 @UntilDestroy()
 @Component({
@@ -131,11 +132,12 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       { name: T('Gateway'), prop: 'gateway' },
     ],
     parent: this,
-    add() {
-      this.parent.showStaticRouteForm();
+    add: () => {
+      this.ixModalService.open(StaticRouteFormComponent, this.translate.instant('Add Static Route'));
     },
-    edit(row: StaticRoute) {
-      this.parent.showStaticRouteForm(row.id);
+    edit: (route: StaticRoute) => {
+      const modal = this.ixModalService.open(StaticRouteFormComponent, this.translate.instant('Edit Static Route'));
+      modal.setEditingStaticRoute(route);
     },
     deleteMsg: {
       title: 'static route',
@@ -197,12 +199,12 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
     edit(row: IpmiRow) {
-      this.parent.modalService.openInSlideIn(IPMIFromComponent, row.id);
+      this.parent.modalService.openInSlideIn(IpmiFormComponent, row.id);
     },
   };
 
   networkSummary: NetworkSummary;
-  impiEnabled: boolean;
+  ipmiEnabled: boolean;
 
   hasConsoleFooter = false;
   constructor(
@@ -214,6 +216,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private modalService: ModalService,
     private translate: TranslateService,
     private tableService: TableService,
+    private ipmiService: IpmiService,
+    private ixModalService: IxModalService,
   ) {
     super();
     this.getGlobalSettings();
@@ -284,7 +288,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       .call('ipmi.is_loaded')
       .pipe(untilDestroyed(this))
       .subscribe((isIpmiLoaded) => {
-        this.impiEnabled = isIpmiLoaded;
+        this.ipmiEnabled = isIpmiLoaded;
       });
   }
 
@@ -295,6 +299,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       .subscribe((advancedConfig) => {
         this.hasConsoleFooter = advancedConfig.consolemsg;
       });
+
+    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.staticRoutesTableConf.tableComponent.getData();
+    });
 
     this.checkInterfacePendingChanges();
     this.core
@@ -612,13 +620,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       name: 'identify',
       matTooltip: T('Identify Light'),
       onClick: () => {
-        this.dialog.select(
-          this.translate.instant(T('IPMI Identify')),
-          ipmiHelptext.ipmiOptions,
-          this.translate.instant(T('IPMI flash duration')),
-          'ipmi.identify',
-          'seconds',
-        );
+        this.ipmiService.showIdentifyDialog();
       },
     }, {
       icon: 'launch',
@@ -638,13 +640,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   showInterfacesForm(id?: string): void {
     const interfacesForm = this.modalService.openInSlideIn(InterfacesFormComponent, id);
     interfacesForm.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
-  }
-
-  showStaticRouteForm(id?: number): void {
-    const staticRouteFormComponent = this.modalService.openInSlideIn(StaticRouteFormComponent, id);
-    if (this.staticRoutesTableConf.tableComponent) {
-      staticRouteFormComponent.afterModalFormClosed = () => this.staticRoutesTableConf.tableComponent.getData();
-    }
   }
 
   openvpnDataSourceHelper(res: any[]): any[] {

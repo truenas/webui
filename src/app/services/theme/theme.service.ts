@@ -10,7 +10,7 @@ import {
 } from 'app/interfaces/events/user-preferences-event.interface';
 import { WebSocketService } from 'app/services';
 
-export const DefaultTheme = {
+export const DefaultTheme: Theme = {
   name: 'ix-dark',
   label: 'iX Dark',
   labelSwatch: 'blue',
@@ -43,13 +43,26 @@ export interface Theme {
   description: string;
   label: string;
   labelSwatch?: string;
-  accentColors: string[];
+  accentColors: ('blue' | 'orange' | 'cyan' | 'violet' | 'yellow' | 'magenta' | 'red' | 'green')[];
   topbar?: string; // CSS var from palette. Defaults to primary
   'topbar-txt'?: string; // Text color for topbar. Will be auto generated if nothing is set
-  favorite?: boolean; // Deprecate: Hasn't been used since the theme switcher was in the topbar
-  hasDarkLogo?: boolean; // Deprecate: logo colors are set with CSS now
-  logoPath?: string; // Deprecate: Themes haven't used this in a couple of releases now
-  logoTextPath?: string; // Deprecate: Themes haven't used this in a couple of releases now
+
+  /**
+   * @deprecated Hasn't been used since the theme switcher was in the topbar
+   */
+  favorite?: boolean;
+  /**
+   * @deprecated logo colors are set with CSS now
+   */
+  hasDarkLogo?: boolean;
+  /**
+   * @deprecated Themes haven't used this in a couple of releases now
+   */
+  logoPath?: string;
+  /**
+   * @deprecated Themes haven't used this in a couple of releases now
+   */
+  logoTextPath?: string;
   primary: string;
   accent: string;
   bg1: string;
@@ -275,7 +288,6 @@ export class ThemeService {
   ];
 
   savedUserTheme = '';
-  private loggedIn: boolean;
   globalPreview = false;
   globalPreviewData: any;
   private utils: ThemeUtils;
@@ -400,10 +412,10 @@ export class ThemeService {
     });
 
     palette.forEach((color) => {
-      const swatch = theme[color] as any;
+      const swatch = theme[color] as string;
 
       // Generate aux. text styles
-      if (this.freenasThemes[0].accentColors.includes(color)) {
+      if (this.freenasThemes[0].accentColors.includes(color as Theme['accentColors'][number])) {
         const txtColor = this.utils.textContrast(swatch, theme['bg2']);
         document.documentElement.style.setProperty('--' + color + '-txt', txtColor);
       }
@@ -421,10 +433,10 @@ export class ThemeService {
     document.documentElement.style.setProperty('--accent', theme['accent']);
 
     // Set Material aux. text styles
-    const primaryColor = this.utils.colorFromMeta(theme['primary']); // eg. blue
-    const accentColor = this.utils.colorFromMeta(theme['accent']); // eg. yellow
-    const primaryTextColor = this.utils.textContrast((theme as any)[primaryColor], theme['bg2']);
-    const accentTextColor = this.utils.textContrast((theme as any)[accentColor], theme['bg2']);
+    const primaryColor = this.utils.colorFromMeta(theme['primary']) as keyof Theme; // eg. blue
+    const accentColor = this.utils.colorFromMeta(theme['accent']) as keyof Theme; // eg. yellow
+    const primaryTextColor = this.utils.textContrast(theme[primaryColor] as string, theme['bg2']);
+    const accentTextColor = this.utils.textContrast(theme[accentColor] as string, theme['bg2']);
 
     document.documentElement.style.setProperty('--primary-txt', primaryTextColor);
     document.documentElement.style.setProperty('--accent-txt', accentTextColor);
@@ -452,7 +464,7 @@ export class ThemeService {
       topbarTextColor = this.utils.textContrast(theme.topbar, theme['bg2']);
       document.documentElement.style.setProperty('--topbar-txt', topbarTextColor);
     } else if (!theme['topbar-txt'] && !theme.topbar) {
-      topbarTextColor = this.utils.textContrast((theme as any)[primaryColor], theme['bg2']);
+      topbarTextColor = this.utils.textContrast(theme[primaryColor] as string, theme['bg2']);
       document.documentElement.style.setProperty('--topbar-txt', topbarTextColor);
     }
 

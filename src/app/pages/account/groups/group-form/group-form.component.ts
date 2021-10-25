@@ -1,7 +1,8 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
@@ -9,13 +10,13 @@ import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { UserService, WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: 'group-form.component.html',
+  templateUrl: './group-form.component.html',
   styleUrls: ['./group-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -28,7 +29,7 @@ export class GroupFormComponent {
   isFormLoading = false;
 
   form = this.fb.group({
-    gid: ['', [Validators.required, regexValidator(/^\d+$/)]],
+    gid: [null as number, [Validators.required, regexValidator(/^\d+$/)]],
     name: ['', [Validators.required, Validators.pattern(UserService.VALIDATOR_NAME)]],
     sudo: [false],
     smb: [false],
@@ -48,6 +49,7 @@ export class GroupFormComponent {
     private ws: WebSocketService,
     private modalService: IxModalService,
     private cdr: ChangeDetectorRef,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
   /**
@@ -114,8 +116,7 @@ export class GroupFormComponent {
       this.modalService.close();
     }, (error) => {
       this.isFormLoading = false;
-      this.modalService.close();
-      new EntityUtils().handleWSError(this, error);
+      this.errorHandler.handleWsFormError(error, this.form);
     });
   }
 }

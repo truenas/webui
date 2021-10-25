@@ -32,7 +32,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   isEntity = true;
   queryCallOption: [QueryFilter<CertificateAuthority>];
   private getRow = new Subscription();
-  private rowNum: any;
+  private rowNum: number;
   title: string;
   private incomingData: CertificateAuthority;
   private unsignedCAs: Option[] = [];
@@ -205,7 +205,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   constructor(protected ws: WebSocketService, protected loader: AppLoaderService,
     private modalService: ModalService, private storage: StorageService, private http: HttpClient,
     private dialog: DialogService, private systemGeneralService: SystemGeneralService) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.rowNum = rowId;
       this.queryCallOption = [['id', '=', rowId]];
       this.getRow.unsubscribe();
@@ -381,7 +381,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     this.ws.call(this.editCall, [this.rowNum, payload]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         this.modalService.refreshTable();
       },
       (res) => {

@@ -9,6 +9,7 @@ import helptext from 'app/helptext/apps/apps';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartReleaseCreate } from 'app/interfaces/chart-release.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { remapAppSubmitData } from 'app/pages/applications/utils/remap-app-submit-data.utils';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
@@ -26,7 +27,7 @@ import { ApplicationsService } from '../applications.service';
 export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   protected addCall = 'chart.release.create' as const;
   protected utils: CommonUtils;
-  summary = {};
+  summary: Record<string, unknown> = {};
   isAutoSummary = true;
   hideCancel = true;
   private title: string;
@@ -140,7 +141,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   customSubmit(data: any): void {
     delete data.version;
 
-    data = new EntityUtils().remapAppSubmitData(data);
+    data = remapAppSubmitData(data);
 
     this.dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
@@ -158,7 +159,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.modalService.refreshTable();
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {

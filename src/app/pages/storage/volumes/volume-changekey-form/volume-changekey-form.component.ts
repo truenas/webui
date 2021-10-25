@@ -13,6 +13,7 @@ import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-
 import {
   FieldConfig, FormParagraphConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { VolumeChangekeyFormValues } from 'app/pages/storage/volumes/volume-changekey-form/volume-changekey-form-values.interface';
 import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -112,7 +113,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     return data;
   }
 
-  pk: any;
+  pk: string;
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
@@ -148,22 +149,15 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any): void {
+  customSubmit(value: VolumeChangekeyFormValues): void {
     let success_msg: string;
     if (value.remove_passphrase) {
       value.passphrase = null;
-      value.passphrase2 = null;
+      (value as any).passphrase2 = null;
       success_msg = 'removed from';
     } else {
       success_msg = 'changed for';
     }
-
-    const params = [this.pk];
-    const payload = {
-      passphrase: value.passphrase,
-      admin_password: value.adminpw,
-    };
-    params.push(payload);
 
     this.ws.call('auth.check_user', ['root', value.adminpw]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {

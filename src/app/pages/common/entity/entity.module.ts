@@ -68,7 +68,6 @@ import { EntityFormEmbeddedComponent } from './entity-form/entity-form-embedded.
 import { EntityFormComponent } from './entity-form/entity-form.component';
 import { EntityJobComponent } from './entity-job/entity-job.component';
 import { EntitySnackbarComponent } from './entity-snackbar/entity-snackbar.component';
-import { DynamicComponentDirective } from './entity-table/dynamic-component.directive';
 import { EntityTableRowDetailsComponent } from './entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
 import { EntityTaskComponent } from './entity-task/entity-task.component';
@@ -104,7 +103,6 @@ import { TableService } from './table/table.service';
     EntityTreeTableComponent,
     EntityCardComponent,
     EntityCardActionsComponent,
-    DynamicComponentDirective,
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
     EntityTemplateDirective,
@@ -169,7 +167,6 @@ import { TableService } from './table/table.service';
     EntityFormComponent,
     EntityFormEmbeddedComponent,
     EntityFormConfigurationComponent,
-    DynamicComponentDirective,
     EntityTableComponent,
     EntityRowDetailsComponent,
     EntityTreeTableComponent,

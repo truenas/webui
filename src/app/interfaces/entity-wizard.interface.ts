@@ -7,7 +7,7 @@ export interface WizardConfiguration {
   addWsCall?: ApiMethod;
   hideCancel?: boolean;
   isLinear?: boolean;
-  summary?: any;
+  summary?: Record<string, unknown>;
   summaryTitle?: string;
   wizardConfig: Wizard[];
   saveSubmitText?: string;

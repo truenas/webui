@@ -105,7 +105,6 @@ module.exports = {
         "radix": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
-        "no-nested-ternary": "off",
         "implicit-arrow-linebreak": "off",
         "@typescript-eslint/no-shadow": "off",
         "no-case-declarations": "off",

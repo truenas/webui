@@ -28,7 +28,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   hideCancel = true;
 
   isLinear = true;
-  summary: any = {};
+  summary: Record<string, unknown> = {};
   entityWizard: EntityWizardComponent;
   private currentStep = 0;
 
@@ -875,7 +875,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     this.ws.call(this.addWsCall, [data]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       this.modalService.refreshTable();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
     }, (error) => {
       this.loader.close();
       this.dialogService.errorReport(T('Error creating CA.'), error.reason, error.trace.formatted);

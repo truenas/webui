@@ -14,7 +14,7 @@ import {
   VmwareDatastore,
   MatchDatastoresWithDatasetsParams,
   VmwareFilesystem,
-  VmwareSnapshotUpdate,
+  VmwareSnapshotUpdate, VmwareSnapshot,
 } from 'app/interfaces/vmware.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -123,7 +123,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
     },
   ];
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: VmwareSnapshot): VmwareSnapshot {
     data.password = '';
     return data;
   }

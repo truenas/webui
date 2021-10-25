@@ -198,7 +198,7 @@ export class CertificateEditComponent implements FormConfiguration {
     },
   ];
 
-  private rowNum: any;
+  private rowNum: number;
   protected entityForm: EntityFormComponent;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private getRow = new Subscription();
@@ -207,7 +207,7 @@ export class CertificateEditComponent implements FormConfiguration {
   constructor(protected ws: WebSocketService, protected matDialog: MatDialog,
     protected loader: AppLoaderService, protected dialog: DialogService,
     private modalService: ModalService, private storage: StorageService, private http: HttpClient) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.rowNum = rowId;
       this.queryCallOption = [['id', '=', rowId]];
       this.getRow.unsubscribe();
@@ -230,7 +230,7 @@ export class CertificateEditComponent implements FormConfiguration {
       id: 'create_ACME',
       name: helptext_system_certificates.list.action_create_acme_certificate,
       function: () => {
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         const message = { action: 'open', component: 'acmeComponent', row: this.rowNum };
         this.modalService.message(message);
       },
@@ -364,13 +364,13 @@ export class CertificateEditComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any): void {
+  customSubmit(value: { name: string }): void {
     this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: 'Updating Identifier' } });
     this.dialogRef.componentInstance.setCall(this.editCall, [this.rowNum, { name: value['name'] }]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.matDialog.closeAll();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.modalService.refreshTable();
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {

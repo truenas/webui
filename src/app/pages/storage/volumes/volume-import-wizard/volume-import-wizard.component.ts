@@ -11,7 +11,7 @@ import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { PoolFindResult } from 'app/interfaces/pool-import.interface';
+import { PoolFindResult, PoolImportParams } from 'app/interfaces/pool-import.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FormInputConfig, FormSelectConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -32,7 +32,7 @@ import { ModalService } from 'app/services/modal.service';
   providers: [],
 })
 export class VolumeImportWizardComponent implements WizardConfiguration {
-  summary: any = {};
+  summary: Record<string, unknown> = {};
   isLinear = true;
   firstFormGroup: FormGroup;
   summaryTitle = 'Pool Import Summary';
@@ -320,7 +320,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   customSubmit(value: any): void {
     if (value.encrypted) {
       const formData: FormData = new FormData();
-      const params: any = { guid: value.guid };
+      const params: PoolImportParams = { guid: value.guid };
       if (value.passphrase && value.passphrase != null) {
         params['passphrase'] = value.passphrase;
       }
@@ -333,7 +333,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close(false);
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         this.modalService.refreshTable();
       });
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
@@ -348,7 +348,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close(false);
         if (this.pool) {
-          this.modalService.close('slide-in-form');
+          this.modalService.closeSlideIn();
           this.modalService.refreshTable();
         } else {
           console.error('Something went wrong. No pool found!');

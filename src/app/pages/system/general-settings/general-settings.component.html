@@ -35,47 +35,9 @@
     </mat-card-content>
   </mat-card>
 
-  <mat-card class="ntp-card" gdArea="ntp-card">
-    <mat-toolbar-row>
-      <h3 class="title">{{ ntpTitle }}</h3>
-      <div class="actions">
-        <button mat-button color="default" class="action-icon" (click)="doAdd('ntp')">{{ 'Add' | translate }}</button>
-      </div>
-    </mat-toolbar-row>
-
-    <mat-card-content>
-      <table *ngIf="dataSource && displayedColumns" mat-table [dataSource]="dataSource" class="ntp-table">
-        <ng-container matColumnDef="address">
-          <th mat-header-cell *matHeaderCellDef> {{ 'Address' | translate}} </th>
-          <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.address}} </td>
-        </ng-container>
-        <ng-container matColumnDef="burst">
-          <th mat-header-cell *matHeaderCellDef> {{ 'Burst' | translate }} </th>
-          <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.burst}} </td>
-        </ng-container>
-        <ng-container matColumnDef="iburst">
-          <th mat-header-cell *matHeaderCellDef> {{ 'iBurst' | translate }} </th>
-          <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.iburst}} </td>
-        </ng-container>
-        <ng-container matColumnDef="prefer">
-          <th mat-header-cell *matHeaderCellDef> {{ 'Prefer' | translate}} </th>
-          <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.prefer}} </td>
-        </ng-container>
-        <ng-container matColumnDef="minpoll">
-          <th mat-header-cell *matHeaderCellDef> {{ 'Min. Poll' | translate}} </th>
-          <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.minpoll}} </td>
-        </ng-container>
-        <ng-container matColumnDef="maxpoll">
-          <th mat-header-cell *matHeaderCellDef> {{ 'Max. Poll' | translate }} </th>
-          <td mat-cell *matCellDef="let server" (click)="doAdd('ntp', server.id)"> {{server.maxpoll}} </td>
-        </ng-container>
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let server" (click)="doNTPDelete(server)"><mat-icon>delete</mat-icon></td>
-        </ng-container>
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
-      </table>
-    </mat-card-content>
-  </mat-card>
+  <app-table
+    *ngIf="ntpServersData?.tableConf"
+    [conf]="ntpServersData.tableConf"
+    gdArea="ntp-card"
+  ></app-table>
 </div>

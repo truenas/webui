@@ -11,9 +11,8 @@ import { EntityFormService } from 'app/pages/common/entity/entity-form/services/
   styleUrls: ['./dynamic-list.component.scss'],
 })
 export class DynamicListComponent implements OnInit {
-  @Input() config: any;
+  @Input() config: FieldConfig;
   @Input() group: FormGroup;
-  @Input() source: any;
 
   listControl: AbstractControl;
   inputConfig: FieldConfig;
@@ -61,6 +60,6 @@ export class DynamicListComponent implements OnInit {
   }
 
   drop(): void {
-    this.config.customEventMethod(this);
+    (this.config as any).customEventMethod(this);
   }
 }

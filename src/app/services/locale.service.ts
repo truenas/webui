@@ -98,7 +98,7 @@ export class LocaleService {
     }
   }
 
-  getTimeOnly(date: Date, seconds = true, tz?: string): string {
+  getTimeOnly(date: Date | number, seconds = true, tz?: string): string {
     if (tz) {
       date = utcToZonedTime(date.valueOf(), tz);
     } else if (this.timeZone) {

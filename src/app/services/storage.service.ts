@@ -222,24 +222,6 @@ export class StorageService {
     this.diskToggleStatus = bool;
   }
 
-  diskNameSort(disks: any[]): void {
-    for (let i = 0; i < disks.length; i++) {
-      for (let j = 0; j < disks.length - i - 1; j++) {
-        const k = j + 1;
-        const disk1name = disks[j].match(/\w+/);
-        const disk1num = parseInt(disks[j].match(/\d+/), 10);
-        const disk2name = disks[k].match(/\w+/);
-        const disk2num = parseInt(disks[k].match(/\d+/), 10);
-
-        if (disk1name > disk2name || disk1num > disk2num) {
-          const temp = disks[j];
-          disks[j] = disks[k];
-          disks[k] = temp;
-        }
-      }
-    }
-  }
-
   poolUnlockServiceOptions(id: number): Observable<Option[]> {
     return this.ws.call('pool.unlock_services_restart_choices', [id]).pipe(
       map((response: Choices) =>
@@ -339,8 +321,8 @@ export class StorageService {
   // allowedUnits (optional) should include any or all of 'kmgtp', the first letters of KiB, Mib, etc. The first letter
   // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass in allowedUnits,
   // all of the above are accepted AND no unit is attached to an unlabeled number, so 256 is considered 256 bytes.
-  convertHumanStringToNum(hstr: any, dec = false, allowedUnits?: string): number {
-    let num = 0;
+  convertHumanStringToNum(hstr: string, dec = false, allowedUnits?: string): number {
+    let num = '0';
     let unit = '';
 
     // empty value is evaluated as zero
@@ -385,7 +367,7 @@ export class StorageService {
     const spacer = (unit) ? ' ' : '';
 
     this.humanReadable = num.toString() + spacer + unit;
-    return num * this.convertUnitToNum(unit);
+    return Number(num) * this.convertUnitToNum(unit);
   }
 
   // Converts a number from bytes to the most natural human readable format

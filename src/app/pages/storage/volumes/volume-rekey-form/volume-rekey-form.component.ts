@@ -10,6 +10,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { VolumeRekeyFormValues } from 'app/pages/storage/volumes/volume-rekey-form/volume-rekey-form-values.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { EncryptionService } from 'app/services/encryption.service';
 
@@ -109,7 +110,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any): void {
+  customSubmit(value: VolumeRekeyFormValues): void {
     this.ws.call('auth.check_user', ['root', value.passphrase]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res) {
         this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');

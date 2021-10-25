@@ -12,7 +12,6 @@ export class Thread extends IxAbstractObject {
   thread: Worker;
   protected ready: boolean;
   protected maxThreads: number;
-  threadPriority = 0.0; // between 0.0 and 1.0 (1.0 being highest);
 
   private _onmessage: (event: MessageEvent) => void;
   set onmessage(value: (event: MessageEvent) => void) {

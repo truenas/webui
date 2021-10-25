@@ -93,10 +93,6 @@
                   <button name="signin_button2" mat-button color="primary" class="mat-accent full-width mb-1" type="submit" [disabled]="!setPasswordForm.form.valid">{{"Sign in" | translate}}</button>
                 </form>
               </div>
-
-              <div id="legacy-btn-wrapper" *ngIf='exposeLegacyUI'>
-                <button mat-button color="default" class="mb-1 full-width" style="text-transform:capitalize !important;" (click)="onGoToLegacy()">{{"LEGACY WEB INTERFACE" | translate}}</button>
-              </div>
             </div>
 
             <span *ngIf="productSupportsHa && failover_status != FailoverStatus.Single">

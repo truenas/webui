@@ -24,7 +24,7 @@ export class FormUploadComponent {
   fieldShow: string;
   busy: Subscription[] = [];
   sub: Subscription;
-  observer: Observer < any > ;
+  observer: Observer<any>;
   jobId: number;
   fileBrowser = true;
   apiEndPoint = '/_upload?auth_token=' + this.ws.token;

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -91,13 +92,13 @@ export class KernelFormComponent implements FormConfiguration {
     this.entityForm = entityEdit;
   }
 
-  customSubmit(body: any): Subscription {
+  customSubmit(body: Partial<AdvancedConfigUpdate>): Subscription {
     this.loader.open();
     return this.ws.call('system.advanced.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       this.entityForm.success = true;
       this.entityForm.formGroup.markAsPristine();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.sysGeneralService.refreshSysGeneral();
     }, (res) => {
       this.loader.close();

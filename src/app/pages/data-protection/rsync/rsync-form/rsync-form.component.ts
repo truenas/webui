@@ -60,7 +60,7 @@ export class RsyncFormComponent implements FormConfiguration {
           validation: helptext.rsync_user_validation,
           searchOptions: [],
           parent: this,
-          updater: this.updateUserSearchOptions,
+          updater: (value: string) => this.updateUserSearchOptions(value),
         },
         {
           type: 'select',
@@ -290,9 +290,9 @@ export class RsyncFormComponent implements FormConfiguration {
     };
   }
 
-  updateUserSearchOptions(value = '', parent: this): void {
-    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      parent.user_field.searchOptions = items.map((user) => {
+  updateUserSearchOptions(value = ''): void {
+    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+      this.user_field.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });
     });

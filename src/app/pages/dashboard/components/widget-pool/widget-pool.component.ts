@@ -31,7 +31,7 @@ interface Slide {
   name: string;
   index?: string;
   dataSource?: any;
-  template: TemplateRef<any>;
+  template: TemplateRef<void>;
   topology?: PoolTopologyCategory;
 }
 
@@ -101,7 +101,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return '';
   }
 
-  get unhealthyDisks(): { totalErrors: number | string; disks: any[] } {
+  get unhealthyDisks(): { totalErrors: number | string; disks: string[] } {
     if (this.poolState && this.poolState.topology) {
       const unhealthy: any[] = []; // Disks with errors
       this.poolState.topology.data.forEach((item: any) => {
@@ -123,7 +123,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       });
       return { totalErrors: unhealthy.length/* errors.toString() */, disks: unhealthy };
     }
-    return { totalErrors: 'Unknown', disks: [] as any[] };
+    return { totalErrors: 'Unknown', disks: [] };
   }
 
   get allDiskNames(): string[] {
@@ -223,13 +223,14 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
     this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
       const currentPath = this.path[this.currentSlideIndex];
-      const currentName = currentPath && currentPath.dataSource
-        ? this.currentMultipathDetails
-          ? this.checkMultipathLabel(currentPath.dataSource.disk)
-          : currentPath.dataSource.disk
-            ? currentPath.dataSource.disk
-            : 'unknown'
-        : 'unknown';
+      let currentName = 'unknown';
+      if (currentPath?.dataSource) {
+        if (this.currentMultipathDetails) {
+          currentName = this.checkMultipathLabel(currentPath.dataSource.disk);
+        } else if (currentPath.dataSource.disk) {
+          currentName = currentPath.dataSource.disk;
+        }
+      }
 
       if ((!currentName || currentName === 'unknown') && evt.data.length == 0) {
         this.currentDiskDetails = null;

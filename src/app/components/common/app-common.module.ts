@@ -14,7 +14,7 @@ import { ViewControllerComponent } from 'app/core/components/view-controller/vie
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
-import { IxFormsModule } from 'app/pages/common/ix/ix-forms.module';
+import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { DialogService } from 'app/services/dialog.service';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';

@@ -94,6 +94,12 @@ export class SystemGeneralService {
     }, 5000);
   });
 
+  /**
+   * OAuth token for JIRA access
+   * used on `support.new_ticket`, `support.get_categories` and `support.attach_ticket` endpoints
+   */
+  private jiraToken: string;
+
   constructor(protected ws: WebSocketService) {}
 
   getCA(): Observable<CertificateAuthority[]> {
@@ -120,24 +126,12 @@ export class SystemGeneralService {
     return this.ws.call('system.info');
   }
 
-  ipChoicesv4(): Observable<Option[]> {
-    return this.ws.call('system.general.ui_address_choices').pipe(
-      map((response) =>
-        Object.keys(response || {}).map((key) => ({
-          label: response[key],
-          value: response[key],
-        }))),
-    );
+  ipChoicesv4(): Observable<Choices> {
+    return this.ws.call('system.general.ui_address_choices');
   }
 
-  ipChoicesv6(): Observable<Option[]> {
-    return this.ws.call('system.general.ui_v6address_choices').pipe(
-      map((response) =>
-        Object.keys(response || {}).map((key) => ({
-          label: response[key],
-          value: response[key],
-        }))),
-    );
+  ipChoicesv6(): Observable<Choices> {
+    return this.ws.call('system.general.ui_v6address_choices');
   }
 
   kbdMapChoices(): Observable<Option[]> {
@@ -180,6 +174,14 @@ export class SystemGeneralService {
     );
   }
 
+  uiCertificateOptions(): Observable<Choices> {
+    return this.ws.call('system.general.ui_certificate_choices');
+  }
+
+  uiHttpsProtocolsOptions(): Observable<Choices> {
+    return this.ws.call('system.general.ui_httpsprotocols_choices');
+  }
+
   refreshDirServicesCache(): Observable<void> {
     return this.ws.call('directoryservices.cache_refresh');
   }
@@ -198,5 +200,21 @@ export class SystemGeneralService {
 
   checkRootPW(password: string): Observable<boolean> {
     return this.ws.call('auth.check_user', ['root', password]);
+  }
+
+  /**
+   *
+   * @returns OAuth Token for JIRA
+   */
+  getTokenForJira(): string {
+    return this.jiraToken;
+  }
+
+  /**
+   * Accepts string and set it as token
+   * @param token
+   */
+  setTokenForJira(token: string): void {
+    this.jiraToken = token;
   }
 }

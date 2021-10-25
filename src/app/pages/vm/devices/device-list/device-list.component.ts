@@ -33,7 +33,7 @@ export class DeviceListComponent implements EntityTableConfig {
   protected pk: string;
   vm: string;
   private entityList: EntityTableComponent;
-  wsDelete = 'datastore.delete' as const;
+  wsDelete = 'vm.device.delete' as const;
   queryCall = 'vm.device.query' as const;
   queryCallOption: [[Partial<QueryFilter<VmDevice>>]] = [[['vm', '=']]];
   protected loaderOpen = false;
@@ -160,18 +160,16 @@ export class DeviceListComponent implements EntityTableConfig {
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.loader.open();
       this.loaderOpen = true;
-      if (this.wsDelete) {
-        this.ws.call(this.wsDelete, ['vm.device', row.id]).pipe(untilDestroyed(this)).subscribe(
-          () => {
-            this.entityList.getData();
-            this.loader.close();
-          },
-          (resinner) => {
-            new EntityUtils().handleError(this, resinner);
-            this.loader.close();
-          },
-        );
-      }
+      this.ws.call(this.wsDelete, [row.id]).pipe(untilDestroyed(this)).subscribe(
+        () => {
+          this.entityList.getData();
+          this.loader.close();
+        },
+        (resinner) => {
+          new EntityUtils().handleError(this, resinner);
+          this.loader.close();
+        },
+      );
     });
   }
 

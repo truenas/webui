@@ -1,109 +1,82 @@
-import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/core';
+import { Validators } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash';
-import { ProductType } from 'app/enums/product-type.enum';
+import { Observable } from 'rxjs';
 import { TunableType } from 'app/enums/tunable-type.enum';
 import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { SystemGeneralService, WebSocketService } from 'app/services';
+import { Tunable, TunableUpdate } from 'app/interfaces/tunable.interface';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { WebSocketService } from 'app/services';
+import { IxModalService } from 'app/services/ix-modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-system-tunable-edit',
-  template: '<entity-form [conf]="this"></entity-form>',
+  templateUrl: './tunable-form.component.html',
+  styleUrls: ['./tunable-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TunableFormComponent implements FormConfiguration {
-  queryCall = 'tunable.query' as const;
-  queryKey = 'id';
-  editCall = 'tunable.update' as const;
-  addCall = 'tunable.create' as const;
-  title: string;
-  protected isOneColumnForm = true;
+export class TunableFormComponent {
+  private editingTunable: Tunable;
+  get isNew(): boolean {
+    return !this.editingTunable;
+  }
 
-  isEntity = true;
+  isFormLoading = false;
 
-  protected product_type: ProductType;
-  protected type_fc: FormSelectConfig;
+  form = this.fb.group({
+    var: ['', Validators.required], // TODO Add pattern and explanation for it
+    value: ['', Validators.required],
+    comment: [''],
+    enabled: [true],
+  });
 
-  fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.metadata.fieldsets[0],
-      class: 'add-cron',
-      label: false,
-      config: [
-        {
-          type: 'input',
-          name: 'var',
-          placeholder: helptext.var.placeholder,
-          tooltip: helptext.var.tooltip,
-          required: true,
-          validation: helptext.var.validation,
-        },
-        {
-          type: 'textarea',
-          name: 'value',
-          placeholder: helptext.value.placeholder,
-          tooltip: helptext.value.tooltip,
-          required: true,
-          validation: helptext.value.validation,
-        },
-        {
-          type: 'select',
-          name: 'type',
-          placeholder: helptext.type.placeholder,
-          tooltip: helptext.type.tooltip,
-          required: false,
-          options: [],
-          value: TunableType.Sysctl,
-        },
-        {
-          type: 'input',
-          name: 'comment',
-          placeholder: helptext.description.placeholder,
-          tooltip: helptext.description.tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'enabled',
-          placeholder: helptext.enabled.placeholder,
-          tooltip: helptext.enabled.tooltip,
-        },
-      ],
-    },
-    {
-      name: 'divider',
-      divider: true,
-    },
-  ];
+  readonly tooltips = {
+    var: helptext.var.tooltip,
+    value: helptext.value.tooltip,
+    comment: helptext.description.tooltip,
+    enabled: helptext.enabled.tooltip,
+  };
 
-  constructor(protected ws: WebSocketService, protected sysGeneralService: SystemGeneralService) {}
+  constructor(
+    private ws: WebSocketService,
+    private modalService: IxModalService,
+    private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder,
+  ) {}
 
-  preInit(): void {
-    this.type_fc = _.find(this.fieldSets[0].config, { name: 'type' }) as FormSelectConfig;
-    this.ws.call('tunable.tunable_type_choices').pipe(untilDestroyed(this)).subscribe((tunables) => {
-      for (const key in tunables) {
-        this.type_fc.options.push({ label: tunables[key], value: key });
-      }
-    });
-    this.product_type = window.localStorage.getItem('product_type') as ProductType;
-    if (this.product_type === ProductType.Scale || this.product_type === ProductType.ScaleEnterprise) {
-      this.type_fc.value = TunableType.Sysctl;
-      this.type_fc.isHidden = true;
-      this.fieldSets[0].name = helptext.metadata.fieldsets_scale[0];
+  setTunableForEdit(tunable: Tunable): void {
+    this.editingTunable = tunable;
+    if (!this.isNew) {
+      this.form.patchValue(this.editingTunable);
     }
   }
 
-  afterInit(entityForm: EntityFormComponent): void {
-    this.title = `${entityForm.isNew ? T('Add') : T('Edit')} ${this.fieldSets[0].name}`;
-    entityForm.formGroup.controls['enabled'].setValue(true);
-  }
+  onSubmit(): void {
+    const values: TunableUpdate = {
+      ...this.form.value,
+      type: TunableType.Sysctl,
+    };
 
-  afterSubmit(): void {
-    this.sysGeneralService.refreshSysGeneral();
+    this.isFormLoading = true;
+    let request$: Observable<unknown>;
+    if (this.isNew) {
+      request$ = this.ws.call('tunable.create', [values]);
+    } else {
+      request$ = this.ws.call('tunable.update', [
+        this.editingTunable.id,
+        values,
+      ]);
+    }
+
+    request$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.isFormLoading = false;
+      this.modalService.close();
+    }, (error) => {
+      this.isFormLoading = false;
+      this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
+    });
   }
 }

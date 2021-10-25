@@ -51,7 +51,7 @@ import { VmService } from 'app/services/vm.service';
 })
 export class VMWizardComponent implements WizardConfiguration {
   addWsCall = 'vm.create' as const;
-  summary: any = {};
+  summary: Record<string, unknown> = {};
   isLinear = true;
   firstFormGroup: FormGroup;
   summaryTitle = T('VM Summary');
@@ -982,7 +982,6 @@ export class VMWizardComponent implements WizardConfiguration {
   customSubmit(value: any): void {
     let hdd;
     const vmPayload: any = {};
-    const zvolPayload: any = {};
 
     if (value.datastore) {
       value.datastore = value.datastore.replace('/mnt/', '');
@@ -990,9 +989,11 @@ export class VMWizardComponent implements WizardConfiguration {
     }
 
     // zvol_payload only applies if the user is creating one
-    zvolPayload['create_zvol'] = true;
-    zvolPayload['zvol_name'] = hdd;
-    zvolPayload['zvol_volsize'] = this.storageService.convertHumanStringToNum(value.volsize);
+    const zvolPayload = {
+      create_zvol: true,
+      zvol_name: hdd,
+      zvol_volsize: this.storageService.convertHumanStringToNum(value.volsize),
+    };
 
     if (this.productType.includes(ProductType.Scale)) {
       vmPayload['cpu_mode'] = value.cpu_mode;
@@ -1103,7 +1104,7 @@ export class VMWizardComponent implements WizardConfiguration {
       const devices = [...vmPayload['devices']];
       delete vmPayload['devices'];
       this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((vm_res) => {
-        const observables: Observable<void>[] = [];
+        const observables: Observable<unknown>[] = [];
         for (const device of devices) {
           device.vm = vm_res.id;
           observables.push(this.ws.call('vm.device.create', [device]).pipe(
@@ -1117,7 +1118,7 @@ export class VMWizardComponent implements WizardConfiguration {
         combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.loader.close();
-            this.modalService.close('slide-in-form');
+            this.modalService.closeSlideIn();
           },
           (error) => {
             setTimeout(() => {
@@ -1148,7 +1149,7 @@ export class VMWizardComponent implements WizardConfiguration {
       const devices = [...vmPayload['devices']];
       delete vmPayload['devices'];
       this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((vm_res) => {
-        const observables: Observable<void>[] = [];
+        const observables: Observable<unknown>[] = [];
         for (const device of devices) {
           device.vm = vm_res.id;
           observables.push(this.ws.call('vm.device.create', [device]).pipe(
@@ -1162,7 +1163,7 @@ export class VMWizardComponent implements WizardConfiguration {
         combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
           () => {
             this.loader.close();
-            this.modalService.close('slide-in-form');
+            this.modalService.closeSlideIn();
           },
           (error) => {
             setTimeout(() => {

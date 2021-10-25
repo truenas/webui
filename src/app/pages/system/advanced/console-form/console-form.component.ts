@@ -1,159 +1,95 @@
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subscription } from 'rxjs';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  DialogService, LanguageService, StorageService,
-  SystemGeneralService, WebSocketService,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
+import { FormBuilder } from '@ngneat/reactive-forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { of } from 'rxjs';
+import { choicesToOptions } from 'app/helpers/options.helper';
+import { helptext_system_advanced as helptext } from 'app/helptext/system/advanced';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import {
+  DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { ModalService } from 'app/services/modal.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-console-form',
-  template: '<entity-form [conf]="this"></entity-form>',
-  providers: [],
+  templateUrl: './console-form.component.html',
+  styleUrls: ['./console-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ConsoleFormComponent implements FormConfiguration {
-  queryCall = 'system.advanced.config' as const;
-  updateCall = 'system.advanced.update' as const;
-  protected isOneColumnForm = true;
-  fieldConfig: FieldConfig[] = [];
+export class ConsoleFormComponent implements OnInit {
+  isFormLoading = false;
 
-  fieldSets = new FieldSets([
-    {
-      name: helptext_system_advanced.fieldset_console,
-      label: false,
-      class: 'console',
-      config: [
-        {
-          type: 'checkbox',
-          name: 'consolemenu',
-          placeholder: helptext_system_advanced.consolemenu_placeholder,
-          tooltip: helptext_system_advanced.consolemenu_tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'serialconsole',
-          placeholder: helptext_system_advanced.serialconsole_placeholder,
-          tooltip: helptext_system_advanced.serialconsole_tooltip,
-        },
-        {
-          type: 'select',
-          name: 'serialport',
-          placeholder: helptext_system_advanced.serialport_placeholder,
-          options: [],
-          tooltip: helptext_system_advanced.serialport_tooltip,
-          relation: [{
-            action: RelationAction.Disable,
-            when: [{
-              name: 'serialconsole',
-              value: false,
-            }],
-          }],
-        },
-        {
-          type: 'select',
-          name: 'serialspeed',
-          placeholder: helptext_system_advanced.serialspeed_placeholder,
-          options: [
-            { label: '9600', value: '9600' },
-            { label: '19200', value: '19200' },
-            { label: '38400', value: '38400' },
-            { label: '57600', value: '57600' },
-            { label: '115200', value: '115200' },
-          ],
-          tooltip: helptext_system_advanced.serialspeed_tooltip,
-          relation: [{
-            action: RelationAction.Disable,
-            when: [{
-              name: 'serialconsole',
-              value: false,
-            }],
-          }],
-        },
-        {
-          type: 'textarea',
-          name: 'motd',
-          placeholder: helptext_system_advanced.motd_placeholder,
-          tooltip: helptext_system_advanced.motd_tooltip,
-        },
-      ],
-    },
-    {
-      name: 'divider',
-      divider: true,
-    },
+  form = this.fb.group({
+    consolemenu: [true],
+    serialconsole: [true],
+    serialport: [''],
+    serialspeed: [''],
+    motd: [''],
+  });
+
+  readonly tooltips = {
+    consolemenu: helptext.consolemenu_tooltip,
+    serialconsole: helptext.serialconsole_tooltip,
+    serialport: helptext.serialport_tooltip,
+    serialspeed: helptext.serialspeed_tooltip,
+    motd: helptext.motd_tooltip,
+  };
+
+  readonly serialSpeedOptions$ = of([
+    { label: '9600', value: '9600' },
+    { label: '19200', value: '19200' },
+    { label: '38400', value: '38400' },
+    { label: '57600', value: '57600' },
+    { label: '115200', value: '115200' },
   ]);
 
-  private entityForm: EntityFormComponent;
-  private configData: SystemGeneralConfig;
-  title = helptext_system_advanced.fieldset_console;
+  readonly serialPortOptions$ = this.ws.call('system.advanced.serial_port_choices').pipe(choicesToOptions());
 
   constructor(
-    protected router: Router,
-    protected language: LanguageService,
-    protected ws: WebSocketService,
-    protected dialog: DialogService,
-    protected loader: AppLoaderService,
-    public http: HttpClient,
-    protected storage: StorageService,
+    private fb: FormBuilder,
+    private ws: WebSocketService,
+    private modalService: IxModalService,
+    private cdr: ChangeDetectorRef,
+    private errorHandler: FormErrorHandlerService,
     private sysGeneralService: SystemGeneralService,
-    private modalService: ModalService,
-  ) {
-    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.configData = res;
-    });
+    private dialogService: DialogService,
+  ) {}
+
+  ngOnInit(): void {
+    this.isFormLoading = true;
+
+    this.ws.call('system.advanced.config')
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (config) => {
+          this.form.patchValue(config);
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+        (error) => {
+          this.isFormLoading = false;
+          new EntityUtils().handleWSError(null, error, this.dialogService);
+        },
+      );
+
+    this.form.controls.serialport.enabledWhile(this.form.controls.serialconsole.value$);
+    this.form.controls.serialspeed.enabledWhile(this.form.controls.serialconsole.value$);
   }
 
-  reconnect(href: string): void {
-    if (this.ws.connected) {
-      this.loader.close();
-      // ws is connected
-      window.location.replace(href);
-    } else {
-      setTimeout(() => {
-        this.reconnect(href);
-      }, 5000);
-    }
-  }
+  onSubmit(): void {
+    this.isFormLoading = true;
+    const values = this.form.value;
 
-  afterInit(entityEdit: EntityFormComponent): void {
-    this.entityForm = entityEdit;
-
-    this.ws.call('system.advanced.serial_port_choices').pipe(untilDestroyed(this)).subscribe((serialPorts) => {
-      const serialport = this.fieldSets.config('serialport') as FormSelectConfig;
-      serialport.options = [];
-
-      for (const k in serialPorts) {
-        serialport.options.push({
-          label: k, value: serialPorts[k],
-        });
-      }
-    });
-  }
-
-  customSubmit(body: any): Subscription {
-    this.loader.open();
-    return this.ws.call('system.advanced.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.loader.close();
-      this.entityForm.success = true;
-      this.entityForm.formGroup.markAsPristine();
-      this.modalService.close('slide-in-form');
+    this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.isFormLoading = false;
       this.sysGeneralService.refreshSysGeneral();
-    }, (res) => {
-      this.loader.close();
-      new EntityUtils().handleWSError(this.entityForm, res);
+      this.modalService.close();
+    }, (error) => {
+      this.isFormLoading = false;
+      this.errorHandler.handleWsFormError(error, this.form);
     });
   }
 }

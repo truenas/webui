@@ -54,6 +54,10 @@ export class ModalService {
     return componentRef.instance;
   }
 
+  closeSlideIn(): Promise<boolean> {
+    return this.close('slide-in-form');
+  }
+
   /**
    * @deprecated Use openInSlideIn
    */
@@ -67,7 +71,7 @@ export class ModalService {
     modal.open(conf);
   }
 
-  close(id: string, error?: any, response?: any): Promise<boolean> {
+  private close(id: string, error?: any, response?: any): Promise<boolean> {
     // close modal specified by id
     const modal = this.modals.find((x) => x.id === id);
     if (error) {

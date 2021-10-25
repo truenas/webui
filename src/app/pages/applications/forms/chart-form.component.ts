@@ -9,6 +9,7 @@ import helptext from 'app/helptext/apps/apps';
 import { CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { remapAppSubmitData } from 'app/pages/applications/utils/remap-app-submit-data.utils';
 import { FieldConfig, FormDictConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -16,6 +17,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
+import { remapAppConfigData } from '../utils/remap-app-config-data.utils';
 
 @UntilDestroy()
 @Component({
@@ -119,7 +121,7 @@ export class ChartFormComponent implements FormConfiguration {
     extraFieldSets.forEach((fieldSet) => {
       fieldConfigs = fieldConfigs.concat(fieldSet.config);
     });
-    const configData = new EntityUtils().remapAppConfigData(data.config, fieldConfigs);
+    const configData = remapAppConfigData(data.config, fieldConfigs);
 
     configData['release_name'] = data.name;
     configData['extra_fieldsets'] = extraFieldSets;
@@ -128,7 +130,7 @@ export class ChartFormComponent implements FormConfiguration {
   }
 
   customSubmit(data: any): void {
-    data = new EntityUtils().remapAppSubmitData(data);
+    data = remapAppSubmitData(data);
     const payload = [];
     payload.push({
       values: data,
@@ -145,7 +147,7 @@ export class ChartFormComponent implements FormConfiguration {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.modalService.refreshTable();
     });
   }
