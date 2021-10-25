@@ -29,6 +29,8 @@ export type UpdateBootenvParams = [
   updates:{ name: string },
 ];
 
+export type BootenvParams = CreateBootenvParams | UpdateBootenvParams;
+
 export type BootenvTooltip = {
   name: string;
   source?: string;

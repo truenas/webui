@@ -1,18 +1,22 @@
 import {
   ChangeDetectionStrategy, Component,
 } from '@angular/core';
-import {
-  FormBuilder, FormControl, FormGroup, Validators,
-} from '@angular/forms';
+import { Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
-import { BootenvTooltip } from 'app/interfaces/bootenv.interface';
+import {
+  BootenvParams,
+  BootenvTooltip,
+  CreateBootenvParams,
+  UpdateBootenvParams,
+} from 'app/interfaces/bootenv.interface';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { BootEnvService, WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
 
@@ -28,7 +32,7 @@ export class BootEnvironmentFormComponent {
   operation: BootEnvironmentActions = BootEnvironmentActions.Create;
   currentName?: string;
 
-  formGroup: FormGroup = this.formBuilder.group({
+  formGroup: FormGroup<any> = this.formBuilder.group({
     name: ['', [Validators.required, regexValidator(this.bootEnvService.bootenv_name_regex)]],
   });
 
@@ -44,9 +48,10 @@ export class BootEnvironmentFormComponent {
     private ws: WebSocketService,
     private bootEnvService: BootEnvService,
     private modalService: IxModalService,
+    private errorHandler: FormErrorHandlerService,
   ) {}
 
-  setupForm(operation: BootEnvironmentActions, name?: string): FormGroup {
+  setupForm(operation: BootEnvironmentActions, name?: string): FormGroup<any> {
     this.operation = operation;
 
     switch (this.operation) {
@@ -85,14 +90,16 @@ export class BootEnvironmentFormComponent {
 
   onSubmit(): void {
     let apiMethod;
-    let apiParams: unknown;
+    let apiParams: BootenvParams;
+    let query$: Observable<unknown>;
 
     switch (this.operation) {
       case this.Operations.Create:
         apiMethod = 'bootenv.create' as keyof ApiDirectory;
-        apiParams = [{
+        apiParams = {
           name: this.formGroup.value.name,
-        }];
+        } as CreateBootenvParams;
+        query$ = this.ws.call(apiMethod, [apiParams]);
         break;
       case this.Operations.Rename:
         apiMethod = 'bootenv.update' as keyof ApiDirectory;
@@ -101,21 +108,19 @@ export class BootEnvironmentFormComponent {
           {
             name: this.formGroup.value.name,
           },
-        ];
+        ] as UpdateBootenvParams;
+        query$ = this.ws.call(apiMethod, apiParams);
         break;
       case this.Operations.Clone:
         // Cloning is done via adding source param to create API method
         apiMethod = 'bootenv.create' as keyof ApiDirectory;
-        apiParams = [
-          {
-            name: this.formGroup.value.name,
-            source: this.formGroup.value.source,
-          },
-        ];
+        apiParams = {
+          name: this.formGroup.value.name,
+          source: this.formGroup.value.source,
+        } as CreateBootenvParams;
+        query$ = this.ws.call(apiMethod, [apiParams]);
         break;
     }
-
-    const query$: Observable<unknown> = this.ws.call(apiMethod, apiParams);
 
     query$.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
@@ -123,7 +128,7 @@ export class BootEnvironmentFormComponent {
     }, (error) => {
       this.isFormLoading = false;
       this.modalService.close();
-      new EntityUtils().handleWSError(this, error);
+      this.errorHandler.handleWsFormError(error, this.formGroup);
     });
 
     this.isFormLoading = true;
