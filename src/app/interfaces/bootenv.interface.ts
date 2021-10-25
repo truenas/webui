@@ -19,10 +19,10 @@ export type SetBootenvAttributeParams = [
   attributes: Partial<Bootenv>,
 ];
 
-export interface CreateBootenvParams {
+export type CreateBootenvParams = [{
   name: string;
   source?: string;
-}
+}];
 
 export type UpdateBootenvParams = [
   name: string,

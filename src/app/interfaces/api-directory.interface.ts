@@ -315,7 +315,7 @@ export type ApiDirectory = {
   'boot.scrub': { params: void; response: void };
 
   // Bootenv
-  'bootenv.create': { params: [CreateBootenvParams]; response: string };
+  'bootenv.create': { params: CreateBootenvParams; response: string };
   'bootenv.update': { params: UpdateBootenvParams; response: string };
   'bootenv.set_attribute': { params: SetBootenvAttributeParams; response: boolean };
   'bootenv.activate': { params: [string]; response: boolean };

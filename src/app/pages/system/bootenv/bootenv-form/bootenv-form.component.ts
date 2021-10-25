@@ -96,10 +96,10 @@ export class BootEnvironmentFormComponent {
     switch (this.operation) {
       case this.Operations.Create:
         apiMethod = 'bootenv.create' as keyof ApiDirectory;
-        apiParams = {
+        apiParams = [{
           name: this.formGroup.value.name,
-        } as CreateBootenvParams;
-        query$ = this.ws.call(apiMethod, [apiParams]);
+        }] as CreateBootenvParams;
+        query$ = this.ws.call(apiMethod, apiParams);
         break;
       case this.Operations.Rename:
         apiMethod = 'bootenv.update' as keyof ApiDirectory;
@@ -114,11 +114,11 @@ export class BootEnvironmentFormComponent {
       case this.Operations.Clone:
         // Cloning is done via adding source param to create API method
         apiMethod = 'bootenv.create' as keyof ApiDirectory;
-        apiParams = {
+        apiParams = [{
           name: this.formGroup.value.name,
           source: this.formGroup.value.source,
-        } as CreateBootenvParams;
-        query$ = this.ws.call(apiMethod, [apiParams]);
+        }] as CreateBootenvParams;
+        query$ = this.ws.call(apiMethod, apiParams);
         break;
     }
 
@@ -130,7 +130,5 @@ export class BootEnvironmentFormComponent {
       this.modalService.close();
       this.errorHandler.handleWsFormError(error, this.formGroup);
     });
-
-    this.isFormLoading = true;
   }
 }
