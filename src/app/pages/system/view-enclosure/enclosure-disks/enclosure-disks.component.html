@@ -189,7 +189,7 @@
             <div *ngIf="unhealthyPools && unhealthyPools.length == 1" class="subtitle">Pool "{{unhealthyPools[0].name}}" is {{unhealthyPools[0].status}}.</div>
             <div *ngIf="unhealthyPools && unhealthyPools.length > 1" class="subtitle">{{unhealthyPools[0]}} and {{unhealthyPools.length - 1}} other pools are not healthy.</div>
             <div *ngIf="unhealthyPools && unhealthyPools.length < 1" class="subtitle">{{ 'All pools are online.' | translate }}</div>
-            <button mat-button class="" color="default" (click)="setCurrentView('pools')">{{ 'SHOW POOLS' | translate }}</button>
+            <button mat-button color="default" (click)="setCurrentView('pools')">{{ 'SHOW POOLS' | translate }}</button>
           </div>
 
           <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'status' " fxLayout="column" fxLayoutAlign="center center">

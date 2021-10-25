@@ -14,7 +14,7 @@
       &nbsp;&nbsp;
     </label>
     <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip | translate"></tooltip>
-    <mat-form-field class="full-width" style="display:none">
+    <mat-form-field class="full-width display-none">
       <input matInput [type]="config.inputType ? config.inputType : 'text'"
 				[placeholder]="config.placeholder | translate"
 				[attr.value]="config.value"

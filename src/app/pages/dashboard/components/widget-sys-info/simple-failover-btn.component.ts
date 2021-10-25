@@ -14,8 +14,8 @@ interface DialogData {
 @UntilDestroy()
 @Component({
   selector: 'simple-failover-button',
-  template: `<button mat-button style="opacity:1; background-color: var(--primary) !important; color: var(--primary-txt) !important;" [color]="color" [disabled]="disabled" (click)="openDialog()"
-    ix-auto ix-auto-type="button" ix-auto-identifier="Initiate Failover">Initiate Failover</button>`,
+  templateUrl: './simple-failover-btn.component.html',
+  styleUrls: ['./simple-failover-btn.component.scss'],
 })
 export class SimpleFailoverBtnComponent {
   @Input() color = 'default';
@@ -45,6 +45,7 @@ export class SimpleFailoverBtnComponent {
 @Component({
   selector: 'simple-failover-btn-dialog',
   templateUrl: './simple-failover-btn-dialog.component.html',
+  styleUrls: ['./simple-failover-btn.component.scss'],
 })
 export class SimpleFailoverBtnDialogComponent {
   private _confirmed: boolean;

@@ -11,7 +11,7 @@
         ix-auto-type="input"
         ix-auto-identifier="Filter {{entity.title}}">
       <span
-        class="reset-filter-icon"
+        class="reset-icon-wrapper"
         [class.invisible]="!filterValue || filterValue.length == 0"
         matSuffix
       >
@@ -111,7 +111,7 @@
     *ngIf="!entity.showDefaults && entity.showSpinner"
     id="entity-spinner"
     #entityspinner
-    style="margin-left: 8px;"
+    class="spinner"
   >
   </mat-spinner>
 </div>

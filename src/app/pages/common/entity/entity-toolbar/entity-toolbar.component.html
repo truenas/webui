@@ -1,5 +1,5 @@
-<div style="color:var(--fg2);" *ngIf="config" class="control-group">
-  <div *ngFor="let control of config.controls" style="margin: 0 8px;">
+<div *ngIf="config" class="control-group">
+  <div *ngFor="let control of config.controls">
     <toolbar-button *ngIf="control.type == 'button'" [config]="control" [controller]="controller$" ></toolbar-button>
     <toolbar-slider *ngIf="control.type == 'slider'" [config]="control" [controller]="controller$" ></toolbar-slider>
     <toolbar-input *ngIf="control.type == 'input'" [config]="control" [controller]="controller$" ></toolbar-input>

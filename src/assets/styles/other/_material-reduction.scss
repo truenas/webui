@@ -820,11 +820,6 @@ mat-card.mat-card .mat-list-base {
   margin: 0;
   max-height: 36px;
   width: unset !important;
-
-  .search-icon-wrapper {
-    cursor: default;
-    user-select: none;
-  }
 }
 
 @media #{$media-lt-sm} {
