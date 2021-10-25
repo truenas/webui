@@ -7,6 +7,8 @@ import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from 'app/app-material.module';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
 import { NetworkService } from 'app/services';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
 import { EntityModule } from '../common/entity/entity.module';
@@ -16,15 +18,22 @@ import { InterfacesFormComponent } from './forms/interfaces-form.component';
 import { IpmiFormComponent } from './forms/ipmi-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
 import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
-import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 import { NetworkComponent } from './network.component';
 import { routing } from './network.routing';
 
 @NgModule({
   imports: [
-    EntityModule, CommonModule, FormsModule,
-    ReactiveFormsModule, NgxUploaderModule, routing, MaterialModule, FlexLayoutModule,
-    TranslateModule, CommonDirectivesModule,
+    EntityModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    NgxUploaderModule,
+    routing,
+    MaterialModule,
+    FlexLayoutModule,
+    TranslateModule,
+    CommonDirectivesModule,
+    IxFormsModule,
   ],
   declarations: [
     StaticRouteFormComponent,
