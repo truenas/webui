@@ -207,6 +207,8 @@ def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
     assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ha_enabled"]')
+    # 5 second to let the system get ready for the next step.
+    time.sleep(5)
 
 
 @then('verify the system dataset is dozer on the active node')
