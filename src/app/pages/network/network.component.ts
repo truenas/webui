@@ -26,6 +26,7 @@ import { AppTableAction, AppTableConfig, TableComponent } from 'app/pages/common
 import { TableService } from 'app/pages/common/entity/table/table.service';
 import { IpmiRow } from 'app/pages/network/network-dashboard.interface';
 import { NetworkInterfaceUi } from 'app/pages/network/network-interface-ui.interface';
+import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
 import {
   AppLoaderService,
   DialogService,
@@ -33,6 +34,7 @@ import {
   WebSocketService,
 } from 'app/services';
 import { IpmiService } from 'app/services/ipmi.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../common/entity/utils';
 import { CardWidgetConf } from './card-widget/card-widget.component';
@@ -41,7 +43,6 @@ import { InterfacesFormComponent } from './forms/interfaces-form.component';
 import { IpmiFormComponent } from './forms/ipmi-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
 import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
-import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 
 @UntilDestroy()
 @Component({
@@ -131,11 +132,12 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       { name: T('Gateway'), prop: 'gateway' },
     ],
     parent: this,
-    add() {
-      this.parent.showStaticRouteForm();
+    add: () => {
+      this.ixModalService.open(StaticRouteFormComponent, this.translate.instant('Add Static Route'));
     },
-    edit(row: StaticRoute) {
-      this.parent.showStaticRouteForm(row.id);
+    edit: (route: StaticRoute) => {
+      const modal = this.ixModalService.open(StaticRouteFormComponent, this.translate.instant('Edit Static Route'));
+      modal.setEditingStaticRoute(route);
     },
     deleteMsg: {
       title: 'static route',
@@ -215,6 +217,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private translate: TranslateService,
     private tableService: TableService,
     private ipmiService: IpmiService,
+    private ixModalService: IxModalService,
   ) {
     super();
     this.getGlobalSettings();
@@ -296,6 +299,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       .subscribe((advancedConfig) => {
         this.hasConsoleFooter = advancedConfig.consolemsg;
       });
+
+    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.staticRoutesTableConf.tableComponent.getData();
+    });
 
     this.checkInterfacePendingChanges();
     this.core
@@ -633,13 +640,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   showInterfacesForm(id?: string): void {
     const interfacesForm = this.modalService.openInSlideIn(InterfacesFormComponent, id);
     interfacesForm.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
-  }
-
-  showStaticRouteForm(id?: number): void {
-    const staticRouteFormComponent = this.modalService.openInSlideIn(StaticRouteFormComponent, id);
-    if (this.staticRoutesTableConf.tableComponent) {
-      staticRouteFormComponent.afterModalFormClosed = () => this.staticRoutesTableConf.tableComponent.getData();
-    }
   }
 
   openvpnDataSourceHelper(res: any[]): any[] {

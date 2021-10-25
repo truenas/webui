@@ -16,7 +16,7 @@ import { IxModalService } from 'app/services/ix-modal.service';
 
 @UntilDestroy()
 @Component({
-  templateUrl: 'group-form.component.html',
+  templateUrl: './group-form.component.html',
   styleUrls: ['./group-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

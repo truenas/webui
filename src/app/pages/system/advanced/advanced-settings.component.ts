@@ -472,7 +472,11 @@ export class AdvancedSettingsComponent implements OnInit {
       this.sysGeneralService.sendConfigData(this.configData as any);
     }
 
-    this.modalService.openInSlideIn(addComponent, id);
+    if (addComponent === ConsoleFormComponent) {
+      this.ixModal.open(ConsoleFormComponent, this.translate.instant('Console'));
+    } else {
+      this.modalService.openInSlideIn(addComponent, id);
+    }
   }
 
   saveDebug(): void {
