@@ -13,8 +13,8 @@ export class IxModalService {
     this.modalComponent = modal;
   }
 
-  open<T>(modal: Type<T>, title: string): T {
-    return this.modalComponent.openModal(modal, title);
+  open<T>(modal: Type<T>): T {
+    return this.modalComponent.openModal(modal);
   }
 
   close(error?: Error, response?: unknown): void {

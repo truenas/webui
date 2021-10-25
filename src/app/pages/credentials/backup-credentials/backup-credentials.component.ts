@@ -114,10 +114,10 @@ export class BackupCredentialsComponent implements OnInit {
           hideHeader: true,
           parent: this,
           add: () => {
-            this.ixModalService.open(SshKeypairFormComponent, this.translate.instant('SSH Keypairs'));
+            this.ixModalService.open(SshKeypairFormComponent);
           },
           edit: (row: KeychainSshKeyPair) => {
-            const modal = this.ixModalService.open(SshKeypairFormComponent, this.translate.instant('SSH Keypairs'));
+            const modal = this.ixModalService.open(SshKeypairFormComponent);
             modal.setKeypairForEditing(row);
           },
         },

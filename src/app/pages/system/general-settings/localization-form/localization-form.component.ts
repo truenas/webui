@@ -24,7 +24,7 @@ import { LocaleService } from 'app/services/locale.service';
 export class LocalizationFormComponent {
   fieldsetTitle = helptext.localeTitle;
 
-  formIsLoading = false;
+  isFormLoading = false;
 
   sortLanguagesByName = true;
 
@@ -126,18 +126,18 @@ export class LocalizationFormComponent {
 
   submit(): void {
     const body = this.formGroup.value;
-    this.formIsLoading = true;
+    this.isFormLoading = true;
     this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
     delete body.date_format;
     delete body.time_format;
     this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.sysGeneralService.refreshSysGeneral();
-      this.formIsLoading = false;
+      this.isFormLoading = false;
       this.modalService.close();
       this.setTimeOptions(body.timezone);
       this.langService.setLanguage(body.language);
     }, (error) => {
-      this.formIsLoading = false;
+      this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.formGroup);
     });
   }

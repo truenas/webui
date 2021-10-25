@@ -192,11 +192,11 @@ export class AdvancedSettingsComponent implements OnInit {
     ],
     add: async () => {
       await this.showFirstTimeWarningIfNeeded();
-      this.ixModal.open(TunableFormComponent, this.translate.instant('Add Sysctl'));
+      this.ixModal.open(TunableFormComponent);
     },
     edit: async (tunable: Tunable) => {
       await this.showFirstTimeWarningIfNeeded();
-      const dialog = this.ixModal.open(TunableFormComponent, this.translate.instant('Edit Sysctl'));
+      const dialog = this.ixModal.open(TunableFormComponent);
       dialog.setTunableForEdit(tunable);
     },
   };
@@ -473,7 +473,7 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     if (addComponent === ConsoleFormComponent) {
-      this.ixModal.open(ConsoleFormComponent, this.translate.instant('Console'));
+      this.ixModal.open(ConsoleFormComponent);
     } else {
       this.modalService.openInSlideIn(addComponent, id);
     }

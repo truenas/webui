@@ -4,6 +4,7 @@ import {
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/account/groups';
@@ -25,7 +26,9 @@ export class GroupFormComponent {
   get isNew(): boolean {
     return !this.editingGroup;
   }
-
+  get title(): string {
+    return this.isNew ? this.translate.instant('Add Group') : this.translate.instant('Edit Group');
+  }
   isFormLoading = false;
 
   form = this.fb.group({
@@ -50,6 +53,7 @@ export class GroupFormComponent {
     private modalService: IxModalService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
+    private translate: TranslateService,
   ) {}
 
   /**
