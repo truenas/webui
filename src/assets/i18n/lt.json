@@ -3122,6 +3122,7 @@
   "Setting this option is discouraged as it increases security risk.": "",
   "Setting this option reduces the security of the connection, so only use it if the client does not understand reused SSL sessions.": "",
   "Setting this option will result in timeouts if <b>identd</b> is not running on the client.": "",
+  "Setting up LDAP": "",
   "Settings": "",
   "Settings Requiring Re-Initialization": "",
   "Settings saved": "",

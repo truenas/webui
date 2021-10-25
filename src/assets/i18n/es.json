@@ -2873,6 +2873,7 @@
   "Setting this option is discouraged as it increases security risk.": "",
   "Setting this option reduces the security of the connection, so only use it if the client does not understand reused SSL sessions.": "",
   "Setting this option will result in timeouts if <b>identd</b> is not running on the client.": "",
+  "Setting up LDAP": "",
   "Settings Requiring Re-Initialization": "",
   "Setup Method": "",
   "Several providers are supported. If a specific  provider is not listed, select <i>Custom Provider</i> and enter the  information in the <i>Custom Server</i> and <i>Custom Path</i> fields.": "",
