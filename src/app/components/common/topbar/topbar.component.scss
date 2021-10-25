@@ -39,11 +39,6 @@
   }
 }
 
-.mat-menu-item  span.flag-icon {
-  /*padding-left: 30px;
-  background-position-x: left;*/
-}
-
 .mdi-icon {
   font-size: 24px;
 }
@@ -71,4 +66,16 @@
   height: 50px;
   right: 0;
   width: 50px;
+}
+
+.icon {
+  &.account {
+    font-size: 180%;
+  }
+}
+
+.topbar-button-right {
+  &.overflow-visible {
+    overflow: visible;
+  }
 }
