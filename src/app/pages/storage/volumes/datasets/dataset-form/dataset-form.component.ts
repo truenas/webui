@@ -18,8 +18,6 @@ import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/
 import { Validators, ValidationErrors, FormControl } from '@angular/forms';
 import { filter } from 'rxjs/operators';
 import { combineLatest } from 'rxjs';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 
 interface DatasetFormData {
   name: string;
@@ -53,7 +51,6 @@ interface DatasetFormData {
   refquota_critical: number;
   refquota_critical_inherit: boolean;
   special_small_block_size: number;
-  checksum: string;
 }
 
 @Component({
@@ -70,9 +67,8 @@ export class DatasetFormComponent implements Formconfiguration {
   queryCall = 'pool.dataset.query';
   isEntity = true;
   isNew = false;
-  showDedupChecksumWarning = true;
   parent_dataset: any;
-  protected entityForm: EntityFormComponent;
+  protected entityForm: any;
   minimum_recommended_dataset_recordsize = '128K';
   protected recordsize_field: any;
   protected recordsize_fg: any;
@@ -574,14 +570,6 @@ export class DatasetFormComponent implements Formconfiguration {
         },
         {
           type: 'select',
-          name: 'checksum',
-          label: T('Checksum'),
-          placeholder: T('Checksum'),
-          options: [],
-          value: 'SHA512',
-        },
-        {
-          type: 'select',
           name: 'readonly',
           placeholder: helptext.dataset_form_readonly_placeholder,
           tooltip: helptext.dataset_form_readonly_tooltip,
@@ -620,7 +608,7 @@ export class DatasetFormComponent implements Formconfiguration {
             { label: '2', value: '2' },
             { label: '3', value: '3' },
           ],
-          value: '1',
+          value: 1,
         },
         {
           type: 'select',
@@ -732,7 +720,6 @@ export class DatasetFormComponent implements Formconfiguration {
     'refquota_warning_inherit',
     'refquota_critical_inherit',
     'special_small_block_size',
-    'checksum',
     // 'aclmode' -- not yet available in SCALE
 
   ];
@@ -941,14 +928,8 @@ export class DatasetFormComponent implements Formconfiguration {
     this.dedup_fg.valueChanges.subscribe((dedup) => {
       if (dedup === 'INHERIT' || dedup === 'OFF') {
         this.dedup_field.warnings = '';
-        this.showDedupChecksumWarning = true;
       } else {
         this.dedup_field.warnings = helptext.dataset_form_deduplication_warning;
-        if (this.showDedupChecksumWarning) {
-          this.entityForm.formGroup.get('checksum').setValue('SHA512');
-          this.issueDedupChecksumWarning();
-          this.showDedupChecksumWarning = false;
-        }
       }
     });
 
@@ -1044,17 +1025,6 @@ export class DatasetFormComponent implements Formconfiguration {
     this.setBasicMode(this.isBasicMode);
   }
 
-  issueDedupChecksumWarning() {
-    const conf: DialogFormConfiguration = {
-      title: T('Default Checksum Warning'),
-      message: T('The default "Checksum" value for ZFS pools used to be SHA256. Our testing has shown that SHA512 performs better. So, we have changed the default value from SHA256 to SHA512. You can change it back in "Advanced Options".'),
-      fieldConfig: [],
-      hideCancel: true,
-      saveButtonText: T('OK'),
-    };
-    this.dialogService.dialogForm(conf);
-  }
-
   preInit(entityForm: EntityFormComponent) {
     const paramMap: any = (<any> this.aroute.params).getValue();
     this.volid = paramMap['volid'];
@@ -1082,14 +1052,6 @@ export class DatasetFormComponent implements Formconfiguration {
         compression.options.push({ label: key, value: res[key] });
       }
     });
-
-    this.ws.call('pool.dataset.checksum_choices').subscribe((checksumChoices: any) => {
-      const checksumFieldConfig = _.find(this.fieldConfig, { name: 'checksum' });
-      for (const key in checksumChoices) {
-        checksumFieldConfig.options.push({ label: key, value: checksumChoices[key] });
-      }
-    });
-
     if (this.parent) {
       const root = this.parent.split('/')[0];
       this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).subscribe((res) => {
@@ -1428,7 +1390,6 @@ export class DatasetFormComponent implements Formconfiguration {
       this.convertHumanStringToNum(sizeValues[field], field);
       this.OrigHuman[field] = this.humanReadable[field];
     }
-    this.showDedupChecksumWarning = false;
 
     const returnValue: DatasetFormData = {
       name: this.getFieldValueOrRaw(wsResponse.name),
@@ -1440,7 +1401,6 @@ export class DatasetFormComponent implements Formconfiguration {
       compression: this.getFieldValueOrRaw(wsResponse.compression),
       copies: this.getFieldValueOrRaw(wsResponse.copies),
       deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
-      checksum: this.getFieldValueOrRaw(wsResponse.checksum),
       quota_warning,
       quota_warning_inherit,
       quota_critical,
