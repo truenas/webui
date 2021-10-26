@@ -237,7 +237,6 @@ def press_Initiate_Failover_and_confirm(driver):
 def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
     """wait for the login and the HA enabled status and login."""
     assert wait_on_element(driver, 240, '//input[@data-placeholder="Username"]')
-    # assert wait_on_element(driver, 240, '//p[text()="HA is enabled."]')
     assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
     driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
