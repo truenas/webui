@@ -75,7 +75,7 @@ export class AlertConfigComponent implements OnInit {
             label = policy + ' (Default)';
           }
 
-          return { label, value: label };
+          return { label, value: policy };
         });
       },
       (error) => {
