@@ -1,108 +1,62 @@
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Subscription } from 'rxjs';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
-import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
-  DialogService, LanguageService, StorageService,
-  SystemGeneralService, WebSocketService,
-} from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { ModalService } from 'app/services/modal.service';
+  Component, ChangeDetectionStrategy, ChangeDetectorRef,
+} from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { SystemGeneralService, WebSocketService } from 'app/services';
+import { IxModalService } from 'app/services/ix-modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-kernel-form',
-  template: '<entity-form [conf]="this"></entity-form>',
-  providers: [],
+  templateUrl: 'kernel-form.component.html',
+  styleUrls: ['./kernel-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class KernelFormComponent implements FormConfiguration {
-  queryCall = 'system.advanced.config' as const;
-  updateCall = 'system.advanced.update' as const;
-  protected isOneColumnForm = true;
-  fieldConfig: FieldConfig[] = [];
+export class KernelFormComponent {
+  isFormLoading = false;
+  form = this.fb.group({
+    autotune: [false],
+    debugkernel: [false],
+  });
 
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext_system_advanced.fieldset_kernel,
-      label: false,
-      class: 'console',
-      config: [
-        {
-          type: 'checkbox',
-          name: 'autotune',
-          placeholder: helptext_system_advanced.autotune_placeholder,
-          tooltip: helptext_system_advanced.autotune_tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'debugkernel',
-          placeholder: helptext_system_advanced.debugkernel_placeholder,
-          tooltip: helptext_system_advanced.debugkernel_tooltip,
-        },
-      ],
-    },
-    {
-      name: 'divider',
-      divider: true,
-    },
-  ];
-
-  private entityForm: EntityFormComponent;
-  private configData: SystemGeneralConfig;
-  title = helptext_system_advanced.fieldset_kernel;
+  readonly tooltips = {
+    autotune: helptext_system_advanced.autotune_tooltip,
+    debugkernel: helptext_system_advanced.debugkernel_tooltip,
+  };
 
   constructor(
-    protected router: Router,
-    protected language: LanguageService,
-    protected ws: WebSocketService,
-    protected dialog: DialogService,
-    protected loader: AppLoaderService,
-    public http: HttpClient,
-    protected storage: StorageService,
+    private fb: FormBuilder,
+    private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService,
-    private modalService: ModalService,
-  ) {
-    this.sysGeneralService.sendConfigData$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.configData = res;
+    private modalService: IxModalService,
+    private cdr: ChangeDetectorRef,
+  ) {}
+
+  setupForm(group: AdvancedConfig): void {
+    this.form.patchValue({
+      autotune: group?.autotune,
+      debugkernel: group?.debugkernel,
     });
+    this.cdr.markForCheck();
   }
 
-  reconnect(href: string): void {
-    if (this.ws.connected) {
-      this.loader.close();
-      // ws is connected
-      window.location.replace(href);
-    } else {
-      setTimeout(() => {
-        this.reconnect(href);
-      }, 5000);
-    }
-  }
-
-  afterInit(entityEdit: EntityFormComponent): void {
-    this.entityForm = entityEdit;
-  }
-
-  customSubmit(body: Partial<AdvancedConfigUpdate>): Subscription {
-    this.loader.open();
-    return this.ws.call('system.advanced.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.loader.close();
-      this.entityForm.success = true;
-      this.entityForm.formGroup.markAsPristine();
-      this.modalService.closeSlideIn();
+  onSubmit(): void {
+    const values = this.form.value;
+    const commonBody = {
+      autotune: values.autotune,
+      debugkernel: values.debugkernel,
+    };
+    this.isFormLoading = true;
+    this.ws.call('system.advanced.update', [commonBody]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.isFormLoading = false;
+      this.modalService.close();
       this.sysGeneralService.refreshSysGeneral();
     }, (res) => {
-      this.loader.close();
-      new EntityUtils().handleWSError(this.entityForm, res);
+      this.isFormLoading = false;
+      new EntityUtils().handleWSError(this, res);
     });
   }
 }
