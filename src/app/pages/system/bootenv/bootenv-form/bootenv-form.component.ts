@@ -1,5 +1,7 @@
 import {
-  ChangeDetectionStrategy, Component,
+  ChangeDetectionStrategy,
+  Component,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
@@ -49,6 +51,7 @@ export class BootEnvironmentFormComponent {
     private bootEnvService: BootEnvService,
     private modalService: IxModalService,
     private errorHandler: FormErrorHandlerService,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   setupForm(operation: BootEnvironmentActions, name?: string): FormGroup<any> {
@@ -85,6 +88,7 @@ export class BootEnvironmentFormComponent {
         break;
     }
 
+    this.changeDetectorRef.detectChanges();
     return this.formGroup;
   }
 
@@ -116,7 +120,7 @@ export class BootEnvironmentFormComponent {
         apiMethod = 'bootenv.create' as keyof ApiDirectory;
         apiParams = [{
           name: this.formGroup.value.name,
-          source: this.formGroup.value.source,
+          source: this.currentName,
         }] as CreateBootenvParams;
         query$ = this.ws.call(apiMethod, apiParams);
         break;

@@ -34,7 +34,7 @@ describe('BootEnvironmentFormComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    // loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
   });
 
@@ -44,6 +44,7 @@ describe('BootEnvironmentFormComponent', () => {
   describe('creating a boot environment', () => {
     beforeEach(() => {
       spectator.component.setupForm(BootEnvironmentActions.Create);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('sends a create payload to websocket and closes modal when save is pressed', async () => {
@@ -68,13 +69,38 @@ describe('BootEnvironmentFormComponent', () => {
     const cloneSource = 'original';
     beforeEach(() => {
       spectator.component.setupForm(BootEnvironmentActions.Clone, cloneSource);
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('should add the FormControl for source field', () => {
+    it('should add source FormControl to FormGroup', () => {
       const controls = spectator.component.formGroup.controls;
       const controlKeys = Object.keys(controls);
       expect(controlKeys).toContain('source');
       expect(controls.source.value).toBe(cloneSource);
+    });
+
+    it('should add source field to DOM ', () => {
+      const sourceFieldElement = spectator.query('.' + spectator.component.Operations.Clone);
+      expect(sourceFieldElement).toBeTruthy();
+    });
+
+    it('sends a create payload with source option to websocket and closes modal when save is pressed', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      const fields = {
+        name: 'cloned',
+        source: cloneSource,
+      };
+
+      await form.fillForm({
+        Name: fields.name,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(ws.call).toHaveBeenCalledWith('bootenv.create', [
+        fields,
+      ]);
     });
   });
 
@@ -84,6 +110,7 @@ describe('BootEnvironmentFormComponent', () => {
   describe('renaming a boot environment', () => {
     beforeEach(() => {
       spectator.component.setupForm(BootEnvironmentActions.Rename, 'myBootEnv');
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
     it('sends an update payload to websocket and closes modal when save is pressed', async () => {
