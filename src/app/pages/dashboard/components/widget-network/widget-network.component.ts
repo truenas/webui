@@ -22,6 +22,7 @@ import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
 import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { StorageService, WebSocketService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
+import { LocaleService } from 'app/services/locale.service';
 
 interface NicInfo {
   ip: string;
@@ -62,6 +63,8 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   contentHeight = 400 - 56;
   rowHeight = 150;
   aspectRatio = 474 / 200;
+  dateFormat = this.localeService.getPreferredDateFormatForChart();
+  timeFormat = this.localeService.getPreferredTimeFormatForChart();
 
   minSizeToActiveTrafficArrowIcon = 1024;
 
@@ -94,6 +97,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
             displayFormats: {
               minute: 'HH:mm',
             },
+            tooltipFormat: `${this.dateFormat} ${this.timeFormat}`,
           },
           ticks: {
             beginAtZero: true,
@@ -119,6 +123,23 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
         },
       ],
     },
+    tooltips: {
+      callbacks: {
+        label: (tooltipItem, data) => {
+          let label = data.datasets[tooltipItem.datasetIndex].label || '';
+          if (label) {
+            label += ': ';
+          }
+          if (tooltipItem.yLabel == 0) {
+            label += 0;
+          } else {
+            const converted = this.utils.convert(Number(tooltipItem.yLabel));
+            label += parseFloat(converted.value).toFixed(1) + converted.units.charAt(0);
+          }
+          return label;
+        },
+      },
+    },
   };
 
   loadingEmptyConfig = {
@@ -135,6 +156,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
     public translate: TranslateService,
     private dialog: DialogService,
     private storage: StorageService,
+    private localeService: LocaleService,
   ) {
     super(translate);
     this.configurable = false;
@@ -346,7 +368,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   }
 
   chartDataError(err: WebsocketError, nic: BaseNetworkInterface): EmptyConfig {
-    if (err.error === ReportingDatabaseError.InvalidTimestamp) {
+    if ([ReportingDatabaseError.FailedExport, ReportingDatabaseError.InvalidTimestamp].includes(err.error)) {
       const errorMessage = err.reason ? err.reason.replace('[EINVALIDRRDTIMESTAMP] ', '') : null;
       const helpMessage = this.translate.instant('You can clear reporting database and start data collection immediately.');
       return {

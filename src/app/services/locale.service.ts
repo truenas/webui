@@ -196,4 +196,24 @@ export class LocaleService {
     }
     return dateFnsFormat;
   }
+
+  // Revert DateFns for Chart DateTime format
+  getPreferredDateFormatForChart(): string {
+    return this.formatDateTimeToChart(this.dateFormat);
+  }
+
+  getPreferredTimeFormatForChart(): string {
+    return this.formatDateTimeToChart(this.timeFormat);
+  }
+
+  formatDateTimeToChart(format: string): string {
+    const dateFormat = format
+      .replace('yyyy', 'YYYY')
+      .replace('y', 'YY')
+      .replace('dd', 'DD')
+      .replace('d', 'D')
+      .replace(' aaaaa\'m\'', ' a')
+      .replace(' aa', ' A');
+    return dateFormat;
+  }
 }
