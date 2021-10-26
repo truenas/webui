@@ -210,7 +210,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   }
 
   title: string = this.path.length > 0 && this.poolState && this.currentSlide !== '0' ? this.poolState.name : 'Pool';
-  voldataavail = false;
   displayValue: any;
   diskSize: any;
   diskSizeLabel: string;
@@ -326,22 +325,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       // (errors start after this...)
       return 0;
     }
-
-    let availableValue;
-    if (isNaN(this.volumeData.avail)) {
-      availableValue = this.volumeData.avail;
-    } else {
-      const availableObj = (<any>window).filesize(this.volumeData.avail, { output: 'object', exponent: 3 });
-      availableValue = availableObj.value;
-      this.voldataavail = true;
-    }
-    const available: ChartData = {
-      legend: 'Available',
-      data: [availableValue],
-    };
-
-    const percentage = this.volumeData.used_pct ? this.volumeData.used_pct.split('%') : '';
-    this.core.emit({ name: 'PoolDisksRequest', data: [this.poolState.id] });
 
     this.displayValue = (<any>window).filesize(this.volumeData.avail, { standard: 'iec' });
     if (this.displayValue.slice(-2) === ' B') {

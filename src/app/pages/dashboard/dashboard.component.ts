@@ -257,7 +257,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.isDataReady();
     });
 
-    this.core.emit({ name: 'VolumeDataRequest' });
     this.core.emit({ name: 'NicInfoRequest' });
     this.getDisksData();
   }
@@ -326,21 +325,15 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   getDisksData() {
     this.core.register({ observerClass: this, eventName: 'PoolData' }).subscribe((evt: CoreEvent) => {
       this.pools = evt.data;
+      this.isDataReady();
+    });
 
-      if (this.pools.length > 0) {
-        this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]).subscribe((res) => {
-          this.setVolumeData({
-            name: 'RootDatasets',
-            data: res,
-          });
-          this.isDataReady();
-        });
-      } else {
-        const clone = { ...evt };
-        clone.data = [];
-        this.setVolumeData(clone);
-        this.isDataReady();
-      }
+    this.ws.call('pool.dataset.query', [[], { extra: { retrieve_children: false } }]).subscribe((res) => {
+      this.setVolumeData({
+        name: 'RootDatasets',
+        data: res,
+      });
+      this.isDataReady();
     });
 
     this.core.register({ observerClass: this, eventName: 'SysInfo' }).subscribe((evt: CoreEvent) => {
