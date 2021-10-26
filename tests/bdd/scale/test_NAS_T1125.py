@@ -7,9 +7,7 @@ from function import (
     is_element_present,
     attribute_value_exist,
     wait_on_element_disappear,
-    run_cmd,
     ssh_cmd,
-    post
 )
 from pytest_bdd import (
     given,
@@ -53,31 +51,40 @@ def you_should_be_on_the_dashboard_click_on_credentials_and_then_directory_servi
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable') 
+    assert wait_on_element(driver, 7, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Directory Services"]').click()
 
 
 @then('the Directory Services page should open, then click LDAP settings button')
 def the_directory_services_page_should_open_then_click_ldap_settings_button(driver):
     """the Directory Services page should open, then click LDAP settings button."""
+    # Verify the page is starting to load
+    assert wait_on_element(driver, 5, '//h1[text()="Directory Services"]')
+    time.sleep(1)
     # First we have to disable AD
     assert wait_on_element(driver, 5, '//mat-card//span[contains(text(),"Settings")]', 'clickable')
     driver.find_element_by_xpath('//mat-card//span[contains(text(),"Settings")]').click()
+    # Verify the box is starting to load
+    assert wait_on_element(driver, 5, '//h3[text()="Active Directory"]')
     assert wait_on_element(driver, 5, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'clickable')
     checkbox_checked = attribute_value_exist(driver, '//mat-checkbox[contains(@ix-auto, "Enable (requires password")]', 'class', 'mat-checkbox-checked')
+    # The checkbox should be checked
     if checkbox_checked:
         driver.find_element_by_xpath('//mat-checkbox[contains(@ix-auto, "Enable (requires password")]').click()
     assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Configure LDAP")]', 'clickable')
+    assert wait_on_element(driver, 7, '//span[contains(text(),"Configure LDAP")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Configure LDAP")]').click()
+    # Verify the LDAP box is starting to load
+    assert wait_on_element(driver, 5, '//h3[text()="LDAP"]')
 
 
 @then(parsers.parse('input "{hostname}" for Hostname'))
 def input_hostname_for_hostname(driver, hostname):
     """input "{hostname}" for Hostname."""
     assert wait_on_element(driver, 5, '//span[contains(text(),"Configure LDAP")]', 'clickable')
+    assert wait_on_element(driver, 5, '//input[@placeholder="Hostname"]', 'inputable')
     driver.find_element_by_xpath('//input[@placeholder="Hostname"]').clear()
     driver.find_element_by_xpath('//input[@placeholder="Hostname"]').send_keys(hostname)
 
@@ -100,12 +107,13 @@ def input__bind_DN_for_bind_dn(driver, bind_DN):
 def input_bind_password_for_bind_password(driver, bind_password):
     """input "{bind_password}" for Bind Password."""
     driver.find_element_by_xpath('//input[@ix-auto="input__Bind Password"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Bind Password"]').send_keys(bind_password)    
+    driver.find_element_by_xpath('//input[@ix-auto="input__Bind Password"]').send_keys(bind_password)
 
 
 @then('click Advanced Options, then click Enable checkbox, then check Samba Schema, select ON for Encryption Mode, then click save')
 def click_advanced_options_then_click_enable_checkbox_then_check_samba_schema_select_on_for_encryption_mode_then_click_save(driver):
     """click Advanced Options, then click Enable checkbox, then check Samba Schema, select ON for Encryption Mode, then click save."""
+    assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__Enable"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enable"]').click()
     assert wait_on_element(driver, 10, '//span[contains(text(),"Advanced Options")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"Advanced Options")]').click()
@@ -116,7 +124,6 @@ def click_advanced_options_then_click_enable_checkbox_then_check_samba_schema_se
     time.sleep(5)
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Encryption Mode"]').click()
     assert wait_on_element(driver, 10, '//span[contains(.,"ON")]', 'clickable')
-    #assert wait_on_element(driver, 10, '//span[contains(.,"ON")]')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Encryption Mode_ON"]').click()
     element = driver.find_element_by_xpath('//span[contains(text(),"Basic Options")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
@@ -128,7 +135,7 @@ def click_advanced_options_then_click_enable_checkbox_then_check_samba_schema_se
 def wait_for_please_wait_should_appear_while_settings_are_applied_then_after_settings_are_applied_you_should_see_hostname_settings_saved(driver, hostname):
     """wait for Please wait should appear while settings are applied, then after settings are applied, you should see "{hostname}" Settings saved."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    ## Add validtion of elements
+    # Add validation of elements
     assert wait_on_element(driver, 5, '//mat-card//span[contains(text(),"Hostname:")]')
 
 

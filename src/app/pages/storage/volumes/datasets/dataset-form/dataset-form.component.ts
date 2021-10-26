@@ -1577,7 +1577,7 @@ export class DatasetFormComponent implements FormConfiguration {
     const operation$ = this.isNew ? this.addSubmit(body) : this.editSubmit(body);
     return operation$.pipe(untilDestroyed(this)).subscribe((restPostResp) => {
       this.loader.close();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       const parentPath = `/mnt/${this.parent}`;
       this.ws.call('filesystem.acl_is_trivial', [parentPath]).pipe(untilDestroyed(this)).subscribe((res) => {
         if (!res) {
@@ -1603,11 +1603,11 @@ export class DatasetFormComponent implements FormConfiguration {
                 }
               });
             } else {
-              this.modalService.close('slide-in-form');
+              this.modalService.closeSlideIn();
             }
           });
         } else {
-          this.modalService.close('slide-in-form');
+          this.modalService.closeSlideIn();
         }
         this.modalService.refreshTable();
       });

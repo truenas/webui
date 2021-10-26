@@ -267,7 +267,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
 
     this.ws.onCloseSubject$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
     });
   }
 

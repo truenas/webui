@@ -230,7 +230,7 @@ export class CertificateEditComponent implements FormConfiguration {
       id: 'create_ACME',
       name: helptext_system_certificates.list.action_create_acme_certificate,
       function: () => {
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         const message = { action: 'open', component: 'acmeComponent', row: this.rowNum };
         this.modalService.message(message);
       },
@@ -370,7 +370,7 @@ export class CertificateEditComponent implements FormConfiguration {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.matDialog.closeAll();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.modalService.refreshTable();
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {

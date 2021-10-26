@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import {
   chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
 } from 'app/constants/catalog.constants';
@@ -19,6 +18,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { KubernetesSettingsComponent } from 'app/pages/applications/kubernetes-settings/kubernetes-settings.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
@@ -26,11 +26,11 @@ import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-jo
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService, WebSocketService } from 'app/services/index';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
 import { CatalogSummaryDialogComponent } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ChartWizardComponent } from '../forms/chart-wizard.component';
-import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 
 interface CatalogSyncJob {
   id: number;
@@ -100,7 +100,7 @@ export class CatalogComponent implements OnInit {
     private core: CoreService,
     private modalService: ModalService,
     private appService: ApplicationsService,
-    private store: JobsManagerStore,
+    private ixModalService: IxModalService,
   ) {
     this.utils = new CommonUtils();
   }
@@ -205,7 +205,7 @@ export class CatalogComponent implements OnInit {
           this.selectPool();
           return;
         case 'advanced_settings':
-          this.modalService.openInSlideIn(KubernetesSettingsComponent);
+          this.ixModalService.open(KubernetesSettingsComponent, this.translate.instant('Kubernetes Settings'));
           break;
         case 'unset_pool':
           this.doUnsetPool();

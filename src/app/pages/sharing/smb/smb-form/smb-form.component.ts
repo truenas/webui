@@ -350,7 +350,7 @@ export class SMBFormComponent implements FormConfiguration {
     } else {
       this.checkAllowDeny(entityForm);
     }
-    this.modalService.close('slide-in-form');
+    this.modalService.closeSlideIn();
     this.modalService.refreshTable();
   }
 

@@ -97,7 +97,7 @@ export class SystemDatasetPoolComponent implements FormConfiguration {
         this.loader.close();
         this.entityForm.success = true;
         this.entityForm.formGroup.markAsPristine();
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         this.sysGeneralService.refreshSysGeneral();
       },
       error: (error) => {

@@ -473,7 +473,7 @@ export class ChartReleasesComponent implements OnInit {
             message = '<ul>' + message + '</ul>';
             this.dialogService.errorReport(helptext.bulkActions.title, message);
           }
-          this.modalService.close('slide-in-form');
+          this.modalService.closeSlideIn();
           this.refreshChartReleases();
         },
       );

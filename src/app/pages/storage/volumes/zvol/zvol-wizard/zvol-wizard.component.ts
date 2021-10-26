@@ -551,13 +551,11 @@ export class ZvolWizardComponent implements WizardConfiguration {
     if (this.isNew) {
       this.addSubmit(body).pipe(untilDestroyed(this)).subscribe((restPostResp) => {
         this.loader.close();
-        this.modalService.close('slide-in-form').then(
-          (closed) => {
-            if (closed) {
-              this.parent = null;
-            }
-          },
-        );
+        this.modalService.closeSlideIn().then((closed) => {
+          if (closed) {
+            this.parent = null;
+          }
+        });
         this.core.emit({ name: 'zvolCreated', sender: this, data: restPostResp });
         this.modalService.refreshTable();
       }, (res) => {
@@ -572,12 +570,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
   }
 
   customCancel(): void {
-    this.modalService.close('slide-in-form').then(
-      (closed) => {
-        if (closed) {
-          this.parent = null;
-        }
-      },
-    );
+    this.modalService.closeSlideIn().then((closed) => {
+      if (closed) {
+        this.parent = null;
+      }
+    });
   }
 }

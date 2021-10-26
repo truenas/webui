@@ -951,8 +951,8 @@ export type ApiDirectory = {
 
   // staticroute
   'staticroute.query': { params: QueryParams<StaticRoute>; response: StaticRoute[] };
-  'staticroute.create': { params: UpdateStaticRoute; response: StaticRoute };
-  'staticroute.update': { params: UpdateStaticRoute; response: StaticRoute };
+  'staticroute.create': { params: [UpdateStaticRoute]; response: StaticRoute };
+  'staticroute.update': { params: [id: number, update: UpdateStaticRoute]; response: StaticRoute };
   'staticroute.delete': { params: [id: number]; response: boolean };
 
   // SNMP
