@@ -238,7 +238,7 @@ def on_the_dashboard_wait_for_the_active_directory_service(driver):
     assert wait_on_element(driver, 60, '//h1[text()="Dashboard"]')
     assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
     # Make sure HA is enable before going forward
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ha_enabled"]')
     if wait_on_element(driver, 3, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Wait for the directories service manager button
