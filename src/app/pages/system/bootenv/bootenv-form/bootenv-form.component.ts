@@ -4,7 +4,7 @@ import {
   ChangeDetectorRef,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -34,7 +34,7 @@ export class BootEnvironmentFormComponent {
   operation: BootEnvironmentActions = BootEnvironmentActions.Create;
   currentName?: string;
 
-  formGroup: FormGroup<any> = this.formBuilder.group({
+  formGroup = this.formBuilder.group({
     name: ['', [Validators.required, regexValidator(this.bootEnvService.bootenv_name_regex)]],
   });
 
@@ -54,7 +54,7 @@ export class BootEnvironmentFormComponent {
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
-  setupForm(operation: BootEnvironmentActions, name?: string): FormGroup<any> {
+  setupForm(operation: BootEnvironmentActions, name?: string): void {
     this.operation = operation;
 
     switch (this.operation) {
@@ -89,7 +89,6 @@ export class BootEnvironmentFormComponent {
     }
 
     this.changeDetectorRef.detectChanges();
-    return this.formGroup;
   }
 
   onSubmit(): void {

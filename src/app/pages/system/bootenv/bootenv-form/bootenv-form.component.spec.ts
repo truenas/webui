@@ -76,7 +76,6 @@ describe('BootEnvironmentFormComponent', () => {
       const controls = spectator.component.formGroup.controls;
       const controlKeys = Object.keys(controls);
       expect(controlKeys).toContain('source');
-      expect(controls.source.value).toBe(cloneSource);
     });
 
     it('should add source field to DOM ', () => {
