@@ -9,7 +9,7 @@
           [required]="true"
           [tooltip]="tooltips.name"
           ></ix-input>
-        <ng-container *ngIf="formGroup.controls.source && operation === Operations.Clone">
+        <ng-container *ngIf="operation === Operations.Clone">
           <ix-input
             formControlName="source"
             [label]="'Source' | translate"

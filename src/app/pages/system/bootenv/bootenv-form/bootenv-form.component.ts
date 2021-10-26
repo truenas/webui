@@ -7,12 +7,9 @@ import { Validators } from '@angular/forms';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
 import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
-import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import {
-  BootenvParams,
   BootenvTooltip,
   CreateBootenvParams,
   UpdateBootenvParams,
@@ -92,46 +89,56 @@ export class BootEnvironmentFormComponent {
   }
 
   onSubmit(): void {
-    let apiMethod;
-    let apiParams: BootenvParams;
-    let query$: Observable<unknown>;
-
     switch (this.operation) {
       case this.Operations.Create:
-        apiMethod = 'bootenv.create' as keyof ApiDirectory;
-        apiParams = [{
+        const createParams: CreateBootenvParams = [{
           name: this.formGroup.value.name,
-        }] as CreateBootenvParams;
-        query$ = this.ws.call(apiMethod, apiParams);
+        }];
+
+        this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe(() => {
+          this.isFormLoading = false;
+          this.modalService.close();
+        }, (error) => {
+          this.isFormLoading = false;
+          this.modalService.close();
+          this.errorHandler.handleWsFormError(error, this.formGroup);
+        });
+
         break;
       case this.Operations.Rename:
-        apiMethod = 'bootenv.update' as keyof ApiDirectory;
-        apiParams = [
+        const renameParams: UpdateBootenvParams = [
           this.currentName,
           {
             name: this.formGroup.value.name,
           },
-        ] as UpdateBootenvParams;
-        query$ = this.ws.call(apiMethod, apiParams);
+        ];
+
+        this.ws.call('bootenv.update', renameParams).pipe(untilDestroyed(this)).subscribe(() => {
+          this.isFormLoading = false;
+          this.modalService.close();
+        }, (error) => {
+          this.isFormLoading = false;
+          this.modalService.close();
+          this.errorHandler.handleWsFormError(error, this.formGroup);
+        });
+
         break;
       case this.Operations.Clone:
-        // Cloning is done via adding source param to create API method
-        apiMethod = 'bootenv.create' as keyof ApiDirectory;
-        apiParams = [{
+        const cloneParams: CreateBootenvParams = [{
           name: this.formGroup.value.name,
           source: this.currentName,
-        }] as CreateBootenvParams;
-        query$ = this.ws.call(apiMethod, apiParams);
+        }];
+
+        this.ws.call('bootenv.create', cloneParams).pipe(untilDestroyed(this)).subscribe(() => {
+          this.isFormLoading = false;
+          this.modalService.close();
+        }, (error) => {
+          this.isFormLoading = false;
+          this.modalService.close();
+          this.errorHandler.handleWsFormError(error, this.formGroup);
+        });
+
         break;
     }
-
-    query$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.modalService.close();
-    }, (error) => {
-      this.isFormLoading = false;
-      this.modalService.close();
-      this.errorHandler.handleWsFormError(error, this.formGroup);
-    });
   }
 }
