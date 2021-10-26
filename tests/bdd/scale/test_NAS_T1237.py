@@ -51,9 +51,9 @@ def you_are_on_the_dashboard_click_on_storage_in_the_side_menu(driver):
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
 
 
-@then(parsers.parse('Create dataset {dataset_name}'))
-def create_dataset_rtacltest1(driver, dataset_name):
-    """Create dataset rt-acl-test-1."""
+@then(parsers.parse('Create 1st dataset {dataset_name}'))
+def create_1st_dataset_rtacltest1(driver, dataset_name):
+    """Create 1st dataset rt-acl-test-1."""
     assert wait_on_element(driver, 5, '//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"tank")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
@@ -70,9 +70,9 @@ def create_dataset_rtacltest1(driver, dataset_name):
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
 
-@then(parsers.parse('Create dataset {dataset_name} under rt-acl-test-1'))
-def create_dataset_rtacltest2_under_rtacltest1(driver, dataset_name):
-    """Create dataset rt-acl-test-2 under rt-acl-test-1."""
+@then(parsers.parse('Create 2nd dataset {dataset_name} under rt-acl-test-1'))
+def create_2nd_dataset_rtacltest2_under_rtacltest1(driver, dataset_name):
+    """Create 2nd dataset rt-acl-test-2 under rt-acl-test-1."""
     assert wait_on_element(driver, 5, '//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
@@ -87,6 +87,10 @@ def create_dataset_rtacltest2_under_rtacltest1(driver, dataset_name):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"RETURN TO POOL LIST")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"RETURN TO POOL LIST")]').click()
+
+    
 
 
 @then('Apply ACL with both recusrive and transverse set to rt-acl-test-1')
@@ -133,23 +137,26 @@ def verify_that_the_acl_was_set_to_rtacltest1(driver):
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(text(),"Group - ericbsd")]')
+    assert wait_on_element(driver, 5, '//div[contains(text(),"User - ericbsd")]')
 
 
 @then('Verify that the ACL was set to rt-acl-test-2')
 def verify_that_the_acl_was_set_to_rtacltest2(driver):
     """Verify that the ACL was set to rt-acl-test-2."""
+    assert wait_on_element(driver, 5, f'//mat-expansion-panel[@ix-auto="expansion-panel__tank"]//mat-icon[@fonticon="mdi-chevron-right"]')
+    driver.find_element_by_xpath(f'//mat-expansion-panel[@ix-auto="expansion-panel__tank"]//mat-icon[@fonticon="mdi-chevron-right"]').click()
+    time.sleep(3)
     assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-acl-test-2")]//mat-icon[text()="more_vert"]')
     driver.find_element_by_xpath(f'//tr[contains(.,"rt-acl-test-2")]//mat-icon[text()="more_vert"]').click()
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(text(),"Group - ericbsd")]') is False
+    assert wait_on_element(driver, 5, '//div[contains(text(),"User - ericbsd")]') is False
 
 
-@then(parsers.parse('Create dataset {dataset_name}'))
-def create_dataset_rtacltest3(driver, dataset_name):
-    """Create dataset rt-acl-test-3."""
+@then(parsers.parse('Create 3rd dataset {dataset_name}'))
+def create_3rd_dataset_rtacltest3(driver, dataset_name):
+    """Create 3rd dataset rt-acl-test-3."""
     assert wait_on_element(driver, 5, '//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]').click()
     assert wait_on_element(driver, 4, '//button[normalize-space(text())="Add Dataset"]', 'clickable')
