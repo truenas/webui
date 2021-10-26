@@ -8,7 +8,7 @@ import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel-form/kernel-form.component';
-import { WebSocketService } from 'app/services';
+import { SystemGeneralService, WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
 
 describe('KernelFormComponent', () => {
@@ -26,6 +26,7 @@ describe('KernelFormComponent', () => {
         mockCall('system.advanced.update'),
       ]),
       mockProvider(IxModalService),
+      mockProvider(SystemGeneralService),
     ],
   });
 
