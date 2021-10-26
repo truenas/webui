@@ -368,7 +368,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   }
 
   chartDataError(err: WebsocketError, nic: BaseNetworkInterface): EmptyConfig {
-    if ([ReportingDatabaseError.FailedExport, ReportingDatabaseError.InvalidTimestamp].includes(err.error)) {
+    if (err.error === ReportingDatabaseError.InvalidTimestamp) {
       const errorMessage = err.reason ? err.reason.replace('[EINVALIDRRDTIMESTAMP] ', '') : null;
       const helpMessage = this.translate.instant('You can clear reporting database and start data collection immediately.');
       return {

@@ -197,7 +197,6 @@ export class LocaleService {
     return dateFnsFormat;
   }
 
-  // Revert DateFns for Chart DateTime format
   getPreferredDateFormatForChart(): string {
     return this.formatDateTimeToChart(this.dateFormat);
   }
@@ -206,6 +205,7 @@ export class LocaleService {
     return this.formatDateTimeToChart(this.timeFormat);
   }
 
+  /** Revert DateFns for Chart DateTime format */
   formatDateTimeToChart(format: string): string {
     const dateFormat = format
       .replace('yyyy', 'YYYY')
