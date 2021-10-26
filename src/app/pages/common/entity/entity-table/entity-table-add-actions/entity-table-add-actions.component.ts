@@ -14,6 +14,7 @@ import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-t
 @Component({
   selector: 'app-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html',
+  styleUrls: ['./entity-table-add-actions.component.scss'],
 })
 export class EntityTableAddActionsComponent implements GlobalAction, OnInit, AfterViewInit {
   @ViewChild('filter', { static: false }) filter: ElementRef;

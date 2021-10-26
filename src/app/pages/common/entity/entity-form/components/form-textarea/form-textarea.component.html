@@ -28,7 +28,7 @@
       (input)="onInput()">
     </textarea>
     <div *ngIf="config.filereader">
-      <input id="fb" #fileInput type="file" (change)="changeListener($event)" style="display:none"/>
+      <input id="fb" #fileInput type="file" (change)="changeListener($event)" class="display-none" />
       <div class="textarea-filereader">
         <span [style.margin-right.px]="10">{{'Paste value above or choose a file.' | translate}}</span>
         <button type="button" mat-button color="accent" class="btn-default" (click)="fileBtnClick()">
