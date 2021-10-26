@@ -300,8 +300,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           clone.splice(i, 1);
         } else {
           // Only keep INET addresses
-          clone[i].state.aliases = clone[i].state.aliases.filter((address) =>
-            [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(address.type));
+          clone[i].state.aliases = clone[i].state.aliases.filter((address) => {
+            return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(address.type);
+          });
         }
       }
 
