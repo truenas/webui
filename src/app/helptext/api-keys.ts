@@ -1,4 +1,4 @@
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   title: T('API Keys'),
@@ -7,7 +7,6 @@ export default {
   col_created_at: T('Created Date'),
   deleteMsg_title: T('API Key'),
 
-  action_add: T('ADD'),
   action_docs: T('DOCS'),
   action_edit: T('EDIT'),
   action_delete: T('DELETE'),

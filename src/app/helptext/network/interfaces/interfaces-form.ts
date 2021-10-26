@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { LinkAggregationProtocol, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
-import { T } from 'app/translate-marker';
 
 export default {
   title_add: T('Add Interface'),
@@ -53,18 +53,11 @@ export default {
   disable_offload_capabilities_placeholder: T('Disable Hardware Offloading'),
   disable_offload_capabilities_tooltip: T('Turn off hardware offloading \
  for network traffic processing. WARNING: disabling hardware offloading \
- can reduce network performance. Disabling hardware offloading is only \
- recommended when the interface is managing jails, plugins, or virtual \
- machines.'),
+ can reduce network performance.'),
 
   disable_offload_capabilities_warning_title: T('Disable Hardware Offloading'),
   disable_offload_capabilities_warning_msg: T('Disabling hardware offloading can severely reduce\
- network performance. Disabling this feature is only recommended when an interface is used for\
- plugin, jail, or virtual machine networking.'),
-
-  int_options_placeholder: T('Options'),
-  int_options_tooltip: T('Enter additional parameters from \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=ifconfig" target="_blank">ifconfig(8)</a>.'),
+ network performance.'),
 
   alias_address_placeholder: T('IP Address'),
   alias_address_tooltip: T('Define an alias for the interface \
@@ -131,7 +124,7 @@ export default {
 
   vlan_tag_placeholder: T('Vlan Tag'),
   vlan_tag_tooltip: T('Enter the numeric tag configured in the switched network.'),
-  vlan_tag_validation: [rangeValidator(1, 4095), Validators.required],
+  vlan_tag_validation: [rangeValidator(1, 4094), Validators.required],
 
   vlan_pcp_placeholder: T('Priority Code Point'),
   vlan_pcp_tooltip: T('Select the Class of Service. The available 802.1p\

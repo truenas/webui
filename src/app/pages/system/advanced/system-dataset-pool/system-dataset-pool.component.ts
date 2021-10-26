@@ -7,8 +7,8 @@ import { filter, switchMap } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
@@ -67,7 +67,7 @@ export class SystemDatasetPoolComponent implements FormConfiguration {
       .call('systemdataset.pool_choices')
       .pipe(untilDestroyed(this))
       .subscribe((poolChoices) => {
-        const poolField: FormSelectConfig = this.fieldSets.config(poolFieldName);
+        const poolField = this.fieldSets.config(poolFieldName) as FormSelectConfig;
         poolField.options = Object.entries(poolChoices)
           .map(([label, value]) => ({ label, value }));
       });
@@ -97,7 +97,7 @@ export class SystemDatasetPoolComponent implements FormConfiguration {
         this.loader.close();
         this.entityForm.success = true;
         this.entityForm.formGroup.markAsPristine();
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         this.sysGeneralService.refreshSysGeneral();
       },
       error: (error) => {

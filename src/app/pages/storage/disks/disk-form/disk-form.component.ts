@@ -6,7 +6,7 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -19,8 +19,8 @@ import { WebSocketService } from 'app/services';
 })
 export class DiskFormComponent implements FormConfiguration {
   route_success: string[] = ['storage', 'disks'];
-  queryCall: 'disk.query' = 'disk.query';
-  editCall: 'disk.update' = 'disk.update';
+  queryCall = 'disk.query' as const;
+  editCall = 'disk.update' as const;
   customFilter: any[] = [[['identifier', '=']]];
   isEntity = true;
 

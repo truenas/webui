@@ -1,3 +1,4 @@
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import {
   nfsAclTagLabels, nfsAclTypeLabels,
   NfsAdvancedFlag, nfsAdvancedPermissionLabels,
@@ -9,7 +10,6 @@ import {
   NfsFormFlagsType,
   NfsFormPermsType,
 } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form-values.interface';
-import { T } from 'app/translate-marker';
 
 export default {
   dataset_acl_title_file: T('File Information'),
@@ -130,8 +130,7 @@ are submitted only when this box is set.'),
  directories and files in the current dataset.'),
 
   dataset_acl_traverse_placeholder: T('Apply permissions to child datasets'),
-  dataset_acl_traverse_tooltip: T('Apply permissions recursively to all child\
- datasets of the current dataset.'),
+  dataset_acl_traverse_tooltip: T('Apply permissions recursively to all child datasets of the current dataset.'),
 
   dataset_acl_dialog_warning: T('Warning'),
   dataset_acl_dialog_warning_message: T('Changing dataset permission mode\

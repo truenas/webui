@@ -7,6 +7,7 @@ import re
 import requests
 import sys
 import time
+from collections.abc import Iterable
 from selenium.common.exceptions import (
     NoSuchElementException,
     TimeoutException
@@ -96,9 +97,9 @@ def ssh_cmd(command, username, password, host):
         "UserKnownHostsFile=/dev/null",
         "-o",
         "VerifyHostKeyDNS=no",
-        f"{username}@{host}",
-        command
-    ]
+        f"{username}@{host}"
+    ] + command.split()
+
     try:
         process = run(cmd, stdout=PIPE, universal_newlines=True, timeout=5)
         output = process.stdout
@@ -112,7 +113,7 @@ def ssh_cmd(command, username, password, host):
 
 def start_ssh_agent():
     process = run(['ssh-agent', '-s'], stdout=PIPE, universal_newlines=True)
-    torecompil = 'SSH_AUTH_SOCK=(?P<socket>[^;]+).*SSH_AGENT_PID=(?P<pid>\d+)'
+    torecompil = r'SSH_AUTH_SOCK=(?P<socket>[^;]+).*SSH_AGENT_PID=(?P<pid>\d+)'
     OUTPUT_PATTERN = re.compile(torecompil, re.MULTILINE | re.DOTALL)
     match = OUTPUT_PATTERN.search(process.stdout)
     if match is None:
@@ -230,3 +231,35 @@ def interactive_ssh(cmd, host, user, password):
     child.expect('ssword:')
     child.sendline(password)
     return child
+
+
+def make_bytes(item):
+    '''Cast the item to a bytes data type.'''
+
+    if isinstance(item, bytes) or isinstance(item, bytearray):
+        return item
+    if isinstance(item, str):
+        return bytes(item, 'UTF-8')
+    if isinstance(item, int):
+        return bytes([item])
+    if isinstance(item, Iterable):
+        return b''.join([make_bytes(i) for i in item])
+
+    # We should get here, but if we do we need a better solution
+    raise TypeError('Cannot easily cast type {} to bytes'.format(type(item)))
+
+
+def word_xor(data, key):
+    '''Apply xor operation to data by breaking it up into len(key)-sized blocks'''
+    # Data should be a bytes or byte array, key should be 64 bits.
+    # Iterate through the bytes array and
+
+    data = make_bytes(data)
+    key = make_bytes(key)
+    length = len(key)
+    result = bytearray()
+    cycles = len(data)
+    for i in range(cycles):
+        result += (data[i] ^ key[i % length]).to_bytes(1, 'little')
+
+    return result

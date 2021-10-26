@@ -1,19 +1,20 @@
 import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { ConfirmOptions, ConfirmOptionsWithSecondaryCheckbox } from 'app/interfaces/dialog.interface';
-import { ConfirmDialog } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
+import { Job } from 'app/interfaces/job.interface';
+import { Option } from 'app/interfaces/option.interface';
+import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { ErrorDialog } from 'app/pages/common/error-dialog/error-dialog.component';
+import { ErrorDialogComponent } from 'app/pages/common/error-dialog/error-dialog.component';
 import { GeneralDialogComponent, GeneralDialogConfig } from 'app/pages/common/general-dialog/general-dialog.component';
-import { InfoDialog } from 'app/pages/common/info-dialog/info-dialog.component';
-import { PasswordDialog } from 'app/pages/common/password-dialog/password-dialog.component';
+import { InfoDialogComponent } from 'app/pages/common/info-dialog/info-dialog.component';
+import { PasswordDialogComponent } from 'app/pages/common/password-dialog/password-dialog.component';
 import { SelectDialogComponent } from 'app/pages/common/select-dialog/select-dialog.component';
-import { T } from 'app/translate-marker';
 import { AppLoaderService } from './app-loader/app-loader.service';
 import { WebSocketService } from './ws.service';
 
@@ -31,11 +32,11 @@ export class DialogService {
   }
 
   confirm(confirmOptions: ConfirmOptions): Observable<boolean>
-  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialog, unknown>
+  confirm(confirmOptions: ConfirmOptionsWithSecondaryCheckbox): MatDialogRef<ConfirmDialogComponent, unknown>
   confirm(
     options: ConfirmOptions | ConfirmOptionsWithSecondaryCheckbox,
-  ): Observable<boolean> | MatDialogRef<ConfirmDialog, unknown> {
-    const dialogRef = this.dialog.open(ConfirmDialog, { disableClose: options.disableClose || false });
+  ): Observable<boolean> | MatDialogRef<ConfirmDialogComponent, unknown> {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, { disableClose: options.disableClose || false });
 
     dialogRef.componentInstance.title = options.title;
     dialogRef.componentInstance.message = options.message;
@@ -73,7 +74,7 @@ export class DialogService {
       dialogRef.componentInstance.secondaryCheckBoxMsg = options.secondaryCheckBoxMsg;
       dialogRef.componentInstance.data = options.data;
       dialogRef.componentInstance.method = options.method;
-      dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: any) => {
+      dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection: boolean) => {
         const data = options.data;
         if (selection) {
           if (data[0] && data[0].hasOwnProperty('reboot')) {
@@ -91,15 +92,15 @@ export class DialogService {
   }
 
   passwordConfirm(message: string, disableClose = true): Observable<boolean> {
-    const dialogRef = this.dialog.open(PasswordDialog, { disableClose });
+    const dialogRef = this.dialog.open(PasswordDialogComponent, { disableClose });
 
     dialogRef.componentInstance.message = message;
 
     return dialogRef.afterClosed();
   }
 
-  errorReport(title: string, message: string, backtrace = '', logs?: any): Observable<boolean> {
-    const dialogRef = this.dialog.open(ErrorDialog);
+  errorReport(title: string, message: string, backtrace = '', logs?: Job): Observable<boolean> {
+    const dialogRef = this.dialog.open(ErrorDialogComponent);
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.message = message;
@@ -112,7 +113,7 @@ export class DialogService {
   }
 
   info(title: string, info: string, width = '500px', icon = 'report_problem', is_html = false): Observable<boolean> {
-    const dialogRef = this.dialog.open(InfoDialog, { width });
+    const dialogRef = this.dialog.open(InfoDialogComponent, { width });
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
@@ -122,37 +123,20 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
+  /**
+   * @deprecated
+   */
   select(
     title: string,
-    options: any[],
+    options: Option[],
     optionPlaceHolder: string,
-    method: ApiMethod,
-    params?: any,
-  ): void {
-    let data: any;
+  ): MatDialogRef<SelectDialogComponent> {
     const dialogRef = this.dialog.open(SelectDialogComponent, { width: '300px' });
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.options = options;
     dialogRef.componentInstance.optionPlaceHolder = optionPlaceHolder;
-    dialogRef.componentInstance.method = method;
-
-    dialogRef.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this)).subscribe((selection) => {
-      if (selection === 'force') {
-        data = { [selection]: true };
-      } else {
-        data = { [params]: selection };
-      }
-      dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe((res) => {
-        if (res) {
-          // TODO: The whole block seems to be doing nothing.
-          // eslint-disable-next-line unused-imports/no-unused-vars
-          this.ws.call(method, [data]).pipe(untilDestroyed(this)).subscribe((out) => {
-            // this.snackBar.open(message, 'close', { duration: 5000 });
-          });
-        }
-      });
-    });
+    return dialogRef;
   }
 
   dialogForm(conf: DialogFormConfiguration, disableClose = false): Observable<boolean> {
@@ -162,14 +146,20 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  dialogFormWide(conf: any): Observable<boolean> {
+  dialogFormWide(conf: DialogFormConfiguration): Observable<boolean> {
     const dialogRef = this.dialog.open(EntityDialogComponent, { width: '550px', disableClose: true });
     dialogRef.componentInstance.conf = conf;
 
     return dialogRef.afterClosed();
   }
 
-  doubleConfirm(title: string, message: string, name: string, confirmBox?: boolean, buttonMsg?: string): any {
+  doubleConfirm(
+    title: string,
+    message: string,
+    name: string,
+    confirmBox?: boolean,
+    buttonMsg?: string,
+  ): Observable<boolean> {
     const conf = {
       title,
       message,
@@ -199,7 +189,7 @@ export class DialogService {
         });
       },
       customSubmit(entityDialog: EntityDialogComponent) {
-        return entityDialog.dialogRef.close(true);
+        entityDialog.dialogRef.close(true);
       },
     } as DialogFormConfiguration;
     return this.dialogForm(conf);

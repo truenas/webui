@@ -53,7 +53,7 @@
         <mat-autocomplete #autoComplete="matAutocomplete" (optionSelected)="selected($event)">
           <mat-option *ngFor="let option of config.searchOptions" [value]="option.value"
               ix-auto ix-auto-type="option" ix-auto-identifier="{{option.label}}">
-            <span>{{ option.label }}</span>
+            <span>{{ option.label | translate }}</span>
           </mat-option>
         </mat-autocomplete>
       </ng-template>

@@ -4,7 +4,7 @@ import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { MatRadioChange } from '@angular/material/radio/radio';
-import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { BehaviorSubject } from 'rxjs';
@@ -14,15 +14,14 @@ import { helptext_system_email } from 'app/helptext/system/email';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService, WebSocketService, AppLoaderService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 interface OAuthData {
   client_id?: string;
@@ -33,13 +32,11 @@ interface OAuthData {
 @UntilDestroy()
 @Component({
   selector: 'app-email',
-  template: `
-  <entity-form [conf]="this"></entity-form>
-  `,
+  template: '<entity-form [conf]="this"></entity-form>',
 })
 export class EmailComponent implements FormConfiguration {
-  queryCall: 'mail.config' = 'mail.config';
-  updateCall: 'mail.update' = 'mail.update';
+  queryCall = 'mail.config' as const;
+  updateCall = 'mail.update' as const;
   entityEdit: EntityFormComponent;
   rootEmail: string;
   private oauthCreds$: BehaviorSubject<OAuthData> = new BehaviorSubject({});
@@ -93,20 +90,6 @@ export class EmailComponent implements FormConfiguration {
       label: true,
       config: [
         {
-          type: 'input',
-          name: 'fromemail',
-          placeholder: helptext_system_email.fromemail.placeholder,
-          tooltip: helptext_system_email.fromemail.tooltip,
-          validation: helptext_system_email.fromemail.validation,
-          required: true,
-        },
-        {
-          type: 'input',
-          name: 'fromname',
-          placeholder: helptext_system_email.fromname.placeholder,
-          tooltip: helptext_system_email.fromname.tooltip,
-        },
-        {
           type: 'radio',
           name: 'send_mail_method',
           onChange: (data: { event: MatRadioChange }) => {
@@ -128,6 +111,20 @@ export class EmailComponent implements FormConfiguration {
             },
           ],
           value: true,
+        },
+        {
+          type: 'input',
+          name: 'fromemail',
+          placeholder: helptext_system_email.fromemail.placeholder,
+          tooltip: helptext_system_email.fromemail.tooltip,
+          validation: helptext_system_email.fromemail.validation,
+          required: true,
+        },
+        {
+          type: 'input',
+          name: 'fromname',
+          placeholder: helptext_system_email.fromname.placeholder,
+          tooltip: helptext_system_email.fromname.tooltip,
         },
         {
           type: 'input',
@@ -206,24 +203,23 @@ export class EmailComponent implements FormConfiguration {
           name: 'login-gmail',
           customEventActionLabel: helptext_system_email.auth.login_button,
           customEventMethod: () => {
-            const self = this;
             const dialogService = this.dialogservice;
 
             window.open('https://freenas.org/oauth/gmail?origin='
               + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
-            window.addEventListener('message', doAuth, false);
 
-            function doAuth(message: OauthMessage<OAuthData>): void {
+            const doAuth = (message: OauthMessage<OAuthData>): void => {
               if (message.data.oauth_portal) {
                 if (message.data.error) {
                   dialogService.errorReport(T('Error'), message.data.error);
                 } else {
-                  self.oauthCreds$.next(message.data.result);
-                  self.checkForOauthCreds();
+                  this.oauthCreds$.next(message.data.result);
+                  this.checkForOauthCreds();
                 }
               }
               window.removeEventListener('message', doAuth);
-            }
+            };
+            window.addEventListener('message', doAuth, false);
           },
         },
       ],
@@ -238,11 +234,10 @@ export class EmailComponent implements FormConfiguration {
   private pass: FormInputConfig;
 
   constructor(
-    protected router: Router,
-    protected ws: WebSocketService,
+    private ws: WebSocketService,
     private dialogservice: DialogService,
-    protected dialog: MatDialog,
-    protected loader: AppLoaderService,
+    private dialog: MatDialog,
+    private loader: AppLoaderService,
   ) {}
 
   resourceTransformIncomingRestData(data: MailConfig): MailConfig {
@@ -302,6 +297,8 @@ export class EmailComponent implements FormConfiguration {
   }
 
   toggleSmtpControls(): void {
+    this.entityEdit.setDisabled('fromemail', !this.sendMailMethod.value, !this.sendMailMethod.value);
+    this.entityEdit.setDisabled('fromname', !this.sendMailMethod.value, !this.sendMailMethod.value);
     this.entityEdit.setDisabled('outgoingserver', !this.sendMailMethod.value, !this.sendMailMethod.value);
     this.entityEdit.setDisabled('port', !this.sendMailMethod.value, !this.sendMailMethod.value);
     this.entityEdit.setDisabled('security', !this.sendMailMethod.value, !this.sendMailMethod.value);

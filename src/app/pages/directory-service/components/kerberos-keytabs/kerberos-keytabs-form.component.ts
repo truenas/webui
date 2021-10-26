@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-keytabs-form-list';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from 'app/services/modal.service';
@@ -15,9 +15,9 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class KerberosKeytabsFormComponent implements FormConfiguration {
   title: string;
-  addCall: 'kerberos.keytab.create' = 'kerberos.keytab.create';
-  editCall: 'kerberos.keytab.update' = 'kerberos.keytab.update';
-  queryCall: 'kerberos.keytab.query' = 'kerberos.keytab.query';
+  addCall = 'kerberos.keytab.create' as const;
+  editCall = 'kerberos.keytab.update' as const;
+  queryCall = 'kerberos.keytab.query' as const;
   pk: any;
   queryKey = 'id';
   isEntity = true;

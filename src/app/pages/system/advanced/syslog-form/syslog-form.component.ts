@@ -5,9 +5,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -29,8 +30,8 @@ import { ModalService } from 'app/services/modal.service';
   providers: [],
 })
 export class SyslogFormComponent implements FormConfiguration {
-  queryCall: 'system.advanced.config' = 'system.advanced.config';
-  updateCall = 'system.advanced.update';
+  queryCall = 'system.advanced.config' as const;
+  updateCall = 'system.advanced.update' as const;
   protected isOneColumnForm = true;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -137,7 +138,7 @@ export class SyslogFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(body: any): Subscription {
+  customSubmit(body: Partial<AdvancedConfigUpdate> & { syslog: string }): Subscription {
     this.loader.open();
     const syslog_value = body.syslog;
     delete body.syslog;
@@ -155,7 +156,7 @@ export class SyslogFormComponent implements FormConfiguration {
           this.loader.close();
           this.entityForm.success = true;
           this.entityForm.formGroup.markAsPristine();
-          this.modalService.close('slide-in-form');
+          this.modalService.closeSlideIn();
           this.sysGeneralService.refreshSysGeneral();
         }
       },

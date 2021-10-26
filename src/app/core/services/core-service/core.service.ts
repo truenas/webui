@@ -22,10 +22,10 @@ import { CoreEvent } from 'app/interfaces/events';
  * */
 
 export interface Registration {
-  observerClass: any; // The component/service listening for the event
+  observerClass: unknown; // The component/service listening for the event
   observable$?: Subject<CoreEvent>; // The Subject that provides the Observable to the observerClass
   eventName?: string; // If undefined, your class will react to everything
-  sender?: any; // Only listen for events from a specific sender
+  sender?: unknown; // Only listen for events from a specific sender
 }
 
 @Injectable()
@@ -71,9 +71,7 @@ export class CoreService {
       evt.sender = 'null';
     }
 
-    for (let i = 0; i < this.dispatchTable.length; i++) {
-      const reg = this.dispatchTable[i]; // subscription
-
+    this.dispatchTable.forEach((reg) => {
       let subscriptionType = 'Any';
       if (reg.eventName && reg.sender) {
         subscriptionType = 'NameSender';
@@ -92,7 +90,7 @@ export class CoreService {
       } else if (subscriptionType == 'Any') {
         reg.observable$.next(evt);
       }
-    }
+    });
 
     return this;
   }

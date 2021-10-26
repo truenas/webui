@@ -14,7 +14,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
@@ -30,9 +30,9 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SMBFormComponent implements FormConfiguration {
-  queryCall: 'sharing.smb.query' = 'sharing.smb.query';
-  addCall: 'sharing.smb.create' = 'sharing.smb.create';
-  editCall: 'sharing.smb.update' = 'sharing.smb.update';
+  queryCall = 'sharing.smb.query' as const;
+  addCall = 'sharing.smb.create' as const;
+  editCall = 'sharing.smb.update' as const;
   pk: number;
   queryKey = 'id';
   isEntity = true;
@@ -74,7 +74,7 @@ export class SMBFormComponent implements FormConfiguration {
           hasErrors: false,
           errors: helptext_sharing_smb.errormsg_name,
           blurStatus: true,
-          blurEvent: this.blurEventName,
+          blurEvent: () => this.blurEventName(),
           parent: this,
         },
         {
@@ -317,10 +317,10 @@ export class SMBFormComponent implements FormConfiguration {
   }
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     }
-    if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -350,7 +350,7 @@ export class SMBFormComponent implements FormConfiguration {
     } else {
       this.checkAllowDeny(entityForm);
     }
-    this.modalService.close('slide-in-form');
+    this.modalService.closeSlideIn();
     this.modalService.refreshTable();
   }
 
@@ -397,8 +397,10 @@ export class SMBFormComponent implements FormConfiguration {
             this.dialog.errorReport('Error', err.err, err.backtrace);
           },
         );
+      } else if (source === 'timemachine') {
+        this.checkAllowDeny(entityForm);
       } else {
-        source === 'timemachine' ? this.checkAllowDeny(entityForm) : this.checkAclActions(entityForm);
+        this.checkAclActions(entityForm);
       }
     });
   }
@@ -518,7 +520,7 @@ export class SMBFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     const generalFieldsets = _.find(this.fieldSets, { class: 'basic' });
-    const purposeField: FormSelectConfig = _.find(generalFieldsets.config, { name: 'purpose' });
+    const purposeField = _.find(generalFieldsets.config, { name: 'purpose' }) as FormSelectConfig;
     this.ws.call('sharing.smb.presets').pipe(untilDestroyed(this)).subscribe(
       (presets) => {
         this.presets = presets;
@@ -565,7 +567,7 @@ export class SMBFormComponent implements FormConfiguration {
 
       if (!this.stripACLWarningSent) {
         this.ws.call('filesystem.acl_is_trivial', [path]).pipe(untilDestroyed(this)).subscribe((res) => {
-          if (res === false && !entityForm.formGroup.controls['acl'].value) {
+          if (!res && !entityForm.formGroup.controls['acl'].value) {
             this.stripACLWarningSent = true;
             this.showStripACLWarning();
           }
@@ -643,9 +645,9 @@ export class SMBFormComponent implements FormConfiguration {
   }
 
   /* If user blurs name field with empty value, try to auto-populate based on path */
-  blurEventName(parent: { entityForm: EntityFormComponent }): void {
-    const pathControl = parent.entityForm.formGroup.controls['path'];
-    const nameControl = parent.entityForm.formGroup.controls['name'];
+  blurEventName(): void {
+    const pathControl = this.entityForm.formGroup.controls['path'];
+    const nameControl = this.entityForm.formGroup.controls['name'];
     if (pathControl.value && !nameControl.value) {
       nameControl.setValue(pathControl.value.split('/').pop());
     }

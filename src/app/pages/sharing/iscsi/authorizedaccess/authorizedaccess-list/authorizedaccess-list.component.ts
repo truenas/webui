@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-iscsi-authorizedaccess-list',
@@ -11,8 +11,8 @@ import { T } from 'app/translate-marker';
 })
 export class AuthorizedAccessListComponent implements EntityTableConfig {
   tableTitle = 'Authorized Access';
-  queryCall: 'iscsi.auth.query' = 'iscsi.auth.query';
-  wsDelete: 'iscsi.auth.delete' = 'iscsi.auth.delete';
+  queryCall = 'iscsi.auth.query' as const;
+  wsDelete = 'iscsi.auth.delete' as const;
   route_add: string[] = ['sharing', 'iscsi', 'auth', 'add'];
   route_edit: string[] = ['sharing', 'iscsi', 'auth', 'edit'];
   route_add_tooltip = 'Add Authorized Access';

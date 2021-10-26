@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Choices } from 'app/interfaces/choices.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { IscsiService } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-iscsi-portal-list',
@@ -14,8 +14,8 @@ import { T } from 'app/translate-marker';
 })
 export class PortalListComponent implements EntityTableConfig {
   tableTitle = 'Portals';
-  queryCall: 'iscsi.portal.query' = 'iscsi.portal.query';
-  wsDelete: 'iscsi.portal.delete' = 'iscsi.portal.delete';
+  queryCall = 'iscsi.portal.query' as const;
+  wsDelete = 'iscsi.portal.delete' as const;
   route_add: string[] = ['sharing', 'iscsi', 'portals', 'add'];
   route_add_tooltip = 'Add Portal';
   route_edit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
@@ -70,11 +70,11 @@ export class PortalListComponent implements EntityTableConfig {
   }
 
   dataHandler(entityTable: EntityTableComponent): void {
-    for (const i in entityTable.rows) {
-      for (const ip in entityTable.rows[i].listen) {
-        const listenIP = this.ipChoices[entityTable.rows[i].listen[ip].ip] || entityTable.rows[i].listen[ip].ip;
-        entityTable.rows[i].listen[ip] = listenIP + ':' + entityTable.rows[i].listen[ip].port;
+    entityTable.rows.forEach((row) => {
+      for (const ip in row.listen) {
+        const listenIP = this.ipChoices[row.listen[ip].ip] || row.listen[ip].ip;
+        row.listen[ip] = listenIP + ':' + row.listen[ip].port;
       }
-    }
+    });
   }
 }

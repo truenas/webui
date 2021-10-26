@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-webdav';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { SystemGeneralService, WebSocketService, ValidationService } from 'app/services';
@@ -21,9 +21,8 @@ import { SystemGeneralService, WebSocketService, ValidationService } from 'app/s
   providers: [SystemGeneralService],
 })
 export class ServiceWebdavComponent implements FormConfiguration {
-  // protected resource_name: string = 'services/webdav';
-  queryCall: 'webdav.config' = 'webdav.config';
-  editCall: 'webdav.update' = 'webdav.update';
+  queryCall = 'webdav.config' as const;
+  editCall = 'webdav.update' as const;
   route_success: string[] = ['services'];
   title = helptext.formTitle;
 
@@ -136,7 +135,7 @@ export class ServiceWebdavComponent implements FormConfiguration {
         this.handleAuth(value);
       });
 
-    this.webdav_certssl = _.find(this.fieldConfig, { name: 'certssl' });
+    this.webdav_certssl = _.find(this.fieldConfig, { name: 'certssl' }) as FormSelectConfig;
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.length > 0) {
         res.forEach((item) => {

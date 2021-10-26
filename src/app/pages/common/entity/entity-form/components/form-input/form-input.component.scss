@@ -27,3 +27,8 @@
   height: auto;
   width: auto;
 }
+
+input[name='DummyPassword'],
+input[name='DummyUsername'] {
+  display: none;
+}

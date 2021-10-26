@@ -3,13 +3,13 @@ import {
 } from '@angular/common/http';
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription, Observer } from 'rxjs';
 import { FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -24,7 +24,7 @@ export class FormUploadComponent {
   fieldShow: string;
   busy: Subscription[] = [];
   sub: Subscription;
-  observer: Observer < any > ;
+  observer: Observer<any>;
   jobId: number;
   fileBrowser = true;
   apiEndPoint = '/_upload?auth_token=' + this.ws.token;
@@ -84,7 +84,7 @@ export class FormUploadComponent {
     }
   }
 
-  newMessage(message: any): void {
+  newMessage(message: string): void {
     if (this.config.message) {
       this.config.message.newMessage(message);
     }

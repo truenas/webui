@@ -9,7 +9,7 @@ import { FormConfiguration, FormCustomAction } from 'app/interfaces/entity-form.
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
@@ -20,9 +20,8 @@ import { WebSocketService, DialogService } from 'app/services';
   selector: 'nfs-edit',
   template: ' <entity-form [conf]="this"></entity-form>',
 })
-
 export class ServiceNFSComponent implements FormConfiguration {
-  queryCall: 'nfs.config' = 'nfs.config';
+  queryCall = 'nfs.config' as const;
   route_success: string[] = ['services'];
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];
@@ -205,13 +204,13 @@ export class ServiceNFSComponent implements FormConfiguration {
     return false;
   }
 
-  compareBindIps(data: any): any {
+  compareBindIps(data: NfsConfig): NfsConfig {
     // Weeds out invalid addresses (ie, ones that have changed). Called on load and on save.
     data.bindip = data.bindip ? data.bindip : [];
     if (this.validBindIps && this.validBindIps.length > 0) {
-      data.bindip.forEach((ip: any) => {
+      data.bindip.forEach((ip) => {
         if (!this.validBindIps.includes(ip)) {
-          data.bindip.splice(data.bindip[ip], 1);
+          data.bindip.splice((data.bindip as any)[ip], 1);
         }
       });
     } else {
@@ -232,9 +231,9 @@ export class ServiceNFSComponent implements FormConfiguration {
       ipChoices.forEach((ip) => {
         this.validBindIps.push(ip.value);
       });
-      const config: FormSelectConfig = this.fieldSets
+      const config = this.fieldSets
         .find((set) => set.name === helptext.nfs_srv_fieldset_general)
-        .config.find((config) => config.name === 'bindip');
+        .config.find((config) => config.name === 'bindip') as FormSelectConfig;
       config.options = ipChoices;
     });
 
@@ -245,7 +244,7 @@ export class ServiceNFSComponent implements FormConfiguration {
     });
 
     entityForm.formGroup.controls['v4_krb'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      value ? this.v4krbValue = true : this.v4krbValue = false;
+      this.v4krbValue = !!value;
     });
 
     this.ws.call('kerberos.keytab.has_nfs_principal').pipe(untilDestroyed(this)).subscribe((res) => {
@@ -279,7 +278,6 @@ export class ServiceNFSComponent implements FormConfiguration {
   }
 
   addSPN(): void {
-    const that = this;
     if (!this.hasNfsStatus && this.adHealth === DirectoryServiceState.Healthy) {
       this.dialog.confirm({
         title: helptext.add_principal_prompt.title,
@@ -308,7 +306,7 @@ export class ServiceNFSComponent implements FormConfiguration {
               },
             ],
             saveButtonText: helptext.add_principal_form.action,
-            customSubmit(entityDialog: EntityDialogComponent) {
+            customSubmit: (entityDialog: EntityDialogComponent) => {
               const value = entityDialog.formValue;
               const self = entityDialog;
               self.loader.open();
@@ -316,12 +314,12 @@ export class ServiceNFSComponent implements FormConfiguration {
                 .pipe(untilDestroyed(this)).subscribe(() => {
                   self.loader.close();
                   self.dialogRef.close(true);
-                  that.dialog.info(helptext.addSPN.success, helptext.addSPN.success_msg, '500px', 'info');
+                  this.dialog.info(helptext.addSPN.success, helptext.addSPN.success_msg, '500px', 'info');
                 },
                 (err: WebsocketError) => {
                   self.loader.close();
                   self.dialogRef.close(true);
-                  that.dialog.errorReport(helptext.add_principal_form.error_title,
+                  this.dialog.errorReport(helptext.add_principal_form.error_title,
                     err.reason, err.trace.formatted);
                 });
             },

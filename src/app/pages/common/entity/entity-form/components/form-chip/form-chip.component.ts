@@ -82,11 +82,11 @@ export class FormChipComponent implements Field, OnInit {
     } else {
       value = value.toLowerCase();
       const searchOptions: Option[] = [];
-      for (let i = 0; i < this.config.options.length; i++) {
-        if (this.config.options[i].label.toLowerCase().includes(value)) {
-          searchOptions.push(this.config.options[i]);
+      this.config.options.forEach((option) => {
+        if (option.label.toLowerCase().includes(value)) {
+          searchOptions.push(option);
         }
-      }
+      });
       this.config.searchOptions = searchOptions;
     }
   }

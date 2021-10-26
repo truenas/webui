@@ -6,7 +6,7 @@ import { helptext_system_acme as helptext, helptext_system_acme } from 'app/help
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -19,9 +19,9 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class AcmednsFormComponent implements FormConfiguration {
-  addCall: 'acme.dns.authenticator.create' = 'acme.dns.authenticator.create';
-  queryCall: 'acme.dns.authenticator.query' = 'acme.dns.authenticator.query';
-  editCall: 'acme.dns.authenticator.update' = 'acme.dns.authenticator.update';
+  addCall = 'acme.dns.authenticator.create' as const;
+  queryCall = 'acme.dns.authenticator.query' as const;
+  editCall = 'acme.dns.authenticator.update' as const;
   isEntity = true;
   protected isOneColumnForm = true;
   title: string;

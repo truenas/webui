@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/data-protection/smart/smart';
@@ -12,7 +13,6 @@ import { SmartFormComponent } from 'app/pages/data-protection/smart/smart-form/s
 import { TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { StorageService } from 'app/services/storage.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -22,11 +22,11 @@ import { T } from 'app/translate-marker';
 })
 export class SmartListComponent implements EntityTableConfig {
   title = T('S.M.A.R.T. Tests');
-  queryCall: 'smart.test.query' = 'smart.test.query';
+  queryCall = 'smart.test.query' as const;
   route_add: string[] = ['tasks', 'smart', 'add'];
   route_add_tooltip = T('Add S.M.A.R.T. Test');
   route_edit: string[] = ['tasks', 'smart', 'edit'];
-  wsDelete: 'smart.test.delete' = 'smart.test.delete';
+  wsDelete = 'smart.test.delete' as const;
   entityList: EntityTableComponent;
   parent: SmartListComponent;
 

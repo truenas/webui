@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService } from 'app/services';
 
@@ -17,7 +17,7 @@ import { WebSocketService } from 'app/services';
 export class BootEnvReplaceFormComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot', 'status'];
   isEntity = true;
-  addCall: 'boot.replace' = 'boot.replace';
+  addCall = 'boot.replace' as const;
   pk: string;
   isNew = true;
 
@@ -49,7 +49,7 @@ export class BootEnvReplaceFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
-    this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
+    this.diskChoice = _.find(this.fieldConfig, { name: 'dev' }) as FormSelectConfig;
     this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((item) => {
         this.diskChoice.options.push({ label: item.name, value: item.name });

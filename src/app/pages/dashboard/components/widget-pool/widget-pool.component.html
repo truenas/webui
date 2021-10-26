@@ -1,6 +1,6 @@
 <div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container front">
-    <mat-card style="overflow:hidden" class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+    <mat-card class="front overflow-hidden" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content #carouselparent>
         <mat-toolbar-row class="view-{{path.length > 0 ? currentSlideName : 'Pool'}}">
 
@@ -23,7 +23,7 @@
 
           <div class="controls">
             <button
-              mat-icon-button class=""
+              mat-icon-button
               (click)="router.navigate(['storage/status/' + poolState.id.toString()])"
               [ix-auto]="poolState.name" ix-auto-type="button" ix-auto-identifier="poolStatus"
             >
@@ -63,9 +63,8 @@
 
           <ng-template #locked>
             <div fxFlex="40" class="locked offline">
-              <mat-icon *ngIf="!poolState.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-lock-alert"></mat-icon>
-              <mat-icon *ngIf="poolState.is_decrypted" role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
-              <h4>{{"Data not available" | translate}} <span *ngIf="!poolState.is_decrypted"><br>{{"while pool is encrypted" | translate}}</span>.</h4>
+              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+              <h4>{{"Data not available" | translate}}.</h4>
             </div>
           </ng-template>
 
@@ -95,29 +94,24 @@
                     <div class="pool-status tr" >
                       <div class="td label"><strong>Pool Status:</strong></div>
                       <div class="td">
-                        <span class="capitalize">{{poolState.status == PoolStatus.Online && !poolState.healthy ? 'Unhealthy' : poolState.status}}</span>
-                        <span *ngIf="poolState.status == PoolStatus.Locked || !poolState.is_decrypted" class="{{poolHealth.level}} lock-icon-wrapper icon">
-                          &nbsp;<mat-icon>lock</mat-icon>
-                        </span>
-                        <span *ngIf="poolState.status == PoolStatus.Healthy" class="{{poolHealth.level}} icon">
-                          &nbsp;<mat-icon>check_circle</mat-icon>
-                        </span>
-                        <span *ngIf="poolHealth.level == 'error'" class="{{poolHealth.level}} icon">
-                          &nbsp;<mat-icon class="poolHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-                        </span>
-                        <span *ngIf="poolState.status == PoolStatus.Online && !poolState.healthy" class="error icon">
-                          &nbsp;<mat-icon class="poolHealth.level" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-                        </span>
-                        <span *ngIf="poolHealth.level == 'warn' && poolState.status == PoolStatus.Unknown" class="{{poolHealth.level}} icon">
+                        <span class="capitalize">{{poolState.status}}</span>
 
-                          &nbsp;<mat-icon role="img">help</mat-icon>
-                        </span>
-                        <span *ngIf="poolHealth.level == 'warn' && poolState.status !== PoolStatus.Unknown" class="{{poolHealth.level}} icon">
-                          &nbsp;<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
-                        </span>
-                        <span *ngIf="poolState.status == PoolStatus.Online" class="{{poolHealth.level}} icon">
-                          &nbsp;<mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
-                        </span>
+                        <ng-container *ngIf="isErrorStatus(poolState.status); else noerrors">
+                          <span class="error icon">
+                            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+                          </span>
+                        </ng-container>
+
+                        <ng-template #noerrors>
+                          <span *ngIf="poolState.status == PoolStatus.Locked"
+                            class="lock-icon-wrapper icon">
+                            <mat-icon>lock</mat-icon>
+                          </span>
+                          <span *ngIf="poolState.status == PoolStatus.Online || poolState.status == PoolStatus.Healthy"
+                            class="{{poolHealth.level}} icon">
+                            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                          </span>
+                        </ng-template>
                       </div>
                     </div>
 
@@ -377,8 +371,8 @@
               <div class="list-subheader">{{"Advanced Details" | translate}}</div>
               <mat-list>
                 <ng-container *ngFor="let key of currentDiskDetailsKeys">
-                  <mat-list-item *ngIf="key != 'identifier' && currentDiskDetails[key]" role="listitem">
-                    <strong class="detail-key"> {{key}}:</strong>&nbsp;&nbsp; {{currentDiskDetails[key]}}
+                  <mat-list-item *ngIf="key != 'identifier' && currentDiskDetails[diskKey(key)]" role="listitem">
+                    <strong class="detail-key"> {{key}}:</strong>&nbsp;&nbsp; {{currentDiskDetails[diskKey(key)]}}
                   </mat-list-item>
                 </ng-container>
               </mat-list>

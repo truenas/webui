@@ -1,18 +1,19 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { take } from 'rxjs/operators';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import helptext from 'app/helptext/data-protection/smart/smart';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { SmartTestUi } from 'app/interfaces/smart-test.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { QueryParams } from 'app/interfaces/query-api.interface';
+import { SmartTest, SmartTestUi } from 'app/interfaces/smart-test.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -20,10 +21,10 @@ import { T } from 'app/translate-marker';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SmartFormComponent implements FormConfiguration {
-  queryCall: 'smart.test.query' = 'smart.test.query';
-  addCall: 'smart.test.create' = 'smart.test.create';
-  editCall: 'smart.test.update' = 'smart.test.update';
-  customFilter: any[] = [];
+  queryCall = 'smart.test.query' as const;
+  addCall = 'smart.test.create' as const;
+  editCall = 'smart.test.update' as const;
+  customFilter: QueryParams<SmartTest> = [];
   protected entityForm: EntityFormComponent;
   isEntity = true;
   isNew = false;
@@ -105,7 +106,7 @@ export class SmartFormComponent implements FormConfiguration {
   ]);
 
   constructor(protected ws: WebSocketService, protected modalService: ModalService) {
-    this.disk_field = this.fieldSets.config('disks');
+    this.disk_field = this.fieldSets.config('disks') as FormSelectConfig;
     this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
       (choices) => {
         for (const key in choices) {

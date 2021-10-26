@@ -4,6 +4,8 @@ export interface KerberosConfig {
   libdefaults_aux: string;
 }
 
+export type KerberosConfigUpdate = Omit<KerberosConfig, 'id'>;
+
 export interface KerberosKeytab {
   file: string;
   id: number;

@@ -13,12 +13,8 @@ nav.view-nav-bar {
 }
 
 .view-nav-bar .view-nav-btn {
-  /*display:inline-block;*/
   height: 40px;
   text-transform: capitalize !important;
-  /*font-weight:500;
-  padding:0 16px;
-  text-align:center;*/
 }
 
 .view-card {
@@ -30,18 +26,15 @@ nav.view-nav-bar {
 }
 
 .view-card .mat-toolbar {
-  /*border-bottom:solid 1px var(--lines);*/
   background-color: unset;
   color: var(--fg2);
 }
 
 .view-card #disks-overview {
-  /*color:#ccc;*/
   color: var(--fg2);
   cursor: default;
   height: 304px;
   overflow: hidden;
-  /*background-color:rgba(0, 0, 0, 0.85);*/
   position: relative;
   user-select: none;
 }
@@ -57,11 +50,9 @@ nav.view-nav-bar {
 }
 
 .view-card #disks-details-header {
-  /*border-top:solid 1px var(--lines);*/
   border-bottom: solid 1px var(--lines);
   font-size: 1.15rem;
   padding: 12px 16px;
-  /*background-color: rgba(0,0,0,0.05);*/
 }
 
 .view-card #disks-details,
@@ -195,6 +186,7 @@ nav.view-nav-bar {
 .view-card .dom-overlay.stage-left,
 .view-card .dom-overlay.stage-right {
   display: block;
+  pointer-events: none;
   position: absolute;
   width: 25%;
 }
@@ -221,8 +213,8 @@ nav.view-nav-bar {
 .view-card .model.dom-overlay {
   height: auto;
   left: 0;
+  opacity: 0.75;
   position: absolute;
-  /*top:12px;*/
   text-align: center;
   z-index: 3;
 }
@@ -318,7 +310,6 @@ div.vdev-disk {
 
 /* MINI OVERRIDES */
 .view-card.mini {
-  /*color: #fff;*/
   min-width: 960px;
 }
 
@@ -332,6 +323,19 @@ div.vdev-disk {
 
 .view-card.mini ul.disk-stats {
   margin-left: 32px;
+}
+
+.view-card.mini .disk-stats-wrapper {
+  .nostats {
+    padding: 48px;
+    text-align: center;
+
+    .mat-icon {
+      margin: 6px;
+      position: relative;
+      top: 5px;
+    }
+  }
 }
 
 .view-card.mini .capacity {
@@ -408,6 +412,10 @@ div.vdev-disk {
 .mini h3.header {
   border-bottom: solid 1px var(--lines);
   padding-bottom: 4px;
+
+  &.stats {
+    margin-top: 24px;
+  }
 }
 
 .mini .header-container .mat-button.back-btn {
@@ -439,6 +447,10 @@ div.vdev-disk {
   min-width: 25%;
   position: absolute;
   z-index: 3;
+
+  &.status {
+    right: 0;
+  }
 }
 
 .mini .overlay.names {
@@ -465,7 +477,6 @@ div.vdev-disk {
 }
 
 .mini .slot-value {
-  //padding: 2px 0 0 8px;
   position: absolute;
   top: -1.5px;
 }
@@ -477,6 +488,18 @@ div.vdev-disk {
   padding: 3px 5px;
   text-align: center;
   width: 20px;
+}
+
+.mini .slot-label-wrapper {
+  left: calc(48% - 24px);
+  position: absolute;
+  z-index: 12;
+}
+
+.mini .disks-overlay.status > div {
+  left: 12.5%;
+  position: absolute;
+  z-index: 12;
 }
 
 .mini .disks-overlay.status > div,
@@ -539,4 +562,17 @@ div.vdev-disk {
 
 .front-rear-toggle button:hover {
   background-color: rgba(255, 255, 255, 0.25);
+}
+
+.swatch {
+  &.available,
+  &.unassigned {
+    background: #999;
+  }
+}
+
+.expanders {
+  .expander-item {
+    display: inline-block;
+  }
 }

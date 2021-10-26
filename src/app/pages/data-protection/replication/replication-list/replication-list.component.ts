@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -28,7 +29,6 @@ import {
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -46,8 +46,8 @@ import { T } from 'app/translate-marker';
 })
 export class ReplicationListComponent implements EntityTableConfig {
   title = T('Replication Tasks');
-  queryCall: 'replication.query' = 'replication.query';
-  wsDelete: 'replication.delete' = 'replication.delete';
+  queryCall = 'replication.query' as const;
+  wsDelete = 'replication.delete' as const;
   route_add: string[] = ['tasks', 'replication', 'wizard'];
   route_edit: string[] = ['tasks', 'replication', 'edit'];
   route_success: string[] = ['tasks', 'replication'];
@@ -115,7 +115,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         onClick: (row: ReplicationTaskUi) => {
           this.dialog.confirm({
             title: T('Run Now'),
-            message: T('Replicate <i>') + row.name + T('</i> now?'),
+            message: this.translate.instant('Replicate <i>{name}</i> now?', { name: row.name }),
             hideCheckBox: true,
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
             row.state = { state: JobState.Running };
@@ -147,7 +147,6 @@ export class ReplicationListComponent implements EntityTableConfig {
         label: T('Restore'),
         icon: 'restore',
         onClick: (row: ReplicationTaskUi) => {
-          const parent = this;
           const conf: DialogFormConfiguration = {
             title: helptext.replication_restore_dialog.title,
             fieldConfig: [
@@ -171,16 +170,16 @@ export class ReplicationListComponent implements EntityTableConfig {
               },
             ],
             saveButtonText: helptext.replication_restore_dialog.saveButton,
-            customSubmit(entityDialog: EntityDialogComponent) {
-              parent.loader.open();
-              parent.ws.call('replication.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
+            customSubmit: (entityDialog: EntityDialogComponent) => {
+              this.loader.open();
+              this.ws.call('replication.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
                 () => {
                   entityDialog.dialogRef.close(true);
-                  parent.entityList.getData();
+                  this.entityList.getData();
                 },
                 (err) => {
-                  parent.loader.close();
-                  new EntityUtils().handleWSError(entityDialog, err, parent.dialog);
+                  this.loader.close();
+                  new EntityUtils().handleWSError(entityDialog, err, this.dialog);
                 },
               );
             },

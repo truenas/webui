@@ -23,3 +23,6 @@ export interface KeychainSshCredentials {
   name: string;
   type: KeychainCredentialType.SshCredentials;
 }
+
+export type KeychainCredentialCreate = Omit<KeychainCredential, 'id'>;
+export type KeychainCredentialUpdate = Omit<KeychainCredential, 'id' | 'type'>;

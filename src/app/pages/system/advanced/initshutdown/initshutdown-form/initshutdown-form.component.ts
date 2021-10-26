@@ -8,7 +8,7 @@ import helptext from 'app/helptext/system/init-shutdown';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from 'app/services/modal.service';
@@ -20,9 +20,9 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class InitshutdownFormComponent implements FormConfiguration {
   title: string;
-  queryCall: 'initshutdownscript.query' = 'initshutdownscript.query';
-  addCall: 'initshutdownscript.create' = 'initshutdownscript.create';
-  editCall: 'initshutdownscript.update' = 'initshutdownscript.update';
+  queryCall = 'initshutdownscript.query' as const;
+  addCall = 'initshutdownscript.create' as const;
+  editCall = 'initshutdownscript.update' as const;
   customFilter: QueryParams<InitShutdownScript> = [];
   protected entityForm: EntityFormComponent;
   isEntity = true;

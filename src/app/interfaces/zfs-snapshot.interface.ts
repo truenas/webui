@@ -15,6 +15,15 @@ export interface ZfsSnapshot {
   type: string; // "SNAPSHOT"
 }
 
+export interface CreateZfsSnapshot {
+  dataset: string;
+  name?: string;
+  naming_schema?: string;
+  recursive?: boolean;
+  vmware_sync?: boolean;
+  properties: Record<string, unknown>;
+}
+
 export interface CloneZfsSnapshot {
   snapshot: boolean;
   dataset_dst: string;

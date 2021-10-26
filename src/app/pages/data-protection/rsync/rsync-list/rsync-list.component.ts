@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -13,7 +14,6 @@ import {
   WebSocketService, DialogService, TaskService, JobService, UserService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -23,8 +23,8 @@ import { T } from 'app/translate-marker';
 })
 export class RsyncListComponent implements EntityTableConfig {
   title = T('Rsync Tasks');
-  queryCall: 'rsynctask.query' = 'rsynctask.query';
-  wsDelete: 'rsynctask.delete' = 'rsynctask.delete';
+  queryCall = 'rsynctask.query' as const;
+  wsDelete = 'rsynctask.delete' as const;
   route_add: string[] = ['tasks', 'rsync', 'add'];
   route_add_tooltip = T('Add Rsync Task');
   route_edit: string[] = ['tasks', 'rsync', 'edit'];
@@ -144,11 +144,11 @@ export class RsyncListComponent implements EntityTableConfig {
   resourceTransformIncomingRestData(data: RsyncTaskUi[]): RsyncTaskUi[] {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.frequency = this.taskService.getTaskNextRun(task.cron_schedule);
-      task.next_run = this.taskService.getTaskCronDescription(task.cron_schedule);
+      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
+      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
 
-      if (task.job == null) {
-        task.state = { state: JobState.Pending };
+      if (task.job === null) {
+        task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
         this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: Job) => {

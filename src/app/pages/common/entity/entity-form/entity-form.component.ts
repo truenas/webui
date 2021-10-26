@@ -6,7 +6,6 @@ import {
   OnInit,
   QueryList,
   TemplateRef,
-  ViewChildren,
   AfterViewInit,
   OnChanges,
   ChangeDetectorRef,
@@ -16,17 +15,17 @@ import {
   FormBuilder, FormControl, FormGroup, FormArray, AbstractControl,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { EntityTemplateDirective } from '../entity-template.directive';
 import { EntityUtils } from '../utils';
 import {
@@ -44,7 +43,7 @@ import { FieldRelationService } from './services/field-relation.service';
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterViewInit, AfterViewChecked {
-  @Input('conf') conf: FormConfiguration;
+  @Input() conf: FormConfiguration;
 
   pk: any;
   fieldSetDisplay = 'default';
@@ -60,9 +59,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   wsfg: AbstractControl;
   wsResponseIdx: any;
   queryResponse: any;
-  saveSubmitText = T('Save');
+  saveSubmitText: string = T('Save');
   showPassword = false;
-  successMessage = T('Settings saved.');
+  successMessage: string = T('Settings saved.');
 
   loaderOpen = false;
   keepLoaderOpen = false;
@@ -80,13 +79,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     return this.formGroup.value;
   }
 
-  templateTop: TemplateRef<any>;
+  templateTop: TemplateRef<unknown>;
   @ContentChildren(EntityTemplateDirective)
   templates: QueryList<EntityTemplateDirective>;
 
-  @ViewChildren('component') components: any[];
-
-  sub: any;
+  sub: Subscription;
   error: string;
   success = false;
   data: any = {};
@@ -132,8 +129,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.fieldConfig = [];
       /* Temp patch to support both FieldSet approaches */
       this.fieldSets = (this.conf.fieldSets instanceof FieldSets) ? this.conf.fieldSets.list() : this.conf.fieldSets;
-      for (let i = 0; i < this.fieldSets.length; i++) {
-        const fieldset = this.fieldSets[i];
+      this.fieldSets.forEach((fieldset) => {
         if (!fieldset.divider) {
           if (fieldset.maxWidth) fieldset.width = '100%';
           else fieldset.width = this.conf.columnsOnForm === 1 || fieldset.colspan === 2 ? '100%' : '50%';
@@ -142,7 +138,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
         if (fieldset.config) {
           this.fieldConfig = this.fieldConfig.concat(fieldset.config);
         }
-      }
+      });
       this.conf.fieldConfig = this.fieldConfig;
     } else {
       this.fieldConfig = this.conf.fieldConfig;
@@ -163,9 +159,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     }
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
 
-    for (const i in this.fieldConfig) {
-      this.fieldRelationService.setRelation(this.fieldConfig[i], this.formGroup);
-    }
+    this.fieldConfig.forEach((config) => {
+      this.fieldRelationService.setRelation(config, this.formGroup);
+    });
   }
 
   addFormControls(fieldSets: FieldSet[]): void {
@@ -491,7 +487,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.conf.beforeSubmit(value);
     }
     if (this.conf.customEditCall && this.pk) {
-      return this.conf.customEditCall(value);
+      this.conf.customEditCall(value);
+      return;
     }
 
     if (this.conf.customSubmit) {
@@ -531,7 +528,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                   this.conf.responseOnSubmit(res);
                 }
               }
-              this.modalService.close('slide-in-form').then((closed) => {
+              this.modalService.closeSlideIn().then((closed) => {
                 if (closed && this.conf.afterModalFormClosed) {
                   this.conf.afterModalFormClosed();
                 }
@@ -554,34 +551,30 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   clearErrors(): void {
-    for (let f = 0; f < this.fieldConfig.length; f++) {
-      this.fieldConfig[f]['errors'] = '';
-      this.fieldConfig[f]['hasErrors'] = false;
-    }
+    this.fieldConfig.forEach((fieldConfig) => {
+      fieldConfig['errors'] = '';
+      fieldConfig['hasErrors'] = false;
+    });
   }
 
   isFieldsetAvailabel(fieldset: FieldSet): boolean {
     if (fieldset.config) {
-      for (let i = 0; i < fieldset.config.length; i++) {
-        if (!fieldset.config[i].isHidden) {
-          return true;
-        }
-      }
+      return fieldset.config.some((config) => !config.isHidden);
     }
     return false;
   }
 
-  isShow(id: any): boolean {
+  isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
-      if (this.conf.advanced_field.indexOf(id) > -1) {
+      if (this.conf.advanced_field.includes(id)) {
         return false;
       }
-    } else if (this.conf.basic_field !== undefined && this.conf.basic_field.indexOf(id) > -1) {
+    } else if (this.conf.basic_field !== undefined && this.conf.basic_field.includes(id)) {
       return false;
     }
 
     if (this.conf.hide_fileds !== undefined) {
-      if (this.conf.hide_fileds.indexOf(id) > -1) {
+      if (this.conf.hide_fileds.includes(id)) {
         return false;
       }
     }
@@ -613,14 +606,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   setArrayValue(data: any[], formArray: FormArray, name: string): void {
-    let array_controls: any;
-    for (const i in this.fieldConfig) {
-      const config: FieldConfig = this.fieldConfig[i];
+    let array_controls: FieldConfig[];
+    this.fieldConfig.forEach((config) => {
       if (config.name === name) {
         const arrayConfig: FormArrayConfig = config as FormArrayConfig;
         array_controls = arrayConfig.formarray;
       }
-    }
+    });
 
     if (this.conf.preHandler) {
       data = this.conf.preHandler(data, formArray);
@@ -692,10 +684,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
     const listConfig: FormListConfig = fieldConfig as FormListConfig;
     const dictConfig: FormDictConfig = fieldConfig as FormDictConfig;
     if (listConfig.type == 'list' && listConfig.listFields) {
-      for (let i = 0; i < listConfig.listFields.length; i++) {
-        const formGroup = this.entityFormService.createFormGroup(listConfig.listFields[i]);
+      listConfig.listFields.forEach((field) => {
+        const formGroup = this.entityFormService.createFormGroup(field);
         (formControl as FormArray).push(formGroup);
-      }
+      });
       for (let i = 0; i < listConfig.listFields.length; i++) {
         listConfig.listFields[i].forEach((subFieldConfig) => {
           this.fieldRelationService.setRelation(subFieldConfig, (formControl as FormArray).at(i) as FormGroup);

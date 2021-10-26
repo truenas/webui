@@ -3,7 +3,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { ConsolePanelModalDialog } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
+import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketService } from '../ws.service';
 
@@ -22,7 +22,7 @@ export class AppLoaderComponent {
 
   isShowConsole = false;
 
-  consoleDialog: MatDialogRef<ConsolePanelModalDialog>;
+  consoleDialog: MatDialogRef<ConsolePanelDialogComponent>;
   private _consoleSubscription: Subscription;
 
   constructor(
@@ -41,7 +41,7 @@ export class AppLoaderComponent {
   }
 
   onOpenConsole(): void {
-    this.consoleDialog = this._dialog.open(ConsolePanelModalDialog, {});
+    this.consoleDialog = this._dialog.open(ConsolePanelDialogComponent, {});
 
     this._consoleSubscription = this.consoleDialog.componentInstance.onEventEmitter
       .pipe(switchMap(() => this._ws.consoleMessages))

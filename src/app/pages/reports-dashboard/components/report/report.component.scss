@@ -584,3 +584,13 @@ h3 {
   border: var(--red);
   opacity: 0.75;
 }
+
+.report entity-empty {
+  display: block;
+  min-height: 277px;
+  width: 100%;
+}
+
+.text-invisible {
+  opacity: 0;
+}

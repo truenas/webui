@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
@@ -9,15 +10,14 @@ import { AclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-permissions';
 import { DatasetPermissionsUpdate } from 'app/interfaces/dataset-permissions.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import {
   DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -26,7 +26,7 @@ import { T } from 'app/translate-marker';
   styleUrls: ['./dataset-trivial-permissions.component.scss'],
 })
 export class DatasetTrivialPermissionsComponent implements FormConfiguration {
-  protected updateCall: 'pool.dataset.permission' = 'pool.dataset.permission';
+  protected updateCall = 'pool.dataset.permission' as const;
 
   datasetPath: string;
   aclType: AclType;
@@ -52,7 +52,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
           options: [],
           searchOptions: [],
           parent: this,
-          updater: this.updateUserSearchOptions,
+          updater: (value: string) => this.updateUserSearchOptions(value),
           loadMoreOptions: this.loadMoreOptions,
         },
         {
@@ -70,7 +70,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
           options: [],
           searchOptions: [],
           parent: this,
-          updater: this.updateGroupSearchOptions,
+          updater: (value: string) => this.updateGroupSearchOptions(value),
           loadMoreOptions: this.loadMoreGroupOptions,
         },
         {
@@ -118,6 +118,14 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
           placeholder: helptext.dataset_permissions_traverse_placeholder,
           tooltip: helptext.dataset_permissions_traverse_tooltip,
           value: false,
+          isHidden: true,
+          relation: [{
+            action: RelationAction.Show,
+            when: [{
+              name: 'recursive',
+              value: true,
+            }],
+          }],
         },
       ],
       width: '100%',
@@ -134,15 +142,15 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       name: helptext.acl_manager_button,
       function: () => {
         if (this.aclType === AclType.Posix1e) {
-          this.router.navigate(new Array('/').concat([
-            'storage', 'id', this.datasetId.split('/')[0], 'dataset',
+          this.router.navigate([
+            '/', 'storage', 'id', this.datasetId.split('/')[0], 'dataset',
             'posix-acl', this.datasetId,
-          ]));
+          ]);
         } else {
-          this.router.navigate(new Array('/').concat([
-            'storage', 'id', this.datasetId.split('/')[0], 'dataset',
+          this.router.navigate([
+            '/', 'storage', 'id', this.datasetId.split('/')[0], 'dataset',
             'acl', this.datasetId,
-          ]));
+          ]);
         }
       },
     },
@@ -179,22 +187,24 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       this.aclType = dataset[0].acltype.value as AclType;
     });
 
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
-      const users: Option[] = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      this.userField = _.find(this.fieldSets.find((set) => set.name === helptext.heading_owner).config, { name: 'user' });
-      this.userField.options = users;
+    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
+      this.userField = _.find(
+        this.fieldSets.find((set) => set.name === helptext.heading_owner).config,
+        { name: 'user' },
+      ) as FormComboboxConfig;
+      this.userField.options = users.map((user) => {
+        return { label: user.username, value: user.username };
+      });
     });
 
     this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
-      this.groupField = _.find(this.fieldSets.find((set) => set.name === helptext.heading_owner).config, { name: 'group' });
-      this.groupField.options = groupOptions;
+      this.groupField = _.find(
+        this.fieldSets.find((set) => set.name === helptext.heading_owner).config,
+        { name: 'group' },
+      ) as FormComboboxConfig;
+      this.groupField.options = groups.map((group) => {
+        return { label: group.group, value: group.group };
+      });
     });
   }
 
@@ -209,7 +219,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
 
     const recursive = entityEdit.formGroup.controls['recursive'];
     recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
-      if (value === true) {
+      if (value) {
         this.dialog.confirm({
           title: T('Warning'),
           message: T('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'),
@@ -223,23 +233,19 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     });
   }
 
-  updateGroupSearchOptions(value = '', parent: this): void {
-    parent.userService.groupQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((groups) => {
-      const groupOptions: Option[] = [];
-      for (let i = 0; i < groups.length; i++) {
-        groupOptions.push({ label: groups[i].group, value: groups[i].group });
-      }
-      parent.groupField.searchOptions = groupOptions;
+  updateGroupSearchOptions(value = ''): void {
+    this.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+      this.groupField.searchOptions = groups.map((group) => {
+        return { label: group.group, value: group.group };
+      });
     });
   }
 
-  updateUserSearchOptions(value = '', parent: this): void {
-    parent.userService.userQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((items) => {
-      const users = [];
-      for (let i = 0; i < items.length; i++) {
-        users.push({ label: items[i].username, value: items[i].username });
-      }
-      parent.userField.searchOptions = users;
+  updateUserSearchOptions(value = ''): void {
+    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+      this.userField.searchOptions = items.map((user) => {
+        return { label: user.username, value: user.username };
+      });
     });
   }
 
@@ -287,15 +293,14 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   loadMoreOptions(length: number, parent: this, searchText: string): void {
     parent.userService.userQueryDSCache(searchText, length)
       .pipe(untilDestroyed(parent))
-      .subscribe((items) => {
-        const users = [];
-        for (let i = 0; i < items.length; i++) {
-          users.push({ label: items[i].username, value: items[i].username });
-        }
+      .subscribe((users) => {
+        const userOptions = users.map((user) => {
+          return { label: user.username, value: user.username };
+        });
         if (searchText == '') {
-          parent.userField.options = parent.userField.options.concat(users);
+          parent.userField.options = parent.userField.options.concat(userOptions);
         } else {
-          parent.userField.searchOptions = parent.userField.searchOptions.concat(users);
+          parent.userField.searchOptions = parent.userField.searchOptions.concat(userOptions);
         }
       });
   }
@@ -304,10 +309,9 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     parent.userService.groupQueryDSCache(searchText, false, length)
       .pipe(untilDestroyed(parent))
       .subscribe((groups) => {
-        const groupOptions: Option[] = [];
-        for (let i = 0; i < groups.length; i++) {
-          groupOptions.push({ label: groups[i].group, value: groups[i].group });
-        }
+        const groupOptions = groups.map((group) => {
+          return { label: group.group, value: group.group };
+        });
         if (searchText == '') {
           parent.groupField.options = parent.groupField.options.concat(groupOptions);
         } else {

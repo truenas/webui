@@ -25,3 +25,14 @@ export interface RemoteSshScanParams {
   host: string;
   port: number;
 }
+
+export interface SshSemiAutomaticSetup {
+  name: string;
+  url: string;
+  token?: string;
+  password?: string;
+  username?: string;
+  private_key: number;
+  cipher?: CipherType;
+  connect_timeout?: number;
+}

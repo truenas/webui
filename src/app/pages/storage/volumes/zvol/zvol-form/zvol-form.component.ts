@@ -1,28 +1,35 @@
 import { Component } from '@angular/core';
-import { Validators, ValidationErrors, FormControl } from '@angular/forms';
+import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { combineLatest, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { OnOff } from 'app/enums/on-off.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig, FormCheckboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import {
+  FieldConfig,
+  FormCheckboxConfig,
+  FormSelectConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { WebSocketService, StorageService } from 'app/services';
+import { StorageService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 interface ZvolFormData {
   name: string;
@@ -51,7 +58,6 @@ export class ZvolFormComponent implements FormConfiguration {
   isNew = true;
   isEntity = true;
   parent: string;
-  data: any;
   volid: string;
   customFilter: any[] = [];
   edit_data: any;
@@ -64,11 +70,10 @@ export class ZvolFormComponent implements FormConfiguration {
   protected origHuman: any;
 
   protected non_encrypted_warned = false;
-  protected legacy_encryption = false;
   protected encrypted_parent = false;
   protected inherit_encryption = true;
   protected passphrase_parent = false;
-  protected encryption_type = 'key';
+  protected encryption_type: 'key' | 'passphrase' = 'key';
   protected generate_key = true;
   protected encryption_algorithm: string;
 
@@ -133,7 +138,7 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_volsize_placeholder,
         tooltip: helptext.zvol_volsize_tooltip,
         required: true,
-        blurEvent: this.blurVolsize,
+        blurEvent: () => this.blurVolsize(),
         blurStatus: true,
         parent: this,
         validation: [
@@ -143,7 +148,7 @@ export class ZvolFormComponent implements FormConfiguration {
             const size = control.value && typeof control.value == 'string' ? this.storageService.convertHumanStringToNum(control.value, true) : null;
             const humanSize = control.value;
 
-            let errors = control.value && isNaN(size)
+            let errors = control.value && Number.isNaN(size)
               ? { invalid_byte_string: true }
               : null;
 
@@ -233,8 +238,8 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_readonly_placeholder,
         tooltip: helptext.zvol_readonly_tooltip,
         options: [
-          { label: T('On'), value: 'ON' },
-          { label: T('Off'), value: 'OFF' },
+          { label: T('On'), value: OnOff.On },
+          { label: T('Off'), value: OnOff.Off },
         ],
       },
       {
@@ -368,9 +373,9 @@ export class ZvolFormComponent implements FormConfiguration {
   ];
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -379,7 +384,7 @@ export class ZvolFormComponent implements FormConfiguration {
   sendAsBasicOrAdvanced(data: ZvolFormData): ZvolFormData {
     data.type = 'VOLUME';
 
-    if (this.isNew === false) {
+    if (!this.isNew) {
       delete data.name;
       delete data.volblocksize;
       delete data.type;
@@ -389,7 +394,7 @@ export class ZvolFormComponent implements FormConfiguration {
     }
 
     if (this.origHuman !== data.volsize) {
-      data.volsize = this.storageService.convertHumanStringToNum(data.volsize, true);
+      data.volsize = this.storageService.convertHumanStringToNum(data.volsize as any, true);
     } else {
       delete data.volsize;
     }
@@ -411,9 +416,9 @@ export class ZvolFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     if (!this.parent) return;
     if (!entityForm.isNew) {
-      for (let i = 0; i < this.encryption_fields.length; i++) {
-        this.entityForm.setDisabled(this.encryption_fields[i], true, true);
-      }
+      this.encryption_fields.forEach((field) => {
+        this.entityForm.setDisabled(field, true, true);
+      });
       _.find(this.fieldSets, { name: 'encryption_divider' }).divider = false;
       this.entityForm.setDisabled('encryption', true, true);
       this.entityForm.setDisabled('inherit_encryption', true, true);
@@ -425,24 +430,17 @@ export class ZvolFormComponent implements FormConfiguration {
       this.title = helptext.zvol_title_edit;
     }
 
-    const root = this.parent.split('/')[0];
-    combineLatest([
-      this.ws.call('pool.query', [[['name', '=', root]]]),
-      this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]),
-    ]).pipe(untilDestroyed(this)).subscribe(([pk_pool, pk_dataset]) => {
-      if (pk_pool[0].encrypt !== 0) {
-        this.legacy_encryption = true;
-      }
+    this.ws.call('pool.dataset.query', [[['id', '=', this.parent]]]).pipe(untilDestroyed(this)).subscribe((pk_dataset) => {
       this.encrypted_parent = pk_dataset[0].encrypted;
       this.encryption_algorithm = pk_dataset[0].encryption_algorithm.value;
       const children = (pk_dataset[0].children);
       if (children.length > 0) {
-        for (const i in children) {
-          this.namesInUse.push(/[^/]*$/.exec(children[i].name)[0]);
-        }
+        children.forEach((child) => {
+          this.namesInUse.push(/[^/]*$/.exec(child.name)[0]);
+        });
       }
 
-      let inherit_encrypt_placeholder = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
+      let inherit_encrypt_placeholder: string = helptext.dataset_form_encryption.inherit_checkbox_notencrypted;
       if (this.encrypted_parent) {
         if (pk_dataset[0].key_format.value === DatasetEncryptionType.Passphrase) {
           this.passphrase_parent = true;
@@ -455,123 +453,114 @@ export class ZvolFormComponent implements FormConfiguration {
       _.find(this.fieldConfig, { name: 'inherit_encryption' }).placeholder = inherit_encrypt_placeholder;
 
       if (this.isNew) {
-        if (this.legacy_encryption) {
-          for (let i = 0; i < this.encryption_fields.length; i++) {
-            this.entityForm.setDisabled(this.encryption_fields[i], true, true);
-            _.find(this.fieldSets, { name: 'encryption_divider' }).divider = false;
-          }
-          this.entityForm.setDisabled('encryption', true, true);
-          this.entityForm.setDisabled('inherit_encryption', true, true);
-        } else {
-          const encryption_algorithm_fc: FormSelectConfig = _.find(this.fieldConfig, { name: 'algorithm' });
-          const encryption_algorithm_fg = this.entityForm.formGroup.controls['algorithm'];
-          let parent_algorithm;
-          if (this.encrypted_parent && pk_dataset[0].encryption_algorithm) {
-            parent_algorithm = pk_dataset[0].encryption_algorithm.value;
-            encryption_algorithm_fg.setValue(parent_algorithm);
-          }
-          this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe((algorithms) => {
-            for (const algorithm in algorithms) {
-              if (algorithms.hasOwnProperty(algorithm)) {
-                encryption_algorithm_fc.options.push({ label: algorithm, value: algorithm });
-              }
+        const encryption_algorithm_fc = _.find(this.fieldConfig, { name: 'algorithm' }) as FormSelectConfig;
+        const encryption_algorithm_fg = this.entityForm.formGroup.controls['algorithm'];
+        let parent_algorithm;
+        if (this.encrypted_parent && pk_dataset[0].encryption_algorithm) {
+          parent_algorithm = pk_dataset[0].encryption_algorithm.value;
+          encryption_algorithm_fg.setValue(parent_algorithm);
+        }
+        this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe((algorithms) => {
+          for (const algorithm in algorithms) {
+            if (algorithms.hasOwnProperty(algorithm)) {
+              encryption_algorithm_fc.options.push({ label: algorithm, value: algorithm });
             }
-          });
-          _.find(this.fieldConfig, { name: 'encryption' }).isHidden = true;
-          const inherit_encryption_fg = this.entityForm.formGroup.controls['inherit_encryption'];
-          const encryption_fg = this.entityForm.formGroup.controls['encryption'];
-          const encryption_type_fg = this.entityForm.formGroup.controls['encryption_type'];
-          const all_encryption_fields = this.encryption_fields.concat(this.key_fields, this.passphrase_fields);
-          if (this.passphrase_parent) {
-            encryption_type_fg.setValue('passphrase');
           }
-          for (let i = 0; i < this.encryption_fields.length; i++) {
-            this.entityForm.setDisabled(this.encryption_fields[i], true, true);
+        });
+        _.find(this.fieldConfig, { name: 'encryption' }).isHidden = true;
+        const inherit_encryption_fg = this.entityForm.formGroup.controls['inherit_encryption'];
+        const encryption_fg = this.entityForm.formGroup.controls['encryption'];
+        const encryption_type_fg = this.entityForm.formGroup.controls['encryption_type'];
+        const all_encryption_fields = this.encryption_fields.concat(this.key_fields, this.passphrase_fields);
+        if (this.passphrase_parent) {
+          encryption_type_fg.setValue('passphrase');
+        }
+        this.encryption_fields.forEach((field) => {
+          this.entityForm.setDisabled(field, true, true);
+        });
+        inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: boolean) => {
+          this.inherit_encryption = inherit;
+          if (inherit) {
+            all_encryption_fields.forEach((field) => {
+              this.entityForm.setDisabled(field, inherit, inherit);
+            });
+            _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inherit;
           }
-          inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((inherit: any) => {
-            this.inherit_encryption = inherit;
-            if (inherit) {
-              for (let i = 0; i < all_encryption_fields.length; i++) {
-                this.entityForm.setDisabled(all_encryption_fields[i], inherit, inherit);
-              }
-              _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inherit;
+          if (!inherit) {
+            this.entityForm.setDisabled('encryption_type', inherit, inherit);
+            this.entityForm.setDisabled('algorithm', inherit, inherit);
+            if (this.passphrase_parent) { // keep it hidden if it passphrase
+              _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = true;
             }
-            if (!inherit) {
-              this.entityForm.setDisabled('encryption_type', inherit, inherit);
-              this.entityForm.setDisabled('algorithm', inherit, inherit);
-              if (this.passphrase_parent) { // keep it hidden if it passphrase
-                _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = true;
-              }
-              const key = (this.encryption_type === 'key');
-              this.entityForm.setDisabled('passphrase', key, key);
-              this.entityForm.setDisabled('confirm_passphrase', key, key);
-              this.entityForm.setDisabled('pbkdf2iters', key, key);
-              this.entityForm.setDisabled('generate_key', !key, !key);
-              if (this.encrypted_parent) {
-                _.find(this.fieldConfig, { name: 'encryption' }).isHidden = this.isBasicMode;
-              } else {
-                _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inherit;
-              }
-            }
-          });
-          encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: any) => {
-            // if on an encrypted parent we should warn the user, otherwise just disable the fields
-            if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
-              this.dialogService.confirm({
-                title: helptext.dataset_form_encryption.non_encrypted_warning_title,
-                message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
-              }).pipe(
-                filter(Boolean),
-                untilDestroyed(this),
-              ).subscribe(() => {
-                this.non_encrypted_warned = true;
-                for (let i = 0; i < all_encryption_fields.length; i++) {
-                  if (all_encryption_fields[i] !== 'encryption') {
-                    this.entityForm.setDisabled(all_encryption_fields[i], true, true);
-                  }
-                }
-              });
-            } else {
-              for (let i = 0; i < this.encryption_fields.length; i++) {
-                if (this.encryption_fields[i] !== 'encryption') {
-                  if (this.encryption_fields[i] === 'generate_key' && this.encryption_type !== 'key') {
-                    continue;
-                  } else {
-                    this.entityForm.setDisabled(this.encryption_fields[i], !encryption, !encryption);
-                  }
-                }
-              }
-              if (this.encryption_type === 'key' && !this.generate_key) {
-                this.entityForm.setDisabled('key', !encryption, !encryption);
-              }
-              if (this.encryption_type === 'passphrase') {
-                for (let i = 0; i < this.passphrase_fields.length; i++) {
-                  this.entityForm.setDisabled(this.passphrase_fields[i], !encryption, !encryption);
-                }
-              }
-              if (this.passphrase_parent) { // keep this field hidden if parent has a passphrase
-                _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = true;
-              }
-            }
-          });
-          encryption_type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: any) => {
-            this.encryption_type = type;
-            const key = (type === 'key');
+            const key = (this.encryption_type === 'key');
             this.entityForm.setDisabled('passphrase', key, key);
             this.entityForm.setDisabled('confirm_passphrase', key, key);
             this.entityForm.setDisabled('pbkdf2iters', key, key);
             this.entityForm.setDisabled('generate_key', !key, !key);
-            if (key) {
-              this.entityForm.setDisabled('key', this.generate_key, this.generate_key);
+            if (this.encrypted_parent) {
+              _.find(this.fieldConfig, { name: 'encryption' }).isHidden = this.isBasicMode;
             } else {
-              this.entityForm.setDisabled('key', true, true);
+              _.find(this.fieldConfig, { name: 'encryption' }).isHidden = inherit;
             }
-          });
-          this.entityForm.formGroup.controls['generate_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((generate_key: any) => {
-            this.generate_key = generate_key;
-            this.entityForm.setDisabled('key', generate_key, generate_key);
-          });
-        }
+          }
+        });
+        encryption_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((encryption: boolean) => {
+          // if on an encrypted parent we should warn the user, otherwise just disable the fields
+          if (this.encrypted_parent && !encryption && !this.non_encrypted_warned) {
+            this.dialogService.confirm({
+              title: helptext.dataset_form_encryption.non_encrypted_warning_title,
+              message: helptext.dataset_form_encryption.non_encrypted_warning_warning,
+            }).pipe(
+              filter(Boolean),
+              untilDestroyed(this),
+            ).subscribe(() => {
+              this.non_encrypted_warned = true;
+              all_encryption_fields.forEach((field) => {
+                if (field !== 'encryption') {
+                  this.entityForm.setDisabled(field, true, true);
+                }
+              });
+            });
+          } else {
+            this.encryption_fields.forEach((field) => {
+              if (field !== 'encryption') {
+                if (field === 'generate_key' && this.encryption_type !== 'key') {
+                  return;
+                }
+
+                this.entityForm.setDisabled(field, !encryption, !encryption);
+              }
+            });
+            if (this.encryption_type === 'key' && !this.generate_key) {
+              this.entityForm.setDisabled('key', !encryption, !encryption);
+            }
+            if (this.encryption_type === 'passphrase') {
+              this.passphrase_fields.forEach((field) => {
+                this.entityForm.setDisabled(field, !encryption, !encryption);
+              });
+            }
+            if (this.passphrase_parent) { // keep this field hidden if parent has a passphrase
+              _.find(this.fieldConfig, { name: 'encryption_type' }).isHidden = true;
+            }
+          }
+        });
+        encryption_type_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((type: 'key' | 'passphrase') => {
+          this.encryption_type = type;
+          const key = (type === 'key');
+          this.entityForm.setDisabled('passphrase', key, key);
+          this.entityForm.setDisabled('confirm_passphrase', key, key);
+          this.entityForm.setDisabled('pbkdf2iters', key, key);
+          this.entityForm.setDisabled('generate_key', !key, !key);
+          if (key) {
+            this.entityForm.setDisabled('key', this.generate_key, this.generate_key);
+          } else {
+            this.entityForm.setDisabled('key', true, true);
+          }
+        });
+        this.entityForm.formGroup.controls['generate_key'].valueChanges.pipe(untilDestroyed(this)).subscribe((generate_key: boolean) => {
+          this.generate_key = generate_key;
+          this.entityForm.setDisabled('key', generate_key, generate_key);
+        });
       } else {
         entityForm.setDisabled('name', true);
       }
@@ -583,147 +572,145 @@ export class ZvolFormComponent implements FormConfiguration {
             (this.reverseZvolBlockSizeMap as any)[this.minimum_recommended_zvol_volblocksize], 0,
           );
           if (res_number < recommended_size_number) {
-            this.translate.get(helptext.blocksize_warning.a).pipe(untilDestroyed(this)).subscribe((blockMsgA) => (
-              this.translate.get(helptext.blocksize_warning.b).pipe(untilDestroyed(this)).subscribe((blockMsgB) => {
-                _.find(this.fieldConfig, { name: 'volblocksize' }).warnings = `${blockMsgA} ${this.minimum_recommended_zvol_volblocksize}. ${blockMsgB}`;
-              })
-            ));
+            _.find(this.fieldConfig, { name: 'volblocksize' }).warnings = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimum_recommended_zvol_volblocksize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
           } else {
             _.find(this.fieldConfig, { name: 'volblocksize' }).warnings = null;
           }
         }
       });
 
-      this.translate.get('Inherit').pipe(untilDestroyed(this)).subscribe((inheritTr) => {
-        const readonly_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT' }];
-        const readonly: FormSelectConfig = _.find(this.fieldConfig, { name: 'readonly' });
-        readonly.options = readonly_inherit.concat(readonly.options);
-        let readonly_value;
-        if (this.isNew) {
+      const inheritTr = this.translate.instant('Inherit');
+      const readonly_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].readonly.rawvalue})`, value: 'INHERIT' }];
+      const readonly = _.find(this.fieldConfig, { name: 'readonly' }) as FormSelectConfig;
+      readonly.options = readonly_inherit.concat(readonly.options);
+      let readonly_value;
+      if (this.isNew) {
+        readonly_value = 'INHERIT';
+      } else {
+        readonly_value = pk_dataset[0].readonly.value;
+        if (
+          pk_dataset[0].readonly.source === ZfsPropertySource.Default
+          || pk_dataset[0].readonly.source === ZfsPropertySource.Inherited
+        ) {
           readonly_value = 'INHERIT';
-        } else {
-          readonly_value = pk_dataset[0].readonly.value;
-          if (pk_dataset[0].readonly.source === 'DEFAULT' || pk_dataset[0].readonly.source === 'INHERITED') {
-            readonly_value = 'INHERIT';
+        }
+      }
+      entityForm.formGroup.controls['readonly'].setValue(readonly_value);
+
+      const sync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
+      const sparse = _.find(this.fieldConfig, { name: 'sparse' }) as FormCheckboxConfig;
+      const compression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;
+      const deduplication = _.find(this.fieldConfig, { name: 'deduplication' }) as FormSelectConfig;
+      const volblocksize = _.find(this.fieldConfig, { name: 'volblocksize' }) as FormSelectConfig;
+
+      if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {
+        const sync_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
+        sync.options = sync_inherit.concat(sync.options);
+
+        const compression_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
+        compression.options = compression_inherit.concat(compression.options);
+
+        const deduplication_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
+        deduplication.options = deduplication_inherit.concat(deduplication.options);
+
+        const volblocksize_inherit: Option[] = [{ label: `${inheritTr}`, value: 'INHERIT' }];
+        volblocksize.options = volblocksize_inherit.concat(volblocksize.options);
+
+        entityForm.formGroup.controls['sync'].setValue('INHERIT');
+        entityForm.formGroup.controls['compression'].setValue('INHERIT');
+        entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
+        entityForm.formGroup.controls['readonly'].setValue('INHERIT');
+        const root = this.parent.split('/')[0];
+        this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
+          this.entityForm.formGroup.controls['volblocksize'].setValue(res);
+          this.minimum_recommended_zvol_volblocksize = res;
+        });
+      } else {
+        let parent_dataset: string | string[] = pk_dataset[0].name.split('/');
+        parent_dataset.pop();
+        parent_dataset = parent_dataset.join('/');
+
+        this.ws.call('pool.dataset.query', [[['id', '=', parent_dataset]]]).pipe(untilDestroyed(this)).subscribe((parent_dataset_res) => {
+          this.custActions = null;
+
+          sparse.isHidden = true;
+          volblocksize.isHidden = true;
+
+          this.customFilter = [[['id', '=', this.parent]]];
+          let sync_collection: Option[];
+          let compression_collection: Option[];
+          let deduplication_collection: Option[];
+
+          const volumesize = pk_dataset[0].volsize.parsed;
+
+          // keep track of original volume size data so we can check to see if the user intended to change since
+          // decimal has to be truncated to three decimal places
+          this.origVolSize = volumesize;
+
+          const humansize = this.storageService.convertBytestoHumanReadable(volumesize);
+          this.origHuman = humansize;
+
+          entityForm.formGroup.controls['name'].setValue(pk_dataset[0].name);
+          if (pk_dataset[0].comments) {
+            entityForm.formGroup.controls['comments'].setValue(pk_dataset[0].comments.value);
+          } else {
+            entityForm.formGroup.controls['comments'].setValue('');
           }
-        }
-        entityForm.formGroup.controls['readonly'].setValue(readonly_value);
 
-        const sync: FormSelectConfig = _.find(this.fieldConfig, { name: 'sync' });
-        const sparse = _.find(this.fieldConfig, { name: 'sparse' }) as FormCheckboxConfig;
-        const compression: FormSelectConfig = _.find(this.fieldConfig, { name: 'compression' });
-        const deduplication: FormSelectConfig = _.find(this.fieldConfig, { name: 'deduplication' });
-        const volblocksize: FormSelectConfig = _.find(this.fieldConfig, { name: 'volblocksize' });
+          entityForm.formGroup.controls['volsize'].setValue(humansize);
 
-        if (pk_dataset && pk_dataset[0].type === DatasetType.Filesystem) {
-          const sync_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].sync.rawvalue})`, value: 'INHERIT' }];
-          sync.options = sync_inherit.concat(sync.options);
-
-          const compression_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].compression.rawvalue})`, value: 'INHERIT' }];
-          compression.options = compression_inherit.concat(compression.options);
-
-          const deduplication_inherit: Option[] = [{ label: `${inheritTr} (${pk_dataset[0].deduplication.rawvalue})`, value: 'INHERIT' }];
-          deduplication.options = deduplication_inherit.concat(deduplication.options);
-
-          const volblocksize_inherit: Option[] = [{ label: `${inheritTr}`, value: 'INHERIT' }];
-          volblocksize.options = volblocksize_inherit.concat(volblocksize.options);
-
-          entityForm.formGroup.controls['sync'].setValue('INHERIT');
-          entityForm.formGroup.controls['compression'].setValue('INHERIT');
-          entityForm.formGroup.controls['deduplication'].setValue('INHERIT');
-          entityForm.formGroup.controls['readonly'].setValue('INHERIT');
-          const root = this.parent.split('/')[0];
-          this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
-            this.entityForm.formGroup.controls['volblocksize'].setValue(res);
-            this.minimum_recommended_zvol_volblocksize = res;
-          });
-        } else {
-          let parent_dataset: string | string[] = pk_dataset[0].name.split('/');
-          parent_dataset.pop();
-          parent_dataset = parent_dataset.join('/');
-
-          this.ws.call('pool.dataset.query', [[['id', '=', parent_dataset]]]).pipe(untilDestroyed(this)).subscribe((parent_dataset_res) => {
-            this.custActions = null;
-
-            sparse.isHidden = true;
-            volblocksize.isHidden = true;
-
-            this.customFilter = [[['id', '=', this.parent]]];
-            let sync_collection: Option[] = [{ label: pk_dataset[0].sync.value, value: pk_dataset[0].sync.value }];
-            let compression_collection: Option[] = [{
-              label: pk_dataset[0].compression.value,
-              value: pk_dataset[0].compression.value,
-            }];
-            let deduplication_collection: Option[] = [{
-              label: pk_dataset[0].deduplication.value,
-              value: pk_dataset[0].deduplication.value,
-            }];
-
-            const volumesize = pk_dataset[0].volsize.parsed;
-
-            // keep track of original volume size data so we can check to see if the user intended to change since
-            // decimal has to be truncated to three decimal places
-            this.origVolSize = volumesize;
-
-            const humansize = this.storageService.convertBytestoHumanReadable(volumesize);
-            this.origHuman = humansize;
-
-            entityForm.formGroup.controls['name'].setValue(pk_dataset[0].name);
-            if (pk_dataset[0].comments) {
-              entityForm.formGroup.controls['comments'].setValue(pk_dataset[0].comments.value);
-            } else {
-              entityForm.formGroup.controls['comments'].setValue('');
-            }
-
-            entityForm.formGroup.controls['volsize'].setValue(humansize);
-
-            if (pk_dataset[0].sync.source === 'INHERITED' || pk_dataset[0].sync.source === 'DEFAULT') {
-              sync_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].sync.rawvalue})`, value: parent_dataset_res[0].sync.value }];
-            } else {
-              sync_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].sync.rawvalue})`, value: 'INHERIT' }];
-              entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
-            }
-            sync.options = sync_collection.concat(sync.options);
-
-            if (pk_dataset[0].compression.source === 'DEFAULT') {
-              compression_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: parent_dataset_res[0].compression.value }];
-            } else {
-              compression_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: 'INHERIT' }];
-            }
-            compression.options = compression_collection.concat(compression.options);
-
-            if (pk_dataset[0].compression.source === 'INHERITED') {
-              entityForm.formGroup.controls['compression'].setValue('INHERIT');
-            } else {
-              entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
-            }
-
-            if (pk_dataset[0].deduplication.source === 'INHERITED' || pk_dataset[0].deduplication.source === 'DEFAULT') {
-              deduplication_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].deduplication.rawvalue})`, value: parent_dataset_res[0].deduplication.value }];
-            } else {
-              deduplication_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].deduplication.rawvalue})`, value: 'INHERIT' }];
-              entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
-            }
-            deduplication.options = deduplication_collection.concat(deduplication.options);
-
+          if (
+            pk_dataset[0].sync.source === ZfsPropertySource.Inherited
+            || pk_dataset[0].sync.source === ZfsPropertySource.Default
+          ) {
+            sync_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].sync.rawvalue})`, value: parent_dataset_res[0].sync.value }];
+          } else {
+            sync_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].sync.rawvalue})`, value: 'INHERIT' }];
             entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
-            if (pk_dataset[0].compression.value === 'GZIP') {
-              entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value + '-6');
-            }
+          }
+          sync.options = sync_collection.concat(sync.options);
+
+          if (pk_dataset[0].compression.source === ZfsPropertySource.Default) {
+            compression_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: parent_dataset_res[0].compression.value }];
+          } else {
+            compression_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].compression.rawvalue})`, value: 'INHERIT' }];
+          }
+          compression.options = compression_collection.concat(compression.options);
+
+          if (pk_dataset[0].compression.source === ZfsPropertySource.Inherited) {
+            entityForm.formGroup.controls['compression'].setValue('INHERIT');
+          } else {
+            entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value);
+          }
+
+          if (
+            pk_dataset[0].deduplication.source === ZfsPropertySource.Inherited
+            || pk_dataset[0].deduplication.source === ZfsPropertySource.Default
+          ) {
+            deduplication_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].deduplication.rawvalue})`, value: parent_dataset_res[0].deduplication.value }];
+          } else {
+            deduplication_collection = [{ label: `${inheritTr} (${parent_dataset_res[0].deduplication.rawvalue})`, value: 'INHERIT' }];
             entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
-          });
-        }
-      });
+          }
+          deduplication.options = deduplication_collection.concat(deduplication.options);
+
+          entityForm.formGroup.controls['sync'].setValue(pk_dataset[0].sync.value);
+          if (pk_dataset[0].compression.value === 'GZIP') {
+            entityForm.formGroup.controls['compression'].setValue(pk_dataset[0].compression.value + '-6');
+          }
+          entityForm.formGroup.controls['deduplication'].setValue(pk_dataset[0].deduplication.value);
+        });
+      }
     });
   }
 
-  blurVolsize(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['volsize'].setValue(parent.storageService.humanReadable);
+  blurVolsize(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['volsize'].setValue(this.storageService.humanReadable);
     }
   }
 
-  addSubmit(body: any): Observable<any> {
+  addSubmit(body: any): Observable<Dataset> {
     const data: any = this.sendAsBasicOrAdvanced(body);
 
     if (data.sync === 'INHERIT') {
@@ -830,7 +817,7 @@ export class ZvolFormComponent implements FormConfiguration {
       if (!this.edit_data.volsize || this.edit_data.volsize >= rounded_vol_size) {
         this.ws.call('pool.dataset.update', [this.parent, this.edit_data]).pipe(untilDestroyed(this)).subscribe(() => {
           this.loader.close();
-          this.modalService.close('slide-in-form');
+          this.modalService.closeSlideIn();
           this.modalService.refreshTable();
         }, (eres) => {
           this.loader.close();
@@ -839,7 +826,7 @@ export class ZvolFormComponent implements FormConfiguration {
       } else {
         this.loader.close();
         this.dialogService.info(helptext.zvol_save_errDialog.title, helptext.zvol_save_errDialog.msg);
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
       }
     });
   }
@@ -847,10 +834,10 @@ export class ZvolFormComponent implements FormConfiguration {
   customSubmit(body: any): void {
     this.loader.open();
 
-    if (this.isNew === true) {
+    if (this.isNew) {
       this.addSubmit(body).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         this.modalService.refreshTable();
       }, (res) => {
         this.loader.close();

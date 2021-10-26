@@ -1,7 +1,7 @@
 import { FormControl, ValidatorFn } from '@angular/forms';
-import * as ipRegex from 'ip-regex';
-import * as isCidr from 'is-cidr';
-import * as _ from 'lodash';
+import ipRegex from 'ip-regex';
+import isCidr from 'is-cidr';
+import _ from 'lodash';
 
 // Accepts ipv4 or ipv6 addresses with no CIDR (ie, /24)
 export function ipv4or6Validator(): ValidatorFn {
@@ -154,9 +154,9 @@ export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all'): Validator
       const regex = ipType === 'ipv4' ? ipv4_regex : ipv6_regex;
       const wildcard = ipType === 'ipv4' ? '0.0.0.0' : '::';
       if (_.indexOf(thisControl.value, wildcard) !== -1) {
-        for (let i = 0; i < thisControl.value.length; i++) {
-          if (thisControl.value[i] !== wildcard && regex.test(thisControl.value[i])) {
-            error = [ipType === 'ipv4' ? 'IPv4' : 'IPv6', wildcard, thisControl.value[i]];
+        for (const ip of thisControl.value) {
+          if (ip !== wildcard && regex.test(ip)) {
+            error = [ipType === 'ipv4' ? 'IPv4' : 'IPv6', wildcard, ip];
             return false;
           }
         }

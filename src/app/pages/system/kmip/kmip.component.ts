@@ -3,7 +3,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_kmip } from 'app/helptext/system/kmip';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -16,9 +18,9 @@ import { SystemGeneralService, DialogService, WebSocketService } from 'app/servi
   templateUrl: './kmip.component.html',
   styleUrls: ['./kmip.component.scss'],
 })
-export class KmipComponent {
-  protected queryCall: 'kmip.config' = 'kmip.config';
-  protected editCall: 'kmip.update' = 'kmip.update';
+export class KmipComponent implements FormConfiguration {
+  queryCall = 'kmip.config' as const;
+  editCall = 'kmip.update' as const;
   isEntity = false;
 
   entityForm: EntityFormComponent;
@@ -161,18 +163,18 @@ export class KmipComponent {
 
   preInit(): void {
     const certificateFieldset: FieldSet = _.find(this.fieldSets, { class: 'certificate' });
-    const certificateField: FormSelectConfig = _.find(certificateFieldset.config, { name: 'certificate' });
-    const certificateAuthorityField: FormSelectConfig = _.find(certificateFieldset.config, { name: 'certificate_authority' });
+    const certificateField = _.find(certificateFieldset.config, { name: 'certificate' }) as FormSelectConfig;
+    const certificateAuthorityField = _.find(certificateFieldset.config, { name: 'certificate_authority' }) as FormSelectConfig;
 
     this.systemGeneralService.getCA().pipe(untilDestroyed(this)).subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        certificateAuthorityField.options.push({ label: res[i].name, value: res[i].id });
-      }
+      res.forEach((authority) => {
+        certificateAuthorityField.options.push({ label: authority.name, value: authority.id });
+      });
     });
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        certificateField.options.push({ label: res[i].name, value: res[i].id });
-      }
+      res.forEach((certificate) => {
+        certificateField.options.push({ label: certificate.name, value: certificate.id });
+      });
     });
   }
 
@@ -181,7 +183,7 @@ export class KmipComponent {
     this.fieldConfig = entityForm.fieldConfig;
   }
 
-  customSubmit(data: any): void {
+  customSubmit(data: KmipConfigUpdate): void {
     if (data['server'] === null) {
       data['server'] = '';
     }

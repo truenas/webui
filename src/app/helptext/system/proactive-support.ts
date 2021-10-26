@@ -1,4 +1,4 @@
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   cardtitle_placeholder: T('Proactive Support can notify iXsystems by email when TrueNAS hardware conditions require attention.'),

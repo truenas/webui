@@ -1,6 +1,6 @@
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import globalHelptext from 'app/helptext/global-helptext';
 import { FailoverDisabledReason } from '../enums/failover-disabled-reason.enum';
-import globalHelptext from './global-helptext';
 
 export default {
   ha_status: T('HA Status'),
@@ -10,20 +10,18 @@ export default {
   ha_disabled_reasons: {
     [FailoverDisabledReason.NoVolume]: T('No pools are configured.'),
     [FailoverDisabledReason.NoVip]: T('No interfaces configured with Virtual IP.'),
-    [FailoverDisabledReason.NoSystemReady]: T(`Other ${globalHelptext.ctrlr} has not finished booting.`),
-    [FailoverDisabledReason.NoPong]: T(`Other ${globalHelptext.ctrlr} cannot be reached.`),
+    [FailoverDisabledReason.NoSystemReady]: T('Other TrueNAS controller has not finished booting.'),
+    [FailoverDisabledReason.NoPong]: T('Other TrueNAS controller cannot be reached.'),
     [FailoverDisabledReason.NoFailover]: T('Failover is administratively disabled.'),
-    [FailoverDisabledReason.NoLicense]: T(`Other ${globalHelptext.ctrlr} has no license.`),
+    [FailoverDisabledReason.NoLicense]: T('Other TrueNAS controller has no license.'),
     [FailoverDisabledReason.DisagreeCarp]: T('Nodes CARP states do not agree.'),
-    [FailoverDisabledReason.MismatchDisks]: T(`The ${globalHelptext.ctrlrs} do not have the same quantity of disks.`),
+    [FailoverDisabledReason.MismatchDisks]: T('The TrueNAS controllers do not have the same quantity of disks.'),
     [FailoverDisabledReason.NoCriticalInterfaces]: T('No network interfaces are marked critical for failover.'),
   },
-  legacyUIWarning: `${globalHelptext.legacyUIWarning}`,
   updateRunning_dialog: {
     title: T('Update in Progress'),
-    message: T('A system update is in progress. It might have been \
- launched in another window or by an external source like TrueCommand.'),
-    message_pt2: T(` <b>${globalHelptext.sys_update_message}</b> `),
+    message: globalHelptext.sysUpdateMessage,
+    message_pt2: T(` <b>${globalHelptext.sysUpdateMessagePt2}</b> `),
   },
 
   mat_tooltips: {

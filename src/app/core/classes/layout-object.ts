@@ -54,7 +54,6 @@ export class LayoutObject {
   }
 
   intro: string;
-  outro: string;
   updateMessage: string;
   itemSize: ElementDimensions;
   contentSize: ElementDimensions;
@@ -157,9 +156,6 @@ export class LayoutObject {
     this.createLayoutFromArrangement(this.arrangement);
     // Move all items to new screenpositions
     this.updateCollectionPositions(0, Object.keys(this.collection).length - 1);
-    /* console.log(this.screenPositions);
-        console.log(item.x + " " + item.y)
-        console.log(item.id) */
   }
 
   private remove(item: DisplayObject): void { // Remove item from collection and regenerate screenPositions

@@ -16,8 +16,8 @@
           <div class="logo">
             <img [src]="item.icon_url" [src-fallback]="imagePlaceholder"/>
           </div>
-          <div class="badge-area">
-            <div class="partner-badge capitalized-text">
+          <div class="badge-area" [class.badge-official]="item.catalog.label === officialCatalog">
+            <div class="capitalized-text">
               {{ item.catalog.label }}
             </div>
             <div class="train-badge capitalized-text">

@@ -5,12 +5,13 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/volumes/volume-key';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormParagraphConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -18,7 +19,6 @@ import { WebSocketService, StorageService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { EncryptionService } from 'app/services/encryption.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -28,7 +28,7 @@ import { T } from 'app/translate-marker';
 export class VolumeAddkeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Add Recovery Key');
 
-  queryCall: 'pool.query' = 'pool.query';
+  queryCall = 'pool.query' as const;
   queryKey = 'id';
   route_return: string[] = ['storage', 'pools'];
   isNew = false;
@@ -100,7 +100,7 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
     return data;
   }
 
-  pk: any;
+  pk: string;
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
@@ -123,12 +123,12 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     entityForm.formGroup.controls['password'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.admin_pw = res;
-      const btn = <HTMLInputElement> document.getElementById('cust_button_Invalidate Existing Key');
-      this.admin_pw !== '' ? btn.disabled = false : btn.disabled = true;
+      const btn = document.getElementById('cust_button_Invalidate Existing Key') as HTMLInputElement;
+      btn.disabled = this.admin_pw === '';
     });
   }
 
-  customSubmit(value: any): void {
+  customSubmit(value: { name: string; password: string }): void {
     this.ws.call('auth.check_user', ['root', value.password]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_return);

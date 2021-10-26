@@ -90,7 +90,7 @@ export class SystemProfiler {
     // with the enclosure info we set up basic data structure
     for (let i = 0; i < this.enclosures.length; i++) {
       // Detect rear drive bays
-      if (this.enclosures[i].controller == true) {
+      if (this.enclosures[i].controller) {
         if (this.enclosures[i].id.includes('plx_enclosure')) {
           this.enclosures[i].model = this.enclosures[this.headIndex].model + ' Rear Bays';
           this.rearIndex = i;
@@ -324,12 +324,6 @@ export class SystemProfiler {
       }
     });
     return capacity;
-  }
-
-  getEnclosureLabel(key: number): string {
-    return this.enclosures[key].label == this.enclosures[key].name
-      ? this.enclosures[key].label
-      : this.enclosures[key].model;
   }
 
   getDiskByID(id: string): Disk {

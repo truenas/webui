@@ -1,6 +1,6 @@
 <div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container  front">
-    <mat-card style="overflow:hidden" class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+    <mat-card class="front overflow-hidden" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content #carouselparent>
         <mat-toolbar-row>
 
@@ -38,24 +38,25 @@
           <div class="card-body" [style.padding]="paddingTop + 'px ' + paddingX + 'px ' + paddingBottom + 'px'">
             <mat-grid-list cols="6" [gutterSize]="gap + 'px'" [rowHeight]="rowHeight + 'px'"  [ngClass]="'nics-' + availableNics.length">
               <mat-grid-tile *ngFor="let nic of availableNics; let i=index" [colspan]="getColspan(i)" class="tile-{{ i }}">
-                <div class="tile" [fxLayout]="availableNics.length === 1 ? 'column' : 'row'" fxFill fxLayoutAlign="start stretch" >
+                <div class="tile" [fxLayout]="availableNics.length === 1 ? 'column' : 'row'" fxFlexFill fxLayoutAlign="start stretch">
                   <div class="nic-info" fxLayout="column" fxLayoutAlign="start stretch">
                     <div class="info-header" fxLayout="row" fxLayoutAlign="start start">
                       <h4 class="info-header-title">{{nic.state.name}}</h4>
+                      <!-- TODO: Add pencil icon and open edit interface as slide-in form on click -->
                     </div>
-                    <div class="info-body" fxLayout="row" fxFlex fxLayoutAlign="space-between stretch">
+                    <div class="info-body" fxLayout="row" fxFlex fxLayoutAlign="space-between center">
                       <ul>
                         <li fxLayout="row" fxLayoutAlign="start center">
                           <span class="icon up" *ngIf="nic.state.link_state === LinkState.Up">
-                            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle" [matTooltip]="nicInfoMap[nic.state.name]?.state"></mat-icon>
                           </span>
                           <span class="icon down" *ngIf="nic.state.link_state !== LinkState.Up">
-                            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+                            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-close-circle" [matTooltip]="nicInfoMap[nic.state.name]?.state"></mat-icon>
                           </span>
                           <span>{{ nicInfoMap[nic.state.name]?.state }}</span>
                         </li>
                         <li fxLayout="row" fxLayoutAlign="start center"  class="line-state">
-                          <span class="icon state"><mat-icon [id]="nic.state.name" class="state-info-icon" svgIcon="network-upload-download"></mat-icon></span>
+                          <span class="icon state"><mat-icon [id]="nic.state.name" class="state-info-icon" svgIcon="network-upload-download" [matTooltip]="showInOutInfo(nic)"></mat-icon></span>
                           <ul *ngIf="nic.state.link_state === LinkState.Up">
                             <li><span class="label">{{ 'In' | translate }}:</span> {{ nicInfoMap[nic.state.name]?.in }}</li>
                             <li><span class="label">{{ 'Out' | translate }}:</span>{{ nicInfoMap[nic.state.name]?.out }}</li>
@@ -63,7 +64,7 @@
                           <span *ngIf="nic.state.link_state !== LinkState.Up">{{ 'No Traffic' | translate }}</span>
                         </li>
                         <li fxLayout="row" fxLayoutAlign="start center" *ngIf="availableNics.length > 1">
-                          <span class="icon address"><mat-icon [matTooltip]="'IP Address' | translate">settings_ethernet</mat-icon></span>
+                          <span class="icon address"><mat-icon [matTooltip]="getIpAddressTooltip(nic)">settings_ethernet</mat-icon></span>
                           <span>{{ nicInfoMap[nic.state.name]?.ip }}</span>
                         </li>
                       </ul>

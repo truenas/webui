@@ -9,7 +9,7 @@ import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/idmap';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IdmapBackendOptions } from 'app/interfaces/idmap-backend-options.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -27,9 +27,9 @@ export class IdmapFormComponent implements FormConfiguration {
   title: string;
   isEntity = true;
   protected namesInUse: string[] = [];
-  queryCall: 'idmap.query' = 'idmap.query';
-  addCall: 'idmap.create' = 'idmap.create';
-  editCall: 'idmap.update' = 'idmap.update';
+  queryCall = 'idmap.query' as const;
+  addCall = 'idmap.create' as const;
+  editCall = 'idmap.update' as const;
   pk: number;
   queryKey = 'id';
   private getRow = new Subscription();
@@ -304,7 +304,7 @@ export class IdmapFormComponent implements FormConfiguration {
     if (data.certificate) {
       data.certificate = data.certificate.id;
     }
-    this.requiredDomains.includes(data.name) ? this.readOnly = true : this.readOnly = false;
+    this.readOnly = this.requiredDomains.includes(data.name);
     return data;
   }
 
@@ -316,7 +316,7 @@ export class IdmapFormComponent implements FormConfiguration {
     });
 
     this.idmapService.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
-      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'certificate');
+      const config = this.fieldConfig.find((c) => c.name === 'certificate') as FormSelectConfig;
       config.options.push({ label: '---', value: null });
       certificates.forEach((certificate) => {
         config.options.push({ label: certificate.name, value: certificate.id });
@@ -356,7 +356,7 @@ export class IdmapFormComponent implements FormConfiguration {
 
     this.idmapService.getBackendChoices().pipe(untilDestroyed(this)).subscribe((backendChoices) => {
       this.backendChoices = backendChoices;
-      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'idmap_backend');
+      const config = this.fieldConfig.find((c) => c.name === 'idmap_backend') as FormSelectConfig;
       for (const item in backendChoices) {
         config.options.push({ label: item, value: item });
       }
@@ -384,7 +384,7 @@ export class IdmapFormComponent implements FormConfiguration {
       data.name = data.custom_name;
       delete data.custom_name;
     }
-    const options: any = {};
+    const options: Record<string, string> = {};
     for (const item in data) {
       if (this.optionsFields.includes(item)) {
         if (data[item]) {

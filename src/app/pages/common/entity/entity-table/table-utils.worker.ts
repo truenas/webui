@@ -18,13 +18,13 @@ const tableUtils = {
     const output = decimals > max ? input.toFixed(max) : input;
     return parseFloat(output);
   },
-  arrayAvg: (input: any[]) => {
+  arrayAvg: (input: number[]) => {
     const sum = input.reduce((acc, cv) => acc + cv);
     const avg = sum / input.length;
     return maxDecimals(avg);
   },
-  avgFromReportData: (input: any[]) => {
-    const output: any[] = [];
+  avgFromReportData: (input: number[][]) => {
+    const output: number[][] = [];
     input.forEach((item) => {
       const avg = arrayAvg(item);
       output.push([avg]);
@@ -155,7 +155,7 @@ function tableUtilsEmit(evt: any): void {
   postMessage(evt);
 }
 
-addEventListener('message', ({ data }) => {
+addEventListener('message', ({ data }) => { // eslint-disable-line no-restricted-globals
   const evt = data;
   let output;
 

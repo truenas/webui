@@ -1,199 +1,90 @@
-import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { FormControl, ValidatorFn } from '@angular/forms';
-import { Router } from '@angular/router';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef, Component,
+} from '@angular/core';
+import {
+  Validators,
+} from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
-import { filter, map, take } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import {
-  DialogService, LanguageService, StorageService, SystemGeneralService, WebSocketService,
+  DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { ModalService } from 'app/services/modal.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-gui-form',
-  template: '<entity-form [conf]="this"></entity-form>',
-  providers: [],
+  templateUrl: './gui-form.component.html',
+  styleUrls: ['./gui-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class GuiFormComponent implements FormConfiguration {
-  updateCall = 'system.general.update';
-  sortLanguagesByName = true;
-  languageList: Option[] = [];
-  languageKey: string;
-  fieldConfig: FieldConfig[] = [];
-
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.stg_fieldset_gui,
-      width: '100%',
-      label: true,
-      config: [
-        {
-          type: 'select',
-          name: 'ui_certificate',
-          placeholder: helptext.stg_guicertificate.placeholder,
-          tooltip: helptext.stg_guicertificate.tooltip,
-          options: [{ label: '---', value: null }],
-          required: true,
-          validation: helptext.stg_guicertificate.validation,
-        },
-        {
-          type: 'select',
-          name: 'ui_address',
-          multiple: true,
-          placeholder: helptext.stg_guiaddress.placeholder,
-          tooltip: helptext.stg_guiaddress.tooltip,
-          required: true,
-          options: [],
-          validation: [this.ipValidator('ui_address', '0.0.0.0')],
-        },
-        {
-          type: 'select',
-          name: 'ui_v6address',
-          multiple: true,
-          placeholder: helptext.stg_guiv6address.placeholder,
-          tooltip: helptext.stg_guiv6address.tooltip,
-          required: true,
-          options: [],
-          validation: [this.ipValidator('ui_v6address', '::')],
-        },
-        {
-          type: 'input',
-          name: 'ui_port',
-          placeholder: helptext.stg_guiport.placeholder,
-          tooltip: helptext.stg_guiport.tooltip,
-          inputType: 'number',
-          validation: helptext.stg_guiport.validation,
-        },
-        {
-          type: 'input',
-          name: 'ui_httpsport',
-          placeholder: helptext.stg_guihttpsport.placeholder,
-          tooltip: helptext.stg_guihttpsport.tooltip,
-          inputType: 'number',
-          validation: helptext.stg_guihttpsport.validation,
-        },
-        {
-          type: 'select',
-          multiple: true,
-          name: 'ui_httpsprotocols',
-          placeholder: helptext.stg_guihttpsprotocols.placeholder,
-          tooltip: helptext.stg_guihttpsprotocols.tooltip,
-          options: [],
-        },
-        {
-          type: 'checkbox',
-          name: 'ui_httpsredirect',
-          placeholder: helptext.stg_guihttpsredirect.placeholder,
-          tooltip: helptext.stg_guihttpsredirect.tooltip,
-        },
-      ],
-    },
-    {
-      name: helptext.stg_fieldset_other,
-      label: true,
-      config: [
-        {
-          type: 'checkbox',
-          name: 'crash_reporting',
-          placeholder: helptext.crash_reporting.placeholder,
-          tooltip: helptext.crash_reporting.tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'usage_collection',
-          placeholder: helptext.usage_collection.placeholder,
-          tooltip: helptext.usage_collection.tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'ui_consolemsg',
-          placeholder: helptext.consolemsg_placeholder,
-          tooltip: helptext.consolemsg_tooltip,
-        },
-      ],
-    },
-  ];
-
-  private ui_certificate: FormSelectConfig;
-  private addresses: string[];
-  private v6addresses: string[];
-  private http_port: number;
-  private https_port: number;
-  private redirect: boolean;
-  private guicertificate: string;
-  private entityForm: EntityFormComponent;
-  private configData: SystemGeneralConfig;
+export class GuiFormComponent {
   title = helptext.guiPageTitle;
+  isFormLoading = true;
+  configData: SystemGeneralConfig;
+
+  formGroup = this.fb.group({
+    ui_certificate: ['', [Validators.required]],
+    ui_address: [[] as string[], [ipValidator('ipv4')]],
+    ui_v6address: [[] as string[], [ipValidator('ipv6')]],
+    ui_port: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_httpsport: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_httpsprotocols: [[] as string[], [Validators.required]],
+    ui_httpsredirect: [false],
+    crash_reporting: [false, [Validators.required]],
+    usage_collection: [false, [Validators.required]],
+    ui_consolemsg: [false, [Validators.required]],
+  });
+
+  options = {
+    ui_certificate: this.sysGeneralService.uiCertificateOptions().pipe(choicesToOptions()),
+    ui_address: this.sysGeneralService.ipChoicesv4().pipe(choicesToOptions()),
+    ui_v6address: this.sysGeneralService.ipChoicesv6().pipe(choicesToOptions()),
+    ui_httpsprotocols: this.sysGeneralService.uiHttpsProtocolsOptions().pipe(choicesToOptions()),
+  };
+
+  readonly helptext = helptext;
 
   constructor(
-    protected router: Router,
-    protected language: LanguageService,
-    protected ws: WebSocketService,
-    protected dialog: DialogService,
-    protected loader: AppLoaderService,
-    public http: HttpClient,
-    protected storage: StorageService,
+    private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
-    private modalService: ModalService,
-  ) {}
-
-  prerequisite(): Promise<boolean> {
-    return this.sysGeneralService.getGeneralConfig$.pipe(
-      map((configData) => {
-        this.configData = configData;
-        return true;
-      }),
-      take(1),
+    private modalService: IxModalService,
+    private cdr: ChangeDetectorRef,
+    private ws: WebSocketService,
+    private dialog: DialogService,
+    private loader: AppLoaderService,
+    private translate: TranslateService,
+    private errorHandler: FormErrorHandlerService,
+  ) {
+    this.sysGeneralService.getGeneralConfig$.pipe(
       untilDestroyed(this),
-    ).toPromise();
-  }
-
-  ipValidator(name: 'ui_address' | 'ui_v6address', wildcard: string): ValidatorFn {
-    const self = this;
-    return function validIPs(control: FormControl) {
-      const config = self.fieldSets
-        .find((set) => set.name === helptext.stg_fieldset_gui)
-        .config.find((c) => c.name === name);
-
-      const errors = control.value && control.value.length > 1 && _.indexOf(control.value, wildcard) !== -1
-        ? { validIPs: true }
-        : null;
-
-      if (errors) {
-        config.hasErrors = true;
-        config.errors = helptext.validation_errors[name];
-      } else {
-        config.hasErrors = false;
-        config.errors = '';
-      }
-
-      return errors;
-    };
-  }
-
-  preInit(): void {
-    this.http_port = this.configData.ui_port;
-    this.https_port = this.configData.ui_httpsport;
-    this.redirect = this.configData.ui_httpsredirect;
-    if (this.configData.ui_certificate && this.configData.ui_certificate.id) {
-      this.guicertificate = this.configData.ui_certificate.id.toString();
-    }
-    this.addresses = this.configData['ui_address'];
-    this.v6addresses = this.configData['ui_v6address'];
+    ).subscribe((config) => {
+      this.configData = config;
+      this.formGroup.patchValue({
+        ui_certificate: config.ui_certificate?.id.toString(),
+        ui_address: config.ui_address,
+        ui_v6address: config.ui_v6address,
+        ui_port: config.ui_port,
+        ui_httpsport: config.ui_httpsport,
+        ui_httpsprotocols: config.ui_httpsprotocols,
+        ui_httpsredirect: config.ui_httpsredirect,
+        crash_reporting: config.crash_reporting,
+        usage_collection: config.usage_collection,
+        ui_consolemsg: config.ui_consolemsg,
+      });
+      this.isFormLoading = false;
+      this.cdr.markForCheck();
+    });
   }
 
   reconnect(href: string): void {
@@ -208,134 +99,102 @@ export class GuiFormComponent implements FormConfiguration {
     }
   }
 
-  afterInit(entityEdit: EntityFormComponent): void {
-    this.entityForm = entityEdit;
+  onSubmit(): void {
+    const values = this.formGroup.value;
+    const body: SystemGeneralConfigUpdate = {
+      ui_certificate: parseInt(values.ui_certificate),
+      ui_address: values.ui_address,
+      ui_v6address: values.ui_v6address,
+      ui_port: values.ui_port,
+      ui_httpsport: values.ui_httpsport,
+      ui_httpsprotocols: values.ui_httpsprotocols,
+      ui_httpsredirect: values.ui_httpsredirect,
+      crash_reporting: values.crash_reporting,
+      usage_collection: values.usage_collection,
+      ui_consolemsg: values.ui_consolemsg,
+    };
 
-    this.ui_certificate = this.fieldSets
-      .find((set) => set.name === helptext.stg_fieldset_gui)
-      .config.find((config) => config.name === 'ui_certificate');
-
-    this.ws.call('system.general.ui_certificate_choices')
-      .pipe(untilDestroyed(this))
-      .subscribe((res) => {
-        this.ui_certificate.options = [{ label: '---', value: null }];
-        for (const id in res) {
-          this.ui_certificate.options.push({ label: res[id], value: id });
-        }
-        entityEdit.formGroup.controls['ui_certificate'].setValue(this.configData.ui_certificate.id.toString());
-      });
-
-    const httpsprotocolsField: FormSelectConfig = this.fieldSets
-      .find((set) => set.name === helptext.stg_fieldset_gui)
-      .config.find((config) => config.name === 'ui_httpsprotocols');
-
-    this.ws.call('system.general.ui_httpsprotocols_choices').pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        httpsprotocolsField.options = [];
-        for (const key in res) {
-          httpsprotocolsField.options.push({ label: res[key], value: key });
-        }
-        entityEdit.formGroup.controls['ui_httpsprotocols'].setValue(this.configData.ui_httpsprotocols);
-      },
-    );
-
-    this.sysGeneralService
-      .ipChoicesv4()
-      .pipe(untilDestroyed(this)).subscribe((ips) => {
-        const config: FormSelectConfig = this.fieldSets
-          .find((set) => set.name === helptext.stg_fieldset_gui)
-          .config.find((config) => config.name === 'ui_address');
-        config.options = ips;
-        entityEdit.formGroup.controls['ui_address'].setValue(this.configData.ui_address);
-      });
-
-    this.sysGeneralService
-      .ipChoicesv6()
-      .pipe(untilDestroyed(this)).subscribe((v6Ips) => {
-        const config: FormSelectConfig = this.fieldSets
-          .find((set) => set.name === helptext.stg_fieldset_gui)
-          .config.find((config) => config.name === 'ui_v6address');
-        config.options = v6Ips;
-        entityEdit.formGroup.controls['ui_v6address'].setValue(this.configData.ui_v6address);
-      });
-
-    entityEdit.formGroup.controls['ui_port'].setValue(this.configData.ui_port);
-    entityEdit.formGroup.controls['ui_httpsport'].setValue(this.configData.ui_httpsport);
-    entityEdit.formGroup.controls['ui_httpsredirect'].setValue(this.configData.ui_httpsredirect);
-    entityEdit.formGroup.controls['crash_reporting'].setValue(this.configData.crash_reporting);
-    entityEdit.formGroup.controls['usage_collection'].setValue(this.configData.usage_collection);
-    entityEdit.formGroup.controls['ui_consolemsg'].setValue(this.configData.ui_consolemsg);
+    this.isFormLoading = true;
+    this.ws.call('system.general.update', [body]).pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.isFormLoading = false;
+      this.modalService.close();
+      this.handleServiceRestart(body);
+    }, (error) => {
+      this.isFormLoading = false;
+      this.errorHandler.handleWsFormError(error, this.formGroup);
+    });
   }
 
-  beforeSubmit(value: any): void {
-    delete value.language_sort;
-    value.language = this.languageKey;
+  getIsServiceRestartRequired(current: SystemGeneralConfig, next: SystemGeneralConfigUpdate): boolean {
+    const uiCertificateChanged = current.ui_certificate?.id !== next.ui_certificate;
+    const httpPortChanged = current.ui_port !== next.ui_port;
+    const httpsPortChanged = current.ui_httpsport !== next.ui_httpsport;
+    const redirectChanged = current.ui_httpsredirect !== next.ui_httpsredirect;
+    const v4AddressesChanged = !(current.ui_address.length === next.ui_address.length
+      && current.ui_address.every((val, index) => val === next.ui_address[index]));
+    const v6AddressesChanged = !(current.ui_v6address.length === next.ui_v6address.length
+      && current.ui_v6address.every((val, index) => val === next.ui_v6address[index]));
+
+    return [
+      uiCertificateChanged,
+      httpPortChanged,
+      httpsPortChanged,
+      redirectChanged,
+      v4AddressesChanged,
+      v6AddressesChanged,
+    ].includes(true);
   }
 
-  afterSubmit(value: any): void {
-    const new_http_port = value.ui_port;
-    const new_https_port = value.ui_httpsport;
-    const new_redirect = value.ui_httpsredirect;
-    const new_guicertificate = value.ui_certificate;
-    const new_addresses = value.ui_address;
-    const new_v6addresses = value.ui_v6address;
-    if (this.http_port !== new_http_port
-        || this.https_port !== new_https_port
-        || this.redirect !== new_redirect
-        || this.guicertificate !== new_guicertificate
-        || !(this.addresses.length === new_addresses.length
-           && this.addresses.every((val, index) => val === new_addresses[index]))
-        || !(this.v6addresses.length === new_v6addresses.length
-           && this.v6addresses.every((val, index) => val === new_v6addresses[index]))) {
+  handleServiceRestart(changed: SystemGeneralConfigUpdate): void {
+    const current: SystemGeneralConfig = { ...this.configData };
+    const httpPortChanged = current.ui_port !== changed.ui_port;
+    const httpsPortChanged = current.ui_httpsport !== changed.ui_httpsport;
+    const isServiceRestartRequired = this.getIsServiceRestartRequired(current, changed);
+
+    this.sysGeneralService.refreshSysGeneral();
+
+    if (isServiceRestartRequired) {
       this.dialog.confirm({
-        title: helptext.dialog_confirm_title,
-        message: helptext.dialog_confirm_title,
-      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-        let href = window.location.href;
+        title: this.translate.instant(helptext.dialog_confirm_title),
+        message: this.translate.instant(helptext.dialog_confirm_message),
+      }).pipe(
+        filter(Boolean),
+        untilDestroyed(this),
+      ).subscribe(() => {
         const hostname = window.location.hostname;
-        let port = window.location.port;
         const protocol = window.location.protocol;
+        let port = window.location.port;
+        let href = window.location.href;
 
-        if (new_http_port !== this.http_port && protocol == 'http:') {
-          port = new_http_port;
-        } else if (new_https_port !== this.https_port && protocol == 'https:') {
-          port = new_https_port;
+        if (httpPortChanged && protocol === 'http:') {
+          port = changed.ui_port.toString();
+        } else if (httpsPortChanged && protocol === 'https:') {
+          port = changed.ui_httpsport.toString();
         }
 
         href = protocol + '//' + hostname + ':' + port + window.location.pathname;
 
         this.loader.open();
         this.ws.shuttingdown = true; // not really shutting down, just stop websocket detection temporarily
-        this.ws.call('service.restart', [ServiceName.Http]).pipe(untilDestroyed(this)).subscribe(
-          () => {},
-          (res: WebsocketError) => {
+        this.ws.call('service.restart', [ServiceName.Http]).pipe(
+          untilDestroyed(this),
+        ).subscribe(
+          () => {
+            this.ws.reconnect(protocol, hostname + ':' + port);
+            this.reconnect(href);
+          },
+          (error: WebsocketError) => {
             this.loader.close();
-            this.dialog.errorReport(helptext.dialog_error_title, res.reason, res.trace.formatted);
+            this.dialog.errorReport(
+              helptext.dialog_error_title,
+              error.reason,
+              error.trace.formatted,
+            );
           },
         );
-
-        this.ws.reconnect(protocol, hostname + ':' + port);
-        setTimeout(() => {
-          this.reconnect(href);
-        }, 1000);
       });
     }
-    this.language.setLanguage(value.language);
-    this.modalService.refreshTable();
-  }
-
-  customSubmit(body: SystemGeneralConfigUpdate): Subscription {
-    this.loader.open();
-    return this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.loader.close();
-      this.modalService.close('slide-in-form');
-      this.sysGeneralService.refreshSysGeneral();
-      this.entityForm.success = true;
-      this.entityForm.formGroup.markAsPristine();
-      this.afterSubmit(body);
-    }, (res) => {
-      this.loader.close();
-      new EntityUtils().handleWSError(this.entityForm, res);
-    });
   }
 }

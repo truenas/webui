@@ -16,3 +16,5 @@ export interface OpenvpnServerConfig {
   tls_crypt_auth_enabled: boolean;
   topology: string;
 }
+
+export type OpenvpnServerConfigUpdate = Omit<OpenvpnServerConfig, 'id' | 'interface'>;

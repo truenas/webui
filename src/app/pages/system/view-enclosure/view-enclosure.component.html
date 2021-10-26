@@ -1,5 +1,5 @@
 <ng-container *ngIf="errors.length == 0">
-  <div *ngIf="system && system.enclosures && system_manufacturer && system_manufacturer == 'ixsystems'" class="page-viewport" fxLayout="row wrap" >
+  <div *ngIf="system && system.enclosures && system_manufacturer && system_manufacturer == 'ixsystems'" class="page-viewport" fxLayout="row wrap">
 
     <!-- Persistent Visualizer -->
     <div class="main-content" fxFlex="calc(100% - {{ (system.enclosures.length * 240).toString() }}px )">
@@ -9,7 +9,7 @@
       </div>
 
       <ng-container *ngIf="supportedHardware">
-        <div *ngIf="!system.platform.includes('MINI'); else mini" style="padding:16px 64px;">
+        <div *ngIf="!system.platform.includes('MINI'); else mini" class="enclosure-disks-wrapper">
           <enclosure-disks
             *ngIf="events && system && system.pools && selectedEnclosure"
             [controller-events]="events"
@@ -36,7 +36,7 @@
     <!-- Enclosure Selector -->
     <div fxFlex="240px" fxFlex.lt-lg="180px" #navigation  *ngIf="showEnclosureSelector && events && system && system.pools && system.enclosures && system.enclosures.length > 1 && supportedHardware" class="enclosure-selector">
       <ng-container *ngFor="let enclosure of system.profile; let i = index">
-        <div *ngIf="enclosure.enclosureKey != system.rearIndex" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }} ">
+        <div *ngIf="enclosure.enclosureKey != system.rearIndex" (click)="selectEnclosure(i)" class="enclosure enclosure-{{i}} {{selectedEnclosure.enclosureKey == i ? 'active' : '' }}">
           <div *ngIf="system.enclosures[enclosure.enclosureKey].label == system.enclosures[enclosure.enclosureKey].name">{{enclosure.model}} ({{i}})</div>
           <div *ngIf="system.enclosures[enclosure.enclosureKey].label !== system.enclosures[enclosure.enclosureKey].name">{{system.enclosures[enclosure.enclosureKey].label}} ({{i}})</div>
         </div>
@@ -46,7 +46,7 @@
 </ng-container>
 
 <ng-container *ngIf="errors.length > 0">
-  <div class="error mat-card" style="margin: 16px auto 0; top:0; width: 600px;">
+  <div class="error mat-card">
     <h3 class="error-header">
       <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
       {{errors[0].name}}
@@ -55,11 +55,11 @@
     <div class="error-message">
       {{errors[0].message}}.
       <br>
-      Please visit our support page for help.
+      {{ 'Please visit our support page for help.' | translate }}
     </div>
 
     <div class="error-footer">
-      <button mat-button color="primary" (click)="router.navigate(['/system/support'])">CONTACT SUPPORT</button>
+      <button mat-button color="primary" (click)="router.navigate(['/system/support'])">{{ 'CONTACT SUPPORT' | translate }}</button>
     </div>
   </div>
 </ng-container>

@@ -36,7 +36,7 @@ export class NotificationsComponent implements OnInit {
       setTimeout(() => {
         this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
         notifications.forEach((notification: NotificationAlert) => {
-          if (notification.dismissed === false) {
+          if (!notification.dismissed) {
             if (!_.find(this.notifications, { id: notification.id })) {
               this.notifications.push(notification);
             }
@@ -57,7 +57,7 @@ export class NotificationsComponent implements OnInit {
 
     const notificationAlerts: NotificationAlert[] = this.notificationsService.getNotificationList();
     notificationAlerts.forEach((notification: NotificationAlert) => {
-      if (notification.dismissed === false) {
+      if (!notification.dismissed) {
         this.notifications.push(notification);
       } else {
         this.dismissedNotifications.push(notification);

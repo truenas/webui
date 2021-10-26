@@ -3,17 +3,22 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import {
+  catchError, filter, switchMap, tap,
+} from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
+import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
+import { ConfirmDialogComponent } from 'app/pages/common/confirm-dialog/confirm-dialog.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -22,7 +27,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { StorageService, SystemGeneralService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -33,12 +37,11 @@ import { T } from 'app/translate-marker';
 export class UpdateComponent implements OnInit {
   packages: { operation: string; name: string }[] = [];
   status: SystemUpdateStatus;
-  releaseNotes: any = '';
-  changeLog: any = '';
+  releaseNotes = '';
+  changeLog = '';
   updating = false;
   updated = false;
   progress: Record<string, unknown> = {};
-  job: any = {};
   error: string;
   autoCheck = false;
   train: string;
@@ -57,15 +60,15 @@ export class UpdateComponent implements OnInit {
   updateMethod: ApiMethod = 'update.update';
   is_ha = false;
   product_type: ProductType;
-  ds: any;
+  ds: MatDialogRef<ConfirmDialogComponent, boolean>;
   failover_upgrade_pending = false;
   showSpinner = false;
   singleDescription: string;
   updateType: string;
   sysInfo: SystemInfoWithFeatures;
   isHA: boolean;
-  sysUpdateMessage = T('A system update is in progress. ');
-  sysUpdateMsgPt2 = helptext.sysUpdateMessage;
+  sysUpdateMessage = globalHelptext.sysUpdateMessage;
+  sysUpdateMsgPt2 = globalHelptext.sysUpdateMessagePt2;
   updatecheck_tooltip = T('Check the update server daily for \
                                   any updates on the chosen train. \
                                   Automatically download an update if \
@@ -91,10 +94,9 @@ export class UpdateComponent implements OnInit {
               configuration file with a new boot device. It also\
               decrypts all passwords used on this system.\
               <b>Keep the configuration file safe and protect it from unauthorized access!</b>'),
-    method_ws: 'core.download',
     saveButtonText: T('SAVE CONFIGURATION'),
     cancelButtonText: T('NO'),
-    customSubmit: this.saveConfigSubmit,
+    customSubmit: (entityDialog) => this.saveConfigSubmit(entityDialog),
     parent: this,
   };
 
@@ -252,7 +254,7 @@ export class UpdateComponent implements OnInit {
     });
   }
 
-  onTrainChanged(event: any): void {
+  onTrainChanged(event: string): void {
     // For the case when the user switches away, then BACK to the train of the current OS
     if (event === this.selectedTrain) {
       this.currentTrainDescription = this.trainDescriptionOnPageLoad;
@@ -266,8 +268,8 @@ export class UpdateComponent implements OnInit {
     }
 
     this.dialogService.confirm({
-      title: this.translate.instant(T('Switch Train')),
-      message: this.translate.instant(warning + T('Switch update trains?')),
+      title: this.translate.instant('Switch Train'),
+      message: warning + T('Switch update trains?'),
     }).pipe(untilDestroyed(this)).subscribe((train_res: boolean) => {
       if (train_res) {
         this.train = event;
@@ -281,16 +283,14 @@ export class UpdateComponent implements OnInit {
   }
 
   setTrainDescription(): void {
-    if ((this.fullTrainList as any)[this.train]) {
-      this.currentTrainDescription = (this.fullTrainList as any)[this.train].description.toLowerCase();
+    if (this.fullTrainList[this.train]) {
+      this.currentTrainDescription = this.fullTrainList[this.train].description.toLowerCase();
     } else {
       this.currentTrainDescription = '';
     }
   }
 
   toggleAutoCheck(): void {
-    // TODO: Likely a bug
-    this.autoCheck === !this.autoCheck;
     this.ws.call('update.set_auto_download', [this.autoCheck]).pipe(untilDestroyed(this)).subscribe(() => {
       if (this.autoCheck) {
         this.check();
@@ -389,7 +389,7 @@ export class UpdateComponent implements OnInit {
         this.showSpinner = false;
       },
       (err) => {
-        this.general_update_error = err.reason.replace('>', '').replace('<', '') + T(': Automatic update check failed. Please check system network settings.');
+        this.general_update_error = `${err.reason.replace('>', '').replace('<', '')}: ${T('Automatic update check failed. Please check system network settings.')}`;
         this.showSpinner = false;
       },
       () => {
@@ -436,7 +436,7 @@ export class UpdateComponent implements OnInit {
     this.updateType = 'applyPending';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res === false) {
+      if (!res) {
         this.continueUpdate();
       }
     });
@@ -446,12 +446,11 @@ export class UpdateComponent implements OnInit {
     this.updateType = 'manual';
     // Calls the 'Save Config' dialog - Returns here if user declines
     this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res === false) {
+      if (!res) {
         this.continueUpdate();
       }
     });
   }
-  // End button section
 
   startUpdate(): void {
     this.error = null;
@@ -476,8 +475,7 @@ export class UpdateComponent implements OnInit {
                 name: change.new.name + '-' + change.new.version,
               });
             } else if (change.operation === SystemUpdateOperationType.Delete) {
-              // FIXME: For some reason new is populated instead of
-              // old?
+              // FIXME: For some reason new is populated instead of old?
               if (change.old) {
                 this.packages.push({
                   operation: 'Delete',
@@ -502,7 +500,7 @@ export class UpdateComponent implements OnInit {
           this.updateType = 'standard';
           // Calls the 'Save Config' dialog - Returns here if user declines
           this.dialogService.dialogForm(this.saveConfigFormConf).pipe(untilDestroyed(this)).subscribe((res) => {
-            if (res === false) {
+            if (!res) {
               this.confirmAndUpdate();
             }
           });
@@ -543,12 +541,12 @@ export class UpdateComponent implements OnInit {
       secondaryCheckBoxMsg: this.translate.instant(confirmMsg),
       method: this.updateMethod,
       data: [{ reboot: false }],
-    });
+    }) as MatDialogRef<ConfirmDialogComponent, boolean>;
 
     this.ds.componentInstance.isSubmitEnabled = true;
-    this.ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status: any) => {
+    this.ds.afterClosed().pipe(untilDestroyed(this)).subscribe((status) => {
       if (status) {
-        if (!this.ds.componentInstance.data[0].reboot) {
+        if (!(this.ds.componentInstance.data[0] as any).reboot) {
           this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
           this.dialogRef.componentInstance.setCall('update.download');
           this.dialogRef.componentInstance.submit();
@@ -606,8 +604,8 @@ export class UpdateComponent implements OnInit {
   saveConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
     let fileName = '';
     let mimetype: string;
-    if (entityDialog.parent.sysInfo) {
-      const hostname = entityDialog.parent.sysInfo.hostname.split('.')[0];
+    if (this.sysInfo) {
+      const hostname = this.sysInfo.hostname.split('.')[0];
       const date = entityDialog.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
       fileName = hostname + '-' + date;
       if (entityDialog.formValue['secretseed']) {
@@ -618,45 +616,37 @@ export class UpdateComponent implements OnInit {
         mimetype = 'application/x-sqlite3';
       }
     }
+    this.loader.open();
 
-    entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
-      .pipe(untilDestroyed(entityDialog.parent)).subscribe(
-        (succ) => {
-          const url = succ[1];
-          entityDialog.parent.storage.streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
-            .pipe(untilDestroyed(entityDialog.parent)).subscribe((file: Blob) => {
-              entityDialog.dialogRef.close();
-              entityDialog.parent.storage.downloadBlob(file, fileName);
-              entityDialog.parent.continueUpdate();
-            }, () => {
-              entityDialog.dialogRef.close();
-              entityDialog.parent.dialogService.confirm({
-                title: entityDialog.parent.translate.instant(helptext.save_config_err.title),
-                message: entityDialog.parent.translate.instant(helptext.save_config_err.message),
-                buttonMsg: entityDialog.parent.translate.instant(helptext.save_config_err.button_text),
-              }).pipe(
-                filter(Boolean),
-                untilDestroyed(entityDialog.parent),
-              ).subscribe(() => {
-                entityDialog.parent.continueUpdate();
-              });
-            });
-          entityDialog.dialogRef.close();
-        },
-        () => {
-          entityDialog.parent.dialogService.confirm({
-            title: entityDialog.parent.translate.instant(helptext.save_config_err.title),
-            message: entityDialog.parent.translate.instant(helptext.save_config_err.message),
-            hideCheckBox: false,
-            buttonMsg: entityDialog.parent.translate.instant(helptext.save_config_err.button_text),
-          }).pipe(filter(Boolean), untilDestroyed(entityDialog.parent)).subscribe(() => {
-            entityDialog.parent.continueUpdate();
-          });
-        },
-      );
+    this.ws.call(
+      'core.download',
+      ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName],
+    ).pipe(
+      switchMap(([_, url]) => {
+        return this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(
+          tap((file: Blob) => {
+            this.storage.downloadBlob(file, fileName);
+          }),
+        );
+      }),
+      catchError(() => {
+        this.loader.close();
+        entityDialog.dialogRef.close(true);
+        return this.dialogService.confirm({
+          title: this.translate.instant(helptext.save_config_err.title),
+          message: this.translate.instant(helptext.save_config_err.message),
+          buttonMsg: this.translate.instant(helptext.save_config_err.button_text),
+        }).pipe(filter(Boolean));
+      }),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.loader.close();
+      entityDialog.dialogRef.close(true);
+      this.continueUpdate();
+    });
   }
 
-  // Continutes the update (based on its type) after the Save Config dialog is closed
+  // Continues the update (based on its type) after the Save Config dialog is closed
   continueUpdate(): void {
     switch (this.updateType) {
       case 'manual':

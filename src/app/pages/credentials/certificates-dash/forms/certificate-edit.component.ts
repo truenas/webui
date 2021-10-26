@@ -10,7 +10,7 @@ import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormButtonConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -25,11 +25,11 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CertificateEditComponent implements FormConfiguration {
-  queryCall: 'certificate.query' = 'certificate.query';
-  editCall: 'certificate.update' = 'certificate.update';
+  queryCall = 'certificate.query' as const;
+  editCall = 'certificate.update' as const;
   isEntity = true;
-  title = helptext_system_certificates.edit.title;
-  private viewButtonText = helptext_system_certificates.viewButton.certificate;
+  title: string = helptext_system_certificates.edit.title;
+  private viewButtonText: string = helptext_system_certificates.viewButton.certificate;
   protected isCSR: boolean;
   queryCallOption: [QueryFilter<Certificate>];
 
@@ -198,7 +198,7 @@ export class CertificateEditComponent implements FormConfiguration {
     },
   ];
 
-  private rowNum: any;
+  private rowNum: number;
   protected entityForm: EntityFormComponent;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private getRow = new Subscription();
@@ -207,7 +207,7 @@ export class CertificateEditComponent implements FormConfiguration {
   constructor(protected ws: WebSocketService, protected matDialog: MatDialog,
     protected loader: AppLoaderService, protected dialog: DialogService,
     private modalService: ModalService, private storage: StorageService, private http: HttpClient) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.rowNum = rowId;
       this.queryCallOption = [['id', '=', rowId]];
       this.getRow.unsubscribe();
@@ -230,7 +230,7 @@ export class CertificateEditComponent implements FormConfiguration {
       id: 'create_ACME',
       name: helptext_system_certificates.list.action_create_acme_certificate,
       function: () => {
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         const message = { action: 'open', component: 'acmeComponent', row: this.rowNum };
         this.modalService.message(message);
       },
@@ -255,8 +255,11 @@ export class CertificateEditComponent implements FormConfiguration {
     ];
     fields.forEach((field) => {
       const paragraph: FormParagraphConfig = _.find(this.fieldConfig, { name: field });
-      this.incomingData[field] || this.incomingData[field] === false
-        ? paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---';
+      if (this.incomingData[field] || this.incomingData[field] === false) {
+        paragraph.paraText += this.incomingData[field];
+      } else {
+        paragraph.paraText += '---';
+      }
     });
     const sanConfig: FormParagraphConfig = _.find(this.fieldConfig, { name: 'san' });
     sanConfig.paraText += this.incomingData.san.join(',');
@@ -267,8 +270,10 @@ export class CertificateEditComponent implements FormConfiguration {
     const issuer: FormParagraphConfig = _.find(this.fieldConfig, { name: 'issuer' });
     if (_.isObject(this.incomingData.issuer)) {
       issuer.paraText += (this.incomingData.issuer as any).name;
+    } else if (this.incomingData.issuer) {
+      issuer.paraText += this.incomingData.issuer;
     } else {
-      this.incomingData.issuer ? issuer.paraText += this.incomingData.issuer : issuer.paraText += '---';
+      issuer.paraText += '---';
     }
     const certButton = _.find(this.fieldConfig, { name: 'certificate_view' }) as FormButtonConfig;
     certButton.customEventActionLabel = this.viewButtonText;
@@ -359,13 +364,13 @@ export class CertificateEditComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any): void {
+  customSubmit(value: { name: string }): void {
     this.dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: 'Updating Identifier' } });
     this.dialogRef.componentInstance.setCall(this.editCall, [this.rowNum, { name: value['name'] }]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.matDialog.closeAll();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.modalService.refreshTable();
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
 import { filter } from 'rxjs/operators';
@@ -24,7 +25,6 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -33,7 +33,7 @@ import { T } from 'app/translate-marker';
 })
 export class DiskListComponent implements EntityTableConfig<Disk> {
   title = T('Disks');
-  queryCall: 'disk.query' = 'disk.query';
+  queryCall = 'disk.query' as const;
   queryCallOption: QueryParams<Disk, { extra: { pools: true } }> = [[], { extra: { pools: true } }];
   noAdd = true;
 
@@ -82,7 +82,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
           this.diskNames.push(i.name);
           this.hddStandby.push(i.hddstandby);
           this.advPowerMgt.push(i.advpowermgmt);
-          if (i.togglesmart === true) {
+          if (i.togglesmart) {
             this.diskToggle = true;
             this.SMARToptions.push(i.smartoptions);
           }
@@ -92,17 +92,23 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         this.diskbucket.diskToggleBucket(this.diskToggle);
 
         // If all items match in an array, this fills in the value in the form; otherwise, blank
-        this.hddStandby.every((val, i, arr) => val === arr[0])
-          ? this.diskbucket.hddStandby = this.hddStandby[0]
-          : this.diskbucket.hddStandby = undefined;
+        if (this.hddStandby.every((val, i, arr) => val === arr[0])) {
+          this.diskbucket.hddStandby = this.hddStandby[0];
+        } else {
+          this.diskbucket.hddStandby = undefined;
+        }
 
-        this.advPowerMgt.every((val, i, arr) => val === arr[0])
-          ? this.diskbucket.advPowerMgt = this.advPowerMgt[0]
-          : this.diskbucket.advPowerMgt = undefined;
+        if (this.advPowerMgt.every((val, i, arr) => val === arr[0])) {
+          this.diskbucket.advPowerMgt = this.advPowerMgt[0];
+        } else {
+          this.diskbucket.advPowerMgt = undefined;
+        }
 
-        this.SMARToptions.every((val, i, arr) => val === arr[0])
-          ? this.diskbucket.SMARToptions = this.SMARToptions[0]
-          : this.diskbucket.SMARToptions = undefined;
+        if (this.SMARToptions.every((val, i, arr) => val === arr[0])) {
+          this.diskbucket.SMARToptions = this.SMARToptions[0];
+        } else {
+          this.diskbucket.SMARToptions = undefined;
+        }
 
         this.router.navigate(['/', 'storage', 'disks', 'bulk-edit']);
       } else {
@@ -146,22 +152,23 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
       id: parentRow.name,
       icon: 'edit',
       name: 'edit',
-      label: T('Edit'),
+      label: T('Edit') as string,
       onClick: (row: Disk) => {
         this.router.navigate(['/', 'storage', 'disks', 'edit', row.identifier]);
-      },
-    }, {
-      id: parentRow.name,
-      icon: 'format_list_bulleted',
-      name: 'manual_test',
-      label: T('Manual Test'),
-      onClick: (row: Disk) => {
-        this.manualTest(row);
       },
     }];
 
     for (const key in this.SMARTdiskChoices) {
       if (key === parentRow.identifier) {
+        actions.push({
+          id: parentRow.name,
+          icon: 'format_list_bulleted',
+          name: 'manual_test',
+          label: T('Manual Test'),
+          onClick: (row: Disk) => {
+            this.manualTest(row);
+          },
+        });
         actions.push({
           id: parentRow.name,
           icon: 'format_list_bulleted',
@@ -183,7 +190,6 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         name: 'wipe',
         label: T('Wipe'),
         onClick: (row) => {
-          const self = this;
           const conf: DialogFormConfiguration = {
             title: helptext.diskWipeDialogForm.title + row.name,
             fieldConfig: [
@@ -218,15 +224,15 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
             afterInit(entityDialogForm: EntityDialogComponent) {
               entityDialogForm.formGroup.controls['disk_name'].setValue(row.name);
             },
-            customSubmit(entityDialogForm: EntityDialogComponent) {
-              self.dialogService.confirm({
+            customSubmit: (entityDialogForm: EntityDialogComponent) => {
+              this.dialogService.confirm({
                 title: helptext.diskWipeDialogForm.title + row.name,
                 message: helptext.diskWipeDialogForm.confirmContent,
               }).pipe(
                 filter(Boolean),
-                untilDestroyed(self),
+                untilDestroyed(this),
               ).subscribe(() => {
-                const dialogRef = self.dialog.open(EntityJobComponent, {
+                const dialogRef = this.dialog.open(EntityJobComponent, {
                   data: { title: helptext.diskWipeDialogForm.title + row.name },
                 });
                 dialogRef.componentInstance.setDescription(helptext.diskWipeDialogForm.startDescription);
@@ -236,20 +242,20 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
                 );
                 dialogRef.componentInstance.submit();
 
-                dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe(() => {
+                dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
                   if (dialogRef.componentInstance) {
                     dialogRef.close(true);
-                    self.dialogService.generalDialog({
+                    this.dialogService.generalDialog({
                       title: helptext.diskWipeDialogForm.title + row.name,
                       message: helptext.diskWipeDialogForm.infoContent,
                       hideCancel: true,
                     });
                   }
                 });
-                dialogRef.componentInstance.failure.pipe(untilDestroyed(self)).subscribe((wipeRes) => {
+                dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((wipeRes) => {
                   dialogRef.componentInstance.setDescription(wipeRes.error);
                 });
-                dialogRef.componentInstance.aborted.pipe(untilDestroyed(self)).subscribe(() => {
+                dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe(() => {
                   dialogRef.close(true);
                 });
                 entityDialogForm.dialogRef.close(true);
@@ -291,7 +297,6 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
   }
 
   manualTest(selected: Disk | Disk[]): void {
-    const parent = this;
     const disks = Array.isArray(selected) ? selected.map((item) => item.name) : [selected.name];
     const disksIdentifier: SmartManualTestParams[] = Array.isArray(selected)
       ? selected.map((item) => ({ identifier: item.identifier } as SmartManualTestParams))
@@ -332,18 +337,18 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         },
       ],
       saveButtonText: helptext.manual_test_dialog.saveButtonText,
-      customSubmit(entityDialog: EntityDialogComponent) {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         disksIdentifier.forEach((item) => {
           item.type = entityDialog.formValue.type;
         });
 
-        parent.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(parent)).subscribe(
+        this.ws.call('smart.test.manual_test', [disksIdentifier]).pipe(untilDestroyed(this)).subscribe(
           (res) => {
             entityDialog.dialogRef.close(true);
-            parent.generateManualTestSummary(res);
+            this.generateManualTestSummary(res);
           },
           (err) => {
-            new EntityUtils().handleWSError(parent, err, parent.dialogService, conf.fieldConfig);
+            new EntityUtils().handleWSError(this, err, this.dialogService, conf.fieldConfig);
           },
         );
       },
@@ -357,15 +362,15 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     let fail_note = '<h4>Errors:</h4>';
     let hasFailNote = false;
 
-    for (let i = 0; i < res.length; i++) {
-      if (res[i].expected_result_time) {
+    res.forEach((test) => {
+      if (test.expected_result_time) {
         hasSuccessNote = true;
-        success_note += `<b>${res[i].disk}</b>: ${this.localeService.formatDateTime(res[i].expected_result_time.$date)}<br>`;
-      } else if (res[i].error) {
+        success_note += `<b>${test.disk}</b>: ${this.localeService.formatDateTime(test.expected_result_time.$date)}<br>`;
+      } else if (test.error) {
         hasFailNote = true;
-        fail_note += `<b>${res[i].disk}</b><br>${res[i].error}<br>`;
+        fail_note += `<b>${test.disk}</b><br>${test.error}<br>`;
       }
-    }
+    });
     this.dialogService.info(
       T('Manual Test Summary'),
       (hasSuccessNote ? success_note + '<br>' : '') + (hasFailNote ? fail_note : ''),

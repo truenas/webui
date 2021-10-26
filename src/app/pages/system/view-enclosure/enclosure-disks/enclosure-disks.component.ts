@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { DomSanitizer } from '@angular/platform-browser';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import {
   Application, Container,
@@ -17,8 +18,10 @@ import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { E16 } from 'app/core/classes/hardware/e16';
 import { E24 } from 'app/core/classes/hardware/e24';
 import { E60 } from 'app/core/classes/hardware/e60';
+import { ES102 } from 'app/core/classes/hardware/es102';
 import { ES12 } from 'app/core/classes/hardware/es12';
 import { ES24 } from 'app/core/classes/hardware/es24';
+import { ES24F } from 'app/core/classes/hardware/es24f';
 import { ES60 } from 'app/core/classes/hardware/es60';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { R10 } from 'app/core/classes/hardware/r10';
@@ -27,21 +30,25 @@ import { R20A } from 'app/core/classes/hardware/r20a';
 import { R40 } from 'app/core/classes/hardware/r40';
 import { R50 } from 'app/core/classes/hardware/r50';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
-import { SystemProfiler, EnclosureMetadata, EnclosureDisk } from 'app/core/classes/system-profiler';
+import {
+  SystemProfiler, EnclosureMetadata, EnclosureDisk, VDevMetadata,
+} from 'app/core/classes/system-profiler';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { Temperature } from 'app/core/services/disk-temperature.service';
+import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { ViewConfig } from 'app/pages/system/view-enclosure/view-enclosure.component';
 import { DialogService } from 'app/services/dialog.service';
 import { Theme } from 'app/services/theme/theme.service';
-import { T } from 'app/translate-marker';
 
 export enum EnclosureLocation {
   Front = 'front',
@@ -74,13 +81,16 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   @ViewChild('disksoverview', { static: true }) overview: ElementRef;
   @ViewChild('diskdetails', { static: false }) details: ElementRef;
   @ViewChild('domLabels', { static: false }) domLabels: ElementRef;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('system-profiler') system: SystemProfiler;
-  @Input('selected-enclosure') selectedEnclosure: any;
-  @Input('current-tab') currentTab: any;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
+  @Input('selected-enclosure') selectedEnclosure: EnclosureMetadata;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
+  @Input('current-tab') currentTab: ViewConfig;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('controller-events') controllerEvent$: Subject<CoreEvent>;
 
   app: Application;
-  private loader = PIXI.loader;
   private resources = PIXI.loader.resources;
   container: Container;
   system_product = 'unknown';
@@ -112,8 +122,8 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     return sickPools;
   }
 
-  private _selectedVdev: any;
-  get selectedVdev(): any {
+  private _selectedVdev: VDevMetadata;
+  get selectedVdev(): VDevMetadata {
     return this._selectedVdev;
   }
   set selectedVdev(value) {
@@ -127,7 +137,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.selectedVdevDisks = disks;
   }
 
-  get enclosurePools(): any {
+  get enclosurePools(): string[] {
     const selectedEnclosure = this.getSelectedEnclosure();
     return Object.keys(selectedEnclosure.poolKeys);
   }
@@ -246,24 +256,25 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.pixiInit();
 
     // Listen for DOM changes to avoid race conditions with animations
-    const callback = (mutationList: any[]): void => {
-      mutationList.forEach((mutation: any) => {
+    const callback = (mutationList: MutationRecord[]): void => {
+      mutationList.forEach((mutation) => {
         switch (mutation.type) {
           case 'childList':
             /* One or more children have been added to and/or removed
                from the tree; see mutation.addedNodes and
                mutation.removedNodes */
+            const element = mutation.addedNodes?.[0] as HTMLElement;
             if (
-              !mutation.addedNodes[0]
-              || !mutation.addedNodes[0].classList
+              !element
+              || !element.classList
               || mutation.addedNodes.length == 0
-              || mutation.addedNodes[0].classList.length == 0
+              || element.classList.length == 0
             ) {
               break;
             }
-            const fullStage: boolean = mutation.addedNodes[0].classList.contains('full-stage');
-            const stageLeft: boolean = mutation.addedNodes[0].classList.contains('stage-left');
-            const stageRight: boolean = mutation.addedNodes[0].classList.contains('stage-right');
+            const fullStage: boolean = element.classList.contains('full-stage');
+            const stageLeft: boolean = element.classList.contains('stage-left');
+            const stageRight: boolean = element.classList.contains('stage-right');
             if (stageLeft) {
               this.enter('stage-left'); // View has changed so we launch transition animations
             } else if (stageRight) {
@@ -278,7 +289,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
                mutation.attributeName and its previous value is in
                mutation.oldValue */
 
-            const diskName: boolean = mutation.target.classList.contains('disk-name');
+            const diskName: boolean = (mutation.target as HTMLElement).classList.contains('disk-name');
 
             if (diskName && this.currentView == 'details' && this.exitingView == 'details') {
               this.update('stage-right'); // View has changed so we launch transition animations
@@ -319,7 +330,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.app.destroy(true);
   }
 
-  loadEnclosure(enclosure: any, view?: string, update?: boolean): void {
+  loadEnclosure(enclosure: EnclosureMetadata, view?: string, update?: boolean): void {
     if (this.selectedDisk) {
       this.selectedDisk = null;
       this.clearDisk();
@@ -383,7 +394,12 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     this.controllerEvent$.next({ name: 'VisualizerReady', sender: this });
   }
 
-  createEnclosure(profile: any = this.selectedEnclosure): void {
+  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
+  themeKey(key: string): keyof Theme {
+    return key as keyof Theme;
+  }
+
+  createEnclosure(profile: EnclosureMetadata = this.selectedEnclosure): void {
     if (this.currentView == 'details') {
       this.clearDisk();
     }
@@ -397,6 +413,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new R20A(true);
         break;
       case 'R20':
+      case 'R20B':
         this.chassis = new R20(true);
         break;
       case 'R40':
@@ -422,6 +439,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'ES24':
         this.chassis = new ES24();
         break;
+      case 'ES24F':
+        this.chassis = new ES24F();
+        break;
       case 'E24':
         this.chassis = new E24();
         break;
@@ -430,6 +450,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         break;
       case 'E60':
         this.chassis = new E60();
+        break;
+      case 'ES102':
+        this.chassis = new ES102();
+        this.showCaption = false;
         break;
       default:
         this.controllerEvent$.next({
@@ -503,6 +527,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new R20A(true);
         break;
       case 'R20':
+      case 'R20B':
         this.chassis = new R20(true);
         break;
       case 'R40':
@@ -530,11 +555,17 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'ES24':
         chassis = new ES24();
         break;
+      case 'ES24F':
+        chassis = new ES24F();
+        break;
       case 'ES60':
         chassis = new ES60();
         break;
       case 'E60':
         chassis = new E60();
+        break;
+      case 'ES102':
+        chassis = new ES102();
         break;
       default:
         this.controllerEvent$.next({
@@ -655,7 +686,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
         this.labels = new VDevLabelsSVG(this.enclosure, this.app, this.theme, this.selectedDisk);
 
-        this.labels.events$.next({ name: 'LabelDrives', data: vdev, sender: this });
+        this.labels.events$.next({ name: 'LabelDrives', data: vdev, sender: this } as LabelDrivesEvent);
 
         break;
     }
@@ -778,20 +809,15 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     });
   }
 
-  setDisksHealthState(disk?: any): void { // Give it a disk and it will only change that slot
+  setDisksHealthState(): void {
     const selectedEnclosure = this.getSelectedEnclosure();
 
-    if (disk || typeof disk !== 'undefined') {
-      this.setDiskHealthState(disk);
-      return;
-    }
-
-    selectedEnclosure.disks.forEach((disk: any) => {
+    selectedEnclosure.disks.forEach((disk) => {
       this.setDiskHealthState(disk);
     });
   }
 
-  setDiskHealthState(disk: any, enclosure: ChassisView = this.enclosure): void {
+  setDiskHealthState(disk: EnclosureDisk, enclosure: ChassisView = this.enclosure): void {
     let index = -1;
 
     enclosure.driveTrayObjects.forEach((dto: DriveTray, i: number) => {
@@ -828,10 +854,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
 
     // Also check slot status
-    const elements: any[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
-      ? this.system.enclosures[disk.enclosure.number].elements
+    const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
+      ? this.system.enclosures[disk.enclosure.number].elements as any[]
       : this.system.enclosures[disk.enclosure.number].elements[0].elements;
-    const slot = elements.filter((s: any) => s.slot == disk.enclosure.slot)[0];
+    const slot = elements.find((s) => s.slot == disk.enclosure.slot);
 
     if (!failed && slot.fault) {
       failed = true;
@@ -869,10 +895,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       }
 
       // Also check slot status
-      const elements = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
-        ? this.system.enclosures[disk.enclosure.number].elements
+      const elements: EnclosureElement[] = this.system.rearIndex && disk.enclosure.number == this.system.rearIndex
+        ? this.system.enclosures[disk.enclosure.number].elements as any[]
         : this.system.enclosures[disk.enclosure.number].elements[0].elements;
-      const slot = (elements as any).filter((s: any) => s.slot == disk.enclosure.slot);
+      const slot = elements.find((s) => s.slot == disk.enclosure.slot);
 
       if (!failed && slot.fault) {
         failed = true;
@@ -950,11 +976,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   findDiskBySlotNumber(slot: number): EnclosureDisk {
     const selectedEnclosure = this.getSelectedEnclosure();
-    for (const i in selectedEnclosure.disks) {
-      if (selectedEnclosure.disks[i].enclosure.slot == slot) {
-        return selectedEnclosure.disks[i];
-      }
-    }
+    return selectedEnclosure.disks.find((disk) => {
+      return disk.enclosure.slot == slot;
+    });
   }
 
   toggleHighlightMode(mode: string): void {
@@ -1005,7 +1029,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const selectedEnclosure = this.getSelectedEnclosure();
     const enclosure_id = this.system.enclosures[selectedEnclosure.enclosureKey].id;
     const slot = this.selectedDisk.enclosure.slot;
-    const status = !this.identifyBtnRef && !kill ? 'IDENTIFY' : 'CLEAR';
+    const status = !this.identifyBtnRef && !kill ? EnclosureSlotStatus.Identify : EnclosureSlotStatus.Clear;
     const args = [enclosure_id, slot, status];
 
     // Arguments are Str("enclosure_id"), Int("slot"), Str("status", enum=["CLEAR", "FAULT", "IDENTIFY"])
@@ -1099,15 +1123,13 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       value = enclosure.name;
     }
 
-    const args: any = { index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value };
+    const args = { index: this.selectedEnclosure.enclosureKey, id: enclosure.id, label: value };
     this.controllerEvent$.next({ name: 'SetEnclosureLabel', data: args, sender: this });
   }
 
   labelForm(): void {
-    const self = this;
-
-    const obj = self.system.enclosures[self.selectedEnclosure.enclosureKey];
-    const currentLabel = obj.label !== obj.name ? obj.label : self.selectedEnclosure.model;
+    const obj = this.system.enclosures[this.selectedEnclosure.enclosureKey];
+    const currentLabel = obj.label !== obj.name ? obj.label : this.selectedEnclosure.model;
     const conf: DialogFormConfiguration = {
       title: T('Change Enclosure Label'),
       fieldConfig: [
@@ -1136,10 +1158,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         },
       ],
       saveButtonText: T('SAVE'),
-      customSubmit(entityDialog: EntityDialogComponent) {
-        self.pendingDialog = entityDialog;
+      customSubmit: (entityDialog: EntityDialogComponent) => {
+        this.pendingDialog = entityDialog;
         entityDialog.loader.open();
-        self.setEnclosureLabel(entityDialog.formValue.label);
+        this.setEnclosureLabel(entityDialog.formValue.label);
       },
     };
 

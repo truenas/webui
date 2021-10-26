@@ -44,11 +44,11 @@ export class FormComboboxComponent implements Field {
     this.searchTextChanged$.next(query);
   }
 
-  onChangeOption(value: any): void {
+  onChangeOption(value: string | number): void {
     this.group.controls[this.config.name].setValue(value);
   }
 
-  updateSearchOptions(value: any): void {
+  updateSearchOptions(value: string): void {
     if (this.config.updater && this.config.parent) {
       if (this.config.updateLocal) {
         this.config.updater(value, this.config.parent, this.config);
@@ -74,12 +74,7 @@ export class FormComboboxComponent implements Field {
             takeUntil(this.autocompleteTrigger.panelClosingActions),
           )
           .pipe(untilDestroyed(this)).subscribe(() => {
-            const scrollTop = this.autoCompleteRef.panel.nativeElement
-              .scrollTop;
-            const scrollHeight = this.autoCompleteRef.panel.nativeElement
-              .scrollHeight;
-            const elementHeight = this.autoCompleteRef.panel.nativeElement
-              .clientHeight;
+            const { scrollTop, scrollHeight, clientHeight: elementHeight } = this.autoCompleteRef.panel.nativeElement;
             const atBottom = scrollHeight === scrollTop + elementHeight;
             if (atBottom) {
               this.loadMoreSearchOptions();

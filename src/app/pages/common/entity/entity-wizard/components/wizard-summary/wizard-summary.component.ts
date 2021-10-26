@@ -10,10 +10,10 @@ import { EntityUtils } from '../../../utils';
   styleUrls: ['../../entity-wizard.component.scss'],
 })
 export class WizardSummaryComponent {
-  @Input('fieldConfigs') fieldConfigs: FieldConfig[];
-  @Input('value') value: any;
-  @Input('isRoot') isRoot: boolean;
-  @Input('summary') summary: any;
+  @Input() fieldConfigs: FieldConfig[];
+  @Input() value: any;
+  @Input() isRoot: boolean;
+  @Input() summary: Record<string, unknown>;
 
   isAutoSummary(): boolean {
     if (this.summary && Object.keys(this.summary).length > 0) {

@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable, Observer } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -7,7 +8,6 @@ import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
 import { DialogService } from './dialog.service';
 import { StorageService } from './storage.service';
 import { WebSocketService } from './ws.service';
@@ -42,10 +42,8 @@ export class JobService {
   }
 
   showLogs(job: Job, title?: string, cancelMsg?: string): void {
-    let dialog_title;
-    let cancelButtonMsg;
-    title ? dialog_title = title : dialog_title = T('Logs');
-    cancelMsg ? cancelButtonMsg = cancelMsg : cancelButtonMsg = T('Close');
+    const dialog_title = title || T('Logs');
+    const cancelButtonMsg = cancelMsg || T('Close');
 
     if (job.error) {
       if (job.logs_path) {

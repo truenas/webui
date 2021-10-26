@@ -19,7 +19,7 @@
         </mat-card-title>
         <!-- Controls/Tools -->
         <div fxFlex="calc(35%)" class="line-chart-tools-wrapper">
-          <div class="line-chart-tools" *ngIf="localControls">
+          <div class="line-chart-tools" *ngIf="localControls && !report?.errorConf">
             <button
               class="tool-icon"
               mat-icon-button
@@ -70,7 +70,7 @@
         </div>
       </mat-toolbar-row>
 
-      <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100">
+      <mat-card-content fxLayout="row wrap" fxLayout.gt-xs="row wrap" fxLayoutAlign="space-between start" fxFlex="100" *ngIf="!report?.errorConf">
         <!-- Chart -->
         <div class="chart-wrapper-outer" fxFlex="calc(100% - 400px)">
           <div class="chart-wrapper">
@@ -96,9 +96,9 @@
                 <span *ngIf="data && legendData">
                   <h4>
                     <strong>{{ 'Start' | translate }}:</strong>
-                    <span style="font-weight: normal;">&nbsp;&nbsp;{{ startTime }}</span>
+                    <span class="font-normal">&nbsp;&nbsp;{{ startTime }}</span>
                     <br ngClass.gt-sm="hidden" />
-                    <span style="margin-left: 0;" class="text-small"> ({{ timezone }})</span>
+                    <span class="text-small m-0"> ({{ timezone }})</span>
                   </h4>
                 </span>
               </div>
@@ -109,9 +109,9 @@
                 <span *ngIf="data && legendData">
                   <h4>
                     <strong>{{ 'End' | translate }}:</strong>
-                    <span style="font-weight: normal;">&nbsp;&nbsp;{{ endTime }}</span>
+                    <span class="font-normal">&nbsp;&nbsp;{{ endTime }}</span>
                     <br ngClass.gt-sm="hidden" />
-                    <span style="opacity: 0;" class="text-small"> ({{ timezone }})</span>
+                    <span class="text-small text-invisible"> ({{ timezone }})</span>
                   </h4>
                 </span>
               </div>
@@ -125,7 +125,7 @@
               <span *ngIf="data && legendData && legendData.xHTML">
                 <h4>
                   <strong>{{ 'Time' | translate }}:</strong>
-                  <span *ngIf="legendData && legendData.xHTML" style="font-weight: normal;">
+                  <span *ngIf="legendData && legendData.xHTML" class="font-normal">
                     &nbsp;&nbsp;
                     {{ legendData.xHTML }}
                   </span>
@@ -159,7 +159,7 @@
 
                   <span *ngIf="legendData && legendData.series">
                     <span class="tooltip-value">
-                      <span style="font-weight: normal;"> : {{ legendData.series[i].yHTML }}</span>
+                      <span class="font-normal"> : {{ legendData.series[i].yHTML }}</span>
                     </span>
                   </span>
                 </td>
@@ -168,7 +168,7 @@
                 <ng-container *ngIf="data && data.aggregations">
                   <td *ngFor="let key of aggregationKeys" class="report-analytics">
                     <span>
-                      {{ data.aggregations[key][i] ? data.aggregations[key][i] : 'null' }}
+                      {{ data.aggregations[aggregationKey(key)][i] ? data.aggregations[aggregationKey(key)][i] : 'null' }}
                     </span>
                   </td>
                 </ng-container>
@@ -184,6 +184,16 @@
             </div>
           </ng-container>
         </section>
+      </mat-card-content>
+
+      <mat-card-content
+        *ngIf="report?.errorConf"
+        fxLayout="row wrap"
+        fxLayout.gt-xs="row wrap"
+        fxLayoutAlign="space-between start"
+        fxFlex="100"
+      >
+        <entity-empty [conf]="report.errorConf"></entity-empty>
       </mat-card-content>
     </mat-card>
 

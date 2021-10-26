@@ -1,0 +1,20 @@
+:host {
+  .form-select {
+    margin: unset;
+    position: relative;
+  }
+
+  .mat-label {
+    left: 16px;
+    position: absolute;
+    top: 8px;
+  }
+
+  .mat-option[disabled] {
+    opacity: 0.5;
+
+    span {
+      color: var(--red);
+    }
+  }
+}

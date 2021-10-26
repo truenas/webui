@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { chartsTrain } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { DialogService } from 'app/services/index';
@@ -14,8 +14,8 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CatalogAddFormComponent implements FormConfiguration {
-  queryCall: 'catalog.query' = 'catalog.query';
-  addCall: 'catalog.create' = 'catalog.create';
+  queryCall = 'catalog.query' as const;
+  addCall = 'catalog.create' as const;
   isCreateJob = true;
   isEntity = true;
   protected entityForm: EntityFormComponent;

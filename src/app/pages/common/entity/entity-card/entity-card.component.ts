@@ -7,6 +7,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { IxObject } from 'app/core/classes/ix-object';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
+import {
+  EntityCardAction,
+  EntityCardConfig,
+} from 'app/pages/common/entity/entity-card/entity-card-config.interface';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -19,7 +23,7 @@ import { WebSocketService } from 'app/services/ws.service';
   providers: [DialogService],
 })
 export class EntityCardComponent extends IxObject implements OnInit, AfterViewInit {
-  @Input('conf') conf: any;
+  @Input() conf: EntityCardConfig;
   @Input() width: string;
   @Input() height: string;
   @Input() isFlipped = false;
@@ -108,20 +112,6 @@ export class EntityCardComponent extends IxObject implements OnInit, AfterViewIn
     }
   }
 
-  onChangeTable(
-    config: any,
-    page: any = { page: this.page, itemsPerPage: this.itemsPerPage },
-  ): void {
-    if (config.filtering) {
-      Object.assign(this.config.filtering, config.filtering);
-    }
-    if (config.sorting) {
-      Object.assign(this.config.sorting, config.sorting);
-    }
-    this.page = page.page;
-    this.getData();
-  }
-
   trClass(row: any): string {
     const classes = [];
     classes.push('treegrid-' + row.id);
@@ -131,7 +121,7 @@ export class EntityCardComponent extends IxObject implements OnInit, AfterViewIn
     return classes.join(' ');
   }
 
-  getCardActions(): any[] {
+  getCardActions(): EntityCardAction[] {
     if (this.conf.cardActions) {
       this.actions = true;
       return this.conf.cardActions;
@@ -139,14 +129,7 @@ export class EntityCardComponent extends IxObject implements OnInit, AfterViewIn
     this.actions = false;
   }
 
-  getAddActions(): any[] {
-    if (this.conf.getAddActions) {
-      return this.conf.getAddActions();
-    }
-    return [];
-  }
-
-  rowValue(row: any, attr: any): any {
+  rowValue(row: any, attr: string): any {
     if (this.conf.rowValue) {
       return this.conf.rowValue(row, attr);
     }

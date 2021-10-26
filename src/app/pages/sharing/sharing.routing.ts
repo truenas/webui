@@ -1,13 +1,13 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
-import { T } from 'app/translate-marker';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { AuthorizedAccessFormComponent } from './iscsi/authorizedaccess/authorizedaccess-form/authorizedaccess-form.component';
 import { ExtentFormComponent } from './iscsi/extent/extent-form/extent-form.component';
 import { InitiatorFormComponent } from './iscsi/initiator/initiator-form/initiator-form.component';
 import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.component';
-import { ISCSI } from './iscsi/iscsi.component';
+import { IscsiComponent } from './iscsi/iscsi.component';
 import { PortalFormComponent } from './iscsi/portal/portal-form/portal-form.component';
 import { TargetFormComponent } from './iscsi/target/target-form/target-form.component';
 import { NFSListComponent } from './nfs/nfs-list/nfs-list.component';
@@ -25,7 +25,7 @@ export const routes: Routes = [
       {
         path: '',
         component: SharesDashboardComponent,
-        data: { title: 'Dashboard', breadcrumb: 'Dashboard' },
+        data: { title: 'Sharing', breadcrumb: 'Dashboard' },
       },
       {
         path: 'nfs',
@@ -91,7 +91,7 @@ export const routes: Routes = [
               },
               {
                 path: ':pk',
-                component: ISCSI,
+                component: IscsiComponent,
                 data: { title: '', breadcrumb: '' },
               },
               {

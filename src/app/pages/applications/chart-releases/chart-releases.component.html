@@ -5,8 +5,8 @@
         <div class="logo">
           <img [src]="item.chart_metadata.icon" [src-fallback]="imagePlaceholder"/>
         </div>
-        <div class="badge-area">
-          <div class="partner-badge capitalized-text">
+        <div class="badge-area" [class.badge-official]="item.catalog === officialCatalog">
+          <div class="capitalized-text">
             {{ item.catalog }}
           </div>
           <div class="train-badge capitalized-text">
@@ -26,10 +26,16 @@
         </div>
 
         <div class="chart-button-row" fxLayout="row" fxLayoutAlign="end end" (click)="$event.stopPropagation()">
-          <button mat-button (click)="portal(item)" *ngIf="item.status === ChartReleaseStatus.Active && item.portals && item.portals.web_portal && item.portals.web_portal[0]"
-              ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-portal">
-            {{ 'Portal' | translate }}
-          </button>
+          <ng-container *ngIf="item.status === ChartReleaseStatus.Active">
+            <div class="ports" >
+              <span class="ports-text" textLimiter threshold="28" content="{{ appService.getPorts(item) | lowercase }}"> </span>
+            </div>
+            <div *ngFor="let portal of item.portals | keyvalue">
+              <button mat-button (click)="portalLink(item, portal.key )" ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-portal">
+                {{ portalName(portal.key) }}
+              </button>
+            </div>
+          </ng-container>
           <button mat-button (click)="stop(item.name)" *ngIf="item.status !== ChartReleaseStatus.Stopped"
               ix-auto ix-auto-type="button" ix-auto-identifier="{{ item.name}}-stop">
             {{ 'Stop' | translate }}
@@ -39,11 +45,7 @@
             {{ 'Start' | translate }}
           </button>
         </div>
-
       </div>
-    </div>
-
-    <div class="ports" textLimiter threshold="28" content="{{ appService.getPorts(item) | lowercase }}">
     </div>
 
     <div class="more-info">
@@ -75,7 +77,7 @@
         </button>
         <button name="shell" mat-menu-item (click)="openShell(item.name)"
               ix-auto ix-auto-type="option" ix-auto-identifier="shell">
-          <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-console-line" style="font-size:24px;line-height: 22px;"></mat-icon>
+          <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-console-line" class="shell-icon"></mat-icon>
           <span>{{'Shell' | translate}}</span>
         </button>
         <button name="logs" mat-menu-item (click)="openLogs(item.name)"

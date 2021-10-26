@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
@@ -16,7 +17,6 @@ import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row
 import { DialogService, TaskService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { UserService } from 'app/services/user.service';
-import { T } from 'app/translate-marker';
 import { CronFormComponent } from '../cron-form/cron-form.component';
 
 @UntilDestroy()
@@ -27,8 +27,8 @@ import { CronFormComponent } from '../cron-form/cron-form.component';
 })
 export class CronListComponent implements EntityTableConfig<CronjobRow> {
   title = 'Cron Jobs';
-  wsDelete: 'cronjob.delete' = 'cronjob.delete';
-  queryCall: 'cronjob.query' = 'cronjob.query';
+  wsDelete = 'cronjob.delete' as const;
+  queryCall = 'cronjob.query' as const;
   route_add: string[] = ['tasks', 'cron', 'add'];
   route_add_tooltip = 'Add Cron Job';
   route_edit: string[] = ['tasks', 'cron', 'edit'];
@@ -111,7 +111,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
             )
             .pipe(untilDestroyed(this)).subscribe(
               () => {
-                const message = row.enabled == true
+                const message = row.enabled
                   ? T('This job is scheduled to run again ' + row.next_run + '.')
                   : T('This job will not run again until it is enabled.');
                 this.dialog.info(

@@ -1,4 +1,4 @@
-<table *ngIf="displayedColumns && tableDataSource" mat-table [dataSource]="tableDataSource" matSort (matSortChange)="sortTable($event)" #tt style="border-collapse: separate;">
+<table *ngIf="displayedColumns && tableDataSource" mat-table [dataSource]="tableDataSource" matSort (matSortChange)="sortTable($event)" #tt>
 
   <!--- Note that these columns can be defined in any order.
     The actual rendered columns are set as a property on the row definition" -->
@@ -8,7 +8,7 @@
 
     <!-- NonActions Columns -->
     <ng-container *ngIf="column.prop !== 'actions'" matColumnDef="{{column.prop}}" [sticky]="i == 0">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear [ngClass]="{'sticky-border-right': i == 0 && isTableOverflow(), 'scroll-padding': isTableOverflow()}"> {{column.name}} </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear [ngClass]="{'sticky-border-right': i == 0 && isTableOverflow(), 'scroll-padding': isTableOverflow()}"> {{ column.name | translate }} </th>
       <ng-container>
         <!-- Tree and Data Cells -->
         <td mat-cell *matCellDef="let element; let ii = index" [ngClass]="{ 'tree-cell': i == 0, 'sticky-border-right': i == 0 && isTableOverflow(), 'scroll-padding': isTableOverflow() }" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)">
@@ -63,7 +63,7 @@
                   </div>
                 </div>
                 <button mat-menu-item *ngFor="let action of actionGroup.actions" (click)="action.onClick(element.data)">
-                  {{action.label}}
+                  {{action.label | translate}}
                 </button>
               </ng-container>
             </mat-menu>

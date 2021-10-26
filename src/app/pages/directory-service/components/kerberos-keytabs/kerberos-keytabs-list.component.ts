@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directory-service/kerberos-keytabs-form-list';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
@@ -6,7 +7,6 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form.component';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -15,8 +15,8 @@ import { T } from 'app/translate-marker';
 })
 export class KerberosKeytabsListComponent implements EntityTableConfig {
   title = 'Kerberos Keytabs';
-  queryCall: 'kerberos.keytab.query' = 'kerberos.keytab.query';
-  wsDelete: 'kerberos.keytab.delete' = 'kerberos.keytab.delete';
+  queryCall = 'kerberos.keytab.query' as const;
+  wsDelete = 'kerberos.keytab.delete' as const;
   protected entityList: EntityTableComponent;
 
   columns = [

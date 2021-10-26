@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { Subject } from 'rxjs';
@@ -7,7 +8,6 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { UserPreferencesReadyEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { T } from 'app/translate-marker';
 import { SystemGeneralService } from '.';
 
 @UntilDestroy()
@@ -93,12 +93,12 @@ export class LocaleService {
   formatDateTimeWithNoTz(date: Date): string {
     try {
       return format(date.valueOf(), `${this.dateFormat} ${this.timeFormat}`);
-    } catch (e) {
+    } catch (e: unknown) {
       return 'Invalid date';
     }
   }
 
-  getTimeOnly(date: Date, seconds = true, tz?: string): string {
+  getTimeOnly(date: Date | number, seconds = true, tz?: string): string {
     if (tz) {
       date = utcToZonedTime(date.valueOf(), tz);
     } else if (this.timeZone) {
@@ -164,9 +164,12 @@ export class LocaleService {
     const ngTimeFormat = this.timeFormat === 'hh:mm:ss a' ? 'hh:mm:ss aaaaa\'m\'' : this.timeFormat;
     const tempStr = `${this.dateFormat} ${ngTimeFormat}`;
     let dateStr = '';
-    for (let i = 0; i < tempStr.length; i++) {
-      tempStr[i] === 'M' || tempStr[i] === 'Z' || tempStr[i] === 'H' ? dateStr += tempStr[i]
-        : dateStr += tempStr[i].toLowerCase();
+    for (const char of tempStr) {
+      if (char === 'M' || char === 'Z' || char === 'H') {
+        dateStr += char;
+      } else {
+        dateStr += char.toLowerCase();
+      }
     }
     return dateStr;
   }
@@ -192,5 +195,25 @@ export class LocaleService {
       dateFnsFormat = dateFnsFormat.replace(' a', ' aaaaa\'m\'');
     }
     return dateFnsFormat;
+  }
+
+  getPreferredDateFormatForChart(): string {
+    return this.formatDateTimeToChart(this.dateFormat);
+  }
+
+  getPreferredTimeFormatForChart(): string {
+    return this.formatDateTimeToChart(this.timeFormat);
+  }
+
+  /** Revert DateFns for Chart DateTime format */
+  formatDateTimeToChart(format: string): string {
+    const dateFormat = format
+      .replace('yyyy', 'YYYY')
+      .replace('y', 'YY')
+      .replace('dd', 'DD')
+      .replace('d', 'D')
+      .replace(' aaaaa\'m\'', ' a')
+      .replace(' aa', ' A');
+    return dateFormat;
   }
 }

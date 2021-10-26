@@ -3,22 +3,27 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/vmware-snapshot/vmware-snapshot';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { VmwareDatastore, MatchDatastoresWithDatasetsParams, VmwareFilesystem } from 'app/interfaces/vmware.interface';
+import {
+  VmwareDatastore,
+  MatchDatastoresWithDatasetsParams,
+  VmwareFilesystem,
+  VmwareSnapshotUpdate, VmwareSnapshot,
+} from 'app/interfaces/vmware.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -29,8 +34,8 @@ import { T } from 'app/translate-marker';
 export class VmwareSnapshotFormComponent implements FormConfiguration {
   route_success: string[] = ['storage', 'vmware-snapshots'];
   isEntity = true;
-  queryCall: 'vmware.query' = 'vmware.query';
-  addCall: 'vmware.create' = 'vmware.create';
+  queryCall = 'vmware.query' as const;
+  addCall = 'vmware.create' as const;
   pk: any;
   formGroup: FormGroup;
 
@@ -74,7 +79,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           required: true,
           blurStatus: true,
           parent: this,
-          blurEvent: this.passwordBlur,
+          blurEvent: () => this.passwordBlur(),
           togglePw: true,
         },
         {
@@ -104,7 +109,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
       id: 'FetchDataStores',
       name: T('Fetch DataStores'),
       function: () => {
-        this.datastore = _.find(this.fieldConfig, { name: 'datastore' });
+        this.datastore = _.find(this.fieldConfig, { name: 'datastore' }) as FormSelectConfig;
         this.datastore.type = 'select';
 
         if (
@@ -112,13 +117,13 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           || this.entityForm.formGroup.controls['username'].value === undefined
           || this.entityForm.formGroup.controls['password'].value === undefined
         ) { this.dialogService.info(T('VM Snapshot'), T('Enter valid VMware ESXI/vSphere credentials to fetch datastores.')); } else {
-          this.passwordBlur(this);
+          this.passwordBlur();
         }
       },
     },
   ];
 
-  resourceTransformIncomingRestData(data: any): any {
+  resourceTransformIncomingRestData(data: VmwareSnapshot): VmwareSnapshot {
     data.password = '';
     return data;
   }
@@ -133,12 +138,8 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
   ) { }
 
   preInit(): void {
-    const queryPayload: any[] = [];
     this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      queryPayload.push('id');
-      queryPayload.push('=');
-      queryPayload.push(parseInt(params['pk'], 10));
-      this.pk = [queryPayload];
+      this.pk = [['id', '=', parseInt(params['pk'], 10)]];
     });
   }
 
@@ -148,11 +149,11 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
     this.fieldConfig = entityForm.fieldConfig;
 
     if (this.entityForm.pk) {
-      this.datastore = _.find(this.fieldConfig, { name: 'datastore' });
+      this.datastore = _.find(this.fieldConfig, { name: 'datastore' }) as FormSelectConfig;
       this.datastore.options.length = 0;
     }
 
-    this.entityForm.formGroup.controls['datastore'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    this.entityForm.formGroup.controls['datastore'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.datastoreList.forEach((e) => {
         if (res === e.name) {
           this.entityForm.formGroup.controls['filesystem'].setValue(e.filesystems[0]);
@@ -161,14 +162,8 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(value: any): void {
-    if (value.filesystem !== undefined) {
-      value.filesystem = value.filesystem;
-    }
-  }
-
-  customSubmit(value: any): void {
-    const payload = {
+  customSubmit(value: VmwareSnapshotUpdate): void {
+    const payload: VmwareSnapshotUpdate = {
       datastore: value.datastore,
       filesystem: value.filesystem,
       hostname: value.hostname,
@@ -222,7 +217,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
     }
   }
 
-  customEditCall(body: any): void {
+  customEditCall(body: VmwareSnapshotUpdate): void {
     if (this.entityForm.pk) {
       this.loader.open();
       this.ws.call('vmware.update', [this.entityForm.pk, body]).pipe(untilDestroyed(this)).subscribe(() => {
@@ -244,20 +239,20 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
     }
   }
 
-  passwordBlur(parent: this): void {
-    if (parent.entityForm) {
-      this.datastore = _.find(parent.fieldConfig, { name: 'datastore' });
+  passwordBlur(): void {
+    if (this.entityForm) {
+      this.datastore = _.find(this.fieldConfig, { name: 'datastore' }) as FormSelectConfig;
       const payload: MatchDatastoresWithDatasetsParams = {
-        hostname: parent.entityForm.formGroup.value.hostname,
-        username: parent.entityForm.formGroup.value.username,
-        password: parent.entityForm.formGroup.value.password,
+        hostname: this.entityForm.formGroup.value.hostname,
+        username: this.entityForm.formGroup.value.username,
+        password: this.entityForm.formGroup.value.password,
       };
 
       if (payload['password'] !== '' && typeof (payload['password']) !== 'undefined') {
-        parent.loader.open();
-        parent.ws.call('vmware.match_datastores_with_datasets', [payload]).pipe(untilDestroyed(parent)).subscribe((res) => {
+        this.loader.open();
+        this.ws.call('vmware.match_datastores_with_datasets', [payload]).pipe(untilDestroyed(this)).subscribe((res) => {
           res.filesystems.forEach((filesystem_item) => {
-            const config: FormSelectConfig = _.find(parent.fieldConfig, { name: 'filesystem' });
+            const config = _.find(this.fieldConfig, { name: 'filesystem' }) as FormSelectConfig;
             config.options.push(
               {
                 label: filesystem_item.name, value: filesystem_item.name,
@@ -267,26 +262,25 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
 
           res.datastores.forEach((i) => {
             if (i.filesystems.length > 0) {
-              parent.datastoreList.push(i);
+              this.datastoreList.push(i);
             }
           });
           if (this.datastore.options.length > 0) {
             this.datastore.options.length = 0;
           }
-          for (const key in res.datastores) {
-            const datastores = res.datastores[key];
-            this.datastore.options.push({ label: datastores.name, value: datastores.name });
-          }
+          res.datastores.forEach((datastore) => {
+            this.datastore.options.push({ label: datastore.name, value: datastore.name });
+          });
 
-          parent.fileSystemList = res.filesystems;
-          parent.dataListComplete = res.datastores;
-          parent.loader.close();
+          this.fileSystemList = res.filesystems;
+          this.dataListComplete = res.datastores;
+          this.loader.close();
         },
         (error: WebsocketError) => {
           this.datastore.options.length = 0;
-          parent.loader.close();
+          this.loader.close();
           if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
-            parent.dialogService.errorReport(helptext.connect_err_dialog.title, helptext.connect_err_dialog.msg, '');
+            this.dialogService.errorReport(helptext.connect_err_dialog.title, helptext.connect_err_dialog.msg, '');
           } else {
             new EntityUtils().handleWSError(this, error, this.dialogService);
           }

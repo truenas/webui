@@ -1,9 +1,11 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_system_ca } from 'app/helptext/system/ca';
+import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -13,7 +15,6 @@ import { SystemGeneralService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -21,14 +22,13 @@ import { T } from 'app/translate-marker';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [SystemGeneralService],
 })
-
 export class CertificateAuthorityAddComponent implements WizardConfiguration {
-  addWsCall: 'certificateauthority.create' = 'certificateauthority.create';
+  addWsCall = 'certificateauthority.create' as const;
   private title: string;
   hideCancel = true;
 
   isLinear = true;
-  summary: any = {};
+  summary: Record<string, unknown> = {};
   entityWizard: EntityWizardComponent;
   private currentStep = 0;
 
@@ -560,9 +560,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   private country: FormSelectConfig;
   private signedby: FormSelectConfig;
-  identifier: any;
+  identifier: string;
   usageField: FormSelectConfig;
-  private currenProfile: any;
+  private currenProfile: CertificateProfile;
   private entityForm: EntityWizardComponent;
 
   constructor(protected ws: WebSocketService, private modalService: ModalService,
@@ -572,7 +572,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
     this.systemGeneralService.getUnsignedCAs().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.signedby = this.getTarget('signedby');
+      this.signedby = this.getTarget('signedby') as FormSelectConfig;
       res.forEach((item) => {
         this.signedby.options.push(
           { label: item.name, value: item.id },
@@ -581,14 +581,14 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     });
 
     this.ws.call('certificate.ec_curve_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      const ec_curves_field: FormSelectConfig = this.getTarget('ec_curve');
+      const ec_curves_field = this.getTarget('ec_curve') as FormSelectConfig;
       for (const key in res) {
         ec_curves_field.options.push({ label: res[key], value: key });
       }
     });
 
     this.systemGeneralService.getCertificateCountryChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.country = this.getTarget('country');
+      this.country = this.getTarget('country') as FormSelectConfig;
       for (const item in res) {
         this.country.options.push(
           { label: res[item], value: item },
@@ -596,14 +596,14 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       }
     });
 
-    this.usageField = this.getTarget('ExtendedKeyUsage-usages');
+    this.usageField = this.getTarget('ExtendedKeyUsage-usages') as FormSelectConfig;
     this.ws.call('certificate.extended_key_usage_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       Object.keys(choices).forEach((key) => {
         this.usageField.options.push({ label: choices[key], value: key });
       });
     });
 
-    const profilesField: FormSelectConfig = this.getTarget('profiles');
+    const profilesField = this.getTarget('profiles') as FormSelectConfig;
     this.ws.call('certificateauthority.profiles').pipe(untilDestroyed(this)).subscribe((res) => {
       Object.keys(res).forEach((item) => {
         profilesField.options.push({ label: item, value: res[item] });
@@ -659,15 +659,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     this.entityForm = entity;
     this.title = helptext_system_ca.add.title;
 
-    for (const i in this.intermediatecaFields) {
-      this.hideField(this.intermediatecaFields[i], true);
-    }
-    for (const i in this.importcaFields) {
-      this.hideField(this.importcaFields[i], true);
-    }
-    for (const i in this.internalcaFields) {
-      this.hideField(this.internalcaFields[i], false);
-    }
+    this.intermediatecaFields.forEach((field) => this.hideField(field, true));
+    this.importcaFields.forEach((field) => this.hideField(field, true));
+    this.internalcaFields.forEach((field) => this.hideField(field, false));
     this.hideField(this.internalcaFields[1], true);
 
     this.getField('create_type').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
@@ -675,18 +669,11 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       this.wizardConfig[2].skip = false;
 
       if (res == 'CA_CREATE_INTERNAL') {
-        for (const i in this.intermediatecaFields) {
-          this.hideField(this.intermediatecaFields[i], true);
-        }
-        for (const i in this.importcaFields) {
-          this.hideField(this.importcaFields[i], true);
-        }
-        for (const i in this.internalcaFields) {
-          this.hideField(this.internalcaFields[i], false);
-        }
-        for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], false);
-        }
+        this.intermediatecaFields.forEach((field) => this.hideField(field, true));
+        this.importcaFields.forEach((field) => this.hideField(field, true));
+        this.internalcaFields.forEach((field) => this.hideField(field, false));
+        this.extensionFields.forEach((field) => this.hideField(field, false));
+
         // This block makes the form reset its 'disabled/hidden' settings on switch of type
         if (this.getField('key_type').value === 'RSA') {
           this.hideField('ec_curve', true);
@@ -694,36 +681,20 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           this.hideField('key_length', true);
         }
       } else if (res == 'CA_CREATE_INTERMEDIATE') {
-        for (const i in this.internalcaFields) {
-          this.hideField(this.internalcaFields[i], true);
-        }
-        for (const i in this.importcaFields) {
-          this.hideField(this.importcaFields[i], true);
-        }
-        for (const i in this.intermediatecaFields) {
-          this.hideField(this.intermediatecaFields[i], false);
-        }
-        for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], false);
-        }
+        this.intermediatecaFields.forEach((field) => this.hideField(field, false));
+        this.importcaFields.forEach((field) => this.hideField(field, true));
+        this.internalcaFields.forEach((field) => this.hideField(field, true));
+        this.extensionFields.forEach((field) => this.hideField(field, false));
         if (this.getField('key_type').value === 'RSA') {
           this.hideField('ec_curve', true);
         } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true);
         }
       } else if (res == 'CA_CREATE_IMPORTED') {
-        for (const i in this.internalcaFields) {
-          this.hideField(this.internalcaFields[i], true);
-        }
-        for (const i in this.intermediatecaFields) {
-          this.hideField(this.intermediatecaFields[i], true);
-        }
-        for (const i in this.importcaFields) {
-          this.hideField(this.importcaFields[i], false);
-        }
-        for (const i in this.extensionFields) {
-          this.hideField(this.extensionFields[i], true);
-        }
+        this.intermediatecaFields.forEach((field) => this.hideField(field, true));
+        this.importcaFields.forEach((field) => this.hideField(field, false));
+        this.internalcaFields.forEach((field) => this.hideField(field, true));
+        this.extensionFields.forEach((field) => this.hideField(field, true));
 
         this.wizardConfig[1].skip = true;
         this.wizardConfig[2].skip = true;
@@ -759,7 +730,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       this.setSummary();
     });
 
-    this.getField('profiles').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
+    this.getField('profiles').valueChanges.pipe(untilDestroyed(this)).subscribe((res: CertificateProfile) => {
       // undo revious profile settings
       this.loadProfiels(this.currenProfile, true);
       // load selected profile settings
@@ -768,18 +739,18 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       this.setSummary();
     });
 
-    for (const i in this.relationFields) {
-      this.getField(this.relationFields[i]).valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+    this.relationFields.forEach((field) => {
+      this.getField(field).valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
         this.setSummary();
       });
-    }
+    });
 
     this.setSummary();
   }
 
-  loadProfiels(value: any, reset?: boolean): void {
+  loadProfiels(value: CertificateProfile, reset?: boolean): void {
     if (value) {
-      Object.keys(value).forEach((item) => {
+      Object.keys(value).forEach((item: keyof CertificateProfile) => {
         if (item === 'cert_extensions') {
           Object.keys(value['cert_extensions']).forEach((type) => {
             Object.keys(value['cert_extensions'][type]).forEach((prop) => {
@@ -829,7 +800,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   getField(fieldName: string): AbstractControl {
     const stepNumber = this.getStep(fieldName);
     if (stepNumber > -1) {
-      const target = (<FormGroup> this.entityWizard.formArray.get([stepNumber])).controls[fieldName];
+      const target = (this.entityWizard.formArray.get([stepNumber]) as FormGroup).controls[fieldName];
       return target;
     }
     return null;
@@ -881,8 +852,8 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           }
           if (data[key]) {
             if (type_prop.length === 1) {
-              for (let i = 0; i < data[key].length; i++) {
-                (cert_extensions as any)[type_prop[0]][data[key][i]] = true;
+              for (const item of data[key]) {
+                (cert_extensions as any)[type_prop[0]][item] = true;
               }
             } else {
               (cert_extensions as any)[type_prop[0]][type_prop[1]] = data[key];
@@ -904,7 +875,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     this.ws.call(this.addWsCall, [data]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
       this.modalService.refreshTable();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
     }, (error) => {
       this.loader.close();
       this.dialogService.errorReport(T('Error creating CA.'), error.reason, error.trace.formatted);

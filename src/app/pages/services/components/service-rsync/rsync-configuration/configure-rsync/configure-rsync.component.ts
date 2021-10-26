@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import helptext from 'app/helptext/services/components/service-rsync';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { RsyncConfigUpdate } from 'app/interfaces/rsync-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -12,7 +12,7 @@ import { WebSocketService } from 'app/services/ws.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CconfigureRYSNCComponent implements FormConfiguration {
-  queryCall: 'rsyncd.config' = 'rsyncd.config';
+  queryCall = 'rsyncd.config' as const;
   title = helptext.configureFormTitle;
 
   route_success: string[] = ['services'];

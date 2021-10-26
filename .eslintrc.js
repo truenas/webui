@@ -102,14 +102,11 @@ module.exports = {
         "no-restricted-syntax": "off",
         "guard-for-in": "off",
         "no-param-reassign": "off",
-        "@typescript-eslint/no-unused-expressions": "off",
         "radix": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
-        "no-nested-ternary": "off",
         "implicit-arrow-linebreak": "off",
         "@typescript-eslint/no-shadow": "off",
-        "no-restricted-globals": "off",
         "no-case-declarations": "off",
         "no-multi-str": "off",
         "max-classes-per-file": "off",
@@ -121,7 +118,6 @@ module.exports = {
         "no-prototype-builtins": "off",
         "prefer-promise-reject-errors": "off",
         "import/no-cycle": "off",
-        "no-self-assign": "off",
         "no-async-promise-executor": "off",
         "no-bitwise": "off",
         "@typescript-eslint/member-ordering": "off",
@@ -135,14 +131,10 @@ module.exports = {
         "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/explicit-module-boundary-types": "off",
-        "@typescript-eslint/no-this-alias": "off",
-        "@typescript-eslint/no-for-in-array": "off",
         "@typescript-eslint/prefer-regexp-exec": "off",
         "@typescript-eslint/no-misused-promises": "off",
 
         // Other temporary disables
-        "@angular-eslint/component-class-suffix": "off",
-        "@angular-eslint/no-input-rename": "off",
         "@typescript-eslint/dot-notation": "off",
 
         // Other overwrites
@@ -158,6 +150,12 @@ module.exports = {
         "@typescript-eslint/type-annotation-spacing": "error",
         "@typescript-eslint/ban-ts-comment": "error",
         "@typescript-eslint/explicit-function-return-type": ["error", { allowExpressions: true }],
+        "@typescript-eslint/consistent-type-assertions": ["error"],
+        "@typescript-eslint/no-implicit-any-catch": ["error"],
+        "@typescript-eslint/no-unnecessary-boolean-literal-compare": ["error"],
+        "@typescript-eslint/prefer-includes": ["error"],
+        "@typescript-eslint/prefer-for-of": ["error"],
+        "@typescript-eslint/prefer-as-const": ["error"],
         "@angular-eslint/use-component-view-encapsulation": ["error"],
         "@typescript-eslint/no-unused-vars": "off",
         "unused-imports/no-unused-imports": "error",
@@ -168,6 +166,10 @@ module.exports = {
         }],
         "@typescript-eslint/ban-types": ["error"],
         "unicorn/filename-case": ["error", { case: "kebabCase"}],
+        "unicorn/prefer-array-find": ["error"],
+        "@angular-eslint/component-max-inline-declarations": ["error"],
+        "@angular-eslint/contextual-decorator": ["error"],
+        "@angular-eslint/contextual-lifecycle": ["error"],
 
         // RxJS rules
         "rxjs/no-unsafe-takeuntil": ["error", {

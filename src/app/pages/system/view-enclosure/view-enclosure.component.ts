@@ -5,19 +5,19 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { ErrorMessage } from 'app/core/classes/ix-interfaces';
-import { SystemProfiler } from 'app/core/classes/system-profiler';
+import { EnclosureMetadata, SystemProfiler } from 'app/core/classes/system-profiler';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
-import { DiskDataEvent } from 'app/interfaces/events/disk-data-event.interface';
-import { EnclosureDataEvent } from 'app/interfaces/events/enclosure-data-event.interface';
+import { DisksDataEvent } from 'app/interfaces/events/disks-data-event.interface';
+import { EnclosureDataEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
-import { ResilverEvent } from 'app/interfaces/events/resilver-event.interface';
+import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SensorDataEvent } from 'app/interfaces/events/sensor-data-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 
-interface ViewConfig {
+export interface ViewConfig {
   name: string;
   alias: string; // Used for tab label
   icon: string;
@@ -48,7 +48,7 @@ export class ViewEnclosureComponent implements OnDestroy {
 
   scrollContainer: HTMLElement;
   system: SystemProfiler;
-  selectedEnclosure: any;
+  selectedEnclosure: EnclosureMetadata;
   views: ViewConfig[] = [];
   spinner = true;
 
@@ -60,7 +60,7 @@ export class ViewEnclosureComponent implements OnDestroy {
       || !this.events
       || !this.system.pools
       || !this.system.enclosures
-      || this.supportedHardware !== true
+      || !this.supportedHardware
     ) return false;
 
     // These conditions are here because M series actually reports a separate chassis for
@@ -135,7 +135,7 @@ export class ViewEnclosureComponent implements OnDestroy {
       core.emit({ name: 'SensorDataRequest', sender: this });
     });
 
-    core.register({ observerClass: this, eventName: 'EnclosureLabelChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    core.register({ observerClass: this, eventName: 'EnclosureLabelChanged' }).pipe(untilDestroyed(this)).subscribe((evt: EnclosureLabelChangedEvent) => {
       this.system.enclosures[evt.data.index].label = evt.data.label;
       this.events.next(evt);
     });
@@ -150,7 +150,7 @@ export class ViewEnclosureComponent implements OnDestroy {
       this.system.sensorData = evt.data;
     });
 
-    core.register({ observerClass: this, eventName: 'Resilvering' }).pipe(untilDestroyed(this)).subscribe((evt: ResilverEvent) => {
+    core.register({ observerClass: this, eventName: 'Resilvering' }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
       if (evt.data.scan.state == PoolScanState.Finished) this.fetchData();
     });
 
@@ -158,7 +158,7 @@ export class ViewEnclosureComponent implements OnDestroy {
       this.fetchData();
     });
 
-    core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DiskDataEvent) => {
+    core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
       this.system.diskData = evt.data;
       core.emit({ name: 'PoolDataRequest', sender: this });
       setTimeout(() => {
@@ -274,7 +274,7 @@ export class ViewEnclosureComponent implements OnDestroy {
       this.formEvent$.pipe(
         untilDestroyed(this),
       ).subscribe((evt: CoreEvent) => {
-        const nextView = this.views.filter((view) => view.alias == evt.data.configFiles.value)[0];
+        const nextView = this.views.find((view) => view.alias == evt.data.configFiles.value);
         this.changeView(nextView.id);
       });
     }

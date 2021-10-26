@@ -15,7 +15,7 @@ import { ModalService } from 'app/services/modal.service';
   providers: [],
 })
 export class LicenseComponent implements FormConfiguration {
-  updateCall: 'system.license_update' = 'system.license_update';
+  updateCall = 'system.license_update' as const;
   protected isOneColumnForm = true;
   fieldSets: FieldSet[] = [
     {
@@ -52,7 +52,7 @@ export class LicenseComponent implements FormConfiguration {
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         document.location.reload(true);
       });
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
     }, (err) => {
       this.loader.close();
       this.dialog.errorReport('Error', err.reason);

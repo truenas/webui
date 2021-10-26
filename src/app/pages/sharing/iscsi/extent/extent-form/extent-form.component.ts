@@ -10,7 +10,7 @@ import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -26,9 +26,9 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
   providers: [IscsiService, StorageService],
 })
 export class ExtentFormComponent implements FormConfiguration {
-  addCall: 'iscsi.extent.create' = 'iscsi.extent.create';
-  queryCall: 'iscsi.extent.query' = 'iscsi.extent.query';
-  editCall: 'iscsi.extent.update' = 'iscsi.extent.update';
+  addCall = 'iscsi.extent.create' as const;
+  queryCall = 'iscsi.extent.query' as const;
+  editCall = 'iscsi.extent.update' as const;
   customFilter: any[] = [[['id', '=']]];
   // protected resource_name: string = 'services/iscsi/extent';
   route_success: string[] = ['sharing', 'iscsi', 'extent'];
@@ -120,14 +120,14 @@ export class ExtentFormComponent implements FormConfiguration {
           isHidden: false,
           disabled: false,
           required: true,
-          blurEvent: this.blurFilesize,
+          blurEvent: () => this.blurFilesize(),
           blurStatus: true,
           parent: this,
           validation: [Validators.required,
             (control: FormControl): ValidationErrors => {
               const config = this.fieldConfig.find((c) => c.name === 'filesize');
               const size = this.storageService.convertHumanStringToNum(control.value, true);
-              const errors = control.value && isNaN(size)
+              const errors = control.value && Number.isNaN(size)
                 ? { invalid_byte_string: true }
                 : null;
               if (errors) {
@@ -290,7 +290,7 @@ export class ExtentFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
-    const extent_disk_field: FormSelectConfig = _.find(this.fieldConfig, { name: 'disk' });
+    const extent_disk_field = _.find(this.fieldConfig, { name: 'disk' }) as FormSelectConfig;
     // get device options
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
       const options = [];
@@ -301,13 +301,13 @@ export class ExtentFormComponent implements FormConfiguration {
     });
 
     this.extent_type_control = entityForm.formGroup.controls['type'];
-    this.extent_type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.extent_type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       this.formUpdate(value);
     });
 
     this.avail_threshold_field = _.find(this.fieldConfig, { name: 'avail_threshold' });
     this.extent_disk_control = entityForm.formGroup.controls['disk'];
-    this.extent_disk_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
+    this.extent_disk_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       // zvol
       if (_.startsWith(value, 'zvol')) {
         this.avail_threshold_field.isHidden = false;
@@ -391,9 +391,9 @@ export class ExtentFormComponent implements FormConfiguration {
     }
   }
 
-  blurFilesize(parent: this): void {
-    if (parent.entityForm) {
-      parent.entityForm.formGroup.controls['filesize'].setValue(parent.storageService.humanReadable);
+  blurFilesize(): void {
+    if (this.entityForm) {
+      this.entityForm.formGroup.controls['filesize'].setValue(this.storageService.humanReadable);
     }
   }
 }

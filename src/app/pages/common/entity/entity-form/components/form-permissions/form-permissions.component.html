@@ -13,10 +13,10 @@
       <span *ngIf="config.required">*</span>
       &nbsp;&nbsp;
     </label>
-    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
-    <mat-form-field class="full-width" style="display:none">
+    <tooltip *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip | translate"></tooltip>
+    <mat-form-field class="full-width display-none">
       <input matInput [type]="config.inputType ? config.inputType : 'text'"
-				[placeholder]="config.placeholder"
+				[placeholder]="config.placeholder | translate"
 				[attr.value]="config.value"
 				[formControlName]="config.name"
 				ix-auto ix-auto-type="input" ix-auto-identifier="{{config.placeholder}}"

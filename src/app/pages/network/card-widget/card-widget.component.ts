@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-export interface CardWidgetConf<P = any> {
+export interface CardWidgetConf<P> {
   title: string;
   data: any;
   parent: P;
@@ -16,5 +16,5 @@ export interface CardWidgetConf<P = any> {
   styleUrls: ['./card-widget.component.scss'],
 })
 export class CardWidgetComponent {
-  @Input('conf') widgetConf: CardWidgetConf;
+  @Input() conf: CardWidgetConf<unknown>;
 }

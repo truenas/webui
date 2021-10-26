@@ -1,8 +1,4 @@
-import { Validators } from '@angular/forms';
-import {
-  regexValidator,
-} from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
 
@@ -13,7 +9,6 @@ export default {
  with user accounts. Groups used by a service must have\
  an ID that matches the default port number used by the\
  service.'),
-  bsdgrp_gid_validation: [Validators.required, regexValidator(/^\d+$/)],
 
   bsdgrp_group_placeholder: T('Name'),
   bsdgrp_group_tooltip: T('Group name cannot begin with a hyphen\
@@ -33,8 +28,4 @@ export default {
 
   smb_placeholder: T('Samba Authentication'),
   smb_tooltip: T('Set to allow group to be used for Samba permissions and authentication.'),
-
-  title_add: T('Add Group'),
-  title_edit: T('Edit Group'),
-
 };

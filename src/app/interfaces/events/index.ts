@@ -1,15 +1,18 @@
 import { AnimateEvent } from 'app/interfaces/events/animate-event.interface';
 import { AuthenticatedEvent } from 'app/interfaces/events/authenticated-event.interface';
 import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
-import { DiskDataEvent, DisksRequestEvent } from 'app/interfaces/events/disk-data-event.interface';
-import { EnclosureDataEvent } from 'app/interfaces/events/enclosure-data-event.interface';
+import { DisksDataEvent, DisksRequestEvent } from 'app/interfaces/events/disks-data-event.interface';
+import { EnclosureDataEvent, EnclosureLabelChangedEvent } from 'app/interfaces/events/enclosure-events.interface';
 import { ForceSidenavEvent } from 'app/interfaces/events/force-sidenav-event.interface';
+import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.interface';
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
+import { MemoryStatsEvent } from 'app/interfaces/events/memory-stats-event.interface';
+import { MultipathDataEvent, MultipathRequestEvent } from 'app/interfaces/events/multipath-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { PseudoRouteChangeEvent } from 'app/interfaces/events/pseudo-route-change-event.interface';
-import { ResilverEvent } from 'app/interfaces/events/resilver-event.interface';
+import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { ScrollToEvent } from 'app/interfaces/events/scroll-to-event.interface';
 import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
@@ -41,9 +44,9 @@ export type CoreEvent =
   | UpdateCheckedEvent
   | UserDataEvent
   | EnclosureDataEvent
-  | ResilverEvent
+  | ResilveringEvent
   | DisksRequestEvent
-  | DiskDataEvent
+  | DisksDataEvent
   | ScrollToEvent
   | ThemeListsChangedEvent
   | ForceSidenavEvent
@@ -60,4 +63,9 @@ export type CoreEvent =
   | MediaChangeEvent
   | NetworkInterfacesChangedEvent
   | AuthenticatedEvent
-  | UserPreferencesEvent;
+  | UserPreferencesEvent
+  | LabelDrivesEvent
+  | MemoryStatsEvent
+  | MultipathRequestEvent
+  | MultipathDataEvent
+  | EnclosureLabelChangedEvent;

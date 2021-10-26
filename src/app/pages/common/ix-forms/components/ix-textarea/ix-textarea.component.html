@@ -1,0 +1,25 @@
+<div class="full-width container has-tooltip">
+
+  <div *ngIf="label" class="label-container">
+    <label class="label">
+      {{label}}
+      <span *ngIf="required" class="required">*</span>
+    </label>
+    <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+  </div>
+
+  <div class="outlined input-container" [class.disabled]="isDisabled">
+    <textarea
+      matInput
+      [rows]="rows"
+      [required]="required"
+      [disabled]="isDisabled"
+      [(ngModel)]="value"
+      (ngModelChange)="onChange($event)"
+      (blur)="onTouch()"
+    ></textarea>
+  </div>
+  <ix-form-errors [control]="controlDirective.control" [label]="label"></ix-form-errors>
+  <mat-hint *ngIf="hint">{{hint}}</mat-hint>
+
+</div>

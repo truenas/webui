@@ -4,7 +4,7 @@ import {
 import { Subject } from 'rxjs';
 import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
 import { ViewController } from 'app/core/classes/view-controller';
-import { Display } from 'app/core/components/display/display.component';
+import { DisplayComponent } from 'app/core/components/display/display.component';
 import { CoreServiceInjector } from 'app/core/services/core-service-injector';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
@@ -12,11 +12,11 @@ import { CoreEvent } from 'app/interfaces/events';
 @Component({
   selector: 'viewcontroller',
   templateUrl: './view-controller.component.html',
-  styles: [':host {display:block;}'],
+  styleUrls: ['./view-controller.component.scss'],
 })
 export class ViewControllerComponent extends ViewController implements OnDestroy {
   readonly componentName = ViewControllerComponent;
-  @ViewChild('display', { static: true }) display: Display;
+  @ViewChild('display', { static: true }) display: DisplayComponent;
   protected core: CoreService;
   controlEvents: Subject<CoreEvent> = new Subject();
 

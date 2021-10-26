@@ -1,9 +1,11 @@
 .control-group {
+  color: var(--fg2);
   display: flex;
   flex-wrap: wrap;
 }
 
 .control-group > * {
   display: inline-block;
+  margin: 0 8px;
   max-height: 36px;
 }

@@ -3,8 +3,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/data-protection/scrub/scrub-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
@@ -16,11 +16,11 @@ import { ModalService } from 'app/services/modal.service';
   providers: [TaskService],
 })
 export class ScrubFormComponent implements FormConfiguration {
-  queryCall: 'pool.scrub.query' = 'pool.scrub.query';
+  queryCall = 'pool.scrub.query' as const;
   queryKey = 'id';
   pk: number;
-  editCall: 'pool.scrub.update' = 'pool.scrub.update';
-  addCall: 'pool.scrub.create' = 'pool.scrub.create';
+  editCall = 'pool.scrub.update' as const;
+  addCall = 'pool.scrub.create' as const;
   protected entityForm: EntityFormComponent;
   isEntity = true;
   protected preTaskName = 'scrub';
@@ -98,7 +98,7 @@ export class ScrubFormComponent implements FormConfiguration {
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.scrub_task_add : helptext.scrub_task_edit;
 
-    this.volume_field = this.fieldSets.config('pool');
+    this.volume_field = this.fieldSets.config('pool') as FormSelectConfig;
     this.taskService.getVolumeList().pipe(untilDestroyed(this)).subscribe((pools) => {
       pools.forEach((pool) => {
         this.volume_field.options.push({ label: pool.name, value: pool.id });
@@ -130,7 +130,7 @@ export class ScrubFormComponent implements FormConfiguration {
     delete value.cron_schedule;
   }
 
-  resourceTransformIncomingRestData(data: PoolScrub): any {
+  resourceTransformIncomingRestData(data: PoolScrub): PoolScrub & { cron_schedule: string } {
     this.entityForm.formGroup.controls['threshold'].setValue(data.threshold);
     this.entityForm.formGroup.controls['enabled'].setValue(data.enabled);
     this.entityForm.formGroup.controls['description'].setValue(data.description);
@@ -149,7 +149,7 @@ export class ScrubFormComponent implements FormConfiguration {
     const formatted = schedule.minute + ' ' + schedule.hour + ' ' + schedule.dom + ' ' + schedule.month + ' ' + schedule.dow;
     const cronField = entity.formGroup.controls['cron_schedule'];
     cronField.setValue(formatted);
-    const cronEntity = entity.fieldConfig.filter((field) => field.name == 'cron_schedule')[0];
+    const cronEntity = entity.fieldConfig.find((field) => field.name == 'cron_schedule');
     cronEntity.value = formatted;
 
     // Setup all the other fields

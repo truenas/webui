@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -12,7 +13,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -21,9 +21,9 @@ import { T } from 'app/translate-marker';
 })
 export class SMBListComponent implements EntityTableConfig {
   title = 'Samba';
-  queryCall: 'sharing.smb.query' = 'sharing.smb.query';
-  updateCall: 'sharing.smb.update' = 'sharing.smb.update';
-  wsDelete: 'sharing.smb.delete' = 'sharing.smb.delete';
+  queryCall = 'sharing.smb.query' as const;
+  updateCall = 'sharing.smb.update' as const;
+  wsDelete = 'sharing.smb.delete' as const;
   route_add: string[] = ['sharing', 'smb', 'add'];
   route_add_tooltip = 'Add Windows (SMB) Share';
   protected route_delete: string[] = ['sharing', 'smb', 'delete'];
@@ -91,8 +91,7 @@ export class SMBListComponent implements EntityTableConfig {
   getActions(row: SmbShare): EntityTableAction[] {
     const rowName = row.path.replace('/mnt/', '');
     const poolName = rowName.split('/')[0];
-    let optionDisabled;
-    rowName.includes('/') ? optionDisabled = false : optionDisabled = true;
+    const optionDisabled = !rowName.includes('/');
     return [
       {
         id: row.name,

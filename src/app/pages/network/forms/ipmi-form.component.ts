@@ -1,14 +1,16 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/ipmi/ipmi';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { IpmiUpdate } from 'app/interfaces/ipmi.interface';
-import { Option } from 'app/interfaces/option.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { Ipmi, IpmiUpdate } from 'app/interfaces/ipmi.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -16,37 +18,34 @@ import { ipv4Validator } from 'app/pages/common/entity/entity-form/validators/ip
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { T } from 'app/translate-marker';
+import { IpmiService } from 'app/services/ipmi.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-ipmi',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class IPMIFromComponent implements FormConfiguration {
+export class IpmiFormComponent implements FormConfiguration {
   title = T('IPMI');
-  queryCall: 'ipmi.query' = 'ipmi.query';
+  queryCall = 'ipmi.query' as const;
 
   protected entityEdit: EntityFormComponent;
-  is_ha = false;
+  isHa = false;
   controllerName = globalHelptext.Ctrlr;
   currentControllerLabel: string;
   failoverControllerLabel: string;
   managementIP: string;
-  options: Option[] = helptext.ipmiOptions;
   custActions = [
     {
       id: 'ipmi_identify',
-      name: T('Identify Light'),
+      name: this.translate.instant('Identify Light'),
       function: () => {
-        this.dialog.select(
-          'IPMI Identify', this.options, 'IPMI flash duration', 'ipmi.identify', 'seconds',
-        );
+        this.ipmiService.showIdentifyDialog();
       },
     },
     {
       id: 'connect',
-      name: T('Manage'),
+      name: this.translate.instant('Manage'),
       function: () => {
         window.open(`http://${this.managementIP}`);
       },
@@ -157,15 +156,17 @@ export class IPMIFromComponent implements FormConfiguration {
     protected ws: WebSocketService,
     protected dialog: DialogService,
     protected loader: AppLoaderService,
+    private translate: TranslateService,
+    private ipmiService: IpmiService,
   ) { }
 
   async prerequisite(): Promise<boolean> {
     return new Promise(async (resolve) => {
       if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-        await this.ws.call('failover.licensed').toPromise().then((is_ha) => {
-          this.is_ha = is_ha;
+        await this.ws.call('failover.licensed').toPromise().then((isHa) => {
+          this.isHa = isHa;
         });
-        if (this.is_ha) {
+        if (this.isHa) {
           await this.ws.call('failover.node').toPromise().then((node) => {
             this.currentControllerLabel = (node === 'A') ? '1' : '2';
             this.failoverControllerLabel = (node === 'A') ? '2' : '1';
@@ -218,8 +219,8 @@ export class IPMIFromComponent implements FormConfiguration {
     entityEdit.formGroup.controls['ipaddress'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {
       this.setErrorStatus(status, _.find(this.fieldConfig, { name: 'ipaddress' }));
       const ipValue = entityEdit.formGroup.controls['ipaddress'].value;
-      const btn = <HTMLInputElement>document.getElementById('cust_button_Manage');
-      status === 'INVALID' || ipValue === '0.0.0.0' ? btn.disabled = true : btn.disabled = false;
+      const btn = document.getElementById('cust_button_Manage') as HTMLInputElement;
+      btn.disabled = (status === 'INVALID' || ipValue === '0.0.0.0');
     });
 
     entityEdit.formGroup.controls['ipaddress'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
@@ -242,7 +243,7 @@ export class IPMIFromComponent implements FormConfiguration {
   }
 
   setErrorStatus(status: string, field: FieldConfig): void {
-    status === 'INVALID' ? field.hasErrors = true : field.hasErrors = false;
+    field.hasErrors = (status === 'INVALID');
   }
 
   customSubmit(payload: IpmiUpdate): Subscription {
@@ -261,20 +262,20 @@ export class IPMIFromComponent implements FormConfiguration {
     });
   }
 
-  loadData(filter: any = []): void {
+  loadData(filter: QueryParams<Ipmi> = []): void {
     let query$ = this.ws.call(this.queryCall, filter);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
       query$ = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);
     }
     query$.pipe(untilDestroyed(this)).subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.channelValue = res[i].channel;
-        this.entityEdit.formGroup.controls['netmask'].setValue(res[i].netmask);
-        this.entityEdit.formGroup.controls['dhcp'].setValue(res[i].dhcp);
-        this.entityEdit.formGroup.controls['ipaddress'].setValue(res[i].ipaddress);
-        this.entityEdit.formGroup.controls['gateway'].setValue(res[i].gateway);
-        this.entityEdit.formGroup.controls['vlan'].setValue(res[i].vlan);
-      }
+      res.forEach((ipmi) => {
+        this.channelValue = ipmi.channel;
+        this.entityEdit.formGroup.controls['netmask'].setValue(ipmi.netmask);
+        this.entityEdit.formGroup.controls['dhcp'].setValue(ipmi.dhcp);
+        this.entityEdit.formGroup.controls['ipaddress'].setValue(ipmi.ipaddress);
+        this.entityEdit.formGroup.controls['gateway'].setValue(ipmi.gateway);
+        this.entityEdit.formGroup.controls['vlan'].setValue(ipmi.vlan);
+      });
     });
   }
 }

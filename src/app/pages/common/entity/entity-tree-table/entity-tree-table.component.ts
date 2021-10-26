@@ -49,8 +49,8 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
 
   // Table Props
   displayedColumns: string[];
-  treeDataSource: any;
-  tableDataSource: any[];
+  treeDataSource: TreeNode[];
+  tableDataSource: TreeNode[];
 
   constructor(private ws: WebSocketService,
     private treeTableService: EntityTreeTableService,
@@ -71,7 +71,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   }
 
   fillTable(): void {
-    const cols = this._conf.columns.filter((col) => !col.hidden || col.always_display == true);
+    const cols = this._conf.columns.filter((col) => !col.hidden || col.always_display);
     this.displayedColumns = cols.map((col) => col.prop);
 
     const mutated = Object.assign([], this._conf.tableData);
@@ -103,20 +103,37 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
       const value1 = this.resolve(sort.sortBy, data1.data);
       const value2 = this.resolve(sort.sortBy, data2.data);
 
-      let result = null;
+      let result: number;
 
-      if (value1 == null && value2 != null) result = -1;
-      else if (value1 != null && value2 == null) result = 1;
-      else if (value1 == null && value2 == null) result = 0;
-      else if (typeof value1 === 'string' && typeof value2 === 'string') result = value1.localeCompare(value2);
-      else result = (value1 < value2) ? -1 : (value1 > value2) ? 1 : 0;
+      switch (true) {
+        case value1 == null && value2 != null:
+          result = -1;
+          break;
+        case value1 != null && value2 == null:
+          result = 1;
+          break;
+        case value1 == null && value2 == null:
+          result = 0;
+          break;
+        case typeof value1 === 'string' && typeof value2 === 'string':
+          result = value1.localeCompare(value2);
+          break;
+        case value1 < value2:
+          result = -1;
+          break;
+        case value1 > value2:
+          result = 1;
+          break;
+        default:
+          result = 0;
+      }
 
       return ((isAsc ? 1 : -1) * result);
     });
   }
 
   resolve(path: string, obj: any): string {
-    return path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj || self);
+    return path.split('.').reduce((prev, curr) => (prev ? prev[curr] : null), obj || {});
   }
 
   ngAfterViewInit(): void {
@@ -147,9 +164,9 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     return null;
   }
 
-  expandNode(rootNode: any): void {
+  expandNode(rootNode: TreeNode): void {
     const value = rootNode.expanded ? rootNode.expanded = false : true;
-    this.treeDataSource = this.treeTableService.editNode('expanded', value, rootNode.indexPath, this.treeDataSource);
+    this.treeDataSource = this.treeTableService.editNode('expanded', value, (rootNode as any).indexPath, this.treeDataSource);
 
     if (this.filter.value.length > 0) {
       this.tableDataSource = this.treeTableService.filteredTable(
@@ -176,9 +193,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
     const row = this.findRow(evt);
     const cells = row.children;
 
-    for (let i = 0; i < cells.length; i++) {
-      const cell = cells[i];
-
+    for (const cell of cells) {
       if (cell.classList.contains('mat-table-sticky') || cell.classList.contains('action-cell')) {
         if (over) {
           cell.classList.add('hover');

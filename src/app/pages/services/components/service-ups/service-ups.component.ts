@@ -5,7 +5,8 @@ import { UpsMode } from 'app/enums/ups-mode.enum';
 import helptext from 'app/helptext/services/components/service-ups';
 import { Choices } from 'app/interfaces/choices.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { UpsConfigUpdate } from 'app/interfaces/ups-config.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -23,7 +24,7 @@ export class ServiceUPSComponent implements FormConfiguration {
   protected ups_port: FormComboboxConfig;
   protected entityForm: EntityFormComponent;
 
-  queryCall: 'ups.config' = 'ups.config';
+  queryCall = 'ups.config' as const;
   route_success: string[] = ['services'];
   title = helptext.formTitle;
 
@@ -190,31 +191,6 @@ export class ServiceUPSComponent implements FormConfiguration {
         },
       ],
     },
-    {
-      name: helptext.ups_fieldset_email,
-      label: true,
-      width: '50%',
-      config: [
-        {
-          type: 'checkbox',
-          name: 'emailnotify',
-          placeholder: helptext.ups_emailnotify_placeholder,
-          tooltip: helptext.ups_emailnotify_tooltip,
-        },
-        {
-          type: 'chip',
-          name: 'toemail',
-          placeholder: helptext.ups_toemail_placeholder,
-          tooltip: helptext.ups_toemail_tooltip,
-        },
-        {
-          type: 'input',
-          name: 'subject',
-          placeholder: helptext.ups_subject_placeholder,
-          tooltip: helptext.ups_subject_tooltip,
-        },
-      ],
-    },
     { name: 'divier', divider: true },
     {
       name: helptext.ups_fieldset_other,
@@ -273,8 +249,8 @@ export class ServiceUPSComponent implements FormConfiguration {
     this.entityForm = entityForm;
 
     const generalSet = this.fieldSets.find((set) => set.name === helptext.ups_fieldset_general);
-    this.ups_driver = generalSet.config.find((config) => config.name === 'driver');
-    this.ups_port = generalSet.config.find((config) => config.name === 'port');
+    this.ups_driver = generalSet.config.find((config) => config.name === 'driver') as FormComboboxConfig;
+    this.ups_port = generalSet.config.find((config) => config.name === 'port') as FormComboboxConfig;
 
     this.ws.call('ups.driver_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.ups_drivers_list = res;
@@ -284,9 +260,9 @@ export class ServiceUPSComponent implements FormConfiguration {
     });
 
     this.ws.call('ups.port_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      for (let i = 0; i < res.length; i++) {
-        this.ups_port.options.push({ label: res[i], value: res[i] });
-      }
+      res.forEach((port) => {
+        this.ups_port.options.push({ label: port, value: port });
+      });
     });
 
     entityForm.formGroup.controls['driver'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
@@ -307,7 +283,7 @@ export class ServiceUPSComponent implements FormConfiguration {
     return Object.keys(object).find((key) => object[key] === value);
   }
 
-  beforeSubmit(data: any): void {
+  beforeSubmit(data: UpsConfigUpdate): void {
     data.driver = this.ups_driver_key;
   }
 }

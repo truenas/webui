@@ -8,18 +8,21 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { GlobalAction } from 'app/interfaces/global-action.interface';
 import { EntityTableAddActionsConfig } from 'app/pages/common/entity/entity-table/entity-table-add-actions/entity-table-add-actions-config.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 @UntilDestroy()
 @Component({
   selector: 'app-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html',
+  styleUrls: ['./entity-table-add-actions.component.scss'],
 })
 export class EntityTableAddActionsComponent implements GlobalAction, OnInit, AfterViewInit {
   @ViewChild('filter', { static: false }) filter: ElementRef;
-  @Input('entity') entity: EntityTableComponent;
+  @Input() entity: EntityTableComponent;
   conf: EntityTableAddActionsConfig;
+  filterValue = '';
 
-  actions: any[];
+  actions: EntityTableAction[];
   menuTriggerMessage = 'Click for options';
 
   spin = true;
@@ -27,7 +30,7 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
   animationMode = 'fling';
 
   get totalActions(): number {
-    const addAction = this.entity.conf.route_add ? 1 : this.entity.conf.doAdd ? 1 : 0;
+    const addAction = this.entity.conf.route_add || this.entity.conf.doAdd ? 1 : 0;
     return this.actions.length + addAction;
   }
 
@@ -55,8 +58,15 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
         distinctUntilChanged(),
       )
         .pipe(untilDestroyed(this)).subscribe(() => {
+          this.filterValue = this.filter.nativeElement.value;
           this.entity.filter(this.filter.nativeElement.value);
         });
     }
+  }
+
+  resetFilter(): void {
+    this.filterValue = '';
+    this.filter.nativeElement.value = '';
+    this.entity.filter('');
   }
 }

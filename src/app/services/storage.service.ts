@@ -14,7 +14,7 @@ import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class StorageService {
-  protected diskResource: 'disk.query' = 'disk.query';
+  protected diskResource = 'disk.query' as const;
 
   ids: string[];
   diskNames: string[];
@@ -59,9 +59,8 @@ export class StorageService {
     dlink.href = window.URL.createObjectURL(blob);
     dlink.onclick = () => {
       // revokeObjectURL needs a delay to work properly
-      const that: any = this;
       setTimeout(() => {
-        window.URL.revokeObjectURL(that.href);
+        window.URL.revokeObjectURL((this as any).href);
       }, 1500);
     };
 
@@ -176,7 +175,7 @@ export class StorageService {
 
     // Select strings that Date.parse can turn into a number (ie, that are a legit date)
     } else if (typeof (tempArr[n]) === 'string'
-      && !isNaN(Date.parse(tempArr[n]))) {
+      && !Number.isNaN(Date.parse(tempArr[n]))) {
       let timeArr = [];
       for (const i of tempArr) {
         timeArr.push(Date.parse(i));
@@ -193,12 +192,16 @@ export class StorageService {
     // Rejoins the sorted keys with the rest of the row data
     let v: number;
     // ascending or decending
-    asc === 'asc' ? (v = 1) : (v = -1);
+    if (asc === 'asc') {
+      (v = 1);
+    } else {
+      (v = -1);
+    }
     arr.sort((a, b) => {
       const A = a[key];
       const B = b[key];
       if (sorter.indexOf(A) > sorter.indexOf(B)) {
-        return 1 * v;
+        return v;
       }
       return -1 * v;
     });
@@ -219,25 +222,7 @@ export class StorageService {
     this.diskToggleStatus = bool;
   }
 
-  diskNameSort(disks: any[]): void {
-    for (let i = 0; i < disks.length; i++) {
-      for (let j = 0; j < disks.length - i - 1; j++) {
-        const k = j + 1;
-        const disk1name = disks[j].match(/\w+/);
-        const disk1num = parseInt(disks[j].match(/\d+/), 10);
-        const disk2name = disks[k].match(/\w+/);
-        const disk2num = parseInt(disks[k].match(/\d+/), 10);
-
-        if (disk1name > disk2name || disk1num > disk2num) {
-          const temp = disks[j];
-          disks[j] = disks[k];
-          disks[k] = temp;
-        }
-      }
-    }
-  }
-
-  poolUnlockServiceOptions(id: string): Observable<Option[]> {
+  poolUnlockServiceOptions(id: number): Observable<Option[]> {
     return this.ws.call('pool.unlock_services_restart_choices', [id]).pipe(
       map((response: Choices) =>
         Object.keys(response || {}).map((serviceId) => ({
@@ -267,7 +252,7 @@ export class StorageService {
      */
     path = path.indexOf('/') === 0 ? path.substr(1) : path;
 
-    return path.indexOf('/') < 0;
+    return !path.includes('/');
   }
 
   // ----------------------- //
@@ -336,8 +321,8 @@ export class StorageService {
   // allowedUnits (optional) should include any or all of 'kmgtp', the first letters of KiB, Mib, etc. The first letter
   // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass in allowedUnits,
   // all of the above are accepted AND no unit is attached to an unlabeled number, so 256 is considered 256 bytes.
-  convertHumanStringToNum(hstr: any, dec = false, allowedUnits?: string): number {
-    let num = 0;
+  convertHumanStringToNum(hstr: string, dec = false, allowedUnits?: string): number {
+    let num = '0';
     let unit = '';
 
     // empty value is evaluated as zero
@@ -382,7 +367,7 @@ export class StorageService {
     const spacer = (unit) ? ' ' : '';
 
     this.humanReadable = num.toString() + spacer + unit;
-    return num * this.convertUnitToNum(unit);
+    return Number(num) * this.convertUnitToNum(unit);
   }
 
   // Converts a number from bytes to the most natural human readable format

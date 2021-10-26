@@ -1,10 +1,13 @@
 import { Component, OnInit, Type } from '@angular/core';
+import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
+import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { LicenseComponent } from './license/license.component';
@@ -16,17 +19,17 @@ import { SupportFormUnlicensedComponent } from './support-unlicensed/support-for
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
+  styleUrls: ['./support.component.scss'],
 })
 export class SupportComponent implements OnInit {
-  subs: any;
   isProduction: boolean;
   product_image = '';
   isProductImageRack = false;
   extraMargin = true;
   serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];
-  systemInfo: any;
+  systemInfo: SystemInfoInSupport;
   hasLicense = false;
-  licenseInfo: any = null;
+  licenseInfo: LicenseInfoInSupport = null;
   links = [helptext.docHub, helptext.forums, helptext.licensing];
   licenseButtonText: string;
   ticketText = helptext.ticket;
@@ -63,16 +66,23 @@ export class SupportComponent implements OnInit {
   }
 
   parseLicenseInfo(): void {
-    this.licenseInfo.features.length === 0 ? this.licenseInfo.featuresString = 'NONE'
-      : this.licenseInfo.featuresString = this.licenseInfo.features.join(', ');
+    if (this.licenseInfo.features.length === 0) {
+      this.licenseInfo.featuresString = 'NONE';
+    } else {
+      this.licenseInfo.featuresString = this.licenseInfo.features.join(', ');
+    }
     const expDateConverted = new Date(this.licenseInfo.contract_end.$value);
     this.licenseInfo.expiration_date = this.licenseInfo.contract_end.$value;
-    this.systemInfo.system_serial_ha
-      ? this.systemInfo.serial = this.systemInfo.system_serial + ' / ' + this.systemInfo.system_serial_ha
-      : this.systemInfo.serial = this.systemInfo.system_serial;
-    this.licenseInfo.addhw_detail.length === 0
-      ? this.licenseInfo.add_hardware = 'NONE'
-      : this.licenseInfo.add_hardware = this.licenseInfo.addhw_detail.join(', ');
+    if (this.systemInfo.system_serial_ha) {
+      this.systemInfo.serial = this.systemInfo.system_serial + ' / ' + this.systemInfo.system_serial_ha;
+    } else {
+      this.systemInfo.serial = this.systemInfo.system_serial;
+    }
+    if (this.licenseInfo.addhw_detail.length === 0) {
+      this.licenseInfo.add_hardware = 'NONE';
+    } else {
+      this.licenseInfo.add_hardware = this.licenseInfo.addhw_detail.join(', ');
+    }
     const now = new Date(this.systemInfo.datetime.$date);
     const then = expDateConverted;
     this.licenseInfo.daysLeftinContract = this.daysTillExpiration(now, then);
@@ -144,7 +154,7 @@ export class SupportComponent implements OnInit {
     this.modalService.openInSlideIn(ProactiveComponent);
   }
 
-  updateProductionStatus(e: any): void {
+  updateProductionStatus(e: MatCheckboxChange): void {
     if (e.checked) {
       this.dialog.dialogForm(this.updateProdStatusConf);
     } else {

@@ -7,13 +7,13 @@ import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/network/configuration/configuration';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { NetworkConfiguration, NetworkConfigurationUpdate } from 'app/interfaces/network-configuration.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { ipv4Validator, ipv6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-import { TooltipsService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -21,11 +21,10 @@ import { TooltipsService, WebSocketService } from 'app/services';
   template: `
   <entity-form [conf]="this"></entity-form>
   `,
-  providers: [TooltipsService],
 })
 export class ConfigurationComponent implements FormConfiguration {
-  queryCall: 'network.configuration.config' = 'network.configuration.config';
-  updateCall: 'network.configuration.update' = 'network.configuration.update';
+  queryCall = 'network.configuration.config' as const;
+  updateCall = 'network.configuration.update' as const;
   isEntity = false;
   fieldConfig: FieldConfig[] = [];
   fieldSets = new FieldSets([
@@ -240,7 +239,7 @@ export class ConfigurationComponent implements FormConfiguration {
     protected ws: WebSocketService) { }
 
   preInit(): void {
-    const outbound_network_value_field: FormSelectConfig = this.fieldSets.config('outbound_network_value');
+    const outbound_network_value_field = this.fieldSets.config('outbound_network_value') as FormSelectConfig;
     this.ws.call('network.configuration.activity_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       for (const [value, label] of choices) {
         outbound_network_value_field.options.push({ label, value });
@@ -252,9 +251,9 @@ export class ConfigurationComponent implements FormConfiguration {
     this.entityEdit = entityEdit;
     if ([ProductType.Enterprise, ProductType.ScaleEnterprise].includes(window.localStorage.getItem('product_type') as ProductType)) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => { // fixme, stupid race condition makes me need to call this again
-        for (let i = 0; i < this.failover_fields.length; i++) {
-          entityEdit.setDisabled(this.failover_fields[i], !is_ha, !is_ha);
-        }
+        this.failover_fields.forEach((field) => {
+          entityEdit.setDisabled(field, !is_ha, !is_ha);
+        });
       });
     }
     this.entityEdit.submitFunction = this.submitFunction;

@@ -1,7 +1,7 @@
-import { ReportingData } from 'app/interfaces/reporting.interface';
+import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 
 export interface ReportingGraphsEvent {
   name: 'ReportingGraphs';
   sender: unknown;
-  data: ReportingData[];
+  data: ReportingGraph[];
 }

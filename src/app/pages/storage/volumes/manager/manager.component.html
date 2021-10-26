@@ -13,7 +13,7 @@
                 <label class="label input-text">
                   {{ 'Name' | translate }}*
                 </label>
-                <tooltip class="volumeTooltip" [message]=name_tooltip></tooltip>
+                <tooltip class="volumeTooltip" [message]="name_tooltip | translate"></tooltip>
               </div>
 
               <div class="full-width">
@@ -21,7 +21,7 @@
               </div>
             </div>
 
-            <div fxFlex="25%" class="inline" style="padding-top: 50px;">
+            <div fxFlex="25%" class="inline encryption-checkbox">
               <mat-checkbox
                 color="primary"
                 id="pool-manager__encryption-checkbox"
@@ -31,10 +31,10 @@
               >
                 {{"Encryption" | translate}}
               </mat-checkbox>
-              <tooltip class="volumeTooltip" [message]=encryption_tooltip></tooltip>
+              <tooltip class="volumeTooltip" [message]="encryption_tooltip | translate"></tooltip>
             </div>
 
-            <div *ngIf="isEncrypted" fxFlex="30%" class="inline form-element encryption-select" style="padding-top: 4px;">
+            <div *ngIf="isEncrypted" fxFlex="30%" class="inline form-element encryption-select">
               <div class="label-container">
                 <label class="label input-text">
                   {{ 'Encryption Standard' | translate }}*
@@ -46,11 +46,11 @@
                   id="pool-manager__encryption_algorithm-select"
                   [(ngModel)]="encryption_algorithm"
                   class="form-control"
-                  placeholder="{{'Encryption Algorithm' | translate}}"
+                  [placeholder]="'Encryption Algorithm' | translate"
                 >
                   <mat-option *ngFor="let option of encryption_algorithm_options" [value]="option.value"
                     id="encryption_algorithm_option_{{option.label}}">
-                    {{ option.label }}
+                    {{ option.label | translate }}
                   </mat-option>
 
                 </mat-select>
@@ -58,21 +58,24 @@
             </div>
           </div>
 
-          <div fxFlex="100%" *ngIf="poolError" [style.color]="'red'" [innerHTML]="poolError"></div>
+          <div fxFlex="100%" *ngIf="poolError" class="sizeMessage red" [innerHTML]="poolError"></div>
 
           <div fxFlex="100%" class="button-bar">
             <div><button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button></div>
             <div><button id="pool-manager__suggest-layout-button" *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent mat-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button></div>
-            <div><tooltip class="volumeTooltip" [message]=suggested_layout_tooltip></tooltip></div>
+            <div><tooltip class="volumeTooltip" [message]="suggested_layout_tooltip"></tooltip></div>
             <div class="button-spacer"></div>
-            <div><button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle"
-              [disabled]="disks.length === 0"
-              ix-auto
-              ix-auto-type="button"
-              ix-auto-identifier="add_vdev_type">
-              {{"Add Vdev" | translate}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
-              </button></div>
-            <mat-menu class="" #menu="matMenu" multiple overlapTrigger="false">
+            <div>
+              <button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle"
+                [disabled]="disks.length === 0"
+                ix-auto
+                ix-auto-type="button"
+                ix-auto-identifier="add_vdev_type"
+              >
+                {{"Add Vdev" | translate}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
+              </button>
+            </div>
+            <mat-menu #menu="matMenu" multiple overlapTrigger="false">
 
               <button class="tbl vdev-option" id="pool-manager__add-data-button" [disabled]="!canAddData()" (click)="addVdev('data')" mat-menu-item>
                 <div class="tr">
@@ -98,7 +101,7 @@
                 </div>
               </button>
 
-              <button class="tbl vdev-option" id="pool-manager__add-log-button"[disabled]="vdevs.log.length > 0" (click)="addVdev('log')" mat-menu-item>
+              <button class="tbl vdev-option" id="pool-manager__add-log-button" [disabled]="vdevs.log.length > 0" (click)="addVdev('log')" mat-menu-item>
                 <div class="tr">
                   <div class="td icon">
                     <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-clipboard-outline"></mat-icon>
@@ -152,22 +155,24 @@
         <ng-template #extend>
           <div>
             <mat-form-field>
-              <input id="pool-manager__extend-name-input-field" matInput placeholder="Name" [value]="name" disabled>
+              <input id="pool-manager__extend-name-input-field" matInput [placeholder]="'Name' | translate" [value]="name" disabled>
             </mat-form-field>
             <mat-error *ngIf="isEncrypted" class="adjust-upward">{{"Adding Vdevs to an encrypted pool resets the passphrase and recovery key!" | translate }}</mat-error>
             <div>
               <div class="button-bar">
                 <div><button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button></div>
-                <div><button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle"
-                [disabled]="this.disks.length === 0"
-                ix-auto
-                ix-auto-type="button"
-                ix-auto-identifier="add_vdev_type">
-              <span>{{"Add Vdev" | translate}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon></span>
-                  </button></div>
+                <div>
+                  <button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle"
+                    [disabled]="this.disks.length === 0"
+                    ix-auto
+                    ix-auto-type="button"
+                    ix-auto-identifier="add_vdev_type"
+                  >
+                    <span>{{"Add Vdev" | translate}} <mat-icon class="menu-caret">arrow_drop_down</mat-icon></span>
+                  </button>
+                </div>
               </div>
-              <mat-menu class="" #menu="matMenu" multiple overlapTrigger="false">
-
+              <mat-menu #menu="matMenu" multiple overlapTrigger="false">
                 <button class="tbl vdev-option" id="pool-manager__add-data-button" [disabled]="!canAddData()" (click)="addVdev('data')" mat-menu-item>
                   <div class="tr">
                     <div class="td icon">
@@ -254,18 +259,18 @@
             [rows]="disks"
             [headerHeight]="50"
             [rowHeight]="50"
-            [footerHeight]="'auto'"
+            footerHeight="auto"
             [columnMode]="'force'"
             [limit]="10"
             [selected]="selected"
-            [selectionType]="'checkbox'"
+            selectionType="checkbox"
             [externalSorting]="true"
             (sort)='reorderEvent($event)'
             (select)='onSelect($event)'
           >
             <ngx-datatable-row-detail [rowHeight]="100" #myDetailRow>
               <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
-                <div *ngFor="let detail of row.details" style="padding-left:35px;">
+                <div *ngFor="let detail of row.details" class="row-details">
                   <strong>{{detail.label | translate}}:</strong> {{detail.value}}
                 </div>
               </ng-template>
@@ -283,13 +288,6 @@
                 </div>
               </ng-template>
             </ngx-datatable-column>
-            <!-- <ngx-datatable-column
-                  [width]="35"
-                  [sortable]="false"
-                  [canAutoResize]="false"
-                  [draggable]="false"
-                  [resizeable]="false">
-                </ngx-datatable-column> -->
             <ngx-datatable-column
               [width]="165"
               name="{{'Disk' | translate}}"
@@ -328,10 +326,10 @@
               <input
                 matInput
                 id="pool-manager__nameFilter"
-                type='text'
+                type="text"
                 [(ngModel)]="nameFilterField"
-                placeholder="{{ 'Filter disks by name' | translate }}"
-                (keyup)='updateFilter($event)'
+                [placeholder]="'Filter disks by name' | translate"
+                (keyup)="updateFilter($event)"
               />
             </mat-form-field>
             <div fxFlex="5%"></div>
@@ -339,10 +337,10 @@
               <input
                 matInput
                 id="pool-manager__capacityFilter"
-                type='text'
+                type="text"
                 [(ngModel)]="capacityFilterField"
-                placeholder="{{ 'Filter disks by capacity' | translate }}"
-                (keyup)='updateFilter($event)'
+                [placeholder]="'Filter disks by capacity' | translate"
+                (keyup)="updateFilter($event)"
               />
             </mat-form-field>
             <mat-error *ngIf="re_has_errors">{{"Invalid regex filter" | translate}}</mat-error>
@@ -379,11 +377,11 @@
         </div>
       </div>
       <div class="sizeMessage">{{ sizeMessage | translate}}: {{ size }}</div>
-      <div *ngIf="disknumError" class="sizeMessage" [style.color]="'red'" [innerHTML]="disknumError"></div>
-      <div *ngIf="vdevtypeError" class="sizeMessage" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
-      <div *ngIf="stripeVdevTypeError" class="sizeMessage" [style.color]="'red'" [innerHTML]="stripeVdevTypeError"></div>
-      <div *ngIf="logVdevTypeWarning" class="sizeMessage" [style.color]="'orange'" [innerHTML]="logVdevTypeWarning"></div>
-      <div *ngIf="error" class="sizeMessage" [style.color]="'red'" [innerHTML]="error"></div>
+      <div *ngIf="disknumError" class="sizeMessage red" [innerHTML]="disknumError"></div>
+      <div *ngIf="vdevtypeError" class="sizeMessage red" [innerHTML]="vdevtypeError"></div>
+      <div *ngIf="stripeVdevTypeError" class="sizeMessage red" [innerHTML]="stripeVdevTypeError"></div>
+      <div *ngIf="logVdevTypeWarning" class="sizeMessage orange" [innerHTML]="logVdevTypeWarning"></div>
+      <div *ngIf="error" class="sizeMessage red" [innerHTML]="error"></div>
       <div class="forceCreateCheckbox" *ngIf="has_savable_errors">
         <mat-checkbox color="primary" id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()">{{'Force' | translate}}</mat-checkbox>
       </div>

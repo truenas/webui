@@ -2,7 +2,10 @@ import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { TopbarComponent } from 'app/components/common/topbar/topbar.component';
+import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import helptext from 'app/helptext/topbar';
+import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
@@ -15,9 +18,11 @@ export class TruecommandComponent {
   parent = this.data.parent;
   tc = this.data.data;
 
+  readonly TrueCommandStatus = TrueCommandStatus;
+
   constructor(
     public dialogRef: MatDialogRef<TruecommandComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    @Inject(MAT_DIALOG_DATA) public data: { parent: TopbarComponent; data: TrueCommandConfig },
     public translate: TranslateService,
     private dialogService: DialogService,
   ) {}
@@ -35,7 +40,7 @@ export class TruecommandComponent {
     });
   }
 
-  update(data: any): void {
+  update(data: TrueCommandConfig): void {
     this.tc = data;
   }
 }

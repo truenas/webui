@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptext_system_support = {
   proactive: {
@@ -30,19 +30,9 @@ export const helptext_system_support = {
     dialog_err: T('Error Saving Proactive Support Settings'),
   },
 
-  username: {
-    placeholder: T('Username'),
-    tooltip: T(
-      'Enter a valid username for the <a\
- href="https://jira.ixsystems.com/projects/NAS/issues/"\
- target="_blank">TrueNAS bug tracking system</a>',
-    ),
-    validation: [Validators.required],
-  },
-
-  password: {
-    placeholder: T('Password'),
-    tooltip: T('Enter the bug tracker account password.'),
+  token: {
+    placeholder: T('OAuth Token'),
+    tooltip: T('OAuth Token for current session'),
     validation: [Validators.required],
   },
 

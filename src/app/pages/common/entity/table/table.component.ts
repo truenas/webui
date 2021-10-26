@@ -2,7 +2,7 @@ import {
   Component, OnInit, Input, ViewChild, AfterViewInit, AfterViewChecked, ElementRef,
 } from '@angular/core';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
@@ -40,7 +40,7 @@ export interface AppTableColumn {
   hidden?: boolean;
   hiddenIfEmpty?: boolean;
   listview?: boolean;
-  getIcon?(element: any, prop: string): void;
+  getIcon?(element: any, prop: string): string;
 }
 
 export interface AppTableConfirmDeleteDialog {
@@ -68,7 +68,7 @@ export interface AppTableConfig<P = any> {
     title: string;
     key_props: string[];
     id_prop?: string;
-    doubleConfirm?(item: any): any;
+    doubleConfirm?(item: any): Observable<boolean>;
   }; //
   tableComponent?: TableComponent;
   emptyEntityLarge?: boolean;
@@ -92,7 +92,7 @@ export interface AppTableConfig<P = any> {
   onButtonClick?(row: any): void;
 
   expandable?: boolean; // field introduced by ExpandableTable, "fake" field
-  afterGetDataExpandable?(data: any): void; // field introduced by ExpandableTable, "fake" field
+  afterGetDataExpandable?(data: any): any; // field introduced by ExpandableTable, "fake" field
 }
 
 @UntilDestroy()
@@ -134,6 +134,8 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     return this._tableConf;
   }
 
+  // TODO: tableConf can be renamed
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('conf') set tableConf(conf: AppTableConfig) {
     if (!this._tableConf) {
       this._tableConf = conf;
@@ -251,7 +253,6 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
     } else {
       this.tableService.delete(this, row);
     }
-    event.stopPropagation();
   }
 
   // TODO: Enum
@@ -294,25 +295,24 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   getButtonClass(row: any): string {
     // Bring warnings to user's attention even if state is finished or successful.
-    if (row.warnings && row.warnings.length > 0) return 'fn-theme-orange';
+    if (row.warnings && row.warnings.length > 0) {
+      return 'fn-theme-orange';
+    }
 
     const state: JobState = row.state;
 
     switch (state) {
       case JobState.Pending:
-        return 'fn-theme-orange';
       case JobState.Running:
-        return 'fn-theme-orange';
       case JobState.Aborted:
         return 'fn-theme-orange';
       case JobState.Finished:
-        return 'fn-theme-green';
       case JobState.Success:
         return 'fn-theme-green';
       case JobState.Error:
-        return 'fn-theme-red';
       case JobState.Failed:
         return 'fn-theme-red';
+      case JobState.Locked:
       case JobState.Hold:
         return 'fn-theme-yellow';
       default:
@@ -336,7 +336,7 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
       return 'state-icon';
     }
 
-    if (column.prop === 'state' && column.button === true) {
+    if (column.prop === 'state' && column.button) {
       return 'state-button';
     }
 

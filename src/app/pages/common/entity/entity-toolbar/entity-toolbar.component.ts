@@ -19,7 +19,7 @@ import { Control } from './models/control.interface';
   styleUrls: ['./entity-toolbar.component.scss'],
 })
 export class EntityToolbarComponent implements OnChanges, GlobalAction {
-  @Input('conf') conf: ToolbarConfig;
+  @Input() conf: ToolbarConfig;
   config: ToolbarConfig;
   controller$: Subject<Control>;
   values: any;

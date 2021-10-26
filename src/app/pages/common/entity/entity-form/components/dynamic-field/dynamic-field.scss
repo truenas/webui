@@ -44,7 +44,7 @@
   right: 3px;
   top: -2px;
 }
-  
+
 .margin-for-error {
   position: relative;
   top: -12px;
@@ -57,4 +57,21 @@
 
 .textarea-filereader {
   margin-top: 10px;
+}
+
+.form-textarea {
+  &.paragraph {
+    overflow-wrap: break-word;
+  }
+}
+
+.form-ip-netmask {
+  .divider {
+    padding: 0 8px;
+    text-align: center;
+  }
+
+  .label-container {
+    max-height: 27px;
+  }
 }

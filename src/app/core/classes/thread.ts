@@ -12,7 +12,6 @@ export class Thread extends IxAbstractObject {
   thread: Worker;
   protected ready: boolean;
   protected maxThreads: number;
-  threadPriority = 0.0; // between 0.0 and 1.0 (1.0 being highest);
 
   private _onmessage: (event: MessageEvent) => void;
   set onmessage(value: (event: MessageEvent) => void) {
@@ -49,7 +48,7 @@ export class Thread extends IxAbstractObject {
 
   readonly main = (): void => {
     // Some example code to show how messages can be exchanged with main thread
-    const context: Worker = self as any; // Needed for TypeScript not to complain. DO NOT REMOVE!
+    const context: Worker = window.self as any; // Needed for TypeScript not to complain. DO NOT REMOVE!
     context.postMessage('ThreadInitialized'); // This inits the worker. DO NOT REMOVE!
 
     /* context.onmessage = (msg: MessageEvent) => {

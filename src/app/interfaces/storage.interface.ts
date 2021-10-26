@@ -102,6 +102,8 @@ export interface DiskUpdate {
   difference?: number;
   informational?: number;
   enclosure?: EnclosureSlot;
+  number: number;
+  pool: string;
 }
 
 export interface UnusedDisk extends Disk {
@@ -175,3 +177,7 @@ export type DiskWipeParams = [
   disk: string,
   method: DiskWipeMethod,
 ];
+
+export interface DiskTemperatures {
+  [disk: string]: number | null;
+}

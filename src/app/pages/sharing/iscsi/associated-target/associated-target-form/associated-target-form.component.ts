@@ -4,9 +4,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
+import { IscsiTargetExtent, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -20,9 +20,9 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
   providers: [IscsiService],
 })
 export class AssociatedTargetFormComponent implements FormConfiguration {
-  addCall: 'iscsi.targetextent.create' = 'iscsi.targetextent.create';
-  queryCall: 'iscsi.targetextent.query' = 'iscsi.targetextent.query';
-  editCall: 'iscsi.targetextent.update' = 'iscsi.targetextent.update';
+  addCall = 'iscsi.targetextent.create' as const;
+  queryCall = 'iscsi.targetextent.query' as const;
+  editCall = 'iscsi.targetextent.update' as const;
   route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
   isEntity = true;
   customFilter: [[Partial<QueryFilter<IscsiTargetExtent>>]] = [[['id', '=']]];
@@ -71,7 +71,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
 
   protected target_control: FormSelectConfig;
   protected extent_control: FormSelectConfig;
-  pk: string;
+  pk: number;
   protected entityForm: EntityFormComponent;
 
   constructor(protected router: Router, protected iscsiService: IscsiService, protected aroute: ActivatedRoute,
@@ -90,20 +90,20 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    this.target_control = _.find(this.fieldConfig, { name: 'target' });
+    this.target_control = _.find(this.fieldConfig, { name: 'target' }) as FormSelectConfig;
     this.target_control.options.push({ label: '----------', value: '' });
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
-      for (let i = 0; i < targets.length; i++) {
-        this.target_control.options.push({ label: targets[i].name, value: targets[i].id });
-      }
+      targets.forEach((target) => {
+        this.target_control.options.push({ label: target.name, value: target.id });
+      });
     });
 
-    this.extent_control = _.find(this.fieldConfig, { name: 'extent' });
+    this.extent_control = _.find(this.fieldConfig, { name: 'extent' }) as FormSelectConfig;
     this.extent_control.options.push({ label: '----------', value: '' });
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
-      for (let i = 0; i < extents.length; i++) {
-        this.extent_control.options.push({ label: extents[i].name, value: extents[i].id });
-      }
+      extents.forEach((extent) => {
+        this.extent_control.options.push({ label: (extent).name, value: (extent).id });
+      });
     });
   }
 
@@ -113,7 +113,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     }
   }
 
-  customEditCall(value: any): void {
+  customEditCall(value: IscsiTargetExtentUpdate): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {

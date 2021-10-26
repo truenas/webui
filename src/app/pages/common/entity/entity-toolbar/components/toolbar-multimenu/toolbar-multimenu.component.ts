@@ -14,7 +14,7 @@ import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.i
 })
 export class ToolbarMultimenuComponent extends IxAbstractObject implements OnInit {
   @Input() config?: ControlConfig;
-  @Input() controller: Subject<any>;
+  @Input() controller: Subject<Control>;
   allSelected = false;
   values: any[] = [];
   selectStates: boolean [] = [];
@@ -26,12 +26,11 @@ export class ToolbarMultimenuComponent extends IxAbstractObject implements OnIni
     this.selectStates.length = this.config.options.length;
     this.selectStates.fill(false);
     if (this.config.value) {
-      for (let i = 0; i < this.config.value.length; i++) {
-        const option = this.config.value[i];
-        if (option) {
-          this.values.push(option);
+      for (const value of this.config.value) {
+        if (value) {
+          this.values.push(value);
           for (let j = 0; j < this.selectStates.length; j++) {
-            if (this.config.options[j].value == option.value) {
+            if (this.config.options[j].value == value.value) {
               this.selectStates[j] = true;
               break;
             }

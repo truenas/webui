@@ -27,12 +27,12 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CertificateAuthorityEditComponent implements FormConfiguration {
-  queryCall: 'certificateauthority.query' = 'certificateauthority.query';
-  editCall: 'certificateauthority.update' = 'certificateauthority.update';
+  queryCall = 'certificateauthority.query' as const;
+  editCall = 'certificateauthority.update' as const;
   isEntity = true;
   queryCallOption: [QueryFilter<CertificateAuthority>];
   private getRow = new Subscription();
-  private rowNum: any;
+  private rowNum: number;
   title: string;
   private incomingData: CertificateAuthority;
   private unsignedCAs: Option[] = [];
@@ -205,7 +205,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   constructor(protected ws: WebSocketService, protected loader: AppLoaderService,
     private modalService: ModalService, private storage: StorageService, private http: HttpClient,
     private dialog: DialogService, private systemGeneralService: SystemGeneralService) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.rowNum = rowId;
       this.queryCallOption = [['id', '=', rowId]];
       this.getRow.unsubscribe();
@@ -236,7 +236,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     }],
     method_ws: 'certificateauthority.ca_sign_csr',
     saveButtonText: helptext_system_ca.sign.sign,
-    customSubmit: this.doSignCSR,
+    customSubmit: (entityDialog) => this.doSignCSR(entityDialog),
     parent: this,
   };
 
@@ -264,16 +264,21 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     ];
     fields.forEach((field) => {
       const paragraph: FormParagraphConfig = _.find(this.fieldConfig, { name: field });
-      this.incomingData[field] || this.incomingData[field] === false
-        ? paragraph.paraText += this.incomingData[field] : paragraph.paraText += '---';
+      if (this.incomingData[field] || this.incomingData[field] === false) {
+        paragraph.paraText += this.incomingData[field];
+      } else {
+        paragraph.paraText += '---';
+      }
     });
     const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'san' });
     config.paraText += this.incomingData.san.join(',');
     const issuer: FormParagraphConfig = _.find(this.fieldConfig, { name: 'issuer' });
     if (_.isObject(this.incomingData.issuer)) {
       issuer.paraText += (this.incomingData.issuer as any).name;
+    } else if (this.incomingData.issuer) {
+      issuer.paraText += this.incomingData.issuer;
     } else {
-      this.incomingData.issuer ? issuer.paraText += this.incomingData.issuer : issuer.paraText += '---';
+      issuer.paraText += '---';
     }
   }
 
@@ -282,20 +287,19 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
   }
 
   doSignCSR(entityDialog: EntityDialogComponent<this>): void {
-    const self = entityDialog.parent;
     const payload = {
-      ca_id: self.rowNum,
+      ca_id: this.rowNum,
       csr_cert_id: entityDialog.formGroup.controls.csr_cert_id.value,
       name: entityDialog.formGroup.controls.name.value,
     };
     entityDialog.loader.open();
     entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).pipe(untilDestroyed(this)).subscribe(() => {
       entityDialog.loader.close();
-      self.dialog.closeAllDialogs();
-      self.modalService.refreshTable();
+      this.dialog.closeAllDialogs();
+      this.modalService.refreshTable();
     }, (err: WebsocketError) => {
       entityDialog.loader.close();
-      self.dialog.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
+      this.dialog.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     });
   }
 
@@ -377,7 +381,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     this.ws.call(this.editCall, [this.rowNum, payload]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         this.modalService.refreshTable();
       },
       (res) => {

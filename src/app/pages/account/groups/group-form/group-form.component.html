@@ -1,0 +1,46 @@
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <ix-fieldset [title]="'Group Configuration' | translate">
+        <ix-input
+          formControlName="gid"
+          label="GID"
+          [required]="true"
+          [tooltip]="tooltips.gid"
+        ></ix-input>
+        <ix-input
+          formControlName="name"
+          [label]="'Name' | translate"
+          [required]="true"
+          [tooltip]="tooltips.name"
+        ></ix-input>
+        <ix-checkbox
+          formControlName="sudo"
+          [label]="'Permit Sudo' | translate"
+          [tooltip]="tooltips.sudo"
+        ></ix-checkbox>
+        <ix-checkbox
+          formControlName="smb"
+          [label]="'Samba Authentication' | translate"
+          [tooltip]="tooltips.smb"
+        ></ix-checkbox>
+        <ix-checkbox
+          *ngIf="isNew"
+          formControlName="allowDuplicateGid"
+          [label]="'Allow Duplicate GIDs' | translate"
+          [tooltip]="tooltips.allowDuplicateGid"
+        ></ix-checkbox>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isFormLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+    <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
+  </mat-card-content>
+</mat-card>

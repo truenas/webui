@@ -5,8 +5,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
+import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
-import { WidgetChartComponent } from 'app/pages/dashboard/components/widget-chart/widget-chart.component';
 import { WidgetControllerComponent } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WidgetCpuComponent } from 'app/pages/dashboard/components/widget-cpu/widget-cpu.component';
 import { WidgetMemoryComponent } from 'app/pages/dashboard/components/widget-memory/widget-memory.component';
@@ -16,7 +16,7 @@ import { WidgetPoolComponent } from 'app/pages/dashboard/components/widget-pool/
 import { WidgetStorageComponent } from 'app/pages/dashboard/components/widget-storage/widget-storage.component';
 import {
   SimpleFailoverBtnComponent,
-  SimpleFailoverBtnDialog,
+  SimpleFailoverBtnDialogComponent,
 } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard/components/widget-sys-info/widget-sys-info.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -27,6 +27,7 @@ import { routing } from './dashboard.routing';
   imports: [
     CoreComponents,
     CommonModule,
+    CommonDirectivesModule,
     FormsModule,
     routing,
     MaterialModule,
@@ -38,7 +39,6 @@ import { routing } from './dashboard.routing';
     DashboardComponent,
 
     WidgetComponent,
-    WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNicComponent,
     WidgetCpuComponent,
@@ -48,11 +48,10 @@ import { routing } from './dashboard.routing';
     WidgetNetworkComponent,
     WidgetStorageComponent,
     SimpleFailoverBtnComponent,
-    SimpleFailoverBtnDialog,
+    SimpleFailoverBtnDialogComponent,
   ],
   entryComponents: [
     WidgetComponent,
-    WidgetChartComponent,
     WidgetSysInfoComponent,
     WidgetNicComponent,
     WidgetCpuComponent,

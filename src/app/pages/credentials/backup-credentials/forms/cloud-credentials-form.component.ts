@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
@@ -12,7 +13,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -22,7 +23,6 @@ import {
   CloudCredentialService, DialogService, WebSocketService, ReplicationService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -32,13 +32,12 @@ import { T } from 'app/translate-marker';
 })
 export class CloudCredentialsFormComponent implements FormConfiguration {
   isEntity = true;
-  addCall: 'cloudsync.credentials.create' = 'cloudsync.credentials.create';
-  queryCall: 'cloudsync.credentials.query' = 'cloudsync.credentials.query';
-  editCall: 'cloudsync.credentials.update' = 'cloudsync.credentials.update';
+  addCall = 'cloudsync.credentials.create' as const;
+  queryCall = 'cloudsync.credentials.query' as const;
+  editCall = 'cloudsync.credentials.update' as const;
   queryCallOption: QueryFilter<CloudsyncCredential>[];
   protected formGroup: FormGroup;
   protected id: number;
-  pk: any;
   protected keyID: number;
   protected isOneColumnForm = true;
   private rowNum: number;
@@ -1292,33 +1291,33 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         this.rowNum = row;
       });
     const basicFieldset = _.find(this.fieldSets, { class: 'basic' });
-    this.providerField = _.find(basicFieldset.config, { name: 'provider' });
+    this.providerField = _.find(basicFieldset.config, { name: 'provider' }) as FormSelectConfig;
     this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe(
       (providers) => {
         this.providers = providers;
-        for (const i in providers) {
+        providers.forEach((provider) => {
           this.providerField.options.push(
             {
-              label: providers[i].title,
-              value: providers[i].name,
+              label: provider.title,
+              value: provider.name,
             },
           );
-        }
+        });
       },
     );
     const authenticationFieldset = _.find(this.fieldSets, { class: 'authentication' });
-    const privateKeySFTPField: FormSelectConfig = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' });
+    const privateKeySFTPField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' }) as FormSelectConfig;
     this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]).pipe(untilDestroyed(this)).subscribe(
       (credentials) => {
-        for (let i = 0; i < credentials.length; i++) {
-          privateKeySFTPField.options.push({ label: credentials[i].name, value: credentials[i].id });
-        }
+        credentials.forEach((credential) => {
+          privateKeySFTPField.options.push({ label: credential.name, value: credential.id });
+        });
       },
     );
   }
 
   isCustActionVisible(actionname: string): boolean {
-    if (actionname === 'authenticate' && this.credentialsOauth === false) {
+    if (actionname === 'authenticate' && !this.credentialsOauth) {
       return false;
     }
     return true;
@@ -1404,7 +1403,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     const tenantCtrl = entityForm.formGroup.controls['tenant-OPENSTACK_SWIFT'];
     const tenantIdCtrl = entityForm.formGroup.controls['tenant_id-OPENSTACK_SWIFT'];
     entityForm.formGroup.controls['auth_version-OPENSTACK_SWIFT'].valueChanges.pipe(untilDestroyed(this)).subscribe(
-      (res: any) => {
+      (res: number) => {
         if (res === 1) {
           this.setFieldRequired('tenant-OPENSTACK_SWIFT', false, entityForm);
           this.setFieldRequired('tenant_id-OPENSTACK_SWIFT', false, entityForm);
@@ -1495,7 +1494,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
           (sshKey) => {
             this.keyID = sshKey.id;
-            const privateKeySFTPField: FormSelectConfig = _.find(this.fieldConfig, { name: 'private_key-SFTP' });
+            const privateKeySFTPField = _.find(this.fieldConfig, { name: 'private_key-SFTP' }) as FormSelectConfig;
             privateKeySFTPField.options.push({ label: payload.name, value: this.keyID });
             this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
             if (submitting) {
@@ -1537,7 +1536,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     this.entityForm.submitFunction(value).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.entityForm.loader.close();
-        this.modalService.close('slide-in-form');
+        this.modalService.closeSlideIn();
         this.modalService.refreshTable();
       },
       (err: WebsocketError) => {
@@ -1592,7 +1591,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       return;
     }
     data = data.result;
-    const drivesConfig: FormSelectConfig = _.find(this.fieldConfig, { name: 'drives-ONEDRIVE' });
+    const drivesConfig = _.find(this.fieldConfig, { name: 'drives-ONEDRIVE' }) as FormSelectConfig;
     this.entityForm.setDisabled('drives-ONEDRIVE', false, false);
     this.ws.call('cloudsync.onedrive_list_drives', [{
       client_id: data.client_id,
@@ -1600,9 +1599,9 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       token: data.token,
     }]).pipe(untilDestroyed(this)).subscribe(
       (drives) => {
-        for (let i = 0; i < drives.length; i++) {
-          drivesConfig.options.push({ label: drives[i].drive_type + ' - ' + drives[i].drive_id, value: drives[i] });
-        }
+        drives.forEach((drive) => {
+          drivesConfig.options.push({ label: drive.drive_type + ' - ' + drive.drive_id, value: drive });
+        });
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialog);

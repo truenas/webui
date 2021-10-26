@@ -22,9 +22,9 @@
                 id="active"
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
-                [enclosure]="systemInformation.features.enclosure"
+                [enclosureSupport]="systemInformation.features.enclosure"
                 [isHA]="isHA"
-                [passive]="false"
+                [isPassive]="false"
                 [widgetSize]="medium">
               </widget-sysinfo>
 
@@ -32,9 +32,9 @@
                 id="passive"
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
-                [enclosure]="systemInformation.features.enclosure"
+                [enclosureSupport]="systemInformation.features.enclosure"
                 [isHA]="isHA"
-                [passive]="true"
+                [isPassive]="true"
                 [widgetSize]="medium">
               </widget-sysinfo>
 
@@ -101,7 +101,6 @@
   </div>
 </div>
 
-<!--<button mat-fab color="primary" style="position:fixed; z-index:30;bottom:24px; right:24px;"><mat-icon role="img">settings</mat-icon></button>-->
 <!-- MOBILE WIDGETS -->
 <div class="mobile-viewport" [ngClass]="{'hidden': screenType == 'Desktop'}">
   <div class="carousel">
@@ -123,18 +122,18 @@
             <widget-sysinfo *ngSwitchCase="'system information'"
               (back)="onMobileBack()"
               id="active"
-              [enclosure]="systemInformation.features.enclosure"
+              [enclosureSupport]="systemInformation.features.enclosure"
               [isHA]="isHA"
-              [passive]="false"
+              [isPassive]="false"
               [widgetSize]="medium">
             </widget-sysinfo>
 
             <widget-sysinfo *ngSwitchCase="'system information(standby)'"
               (back)="onMobileBack()"
               id="passive"
-              [enclosure]="systemInformation.features.enclosure"
+              [enclosureSupport]="systemInformation.features.enclosure"
               [isHA]="isHA"
-              [passive]="true"
+              [isPassive]="true"
               [widgetSize]="medium">
             </widget-sysinfo>
 

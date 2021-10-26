@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
-import { T } from 'app/translate-marker';
 
 export default {
   fieldset_source: T('Source'),

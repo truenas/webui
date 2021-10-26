@@ -5,10 +5,10 @@
       <mat-card-content>
         <div class="text-center pb-1">
           <img src="assets/images/logo-full.svg" alt="FreeNAS logo">
-          <p class="text-muted">Sign up to use our service</p>
+          <p class="text-muted">{{ 'Sign up to use our service' | translate }}</p>
         </div>
         <form #signupForm="ngForm" (ngSubmit)="signup()">
-          <div class="">
+          <div>
             <mat-form-field class="full-width">
               <input
                 matInput
@@ -17,20 +17,20 @@
                 required
                 [(ngModel)]="signupData.email"
                 #email="ngModel"
-                placeholder="Your Email"
+                [placeholder]="'Your Email' | translate"
                 pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$"
                 value="">
             </mat-form-field>
             <small
               *ngIf="email['errors'] && (email.dirty || email.touched) && (email['errors'].required)"
-              class="form-error-msg"> Email is required </small>
+              class="form-error-msg"> {{ 'Email is required' | translate }} </small>
 
             <small
                 *ngIf="email['errors'] && (email.dirty || email.touched) && (email['errors'].pattern)"
-                class="form-error-msg"> Invaild email address </small>
+                class="form-error-msg"> {{ 'Invaild email address' | translate }} </small>
           </div>
 
-          <div class="">
+          <div>
             <mat-form-field class="full-width">
               <input
                 type="password"
@@ -41,15 +41,15 @@
                 reverse="true"
                 [(ngModel)]="signupData.password"
                 #password="ngModel"
-                placeholder="Password"
+                [placeholder]="'Password' | translate"
                 value="">
             </mat-form-field>
             <small
               *ngIf="password['errors'] && (password.dirty || password.touched) && (password['errors'].required)"
-              class="form-error-msg"> Password is required </small>
+              class="form-error-msg"> {{ 'Password is required' | translate }} </small>
           </div>
 
-          <div class="">
+          <div>
             <mat-form-field class="full-width">
               <input
                 type="password"
@@ -59,12 +59,12 @@
                 appEqualValidator="password"
                 [(ngModel)]="signupData.confirmPassword"
                 #confirmPassword="ngModel"
-                placeholder="Confirm Password"
+                [placeholder]="'Confirm Password' | translate"
                 value="">
             </mat-form-field>
             <small
               *ngIf="confirmPassword['errors'] && (confirmPassword.dirty || confirmPassword.touched)"
-              class="form-error-msg"> Password mismatch </small>
+              class="form-error-msg"> {{ 'Password mismatch' | translate }} </small>
           </div>
 
           <div class="pb-1">
@@ -74,16 +74,16 @@
               required
               [(ngModel)]="signupData.isAgreed"
               #isAgreed="ngModel"
-              class="pb-1">I have read and agree to the terms of service.</mat-checkbox>
+              class="pb-1">{{ 'I have read and agree to the terms of service.' | translate }}</mat-checkbox>
 
             <small
               *ngIf="!isAgreed.value && (isAgreed.dirty || isAgreed.touched)"
-              class="form-error-msg"> You must agree to the terms and conditions </small>
+              class="form-error-msg"> {{ 'You must agree to the terms and conditions' | translate }} </small>
           </div>
 
           <button mat-button class="mat-primary full-width mb-1" [disabled]="signupForm.invalid || !isAgreed.value">Sign up</button>
           <div class="text-center">
-            <a [routerLink]="['/sessions/signin']" class="mat-primary text-center full-width">Sign in to existing account</a>
+            <a [routerLink]="['/sessions/signin']" class="mat-primary text-center full-width">{{ 'Sign in to existing account' }}</a>
           </div>
         </form>
       </mat-card-content>

@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { EntityCardAction } from 'app/pages/common/entity/entity-card/entity-card-config.interface';
 import { EntityCardComponent } from './entity-card.component';
 
 @Component({
@@ -8,10 +9,10 @@ import { EntityCardComponent } from './entity-card.component';
   templateUrl: './entity-card-actions.component.html',
 })
 export class EntityCardActionsComponent implements OnInit {
-  @Input('entity') entity: EntityCardComponent;
-  @Input('row') row: any;
+  @Input() entity: EntityCardComponent;
+  @Input() row: any;
 
-  actions: any[];
+  actions: EntityCardAction[];
   showMenu = true;
 
   constructor(public translate: TranslateService) {}
@@ -25,14 +26,14 @@ export class EntityCardActionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.actions = this.entity.getCardActions();
-    for (let i = 0; i < this.actions.length; i++) {
+    this.actions.forEach((action) => {
       if (this.entity.conf.isActionVisible) {
-        this.actions[i].visible = this.entity.conf.isActionVisible.bind(
+        action.visible = this.entity.conf.isActionVisible.bind(
           this.entity.conf,
-        )(this.actions[i].id, this.row);
+        )(action.id, this.row);
       } else {
-        this.actions[i].visible = true;
+        action.visible = true;
       }
-    }
+    });
   }
 }

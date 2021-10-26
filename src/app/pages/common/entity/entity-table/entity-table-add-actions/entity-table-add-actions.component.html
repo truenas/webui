@@ -1,8 +1,10 @@
 <!-- START OF CONTROLS SECTION -->
 <div *ngIf="entity && conf" fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
+
+  <!-- TODO: Replace with ix-input when its ready -->
   <div class="form-element search-field" id="row-filter">
     <mat-form-field floatPlaceholder="never">
-      <span matPrefix><mat-icon>search</mat-icon></span>
+      <span matPrefix class="search-icon-wrapper"><mat-icon>search</mat-icon></span>
       <input
         #filter
         matInput
@@ -10,6 +12,14 @@
         ix-auto
         ix-auto-type="input"
         ix-auto-identifier="Filter {{entity.conf.title}}">
+
+      <span
+        class="reset-icon-wrapper"
+        [class.invisible]="!filterValue || filterValue.length == 0"
+        matSuffix
+      >
+        <mat-icon (click)="resetFilter()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
+      </span>
     </mat-form-field>
   </div>
 
@@ -73,11 +83,9 @@
   <!-- END COLUMN FILTER -->
 
 
-  <!--<div>-->
   <!-- OLD TEMPLATE START -->
-  <div class="entity-add-actions-wrapper" style="display:inline-block; text-align:left;" *ngIf="this.totalActions> 0">
+  <div class="entity-add-actions-wrapper" *ngIf="this.totalActions> 0">
     <button
-      style="height:37px; margin-top:-1px;"
       mat-button color="primary"
       [matMenuTriggerFor]="menu"
       class="menu-toggle"
@@ -142,10 +150,6 @@
     </ng-template>
   </div>
   <!-- OLD TEMPLATE END -->
-  <!--</div>-->
-
-  <mat-spinner [diameter]='40' id="entity-spinner" *ngIf="(!entity.showDefaults && entity.showSpinner)" #entityspinner>
-  </mat-spinner>
 
   <ng-container *ngIf="conf && conf.custActions">
     <span *ngFor="let custBtn of conf.custActions">
@@ -163,7 +167,7 @@
     </span>
   </ng-container>
 
-  <div id='config' *ngIf="conf.globalConfig">
+  <div id="config" *ngIf="conf.globalConfig">
     <button
       mat-icon-button
       id="{{ conf.globalConfig.id }}"
@@ -175,6 +179,15 @@
       <ng-template #settingsIcon><mat-icon>settings</mat-icon></ng-template>
     </button>
   </div>
+
+  <mat-spinner
+    [diameter]="40"
+    id="entity-spinner"
+    *ngIf="!entity.showDefaults && entity.showSpinner"
+    #entityspinner
+    class="spinner"
+  >
+  </mat-spinner>
 
   <!-- END OF CONTROLS SECTION -->
 

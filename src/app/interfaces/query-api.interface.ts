@@ -36,9 +36,8 @@ export type QueryOptions<T> = {
 
   /**
    * Specify which field determines the sort order.
-   * TODO: Actually keyof T or `-${keyof T}` for reverse. Recheck after TS4.1
    */
-  order_by?: string[];
+  order_by?: (keyof T | `-${Extract<keyof T, string>}`)[];
 };
 
 export type QueryOperator =

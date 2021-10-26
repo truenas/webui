@@ -3,26 +3,27 @@ import {
 } from '@angular/core';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { ProductType } from 'app/enums/product-type.enum';
+import { Tunable } from 'app/interfaces/tunable.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { WebSocketService } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'system-tunables-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class TunableListComponent implements EntityTableConfig {
-  title = T('Tunables');
-  title_scale = T('Sysctl');
-  wsDelete: 'tunable.delete' = 'tunable.delete';
-  queryCall: 'tunable.query' = 'tunable.query';
+  title: string = T('Tunables');
+  title_scale: string = T('Sysctl');
+  wsDelete = 'tunable.delete' as const;
+  queryCall = 'tunable.query' as const;
 
   route_edit: string[] = ['system', 'tunable', 'edit'];
   protected route_success: string[] = ['system', 'tunable'];
   route_add: string[] = ['system', 'tunable', 'add'];
-  route_add_tooltip = T('Add Tunable');
+  route_add_tooltip: string = T('Add Tunable');
 
   protected route_edit_scale: string[] = ['system', 'sysctl', 'edit'];
   protected route_success_scale: string[] = ['system', 'advanced'];
@@ -33,7 +34,7 @@ export class TunableListComponent implements EntityTableConfig {
 
   protected entityList: EntityTableComponent;
 
-  wsMultiDelete: 'core.bulk' = 'core.bulk';
+  wsMultiDelete = 'core.bulk' as const;
   multiActions = [
     {
       id: 'mdelete',
@@ -41,7 +42,7 @@ export class TunableListComponent implements EntityTableConfig {
       icon: 'delete',
       enable: true,
       ttpos: 'above' as TooltipPosition,
-      onClick: (selected: any) => {
+      onClick: (selected: Tunable[]) => {
         this.entityList.doMultiDelete(selected);
       },
     },
@@ -60,7 +61,7 @@ export class TunableListComponent implements EntityTableConfig {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('Tunable'),
+      title: T('Tunable') as string,
       key_props: ['var'],
     },
     multiSelect: true,
@@ -85,12 +86,9 @@ export class TunableListComponent implements EntityTableConfig {
     }
   }
 
-  wsMultiDeleteParams(selected: any): any {
-    const params: any[] = [this.wsDelete];
-    const selectedId = [];
-    for (const i in selected) {
-      selectedId.push([selected[i].id]);
-    }
+  wsMultiDeleteParams(selected: Tunable[]): [string, number[][]?] {
+    const params: [string, number[][]?] = [this.wsDelete];
+    const selectedId = selected.map((tunable) => [tunable.id]);
     params.push(selectedId);
     return params;
   }

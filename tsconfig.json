@@ -15,12 +15,15 @@
     "lib": [
       "es2016",
       "dom",
+      "dom.Iterable",
       "es2017.object",
       "es2016.array.include"
     ]
   },
   "angularCompilerOptions": {
     "enableIvy": true,
-    "allowEmptyCodegenFiles": true
+    "allowEmptyCodegenFiles": true,
+    "strictInjectionParameters": true,
+    "fullTemplateTypeCheck": true
   }
 }

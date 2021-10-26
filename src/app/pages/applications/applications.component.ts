@@ -29,8 +29,8 @@ import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.compo
   encapsulation: ViewEncapsulation.None,
 })
 export class ApplicationsComponent implements OnInit, AfterViewInit {
-  @ViewChild(CatalogComponent, { static: false }) private catalogTab: CatalogComponent;
   @ViewChild(ChartReleasesComponent, { static: false }) private chartTab: ChartReleasesComponent;
+  @ViewChild(CatalogComponent, { static: false }) private catalogTab: CatalogComponent;
   @ViewChild(ManageCatalogsComponent, { static: false }) private manageCatalogTab: ManageCatalogsComponent;
   @ViewChild(DockerImagesComponent, { static: false }) private dockerImagesTab: DockerImagesComponent;
   selectedIndex = 0;
@@ -57,18 +57,12 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     this.setupToolbar();
 
     this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshTab(true);
+      this.refreshTab();
     });
   }
 
   ngAfterViewInit(): void {
-    // If the route parameter "tabIndex" is 1, switch tab to "Installed applications".
-    this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      if (params['tabIndex'] == 1) {
-        this.selectedIndex = 1;
-        this.refreshTab();
-      }
-    });
+    this.refreshTab();
   }
 
   setupToolbar(): void {
@@ -78,12 +72,8 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
         this.filterString = evt.data.filter;
       }
 
-      if (evt.data.event_control == 'catalogs') {
-        this.selectedCatalogOptions = evt.data.catalogs;
-      }
-
-      this.catalogTab.onToolbarAction(evt);
       this.chartTab.onToolbarAction(evt);
+      this.catalogTab.onToolbarAction(evt);
       this.manageCatalogTab.onToolbarAction(evt);
       this.dockerImagesTab.onToolbarAction(evt);
     });
@@ -117,6 +107,26 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     // TODO: Error prone if index is changed
     switch (this.selectedIndex) {
       case 0:
+        search.placeholder = helptext.installedPlaceholder;
+        const bulk = {
+          name: 'bulk',
+          label: helptext.bulkActions.title,
+          type: 'menu',
+          options: helptext.bulkActions.options,
+        };
+        if (this.isSelectedAll) {
+          bulk.options[0].label = helptext.bulkActions.unSelectAll;
+        } else {
+          bulk.options[0].label = helptext.bulkActions.selectAll;
+        }
+        bulk.options.forEach((option) => {
+          if (option.value != 'select_all') {
+            option.disabled = !this.isSelectedOneMore;
+          }
+        });
+        this.toolbarConfig.controls.push(bulk);
+        break;
+      case 1:
         search.placeholder = helptext.availablePlaceholder;
         this.toolbarConfig.controls.push({
           name: 'refresh_all',
@@ -136,26 +146,6 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
           value: this.selectedCatalogOptions,
           customTriggerValue: helptext.catalogs,
         });
-        break;
-      case 1:
-        search.placeholder = helptext.installedPlaceholder;
-        const bulk = {
-          name: 'bulk',
-          label: helptext.bulkActions.title,
-          type: 'menu',
-          options: helptext.bulkActions.options,
-        };
-        if (this.isSelectedAll) {
-          bulk.options[0].label = helptext.bulkActions.unSelectAll;
-        } else {
-          bulk.options[0].label = helptext.bulkActions.selectAll;
-        }
-        bulk.options.forEach((option) => {
-          if (option.value != 'select_all') {
-            option.disabled = !this.isSelectedOneMore;
-          }
-        });
-        this.toolbarConfig.controls.push(bulk);
         break;
       case 2:
         search.placeholder = helptext.catalogPlaceholder;
@@ -191,8 +181,8 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
       label: helptext.settings,
       type: 'menu',
       options: [
-        { label: helptext.choose, value: 'select_pool' },
-        { label: helptext.advanced, value: 'advanced_settings' },
+        { label: helptext.choose as string, value: 'select_pool' },
+        { label: helptext.advanced as string, value: 'advanced_settings' },
       ],
     };
 
@@ -240,17 +230,12 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  refreshTab(switchToAppTab = false): void {
+  refreshTab(): void {
     this.updateToolbar();
     if (this.selectedIndex == 0) {
-      if (switchToAppTab) {
-        this.selectedIndex = 1;
-        this.chartTab.refreshChartReleases();
-      } else {
-        this.catalogTab.loadCatalogs();
-      }
-    } else if (this.selectedIndex == 1) {
       this.chartTab.refreshChartReleases();
+    } else if (this.selectedIndex == 1) {
+      this.catalogTab.loadCatalogs();
     } else if (this.selectedIndex == 2) {
       this.manageCatalogTab.refresh();
     } else if (this.selectedIndex == 3) {

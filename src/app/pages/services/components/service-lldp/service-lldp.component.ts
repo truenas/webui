@@ -4,7 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/services/components/service-lldp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService, ServicesService } from 'app/services';
@@ -15,7 +15,7 @@ import { WebSocketService, ServicesService } from 'app/services';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ServiceLLDPComponent implements FormConfiguration {
-  queryCall: 'lldp.config' = 'lldp.config';
+  queryCall = 'lldp.config' as const;
   route_success: string[] = ['services'];
   title = helptext.formTitle;
 
@@ -63,9 +63,9 @@ export class ServiceLLDPComponent implements FormConfiguration {
     entityEdit.submitFunction = (body) => this.ws.call('lldp.update', [body]);
 
     this.services.getLLDPCountries().pipe(untilDestroyed(this)).subscribe((res) => {
-      const countries: FormComboboxConfig = this.fieldSets
+      const countries = this.fieldSets
         .find((set) => set.name === 'General Options')
-        .config.find((config) => config.name === 'country');
+        .config.find((config) => config.name === 'country') as FormComboboxConfig;
       for (const country in res) {
         countries.options.push({ label: `${country} (${res[country]})`, value: `${country}` });
       }
@@ -73,9 +73,8 @@ export class ServiceLLDPComponent implements FormConfiguration {
   }
 
   countryValidator(code: string): ValidatorFn {
-    const self = this;
-    return function validCode(control: FormControl) {
-      const config = self.fieldConfig.find((c) => c.name === code);
+    return (control: FormControl) => {
+      const config = this.fieldConfig.find((c) => c.name === code);
       if (control.value || control.value === '') {
         const errors = (!(control.value).match(/^[A-Z]{2}$/) && !(control.value === ''))
           ? { validCode: true }

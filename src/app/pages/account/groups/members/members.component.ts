@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { mergeMap } from 'rxjs/operators';
 import helptext from 'app/helptext/account/members';
+import { Group } from 'app/interfaces/group.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -38,7 +39,7 @@ export class MembersComponent implements OnInit {
   }
 
   getGroupDetails(): void {
-    let myFilter: QueryFilter<User> = ['id', '=', parseInt(this.groupId)];
+    let myFilter: QueryFilter<Group | User> = ['id', '=', parseInt(this.groupId)];
     const group$ = this.ws.call('group.query', [[myFilter]]);
 
     group$.pipe(mergeMap((group) => {
@@ -73,7 +74,7 @@ export class MembersComponent implements OnInit {
     this.loading.open(this.translate.instant(helptext.update_users_message));
 
     const userIds = this.selectedMembers.map((user) => user.id);
-    this.ws.call('group.update', [this.groupId, { users: userIds }]).pipe(untilDestroyed(this)).subscribe(() => {
+    this.ws.call('group.update', [Number(this.groupId), { users: userIds }]).pipe(untilDestroyed(this)).subscribe(() => {
       this.router.navigate(['/', 'credentials', 'groups']);
       this.loading.close();
     });

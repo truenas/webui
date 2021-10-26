@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -12,9 +11,9 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig, FormComboboxConfig, FormListConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import {
   DialogService, NetworkService, WebSocketService, UserService, ModalService,
@@ -27,9 +26,9 @@ import {
   providers: [NetworkService],
 })
 export class NFSFormComponent implements FormConfiguration {
-  queryCall: 'sharing.nfs.query' = 'sharing.nfs.query';
-  editCall: 'sharing.nfs.update' = 'sharing.nfs.update';
-  addCall: 'sharing.nfs.create' = 'sharing.nfs.create';
+  queryCall = 'sharing.nfs.query' as const;
+  editCall = 'sharing.nfs.update' as const;
+  addCall = 'sharing.nfs.create' as const;
   pk: number;
   queryKey = 'id';
   isEntity = true;
@@ -38,7 +37,7 @@ export class NFSFormComponent implements FormConfiguration {
   save_button_enabled = true;
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['alldirs', 'quiet'];
-  title = helptext_sharing_nfs.title;
+  title: string = helptext_sharing_nfs.title;
   isOneColumnForm = true;
 
   fieldSets = new FieldSets([
@@ -279,19 +278,7 @@ export class NFSFormComponent implements FormConfiguration {
     private dialog: DialogService,
     public networkService: NetworkService,
     private translate: TranslateService,
-  ) {
-    const paths: FormListConfig = this.fieldSets.config('paths');
-    const pathsTemplate = paths.templateListField;
-    if (this.productType.includes(ProductType.Scale)) {
-      pathsTemplate.push({
-        type: 'input',
-        name: 'alias',
-        placeholder: helptext_sharing_nfs.placeholder_alias,
-        tooltip: helptext_sharing_nfs.tooltip_alias,
-        validation: [Validators.pattern(/^\/.*/)],
-      });
-    }
-  }
+  ) {}
 
   preInit(): void {
     this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((id: number) => {
@@ -321,12 +308,12 @@ export class NFSFormComponent implements FormConfiguration {
             value: '',
           },
         ];
-        for (let i = 0; i < items.length; i++) {
-          users.push({ label: items[i].username, value: items[i].username });
-        }
-        this.mapall_user = this.fieldSets.config('mapall_user');
+        items.forEach((user) => {
+          users.push({ label: user.username, value: user.username });
+        });
+        this.mapall_user = this.fieldSets.config('mapall_user') as FormComboboxConfig;
         this.mapall_user.options = users;
-        this.maproot_user = this.fieldSets.config('maproot_user');
+        this.maproot_user = this.fieldSets.config('maproot_user') as FormComboboxConfig;
         this.maproot_user.options = users;
       });
 
@@ -340,12 +327,12 @@ export class NFSFormComponent implements FormConfiguration {
             value: '',
           },
         ];
-        for (let i = 0; i < groups.length; i++) {
-          groupOptions.push({ label: groups[i].group, value: groups[i].group });
-        }
-        this.mapall_group = this.fieldSets.config('mapall_group');
+        groups.forEach((group) => {
+          groupOptions.push({ label: group.group, value: group.group });
+        });
+        this.mapall_group = this.fieldSets.config('mapall_group') as FormComboboxConfig;
         this.mapall_group.options = groupOptions;
-        this.maproot_group = this.fieldSets.config('maproot_group');
+        this.maproot_group = this.fieldSets.config('maproot_group') as FormComboboxConfig;
         this.maproot_group.options = groupOptions;
       });
 
@@ -354,27 +341,13 @@ export class NFSFormComponent implements FormConfiguration {
         this.entityForm.setDisabled(name, true, true);
       });
     }
-
-    entityForm.formGroup.controls['paths'].valueChanges
-      .pipe(untilDestroyed(this))
-      .subscribe((res: { alias: string; path: string }[]) => {
-        const aliases = res.filter((p) => !!p.alias);
-
-        if (aliases.length > 0 && aliases.length !== res.length) {
-          this.fieldSets.config('paths').hasErrors = true;
-          this.fieldSets.config('paths').errors = helptext_sharing_nfs.error_alias;
-        } else {
-          this.fieldSets.config('paths').hasErrors = false;
-          this.fieldSets.config('paths').errors = '';
-        }
-      });
   }
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
     }
-    if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -386,15 +359,8 @@ export class NFSFormComponent implements FormConfiguration {
       paths.push({ path: data['paths'][i], alias: data['aliases'][i] ? data['aliases'][i] : undefined });
     }
 
-    const networks = [];
-    for (let i = 0; i < data['networks'].length; i++) {
-      networks.push({ network: data['networks'][i] });
-    }
-
-    const hosts = [];
-    for (let i = 0; i < data['hosts'].length; i++) {
-      hosts.push({ host: data['hosts'][i] });
-    }
+    const networks = data.networks.map((network) => ({ network }));
+    const hosts = data.hosts.map((host) => ({ host }));
 
     return {
       ...data,
@@ -415,7 +381,7 @@ export class NFSFormComponent implements FormConfiguration {
   }
 
   afterSave(): void {
-    this.modalService.close('slide-in-form');
+    this.modalService.closeSlideIn();
     this.modalService.refreshTable();
     this.ws
       .call('service.query', [[]])
@@ -482,12 +448,8 @@ export class NFSFormComponent implements FormConfiguration {
       .groupQueryDSCache(value)
       .pipe(untilDestroyed(parent))
       .subscribe((groups) => {
-        const groupOptions: Option[] = [];
-        for (let i = 0; i < groups.length; i++) {
-          groupOptions.push({ label: groups[i].group, value: groups[i].group });
-        }
-        const config: FormComboboxConfig = parent.fieldSets.config(field);
-        config.searchOptions = groupOptions;
+        const config = parent.fieldSets.config(field) as FormComboboxConfig;
+        config.searchOptions = groups.map((group) => ({ label: group.group, value: group.group }));
       });
   }
 
@@ -503,13 +465,9 @@ export class NFSFormComponent implements FormConfiguration {
     parent.userService
       .userQueryDSCache(value)
       .pipe(untilDestroyed(parent))
-      .subscribe((items) => {
-        const users: Option[] = [];
-        for (let i = 0; i < items.length; i++) {
-          users.push({ label: items[i].username, value: items[i].username });
-        }
-        const config: FormComboboxConfig = parent.fieldSets.config(field);
-        config.searchOptions = users;
+      .subscribe((users) => {
+        const config = parent.fieldSets.config(field) as FormComboboxConfig;
+        config.searchOptions = users.map((user) => ({ label: user.username, value: user.username }));
       });
   }
 
@@ -518,10 +476,7 @@ export class NFSFormComponent implements FormConfiguration {
       .userQueryDSCache(searchText, length)
       .pipe(untilDestroyed(parent))
       .subscribe((items) => {
-        const users: Option[] = [];
-        for (let i = 0; i < items.length; i++) {
-          users.push({ label: items[i].username, value: items[i].username });
-        }
+        const users = items.map((user) => ({ label: user.username, value: user.username }));
 
         const config = fieldConfig as FormComboboxConfig;
 
@@ -538,10 +493,7 @@ export class NFSFormComponent implements FormConfiguration {
       .groupQueryDSCache(searchText, false, length)
       .pipe(untilDestroyed(parent))
       .subscribe((items: Group[]) => {
-        const groups: Option[] = [];
-        for (let i = 0; i < items.length; i++) {
-          groups.push({ label: items[i].group, value: items[i].group });
-        }
+        const groups = items.map((group) => ({ label: group.group, value: group.group }));
 
         const config = fieldConfig as FormComboboxConfig;
 

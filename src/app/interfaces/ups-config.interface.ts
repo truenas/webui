@@ -4,7 +4,6 @@ export interface UpsConfig {
   complete_identifier: string;
   description: string;
   driver: string;
-  emailnotify: boolean;
   extrausers: string;
   hostsync: number;
   id: number;
@@ -23,6 +22,6 @@ export interface UpsConfig {
   shutdown: UpsShutdownMode;
   shutdowncmd: unknown;
   shutdowntimer: number;
-  subject: string;
-  toemail: unknown[];
 }
+
+export type UpsConfigUpdate = Omit<UpsConfig, 'id'>;

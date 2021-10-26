@@ -6,7 +6,9 @@ import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FieldConfig,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationGroup } from 'app/pages/common/entity/entity-form/models/field-relation.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
@@ -24,12 +26,12 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
   providers: [FieldRelationService, NetworkService],
 })
 export class InitiatorFormComponent implements OnInit {
-  protected addCall: 'iscsi.initiator.create' = 'iscsi.initiator.create';
-  protected queryCall: 'iscsi.initiator.query' = 'iscsi.initiator.query';
-  protected editCall: 'iscsi.initiator.update' = 'iscsi.initiator.update';
+  protected addCall = 'iscsi.initiator.create' as const;
+  protected queryCall = 'iscsi.initiator.query' as const;
+  protected editCall = 'iscsi.initiator.update' as const;
   protected customFilter: any[] = [[['id', '=']]];
   route_success: string[] = ['sharing', 'iscsi', 'initiator'];
-  protected pk: any;
+  protected pk: number;
 
   fieldConfig: FieldConfig[] = [
     {
@@ -44,8 +46,8 @@ export class InitiatorFormComponent implements OnInit {
       placeholder: helptext_sharing_iscsi.initiator_form_placeholder_initiators,
       tooltip: helptext_sharing_iscsi.initiator_form_tooltip_initiators,
       customEventMethod: (parent) => {
-        for (let i = 0; i < parent.source.selectedOptions.selected.length; i++) {
-          parent.listControl.value.add(parent.source.selectedOptions.selected[i].value.initiator);
+        for (const selected of parent.source.selectedOptions.selected) {
+          parent.listControl.value.add(selected.value.initiator);
         }
         parent.source.deselectAll();
       },
@@ -64,8 +66,8 @@ export class InitiatorFormComponent implements OnInit {
       tooltip: helptext_sharing_iscsi.initiator_form_tooltip_auth_network,
       validation: [ipv4or6OptionalCidrValidator()],
       customEventMethod: (parent) => {
-        for (let i = 0; i < parent.source.selectedOptions.selected.length; i++) {
-          parent.listControl.value.add(parent.source.selectedOptions.selected[i].value.initiator_addr);
+        for (const selected of parent.source.selectedOptions.selected.length) {
+          parent.listControl.value.add(selected.value.initiator_addr);
         }
         parent.source.deselectAll();
       },
@@ -124,12 +126,12 @@ export class InitiatorFormComponent implements OnInit {
     });
 
     this.formGroup = this.entityFormService.createFormGroup(this.fieldConfig);
-    for (const i in this.fieldConfig) {
-      const config = this.fieldConfig[i];
+
+    this.fieldConfig.forEach((config) => {
       if (config.relation.length > 0) {
         this.setRelation(config);
       }
-    }
+    });
 
     this.formGroup.controls['initiators'].statusChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       this.connectedInitiatorsDisabled = res === 'DISABLED';
@@ -194,6 +196,8 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   setRelation(config: FieldConfig): void {
+    if (!config) return;
+
     const activations = this.fieldRelationService.findActivationRelation(config.relation);
     if (activations) {
       const tobeDisabled = this.fieldRelationService.isFormControlToBeDisabled(

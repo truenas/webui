@@ -3,6 +3,7 @@ import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { EntityErrorHandler } from 'app/pages/common/entity/entity-form/interfaces/entity-error-handler.interface';
 import {
   FieldConfig,
   FormCheckboxConfig,
@@ -41,7 +42,7 @@ export class EntityUtils {
     }
   }
 
-  handleObjError(entity: any, res: any): void {
+  handleObjError(entity: EntityErrorHandler, res: any): void {
     let scroll = false;
     entity.error = '';
     for (const i in res.error) {
@@ -80,7 +81,7 @@ export class EntityUtils {
     dialogService?: DialogService,
     targetFieldConfig?: FieldConfig[],
   ): void {
-    let dialog;
+    let dialog: DialogService;
     if (dialogService) {
       dialog = dialogService;
     } else if (entity) {
@@ -95,9 +96,9 @@ export class EntityUtils {
       if ((res.extra as any).excerpt) {
         this.errorReport(res, dialog);
       }
-      for (let i = 0; i < res.extra.length; i++) {
-        const field = res.extra[i][0].split('.')[1];
-        const error = res.extra[i][1];
+      res.extra.forEach((extraItem) => {
+        const field = extraItem[0].split('.')[1];
+        const error = extraItem[1];
 
         let fc = _.find(entity.fieldConfig, { name: field })
           || (entity.getErrorField ? entity.getErrorField(field) : undefined);
@@ -137,7 +138,7 @@ export class EntityUtils {
         } else {
           this.errorReport(res, dialog);
         }
-      }
+      });
     } else {
       this.errorReport(res, dialog);
     }
@@ -203,7 +204,7 @@ export class EntityUtils {
     return cronArray.join(' ');
   }
 
-  filterArrayFunction(item: any): boolean {
+  filterArrayFunction(item: unknown): boolean {
     /**
      * This function is for validation.
      * If the value of a control is invaild, we ignore it during sending payload
@@ -244,8 +245,8 @@ export class EntityUtils {
     return value;
   }
 
-  changeNullString2Null(data: any): any {
-    let result: any;
+  changeNullString2Null(data: unknown): unknown {
+    let result: unknown;
     if (data === undefined || data === null || data === '') {
       result = data;
     } else if (Array.isArray(data)) {
@@ -254,8 +255,8 @@ export class EntityUtils {
     } else if (typeof data === 'object') {
       result = {};
       Object.keys(data).forEach((key) => {
-        const value = this.changeNullString2Null(data[key]);
-        result[key] = value;
+        const value = this.changeNullString2Null((data as Record<string, unknown>)[key]);
+        (result as Record<string, unknown>)[key] = value;
       });
     } else if (data === NULL_VALUE) {
       result = null;
@@ -318,6 +319,8 @@ export class EntityUtils {
       }));
     }
 
+    // TODO: Check if condition can be simplified to !schemaConfig.schema.editable
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
     if (schemaConfig.schema.editable === false) {
       fieldConfig['readonly'] = true;
     }
@@ -360,13 +363,15 @@ export class EntityUtils {
       const checkboxConfig = fieldConfig as FormCheckboxConfig;
       checkboxConfig['type'] = 'checkbox';
     } else if (schemaConfig.schema.type == 'ipaddr') {
-      const ipConfig = fieldConfig as FormIpWithNetmaskConfig;
-      ipConfig['type'] = 'ipwithnetmask';
       if (!schemaConfig.schema.cidr) {
-        ipConfig['type'] = 'input';
+        const ipInputConfig = fieldConfig as FormInputConfig;
+        ipInputConfig['type'] = 'input';
+      } else {
+        const ipConfig = fieldConfig as FormIpWithNetmaskConfig;
+        ipConfig['type'] = 'ipwithnetmask';
       }
     } else if (schemaConfig.schema.type == 'hostpath') {
-      const conf: FormExplorerConfig = { ...fieldConfig };
+      const conf = { ...fieldConfig } as FormExplorerConfig;
       conf['type'] = 'explorer';
       conf['initial'] = '/mnt';
       conf['explorerType'] = 'file';
@@ -410,7 +415,7 @@ export class EntityUtils {
 
     if (fieldConfig) {
       if (fieldConfig['type']) {
-        if (relations) {
+        if (fieldConfig && relations) {
           fieldConfig['relation'] = this.createRelations(relations);
         }
 
@@ -423,6 +428,7 @@ export class EntityUtils {
             if (schemaConfig.schema.show_subquestions_if !== undefined) {
               subResults.forEach((subFieldConfig) => {
                 subFieldConfig['isHidden'] = true;
+
                 subFieldConfig['relation'] = [{
                   action: RelationAction.Show,
                   when: [{
@@ -444,75 +450,12 @@ export class EntityUtils {
     return results;
   }
 
-  remapAppSubmitData(data: any): any {
-    let result: any;
-    if (data === undefined || data === null || data === '') {
-      result = data;
-    } else if (Array.isArray(data)) {
-      result = data.map((item) => {
-        if (Object.keys(item).length > 1) {
-          return this.remapAppSubmitData(item);
-        }
-        return this.remapAppSubmitData(item[Object.keys(item)[0]]);
-      });
-    } else if (typeof data === 'object') {
-      result = {};
-      Object.keys(data).forEach((key) => {
-        result[key] = this.remapAppSubmitData(data[key]);
-      });
-    } else {
-      result = data;
-    }
-
-    return result;
-  }
-
-  remapOneConfigData(data: any, fieldConfig: FieldConfig): any {
-    let result;
-    if (!fieldConfig || data === undefined || data === null || data === '') {
-      result = data;
-    } else if (Array.isArray(data)) {
-      result = [];
-      data.forEach((item) => {
-        const listConfig = fieldConfig as FormListConfig;
-        let value = item;
-        const subFieldConfig = listConfig.templateListField[0];
-        if (subFieldConfig.type === 'dict') {
-          value = this.remapOneConfigData(item, subFieldConfig);
-        }
-        result.push({
-          [subFieldConfig.name]: value,
-        });
-      });
-    } else if (typeof data === 'object') {
-      result = {} as any;
-      for (const key in data) {
-        const dictConfig = fieldConfig as FormDictConfig;
-        const subValue = data[key];
-        const subFieldConfig = dictConfig.subFields.find((fg) => fg.name === key);
-        const newValue = this.remapOneConfigData(subValue, subFieldConfig);
-        result[key] = newValue;
-      }
-    } else {
-      result = data;
-    }
-
-    return result;
-  }
-
-  remapAppConfigData(data: any, fieldConfigs: FieldConfig[]): any {
-    const result = {} as any;
-    for (const key in data) {
-      const value = data[key];
-      const fieldConfig = fieldConfigs.find((fg) => fg.name === key);
-      const newValue = this.remapOneConfigData(value, fieldConfig);
-      result[key] = newValue;
-    }
-    return result;
-  }
-
   snakeToPascal(str: string): string {
     return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join('');
+  }
+
+  snakeToHuman(str: string): string {
+    return str.split('_').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
   }
 
   getCleanMethod(str: string): string {

@@ -3,6 +3,7 @@ export type CoreBulkQuery = [
   arguments: any[][],
 ];
 
-export interface CoreBulkResponse {
+export interface CoreBulkResponse<T = unknown> {
   error: string;
+  result: T;
 }

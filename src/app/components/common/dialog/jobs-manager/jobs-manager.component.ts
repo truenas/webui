@@ -4,13 +4,18 @@ import {
 import {
   Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { filter } from 'rxjs/operators';
 import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
+import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { T } from 'app/translate-marker';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { DialogService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -53,6 +58,9 @@ export class JobsManagerComponent implements OnInit {
     private store: JobsManagerStore,
     private cdr: ChangeDetectorRef,
     private dialogRef: MatDialogRef<JobsManagerComponent>,
+    private translate: TranslateService,
+    private dialog: DialogService,
+    private matDialog: MatDialog,
   ) {
     this.isLoading = true;
   }
@@ -66,11 +74,37 @@ export class JobsManagerComponent implements OnInit {
   }
 
   onAbort(job: Job): void {
-    this.store.remove(job);
+    this.dialog
+      .confirm({
+        title: this.translate.instant('Abort'),
+        message: this.translate.instant('Are you sure you want to abort the <b>{task}</b> task?', { task: job.method }),
+        hideCheckBox: true,
+        buttonMsg: this.translate.instant('Abort'),
+        cancelMsg: this.translate.instant('Cancel'),
+        disableClose: true,
+      })
+      .pipe(filter(Boolean), untilDestroyed(this))
+      .subscribe(() => {
+        this.store.remove(job);
+      });
   }
 
-  onChildrenDialogOpened(): void {
+  openEntityJobDialog(job: Job): void {
     this.dialogRef.close();
+    let title = job.description ? job.description : job.method;
+    if (job.state === JobState.Running) {
+      title = this.translate.instant(T('Updating'));
+    }
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
+      data: { title },
+      hasBackdrop: true,
+      width: '400px',
+    });
+
+    dialogRef.componentInstance.jobId = job.id;
+    dialogRef.componentInstance.autoCloseOnSuccess = true;
+    dialogRef.componentInstance.openJobsManagerOnClose = false;
+    dialogRef.componentInstance.wsshow();
   }
 
   goToJobs(): void {

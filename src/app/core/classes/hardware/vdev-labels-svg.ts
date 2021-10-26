@@ -3,7 +3,7 @@ import { Selection } from 'd3';
 import * as d3 from 'd3';
 import { Application, Container } from 'pixi.js';
 import { Subject } from 'rxjs';
-import { EnclosureDisk } from 'app/core/classes/system-profiler';
+import { EnclosureDisk, VDevMetadata } from 'app/core/classes/system-profiler';
 import { CoreEvent } from 'app/interfaces/events';
 import { Theme } from 'app/services/theme/theme.service';
 import { ChassisView } from './chassis-view';
@@ -145,7 +145,7 @@ export class VDevLabelsSVG {
       .attr('style', style);
   }
 
-  createVdevLabels(vdev: any): void {
+  createVdevLabels(vdev: VDevMetadata): void {
     const disks = vdev.disks
       ? Object.keys(vdev.disks)
       : [this.selectedDisk.devname]; // NOTE: vdev.slots only has values for current enclosure
@@ -155,7 +155,7 @@ export class VDevLabelsSVG {
 
       if (slot && slot >= this.chassis.slotRange.start && slot <= this.chassis.slotRange.end) {
         // Create tile if the disk is in the current enclosure
-        const dt = this.chassis.driveTrayObjects.filter((dto) => parseInt(dto.id) == slot)[0];
+        const dt = this.chassis.driveTrayObjects.find((dto) => parseInt(dto.id) == slot);
         const src = dt.container;
         const tray = src.getGlobalPosition();
 

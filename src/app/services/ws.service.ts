@@ -3,7 +3,9 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { UUID } from 'angular2-uuid';
 import { LocalStorage } from 'ngx-webstorage';
-import { Observable, Observer, Subject } from 'rxjs';
+import {
+  Observable, Observer, Subject, Subscriber,
+} from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -20,8 +22,18 @@ export class WebSocketService {
   private authStatus$: Subject<boolean>;
   onCloseSubject$: Subject<boolean>;
   onOpenSubject$: Subject<boolean>;
-  pendingCalls: Map<string, any>;
-  pendingSubs: any = {};
+  pendingCalls: Map<string, {
+    method: ApiMethod;
+    args: unknown;
+    observer: Subscriber<unknown>;
+  }>;
+  pendingSubs: {
+    [name: string]: {
+      observers: {
+        [id: string]: Subscriber<unknown>;
+      };
+    };
+  } = {};
   pendingMessages: unknown[] = [];
   socket: WebSocket;
   connected = false;
@@ -34,7 +46,7 @@ export class WebSocketService {
   remote: string;
   private consoleSub$: Observable<string>;
 
-  subscriptions: Map<string, any[]> = new Map<string, any[]>();
+  subscriptions = new Map<string, Observer<unknown>[]>();
 
   constructor(private _router: Router) {
     this.authStatus$ = new Subject<boolean>();
@@ -109,7 +121,7 @@ export class WebSocketService {
     let data: any;
     try {
       data = JSON.parse(msg.data);
-    } catch (e) {
+    } catch (e: unknown) {
       console.warn(`Malformed response: "${msg.data}"`);
       return;
     }
@@ -172,7 +184,7 @@ export class WebSocketService {
   }
 
   subscribe<K extends keyof ApiEventDirectory>(name: K): Observable<ApiEvent<ApiEventDirectory[K]['response']>> {
-    const source = Observable.create((observer: any) => {
+    const source = Observable.create((observer: Subscriber<ApiEventDirectory[K]['response']>) => {
       if (this.subscriptions.has(name)) {
         this.subscriptions.get(name).push(observer);
       } else {
@@ -200,7 +212,7 @@ export class WebSocketService {
     };
 
     // Create the observable
-    return new Observable((observer: any) => {
+    return new Observable((observer: Subscriber<ApiDirectory[K]['response']>) => {
       this.pendingCalls.set(uuid, {
         method,
         args: params,
@@ -222,7 +234,7 @@ export class WebSocketService {
     const uuid = UUID.UUID();
     const payload = { id: uuid, name, msg: 'sub' };
 
-    const obs = Observable.create((observer: any) => {
+    const obs = Observable.create((observer: Subscriber<T>) => {
       this.pendingSubs[nom].observers[uuid] = observer;
       this.send(payload);
 
@@ -241,7 +253,7 @@ export class WebSocketService {
   }
 
   job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {
-    const source = Observable.create((observer: any) => {
+    const source = Observable.create((observer: Subscriber<Job<ApiDirectory[K]['response']>>) => {
       this.call(method, params).pipe(untilDestroyed(this)).subscribe((job_id) => {
         this.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
           if (event.id == job_id) {
@@ -259,7 +271,7 @@ export class WebSocketService {
     const params: LoginParams = otp_token
       ? [username, password, otp_token]
       : [username, password];
-    return Observable.create((observer: Observer<boolean>) => {
+    return Observable.create((observer: Subscriber<boolean>) => {
       this.call('auth.login', params).pipe(untilDestroyed(this)).subscribe((wasLoggedIn) => {
         this.loginCallback(wasLoggedIn, observer);
       });
@@ -267,7 +279,7 @@ export class WebSocketService {
   }
 
   loginCallback(result: boolean, observer: Observer<boolean>): void {
-    if (result === true) {
+    if (result) {
       if (!this.loggedIn) {
         this.authStatus$.next(this.loggedIn);
       }
@@ -289,7 +301,7 @@ export class WebSocketService {
   }
 
   loginToken(token: string): Observable<boolean> {
-    return Observable.create((observer: Observer<boolean>) => {
+    return Observable.create((observer: Subscriber<boolean>) => {
       if (token) {
         this.call('auth.token', [token]).pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result, observer);

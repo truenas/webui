@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -7,7 +8,6 @@ import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-t
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, ModalService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from 'app/translate-marker';
 import { NFSFormComponent } from '../nfs-form/nfs-form.component';
 
 @UntilDestroy()
@@ -17,9 +17,9 @@ import { NFSFormComponent } from '../nfs-form/nfs-form.component';
 })
 export class NFSListComponent implements EntityTableConfig<NfsShare> {
   title = T('NFS');
-  queryCall: 'sharing.nfs.query' = 'sharing.nfs.query';
-  updateCall: 'sharing.nfs.update' = 'sharing.nfs.update';
-  wsDelete: 'sharing.nfs.delete' = 'sharing.nfs.delete';
+  queryCall = 'sharing.nfs.query' as const;
+  updateCall = 'sharing.nfs.update' as const;
+  wsDelete = 'sharing.nfs.delete' as const;
   route_add: string[] = ['sharing', 'nfs', 'add'];
   route_add_tooltip = 'Add Unix (NFS) Share';
   route_edit: string[] = ['sharing', 'nfs', 'edit'];

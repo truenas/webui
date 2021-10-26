@@ -9,9 +9,10 @@ import { difference, ListSelection, ListSelectionImpl } from './models';
   styleUrls: ['./dual-list.component.scss'],
   templateUrl: 'dual-list.component.html',
 })
-export class DualListboxComponent<T extends { id: string }> implements OnInit {
+export class DualListboxComponent<T extends { id: string | number }> implements OnInit {
   @Input() key: keyof T = 'id';
   @Input() items: T[];
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('selectedItems') _selectedItems: T[];
   @Output() selectedItemsChange = new EventEmitter<T[]>();
 
@@ -60,8 +61,10 @@ export class DualListboxComponent<T extends { id: string }> implements OnInit {
       if (document.querySelector('#counter')) {
         document.querySelector('#counter').remove();
       }
+    } else if (event.previousContainer.id === 'cdk-drop-list-0') {
+      this.select();
     } else {
-      event.previousContainer.id === 'cdk-drop-list-0' ? this.select() : this.return();
+      this.return();
     }
     this.dragging = false;
   }

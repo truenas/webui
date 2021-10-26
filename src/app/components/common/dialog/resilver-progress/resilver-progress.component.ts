@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
+import { PoolScanState } from 'app/enums/pool-scan-state.enum';
+import { ResilverData } from 'app/interfaces/resilver-job.interface';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -14,14 +17,15 @@ export class ResilverProgressDialogComponent implements OnInit {
   tooltip: string;
   hideCancel = false;
   final = false;
-  parent: any;
   progressTotalPercent = 0;
-  state: any;
-  resilveringDetails: any;
+  state: PoolScanState;
+  resilveringDetails: ResilverData;
   title = T('Resilvering Status');
   description = T('Resilvering pool: ');
   statusLabel = T('Status: ');
   diskName: string;
+
+  readonly PoolScanState = PoolScanState;
 
   constructor(
     protected translate: TranslateService,
@@ -30,7 +34,7 @@ export class ResilverProgressDialogComponent implements OnInit {
 
   ngOnInit(): void {
     this.ws.subscribe('zfs.pool.scan').pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res && res.fields.scan.function.indexOf('RESILVER') > -1) {
+      if (res && res.fields.scan.function.includes(PoolScanFunction.Resilver)) {
         this.resilveringDetails = res.fields;
         this.diskName = this.resilveringDetails.name;
         this.progressTotalPercent = this.resilveringDetails.scan.percentage;

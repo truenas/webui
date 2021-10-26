@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -8,7 +10,6 @@ import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/ent
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -20,11 +21,11 @@ import { T } from 'app/translate-marker';
 export class ExtentListComponent implements EntityTableConfig {
   tableTitle = 'Extents';
   protected entityTable: EntityTableComponent;
-  queryCall: 'iscsi.extent.query' = 'iscsi.extent.query';
+  queryCall = 'iscsi.extent.query' as const;
   route_add: string[] = ['sharing', 'iscsi', 'extent', 'add'];
   route_add_tooltip = 'Add Extent';
   route_edit: string[] = ['sharing', 'iscsi', 'extent', 'edit'];
-  wsDelete: 'iscsi.extent.delete' = 'iscsi.extent.delete';
+  wsDelete = 'iscsi.extent.delete' as const;
 
   columns = [
     {
@@ -76,9 +77,8 @@ export class ExtentListComponent implements EntityTableConfig {
 
   doDelete(row: IscsiExtent): void {
     const id = row.id;
-    const self = this;
     const entityTable = this.entityTable;
-    const isFile = row.type === 'FILE';
+    const isFile = row.type === IscsiExtentType.File;
     const deleteMsg = entityTable.getDeleteMessage(row);
     const conf: DialogFormConfiguration = {
       title: T('Delete iSCSI extent ') + row.name + '?',
@@ -103,11 +103,11 @@ export class ExtentListComponent implements EntityTableConfig {
         },
       ],
       saveButtonText: T('Delete'),
-      customSubmit(entityDialog: EntityDialogComponent) {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         const value = entityDialog.formValue;
         entityTable.loader.open();
         entityTable.loaderOpen = true;
-        entityTable.ws.call(self.wsDelete, [id, value.remove, value.force]).pipe(untilDestroyed(this)).subscribe(
+        entityTable.ws.call(this.wsDelete, [id, value.remove, value.force]).pipe(untilDestroyed(this)).subscribe(
           () => {
             entityDialog.dialogRef.close(true);
             entityTable.getData();

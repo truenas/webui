@@ -5,7 +5,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import {
   chartsTrain, ixChartApp, officialCatalog, appImagePlaceholder,
 } from 'app/constants/catalog.constants';
@@ -19,6 +18,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { KubernetesConfig } from 'app/interfaces/kubernetes-config.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { KubernetesSettingsComponent } from 'app/pages/applications/kubernetes-settings/kubernetes-settings.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
@@ -26,11 +26,11 @@ import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-jo
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService, WebSocketService } from 'app/services/index';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
-import { CatalogSummaryDialog } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
+import { CatalogSummaryDialogComponent } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
 import { ChartWizardComponent } from '../forms/chart-wizard.component';
-import { KubernetesSettingsComponent } from '../forms/kubernetes-settings.component';
 
 interface CatalogSyncJob {
   id: number;
@@ -66,6 +66,8 @@ export class CatalogComponent implements OnInit {
     title: helptext.catalogMessage.loading,
   };
 
+  readonly officialCatalog = officialCatalog;
+
   choosePool: DialogFormConfiguration = {
     title: helptext.choosePool.title,
     fieldConfig: [
@@ -84,7 +86,7 @@ export class CatalogComponent implements OnInit {
     ],
     method_ws: 'kubernetes.update',
     saveButtonText: helptext.choosePool.action,
-    customSubmit: this.doPoolSelect,
+    customSubmit: (entityForm) => this.doPoolSelect(entityForm),
     parent: this,
   };
 
@@ -98,7 +100,7 @@ export class CatalogComponent implements OnInit {
     private core: CoreService,
     private modalService: ModalService,
     private appService: ApplicationsService,
-    private store: JobsManagerStore,
+    private ixModalService: IxModalService,
   ) {
     this.utils = new CommonUtils();
   }
@@ -130,8 +132,7 @@ export class CatalogComponent implements OnInit {
 
     this.appService.getAllCatalogItems().pipe(untilDestroyed(this)).subscribe((catalogs) => {
       this.noAvailableCatalog = true;
-      for (let i = 0; i < catalogs.length; i++) {
-        const catalog = catalogs[i];
+      catalogs.forEach((catalog) => {
         if (!catalog.cached) {
           if (catalog.caching_job) {
             this.catalogSyncJobs.push({
@@ -140,7 +141,7 @@ export class CatalogComponent implements OnInit {
               progress: catalog.caching_job.progress.percent,
             });
           }
-          continue;
+          return;
         }
 
         if (!catalog.error) {
@@ -160,7 +161,7 @@ export class CatalogComponent implements OnInit {
             }
           });
         }
-      }
+      });
 
       this.refreshToolbarMenus();
       this.filterApps();
@@ -201,9 +202,10 @@ export class CatalogComponent implements OnInit {
     if (evt.data.event_control == 'settings' && evt.data.settings) {
       switch (evt.data.settings.value) {
         case 'select_pool':
-          return this.selectPool();
+          this.selectPool();
+          return;
         case 'advanced_settings':
-          this.modalService.openInSlideIn(KubernetesSettingsComponent);
+          this.ixModalService.open(KubernetesSettingsComponent, this.translate.instant('Kubernetes Settings'));
           break;
         case 'unset_pool':
           this.doUnsetPool();
@@ -235,6 +237,7 @@ export class CatalogComponent implements OnInit {
     this.appService.getKubernetesConfig().pipe(untilDestroyed(this)).subscribe((config) => {
       if (!config.pool) {
         this.selectPool();
+        this.updateTab.emit({ name: ApplicationUserEventName.SwitchTab, value: 1 });
       } else {
         this.selectedPool = config.pool;
       }
@@ -299,24 +302,26 @@ export class CatalogComponent implements OnInit {
         this.dialogService.closeAllDialogs();
         this.selectedPool = null;
         this.refreshToolbarMenus();
-        this.translate.get(helptext.choosePool.unsetPool.label).pipe(untilDestroyed(this)).subscribe((msg) => {
-          this.dialogService.info(helptext.choosePool.success, msg,
-            '500px', 'info', true);
-        });
+        this.dialogService.info(
+          helptext.choosePool.success,
+          this.translate.instant(helptext.choosePool.unsetPool.label),
+          '500px',
+          'info',
+          true,
+        );
       });
 
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-        new EntityUtils().handleWSError(self, err, this.dialogService);
+        new EntityUtils().handleWSError(this, err, this.dialogService);
       });
     });
   }
 
   doPoolSelect(entityDialog: EntityDialogComponent<this>): void {
-    const self = entityDialog.parent;
     const pool = entityDialog.formGroup.controls['pools'].value;
     const migrateApplications = entityDialog.formGroup.controls['migrateApplications'].value;
-    self.dialogService.closeAllDialogs();
-    const dialogRef = self.mdDialog.open(EntityJobComponent, {
+    this.dialogService.closeAllDialogs();
+    const dialogRef = this.mdDialog.open(EntityJobComponent, {
       data: {
         title: helptext.choosePool.jobTitle,
       },
@@ -326,14 +331,17 @@ export class CatalogComponent implements OnInit {
       migrate_applications: migrateApplications,
     }]);
     dialogRef.componentInstance.submit();
-    dialogRef.componentInstance.success.pipe(untilDestroyed(self)).subscribe((res: Job<KubernetesConfig>) => {
-      self.selectedPool = pool;
-      self.refreshToolbarMenus();
-      self.dialogService.closeAllDialogs();
-      self.translate.get(helptext.choosePool.message).pipe(untilDestroyed(self)).subscribe((msg: string) => {
-        self.dialogService.info(helptext.choosePool.success, msg + res.result.pool,
-          '500px', 'info', true);
-      });
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((res: Job<KubernetesConfig>) => {
+      this.selectedPool = pool;
+      this.refreshToolbarMenus();
+      this.dialogService.closeAllDialogs();
+      this.dialogService.info(
+        helptext.choosePool.success,
+        this.translate.instant(helptext.choosePool.message) + res.result.pool,
+        '500px',
+        'info',
+        true,
+      );
     });
   }
 
@@ -359,7 +367,7 @@ export class CatalogComponent implements OnInit {
   filterApps(): void {
     if (this.filterString) {
       this.filteredCatalogApps = this.catalogApps.filter((app) => {
-        return app.name.toLowerCase().indexOf(this.filterString.toLocaleLowerCase()) > -1;
+        return app.name.toLowerCase().includes(this.filterString.toLocaleLowerCase());
       });
     } else {
       this.filteredCatalogApps = this.catalogApps;
@@ -387,7 +395,7 @@ export class CatalogComponent implements OnInit {
           label: catalog,
           train,
         };
-        this.mdDialog.open(CatalogSummaryDialog, {
+        this.mdDialog.open(CatalogSummaryDialogComponent, {
           width: '470px',
           data: catalogAppInfo,
         });

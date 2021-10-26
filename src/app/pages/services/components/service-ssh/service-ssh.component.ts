@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/services/components/service-ssh';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { NetworkService, WebSocketService } from 'app/services';
@@ -20,7 +20,7 @@ import { NetworkService, WebSocketService } from 'app/services';
 export class ServiceSSHComponent implements FormConfiguration, OnInit {
   // Form Layout
   isBasicMode = true;
-  queryCall: 'ssh.config' = 'ssh.config';
+  queryCall = 'ssh.config' as const;
   title = helptext.formTitle;
   route_success: string[] = ['services'];
 
@@ -146,9 +146,9 @@ export class ServiceSSHComponent implements FormConfiguration, OnInit {
   protected ssh_bindiface: FormSelectConfig;
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId == 'advanced_mode' && this.isBasicMode == false) {
+    if (actionId == 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId == 'basic_mode' && this.isBasicMode == true) {
+    } if (actionId == 'basic_mode' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -171,7 +171,7 @@ export class ServiceSSHComponent implements FormConfiguration, OnInit {
     this.ws.call('ssh.bindiface_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.ssh_bindiface = this.fieldSets
         .find((set) => set.name === globalHelptext.fieldset_other_options)
-        .config.find((config) => config.name === 'bindiface');
+        .config.find((config) => config.name === 'bindiface') as FormSelectConfig;
       for (const k in res) {
         this.ssh_bindiface.options.push({ label: res[k], value: k });
       }

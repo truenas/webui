@@ -16,6 +16,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
 @Component({
   selector: 'navigation',
   templateUrl: './navigation.component.html',
+  styleUrls: ['./navigation.component.scss'],
 })
 export class NavigationComponent extends ViewControllerComponent implements OnInit {
   hasIconTypeMenuItem: boolean;
@@ -48,13 +49,12 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
             _.find(menuItem, { state: 'vm' }).disabled = true;
           });
 
-        for (let i = 0; i < this.navService.enterpriseFeatures.length; i++) {
-          const targetMenu = this.navService.enterpriseFeatures[i];
+        this.navService.enterpriseFeatures.forEach((targetMenu) => {
           const enterpriseItem = (_.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state: targetMenu.sub }));
           if (enterpriseItem) {
             enterpriseItem.disabled = false;
           }
-        }
+        });
       }
 
       this.core.register({
@@ -62,11 +62,10 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
         eventName: 'SysInfo',
       }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
         if (evt.data.features.enclosure) {
-          for (let i = 0; i < this.navService.hardwareFeatures.length; i++) {
-            const targetMenu = this.navService.hardwareFeatures[i];
+          this.navService.hardwareFeatures.forEach((targetMenu) => {
             const found = _.find(_.find(menuItem, { state: targetMenu.menu }).sub, { state: targetMenu.sub });
             if (found) found.disabled = false;
-          }
+          });
         }
       });
 

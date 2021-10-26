@@ -1,4 +1,4 @@
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   pending_changes_text: T('There are unapplied network interface changes that must be tested before being permanently saved. Test changes now?'),

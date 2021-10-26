@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { Job } from 'app/interfaces/job.interface';
 import { StorageService } from 'app/services/storage.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { EntityUtils } from '../entity/utils';
@@ -13,15 +14,20 @@ import { EntityUtils } from '../entity/utils';
   templateUrl: './error-dialog.component.html',
   styleUrls: ['./error-dialog.component.scss'],
 })
-export class ErrorDialog {
+export class ErrorDialogComponent {
   title: string;
   message: string;
   backtrace: string;
   isCloseMoreInfo = true;
-  logs: any;
+  logs: Job;
 
-  constructor(public dialogRef: MatDialogRef < ErrorDialog >, public translate: TranslateService,
-    private ws: WebSocketService, public http: HttpClient, public storage: StorageService) {}
+  constructor(
+    public dialogRef: MatDialogRef<ErrorDialogComponent>,
+    public translate: TranslateService,
+    private ws: WebSocketService,
+    public http: HttpClient,
+    public storage: StorageService,
+  ) {}
 
   toggleOpen(): void {
     const dialogs = document.getElementsByClassName('mat-dialog-container');
@@ -34,20 +40,14 @@ export class ErrorDialog {
 
     this.isCloseMoreInfo = !this.isCloseMoreInfo;
     if (!this.isCloseMoreInfo) {
-      dialog.setAttribute('style', 'width : 800px; height: 600px');
+      dialog.setAttribute('style', 'width : 800px; max-height: 80vh;');
       let errMsgHeight = messageWrapper.offsetHeight - 21;
       if (errMsgHeight > 63) {
         errMsgHeight = 63;
       }
-      const tracebackHeight = (400 - errMsgHeight).toString() + 'px';
       title.setAttribute('style', 'height: 40px; overflow: hidden');
-      content.setAttribute('style', 'height: 450px');
       messageWrapper.setAttribute('style', 'max-height: 63px; overflow: auto');
-      btPanel.setAttribute('style', 'width: 750px; max-height: 400px');
-      btPanel.style.height = tracebackHeight;
-      setTimeout(() => {
-        txtarea.style.height = tracebackHeight;
-      }, 215);
+      btPanel.setAttribute('style', 'width: 750px; height: calc(80vh - 240px)');
     } else {
       dialog.removeAttribute('style');
       title.removeAttribute('style');

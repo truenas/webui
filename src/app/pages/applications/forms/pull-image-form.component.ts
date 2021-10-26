@@ -5,7 +5,7 @@ import { latestVersion } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -26,8 +26,8 @@ interface PullImageFormValues {
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class PullImageFormComponent implements FormConfiguration {
-  queryCall: 'container.image.query' = 'container.image.query';
-  addCall: 'container.image.pull' = 'container.image.pull';
+  queryCall = 'container.image.query' as const;
+  addCall = 'container.image.pull' as const;
   isEntity = true;
   protected entityForm: EntityFormComponent;
   title = helptext.pullImageForm.title;
@@ -111,7 +111,7 @@ export class PullImageFormComponent implements FormConfiguration {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.modalService.refreshTable();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {

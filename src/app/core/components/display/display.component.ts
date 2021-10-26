@@ -6,7 +6,7 @@ import {
   selector: 'display',
   template: '<ng-container #wrapper></ng-container>',
 })
-export class Display {
+export class DisplayComponent {
   displayList: any[] = []; // items in DOM
   children: any[] = [];
   @ViewChild('wrapper', { static: true }) wrapper: ViewContainerRef;
@@ -22,7 +22,7 @@ export class Display {
   ) {}
 
   create(component: Type<any>): any {
-    const compRef = <any> this.resolver.resolveComponentFactory(component).create(this.viewContainerRef.injector);
+    const compRef = this.resolver.resolveComponentFactory(component).create(this.viewContainerRef.injector);
     this.children.push(compRef);
     return compRef.instance;
   }
@@ -42,9 +42,9 @@ export class Display {
     const selector = compRef.hostView.rootNodes['0'];
     const contents = compRef.hostView.rootNodes['0'].childNodes;
 
-    for (let i = 0; i < contents.length; i++) {
-      if (contents[i].tagName == 'MD-CARD') {
-        this.renderer.appendChild(container, contents[i]);
+    for (const node of contents) {
+      if (node.tagName == 'MD-CARD') {
+        this.renderer.appendChild(container, node);
         this.renderer.removeChild(container, selector);
       }
     }
@@ -66,9 +66,9 @@ export class Display {
   }
 
   getChild(instance: any): any {
-    for (let i = 0; i < this.children.length; i++) {
-      if (this.children[i].instance == instance) {
-        return this.children[i];
+    for (const item of this.children) {
+      if (item.instance == instance) {
+        return item;
       }
     }
   }

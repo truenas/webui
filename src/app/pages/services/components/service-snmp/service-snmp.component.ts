@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-snmp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SnmpConfig, SnmpConfigUpdate } from 'app/interfaces/snmp-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
@@ -18,8 +18,8 @@ import {
 })
 
 export class ServiceSNMPComponent implements FormConfiguration {
-  updateCall = 'snmp.update';
-  queryCall: 'snmp.config' = 'snmp.config';
+  updateCall = 'snmp.update' as const;
+  queryCall = 'snmp.config' as const;
   route_success: string[] = ['services'];
   title = helptext.formTitle;
   fieldConfig: FieldConfig[] = [];

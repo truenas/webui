@@ -11,7 +11,7 @@ export interface RsyncTask {
   desc: string;
   direction: Direction;
   enabled: boolean;
-  extra: any[];
+  extra: string[];
   id: number;
   job: Job;
   locked: boolean;
@@ -29,6 +29,10 @@ export interface RsyncTask {
   times: boolean;
   user: string;
 }
+
+export type RsyncTaskUpdate = {
+  validate_rpath?: boolean;
+} & Omit<RsyncTask, 'id' | 'job' | 'locked'>;
 
 export interface RsyncTaskUi extends RsyncTask {
   cron_schedule: string;

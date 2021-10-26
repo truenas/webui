@@ -16,20 +16,20 @@
     </div>
 
     <!-- ENCLOSURE MODEL -->
-    <div class="model dom-overlay" style="opacity:0.75;">
+    <div class="model dom-overlay">
       <div class="model-inner">
       </div>
     </div>
 
     <!-- ENCLOSURE RENAME -->
     <div class="enclosure-label-actions">
-      <button (click)="labelForm()" mat-button color="default">EDIT LABEL</button>
+      <button (click)="labelForm()" mat-button color="default">{{ 'EDIT LABEL' | translate }}</button>
     </div>
 
   </mat-toolbar>
 
   <!-- Tabs other than Disks -->
-  <tab-content class="other-tab" *ngIf="currentTab.alias !== 'Disks'" [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex]" ></tab-content>
+  <tab-content class="other-tab" *ngIf="currentTab.alias !== 'Disks'" [data]="system.enclosures[selectedEnclosure.enclosureKey].elements[currentTab.elementIndex]"></tab-content>
 
   <mat-card-content id="Disks-content" [class]="currentTab.alias">
 
@@ -39,11 +39,10 @@
         id="disks-overview"
         [class]="currentView">
 
-
         <!-- POOLS OVERLAY -->
         <div *ngIf="currentView == 'pools' || exitingView == 'pools'" class="pools stage-left dom-overlay" >
           <div class="content">
-            <h2>Pools</h2>
+            <h2>{{ 'Pools' | translate }}</h2>
           </div>
         </div>
         <div *ngIf="currentView == 'pools' || exitingView == 'pools'" class="pools stage-right dom-overlay list">
@@ -52,7 +51,7 @@
             <div *ngIf="enclosurePools.length > 0; else noPools" class="legend">
               <div *ngFor="let pool of enclosurePools; let i=index">
                 <div class="swatch"
-                  [style.background]="subenclosure ? theme[theme.accentColors[subenclosure.poolKeys[pool]]] : theme[theme.accentColors[selectedEnclosure.poolKeys[pool]]]">
+                  [style.background]="subenclosure ? theme[themeKey(theme.accentColors[subenclosure.poolKeys[pool]])] : theme[themeKey(theme.accentColors[selectedEnclosure.poolKeys[pool]])]">
                 </div>
                 {{pool}}
                 <span *ngIf="!system.pools[selectedEnclosure.poolKeys[pool]] || !system.pools[selectedEnclosure.poolKeys[pool]].healthy">
@@ -62,18 +61,18 @@
 
               <!-- UNASSIGNED DISKS -->
               <div>
-                <div class="swatch" style="background:#999999;"></div>
-                Unassigned
+                <div class="swatch unassigned"></div>
+                {{ 'Unassigned' | translate }}
               </div>
             </div>
 
             <ng-template #noPools>
               <div class="legend">
-                <div>No pools on this enclosure.</div>
+                <div>{{ 'No pools on this enclosure.' | translate }}</div>
                 <!-- UNASSIGNED DISKS -->
                 <div>
-                  <div class="swatch" style="background:#999999;"></div>
-                  Unassigned
+                  <div class="swatch unassigned"></div>
+                  {{ 'Unassigned' | translate }}
                 </div>
               </div>
             </ng-template>
@@ -84,16 +83,16 @@
         <!-- STATUS OVERLAY -->
         <div *ngIf="currentView == 'status' || exitingView == 'status'" class="status stage-left dom-overlay">
           <div class="content">
-            <h2>Status</h2>
+            <h2>{{ 'Status' | translate }}</h2>
           </div>
         </div>
         <div *ngIf="currentView == 'status' || exitingView == 'status'" class="status stage-right dom-overlay list">
           <div class="content">
             <div class="legend">
-              <div><div class="swatch" [style.background]="theme.green"></div>ONLINE</div>
-              <div><div class="swatch" [style.background]="theme.yellow"></div>OTHER</div>
-              <div><div class="swatch" [style.background]="theme.red"></div>FAULT</div>
-              <div><div class="swatch" style="background:#999999;"></div>AVAILABLE</div>
+              <div><div class="swatch" [style.background]="theme.green"></div>{{ 'ONLINE' | translate }}</div>
+              <div><div class="swatch" [style.background]="theme.yellow"></div>{{ 'OTHER' | translate }}</div>
+              <div><div class="swatch" [style.background]="theme.red"></div>{{ 'FAULT' | translate }}</div>
+              <div><div class="swatch available"></div>{{ 'AVAILABLE' | translate }}</div>
             </div>
           </div>
         </div>
@@ -103,16 +102,16 @@
           <div class="content">
             <h1 class="disk-name {{selectedDisk.name}}">{{selectedDisk.name}}</h1>
             <div class="title">
-              <span class="semibold">vdev: </span>
-              <span *ngIf="selectedVdev.type == 'DISK'"> NONE </span>
+              <span class="semibold">{{ 'vdev' | translate }}: </span>
+              <span *ngIf="selectedVdev.type == 'DISK'">{{ 'NONE' | translate }}</span>
               <span *ngIf="selectedVdev.type !== 'DISK'">{{selectedVdev.type == 'None' ? 'UNASSIGNED' : selectedVdev.type}}</span>
             </div>
             <div *ngIf="selectedVdev.type !== 'None'" class="title">
-              <span class="semibold">Function:</span>
-              <span> {{selectedVdev.topology == 'None' ? 'UNKNOWN' : selectedVdev.topology.toUpperCase()}}</span>
+              <span class="semibold">{{ 'Function' | translate }}:</span>
+              <span> {{$any(selectedVdev).topology == 'None' ? 'UNKNOWN' : selectedVdev.topology.toUpperCase()}}</span>
             </div>
             <div class="title">
-              <span class="semibold">Slot: </span>
+              <span class="semibold">{{ 'Slot' | translate}}: </span>
               <span>{{selectedDisk.enclosure.slot}}</span>
             </div>
           </div>
@@ -129,7 +128,7 @@
 
             <ng-template #noVdevDisks>
               <div class="legend">
-                <div class="vdev-disk "> No vdev info for disk.</div>
+                <div class="vdev-disk ">{{ 'No vdev info for disk.' | translate }}</div>
               </div>
             </ng-template>
 
@@ -137,14 +136,14 @@
         </div>
 
         <!-- CAPTION OVERLAY -->
-        <div *ngIf="showCaption && chassis && !chassis.rear && !chassis.internal" class="caption dom-overlay">Choose a Disk</div>
+        <div *ngIf="showCaption && chassis && !chassis.rear && !chassis.internal" class="caption dom-overlay">{{ 'Choose a Disk' | translate }}</div>
 
         <!-- FRONT/REAR TOGGLE -->
         <!--<div *ngIf="subenclosure && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">-->
         <div *ngIf="chassis && (chassis.rear || chassis.internal) && currentView != 'expanders'" class="caption dom-overlay front-rear-toggle">
-          <button mat-button (click)="enclosureOverride(EnclosureLocation.Front)">FRONT</button>
-          <button *ngIf="chassis.rear" mat-button (click)="enclosureOverride(EnclosureLocation.Rear)">REAR</button>
-          <button *ngIf="chassis.internal" mat-button (click)="enclosureOverride('rear')">Internal</button>
+          <button mat-button (click)="enclosureOverride(EnclosureLocation.Front)">{{ 'FRONT' | translate }}</button>
+          <button *ngIf="chassis.rear" mat-button (click)="enclosureOverride(EnclosureLocation.Rear)">{{ 'REAR' | translate }}</button>
+          <button *ngIf="chassis.internal" mat-button (click)="enclosureOverride('rear')">{{ 'Internal' | translate }}</button>
         </div>
 
         <!-- CANVAS/SVG OVERLAY -->
@@ -153,10 +152,10 @@
         <!-- EXPANDERS OVERLAY -->
         <div *ngIf="currentView == 'expanders' || exitingView == 'expanders'" class="expanders full-stage dom-overlay">
           <div *ngIf="expanders" class="content" >
-            <div *ngFor="let expander of expanders" [style.width]="(100 / expanders.length).toString() + '%' " style="display:inline-block;">
+            <div *ngFor="let expander of expanders" [style.width]="(100 / expanders.length).toString() + '%'" class="expander-item">
               <div class="primary-number" >{{ expander.status }}</div>
               <div class="title">{{expander.descriptor}}</div>
-              <div class="subtitle">Expander Status </div>
+              <div class="subtitle">{{ 'Expander Status' | translate }}</div>
             </div>
           </div>
         </div>
@@ -185,12 +184,12 @@
 
           <div *ngIf="system && system.pools && enclosurePools; else loading" fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >{{ enclosurePools.length }}</div>
-            <div class="title">Pools in Enclosure</div>
+            <div class="title"> {{ 'Pools in Enclosure' | translate }}</div>
             <!--<div class="subtitle">{{system.profile.length > 1 ? system.profile.length - 1 : 'No' }} other enclosures detected</div>-->
             <div *ngIf="unhealthyPools && unhealthyPools.length == 1" class="subtitle">Pool "{{unhealthyPools[0].name}}" is {{unhealthyPools[0].status}}.</div>
             <div *ngIf="unhealthyPools && unhealthyPools.length > 1" class="subtitle">{{unhealthyPools[0]}} and {{unhealthyPools.length - 1}} other pools are not healthy.</div>
-            <div *ngIf="unhealthyPools && unhealthyPools.length < 1" class="subtitle">All pools are online.</div>
-            <button mat-button class="" color="default" (click)="setCurrentView('pools')">SHOW POOLS</button>
+            <div *ngIf="unhealthyPools && unhealthyPools.length < 1" class="subtitle">{{ 'All pools are online.' | translate }}</div>
+            <button mat-button color="default" (click)="setCurrentView('pools')">{{ 'SHOW POOLS' | translate }}</button>
           </div>
 
           <div *ngIf="system; else loading" fxFlex class="tiles" [class.active]="currentView == 'status' " fxLayout="column" fxLayoutAlign="center center">
@@ -204,14 +203,14 @@
                 <span *ngIf="subenclosure"> {{failedDisks[0].location}} slot {{failedDisks[0].slot}}</span>
               </span>
             </div>
-            <button mat-button color="default" (click)="setCurrentView('status')">SHOW STATUS</button>
+            <button mat-button color="default" (click)="setCurrentView('status')">{{ 'SHOW STATUS' | translate }}</button>
           </div>
 
           <div *ngIf="system && expanders && expanders.length > 0" fxFlex class="tiles" [class.active]="currentView == 'expanders' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >{{expanders.length}}</div>
-            <div class="title">SAS Expanders</div>
-            <div class="subtitle">on this enclosure</div>
-            <button mat-button color="default" (click)="setCurrentView('expanders')">SHOW EXPANDER STATUS</button>
+            <div class="title">{{ 'SAS Expanders' | translate }}</div>
+            <div class="subtitle">{{ 'on this enclosure' | translate }}</div>
+            <button mat-button color="default" (click)="setCurrentView('expanders')">{{ 'SHOW EXPANDER STATUS' | translate }}</button>
           </div>
 
         </div>
@@ -227,7 +226,7 @@
             <disk-ui [data]="selectedDisk"></disk-ui><!-- disk icon + labels -->
             <div class="capacity">{{converter(selectedDisk.size)}}</div>
             <div class="disk-actions">
-              <button id="identify-btn" mat-button color="primary" (click)="toggleSlotStatus()">Identify Drive</button>
+              <button id="identify-btn" mat-button color="primary" (click)="toggleSlotStatus()">{{ 'Identify Drive' | translate }}</button>
             </div>
           </div>
 
@@ -237,63 +236,63 @@
 
               <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
-                  <div class="label">Pool</div>
+                  <div class="label">{{ 'Pool' | translate }}</div>
                   <div class="value">{{selectedDisk.vdev ? selectedDisk.vdev.pool : 'Disk not attached to any pools.'}}</div>
                 </div>
               </div>
 
               <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
-                  <div class="label">Serial</div>
+                  <div class="label">{{ 'Serial' | translate }}</div>
                   <div class="value">{{selectedDisk.serial}}</div>
                 </div>
               </div>
 
               <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
-                  <div class="label">Status</div>
+                  <div class="label">{{ 'Status' | translate }}</div>
                   <div class="value">{{selectedDisk.status}}</div>
                 </div>
               </div>
 
               <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
-                  <div class="label">Adv. Power Mgmt.</div>
+                  <div class="label">{{ 'Adv. Power Mgmt.' | translate }}</div>
                   <div class="value">{{selectedDisk.advpowermgmt}}</div>
                 </div>
               </div>
 
               <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
-                  <div class="label">S.M.A.R.T. Enabled</div>
+                  <div class="label">{{ 'S.M.A.R.T. Enabled' | translate }}</div>
                   <div class="value">{{selectedDisk.togglesmart ? 'Yes' : 'No'}}</div>
                 </div>
               </div>
 
               <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
-                  <div class="label">S.M.A.R.T. Options</div>
+                  <div class="label">{{ 'S.M.A.R.T. Options' | translate }}</div>
                   <div class="value">{{selectedDisk.smartoptions ? selectedDisk.smartoptions : 'None'}}</div>
                 </div>
               </div>
 
               <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
-                  <div class="label">Transfer Mode</div>
+                  <div class="label">{{ 'Transfer Mode' | translate }}</div>
                   <div class="value">{{selectedDisk.transfermode}}</div>
                 </div>
               </div>
 
               <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
-                  <div class="label">HDD Standby</div>
+                  <div class="label">{{ 'HDD Standby' | translate }}</div>
                   <div class="value">{{selectedDisk.hddstandby}}</div>
                 </div>
               </div>
 
               <div fxFlex="calc(75% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
-                  <div class="label">Description</div>
+                  <div class="label">{{ 'Description' | translate }}</div>
                   <div class="value">{{selectedDisk.description ? selectedDisk.description : 'None'}}</div>
                 </div>
               </div>

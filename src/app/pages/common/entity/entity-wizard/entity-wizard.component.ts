@@ -7,6 +7,7 @@ import {
 } from '@angular/forms';
 import { MatStep, MatStepper } from '@angular/material/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -14,7 +15,6 @@ import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { T } from 'app/translate-marker';
 import { FieldConfig } from '../entity-form/models/field-config.interface';
 import { EntityFormService } from '../entity-form/services/entity-form.service';
 import { FieldRelationService } from '../entity-form/services/field-relation.service';
@@ -28,7 +28,7 @@ import { EntityUtils } from '../utils';
   providers: [EntityFormService, FieldRelationService],
 })
 export class EntityWizardComponent implements OnInit {
-  @Input('conf') conf: WizardConfiguration;
+  @Input() conf: WizardConfiguration;
   @ViewChild('stepper', { static: true }) stepper: MatStepper;
 
   formGroup: FormGroup;
@@ -37,7 +37,7 @@ export class EntityWizardComponent implements OnInit {
   summaryValue: any;
   summaryFieldConfigs: FieldConfig[] = [];
 
-  saveSubmitText = T('Save');
+  saveSubmitText: string = T('Save');
   customNextText = T('Next');
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
@@ -74,29 +74,27 @@ export class EntityWizardComponent implements OnInit {
 
   resetFields(): void {
     const wizardformArray = this.formBuilder.array([]);
-    for (const i in this.conf.wizardConfig) {
+    this.conf.wizardConfig.forEach((config) => {
       // Fallback if no fieldsets are defined
-      if (this.conf.wizardConfig[i].fieldSets) {
+      if (config.fieldSets) {
         let fieldConfig: FieldConfig[] = [];
 
         /* Temp patch to support both FieldSet approaches */
-        const fieldSets = this.conf.wizardConfig[i].fieldSets;
-        for (let j = 0; j < fieldSets.length; j++) {
-          const fieldset = fieldSets[j];
+        const fieldSets = config.fieldSets;
+        fieldSets.forEach((fieldset) => {
           if (fieldset.config) {
             fieldConfig = fieldConfig.concat(fieldset.config);
           }
-        }
-        this.conf.wizardConfig[i].fieldConfig = fieldConfig;
+        });
+        config.fieldConfig = fieldConfig;
       } else {
-        // const fieldConfig = this.conf.wizardConfig[i].fieldConfig;
-        this.conf.wizardConfig[i].fieldSets = [
+        config.fieldSets = [
           {
             name: 'FallBack',
             class: 'fallback',
             width: '100%',
             divider: false,
-            config: this.conf.wizardConfig[i].fieldConfig,
+            config: config.fieldConfig,
           },
           {
             name: 'divider',
@@ -105,26 +103,25 @@ export class EntityWizardComponent implements OnInit {
           },
         ];
       }
-      wizardformArray.push(this.entityFormService.createFormGroup(this.conf.wizardConfig[i].fieldConfig));
-    }
+      wizardformArray.push(this.entityFormService.createFormGroup(config.fieldConfig));
+    });
 
     this.formGroup = this.formBuilder.group({
       formArray: wizardformArray,
     });
 
-    for (const i in this.conf.wizardConfig) {
-      this.summaryFieldConfigs = this.summaryFieldConfigs.concat(this.conf.wizardConfig[i].fieldConfig);
-      const formGroup = this.formArray.get(i) as FormGroup;
-      for (const j in this.conf.wizardConfig[i].fieldConfig) {
-        const config = this.conf.wizardConfig[i].fieldConfig[j];
-        this.fieldRelationService.setRelation(config, formGroup);
-      }
-    }
+    this.conf.wizardConfig.forEach((config, i) => {
+      this.summaryFieldConfigs = this.summaryFieldConfigs.concat(config.fieldConfig);
+      const formGroup = this.formArray.get(String(i)) as FormGroup;
+      config.fieldConfig.forEach((fieldConfig) => {
+        this.fieldRelationService.setRelation(fieldConfig, formGroup);
+      });
+    });
   }
 
   isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
-      if (this.conf.advanced_field.indexOf(id) > -1) {
+      if (this.conf.advanced_field.includes(id)) {
         return false;
       }
     }
@@ -133,7 +130,8 @@ export class EntityWizardComponent implements OnInit {
 
   goBack(): void {
     if (this.conf.customCancel) {
-      return this.conf.customCancel();
+      this.conf.customCancel();
+      return;
     }
     let route = this.conf.route_cancel;
     if (!route) {
@@ -149,15 +147,15 @@ export class EntityWizardComponent implements OnInit {
       hide = false;
     }
 
-    for (const i in this.conf.wizardConfig) {
-      this.conf.wizardConfig[i].fieldConfig = this.conf.wizardConfig[i].fieldConfig.map((item) => {
+    this.conf.wizardConfig.forEach((config) => {
+      config.fieldConfig = config.fieldConfig.map((item) => {
         if (item.name === name) {
           item.disabled = disable;
           item['isHidden'] = hide;
         }
         return item;
       });
-    }
+    });
 
     if ((this.formArray.get([stepIndex]) as FormGroup).controls[name]) {
       const method = disable ? 'disable' : 'enable';
@@ -204,11 +202,7 @@ export class EntityWizardComponent implements OnInit {
 
   isFieldsetAvailabel(fieldset: FieldSet): boolean {
     if (fieldset.config) {
-      for (let i = 0; i < fieldset.config.length; i++) {
-        if (!fieldset.config[i].isHidden) {
-          return true;
-        }
-      }
+      return fieldset.config.some((config) => !config.isHidden);
     }
     return false;
   }
@@ -237,12 +231,11 @@ export class EntityWizardComponent implements OnInit {
   }
 
   clearErrors(): void {
-    for (const i in this.conf.wizardConfig) {
-      for (const j in this.conf.wizardConfig[i].fieldConfig) {
-        const config = this.conf.wizardConfig[i].fieldConfig[j];
+    this.conf.wizardConfig.forEach((wizardConfig) => {
+      wizardConfig.fieldConfig.forEach((config) => {
         config['errors'] = '';
         config['hasErrors'] = false;
-      }
-    }
+      });
+    });
   }
 }

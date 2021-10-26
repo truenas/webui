@@ -1,14 +1,15 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/ldap';
 import global_helptext from 'app/helptext/global-helptext';
 import { FormConfiguration, FormCustomAction } from 'app/interfaces/entity-form.interface';
-import { LdapConfig } from 'app/interfaces/ldap-config.interface';
+import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -19,7 +20,6 @@ import {
   DialogService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -30,8 +30,8 @@ import { T } from 'app/translate-marker';
 export class LdapComponent implements FormConfiguration {
   title: string = helptext.title;
   isEntity = false;
-  queryCall: 'ldap.config' = 'ldap.config';
-  upodateCall = 'ldap.update';
+  queryCall = 'ldap.config' as const;
+  updateCall = 'ldap.update' as const;
   isBasicMode = true;
   protected ldap_kerberos_realm: FormSelectConfig;
   protected ldap_kerberos_principal: FormSelectConfig;
@@ -206,11 +206,11 @@ export class LdapComponent implements FormConfiguration {
   advanced_field = helptext.ldap_advanced_fields;
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'advanced_mode' && this.isBasicMode === false) {
+    if (actionId === 'advanced_mode' && !this.isBasicMode) {
       return false;
-    } if (actionId === 'basic_mode' && this.isBasicMode === true) {
+    } if (actionId === 'basic_mode' && this.isBasicMode) {
       return false;
-    } if (actionId === 'edit_idmap' && this.isBasicMode === true) {
+    } if (actionId === 'edit_idmap' && this.isBasicMode) {
       return false;
     }
     return true;
@@ -238,7 +238,7 @@ export class LdapComponent implements FormConfiguration {
     this.entityForm = entityEdit;
 
     this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
-      this.ldap_kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' });
+      this.ldap_kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
       realms.forEach((realm) => {
         this.ldap_kerberos_realm.options.push(
           { label: realm.realm, value: realm.id },
@@ -247,7 +247,7 @@ export class LdapComponent implements FormConfiguration {
     });
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.ldap_kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' });
+      this.ldap_kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
       res.forEach((item) => {
         this.ldap_kerberos_principal.options.push(
           { label: item, value: item },
@@ -256,7 +256,7 @@ export class LdapComponent implements FormConfiguration {
     });
 
     this.ws.call('ldap.ssl_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      this.ldap_ssl = _.find(this.fieldConfig, { name: 'ssl' });
+      this.ldap_ssl = _.find(this.fieldConfig, { name: 'ssl' }) as FormSelectConfig;
       choices.forEach((item) => {
         this.ldap_ssl.options.push(
           { label: item, value: item },
@@ -265,7 +265,7 @@ export class LdapComponent implements FormConfiguration {
     });
 
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.ldapCertificate = _.find(this.fieldConfig, { name: 'certificate' });
+      this.ldapCertificate = _.find(this.fieldConfig, { name: 'certificate' }) as FormSelectConfig;
       res.forEach((item) => {
         this.ldapCertificate.options.push(
           { label: item.name, value: item.id },
@@ -279,7 +279,7 @@ export class LdapComponent implements FormConfiguration {
     });
 
     this.ws.call('ldap.schema_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.ldap_schema = _.find(this.fieldConfig, { name: 'schema' });
+      this.ldap_schema = _.find(this.fieldConfig, { name: 'schema' }) as FormSelectConfig;
       res.forEach(((item) => {
         this.ldap_schema.options.push(
           { label: item, value: item },
@@ -314,7 +314,7 @@ export class LdapComponent implements FormConfiguration {
     delete (data['hostname_noreq']);
   }
 
-  submitFunction(body: any): Observable<any> {
+  submitFunction(body: LdapConfigUpdate): Observable<LdapConfig> {
     return this.ws.call('ldap.update', [body]);
   }
 

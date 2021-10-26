@@ -5,9 +5,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
+import { IscsiAuthAccess, IscsiAuthAccessUpdate } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { matchOtherValidator, doesNotEqualValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -20,10 +20,9 @@ import { WebSocketService } from 'app/services/ws.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class AuthorizedAccessFormComponent implements FormConfiguration {
-  addCall: 'iscsi.auth.create' = 'iscsi.auth.create';
-  queryCall: 'iscsi.auth.query' = 'iscsi.auth.query';
-  editCall: 'iscsi.auth.update' = 'iscsi.auth.update';
-  // protected resource_name: string = 'services/iscsi/authcredential';
+  addCall = 'iscsi.auth.create' as const;
+  queryCall = 'iscsi.auth.query' as const;
+  editCall = 'iscsi.auth.update' as const;
   route_success: string[] = ['sharing', 'iscsi', 'auth'];
   isEntity = true;
   customFilter: [[Partial<QueryFilter<IscsiAuthAccess>>]] = [[['id', '=']]];
@@ -119,7 +118,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     },
   ];
 
-  pk: string;
+  pk: number;
 
   constructor(protected router: Router, protected aroute: ActivatedRoute, protected loader: AppLoaderService,
     protected ws: WebSocketService) {}
@@ -191,12 +190,12 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(value: any): void {
+  beforeSubmit(value: IscsiAuthAccessUpdate & { secret_confirm: string; peersecret_confirm: string }): void {
     delete value['secret_confirm'];
     delete value['peersecret_confirm'];
   }
 
-  customEditCall(value: any): void {
+  customEditCall(value: IscsiAuthAccessUpdate): void {
     this.loader.open();
     this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {

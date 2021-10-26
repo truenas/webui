@@ -1,12 +1,11 @@
 import { AfterViewInit, Component, Type } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import {
-  delay, filter, map, tap,
-} from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptext_sharing_webdav, helptext_sharing_smb, helptext_sharing_nfs } from 'app/helptext/sharing';
@@ -38,7 +37,6 @@ import {
   ModalService,
   WebSocketService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 enum ShareType {
   SMB = 'smb',
@@ -47,7 +45,7 @@ enum ShareType {
   WebDAV = 'webdav',
 }
 
-type ShareTableRow = Partial<SmbShare & WebDavShare & NfsShare>;
+type ShareTableRow = Partial<SmbShare> | Partial<WebDavShare> | Partial<NfsShare>;
 
 @UntilDestroy()
 @Component({
@@ -110,8 +108,6 @@ export class SharesDashboardComponent implements AfterViewInit {
       .pipe(
         map((event) => event.fields),
         filter((service) => this.servicesToCheck.includes(service.service)),
-        tap((service) => this.updateTableServiceStatus({ ...service, state: ServiceStatus.Loading })),
-        delay(300), /* delay to show spinner */
         untilDestroyed(this),
       )
       .subscribe((service: Service) => {
@@ -171,8 +167,8 @@ export class SharesDashboardComponent implements AfterViewInit {
           queryCall: 'sharing.nfs.query',
           deleteCall: 'sharing.nfs.delete',
           deleteMsg: {
-            title: T('Delete'),
-            key_props: ['name'],
+            title: T('NFS Share'),
+            key_props: ['paths'],
           },
           limitRowsByMaxHeight: true,
           hideEntityEmpty: true,
@@ -215,7 +211,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           deleteCall: 'iscsi.target.delete',
           detailsHref: '/sharing/iscsi/target',
           deleteMsg: {
-            title: T('Delete'),
+            title: T('iSCSI'),
             key_props: ['name'],
           },
           limitRowsByMaxHeight: true,
@@ -259,7 +255,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           queryCall: 'sharing.webdav.query',
           deleteCall: 'sharing.webdav.delete',
           deleteMsg: {
-            title: T('Delete'),
+            title: T('WebDAV Share'),
             key_props: ['name'],
           },
           emptyEntityLarge: false,
@@ -317,7 +313,7 @@ export class SharesDashboardComponent implements AfterViewInit {
           queryCall: 'sharing.smb.query',
           deleteCall: 'sharing.smb.delete',
           deleteMsg: {
-            title: T('Delete'),
+            title: T('SMB Share'),
             key_props: ['name'],
           },
           hideEntityEmpty: true,
@@ -480,14 +476,14 @@ export class SharesDashboardComponent implements AfterViewInit {
       ],
       customSubmit: (dialog: EntityDialogComponent) => {
         dialog.dialogRef.close();
-        dialog.parent.add(null, dialog.formValue.share_type);
+        this.add(null, dialog.formValue.share_type);
       },
       parent: this,
     };
     this.dialog.dialogForm(conf);
   }
 
-  onCheckboxToggle(card: ShareType, row: ShareTableRow, param: keyof ShareTableRow): void {
+  onCheckboxToggle(card: ShareType, row: ShareTableRow, param: 'enabled' | 'ro'): void {
     let updateCall: keyof ApiDirectory;
     switch (card) {
       case ShareType.SMB:
@@ -505,10 +501,10 @@ export class SharesDashboardComponent implements AfterViewInit {
 
     this.ws.call(updateCall, [row.id, { [param]: row[param] }]).pipe(untilDestroyed(this)).subscribe(
       (updatedEntity) => {
-        (row as any)[param] = updatedEntity[param];
+        row[param] = updatedEntity[param];
       },
       (err: WebsocketError) => {
-        (row as any)[param] = !row[param];
+        row[param] = !row[param];
         new EntityUtils().handleWSError(this, err, this.dialog);
       },
     );

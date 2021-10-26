@@ -827,8 +827,7 @@ describe('parseSchemaFieldConfig', () => {
   describe.each(basicTypeData)('parse the basic types', (item) => {
     it(item.name, () => {
       const result = utils.parseSchemaFieldConfig(item.schema);
-      const isEqual = _.isEqual(item.expectedFieldConfigs, result);
-      expect(isEqual).toBe(true);
+      expect(result).toEqual(item.expectedFieldConfigs);
     });
   });
 

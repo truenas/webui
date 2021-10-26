@@ -6,8 +6,8 @@ import { filter } from 'rxjs/operators';
 import { helptext } from 'app/helptext/system/2fa';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
-import { FieldConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FieldConfig, FormParagraphConfig, FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
 
@@ -17,7 +17,7 @@ import { WebSocketService, DialogService, AppLoaderService } from 'app/services/
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class TwoFactorComponent implements FormConfiguration {
-  queryCall: 'auth.twofactor.config' = 'auth.twofactor.config';
+  queryCall = 'auth.twofactor.config' as const;
   private entityEdit: EntityFormComponent;
   private TwoFactorEnabled: boolean;
   qrInfo: string;
@@ -204,9 +204,9 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   isCustActionVisible(actionId: string): boolean {
-    if (actionId === 'enable_action' && this.TwoFactorEnabled === true) {
+    if (actionId === 'enable_action' && this.TwoFactorEnabled) {
       return false;
-    } if (actionId === 'disable_action' && this.TwoFactorEnabled === false) {
+    } if (actionId === 'disable_action' && !this.TwoFactorEnabled) {
       return false;
     }
     return true;
@@ -224,7 +224,7 @@ export class TwoFactorComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.getURI();
-    const intervalValue = _.find(this.fieldConfig, { name: 'interval' });
+    const intervalValue: FormInputConfig = _.find(this.fieldConfig, { name: 'interval' }) as FormInputConfig;
     entityEdit.formGroup.controls['interval'].valueChanges.pipe(untilDestroyed(this)).subscribe((val: string) => {
       if (parseInt(val) !== 30) {
         intervalValue.hint = helptext.two_factor.interval.hint;
@@ -246,9 +246,11 @@ export class TwoFactorComponent implements FormConfiguration {
 
   updateEnabledStatus(): void {
     const enabled: FormParagraphConfig = _.find(this.fieldConfig, { name: 'enabled_status' });
-    this.TwoFactorEnabled
-      ? enabled.paraText = helptext.two_factor.enabled_status_true
-      : enabled.paraText = helptext.two_factor.enabled_status_false;
+    if (this.TwoFactorEnabled) {
+      enabled.paraText = helptext.two_factor.enabled_status_true;
+    } else {
+      enabled.paraText = helptext.two_factor.enabled_status_false;
+    }
   }
 
   customSubmit(data: any): void {
@@ -289,7 +291,7 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   openQRDialog(): void {
-    this.mdDialog.open(QRDialog, {
+    this.mdDialog.open(QrDialogComponent, {
       width: '300px',
       data: { qrInfo: this.qrInfo },
     });
@@ -333,10 +335,10 @@ export class TwoFactorComponent implements FormConfiguration {
   selector: 'qr-dialog',
   templateUrl: 'qr-dialog.html',
 })
-export class QRDialog {
+export class QrDialogComponent {
   constructor(
-    public dialogRef: MatDialogRef<QRDialog>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    public dialogRef: MatDialogRef<QrDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: { qrInfo: string },
   ) {}
 
   onNoClick(): void {

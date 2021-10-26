@@ -10,7 +10,7 @@ import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/services/components/service-s3';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import {
@@ -25,9 +25,8 @@ import {
 })
 
 export class ServiceS3Component implements FormConfiguration {
-  // protected resource_name: string = 'services/s3';
-  queryCall: 's3.config' = 's3.config';
-  updateCall = 's3.update';
+  queryCall = 's3.config' as const;
+  updateCall = 's3.update' as const;
   route_success: string[] = ['services'];
   private certificate: FormSelectConfig;
   private initial_path: string;
@@ -134,7 +133,7 @@ export class ServiceS3Component implements FormConfiguration {
           })
           .pipe(untilDestroyed(this))
           .subscribe(() => {
-            if (!confirm) {
+            if (!window.confirm) {
               this.storage_path.setValue(this.initial_path);
             } else {
               this.warned = true;
@@ -143,7 +142,7 @@ export class ServiceS3Component implements FormConfiguration {
       }
     });
     this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.certificate = _.find(this.fieldConfig, { name: 'certificate' });
+      this.certificate = _.find(this.fieldConfig, { name: 'certificate' }) as FormSelectConfig;
       if (res.length > 0) {
         res.forEach((item) => {
           this.certificate.options.push({ label: item.name, value: item.id });
@@ -164,7 +163,7 @@ export class ServiceS3Component implements FormConfiguration {
           this.validBindIps.push(ip.value);
         });
 
-        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'bindip' });
+        const config = _.find(this.fieldConfig, { name: 'bindip' }) as FormSelectConfig;
         config.options = choices;
       });
     entityForm.submitFunction = this.submitFunction;

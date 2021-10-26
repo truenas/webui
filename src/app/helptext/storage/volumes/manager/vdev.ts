@@ -1,4 +1,4 @@
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   vdev_diskSizeErrorMsg: T('Mixing disks of different sizes in a vdev is not allowed.'),

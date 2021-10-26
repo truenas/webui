@@ -2,16 +2,16 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { WebSocketService, DialogService } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +21,7 @@ import { T } from 'app/translate-marker';
 export class BootEnvAttachFormComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot', 'status'];
   isEntity = true;
-  addCall: 'boot.attach' = 'boot.attach';
+  addCall = 'boot.attach' as const;
   pk: string;
   isNew = true;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
@@ -63,7 +63,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
-    this.diskChoice = _.find(this.fieldConfig, { name: 'dev' });
+    this.diskChoice = _.find(this.fieldConfig, { name: 'dev' }) as FormSelectConfig;
     this.ws.call('disk.get_unused').pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((item) => {
         const disk_name = item.name;

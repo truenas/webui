@@ -1,4 +1,4 @@
-<section class="wrapper__details">
+<section class="wrapper__details" *ngIf="this.columns?.length">
   <div
     *ngFor="let column of this.columns"
     fxLayoutAlign="start center"
@@ -37,7 +37,7 @@
   </div>
 </section>
 
-<mat-divider></mat-divider>
+<mat-divider *ngIf="this.columns?.length"></mat-divider>
 
 <div
   fxLayoutAlign="start center"

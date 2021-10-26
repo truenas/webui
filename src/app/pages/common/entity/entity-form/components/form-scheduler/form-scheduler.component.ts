@@ -5,6 +5,7 @@ import {
 } from '@angular/core';
 import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { MatMonthView } from '@angular/material/datepicker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as parser from 'cron-parser';
@@ -17,7 +18,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SystemGeneralService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
 
 interface CronPreset {
   label: string;
@@ -51,10 +51,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   isOpen = false;
   formControl = new FormControl();
-  private _currentValue: string;
-  get currentValue(): any {
-    return this.group.controls[this.config.name].value;
-  }
 
   private _minutes = '0';
   private _hours = '*';
@@ -99,7 +95,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         this.validMinutes = true;
         this._minutes = val;
         this.updateCronTab();
-      } catch (err) {
+      } catch (err: unknown) {
         this.validMinutes = false;
       }
     } else {
@@ -109,14 +105,14 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   get hours(): string { return this._hours; }
   set hours(val) {
-    if (val !== '' && val.indexOf(' ') === -1) {
+    if (val !== '' && !val.includes(' ')) {
       const string = '* * ' + val + ' * * *';
       try {
         parser.parseExpression(string);
         this.validHours = true;
         this._hours = val;
         this.updateCronTab();
-      } catch (err) {
+      } catch (err: unknown) {
         this.validHours = false;
       }
     } else {
@@ -133,7 +129,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         this.validDays = true;
         this._days = val;
         this.updateCronTab();
-      } catch (err) {
+      } catch (err: unknown) {
         this.validDays = false;
       }
     } else {
@@ -336,7 +332,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   validPopup(): boolean {
     // Assigned to disabled attribute
-    if (this.validMinutes === false || this.validHours === false || this.validDays === false) {
+    if (!this.validMinutes || !this.validHours || !this.validDays) {
       return true;
     }
     return false;
@@ -482,7 +478,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
       adjusted = dateFns.subSeconds(this.minDate, 1);
     }
 
-    const options: any = {
+    const options = {
       currentDate: this.formatDateToTz(adjusted, this.timezone),
       endDate: this.maxDate, // max
       iterator: true,
@@ -510,7 +506,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
             parseCounter++;
           }
         }
-      } catch (e) {
+      } catch (e: unknown) {
         console.warn(e);
         break;
       }
@@ -534,7 +530,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
         try {
           const obj: any = intervalDays.next();
           daySchedule.push(obj.value);
-        } catch (e) {
+        } catch (e: unknown) {
           console.error(e);
           break;
         }
@@ -569,12 +565,11 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   private getCalendarCells(): any[] {
     const rows = this.calendar.nativeElement.children[0].children[1].children;
     let cells: any[] = [];
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i].childNodes;
+    for (const row of rows) {
       const tds = [];
-      for (let index = 0; index < row.length; index++) {
-        if (row[index].tagName == 'TD') {
-          tds.push(row[index]);
+      for (const node of row.childNodes) {
+        if (node.tagName == 'TD') {
+          tds.push(node);
         }
       }
       cells = cells.concat(tds);
@@ -678,8 +673,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
     // Assume a list and process it
     const list = rule.split(',');
-    for (const i in list) {
-      switch (list[i]) {
+    list.forEach((month) => {
+      switch (month) {
         case 'jan':
           this._jan = true;
           break;
@@ -717,7 +712,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
           this._dec = true;
           break;
       }
-    }
+    });
   }
 
   updateDaysOfWeekFields(rule: string): void {
@@ -736,8 +731,8 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
     // Assume a list and process it
     const list = rule.split(',');
-    for (const i in list) {
-      switch (list[i]) {
+    list.forEach((weekday) => {
+      switch (weekday) {
         case 'sun':
           this._sun = true;
           break;
@@ -760,10 +755,10 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
           this._sat = true;
           break;
       }
-    }
+    });
   }
 
-  updateCronTab(preset?: any): void {
+  updateCronTab(preset?: string): void {
     this.crontab = '';
     if (!preset) {
       const result = this.minutes + ' ' + this.hours + ' ' + this.days + ' ' + this._months + ' ' + this._daysOfWeek;

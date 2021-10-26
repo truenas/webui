@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter, map, tap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
@@ -19,7 +20,6 @@ import {
 } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { IdmapFormComponent } from './idmap-form.component';
 
 @UntilDestroy()
@@ -29,9 +29,9 @@ import { IdmapFormComponent } from './idmap-form.component';
 })
 export class IdmapListComponent implements EntityTableConfig {
   title = 'Idmap';
-  queryCall: 'idmap.query' = 'idmap.query';
+  queryCall = 'idmap.query' as const;
   queryCallOption: QueryParams<Idmap>;
-  wsDelete: 'idmap.delete' = 'idmap.delete';
+  wsDelete = 'idmap.delete' as const;
   protected entityList: EntityTableComponent;
   protected idmapFormComponent: IdmapFormComponent;
 

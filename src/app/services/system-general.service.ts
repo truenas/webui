@@ -13,8 +13,8 @@ import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class SystemGeneralService {
-  protected certificateList: 'certificate.query' = 'certificate.query';
-  protected caList: 'certificateauthority.query' = 'certificateauthority.query';
+  protected certificateList = 'certificate.query' as const;
+  protected caList = 'certificateauthority.query' as const;
 
   updateRunning = new EventEmitter<string>();
   updateRunningNoticeSent = new EventEmitter<string>();
@@ -26,7 +26,8 @@ export class SystemGeneralService {
   generalConfigInfo: SystemGeneralConfig | { waiting: true };
   getGeneralConfig$ = new Observable<SystemGeneralConfig>((observer) => {
     if (!this.ws.loggedIn) {
-      return observer.next({} as SystemGeneralConfig);
+      observer.next({} as SystemGeneralConfig);
+      return;
     }
     if ((!this.generalConfigInfo || _.isEmpty(this.generalConfigInfo))) {
       // Since the api call can be made many times before the first response comes back,
@@ -93,6 +94,12 @@ export class SystemGeneralService {
     }, 5000);
   });
 
+  /**
+   * OAuth token for JIRA access
+   * used on `support.new_ticket`, `support.get_categories` and `support.attach_ticket` endpoints
+   */
+  private jiraToken: string;
+
   constructor(protected ws: WebSocketService) {}
 
   getCA(): Observable<CertificateAuthority[]> {
@@ -119,24 +126,12 @@ export class SystemGeneralService {
     return this.ws.call('system.info');
   }
 
-  ipChoicesv4(): Observable<Option[]> {
-    return this.ws.call('system.general.ui_address_choices').pipe(
-      map((response) =>
-        Object.keys(response || {}).map((key) => ({
-          label: response[key],
-          value: response[key],
-        }))),
-    );
+  ipChoicesv4(): Observable<Choices> {
+    return this.ws.call('system.general.ui_address_choices');
   }
 
-  ipChoicesv6(): Observable<Option[]> {
-    return this.ws.call('system.general.ui_v6address_choices').pipe(
-      map((response) =>
-        Object.keys(response || {}).map((key) => ({
-          label: response[key],
-          value: response[key],
-        }))),
-    );
+  ipChoicesv6(): Observable<Choices> {
+    return this.ws.call('system.general.ui_v6address_choices');
   }
 
   kbdMapChoices(): Observable<Option[]> {
@@ -153,6 +148,22 @@ export class SystemGeneralService {
     return this.ws.call('system.general.language_choices');
   }
 
+  languageOptions(sortLanguagesByName: boolean): Observable<Option[]> {
+    return this.languageChoices().pipe(map((languageList: Choices): Option[] => {
+      let options = Object.keys(languageList || {}).map((key) => ({
+        label: sortLanguagesByName
+          ? `${languageList[key]} (${key})`
+          : `${key} (${languageList[key]})`,
+        value: key,
+      }));
+      options = _.sortBy(
+        options,
+        sortLanguagesByName ? 'label' : 'value',
+      );
+      return options;
+    }));
+  }
+
   timezoneChoices(): Observable<Option[]> {
     return this.ws.call('system.general.timezone_choices').pipe(
       map((response) =>
@@ -161,6 +172,14 @@ export class SystemGeneralService {
           value: key,
         }))),
     );
+  }
+
+  uiCertificateOptions(): Observable<Choices> {
+    return this.ws.call('system.general.ui_certificate_choices');
+  }
+
+  uiHttpsProtocolsOptions(): Observable<Choices> {
+    return this.ws.call('system.general.ui_httpsprotocols_choices');
   }
 
   refreshDirServicesCache(): Observable<void> {
@@ -181,5 +200,21 @@ export class SystemGeneralService {
 
   checkRootPW(password: string): Observable<boolean> {
     return this.ws.call('auth.check_user', ['root', password]);
+  }
+
+  /**
+   *
+   * @returns OAuth Token for JIRA
+   */
+  getTokenForJira(): string {
+    return this.jiraToken;
+  }
+
+  /**
+   * Accepts string and set it as token
+   * @param token
+   */
+  setTokenForJira(token: string): void {
+    this.jiraToken = token;
   }
 }

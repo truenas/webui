@@ -3,10 +3,10 @@ import {
 } from '@angular/core';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSidenav } from '@angular/material/sidenav';
+import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { ConsolePanelModalDialog } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
+import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -29,7 +29,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   private isMobile: boolean;
   isSidenavOpen = true;
   isSidenavCollapsed = false;
-  sidenavMode = 'over';
+  sidenavMode: MatDrawerMode = 'over';
   isShowFooterConsole = false;
   isSidenotOpen = false;
   consoleMsg = '';
@@ -184,7 +184,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   scrollToBottomOnFooterBar(): void {
     try {
       this.footerBarScroll.nativeElement.scrollTop = this.footerBarScroll.nativeElement.scrollHeight;
-    } catch (err) { }
+    } catch (err: unknown) { }
   }
 
   checkIfConsoleMsgShows(): void {
@@ -208,11 +208,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     const msgarr = msg.split('\n');
 
     // consoleMSgList will store just 500 messages.
-    for (let i = 0; i < msgarr.length; i++) {
-      if (msgarr[i] !== '') {
-        this.consoleMSgList.push(msgarr[i]);
+    msgarr.forEach((message) => {
+      if ((message) !== '') {
+        this.consoleMSgList.push((message));
       }
-    }
+    });
     while (this.consoleMSgList.length > 500) {
       this.consoleMSgList.shift();
     }
@@ -238,7 +238,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   onShowConsolePanel(): void {
-    const dialogRef = this.dialog.open(ConsolePanelModalDialog, {});
+    const dialogRef = this.dialog.open(ConsolePanelDialogComponent, {});
     const sub = dialogRef.componentInstance.onEventEmitter.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.componentInstance.consoleMsg = this.accumulateConsoleMsg('', 500);
     });

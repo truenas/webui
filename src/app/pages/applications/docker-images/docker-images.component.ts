@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { latestVersion } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
@@ -20,12 +22,12 @@ import { PullImageFormComponent } from '../forms/pull-image-form.component';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class DockerImagesComponent implements EntityTableConfig {
-  title = 'Docker Images';
+  title = this.translate.instant('Docker Images');
 
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
-  queryCall: 'container.image.query' = 'container.image.query';
-  wsDelete: 'container.image.delete' = 'container.image.delete';
+  queryCall = 'container.image.query' as const;
+  wsDelete = 'container.image.delete' as const;
   disableActionsConfig = true;
 
   columns = [
@@ -48,6 +50,8 @@ export class DockerImagesComponent implements EntityTableConfig {
   constructor(
     protected dialogService: DialogService,
     private modalService: ModalService,
+    private matDialog: MatDialog,
+    private translate: TranslateService,
   ) {}
 
   chooseTag: DialogFormConfiguration = {
@@ -59,7 +63,7 @@ export class DockerImagesComponent implements EntityTableConfig {
       required: true,
     }],
     saveButtonText: helptext.dockerImages.chooseTag.action,
-    customSubmit: this.updateImage,
+    customSubmit: (entityDialog) => this.updateImage(entityDialog),
     parent: this,
   };
 
@@ -122,7 +126,7 @@ export class DockerImagesComponent implements EntityTableConfig {
 
   onClickUpdateImage(row: ContainerImage): void {
     if (row.repo_tags.length > 0) {
-      const config: FormSelectConfig = this.chooseTag.fieldConfig[0];
+      const config = this.chooseTag.fieldConfig[0] as FormSelectConfig;
       config.options = row.repo_tags.map((item) => ({
         label: item,
         value: item,
@@ -133,7 +137,6 @@ export class DockerImagesComponent implements EntityTableConfig {
   }
 
   updateImage(entityDialog: EntityDialogComponent): void {
-    const self = entityDialog.parent;
     const tag = entityDialog.formGroup.controls['tag'].value;
     const params = tag.split(':');
     const payload: [PullContainerImageParams] = [{
@@ -141,16 +144,16 @@ export class DockerImagesComponent implements EntityTableConfig {
       tag: params.length > 1 ? params[1] : latestVersion,
     }];
 
-    self.dialogRef = self.mdDialog.open(EntityJobComponent, {
+    const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: {
         title: helptext.dockerImages.pulling,
       },
     });
-    self.dialogRef.componentInstance.setCall('container.image.pull', payload);
-    self.dialogRef.componentInstance.submit();
-    self.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      self.dialogService.closeAllDialogs();
-      self.modalService.refreshTable();
+    dialogRef.componentInstance.setCall('container.image.pull', payload);
+    dialogRef.componentInstance.submit();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialogService.closeAllDialogs();
+      this.modalService.refreshTable();
     });
   }
 }

@@ -9,7 +9,10 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
+import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
 import { AclEditorListComponent } from 'app/pages/storage/volumes/permissions/components/acl-editor-list/acl-editor-list.component';
 import { EditNfsAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
@@ -32,7 +35,6 @@ import { VolumeRekeyFormComponent } from 'app/pages/storage/volumes/volume-rekey
 import { JobService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
-import { MessageService } from '../common/entity/entity-form/services/message.service';
 import { EntityModule } from '../common/entity/entity.module';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from './disks/disk-form/disk-form.component';
@@ -45,15 +47,14 @@ import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clon
 import { SnapshotDetailsComponent } from './snapshots/snapshot-list/components/snapshot-details.component';
 import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
 import { routing } from './storage.routing';
-import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot';
-import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list';
+import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
+import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot/vmware-snapshot-form.component';
 import { DatasetQuotasGrouplistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { GroupQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-grouplist/group-quota-form/group-quota-form.component';
 import { DatasetQuotasUserlistComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
 import { UserQuotaFormComponent } from './volumes/datasets/dataset-quotas/dataset-quotas-userlist/user-quota-form/user-quota-form.component';
 import { DatasetUnlockComponent } from './volumes/datasets/dataset-unlock/dataset-unlock.component';
 import { UnlockDialogComponent } from './volumes/datasets/dataset-unlock/unlock-dialog/unlock-dialog.component';
-import { DiskComponent } from './volumes/manager/disk/disk.component';
 import { ManagerComponent } from './volumes/manager/manager.component';
 import { VdevComponent } from './volumes/manager/vdev/vdev.component';
 import { VolumeImportWizardComponent } from './volumes/volume-import-wizard/volume-import-wizard.component';
@@ -68,12 +69,12 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     ReactiveFormsModule, routing, MaterialModule, TreeTableModule,
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
     NgxFilesizeModule, CommonDirectivesModule, CdkAccordionModule,
+    TooltipModule, CoreComponents,
   ],
   declarations: [
     VolumesListComponent,
     VolumesListControlsComponent,
     ManagerComponent,
-    DiskComponent,
     VdevComponent,
     DatasetFormComponent,
     VolumeRekeyFormComponent,

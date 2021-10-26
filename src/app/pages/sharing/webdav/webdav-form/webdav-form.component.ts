@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -7,11 +8,10 @@ import { filter } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptext_sharing_webdav, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -20,12 +20,12 @@ import { T } from 'app/translate-marker';
 })
 
 export class WebdavFormComponent implements FormConfiguration {
-  queryCall: 'sharing.webdav.query' = 'sharing.webdav.query';
+  queryCall = 'sharing.webdav.query' as const;
   queryKey = 'id';
-  addCall: 'sharing.webdav.create' = 'sharing.webdav.create';
-  editCall: 'sharing.webdav.update' = 'sharing.webdav.update';
+  addCall = 'sharing.webdav.create' as const;
+  editCall = 'sharing.webdav.update' as const;
   isEntity = true;
-  title = T('Add WebDAV');
+  title: string = T('Add WebDAV');
   confirmSubmit = true;
   confirmSubmitDialog = {
     title: helptext_sharing_webdav.warning_dialog_title,

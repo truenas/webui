@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -8,6 +9,7 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/group-list';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Group } from 'app/interfaces/group.interface';
+import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -15,10 +17,8 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { ModalService } from 'app/services/modal.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
-import { GroupFormComponent } from '../group-form/group-form.component';
 
 @UntilDestroy()
 @Component({
@@ -27,11 +27,8 @@ import { GroupFormComponent } from '../group-form/group-form.component';
 })
 export class GroupListComponent implements EntityTableConfig<Group> {
   title = 'Groups';
-  queryCall: 'group.query' = 'group.query';
-  wsDelete: 'group.delete' = 'group.delete';
-  route_add = ['account', 'groups', 'add'];
-  route_add_tooltip = T('Add Group');
-  route_edit: string[] = ['account', 'groups', 'edit'];
+  queryCall = 'group.query' as const;
+  wsDelete = 'group.delete' as const;
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
   globalConfig = {
@@ -66,7 +63,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
     protected ws: WebSocketService,
     protected prefService: PreferencesService,
     private translate: TranslateService,
-    private modalService: ModalService,
+    private modalService: IxModalService,
   ) {}
 
   resourceTransformIncomingRestData(data: Group[]): Group[] {
@@ -91,13 +88,13 @@ export class GroupListComponent implements EntityTableConfig<Group> {
       }
     }, 2000);
 
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
 
   isActionVisible(actionId: string, row: Group): boolean {
-    if (actionId === 'delete' && row.builtin === true) {
+    if (actionId === 'delete' && row.builtin) {
       return false;
     }
     return true;
@@ -111,9 +108,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
       label: helptext.group_list_actions_label_member,
       icon: 'people',
       onClick: (members: Group) => {
-        this._router.navigate(new Array('/').concat(
-          ['credentials', 'groups', 'members', String(members.id)],
-        ));
+        this._router.navigate(['/', 'credentials', 'groups', 'members', String(members.id)]);
       },
     });
     if (row.builtin === !true) {
@@ -122,8 +117,9 @@ export class GroupListComponent implements EntityTableConfig<Group> {
         icon: 'edit',
         label: helptext.group_list_actions_label_edit,
         name: helptext.group_list_actions_id_edit,
-        onClick: (members_edit: Group) => {
-          this.modalService.openInSlideIn(GroupFormComponent, members_edit.id);
+        onClick: (group: Group) => {
+          const modal = this.modalService.open(GroupFormComponent, this.translate.instant('Edit Group'));
+          modal.setupForm(group);
         },
       });
       actions.push({
@@ -132,9 +128,8 @@ export class GroupListComponent implements EntityTableConfig<Group> {
         name: 'delete',
         label: helptext.group_list_actions_label_delete,
         onClick: (members_delete: Group) => {
-          const self = this;
           this.loader.open();
-          self.ws.call('user.query', [[['group.id', '=', members_delete.id]]]).pipe(untilDestroyed(this)).subscribe(
+          this.ws.call('user.query', [[['group.id', '=', members_delete.id]]]).pipe(untilDestroyed(this)).subscribe(
             (usersInGroup) => {
               this.loader.close();
 
@@ -158,7 +153,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
                     value: false,
                     onChange: (valueChangeData: { event: MatCheckboxChange }) => {
                       if (valueChangeData.event.checked) {
-                        self.dialogService.info('Following users will be deleted', usersInGroup.map((user, index) => {
+                        this.dialogService.info('Following users will be deleted', usersInGroup.map((user, index) => {
                           if (user.full_name && user.full_name.length) {
                             return (index + 1) + '. ' + user.username + ' (' + user.full_name + ')';
                           }
@@ -168,25 +163,25 @@ export class GroupListComponent implements EntityTableConfig<Group> {
                     },
                   });
                 },
-                customSubmit(entityDialog: EntityDialogComponent) {
+                customSubmit: (entityDialog: EntityDialogComponent) => {
                   entityDialog.dialogRef.close(true);
-                  self.loader.open();
-                  self.ws.call(self.wsDelete, [members_delete.id, entityDialog.formValue])
+                  this.loader.open();
+                  this.ws.call(this.wsDelete, [members_delete.id, entityDialog.formValue])
                     .pipe(untilDestroyed(this))
                     .subscribe(() => {
-                      self.entityList.getData();
-                      self.loader.close();
+                      this.entityList.getData();
+                      this.loader.close();
                     },
                     (err) => {
-                      new EntityUtils().handleWSError(self, err, self.dialogService);
-                      self.loader.close();
+                      new EntityUtils().handleWSError(this, err, this.dialogService);
+                      this.loader.close();
                     });
                 },
               };
               this.dialogService.dialogForm(conf);
             }, (err) => {
               this.loader.close();
-              new EntityUtils().handleWSError(self, err, self.dialogService);
+              new EntityUtils().handleWSError(this, err, this.dialogService);
             },
           );
         },
@@ -234,6 +229,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(GroupFormComponent);
+    const modal = this.modalService.open(GroupFormComponent, this.translate.instant('Add Group'));
+    modal.setupForm();
   }
 }

@@ -3,7 +3,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ModalService } from 'app/services/modal.service';
@@ -15,10 +15,10 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class KerberosRealmsFormComponent implements FormConfiguration {
   title: string;
-  addCall: 'kerberos.realm.create' = 'kerberos.realm.create';
-  editCall: 'kerberos.realm.update' = 'kerberos.realm.update';
-  queryCall: 'kerberos.realm.query' = 'kerberos.realm.query';
-  pk: any;
+  addCall = 'kerberos.realm.create' as const;
+  editCall = 'kerberos.realm.update' as const;
+  queryCall = 'kerberos.realm.query' as const;
+  pk: number;
   queryKey = 'id';
   isEntity = true;
   private getRow = new Subscription();
@@ -61,7 +61,7 @@ export class KerberosRealmsFormComponent implements FormConfiguration {
   ];
 
   constructor(private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
     });

@@ -1,8 +1,10 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -13,15 +15,14 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { helptext_system_update as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +35,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   route_success: string[] = ['system', 'update'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   fileLocation: string;
-  subs: any;
+  subs: { formData: FormData; apiEndPoint: string };
   isHA = false;
   isUpdateRunning = false;
   updateMethod = 'update.update';
@@ -62,7 +63,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       fileLocation: '',
       message: this.messageService,
       acceptedFiles: '.tar,.update',
-      updater: this.updater,
+      updater: (file: FormUploadComponent) => this.updater(file),
       parent: this,
       hideButton: true,
     },
@@ -122,11 +123,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       }
 
       pools.forEach((pool) => {
-        if (!pool.is_decrypted) {
-          return;
-        }
-
-        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'filelocation' });
+        const config = _.find(this.fieldConfig, { name: 'filelocation' }) as FormSelectConfig;
         config.options.push({
           label: '/mnt/' + pool.name, value: '/mnt/' + pool.name,
         });
@@ -149,10 +146,10 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
 
     entityForm.formGroup.controls['filelocation'].valueChanges.pipe(untilDestroyed(this)).subscribe((filelocation: string) => {
       if (filelocation === ':temp:') {
-        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'filename' });
+        const config = _.find(this.fieldConfig, { name: 'filename' }) as FormSelectConfig;
         config.fileLocation = null;
       } else {
-        const config: FormSelectConfig = _.find(this.fieldConfig, { name: 'filename' });
+        const config = _.find(this.fieldConfig, { name: 'filename' }) as FormSelectConfig;
         config.fileLocation = filelocation;
       }
     });
@@ -203,12 +200,16 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
           }).pipe(untilDestroyed(this)).subscribe(() => {});
         }
       });
-      this.dialogRef.componentInstance.prefailure.pipe(untilDestroyed(this)).subscribe((prefailure: any) => {
-        this.dialogRef.close(false);
-        this.dialogService.errorReport(helptext.manual_update_error_dialog.message,
-          `${prefailure.status.toString()} ${prefailure.statusText}`);
-        this.save_button_enabled = true;
-      });
+      this.dialogRef.componentInstance.prefailure
+        .pipe(untilDestroyed(this))
+        .subscribe((prefailure: HttpErrorResponse) => {
+          this.dialogRef.close(false);
+          this.dialogService.errorReport(
+            helptext.manual_update_error_dialog.message,
+            `${prefailure.status.toString()} ${prefailure.statusText}`,
+          );
+          this.save_button_enabled = true;
+        });
       this.dialogRef.componentInstance.failure
         .pipe(take(1))
         .pipe(untilDestroyed(this)).subscribe((failure) => {
@@ -219,12 +220,12 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     });
   }
 
-  updater(file: FormUploadComponent, parent: this): void {
+  updater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.save_button_enabled = true;
+      this.save_button_enabled = true;
       const formData: FormData = new FormData();
-      if (parent.isHA) {
+      if (this.isHA) {
         formData.append('data', JSON.stringify({
           method: 'failover.upgrade',
         }));
@@ -235,9 +236,9 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
         }));
       }
       formData.append('file', fileBrowser.files[0]);
-      parent.subs = { apiEndPoint: file.apiEndPoint, formData };
+      this.subs = { apiEndPoint: file.apiEndPoint, formData };
     } else {
-      parent.save_button_enabled = false;
+      this.save_button_enabled = false;
     }
   }
 

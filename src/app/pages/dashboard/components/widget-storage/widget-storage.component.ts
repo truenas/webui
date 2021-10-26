@@ -2,6 +2,7 @@ import {
   AfterViewInit, Component, Input, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
@@ -11,7 +12,6 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { VolumesData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { T } from 'app/translate-marker';
 
 interface ItemInfo {
   icon: string;
@@ -72,27 +72,21 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
 
   updateGridInfo(): void {
     const poolCount = this.pools.length;
+    this.paddingTop = 16;
+    this.paddingRight = 16;
+    this.paddingBottom = 16;
+    this.paddingLeft = 16;
+
     if (poolCount <= 2) {
       this.cols = 1;
-      this.paddingTop = 24;
-      this.paddingRight = 24;
-      this.paddingBottom = 42;
-      this.paddingLeft = 24;
-      this.gap = 24;
+      this.gap = 16;
     } else if (poolCount <= 4) {
       this.cols = 2;
       this.gap = 16;
-      this.paddingTop = 5;
-      this.paddingRight = 16;
-      this.paddingBottom = 26;
-      this.paddingLeft = 16;
     } else {
       this.cols = 2;
       this.gap = 8;
       this.paddingTop = 0;
-      this.paddingRight = 16;
-      this.paddingBottom = 12;
-      this.paddingLeft = 16;
     }
 
     this.rows = Math.round(poolCount / this.cols);
@@ -160,7 +154,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
     let value;
 
     if (!volume || !volume.used_pct) {
-      value = T('Unknown');
+      value = this.translate.instant('Unknown');
       level = 'warn';
       icon = 'mdi-alert-circle';
     } else {
@@ -193,7 +187,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   getDiskWithErrorsItemInfo(pool: Pool): ItemInfo {
     let level = 'warn';
     let icon = 'mdi-alert-circle';
-    let value = T('Unknown');
+    let value: string = T('Unknown');
 
     if (pool && pool.topology) {
       const unhealthy: string[] = []; // Disks with errors
@@ -255,7 +249,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   getFreeSpace(pool: Pool): string {
     const volume = this.volumeData[pool.name];
     if (volume && volume.used_pct) {
-      if (isNaN(volume.used) ? volume.used : filesize(volume.used, { exponent: 3 }) !== 'Locked') {
+      if (Number.isNaN(volume.used) ? volume.used : filesize(volume.used, { exponent: 3 }) !== 'Locked') {
         return this.getSizeString(volume.avail);
       }
     } else if (!volume || typeof volume.avail == undefined) {

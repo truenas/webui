@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { RsyncModuleMode } from 'app/enums/rsync-mode.enum';
-import { T } from 'app/translate-marker';
 
 export default {
   rsyncd_fieldset_general: T('General'),

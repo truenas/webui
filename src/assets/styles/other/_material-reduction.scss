@@ -1,3 +1,5 @@
+@import 'cssvars';
+
 /* TYPOGRAPHY */
 
 body {
@@ -252,8 +254,12 @@ input.mat-input-element::placeholder {
   border: solid 1px var(--lines);
   box-sizing: border-box;
   color: var(--fg1);
-  color: var(--fg1);
   padding: 8px;
+
+  &[disabled] {
+    cursor: not-allowed;
+    opacity: 0.38;
+  }
 }
 
 .form-element,
@@ -595,6 +601,11 @@ button.mat-menu-trigger.menu-toggle.mat-button {
 
 #slide-in-form .mat-card {
   border: none;
+  box-shadow: none;
+}
+
+#slide-in-form .ix-form-container {
+  padding: 0;
 }
 
 .mat-card .mat-toolbar-row,
@@ -803,11 +814,22 @@ mat-card.mat-card .mat-list-base {
   margin-left: 8px;
 }
 
+
 #row-filter.form-element {
   display: inline;
   margin: 0;
   max-height: 36px;
   width: unset !important;
+}
+
+@media #{$media-lt-sm} {
+  .entity-table-controls > div {
+    margin-top: 8px;
+  }
+
+  #row-filter.search-field {
+    margin-top: 8px;
+  }
 }
 
 #row-filter.form-element .mat-form-field-wrapper {
@@ -977,6 +999,14 @@ ul.nested-list li {
 
   &[data-popper-placement=bottom] {
     margin-left: 11px !important;
+  }
+}
+
+@media #{$media-lt-sm} {
+  .mat-button {
+    font-size: 12px;
+    min-width: auto;
+    padding: 0 8px;
   }
 }
 

@@ -5,12 +5,14 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
+import { JobViewLogState } from 'app/enums/job-view-log-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -19,7 +21,6 @@ import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/e
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { JobsListStore } from 'app/pages/jobs/jobs-list/jobs-list.store';
 import { DialogService } from 'app/services';
-import { T } from 'app/translate-marker';
 import { JobTab } from './jobs-list.store';
 
 @UntilDestroy()
@@ -33,7 +34,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   paginationPageSize = 10;
   paginationPageSizeOptions: number[] = [10, 50, 100];
   paginationShowFirstLastButtons = true;
-  queryCall: 'core.get_jobs' = 'core.get_jobs';
+  queryCall = 'core.get_jobs' as const;
   queryCallOption: QueryParams<Job> = [[], { limit: this.paginationPageSize, order_by: ['-id'] }];
   @ViewChild('taskTable', { static: false }) taskTable: MatTable<Job[]>;
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -42,8 +43,9 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
   dataSource: MatTableDataSource<Job> = new MatTableDataSource<Job>([]);
-  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'logs_excerpt'];
+  displayedColumns = ['name', 'state', 'id', 'time_started', 'time_finished', 'arguments', 'logs_excerpt'];
   viewingLogsForJob: Job;
+  viewType: JobViewLogState;
   isLoading: boolean;
   toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
@@ -61,6 +63,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     title: T('Loading...'),
   };
   readonly JobState = JobState;
+  readonly JobViewLogState = JobViewLogState;
   private paginator: MatPaginator;
 
   constructor(
@@ -73,11 +76,11 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   onAborted(job: Job): void {
     this.dialogService
       .confirm({
-        title: this.translate.instant(T('Abort the task')),
-        message: `<pre>${job.method}</pre>`,
+        title: this.translate.instant('Abort'),
+        message: this.translate.instant('Are you sure you want to abort the <b>{task}</b> task?', { task: job.method }),
         hideCheckBox: true,
-        buttonMsg: this.translate.instant(T('Abort')),
-        cancelMsg: this.translate.instant(T('Close')),
+        buttonMsg: this.translate.instant('Abort'),
+        cancelMsg: this.translate.instant('Cancel'),
         disableClose: true,
       })
       .pipe(filter(Boolean), untilDestroyed(this))
@@ -133,8 +136,9 @@ export class JobsListComponent implements OnInit, AfterViewInit {
     this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
 
-  viewLogs(job: Job): void {
+  viewLogs(job: Job, viewType: JobViewLogState): void {
     this.viewingLogsForJob = job;
+    this.viewType = viewType;
   }
 
   onLogsSidebarClosed(): void {

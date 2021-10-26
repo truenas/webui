@@ -3,7 +3,9 @@ import {
 } from '@angular/core';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
@@ -14,11 +16,12 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
+import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
-import { T } from 'app/translate-marker';
 import { BootenvRow } from './bootenv-row.interface';
 
 @UntilDestroy()
@@ -31,14 +34,13 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
 
   title = T('Boot Environments');
   resource_name = 'system/bootenv';
-  queryCall: 'bootenv.query' = 'bootenv.query';
-  route_add: string[] = ['system', 'boot', 'create'];
+  queryCall = 'bootenv.query' as const;
   protected route_delete: string[] = ['system', 'boot', 'delete'];
-  wsDelete: 'bootenv.delete' = 'bootenv.delete';
-  wsMultiDelete: 'core.bulk' = 'core.bulk';
+  wsDelete = 'bootenv.delete' as const;
+  wsMultiDelete = 'core.bulk' as const;
   protected entityList: EntityTableComponent;
-  protected wsActivate: 'bootenv.activate' = 'bootenv.activate';
-  protected wsKeep: 'bootenv.set_attribute' = 'bootenv.set_attribute';
+  protected wsActivate = 'bootenv.activate' as const;
+  protected wsKeep = 'bootenv.set_attribute' as const;
   protected loaderOpen = false;
   size_consumed: string;
   condition: string;
@@ -56,6 +58,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     private storage: StorageService,
     protected localeService: LocaleService,
     private sysGeneralService: SystemGeneralService,
+    protected translate: TranslateService,
+    private modalService: IxModalService,
   ) {}
 
   columns = [
@@ -111,6 +115,10 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
+
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   isActionVisible(actionId: string): boolean {
@@ -136,9 +144,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: T('Clone'),
       id: 'clone',
       onClick: (row: BootenvRow) => {
-        this._router.navigate(new Array('').concat(
-          ['system', 'boot', 'clone', row.id],
-        ));
+        this._router.navigate(['/', 'system', 'boot', 'clone', row.id]);
       },
     });
 
@@ -146,9 +152,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: T('Rename'),
       id: 'rename',
       onClick: (row: BootenvRow) => {
-        this._router.navigate(new Array('').concat(
-          ['system', 'boot', 'rename', row.id],
-        ));
+        const modal = this.modalService.open(BootEnvironmentFormComponent, this.translate.instant('Create Boot Environment'));
+        modal.setupForm(row.id);
       },
     });
 
@@ -176,7 +181,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       });
     }
 
-    if (row.keep === true) {
+    if (row.keep) {
       actions.push({
         label: T('Unkeep'),
         id: 'keep',
@@ -215,16 +220,16 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
 
   getSelectedNames(selectedBootenvs: BootenvRow[]): string[][] {
     const selected: string[][] = [];
-    for (const i in selectedBootenvs) {
-      if (selectedBootenvs[i].active === '-' || selectedBootenvs[i].active === '') {
-        selected.push([selectedBootenvs[i].id]);
+    selectedBootenvs.forEach((bootenv) => {
+      if (bootenv.active === '-' || bootenv.active === '') {
+        selected.push([bootenv.id]);
       }
-    }
+    });
     return selected;
   }
 
-  wsMultiDeleteParams(selected: BootenvRow[]): any[] {
-    const params: any[] = ['bootenv.do_delete'];
+  wsMultiDeleteParams(selected: BootenvRow[]): (string | string[][])[] {
+    const params: (string | string[][])[] = ['bootenv.do_delete'];
     params.push(this.getSelectedNames(selected));
     return params;
   }
@@ -314,6 +319,12 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
 
   getAddActions(): EntityTableAction[] {
     return [{
+      label: T('Add'),
+      onClick: () => {
+        const modal = this.modalService.open(BootEnvironmentFormComponent, this.translate.instant('Create Boot Environment'));
+        modal.setupForm();
+      },
+    }, {
       label: T('Stats/Settings'),
       onClick: () => {
         this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
@@ -324,22 +335,22 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             {
               type: 'paragraph',
               name: 'condition',
-              paraText: T(`<b>Boot Pool Condition:</b> ${this.condition}`),
+              paraText: this.translate.instant('<b>Boot Pool Condition:</b> {condition}', { condition: this.condition }),
             },
             {
               type: 'paragraph',
               name: 'size_boot',
-              paraText: T(`<b>Size:</b> ${this.size_boot}`),
+              paraText: this.translate.instant('<b>Size:</b> {size_boot}', { size_boot: this.size_boot }),
             },
             {
               type: 'paragraph',
               name: 'size_consumed',
-              paraText: T(`<b>Used:</b> ${this.size_consumed}`),
+              paraText: this.translate.instant('<b>Used:</b> {size_consumed}', { size_consumed: this.size_consumed }),
             },
             {
               type: 'paragraph',
               name: 'scrub_msg',
-              paraText: T(`<b>Last Scrub Run:</b> ${this.scrub_msg}<br /><br />`),
+              paraText: this.translate.instant('<b>Last Scrub Run:</b> {scrub_msg}<br /><br />', { scrub_msg: this.scrub_msg }),
             },
             {
               type: 'input',
@@ -357,15 +368,24 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             saveButtonText: T('Update Interval'),
             cancelButtonText: T('Close'),
             parent: this,
-            customSubmit(entityDialog: EntityDialogComponent) {
+            customSubmit: (entityDialog: EntityDialogComponent) => {
               const scrubIntervalValue = parseInt(entityDialog.formValue.new_scrub_interval);
               if (scrubIntervalValue > 0) {
-                localWS.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(entityDialog.parent)).subscribe(() => {
+                localWS.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(this)).subscribe(() => {
                   localDialog.closeAllDialogs();
-                  localDialog.info(T('Scrub Interval Set'), T(`Scrub interval set to ${scrubIntervalValue} days`), '300px', 'info', true);
+                  localDialog.info(
+                    T('Scrub Interval Set'),
+                    this.translate.instant('Scrub interval set to {scrubIntervalValue} days', { scrubIntervalValue }),
+                    '300px',
+                    'info',
+                    true,
+                  );
                 });
               } else {
-                localDialog.info(T('Enter valid value'), T(scrubIntervalValue + ' is not a valid number of days.'));
+                localDialog.info(
+                  T('Enter valid value'),
+                  this.translate.instant('{scrubIntervalValue} is not a valid number of days.', { scrubIntervalValue }),
+                );
               }
             },
           };
@@ -388,9 +408,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   }
 
   goToStatus(): void {
-    this._router.navigate(new Array('').concat(
-      ['system', 'boot', 'status'],
-    ));
+    this._router.navigate(['/', 'system', 'boot', 'status']);
   }
 
   scrub(): void {

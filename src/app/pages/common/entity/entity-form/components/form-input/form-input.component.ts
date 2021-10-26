@@ -55,7 +55,7 @@ export class FormInputComponent implements Field {
 
   blurEvent(): void {
     if (this.config.blurStatus) {
-      this.config.blurEvent(this.config.parent);
+      this.config.blurEvent();
     }
   }
 
@@ -70,7 +70,7 @@ export class FormInputComponent implements Field {
         this.group.controls[this.config.name].value,
         this.config.inputUnit,
       );
-      if (isNaN(phrasedValue)) {
+      if (Number.isNaN(phrasedValue as number)) {
         this.group.controls[this.config.name].setErrors({
           manualValidateError: true,
           manualValidateErrorMsg: globalHelptext.invalidInputValueWithUnit,
@@ -105,7 +105,7 @@ export class FormInputComponent implements Field {
   }
 
   shouldShowResetInput(): boolean {
-    return this.hasValue() && !this.config.readonly && !this.config.togglePw && this.config.inputType !== 'password';
+    return this.hasValue() && !this.config.readonly && !this.config.togglePw && this.config.inputType !== 'password' && !this.config.disabled;
   }
 
   resetInput(): void {

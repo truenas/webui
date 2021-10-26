@@ -5,6 +5,7 @@ import { MediaObserver } from '@angular/flex-layout';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -13,6 +14,7 @@ import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/
 import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { LayoutService } from 'app/core/services/layout.service';
+import { AlertLevel } from 'app/enums/alert-level.enum';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -22,13 +24,15 @@ import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import network_interfaces_helptext from 'app/helptext/network/interfaces/interfaces-list';
 import helptext from 'app/helptext/topbar';
 import { CoreEvent } from 'app/interfaces/events';
+import { HaStatus, HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
-import { ResilverEvent } from 'app/interfaces/events/resilver-event.interface';
+import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import {
   UserPreferencesEvent,
   UserPreferencesReadyEvent,
 } from 'app/interfaces/events/user-preferences-event.interface';
+import { ResilverData } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -43,8 +47,7 @@ import { NotificationAlert, NotificationsService } from 'app/services/notificati
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
-import { AboutModalDialog } from '../dialog/about/about-dialog.component';
+import { AboutDialogComponent } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
 import { TruecommandComponent } from '../dialog/truecommand/truecommand.component';
@@ -67,7 +70,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   showResilvering = false;
   pendingNetworkChanges = false;
   waitingNetworkCheckin = false;
-  resilveringDetails: any;
+  resilveringDetails: ResilverData;
   themesMenu: Theme[] = this.themeService.themesMenu;
   currentTheme = 'ix-blue';
   isTaskMangerOpened = false;
@@ -76,7 +79,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   dirServicesMonitor: MatDialogRef<DirectoryServicesMonitorComponent>;
   dirServicesStatus: DirectoryServiceState[] = [];
   showDirServicesIcon = false;
-  exposeLegacyUI = false;
   ha_status_text: string;
   ha_disabled_reasons: FailoverDisabledReason[] = [];
   is_ha = false;
@@ -99,8 +101,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   numberOfRunningJobs$: Observable<number> = this.jobsManagerStore.numberOfRunningJobs$;
 
   protected tcConnected = false;
-  protected tc_queryCall: 'truecommand.config' = 'truecommand.config';
-  protected tc_updateCall: 'truecommand.update' = 'truecommand.update';
+  protected tc_queryCall = 'truecommand.config' as const;
+  protected tc_updateCall = 'truecommand.update' as const;
   protected isTcStatusOpened = false;
   protected tcStatusDialogRef: MatDialogRef<TruecommandComponent>;
   tcStatus: TrueCommandConfig;
@@ -139,13 +141,16 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
         this.is_ha = is_ha;
-        this.is_ha ? window.localStorage.setItem('alias_ips', 'show') : window.localStorage.setItem('alias_ips', '0');
+        if (this.is_ha) {
+          window.localStorage.setItem('alias_ips', 'show');
+        } else {
+          window.localStorage.setItem('alias_ips', '0');
+        }
         this.getHAStatus();
       });
       this.sysName = 'TrueNAS ENTERPRISE';
     } else {
       window.localStorage.setItem('alias_ips', '0');
-      this.checkLegacyUISetting();
     }
     this.ws.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
       if (event && event.fields.method === 'update.update' || event.fields.method === 'failover.upgrade') {
@@ -198,14 +203,14 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     const notifications = this.notificationsService.getNotificationList();
 
     notifications.forEach((notificationAlert: NotificationAlert) => {
-      if (notificationAlert.dismissed === false && notificationAlert.level !== 'INFO') {
+      if (!notificationAlert.dismissed && notificationAlert.level !== AlertLevel.Info) {
         this.notifications.push(notificationAlert);
       }
     });
     this.notificationsService.getNotifications().pipe(untilDestroyed(this)).subscribe((notifications1) => {
       this.notifications = [];
       notifications1.forEach((notificationAlert: NotificationAlert) => {
-        if (notificationAlert.dismissed === false && notificationAlert.level !== 'INFO') {
+        if (!notificationAlert.dismissed && notificationAlert.level !== AlertLevel.Info) {
           this.notifications.push(notificationAlert);
         }
       });
@@ -230,10 +235,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.core.register({
       observerClass: this,
       eventName: 'Resilvering',
-    }).pipe(untilDestroyed(this)).subscribe((evt: ResilverEvent) => {
+    }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
       if (evt.data.scan.state == PoolScanState.Finished) {
         this.showResilvering = false;
-        this.resilveringDetails = '';
+        this.resilveringDetails = null;
       } else {
         this.resilveringDetails = evt.data;
         this.showResilvering = true;
@@ -262,7 +267,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
 
     this.ws.onCloseSubject$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
     });
   }
 
@@ -271,19 +276,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.target.next({ name: 'SubmitComplete', sender: this });
       this.isWaiting = false;
     }
-    this.showWelcome = evt.data.showWelcomeDialog;
+    this.showWelcome = evt.data.showWelcomeDialog && !(localStorage.getItem('turnOffWelcomeDialog') as unknown as boolean);
     if (this.showWelcome) {
       this.onShowAbout();
     }
-  }
-
-  checkLegacyUISetting(): void {
-    this.sysGenService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res.legacy_ui) {
-        this.exposeLegacyUI = res.legacy_ui;
-        window.localStorage.setItem('exposeLegacyUI', res.legacy_ui as any);
-      }
-    });
   }
 
   ngOnDestroy(): void {
@@ -320,7 +316,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   onShowAbout(): void {
-    this.dialog.open(AboutModalDialog, {
+    this.dialog.open(AboutDialogComponent, {
       maxWidth: '600px',
       data: {
         extraMsg: this.showWelcome,
@@ -466,17 +462,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.dialog.open(ResilverProgressDialogComponent);
   }
 
-  onGoToLegacy(): void {
-    this.dialogService.confirm({
-      title: T('Warning'),
-      message: helptext.legacyUIWarning,
-      hideCheckBox: true,
-      buttonMsg: T('Continue to Legacy UI'),
-    }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-      window.location.href = '/legacy/';
-    });
-  }
-
   onShowTaskManager(): void {
     if (this.isTaskMangerOpened) {
       this.taskDialogRef.close(true);
@@ -508,9 +493,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       this.dirServicesMonitor = this.dialog.open(DirectoryServicesMonitorComponent, {
         width: '400px',
         hasBackdrop: true,
+        panelClass: 'topbar-panel',
         position: {
           top: '48px',
-          right: '0px',
+          right: '16px',
         },
       });
     }
@@ -522,7 +508,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     );
   }
 
-  updateHAInfo(info: any): void {
+  updateHAInfo(info: HaStatus): void {
     this.ha_disabled_reasons = info.reasons;
     if (info.status == 'HA Enabled') {
       this.ha_status_text = helptext.ha_status_text_enabled;
@@ -535,7 +521,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   getHAStatus(): void {
-    this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
       this.updateHAInfo(evt.data);
     });
   }
@@ -547,17 +533,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     if (this.ha_disabled_reasons.length > 0) {
       ha_status = helptext.ha_status_text_disabled;
       ha_icon = 'warning';
-      for (let i = 0; i < this.ha_disabled_reasons.length; i++) {
-        const reason_text = helptext.ha_disabled_reasons[this.ha_disabled_reasons[i]];
-        this.translate.get(reason_text).pipe(untilDestroyed(this)).subscribe(() => {
-          reasons = reasons + '<li>' + reason_text + '</li>\n';
-        });
-      }
+      this.ha_disabled_reasons.forEach((reason) => {
+        const reason_text = helptext.ha_disabled_reasons[reason];
+        reasons = reasons + '<li>' + this.translate.instant(reason_text) + '</li>\n';
+      });
     } else {
       ha_status = helptext.ha_status_text_enabled;
-      this.translate.get(helptext.ha_is_enabled).pipe(untilDestroyed(this)).subscribe((ha_is_enabled) => {
-        reasons = reasons + '<li>' + ha_is_enabled + '</li>\n';
-      });
+      reasons = reasons + '<li>' + this.translate.instant(helptext.ha_is_enabled) + '</li>\n';
     }
     reasons = reasons + '</ul>';
 
@@ -642,7 +624,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   }
 
   showTCStatus(): void {
-    this.tcConnected ? this.openStatusDialog() : this.openSignupDialog();
+    if (this.tcConnected) {
+      this.openStatusDialog();
+    } else {
+      this.openSignupDialog();
+    }
   }
 
   openSignupDialog(): void {
@@ -662,19 +648,18 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         },
       ],
       parent: this,
-      customSubmit(entityDialog: EntityDialogComponent) {
+      customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close();
-        entityDialog.parent.updateTC();
+        this.updateTC();
       },
     };
     this.dialogService.dialogForm(conf);
   }
 
   updateTC(): void {
-    const self = this;
     let updateDialog: EntityDialogComponent;
     const conf: DialogFormConfiguration = {
-      title: self.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
+      title: this.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
       fieldConfig: [
         {
           type: 'input',
@@ -694,7 +679,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         id: 'deregister',
         name: helptext.tcDeregisterBtn,
         function: () => {
-          self.dialogService.generalDialog({
+          this.dialogService.generalDialog({
             title: helptext.tcDeregisterDialog.title,
             icon: helptext.tcDeregisterDialog.icon,
             message: helptext.tcDeregisterDialog.message,
@@ -704,59 +689,59 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
               return;
             }
 
-            self.loader.open();
-            self.ws.call(self.tc_updateCall, [{ api_key: null, enabled: false }])
+            this.loader.open();
+            this.ws.call(this.tc_updateCall, [{ api_key: null, enabled: false }])
               .pipe(untilDestroyed(this))
               .subscribe(
                 () => {
-                  self.loader.close();
+                  this.loader.close();
                   updateDialog.dialogRef.close();
-                  self.tcStatusDialogRef.close(true);
-                  self.dialogService.generalDialog({
+                  this.tcStatusDialogRef.close(true);
+                  this.dialogService.generalDialog({
                     title: helptext.deregisterInfoDialog.title,
                     message: helptext.deregisterInfoDialog.message,
                     hideCancel: true,
                   });
                 },
                 (err) => {
-                  self.loader.close();
-                  new EntityUtils().handleWSError(updateDialog.parent, err, updateDialog.parent.dialogService);
+                  this.loader.close();
+                  new EntityUtils().handleWSError(this, err, this.dialogService);
                 },
               );
           });
         },
       }],
-      isCustActionVisible(actionId: string) {
-        return !(actionId === 'deregister' && !self.tcConnected);
+      isCustActionVisible: (actionId: string) => {
+        return !(actionId === 'deregister' && !this.tcConnected);
       },
-      saveButtonText: self.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
+      saveButtonText: this.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
       parent: this,
-      afterInit(entityDialog: EntityDialogComponent) {
+      afterInit: (entityDialog: EntityDialogComponent) => {
         updateDialog = entityDialog;
         // load settings
-        if (self.tcConnected) {
-          Object.keys(self.tcStatus).forEach((key) => {
+        if (this.tcConnected) {
+          Object.keys(this.tcStatus).forEach((key) => {
             const ctrl = entityDialog.formGroup.controls[key];
             if (ctrl) {
-              ctrl.setValue(self.tcStatus[key as keyof TrueCommandConfig]);
+              ctrl.setValue(this.tcStatus[key as keyof TrueCommandConfig]);
             }
           });
         }
       },
-      customSubmit(entityDialog: EntityDialogComponent) {
-        self.loader.open();
-        self.ws.call(self.tc_updateCall, [entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
+      customSubmit: (entityDialog: EntityDialogComponent) => {
+        this.loader.open();
+        this.ws.call(this.tc_updateCall, [entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
           () => {
-            self.loader.close();
+            this.loader.close();
             entityDialog.dialogRef.close();
             // only show this for connecting TC
-            if (!self.tcConnected) {
-              self.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message, '500px', 'info');
+            if (!this.tcConnected) {
+              this.dialogService.info(helptext.checkEmailInfoDialog.title, helptext.checkEmailInfoDialog.message, '500px', 'info');
             }
           },
           (err) => {
-            self.loader.close();
-            new EntityUtils().handleWSError(entityDialog.parent, err, entityDialog.parent.dialogService);
+            this.loader.close();
+            new EntityUtils().handleWSError(this, err, this.dialogService);
           },
         );
       },

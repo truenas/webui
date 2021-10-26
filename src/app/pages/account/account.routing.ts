@@ -1,9 +1,8 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { GroupListComponent } from 'app/pages/account/groups/group-list/group-list.component';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
-import { T } from 'app/translate-marker';
 import { BackupCredentialsComponent } from '../credentials/backup-credentials/backup-credentials.component';
 import { CertificatesDashComponent } from '../credentials/certificates-dash/certificates-dash.component';
 import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
@@ -45,16 +44,8 @@ export const routes: Routes = [{
         path: '',
         component: GroupListComponent,
         data: { title: 'Groups', breadcrumb: 'Groups' },
-      }, {
-        path: 'add',
-        component: GroupFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
       },
       {
-        path: 'edit/:pk',
-        component: GroupFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
-      }, {
         path: 'members/:pk',
         component: MembersComponent,
         data: { title: 'Update Members', breadcrumb: 'Members' },

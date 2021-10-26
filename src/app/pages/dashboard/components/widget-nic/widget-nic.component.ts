@@ -2,17 +2,20 @@ import {
   Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
   tween,
   styler,
 } from 'popmotion';
+import { Subject } from 'rxjs';
 import { LinkState, NetworkInterfaceAliasType } from 'app/enums/network-interface.enum';
 import { CoreEvent } from 'app/interfaces/events';
+import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { DashboardNicState } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
-import { T } from 'app/translate-marker';
 
 interface NetTraffic {
   sent: string;
@@ -33,14 +36,17 @@ interface Slide {
   styleUrls: ['./widget-nic.component.scss'],
 })
 export class WidgetNicComponent extends WidgetComponent implements AfterViewInit, OnDestroy, OnChanges {
-  @Input() stats: any;
-  @Input() nicState: any;
+  @Input() stats: Subject<CoreEvent>;
+  @Input() nicState: DashboardNicState;
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
   @ViewChild('carouselparent', { static: false }) carouselParent: ElementRef;
   traffic: NetTraffic;
   currentSlide = '0';
   private utils: WidgetUtils;
-  LinkState = LinkState;
+
+  readonly LinkState = LinkState;
+  readonly NetworkInterfaceAliasType = NetworkInterfaceAliasType;
+
   get currentSlideName(): string {
     return this.path[parseInt(this.currentSlide)].name;
   }
@@ -57,10 +63,10 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     { name: T('empty') },
   ];
 
-  get ipAddresses(): any[] {
+  get ipAddresses(): NetworkInterfaceAlias[] {
     if (!this.nicState && !this.nicState.aliases) { return []; }
 
-    return this.nicState.aliases.filter((item: any) =>
+    return this.nicState.aliases.filter((item) =>
       [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
   }
 
@@ -140,31 +146,15 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     this.title = this.currentSlide == '0' ? 'Interface' : this.nicState.name;
   }
 
-  vlanAliases(vlanIndex: string | number): any[] {
+  vlanAliases(vlanIndex: string | number): NetworkInterfaceAlias[] {
     if (typeof vlanIndex == 'string') { vlanIndex = parseInt(vlanIndex); }
     const vlan = this.nicState.vlans[vlanIndex];
-    return vlan.aliases.filter((item: any) =>
+    return vlan.aliases.filter((item) =>
       [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
   }
 
-  getMbps(arr: number[]): number | string {
-    // NOTE: Stat is in bytes so we convert
-    // no average
-    const result = arr[0] / 1024 / 1024;
-    if (result > 999) {
-      return result.toFixed(1);
-    } if (result < 1000 && result > 99) {
-      return result.toFixed(2);
-    } if (result > 9 && result < 100) {
-      return result.toFixed(3);
-    } if (result < 10) {
-      return result.toFixed(4);
-    }
-    return -1;
-  }
-
-  manageInterface(_interface: any): void {
-    const navigationExtras: NavigationExtras = { state: { editInterface: _interface.name } };
+  manageInterface(nicState: DashboardNicState): void {
+    const navigationExtras: NavigationExtras = { state: { editInterface: nicState.name } };
     this.router.navigate(['network'], navigationExtras);
   }
 }

@@ -1,4 +1,4 @@
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   dataset_permissions_id_placeholder: T('Path'),
@@ -32,13 +32,12 @@ are submitted only when this box is set.'),
   dataset_permissions_mode_placeholder: T('Access Mode'),
   dataset_permissions_mode_tooltip: T('Set the read, write, and execute permissions for the dataset.'),
 
-  dataset_permissions_recursive_placeholder: T('Apply Permissions Recursively'),
+  dataset_permissions_recursive_placeholder: T('Apply permissions recursively'),
   dataset_permissions_recursive_tooltip: T('Apply permissions recursively to all directories\
  and files within the current dataset.'),
 
-  dataset_permissions_traverse_placeholder: T('Traverse'),
-  dataset_permissions_traverse_tooltip: T('Apply permissions recursively to all child\
- datasets of the current dataset.'),
+  dataset_permissions_traverse_placeholder: T('Apply permissions to child datasets'),
+  dataset_permissions_traverse_tooltip: T('Apply permissions recursively to all child datasets of the current dataset.'),
 
   dataset_permissions_dialog_warning: T('Warning'),
   dataset_permissions_dialog_warning_message: T('Changing dataset permission mode can severely\

@@ -3,8 +3,8 @@ export function removeClass(el: HTMLElement | HTMLCollectionOf<HTMLElement>, cla
   if (!('length' in el)) {
     el.classList.remove(className);
   } else {
-    for (let i = 0; i < el.length; i++) {
-      el[i].classList.remove(className);
+    for (const element of el) {
+      element.classList.remove(className);
     }
   }
 }
@@ -14,8 +14,8 @@ export function addClass(el: HTMLElement | HTMLCollectionOf<HTMLElement>, classN
   if (!('length' in el)) {
     el.classList.add(className);
   } else {
-    for (let i = 0; i < el.length; i++) {
-      el[i].classList.add(className);
+    for (const element of el) {
+      element.classList.add(className);
     }
   }
 }
@@ -33,7 +33,7 @@ export function findClosest(el: HTMLElement, className: string): HTMLElement {
 
 export function hasClass(el: HTMLElement, className: string): boolean {
   if (!el) return;
-  return (` ${el.className} `).replace(/[\n\t]/g, ' ').indexOf(` ${className} `) > -1;
+  return (` ${el.className} `).replace(/[\n\t]/g, ' ').includes(` ${className} `);
 }
 
 export function toggleClass(el: HTMLElement | HTMLCollectionOf<HTMLElement>, className: string): void {
@@ -42,26 +42,5 @@ export function toggleClass(el: HTMLElement | HTMLCollectionOf<HTMLElement>, cla
     removeClass(el, className);
   } else {
     addClass(el, className);
-  }
-}
-
-export function changeTheme(): void {
-  // Remove default
-  /* removeClass(document.body, 'ix-blue');
-
-  themes.forEach((theme) => {
-    removeClass(document.body, theme.name);
-    //removeClass(document.body, 'native');
-  });
-  addClass(document.body, themeName); */
-  addClass(document.body, 'ix-blue');
-}
-
-export function ieChatjsFix(): void {
-  if (window.hasOwnProperty('MSInputMethodContext') || document.hasOwnProperty('documentMode')) {
-    document.body.style.width = '99.9%';
-    setTimeout(() => {
-      document.body.style.width = '100%';
-    });
   }
 }

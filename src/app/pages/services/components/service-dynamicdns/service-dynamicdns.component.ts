@@ -3,9 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-dynamic-dns';
+import { DynamicDnsConfig } from 'app/interfaces/dynamic-dns.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, ValidationService } from 'app/services';
 
@@ -14,9 +15,8 @@ import { WebSocketService, ValidationService } from 'app/services';
   selector: 'dynamicdns-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-
 export class ServiceDDNSComponent implements FormConfiguration {
-  addCall: 'dyndns.update' = 'dyndns.update';
+  addCall = 'dyndns.update' as const;
   title = helptext.formTitle;
   route_success: string[] = ['services'];
 
@@ -168,7 +168,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
     return value;
   }
 
-  submitFunction(entityForm: any): Observable<any> {
+  submitFunction(entityForm: any): Observable<DynamicDnsConfig> {
     if (entityForm.domain.length === 0) {
       entityForm.domain = [];
     }
@@ -179,7 +179,7 @@ export class ServiceDDNSComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    this.provider = this.fieldSets.config('provider');
+    this.provider = this.fieldSets.config('provider') as FormSelectConfig;
     this.ws.call('dyndns.provider_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       for (const key in res) {
         this.provider.options.push({ label: res[key], value: key });

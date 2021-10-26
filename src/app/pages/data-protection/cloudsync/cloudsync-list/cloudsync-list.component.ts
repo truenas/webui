@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
@@ -25,7 +26,6 @@ import {
   WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -35,11 +35,11 @@ import { T } from 'app/translate-marker';
 })
 export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi> {
   title = T('Cloud Sync Tasks');
-  queryCall: 'cloudsync.query' = 'cloudsync.query';
+  queryCall = 'cloudsync.query' as const;
   route_add: string[] = ['tasks', 'cloudsync', 'add'];
   route_add_tooltip = 'Add Cloud Sync Task';
   route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
-  wsDelete: 'cloudsync.delete' = 'cloudsync.delete';
+  wsDelete = 'cloudsync.delete' as const;
   entityList: EntityTableComponent;
   asyncView = true;
 
@@ -98,13 +98,14 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   resourceTransformIncomingRestData(data: CloudSyncTask[]): CloudSyncTaskUi[] {
     return data.map((task) => {
       const transformed = { ...task } as CloudSyncTaskUi;
+      const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       transformed.credential = task.credentials.name;
-      transformed.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      transformed.frequency = this.taskService.getTaskCronDescription(transformed.cron_schedule);
-      transformed.next_run = this.taskService.getTaskNextRun(transformed.cron_schedule);
+      transformed.cron_schedule = task.enabled ? formattedCronSchedule : T('Disabled');
+      transformed.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
+      transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : T('Disabled');
 
       if (task.job === null) {
-        transformed.state = { state: JobState.Pending };
+        transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };
       } else {
         transformed.state = { state: task.job.state };
         this.job.getJobStatus(task.job.id).pipe(untilDestroyed(this)).subscribe((job: Job) => {
@@ -230,7 +231,6 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         label: T('Restore'),
         icon: 'restore',
         onClick: (row: CloudSyncTaskUi) => {
-          const parent = this;
           const conf: DialogFormConfiguration = {
             title: T('Restore Cloud Sync Task'),
             fieldConfig: [
@@ -287,16 +287,16 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                 }
               });
             },
-            customSubmit(entityDialog: EntityDialogComponent) {
-              parent.loader.open();
-              parent.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
+            customSubmit: (entityDialog: EntityDialogComponent) => {
+              this.loader.open();
+              this.ws.call('cloudsync.restore', [row.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
                 () => {
                   entityDialog.dialogRef.close(true);
-                  parent.entityList.getData();
+                  this.entityList.getData();
                 },
                 (err) => {
-                  parent.loader.close();
-                  new EntityUtils().handleWSError(entityDialog, err, parent.dialog);
+                  this.loader.close();
+                  new EntityUtils().handleWSError(entityDialog, err, this.dialog);
                 },
               );
             },

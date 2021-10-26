@@ -11,7 +11,7 @@
   <div class="resource" fxLayout="row" fxLayoutAlign="start center" *ngIf="selectedVersion.item_update_available; else noItemUpdate">
     <span>{{ 'Version to be upgraded to' | translate }}:</span>
     <mat-form-field class="form-element ">
-      <mat-select class="" [(ngModel)]="selectedVersionKey"  (ngModelChange)="onVersionOptionChanged()"
+      <mat-select [(ngModel)]="selectedVersionKey"  (ngModelChange)="onVersionOptionChanged()"
           ix-auto ix-auto-type="select" ix-auto-identifier="status-select">
         <mat-option *ngFor="let option of versionOptions | keyvalue: originalOrder" [value]="option.key">
           {{ option.value.latest_human_version }}

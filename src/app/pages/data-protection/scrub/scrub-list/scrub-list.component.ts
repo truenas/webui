@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ScrubTaskUi } from 'app/interfaces/scrub-task.interface';
@@ -8,7 +9,6 @@ import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-t
 import { ScrubFormComponent } from 'app/pages/data-protection/scrub/scrub-form/scrub-form.component';
 import { UserService, TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -18,8 +18,8 @@ import { T } from 'app/translate-marker';
 })
 export class ScrubListComponent implements EntityTableConfig {
   title = T('Scrub Tasks');
-  queryCall: 'pool.scrub.query' = 'pool.scrub.query';
-  wsDelete: 'pool.scrub.delete' = 'pool.scrub.delete';
+  queryCall = 'pool.scrub.query' as const;
+  wsDelete = 'pool.scrub.delete' as const;
   route_add: string[] = ['tasks', 'scrub', 'add'];
   route_add_tooltip = this.translate.instant(T('Add Scrub Task'));
   route_edit: string[] = ['tasks', 'scrub', 'edit'];

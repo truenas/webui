@@ -5,14 +5,6 @@ import { CoreServiceInjector } from 'app/core/services/core-service-injector';
 import { CoreEvent } from 'app/interfaces/events';
 import { ThemeService } from 'app/services/theme/theme.service';
 
-// This makes the metadata available globally
-// Deal Breaker: Angular injects the component's
-// directory path forcing relative paths
-export const ViewComponentMetadata = {
-  selector: 'view',
-  templateUrl: './view.component.html',
-};
-
 @Component({
   selector: 'view',
   templateUrl: './view.component.html',
@@ -38,11 +30,6 @@ export class ViewComponent extends View {
 
   colorsFromTheme(): string[] {
     const theme = this.themeService.currentTheme();
-    // [theme.magenta, theme.cyan, theme.red, theme.blue, theme.green, theme.orange, theme.yellow, theme.violet]
-    const accentColors: string[] = [];
-    for (let i = 0; i < theme.accentColors.length; i++) {
-      accentColors.push((theme as any)[theme.accentColors[i]]);
-    }
-    return accentColors;
+    return theme.accentColors.map((color) => theme[color]);
   }
 }

@@ -50,14 +50,11 @@ export class ThemeUtils {
     switch (valueType) {
       case 'hex':
         return this.hexToRGB(value);
-        break;
       case 'rgba':
         const hex = this.rgbToHex(value);
         return this.hexToRGB(hex);
-        break;
       default:
         throw new Error('Conversion from color format ' + valueType + ' is not currently supported.');
-        break;
     }
   }
 
@@ -137,7 +134,7 @@ export class ThemeUtils {
 
   adjustLightness(value: string, pc: number, method = 'darken'): string {
     const rgb: number[] = this.forceRGB(value);
-    const hsl: number[] = this.rgbToHSL(rgb, false, false);
+    const hsl = this.rgbToHSL(rgb, false, false) as number[];
     let lightness: number = method == 'lighten' ? hsl[2] + pc : hsl[2] - pc;
     lightness = lightness > 100 ? 100 : lightness;
 
@@ -146,8 +143,8 @@ export class ThemeUtils {
     return 'hsl(' + adjusted[0] + ', ' + adjusted[1] + '%, ' + adjusted[2] + '%)';
   }
 
-  rgbToHSL(param: any, inputString = true, outputString = true): any {
-    const value = inputString ? this.forceRGB(param) : param;
+  rgbToHSL(param: string | number[], inputString = true, outputString = true): number[] | string {
+    const value: number[] = inputString ? this.forceRGB(param as string) : param as number[];
 
     const r = value[0] / 255;
     const g = value[1] / 255;

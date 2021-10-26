@@ -9,7 +9,6 @@
       <span>{{ 'Train' | translate }}:</span>
       <mat-form-field class="form-element ">
         <mat-select
-          class=""
           [(ngModel)]="selectedTrain"
           (ngModelChange)="onOptionChanged()"
           ix-auto ix-auto-type="select" ix-auto-identifier="train-select"
@@ -23,7 +22,7 @@
     <div class="status-filter">
       <span>{{ 'Status' | translate }}:</span>
       <mat-form-field class="form-element ">
-        <mat-select class="" [(ngModel)]="selectedStatus"  (ngModelChange)="onOptionChanged()"
+        <mat-select [(ngModel)]="selectedStatus"  (ngModelChange)="onOptionChanged()"
                   ix-auto ix-auto-type="select" ix-auto-identifier="status-select">
           <mat-option *ngFor="let option of statusOptions" value="{{ option | translate }}">
             {{ option }}
@@ -34,9 +33,9 @@
   </div>
   <div class="version-list">
     <div fxLayout="row" fxLayoutAlign="center start" class="detail-row row-light" >
-      <span fxFlex="25%" class="">{{'Train' | translate }}</span>
-      <span fxFlex="25%" class="">{{'App' | translate }}</span>
-      <span fxFlex="50%" class="" >{{'Version' | translate }}</span>
+      <span fxFlex="25%">{{'Train' | translate }}</span>
+      <span fxFlex="25%">{{'App' | translate }}</span>
+      <span fxFlex="50%" >{{'Version' | translate }}</span>
     </div>
     <div *ngIf="filteredItems.length > 0;else empty">
       <div *ngFor="let item of filteredItems; let i = index" class="detail-row value-row" [ngClass]="{'row-dark': i%2==0, 'row-light': i%2==1}">

@@ -9,11 +9,11 @@
   <div class="categories" fxLayout="row" fxLayoutAlign="space-between center">
     <div>
       <span>{{ 'Catalog' | translate }}:</span>
-      <div class="value capitalized-text" textLimiter threshold="20" content="{{ catalogApp.catalog.label }}"></div>
+      <div class="value capitalized-text" textLimiter threshold="20" [content]="catalogApp.catalog.label"></div>
     </div>
     <div>
       <span>{{ 'Train' | translate }}:</span>
-      <div class="value capitalized-text" textLimiter threshold="20" content="{{ catalogApp.catalog.train }}"></div>
+      <div class="value capitalized-text" textLimiter threshold="20" [content]="catalogApp.catalog.train"></div>
     </div>
   </div>
   <div class="categories">
@@ -27,7 +27,7 @@
     <div class="status-filter">
       <span>{{ 'Status' | translate }}:</span>
       <mat-form-field class="form-element ">
-        <mat-select class="" [(ngModel)]="selectedStatus"  (ngModelChange)="onStatusOptionChanged()"
+        <mat-select [(ngModel)]="selectedStatus"  (ngModelChange)="onStatusOptionChanged()"
                   ix-auto ix-auto-type="select" ix-auto-identifier="status-select">
           <mat-option *ngFor="let option of statusOptions" value="{{ option | translate }}">
             {{ option }}
@@ -39,7 +39,7 @@
   </div>
   <div class="version-list">
     <div fxLayout="row" fxLayoutAlign="center start" class="detail-row row-light" >
-      <span fxFlex="70%" class="">{{'Version' | translate }}</span>
+      <span fxFlex="70%">{{'Version' | translate }}</span>
       <span fxFlex="30%" class="text-center" >{{'Version Info' | translate }}</span>
     </div>
     <div *ngIf="hasFilterResult();else noVersions">

@@ -7,9 +7,10 @@ import * as _ from 'lodash';
 import { helptext_system_support as helptext } from 'app/helptext/system/support';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { Subs } from 'app/interfaces/subs.interface';
 import { NewTicketResponse } from 'app/interfaces/support.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -26,7 +27,7 @@ import { ModalService } from 'app/services/modal.service';
 export class SupportFormLicensedComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
   screenshot: FieldConfig;
-  subs: any[];
+  subs: Subs[];
   saveSubmitText = helptext.submitBtn;
   title = helptext.ticket;
   custActions: FormCustomAction[] = [];
@@ -144,7 +145,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
           placeholder: helptext.screenshot.placeholder,
           tooltip: helptext.screenshot.tooltip,
           fileLocation: '',
-          updater: this.updater,
+          updater: (file: FormUploadComponent) => this.updater(file),
           parent: this,
           hideButton: true,
           hasErrors: true,
@@ -173,7 +174,7 @@ export class SupportFormLicensedComponent implements FormConfiguration {
         id: 'eula',
         name: helptext.update_license.eula_button,
         function: () => {
-          this.modalService.close('slide-in-form');
+          this.modalService.closeSlideIn();
           this.router.navigate(['/system/support/eula']);
         },
       },
@@ -181,9 +182,8 @@ export class SupportFormLicensedComponent implements FormConfiguration {
   }
 
   emailListValidator(name: string): ValidatorFn {
-    const self = this;
-    return function validEmails(control: FormControl) {
-      const config = self.fieldConfig.find((c) => c.name === name);
+    return (control: FormControl) => {
+      const config = this.fieldConfig.find((c) => c.name === name);
       if (control.value) {
         let counter = 0;
         const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -266,18 +266,18 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     });
   }
 
-  updater(file: FormUploadComponent, parent: this): void {
-    parent.subs = [];
+  updater(file: FormUploadComponent): void {
+    this.subs = [];
     const fileBrowser = file.fileInput.nativeElement;
-    this.screenshot = _.find(parent.fieldConfig, { name: 'screenshot' });
+    this.screenshot = _.find(this.fieldConfig, { name: 'screenshot' });
     this.screenshot['hasErrors'] = false;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      for (let i = 0; i < fileBrowser.files.length; i++) {
-        if (fileBrowser.files[i].size >= 52428800) {
+      for (const browserFile of fileBrowser.files) {
+        if (browserFile.size >= 52428800) {
           this.screenshot['hasErrors'] = true;
           this.screenshot['errors'] = 'File size is limited to 50 MiB.';
         } else {
-          parent.subs.push({ apiEndPoint: file.apiEndPoint, file: fileBrowser.files[i] });
+          this.subs.push({ apiEndPoint: file.apiEndPoint, file: browserFile });
         }
       }
     }
@@ -289,6 +289,6 @@ export class SupportFormLicensedComponent implements FormConfiguration {
     this.entityEdit.formGroup.controls['environment'].setValue('production');
     this.entityEdit.formGroup.controls['criticality'].setValue('inquiry');
     this.subs = [];
-    this.modalService.close('slide-in-form');
+    this.modalService.closeSlideIn();
   }
 }

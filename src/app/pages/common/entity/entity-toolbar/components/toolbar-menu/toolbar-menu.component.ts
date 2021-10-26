@@ -11,7 +11,7 @@ import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.i
 })
 export class ToolbarMenuComponent extends IxAbstractObject {
   @Input() config?: ControlConfig;
-  @Input() controller: Subject<any>;
+  @Input() controller: Subject<Control>;
   constructor(public translate: TranslateService) {
     super();
   }

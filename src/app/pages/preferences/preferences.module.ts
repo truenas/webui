@@ -7,9 +7,7 @@ import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
-import { CustomThemeManagerFormComponent } from './page/forms/custom-theme-manager-form.component';
-import { GeneralPreferencesFormComponent } from './page/forms/general-preferences-form.component';
-import { PreferencesPage } from './page/preferences.component';
+import { PreferencesPageComponent } from './page/preferences.component';
 import { routing } from './preferences.routing';
 
 @NgModule({
@@ -25,11 +23,8 @@ import { routing } from './preferences.routing';
     routing,
   ],
   declarations: [
-    PreferencesPage,
-    CustomThemeManagerFormComponent,
-    GeneralPreferencesFormComponent,
+    PreferencesPageComponent,
   ],
   providers: [EntityFormService],
-  entryComponents: [],
 })
 export class PreferencesModule { }

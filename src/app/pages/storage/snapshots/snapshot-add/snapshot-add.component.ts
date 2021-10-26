@@ -3,11 +3,11 @@ import {
 } from '@angular/core';
 import { FormControl, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { map } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { T } from 'app/translate-marker';
 import helptext from '../../../../helptext/storage/snapshots/snapshots';
 import {
   DialogService, SystemGeneralService, WebSocketService,
@@ -31,7 +31,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
   isEntity = true;
   isNew = true;
   initialized = true;
-  addCall: 'zfs.snapshot.create' = 'zfs.snapshot.create';
+  addCall = 'zfs.snapshot.create' as const;
   private entityForm: EntityFormComponent;
   private nameValidator: ValidatorFn;
 
@@ -95,7 +95,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
 
       rows.forEach((dataItem) => {
         if (typeof (dataItem.name) !== 'undefined' && dataItem.name.length > 0) {
-          const config: FormSelectConfig = this.fieldConfig[0];
+          const config = this.fieldConfig[0] as FormSelectConfig;
           config.options.push({
             label: dataItem.name,
             value: dataItem.name,
@@ -111,7 +111,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
       .pipe(map(new EntityUtils().array1DToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe(
         (options) => {
-          const config: FormSelectConfig = this.fieldConfig.find((config) => config.name === 'naming_schema');
+          const config = this.fieldConfig.find((config) => config.name === 'naming_schema') as FormSelectConfig;
           config.options = [
             { label: '---', value: undefined },
             ...options,

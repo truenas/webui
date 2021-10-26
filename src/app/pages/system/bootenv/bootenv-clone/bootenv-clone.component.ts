@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
@@ -17,7 +17,7 @@ import { BootEnvService, WebSocketService } from 'app/services';
 })
 export class BootEnvironmentCloneComponent implements FormConfiguration {
   route_success: string[] = ['system', 'boot'];
-  addCall: 'bootenv.create' = 'bootenv.create';
+  addCall = 'bootenv.create' as const;
   pk: string;
   isNew = true;
   isEntity = true;

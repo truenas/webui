@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { helptext_system_failover } from 'app/helptext/system/failover';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FailoverUpdate } from 'app/interfaces/failover.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { FailoverConfig, FailoverUpdate } from 'app/interfaces/failover.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -15,7 +16,6 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -25,8 +25,8 @@ import { T } from 'app/translate-marker';
   providers: [],
 })
 export class FailoverComponent implements FormConfiguration {
-  queryCall: 'failover.config' = 'failover.config';
-  updateCall = 'failover.update';
+  queryCall = 'failover.config' as const;
+  updateCall = 'failover.update' as const;
   entityForm: EntityFormComponent;
   alreadyDisabled = false;
   confirmSubmit = false;
@@ -185,7 +185,7 @@ export class FailoverComponent implements FormConfiguration {
     });
   }
 
-  resourceTransformIncomingRestData(value: any): any {
+  resourceTransformIncomingRestData(value: FailoverConfig): FailoverConfig {
     this.alreadyDisabled = value['disabled'];
     value['master'] = true;
     return value;

@@ -3,20 +3,21 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/volumes/volume-key';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormParagraphConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { VolumeChangekeyFormValues } from 'app/pages/storage/volumes/volume-changekey-form/volume-changekey-form-values.interface';
 import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { EncryptionService } from 'app/services/encryption.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -26,7 +27,7 @@ import { T } from 'app/translate-marker';
 export class VolumeChangekeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Change Passphrase');
 
-  queryCall: 'pool.query' = 'pool.query';
+  queryCall = 'pool.query' as const;
   queryKey = 'id';
   route_return: string[] = ['storage', 'pools'];
   isNew = false;
@@ -112,7 +113,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     return data;
   }
 
-  pk: any;
+  pk: string;
   constructor(
     protected router: Router,
     protected route: ActivatedRoute,
@@ -132,7 +133,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
   }
 
   afterInit(entityForm: EntityFormComponent): void {
-    entityForm.formGroup.controls['remove_passphrase'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['remove_passphrase'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         entityForm.setDisabled('passphrase', true);
         entityForm.setDisabled('passphrase2', true);
@@ -141,29 +142,22 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
         entityForm.setDisabled('passphrase2', false);
       }
     });
-    entityForm.formGroup.controls['adminpw'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['adminpw'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.admin_pw = res;
-      const btn = <HTMLInputElement> document.getElementById('cust_button_Download Encryption Key');
-      this.admin_pw !== '' ? btn.disabled = false : btn.disabled = true;
+      const btn = document.getElementById('cust_button_Download Encryption Key') as HTMLInputElement;
+      btn.disabled = this.admin_pw === '';
     });
   }
 
-  customSubmit(value: any): void {
+  customSubmit(value: VolumeChangekeyFormValues): void {
     let success_msg: string;
     if (value.remove_passphrase) {
       value.passphrase = null;
-      value.passphrase2 = null;
+      (value as any).passphrase2 = null;
       success_msg = 'removed from';
     } else {
       success_msg = 'changed for';
     }
-
-    const params = [this.pk];
-    const payload = {
-      passphrase: value.passphrase,
-      admin_password: value.adminpw,
-    };
-    params.push(payload);
 
     this.ws.call('auth.check_user', ['root', value.adminpw]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {

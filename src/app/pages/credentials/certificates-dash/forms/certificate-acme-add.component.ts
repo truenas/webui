@@ -9,7 +9,7 @@ import { helptext_system_certificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormListConfig, FormParagraphConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -28,15 +28,15 @@ import { ModalService } from 'app/services/modal.service';
   providers: [EntityFormService],
 })
 export class CertificateAcmeAddComponent implements FormConfiguration {
-  addCall: 'certificate.create' = 'certificate.create';
-  queryCall: 'certificate.query' = 'certificate.query';
+  addCall = 'certificate.create' as const;
+  queryCall = 'certificate.query' as const;
   isEntity = true;
   isNew = true;
   private csrOrg: Certificate;
   formArray: FormArray;
   commonName: string;
   private getRow = new Subscription();
-  private rowNum: any;
+  private rowNum: number;
   private dns_map: FormSelectConfig;
   title = helptext_system_certificates.list.action_create_acme_certificate;
   protected isOneColumnForm = true;
@@ -137,7 +137,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     protected entityFormService: EntityFormService, protected dialogService: DialogService,
     private modalService: ModalService,
   ) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.rowNum = rowId;
       this.queryCallOption = [['id', '=', rowId]];
       this.getRow.unsubscribe();
@@ -146,15 +146,15 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
 
   preInit(entityForm: EntityFormComponent): void {
     this.ws.call('acme.dns.authenticator.query').pipe(untilDestroyed(this)).subscribe((authenticators) => {
-      const listConfig: FormListConfig = this.fieldSets[2].config[0];
-      this.dns_map = _.find(listConfig.templateListField, { name: 'authenticators' });
+      const listConfig = this.fieldSets[2].config[0] as FormListConfig;
+      this.dns_map = _.find(listConfig.templateListField, { name: 'authenticators' }) as FormSelectConfig;
       authenticators.forEach((item) => {
         this.dns_map.options.push({ label: item.name, value: item.id });
       });
     });
 
     this.ws.call('certificate.acme_server_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      const acme_directory_uri: FormSelectConfig = _.find(this.fieldSets[0].config, { name: 'acme_directory_uri' });
+      const acme_directory_uri = _.find(this.fieldSets[0].config, { name: 'acme_directory_uri' }) as FormSelectConfig;
       for (const key in choices) {
         acme_directory_uri.options.push({ label: choices[key], value: key });
       }
@@ -167,7 +167,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     this.fieldConfig = entityEdit.fieldConfig;
 
     this.domainList = entityEdit.formGroup.controls['domains'] as FormArray;
-    this.domainList_fc = _.find(this.fieldConfig, { name: 'domains' });
+    this.domainList_fc = _.find(this.fieldConfig, { name: 'domains' }) as FormListConfig;
     const listFields = this.domainList_fc.listFields;
 
     this.ws.call(this.queryCall, [this.queryCallOption]).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -187,7 +187,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
 
             const controls = listFields[i];
             const name_text_fc: FormParagraphConfig = _.find(controls, { name: 'name_text' });
-            const auth_fc: FormSelectConfig = _.find(controls, { name: 'authenticators' });
+            const auth_fc = _.find(controls, { name: 'authenticators' }) as FormSelectConfig;
             (this.domainList.controls[i] as FormGroup).controls['name_text'].setValue(domains[i]);
             name_text_fc.paraText = '<b>' + domains[i] + '</b>';
             auth_fc.options = this.dns_map.options;
@@ -221,7 +221,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialog.closeAll();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.modalService.refreshTable();
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {

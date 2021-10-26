@@ -2,6 +2,7 @@ import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
@@ -10,6 +11,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { MemoryStatsEventData } from 'app/interfaces/events/memory-stats-event.interface';
 import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
@@ -20,7 +22,7 @@ import {
   NetworkInterfaceState,
 } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { ReportingRealtimeUpdate, VirtualMemoryUpdate } from 'app/interfaces/reporting.interface';
+import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
@@ -31,14 +33,15 @@ import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/e
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
 type DashboardNetworkInterface = NetworkInterface & {
-  state: NetworkInterfaceState & {
-    vlans: any[];
-    lagg_ports: string[];
-  };
+  state: DashboardNicState;
+};
+
+export type DashboardNicState = NetworkInterfaceState & {
+  vlans: (NetworkInterfaceState & { interface?: string })[];
+  lagg_ports: string[];
 };
 
 @UntilDestroy()
@@ -67,7 +70,6 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   large = 'lg';
   medium = 'md';
   small = 'sm';
-  zPoolFlex = '100';
   noteFlex = '23';
 
   statsDataEvent$: Subject<CoreEvent> = new Subject<CoreEvent>();
@@ -327,7 +329,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       }
 
       if (update.virtual_memory) {
-        const memStats: VirtualMemoryUpdate & { arc_size?: number } = { ...update.virtual_memory };
+        const memStats: MemoryStatsEventData = { ...update.virtual_memory };
 
         if (update.zfs && update.zfs.arc_size != null) {
           memStats.arc_size = update.zfs.arc_size;
@@ -355,19 +357,19 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   setVolumeData(data: Dataset[]): void {
     const vd: VolumesData = {};
 
-    for (const i in data) {
-      if (typeof data[i] == undefined || !data[i]) { continue; }
-      const used_pct = data[i].used.parsed / (data[i].used.parsed + data[i].available.parsed);
+    data.forEach((dataset) => {
+      if (typeof dataset == undefined || !dataset) { return; }
+      const used_pct = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
       const zvol = {
-        avail: data[i].available.parsed,
-        id: data[i].id,
-        name: data[i].name,
-        used: data[i].used.parsed,
+        avail: dataset.available.parsed,
+        id: dataset.id,
+        name: dataset.name,
+        used: dataset.used.parsed,
         used_pct: (used_pct * 100).toFixed(0) + '%',
       };
 
       vd[zvol.id] = zvol;
-    }
+    });
 
     this.volumeData = vd;
   }
@@ -512,7 +514,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  dataFromConfig(item: DashConfigItem): any {
+  dataFromConfig(item: DashConfigItem): Subject<CoreEvent> | DashboardNicState | Pool | Pool[] {
     let spl: string[];
     let key: string;
     let value: string;
@@ -522,7 +524,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       value = spl[1];
     }
 
-    let data: any;
+    // TODO: Convoluted typing, split apart.
+    // eslint-disable-next-line rxjs/finnish
+    let data: Subject<CoreEvent> | DashboardNicState | Pool | Pool[];
 
     switch (item.name.toLowerCase()) {
       case 'cpu':
@@ -532,23 +536,31 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         data = this.statsDataEvent$;
         break;
       case 'pool':
-        data = spl
-          ? this.pools.filter((pool) => pool[key as keyof Pool] == value)
-          : console.warn('DashConfigItem has no identifier!');
-        if (data) { data = data[0]; }
+        if (spl) {
+          const pools = this.pools.filter((pool) => pool[key as keyof Pool] == value);
+          if (pools) { data = pools[0]; }
+        } else {
+          console.warn('DashConfigItem has no identifier!');
+        }
         break;
       case 'interface':
-        data = spl
-          ? this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] == value)
-          : console.warn('DashConfigItem has no identifier!');
-        if (data) { data = data[0].state; }
+        if (spl) {
+          const nics = this.nics.filter((nic) => nic[key as keyof DashboardNetworkInterface] == value);
+          if (nics) { data = nics[0].state; }
+        } else {
+          console.warn('DashConfigItem has no identifier!');
+        }
         break;
       case 'storage':
         data = this.pools;
         break;
     }
 
-    return data || console.warn('Data for this widget is not available!');
+    if (!data) {
+      console.warn('Data for this widget is not available!');
+    }
+
+    return data;
   }
 
   toggleShake(): void {
@@ -562,7 +574,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   showConfigForm(): void {
     const widgetTypes: string[] = [];
     this.dashState.forEach((item) => {
-      if (widgetTypes.indexOf(item.name) == -1) {
+      if (!widgetTypes.includes(item.name)) {
         widgetTypes.push(item.name);
       }
     });
@@ -608,7 +620,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     // Apply
     keys.forEach((key) => {
       const value = evt.data[key];
-      const dashItem = clone.filter((w) => {
+      const dashItem = clone.find((w) => {
         if (w.identifier) {
           const spl = w.identifier.split(',');
           const name = spl[1];
@@ -617,12 +629,11 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
         return key == w.name;
       });
 
-      dashItem[0].rendered = value;
+      dashItem.rendered = value;
     });
 
     this.dashState = clone;
-    this.modalService.close('slide-in-form');/* .then( closed => {
-    }); */
+    this.modalService.closeSlideIn();
 
     // Save
     this.ws.call('user.set_attribute', [1, 'dashState', clone]).pipe(untilDestroyed(this)).subscribe((res) => {

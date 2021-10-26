@@ -3,7 +3,10 @@ import { AbstractControl, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { FormToggleButtonConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import {
+  FormToggleButtonConfig,
+  FormToggleButtonOption,
+} from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
 @UntilDestroy()
@@ -34,22 +37,22 @@ export class FormToggleButtonComponent implements Field, OnInit {
         if (this.control.value == '*') {
           all_selected = true;
         }
-        for (const i in this.config.options) {
-          if (_.indexOf(values, this.config.options[i].value) > -1) {
-            this.config.options[i].checked = false;
-            this.check(this.config.options[i]);
+        this.config.options.forEach((option) => {
+          if (_.indexOf(values, option.value) > -1) {
+            option.checked = false;
+            this.check(option);
           }
 
           if (all_selected) {
-            this.config.options[i].checked = false;
-            this.check(this.config.options[i]);
+            option.checked = false;
+            this.check(option);
           }
-        }
+        });
       }
     });
   }
 
-  check(item: any): void {
+  check(item: FormToggleButtonOption): void {
     this.init = false;
     item.checked = !item.checked;
     const target = _.findIndex(this.groupValue, _.unary(_.partialRight(_.includes, item.value)));

@@ -5,7 +5,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { QueryParams } from 'app/interfaces/query-api.interface';
+import { SmbSharesec } from 'app/interfaces/smb-share.interface';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormListConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 
@@ -15,12 +17,12 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class SMBAclComponent implements FormConfiguration {
-  queryCall: 'smb.sharesec.query' = 'smb.sharesec.query';
-  editCall: 'smb.sharesec.update' = 'smb.sharesec.update';
+  queryCall = 'smb.sharesec.query' as const;
+  editCall = 'smb.sharesec.update' as const;
 
   route_success: string[] = ['sharing', 'smb'];
   isEntity = true;
-  customFilter: any[] = [[['id', '=']]];
+  customFilter: QueryParams<SmbSharesec>;
 
   fieldSets: FieldSet[] = [
     {
@@ -133,14 +135,14 @@ export class SMBAclComponent implements FormConfiguration {
   preInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['pk']) {
-        this.customFilter[0][0].push(parseInt(params['pk'], 10));
+        this.customFilter = [[['id', '=', parseInt(params['pk'], 10)]]];
       }
     });
   }
 
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
-    this.shareACLField = _.find(entityForm.fieldConfig, { name: 'share_acl' });
+    this.shareACLField = _.find(entityForm.fieldConfig, { name: 'share_acl' }) as FormListConfig;
 
     entityForm.formGroup.controls['share_acl'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
@@ -180,13 +182,13 @@ export class SMBAclComponent implements FormConfiguration {
   }
 
   resourceTransformIncomingRestData(data: any): any {
-    for (let i = 0; i < data['share_acl'].length; i++) {
-      if (data['share_acl'][i]['ae_who_name']) {
-        data['share_acl'][i]['ae_who_name_domain'] = data['share_acl'][i]['ae_who_name']['domain'];
-        data['share_acl'][i]['ae_who_name_name'] = data['share_acl'][i]['ae_who_name']['name'];
-        delete data['share_acl'][i]['ae_who_name'];
+    data.share_acl.forEach((acl: any) => {
+      if (acl['ae_who_name']) {
+        acl['ae_who_name_domain'] = acl['ae_who_name']['domain'];
+        acl['ae_who_name_name'] = acl['ae_who_name']['name'];
+        delete acl['ae_who_name'];
       }
-    }
+    });
     return data;
   }
 

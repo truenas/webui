@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { CipherType } from 'app/enums/cipher-type.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import helptext from 'app/helptext/system/ssh-connections';
@@ -12,7 +13,7 @@ import { KeychainCredential } from 'app/interfaces/keychain-credential.interface
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -31,10 +32,10 @@ import { ModalService } from 'app/services/modal.service';
   providers: [KeychainCredentialService, ReplicationService],
 })
 export class SshConnectionsFormComponent implements FormConfiguration {
-  queryCall: 'keychaincredential.query' = 'keychaincredential.query';
+  queryCall = 'keychaincredential.query' as const;
   queryCallOption: [QueryFilter<KeychainCredential>];
-  addCall: 'keychaincredential.setup_ssh_connection' = 'keychaincredential.setup_ssh_connection';
-  editCall: 'keychaincredential.update' = 'keychaincredential.update';
+  addCall = 'keychaincredential.setup_ssh_connection' as const;
+  editCall = 'keychaincredential.update' as const;
   isEntity = true;
   protected namesInUseConnection: string[] = [];
   protected namesInUse: string[] = [];
@@ -194,16 +195,16 @@ export class SshConnectionsFormComponent implements FormConfiguration {
           options: [
             {
               label: 'Standard',
-              value: 'STANDARD',
+              value: CipherType.Standard,
             }, {
               label: 'Fast',
-              value: 'FAST',
+              value: CipherType.Fast,
             }, {
               label: 'Disabled',
-              value: 'DISABLED',
+              value: CipherType.Disabled,
             },
           ],
-          value: 'STANDARD',
+          value: CipherType.Standard,
         }, {
           type: 'input',
           inputType: 'number',
@@ -246,7 +247,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       this.queryCallOption = [['id', '=', this.rowNum]];
       _.find(this.fieldSets[0].config, { name: 'setup_method' }).isHidden = true;
     } else {
-      const selectConfig: FormSelectConfig = _.find(this.fieldSets[1].config, { name: 'private_key' });
+      const selectConfig = _.find(this.fieldSets[1].config, { name: 'private_key' }) as FormSelectConfig;
       selectConfig.options.push({
         label: 'Generate New',
         value: 'NEW',
@@ -259,15 +260,15 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       this.namesInUse.push(...sshConnections);
       this.namesInUseConnection.push(...sshConnections);
     });
-    const privateKeyField: FormSelectConfig = _.find(this.fieldSets[1].config, { name: 'private_key' });
+    const privateKeyField = _.find(this.fieldSets[1].config, { name: 'private_key' }) as FormSelectConfig;
     this.keychainCredentialService.getSSHKeys().toPromise().then((keyPairs) => {
       const namesInUse = keyPairs
         .filter((sshKey) => sshKey.name.endsWith(' Key'))
         .map((sshKey) => sshKey.name.substring(0, sshKey.name.length - 4));
       this.namesInUse.push(...namesInUse);
-      for (const i in keyPairs) {
-        privateKeyField.options.push({ label: keyPairs[i].name, value: keyPairs[i].id });
-      }
+      keyPairs.forEach((keypair) => {
+        privateKeyField.options.push({ label: keypair.name, value: keypair.id });
+      });
     });
   }
 
@@ -371,10 +372,10 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       this.loader.open();
       if (data['setup_method'] === SshConnectionsSetupMethod.Manual) {
         const attributes: any = {};
-        for (const item in this.manualMethodFields) {
-          attributes[this.manualMethodFields[item]] = data[this.manualMethodFields[item]];
-          delete data[this.manualMethodFields[item]];
-        }
+        this.manualMethodFields.forEach((field) => {
+          attributes[field] = data[field];
+          delete data[field];
+        });
         data['attributes'] = attributes;
         if (this.entityForm.isNew) {
           data['type'] = KeychainCredentialType.SshCredentials;
@@ -395,9 +396,9 @@ export class SshConnectionsFormComponent implements FormConfiguration {
 
     if (value.setup_method === SshConnectionsSetupMethod.Manual) {
       const attributes: any = {};
-      for (const item in this.manualMethodFields) {
-        attributes[this.manualMethodFields[item]] = value[this.manualMethodFields[item]];
-      }
+      this.manualMethodFields.forEach((field) => {
+        attributes[field] = value[field];
+      });
       payload['manual_setup'] = attributes;
     } else {
       payload['semi_automatic_setup'] = {
@@ -414,7 +415,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
 
   responseOnSubmit(): void {
     this.loader.close();
-    this.modalService.close('slide-in-form');
+    this.modalService.closeSlideIn();
     this.modalService.refreshTable();
   }
 

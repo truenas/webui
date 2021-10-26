@@ -15,7 +15,6 @@ export interface ToolbarSliderConfig {
 
 @Component({
   selector: 'toolbar-slider',
-  styleUrls: ['toolbar-slider.component.scss'],
   templateUrl: './toolbar-slider.component.html',
 })
 export class ToolbarSliderComponent extends IxAbstractObject {

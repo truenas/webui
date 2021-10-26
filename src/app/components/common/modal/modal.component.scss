@@ -1,3 +1,5 @@
+@import 'cssvars';
+
 /* MODAL STYLES
 -------------------------------*/
 
@@ -112,3 +114,24 @@ body.jw-modal-open .slide-in-form .jw-modal-body {
   /* body overflow is hidden to hide main scrollbar when modal window is open */
   overflow: hidden;
 }
+
+@media #{$media-lt-sm} {
+  .slide-in-form {
+    min-width: auto;
+    width: auto;
+  }
+}
+
+.control-group {
+  color: var(--fg2);
+
+  .control-group-inner {
+    margin: 0 8px;
+  }
+
+  toolbar-menu {
+    max-height: 36px;
+  }
+}
+
+

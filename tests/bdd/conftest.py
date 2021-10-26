@@ -109,6 +109,7 @@ def pytest_runtest_makereport(item):
             screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
             # look if there is a Error window
             if element_exist('//h1[contains(.,"Error")]'):
+
                 web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
                 time.sleep(2)
                 traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}_error.txt'
@@ -131,7 +132,7 @@ def save_screenshot(name):
 
 def save_traceback(name):
     traceback_file = open(name, 'w')
-    traceback_file.writelines(web_driver.find_element_by_xpath('//textarea[@id="err-bt-text"]').text)
+    traceback_file.writelines(web_driver.find_element_by_xpath('//div[@id="err-bt-text"]').text)
     traceback_file.close()
 
 

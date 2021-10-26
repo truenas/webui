@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
@@ -23,7 +24,6 @@ import {
   SystemGeneralService, WebSocketService, DialogService, StorageService, ModalServiceMessage,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { CertificateAuthorityAddComponent } from './forms/ca-add.component';
 import { CertificateAuthorityEditComponent } from './forms/ca-edit.component';
 import { CertificateAcmeAddComponent } from './forms/certificate-acme-add.component';
@@ -85,7 +85,7 @@ export class CertificatesDashComponent implements OnInit {
           complex: true,
           dataSourceHelper: this.certificatesDataSourceHelper,
           getActions: this.certificateActions.bind(this),
-          isActionVisible: (actionId: string, certificate: any) => {
+          isActionVisible: (actionId: string, certificate: Certificate) => {
             if (actionId === 'revoke') {
               return certificate.can_be_revoked;
             }
@@ -225,7 +225,7 @@ export class CertificatesDashComponent implements OnInit {
     ];
   }
 
-  certificatesDataSourceHelper(res: any[]): any[] {
+  certificatesDataSourceHelper(res: Certificate[]): Certificate[] {
     res.forEach((certificate) => {
       if (_.isObject(certificate.issuer)) {
         certificate.issuer = certificate.issuer.name;
@@ -238,7 +238,7 @@ export class CertificatesDashComponent implements OnInit {
     return res.filter((item) => item.CSR !== null);
   }
 
-  caDataSourceHelper(res: any[]): any[] {
+  caDataSourceHelper(res: CertificateAuthority[]): CertificateAuthority[] {
     res.forEach((row) => {
       if (_.isObject(row.issuer)) {
         row.issuer = row.issuer.name;
@@ -291,7 +291,6 @@ export class CertificatesDashComponent implements OnInit {
               new EntityUtils().handleWSError(this, err, this.dialogService);
             },
           );
-          event.stopPropagation();
         },
       },
     ];
@@ -333,7 +332,6 @@ export class CertificatesDashComponent implements OnInit {
       matTooltip: T('Create ACME Certificate'),
       onClick: (rowinner: Certificate) => {
         this.modalService.openInSlideIn(CertificateAcmeAddComponent, rowinner.id);
-        event.stopPropagation();
       },
     };
 
@@ -350,7 +348,6 @@ export class CertificatesDashComponent implements OnInit {
       onClick: (rowinner: CertificateAuthority) => {
         this.dialogService.dialogForm(this.signCSRFormConf);
         this.caId = rowinner.id;
-        event.stopPropagation();
       },
     };
 
@@ -413,25 +410,24 @@ export class CertificatesDashComponent implements OnInit {
     fieldConfig: this.signCSRFieldConf,
     method_ws: 'certificateauthority.ca_sign_csr',
     saveButtonText: helptext_system_ca.sign.sign,
-    customSubmit: this.doSignCSR,
+    customSubmit: (entityDialog) => this.doSignCSR(entityDialog),
     parent: this,
   };
 
   doSignCSR(entityDialog: EntityDialogComponent<this>): void {
-    const self = entityDialog.parent;
     const payload = {
-      ca_id: self.caId,
+      ca_id: this.caId,
       csr_cert_id: entityDialog.formGroup.controls.csr_cert_id.value,
       name: entityDialog.formGroup.controls.name.value,
     };
     entityDialog.loader.open();
     entityDialog.ws.call('certificateauthority.ca_sign_csr', [payload]).pipe(untilDestroyed(this)).subscribe(() => {
       entityDialog.loader.close();
-      self.dialogService.closeAllDialogs();
-      self.getCards();
+      this.dialogService.closeAllDialogs();
+      this.getCards();
     }, (err: WebsocketError) => {
       entityDialog.loader.close();
-      self.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
+      this.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
     });
   }
 }

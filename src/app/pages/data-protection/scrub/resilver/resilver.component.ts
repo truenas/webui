@@ -4,7 +4,7 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/resilver/resilver';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { TaskService } from 'app/services';
@@ -16,8 +16,8 @@ import { TaskService } from 'app/services';
   providers: [TaskService],
 })
 export class ResilverComponent implements FormConfiguration {
-  queryCall: 'pool.resilver.config' = 'pool.resilver.config';
-  editCall: 'pool.resilver.update' = 'pool.resilver.update';
+  queryCall = 'pool.resilver.config' as const;
+  editCall = 'pool.resilver.update' as const;
   route_success: string[] = ['data-protection'];
 
   fieldSets: FieldSet[] = [
@@ -87,13 +87,13 @@ export class ResilverComponent implements FormConfiguration {
   fieldConfig: FieldConfig[];
 
   constructor(protected router: Router, protected taskService: TaskService) {
-    const begin_field: FormSelectConfig = _.find(this.fieldSets[0].config, { name: 'begin' });
-    const end_field: FormSelectConfig = _.find(this.fieldSets[0].config, { name: 'end' });
+    const begin_field = _.find(this.fieldSets[0].config, { name: 'begin' }) as FormSelectConfig;
+    const end_field = _.find(this.fieldSets[0].config, { name: 'end' }) as FormSelectConfig;
     const time_options = this.taskService.getTimeOptions();
-    for (let i = 0; i < time_options.length; i++) {
-      begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
-      end_field.options.push({ label: time_options[i].label, value: time_options[i].value });
-    }
+    time_options.forEach((timeOption) => {
+      begin_field.options.push({ label: timeOption.label, value: timeOption.value });
+      end_field.options.push({ label: timeOption.label, value: timeOption.value });
+    });
   }
 
   afterInit(entityForm: EntityFormComponent): void {

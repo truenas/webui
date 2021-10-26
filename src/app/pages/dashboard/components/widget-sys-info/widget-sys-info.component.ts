@@ -3,20 +3,19 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { environment } from 'environments/environment';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateStatus } from 'app/enums/system-update.enum';
-import { CoreEvent } from 'app/interfaces/events';
+import { HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
 import { UpdateCheckedEvent } from 'app/interfaces/events/update-checked-event.interface';
 import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -26,12 +25,12 @@ import { T } from 'app/translate-marker';
 })
 export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy, AfterViewInit {
   // HA
-  @Input('isHA') isHA = false;
-  @Input('passive') isPassive = false;
-  @Input('enclosure') enclosureSupport = false;
+  @Input() isHA = false;
+  @Input() isPassive = false;
+  @Input() enclosureSupport = false;
 
   title: string = T('System Info');
-  data: any;
+  data: SystemInfo;
   memory: string;
   imagePath = 'assets/images/';
   ready = false;
@@ -45,7 +44,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   private _updateBtnStatus = 'default';
   updateBtnLabel: string = T('Check for Updates');
   private _themeAccentColors: string[];
-  connectionIp = environment.remote;
   manufacturer = '';
   buildDate: string;
   loader = false;
@@ -67,7 +65,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     super(translate);
     this.configurable = false;
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      res === 'true' ? this.isUpdateRunning = true : this.isUpdateRunning = false;
+      this.isUpdateRunning = res === 'true';
     });
 
     mediaObserver.media$.pipe(untilDestroyed(this)).subscribe((evt) => {
@@ -94,19 +92,17 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     });
 
     if (this.isHA && this.isPassive) {
-      this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+      this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
         if (evt.data.status == 'HA Enabled' && !this.data) {
-          this.ws.call('failover.call_remote', ['system.info']).pipe(untilDestroyed(this)).subscribe((res) => {
-            const evt = { name: 'SysInfoPassive', data: res };
-            this.processSysInfo(evt);
+          this.ws.call('failover.call_remote', ['system.info']).pipe(untilDestroyed(this)).subscribe((systemInfo: SystemInfo) => {
+            this.processSysInfo(systemInfo);
           });
         }
         this.ha_status = evt.data.status;
       });
     } else {
       this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
-        const evt = { name: 'SysInfo', data: systemInfo };
-        this.processSysInfo(evt);
+        this.processSysInfo(systemInfo);
       });
 
       this.core.emit({ name: 'UpdateCheck' });
@@ -143,10 +139,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
 
   get themeAccentColors(): string[] {
     const theme = this.themeService.currentTheme();
-    this._themeAccentColors = [];
-    for (const color in theme.accentColors) {
-      this._themeAccentColors.push((theme as any)[theme.accentColors[color]]);
-    }
+    this._themeAccentColors = theme.accentColors.map((color) => theme[color]);
     return this._themeAccentColors;
   }
 
@@ -158,9 +151,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     return this._updateBtnStatus;
   }
 
-  processSysInfo(evt: CoreEvent): void {
+  processSysInfo(systemInfo: SystemInfo): void {
     this.loader = false;
-    this.data = evt.data;
+    this.data = systemInfo;
 
     const build = new Date(this.data.buildtime['$date']);
     const year = build.getUTCFullYear();
@@ -181,7 +174,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     }
 
     // PRODUCT IMAGE
-    this.setProductImage(evt.data);
+    this.setProductImage(systemInfo);
 
     this.parseUptime();
     this.ready = true;
@@ -203,9 +196,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     }
 
     if (days > 0) {
-      days === 1
-        ? this.uptimeString += days + T(' day, ')
-        : this.uptimeString += days + T(' days, ') + `${hrs}:${pmin}`;
+      if (days === 1) {
+        this.uptimeString += days + T(' day, ');
+      } else {
+        this.uptimeString += days + T(' days, ') + `${hrs}:${pmin}`;
+      }
     } else if (hrs > 0) {
       this.uptimeString += `${hrs}:${pmin}`;
     } else {
@@ -246,6 +241,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     } else if (sys_product.includes('X20')) {
       this.product_image = '/servers/X20.png';
       this.product_model = 'X20';
+    } else if (sys_product.includes('M30')) {
+      this.product_image = '/servers/M30.png';
+      this.product_model = 'M30';
     } else if (sys_product.includes('M40')) {
       this.product_image = '/servers/M40.png';
       this.product_model = 'M40';

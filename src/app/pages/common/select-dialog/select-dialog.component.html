@@ -4,9 +4,9 @@
 <div mat-dialog-content>
   <mat-select
     name="name"
-    placeholder="{{optionPlaceHolder}}"
+    [placeholder]="optionPlaceHolder | translate"
     [(ngModel)]="displaySelection"
-    (change)=switchSelection()
+    (selectionChange)="switchSelection()"
     ix-auto ix-auto-type="select" ix-auto-identifier="{{optionPlaceHolder}}"
   >
     <mat-option
@@ -16,11 +16,11 @@
       ix-auto-type="option"
       ix-auto-identifier="option.label"
     >
-      {{ option.label }}
+      {{ option.label | translate }}
     </mat-option>
   </mat-select>
 </div>
-<div mat-dialog-actions>
+<div mat-dialog-actions class="action-buttons">
   &nbsp;
   <span fxFlex></span>
   <button
@@ -35,6 +35,7 @@
     mat-button
     class="mat-button mat-primary"
     (click)="dialogRef.close(true)"
+    [disabled]="displaySelection === undefined"
     ix-auto
     ix-auto-type="button"
     ix-auto-identifier="OK"

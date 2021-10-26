@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-form.component';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -14,8 +14,8 @@ import { T } from 'app/translate-marker';
 })
 export class KerberosRealmsListComponent implements EntityTableConfig {
   title = 'Kerberos Realms';
-  queryCall: 'kerberos.realm.query' = 'kerberos.realm.query';
-  wsDelete: 'kerberos.realm.delete' = 'kerberos.realm.delete';
+  queryCall = 'kerberos.realm.query' as const;
+  wsDelete = 'kerberos.realm.delete' as const;
   keyList = ['admin_server', 'kdc', 'kpasswd_server'];
   protected entityList: EntityTableComponent;
 

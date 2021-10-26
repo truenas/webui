@@ -9,21 +9,25 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { add, sub } from 'date-fns';
+import { filter, take } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
+import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
-import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
+import { ReportingDatabaseError, ReportsService } from 'app/pages/reports-dashboard/reports.service';
 import { WebSocketService, SystemGeneralService } from 'app/services/';
+import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { Theme } from 'app/services/theme/theme.service';
-import { T } from 'app/translate-marker';
 
 interface DateTime {
   dateFormat: string;
@@ -43,14 +47,9 @@ interface TimeAxisData {
   culling: number;
 }
 
-export interface Report {
-  name: string;
-  title: string;
-  vertical_label: string;
-  identifiers?: string[];
+export interface Report extends ReportingGraph {
   isRendered?: boolean[];
-  stacked: boolean;
-  stacked_show_total: boolean;
+  errorConf?: EmptyConfig;
 }
 
 @UntilDestroy()
@@ -147,21 +146,28 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     return this.localeService.formatDateTime(new Date(this.currentEndDate), this.timezone);
   }
 
-  formatTime(stamp: any): string {
+  formatTime(stamp: string): string {
     const parsed = Date.parse(stamp);
     const result = this.localeService.formatDateTimeWithNoTz(new Date(parsed));
     return result.toLowerCase() !== 'invalid date' ? result : null;
   }
 
-  constructor(public router: Router,
+  constructor(
+    public router: Router,
     public translate: TranslateService,
     private reportsService: ReportsService,
     private ws: WebSocketService,
-    protected localeService: LocaleService, private sysGeneralService: SystemGeneralService) {
+    protected localeService: LocaleService,
+    private sysGeneralService: SystemGeneralService,
+    private dialog: DialogService,
+  ) {
     super(translate);
 
-    this.core.register({ observerClass: this, eventName: 'ReportData-' + this.chartId }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'ReportData-' + this.chartId }).pipe(
+      untilDestroyed(this),
+    ).subscribe((evt: CoreEvent) => {
       this.data = evt.data;
+      this.handleError(evt);
     });
 
     this.core.register({ observerClass: this, eventName: 'LegendEvent-' + this.chartId }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -199,7 +205,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.report) {
-      if (changes.report.previousValue && this.ready == false) {
+      if (changes.report.previousValue && !this.ready) {
         this.setupData(changes);
       } else if (!changes.report.previousValue) {
         setTimeout(() => {
@@ -212,6 +218,11 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     }
   }
 
+  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
+  aggregationKey(key: keyof ReportingData['aggregations']): keyof ReportingData['aggregations'] {
+    return key;
+  }
+
   private async setupData(changes: SimpleChanges): Promise<void> {
     const zoom = this.zoomLevels[this.timeZoomIndex];
     const rrdOptions = await this.convertTimespan(zoom.timespan);
@@ -220,7 +231,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   private processThemeColors(theme: Theme): string[] {
-    return theme.accentColors.map((color) => (theme as any)[color]);
+    return theme.accentColors.map((color) => theme[color]);
   }
 
   setChartInteractive(value: boolean): void {
@@ -360,7 +371,10 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     this.core.emit({
       name: 'ReportDataRequest',
       data: {
-        report, params, timeFrame, truncate: this.stepForwardDisabled,
+        report,
+        params,
+        timeFrame,
+        truncate: this.stepForwardDisabled,
       },
       sender: this,
     });
@@ -373,6 +387,35 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
       if (form.value[i]) {
         filtered.push(i);
       }
+    }
+  }
+
+  handleError(evt: CoreEvent): void {
+    if (evt.data?.name === 'FetchingError' && evt.data?.data?.error === ReportingDatabaseError.InvalidTimestamp) {
+      const err = evt.data.data;
+      this.report.errorConf = {
+        type: EmptyType.Errors,
+        large: false,
+        compact: false,
+        title: this.translate.instant('The reporting database is broken'),
+        button: {
+          label: this.translate.instant('Fix database'),
+          action: () => {
+            const errorMessage = err.reason ? err.reason.replace('[EINVALIDRRDTIMESTAMP] ', '') : null;
+            const helpMessage = this.translate.instant('You can clear reporting database and start data collection immediately.');
+            const message = errorMessage ? `${errorMessage}<br>${helpMessage}` : helpMessage;
+            this.dialog.confirm({
+              title: this.translate.instant('The reporting database is broken'),
+              message,
+              buttonMsg: this.translate.instant('Clear'),
+            }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+              this.ws.call('reporting.clear').pipe(take(1), untilDestroyed(this)).subscribe(() => {
+                window.location.reload();
+              });
+            });
+          },
+        },
+      };
     }
   }
 }

@@ -1,32 +1,33 @@
-import { Component, OnInit, Type } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
-import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { helptext_system_ntpservers as helptext_ntp } from 'app/helptext/system/ntp-servers';
 import { CoreEvent } from 'app/interfaces/events';
+import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
+import { Subs } from 'app/interfaces/subs.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { FieldConfig, FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-servers/ntp-server-form/ntp-server-form.component';
+import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
+import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
-import {
-  WebSocketService, SystemGeneralService, DialogService,
-}
-  from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { SystemGeneralService, DialogService, StorageService } from 'app/services';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
-import { ModalService } from 'app/services/modal.service';
 import { GuiFormComponent } from './gui-form/gui-form.component';
-import { LocalizationFormComponent } from './localization-form/localization-form.component';
 
 @UntilDestroy()
 @Component({
@@ -36,13 +37,12 @@ import { LocalizationFormComponent } from './localization-form/localization-form
 export class GeneralSettingsComponent implements OnInit {
   dataCards: DataCard[] = [];
   supportTitle = helptext.supportTitle;
-  ntpTitle = helptext.ntpTitle;
   localeData: DataCard;
-  configData: any;
-  displayedColumns: string[];
-  subs: any;
-  dataSource: NtpServer[];
+  ntpServersData: DataCard;
+  configData: SystemGeneralConfig;
+  subs: Subs;
   formEvent$: Subject<CoreEvent>;
+  localizationSettings: LocalizationSettings;
 
   // Dialog forms and info for saving, uploading, resetting config
   protected saveConfigFieldConf: FieldConfig[] = [
@@ -60,7 +60,7 @@ export class GeneralSettingsComponent implements OnInit {
     fieldConfig: this.saveConfigFieldConf,
     method_ws: 'core.download',
     saveButtonText: helptext.save_config_form.button_text,
-    customSubmit: this.saveConfigSubmit,
+    customSubmit: (entityDialog) => this.saveConfigSubmit(entityDialog),
     parent: this,
     warning: helptext.save_config_form.warning,
   };
@@ -73,7 +73,7 @@ export class GeneralSettingsComponent implements OnInit {
       tooltip: helptext.upload_config_form.tooltip,
       validation: helptext.upload_config_form.validation,
       fileLocation: '',
-      updater: this.updater,
+      updater: (file: FormUploadComponent) => this.updater(file),
       parent: this,
       hideButton: true,
     },
@@ -84,7 +84,7 @@ export class GeneralSettingsComponent implements OnInit {
     fieldConfig: this.uploadConfigFieldConf,
     method_ws: 'config.upload',
     saveButtonText: helptext.upload_config_form.button_text,
-    customSubmit: this.uploadConfigSubmit,
+    customSubmit: () => this.uploadConfigSubmit(),
     message: helptext.upload_config_form.message,
   };
 
@@ -103,20 +103,21 @@ export class GeneralSettingsComponent implements OnInit {
     fieldConfig: this.resetConfigFieldConf,
     method_ws: 'config.reset',
     saveButtonText: helptext.reset_config_form.button_text,
-    customSubmit: this.resetConfigSubmit,
+    customSubmit: () => this.resetConfigSubmit(),
     parent: this,
   };
 
   constructor(
-    private ws: WebSocketService,
     private localeService: LocaleService,
     private sysGeneralService: SystemGeneralService,
-    private modalService: ModalService,
     private dialog: DialogService,
-    private loader: AppLoaderService,
     private router: Router,
     public mdDialog: MatDialog,
     private core: CoreService,
+    private ixModalService: IxModalService,
+    private storage: StorageService,
+    private http: HttpClient,
+    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -124,9 +125,9 @@ export class GeneralSettingsComponent implements OnInit {
     this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getDataCardData();
     });
-    this.getNTPData();
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.getNTPData();
+
+    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.ntpServersData?.tableConf?.tableComponent.getData();
     });
 
     this.formEvent$ = new Subject();
@@ -177,21 +178,28 @@ export class GeneralSettingsComponent implements OnInit {
           title: helptext.guiTitle,
           id: 'gui',
           items: [
-            { label: helptext.stg_guicertificate.placeholder, value: res.ui_certificate.name },
-            { label: helptext.stg_guiaddress.placeholder, value: res.ui_address.join(', ') },
-            { label: helptext.stg_guiv6address.placeholder, value: res.ui_v6address.join(', ') },
-            { label: helptext.stg_guihttpsport.placeholder, value: res.ui_httpsport },
-            { label: helptext.stg_guihttpsprotocols.placeholder, value: res.ui_httpsprotocols.join(', ') },
-            { label: helptext.stg_guihttpsredirect.placeholder, value: res.ui_httpsredirect as any },
+            { label: helptext.ui_certificate.label, value: res.ui_certificate.name },
+            { label: helptext.ui_address.label, value: res.ui_address.join(', ') },
+            { label: helptext.ui_v6address.label, value: res.ui_v6address.join(', ') },
+            { label: helptext.ui_port.label, value: res.ui_port },
+            { label: helptext.ui_httpsport.label, value: res.ui_httpsport },
+            { label: helptext.ui_httpsprotocols.label, value: res.ui_httpsprotocols.join(', ') },
             {
-              label: helptext.crash_reporting.placeholder,
+              label: helptext.ui_httpsredirect.label,
+              value: res.ui_httpsredirect ? helptext.enabled : helptext.disabled,
+            },
+            {
+              label: helptext.crash_reporting.label,
               value: res.crash_reporting ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext.usage_collection.placeholder,
+              label: helptext.usage_collection.label,
               value: res.usage_collection ? helptext.enabled : helptext.disabled,
             },
-            { label: helptext.consolemsg_placeholder, value: res.ui_consolemsg ? helptext.enabled : helptext.disabled },
+            {
+              label: helptext.ui_consolemsg.label,
+              value: res.ui_consolemsg ? helptext.enabled : helptext.disabled,
+            },
           ],
           actions: [
             { label: helptext.actions.save_config, value: 'saveConfig', icon: 'save_alt' },
@@ -204,64 +212,72 @@ export class GeneralSettingsComponent implements OnInit {
       this.sysGeneralService.languageChoices().pipe(untilDestroyed(this)).subscribe((languages) => {
         this.sysGeneralService.kbdMapChoices().pipe(untilDestroyed(this)).subscribe((mapchoices) => {
           const keyboardMap = mapchoices.find((x) => x.value === this.configData.kbdmap);
+          const dateTime = this.localeService.getDateAndTime(res.timezone);
           this.localeData = {
             title: helptext.localeTitle,
             id: 'localization',
             items: [
               { label: helptext.stg_language.placeholder, value: languages[res.language] },
-              { label: helptext.date_format.placeholder, value: this.localeService.getDateAndTime(res.timezone)[0] },
-              { label: helptext.time_format.placeholder, value: this.localeService.getDateAndTime(res.timezone)[1] },
+              { label: helptext.date_format.placeholder, value: dateTime[0] },
+              { label: helptext.time_format.placeholder, value: dateTime[1] },
               { label: helptext.stg_timezone.placeholder, value: res.timezone },
               { label: helptext.stg_kbdmap.placeholder, value: res.kbdmap ? keyboardMap.label : helptext.default },
             ],
           };
+          this.localizationSettings = {
+            language: res.language,
+            kbdMap: res.kbdmap,
+            timezone: res.timezone,
+            dateFormat: this.localeService.getPreferredDateFormat(),
+            timeFormat: this.localeService.getPreferredTimeFormat(),
+          };
           this.dataCards.push(this.localeData);
         });
       });
+
+      this.ntpServersData = {
+        id: 'ntp',
+        title: helptext.ntpTitle,
+        tableConf: {
+          title: helptext.ntpTitle,
+          queryCall: 'system.ntpserver.query',
+          deleteCall: 'system.ntpserver.delete',
+          deleteMsg: {
+            title: '',
+            key_props: ['address'],
+          },
+          parent: this,
+          columns: [
+            { name: helptext_ntp.address.label, prop: 'address' },
+            { name: helptext_ntp.burst.label, prop: 'burst', width: '40px' },
+            { name: helptext_ntp.iburst.label, prop: 'iburst', width: '40px' },
+            { name: helptext_ntp.prefer.label, prop: 'prefer', width: '40px' },
+            { name: helptext_ntp.minpoll.label, prop: 'minpoll', width: '60px' },
+            { name: helptext_ntp.maxpoll.label, prop: 'maxpoll', width: '60px' },
+          ],
+          add: () => {
+            this.ixModalService.open(NtpServerFormComponent, this.translate.instant('Add NTP Server'));
+          },
+          edit: (server: NtpServer) => {
+            const modal = this.ixModalService.open(NtpServerFormComponent, this.translate.instant('Edit NTP Server'));
+            modal.setupForm(server);
+          },
+        },
+      };
     });
   }
 
-  doAdd(name: string, id?: number): void {
-    let addComponent: Type<GuiFormComponent | NtpServerFormComponent | LocalizationFormComponent>;
+  doAdd(name: string): void {
     switch (name) {
       case 'gui':
-        addComponent = GuiFormComponent;
-        break;
-      case 'ntp':
-        addComponent = NtpServerFormComponent;
+        this.ixModalService.open(GuiFormComponent, this.translate.instant('GUI'));
         break;
       default:
-        addComponent = LocalizationFormComponent;
+        const localizationFormModal = this.ixModalService.open(LocalizationFormComponent, this.translate.instant('Localization Settings'));
+        localizationFormModal.setupForm(this.localizationSettings);
+        break;
     }
     this.sysGeneralService.sendConfigData(this.configData);
-    this.modalService.openInSlideIn(addComponent, id);
-  }
-
-  doNTPDelete(server: NtpServer): void {
-    this.dialog.confirm({
-      title: helptext.deleteServer.title,
-      message: `${helptext.deleteServer.message} ${server.address}?`,
-      buttonMsg: helptext.deleteServer.message,
-    }).pipe(
-      filter(Boolean),
-      untilDestroyed(this),
-    ).subscribe(() => {
-      this.loader.open();
-      this.ws.call('system.ntpserver.delete', [server.id]).pipe(untilDestroyed(this)).subscribe(() => {
-        this.loader.close();
-        this.getNTPData();
-      }, (err) => {
-        this.loader.close();
-        this.dialog.errorReport('Error', err.reason, err.trace.formatted);
-      });
-    });
-  }
-
-  getNTPData(): void {
-    this.ws.call('system.ntpserver.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.dataSource = res;
-      this.displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll', 'actions'];
-    });
   }
 
   saveConfigSubmit(entityDialog: EntityDialogComponent): void {
@@ -286,17 +302,17 @@ export class GeneralSettingsComponent implements OnInit {
         .pipe(untilDestroyed(this)).subscribe(
           (download) => {
             const url = download[1];
-            entityDialog.parent.storage
-              .streamDownloadFile(entityDialog.parent.http, url, fileName, mimetype)
+            this.storage
+              .streamDownloadFile(this.http, url, fileName, mimetype)
               .pipe(untilDestroyed(this))
               .subscribe((file: Blob) => {
                 entityDialog.loader.close();
                 entityDialog.dialogRef.close();
-                entityDialog.parent.storage.downloadBlob(file, fileName);
+                this.storage.downloadBlob(file, fileName);
               }, (err: Error) => {
                 entityDialog.loader.close();
                 entityDialog.dialogRef.close();
-                entityDialog.parent.dialog.errorReport(helptext.config_download.failed_title,
+                this.dialog.errorReport(helptext.config_download.failed_title,
                   helptext.config_download.failed_message, err.message);
               });
           },
@@ -314,38 +330,35 @@ export class GeneralSettingsComponent implements OnInit {
     });
   }
 
-  updater(file: FormUploadComponent, parent: this): void {
+  updater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      parent.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
+      this.subs = { apiEndPoint: file.apiEndPoint, file: fileBrowser.files[0] };
     }
   }
 
-  uploadConfigSubmit(entityDialog: EntityDialogComponent<GeneralSettingsComponent>): void {
-    const config: FormUploadConfig = entityDialog.conf.fieldConfig[0];
-    const parent: GeneralSettingsComponent = config.parent;
+  uploadConfigSubmit(): void {
     const formData: FormData = new FormData();
 
-    const dialogRef = parent.mdDialog.open(EntityJobComponent,
+    const dialogRef = this.mdDialog.open(EntityJobComponent,
       { data: { title: helptext.config_upload.title, closeOnClickOutside: false } });
     dialogRef.componentInstance.setDescription(helptext.config_upload.message);
     formData.append('data', JSON.stringify({
       method: 'config.upload',
       params: [],
     }));
-    formData.append('file', parent.subs.file);
-    dialogRef.componentInstance.wspost(parent.subs.apiEndPoint, formData);
+    formData.append('file', this.subs.file);
+    dialogRef.componentInstance.wspost(this.subs.apiEndPoint, formData);
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close();
-      parent.router.navigate(['/others/reboot']);
+      this.router.navigate(['/others/reboot']);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.componentInstance.setDescription(res.error);
     });
   }
 
-  resetConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
-    const parent = entityDialog.parent;
-    parent.router.navigate(new Array('').concat(['others', 'config-reset']));
+  resetConfigSubmit(): void {
+    this.router.navigate(new Array('').concat(['others', 'config-reset']));
   }
 }

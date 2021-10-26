@@ -10,10 +10,16 @@ import { TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
+import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';
 import {
-  FieldConfig, UnitType, InputUnitConfig, FormArrayConfig, FormListConfig, FormDictConfig,
+  FieldConfig,
+  UnitType,
+  InputUnitConfig,
+  FormArrayConfig,
+  FormListConfig,
+  FormDictConfig,
 } from '../models/field-config.interface';
 
 @Injectable()
@@ -43,14 +49,18 @@ export class EntityFormService {
     const formGroup: { [id: string]: AbstractControl } = {};
 
     if (controls) {
-      for (let i = 0; i < controls.length; i++) {
-        const formControl = this.createFormControl(controls[i]);
+      controls.forEach((control) => {
+        const formControl = this.createFormControl(control);
 
         if (formControl) {
-          formGroup[controls[i].name] = formControl;
+          formGroup[control.name] = formControl;
         }
-        controls[i].relation = Array.isArray(controls[i].relation) ? controls[i].relation : [];
-      }
+
+        // TODO: See if check was supposed to be for `control.relation`.
+        if (control) {
+          control.relation = Array.isArray(control.relation) ? control.relation : [];
+        }
+      });
     }
 
     return this.formBuilder.group(formGroup);
@@ -78,7 +88,8 @@ export class EntityFormService {
       } else if (fieldConfig.type != 'label') {
         formControl = new FormControl(
           { value: fieldConfig.value, disabled: fieldConfig.disabled },
-          fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation, fieldConfig.asyncValidation,
+          fieldConfig.type === 'input-list' as FieldType ? [] : fieldConfig.validation,
+          fieldConfig.asyncValidation,
         );
       }
     }
@@ -110,46 +121,50 @@ export class EntityFormService {
     explorerType?: string,
     hideDirs?: string,
     showHiddenFiles = false,
-  ): Promise<any[]> {
-    const children: any[] = [];
+  ): Promise<ListdirChild[]> {
+    const children: ListdirChild[] = [];
     let typeFilter: any;
-    explorerType && explorerType === 'directory' ? typeFilter = [['type', '=', FileType.Directory]] : typeFilter = [];
+    if (explorerType && explorerType === 'directory') {
+      typeFilter = [['type', '=', FileType.Directory]];
+    } else {
+      typeFilter = [];
+    }
 
     return this.ws.call('filesystem.listdir', [node.data.name, typeFilter,
       { order_by: ['name'], limit: 1000 }]).toPromise().then((res) => {
       res = _.sortBy(res, (o) => o.name.toLowerCase());
 
-      for (let i = 0; i < res.length; i++) {
-        const child: any = {};
+      res.forEach((file) => {
+        const child = {} as ListdirChild;
         if (!showHiddenFiles) {
-          if (res[i].hasOwnProperty('name') && !res[i].name.startsWith('.')) {
-            if (res[i].type === FileType.Symlink) {
-              continue;
+          if (file.hasOwnProperty('name') && !file.name.startsWith('.')) {
+            if (file.type === FileType.Symlink) {
+              return;
             }
-            if (res[i].name !== hideDirs) {
-              child['name'] = res[i].path;
-              child['acl'] = res[i].acl;
-              if (res[i].type === FileType.Directory) {
+            if (file.name !== hideDirs) {
+              child['name'] = file.path;
+              child['acl'] = file.acl;
+              if (file.type === FileType.Directory) {
                 child['hasChildren'] = true;
               }
-              child['subTitle'] = res[i].name;
+              child['subTitle'] = file.name;
               children.push(child);
             }
           }
-        } else if (res[i].hasOwnProperty('name')) {
-          if (res[i].type === FileType.Symlink) {
-            continue;
+        } else if (file.hasOwnProperty('name')) {
+          if (file.type === FileType.Symlink) {
+            return;
           }
-          if (res[i].name !== hideDirs) {
-            child['name'] = res[i].path;
-            if (res[i].type === FileType.Directory) {
+          if (file.name !== hideDirs) {
+            child['name'] = file.path;
+            if (file.type === FileType.Directory) {
               child['hasChildren'] = true;
             }
-            child['subTitle'] = res[i].name;
+            child['subTitle'] = file.name;
             children.push(child);
           }
         }
-      }
+      });
       if (children.length === 0) {
         node.data.hasChildren = false;
       }
@@ -168,17 +183,17 @@ export class EntityFormService {
     }); */
   }
 
-  getPoolDatasets(param: [DatasetType[]?] = []): Promise<any[]> {
-    const nodes: any[] = [];
+  getPoolDatasets(param: [DatasetType[]?] = []): Promise<ListdirChild[]> {
+    const nodes: ListdirChild[] = [];
     return this.ws.call('pool.filesystem_choices', param).toPromise().then((res) => {
-      for (let i = 0; i < res.length; i++) {
-        const pathArr = res[i].split('/');
+      res.forEach((filesystem) => {
+        const pathArr = filesystem.split('/');
         if (pathArr.length === 1) {
-          const node = {
-            name: res[i],
+          const node: ListdirChild = {
+            name: filesystem,
             subTitle: pathArr[0],
             hasChildren: false,
-            children: [] as any,
+            children: [],
           };
           nodes.push(node);
         } else {
@@ -187,28 +202,28 @@ export class EntityFormService {
           while (_.find(parent.children, { subTitle: pathArr[j] })) {
             parent = _.find(parent.children, { subTitle: pathArr[j++] });
           }
-          const node = {
-            name: res[i],
+          const node: ListdirChild = {
+            name: filesystem,
             subTitle: pathArr[j],
             hasChildren: false,
-            children: [] as any,
+            children: [],
           };
           parent.children.push(node);
           parent.hasChildren = true;
         }
-      }
+      });
       return nodes;
     });
   }
 
   clearFormError(fieldConfig: FieldConfig[]): void {
-    for (let f = 0; f < fieldConfig.length; f++) {
-      fieldConfig[f]['errors'] = '';
-      fieldConfig[f]['hasErrors'] = false;
-    }
+    fieldConfig.forEach((config) => {
+      config['errors'] = '';
+      config['hasErrors'] = false;
+    });
   }
 
-  phraseInputData(value: any, config: InputUnitConfig): any {
+  phraseInputData(value: any, config: InputUnitConfig): string | number {
     if (!value) {
       return value;
     }
@@ -234,11 +249,11 @@ export class EntityFormService {
     // get unit and return phrased string
     unit = value.replace(num, '');
     if (unit === '') {
-      unit = config.default
-        ? config.default
-        : (config.allowUnits
-          ? config.allowUnits[0]
-          : this.defaultUnit[config.type]);
+      if (config.default) {
+        unit = config.default;
+      } else {
+        unit = config.allowUnits ? config.allowUnits[0] : this.defaultUnit[config.type];
+      }
     }
     if (config.allowUnits !== undefined) {
       config.allowUnits.forEach((item) => item.toUpperCase());

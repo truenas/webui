@@ -9,6 +9,7 @@ import helptext from 'app/helptext/apps/apps';
 import { CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { remapAppSubmitData } from 'app/pages/applications/utils/remap-app-submit-data.utils';
 import { FieldConfig, FormDictConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
@@ -16,6 +17,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
+import { remapAppConfigData } from '../utils/remap-app-config-data.utils';
 
 @UntilDestroy()
 @Component({
@@ -23,10 +25,10 @@ import { ApplicationsService } from '../applications.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ChartFormComponent implements FormConfiguration {
-  queryCall: 'chart.release.query' = 'chart.release.query';
+  queryCall = 'chart.release.query' as const;
   customFilter: CatalogQueryParams;
-  addCall: 'chart.release.create' = 'chart.release.create';
-  editCall: 'chart.release.update' = 'chart.release.update';
+  addCall = 'chart.release.create' as const;
+  editCall = 'chart.release.update' as const;
   isEntity = true;
   protected utils: CommonUtils;
 
@@ -90,7 +92,7 @@ export class ChartFormComponent implements FormConfiguration {
         if (fieldSet) {
           const fieldConfigs = this.entityUtils.parseSchemaFieldConfig(question);
 
-          const imageConfig: FormDictConfig = _.find(fieldConfigs, { name: 'image' });
+          const imageConfig = _.find(fieldConfigs, { name: 'image' }) as FormDictConfig;
           if (imageConfig) {
             const repositoryConfig = _.find(imageConfig.subFields, { name: 'repository' });
             if (repositoryConfig) {
@@ -103,7 +105,7 @@ export class ChartFormComponent implements FormConfiguration {
       });
 
       fieldSets = fieldSets.filter((fieldSet) => fieldSet.config.length > 0);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
       this.dialogService.errorReport(helptext.chartForm.parseError.title, helptext.chartForm.parseError.message);
     }
@@ -119,7 +121,7 @@ export class ChartFormComponent implements FormConfiguration {
     extraFieldSets.forEach((fieldSet) => {
       fieldConfigs = fieldConfigs.concat(fieldSet.config);
     });
-    const configData = new EntityUtils().remapAppConfigData(data.config, fieldConfigs);
+    const configData = remapAppConfigData(data.config, fieldConfigs);
 
     configData['release_name'] = data.name;
     configData['extra_fieldsets'] = extraFieldSets;
@@ -128,7 +130,7 @@ export class ChartFormComponent implements FormConfiguration {
   }
 
   customSubmit(data: any): void {
-    data = new EntityUtils().remapAppSubmitData(data);
+    data = remapAppSubmitData(data);
     const payload = [];
     payload.push({
       values: data,
@@ -145,7 +147,7 @@ export class ChartFormComponent implements FormConfiguration {
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
-      this.modalService.close('slide-in-form');
+      this.modalService.closeSlideIn();
       this.modalService.refreshTable();
     });
   }

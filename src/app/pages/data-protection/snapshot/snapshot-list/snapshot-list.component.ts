@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
@@ -10,7 +11,6 @@ import { SnapshotFormComponent } from 'app/pages/data-protection/snapshot/snapsh
 import { DialogService, StorageService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { TaskService } from 'app/services/task.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -20,9 +20,9 @@ import { T } from 'app/translate-marker';
 })
 export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshotTaskUi> {
   title = T('Periodic Snapshot Tasks');
-  queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
-  updateCall: 'pool.snapshottask.update' = 'pool.snapshottask.update';
-  wsDelete: 'pool.snapshottask.delete' = 'pool.snapshottask.delete';
+  queryCall = 'pool.snapshottask.query' as const;
+  updateCall = 'pool.snapshottask.update' as const;
+  wsDelete = 'pool.snapshottask.delete' as const;
   route_add: string[] = ['tasks', 'snapshot', 'add'];
   route_add_tooltip = 'Add Periodic Snapshot Task';
   route_edit: string[] = ['tasks', 'snapshot', 'edit'];

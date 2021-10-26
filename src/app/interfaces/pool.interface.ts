@@ -1,3 +1,6 @@
+import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { OnOff } from 'app/enums/on-off.enum';
+import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
@@ -6,12 +9,28 @@ import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
 export interface Pool {
   autotrim: ZfsProperty<string>;
+
+  /**
+   * @deprecated Legacy encryption. Not supported in Scale.
+   */
   encrypt: number;
+
+  /**
+   * @deprecated Legacy encryption. Not supported in Scale.
+   */
   encryptkey: string;
+
+  /**
+   * @deprecated Legacy encryption. Not supported in Scale.
+   */
   encryptkey_path: string;
   guid: string;
   healthy: boolean;
   id: number;
+
+  /**
+   * @deprecated Legacy encryption. Not supported in Scale.
+   */
   is_decrypted: boolean;
   name: string;
   path: string;
@@ -38,8 +57,8 @@ export interface PoolScan {
   bytes_to_process: number;
   end_time: ApiTimestamp;
   errors: number;
-  function: 'SCRUB'; // TODO: Unknown what other values are
-  pause: any;
+  function: PoolScanFunction;
+  pause: string;
   percentage: number;
   start_time: ApiTimestamp;
   state: PoolScanState;
@@ -59,5 +78,31 @@ export interface CreatePool {
     [key in PoolTopologyCategory]: { type: string; disks: string[] }[];
   };
   checksum?: string;
-  deduplication?: string;
+  deduplication?: DeduplicationSetting;
 }
+
+export interface UpdatePool {
+  topology: {
+    [key in PoolTopologyCategory]: { type: string; disks?: string[] }[];
+  };
+  autotrim: OnOff;
+}
+
+export interface PoolAttachParams {
+  target_vdev?: string;
+  new_disk?: string;
+  passphrase?: string;
+}
+
+export interface PoolReplaceParams {
+  label: string;
+  disk: string;
+  force?: boolean;
+  passphrase?: string;
+  preserve_settings?: string;
+}
+
+export type PoolExpandParams = [
+  id: number,
+  params?: { geli: { passphrase: string } },
+];

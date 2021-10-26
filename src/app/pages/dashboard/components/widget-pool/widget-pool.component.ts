@@ -12,24 +12,26 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { styler, tween } from 'popmotion';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
-import { CoreEvent } from 'app/interfaces/events';
+import { DisksDataEvent } from 'app/interfaces/events/disks-data-event.interface';
+import { MultipathDataEvent } from 'app/interfaces/events/multipath-event.interface';
+import { Multipath } from 'app/interfaces/multipath.interface';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
-import { VDev } from 'app/interfaces/storage.interface';
+import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { T } from 'app/translate-marker';
 
 interface Slide {
   name: string;
   index?: string;
   dataSource?: any;
-  template: TemplateRef<any>;
+  template: TemplateRef<void>;
   topology?: PoolTopologyCategory;
 }
 
@@ -39,21 +41,6 @@ interface PoolDiagnosis {
   errors: string[];
   selector: string;
   level: string;
-}
-
-export interface Disk {
-  name: string;
-  smart_enabled: boolean;
-  size: number;
-  model: string;
-  description?: string;
-  enclosure_slot?: any;
-  expiretime?: any;
-  hddstandby?: string;
-  serial?: string;
-  smartoptions?: string;
-  temp?: number;
-  displaysize?: string;
 }
 
 @UntilDestroy()
@@ -114,7 +101,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return '';
   }
 
-  get unhealthyDisks(): { totalErrors: number | string; disks: any[] } {
+  get unhealthyDisks(): { totalErrors: number | string; disks: string[] } {
     if (this.poolState && this.poolState.topology) {
       const unhealthy: any[] = []; // Disks with errors
       this.poolState.topology.data.forEach((item: any) => {
@@ -136,7 +123,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       });
       return { totalErrors: unhealthy.length/* errors.toString() */, disks: unhealthy };
     }
-    return { totalErrors: 'Unknown', disks: [] as any[] };
+    return { totalErrors: 'Unknown', disks: [] };
   }
 
   get allDiskNames(): string[] {
@@ -172,7 +159,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   title: string;
   voldataavail = false;
-  displayValue: any;
+  displayValue: string;
   diskSize: string;
   diskSizeLabel: string;
   poolHealth: PoolDiagnosis = {
@@ -183,7 +170,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     level: 'safe',
   };
 
-  currentMultipathDetails: any;
+  currentMultipathDetails: Multipath;
   currentDiskDetails: Disk;
   get currentDiskDetailsKeys(): (keyof Disk)[] {
     return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) as (keyof Disk)[] : [];
@@ -227,22 +214,23 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
     this.cdr.detectChanges();
 
-    this.core.register({ observerClass: this, eventName: 'MultipathData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'MultipathData' }).pipe(untilDestroyed(this)).subscribe((evt: MultipathDataEvent) => {
       this.currentMultipathDetails = evt.data[0];
 
-      const activeDisk = evt.data[0].children.filter((prop: any) => prop.status == 'ACTIVE');
-      this.core.emit({ name: 'DisksRequest', data: [[['name', '=', activeDisk[0].name]]] });
+      const activeDisk = evt.data[0].children.find((prop) => prop.status == 'ACTIVE');
+      this.core.emit({ name: 'DisksRequest', data: [[['name', '=', activeDisk.name]]] });
     });
 
-    this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
       const currentPath = this.path[this.currentSlideIndex];
-      const currentName = currentPath && currentPath.dataSource
-        ? this.currentMultipathDetails
-          ? this.checkMultipathLabel(currentPath.dataSource.disk)
-          : currentPath.dataSource.disk
-            ? currentPath.dataSource.disk
-            : 'unknown'
-        : 'unknown';
+      let currentName = 'unknown';
+      if (currentPath?.dataSource) {
+        if (this.currentMultipathDetails) {
+          currentName = this.checkMultipathLabel(currentPath.dataSource.disk);
+        } else if (currentPath.dataSource.disk) {
+          currentName = currentPath.dataSource.disk;
+        }
+      }
 
       if ((!currentName || currentName === 'unknown') && evt.data.length == 0) {
         this.currentDiskDetails = null;
@@ -260,6 +248,11 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     this.checkVolumeHealth();
   }
 
+  // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
+  diskKey(key: keyof Disk): keyof Disk {
+    return key;
+  }
+
   getAvailableSpace(): number {
     if (!this.volumeData || typeof this.volumeData.avail == undefined) {
       this.displayValue = 'Unknown';
@@ -267,7 +260,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
 
     let usedValue;
-    if (isNaN(this.volumeData.used)) {
+    if (Number.isNaN(this.volumeData.used)) {
       usedValue = this.volumeData.used;
     } else {
       usedValue = filesize(this.volumeData.used, { exponent: 3 });
@@ -279,7 +272,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       return 0;
     }
 
-    if (!isNaN(this.volumeData.avail)) {
+    if (!Number.isNaN(this.volumeData.avail)) {
       this.voldataavail = true;
     }
 
@@ -461,5 +454,16 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   percentAsNumber(value: string): number {
     const spl = value.split('%');
     return parseInt(spl[0]);
+  }
+
+  isErrorStatus(status: string): boolean {
+    switch (status) {
+      case PoolStatus.Online:
+      case PoolStatus.Healthy:
+      case PoolStatus.Locked:
+        return false;
+      default:
+        return true;
+    }
   }
 }

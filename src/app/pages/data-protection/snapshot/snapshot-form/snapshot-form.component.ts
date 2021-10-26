@@ -20,9 +20,9 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class SnapshotFormComponent implements FormConfiguration {
   queryKey = 'id';
-  queryCall: 'pool.snapshottask.query' = 'pool.snapshottask.query';
-  addCall: 'pool.snapshottask.create' = 'pool.snapshottask.create';
-  editCall: 'pool.snapshottask.update' = 'pool.snapshottask.update';
+  queryCall = 'pool.snapshottask.query' as const;
+  addCall = 'pool.snapshottask.create' as const;
+  editCall = 'pool.snapshottask.update' as const;
   isEntity = true;
   pk: number;
   protected dataset: string;
@@ -137,13 +137,13 @@ export class SnapshotFormComponent implements FormConfiguration {
     protected storageService: StorageService,
     protected dialog: DialogService,
     protected modalService: ModalService) {
-    const begin_field: FormSelectConfig = this.fieldSets.config('begin');
-    const end_field: FormSelectConfig = this.fieldSets.config('end');
+    const begin_field = this.fieldSets.config('begin') as FormSelectConfig;
+    const end_field = this.fieldSets.config('end') as FormSelectConfig;
     const time_options = this.taskService.getTimeOptions();
-    for (let i = 0; i < time_options.length; i++) {
-      begin_field.options.push({ label: time_options[i].label, value: time_options[i].value });
-      end_field.options.push({ label: time_options[i].label, value: time_options[i].value });
-    }
+    time_options.forEach((option) => {
+      begin_field.options.push({ label: option.label, value: option.value });
+      end_field.options.push({ label: option.label, value: option.value });
+    });
   }
 
   afterInit(entityForm: EntityFormComponent): void {
@@ -152,7 +152,7 @@ export class SnapshotFormComponent implements FormConfiguration {
     this.isNew = entityForm.isNew;
     this.title = this.isNew ? helptext.snapshot_task_add : helptext.snapshot_task_edit;
 
-    const datasetField: FormSelectConfig = this.fieldSets.config('dataset');
+    const datasetField = this.fieldSets.config('dataset') as FormSelectConfig;
 
     this.storageService.getDatasetNameOptions().pipe(untilDestroyed(this)).subscribe(
       (options) => {
@@ -229,7 +229,7 @@ export class SnapshotFormComponent implements FormConfiguration {
     const formatted = schedule.minute + ' ' + schedule.hour + ' ' + schedule.dom + ' ' + schedule.month + ' ' + schedule.dow;
     const cronField = entity.formGroup.controls['cron_schedule'];
     cronField.setValue(formatted);
-    const cronEntity = entity.fieldConfig.filter((field) => field.name == 'cron_schedule')[0];
+    const cronEntity = entity.fieldConfig.find((field) => field.name == 'cron_schedule');
     cronEntity.value = formatted;
 
     // Setup all the other fields

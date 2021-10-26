@@ -1,4 +1,4 @@
-import { Container } from 'pixi.js';
+import { Container, Transform } from 'pixi.js';
 import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
 
@@ -79,7 +79,7 @@ export class ES102 extends Chassis {
 
             return undefined;
           });
-          return test.filter((v) => v !== undefined)[0];
+          return test.find((v) => v !== undefined);
         };
 
         const currentColumn: number = getCurrentColumn();
@@ -102,7 +102,7 @@ export class ES102 extends Chassis {
   }
 
   generatePerspectiveOffset(): void {
-    this.front.driveTrays.transform.position.x = 32;
-    this.front.driveTrays.transform.position.y = 32;
+    (this.front.driveTrays.transform as Transform).position.x = 32;
+    (this.front.driveTrays.transform as Transform).position.y = 32;
   }
 }

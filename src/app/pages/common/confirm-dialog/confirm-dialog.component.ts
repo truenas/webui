@@ -1,16 +1,16 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialogRef } from '@angular/material/dialog';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
-import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'confirm-dialog',
   templateUrl: './confirm-dialog.component.html',
   styleUrls: ['./confirm-dialog.component.scss'],
 })
-export class ConfirmDialog {
+export class ConfirmDialogComponent {
   title: string;
   message: string;
   buttonMsg: string = T('Continue');
@@ -29,7 +29,7 @@ export class ConfirmDialog {
 
   @Output() switchSelectionEmitter = new EventEmitter<boolean>();
 
-  constructor(public dialogRef: MatDialogRef < ConfirmDialog >, protected translate: TranslateService) {
+  constructor(public dialogRef: MatDialogRef < ConfirmDialogComponent >, protected translate: TranslateService) {
   }
 
   toggleSubmit(data: MatCheckboxChange): void {

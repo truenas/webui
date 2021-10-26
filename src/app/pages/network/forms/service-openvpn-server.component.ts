@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
+import { OpenvpnServerConfig, OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import {
   ServicesService, DialogService, AppLoaderService, WebSocketService, StorageService,
 } from 'app/services';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +21,7 @@ import { T } from 'app/translate-marker';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class OpenvpnServerComponent implements FormConfiguration {
-  queryCall: 'openvpn.server.config' = 'openvpn.server.config';
+  queryCall = 'openvpn.server.config' as const;
   protected certID: number;
   protected serverAddress: string;
   protected entityEdit: EntityFormComponent;
@@ -171,7 +171,6 @@ export class OpenvpnServerComponent implements FormConfiguration {
       id: 'client_config',
       name: helptext.server.buttons.download,
       function: () => {
-        const self = this;
         const conf: DialogFormConfiguration = {
           title: T('Select Client Certificate'),
           fieldConfig: [
@@ -183,20 +182,20 @@ export class OpenvpnServerComponent implements FormConfiguration {
             },
           ],
           saveButtonText: T('Save'),
-          customSubmit(entityDialog: EntityDialogComponent) {
-            self.ws.call('interface.websocket_local_ip').pipe(untilDestroyed(this)).subscribe((localip) => {
+          customSubmit: (entityDialog: EntityDialogComponent) => {
+            this.ws.call('interface.websocket_local_ip').pipe(untilDestroyed(this)).subscribe((localip) => {
               const value = entityDialog.formValue;
               entityDialog.dialogRef.close(true);
-              self.loader.open();
-              self.services.generateOpenServerClientConfig(value.client_certificate_id,
+              this.loader.open();
+              this.services.generateOpenServerClientConfig(value.client_certificate_id,
                 localip).pipe(untilDestroyed(this)).subscribe((key) => {
                 const filename = 'openVPNClientConfig.ovpn';
                 const blob = new Blob([key], { type: 'text/plain' });
-                self.storageService.downloadBlob(blob, filename);
-                self.loader.close();
+                this.storageService.downloadBlob(blob, filename);
+                this.loader.close();
               }, (err) => {
-                self.loader.close();
-                self.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted);
+                this.loader.close();
+                this.dialog.errorReport(helptext.error_dialog_title, err.reason, err.trace.formatted);
               });
             });
           },
@@ -221,14 +220,16 @@ export class OpenvpnServerComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    entityEdit.submitFunction = (body: any) => this.services.updateOpenVPN('openvpn.server.update', body);
+    entityEdit.submitFunction = (body: OpenvpnServerConfigUpdate) => {
+      return this.services.updateOpenVPN('openvpn.server.update', body);
+    };
 
     this.services.getClientInfo().pipe(untilDestroyed(this)).subscribe((res) => {
       this.certID = res.client_certificate;
     });
 
     this.services.getOpenVPNServerAuthAlgorithmChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'authentication_algorithm');
+      const config = this.fieldConfig.find((c) => c.name === 'authentication_algorithm') as FormSelectConfig;
       for (const item in res) {
         config.options.push(
           { label: `${item} (${res[item]})`, value: item },
@@ -236,7 +237,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
       }
     });
     this.services.getOpenServerCipherChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'cipher');
+      const config = this.fieldConfig.find((c) => c.name === 'cipher') as FormSelectConfig;
       for (const item in res) {
         config.options.push(
           { label: `${item} ${res[item]}`, value: item },
@@ -244,14 +245,14 @@ export class OpenvpnServerComponent implements FormConfiguration {
       }
     });
     this.services.getCerts().pipe(untilDestroyed(this)).subscribe((certificates) => {
-      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'server_certificate');
+      const config = this.fieldConfig.find((c) => c.name === 'server_certificate') as FormSelectConfig;
       certificates.forEach((certificate) => {
         config.options.push({ label: certificate.name, value: certificate.id });
       });
       this.certOptions = config.options;
     });
     this.services.getCAs().pipe(untilDestroyed(this)).subscribe((authorities) => {
-      const config: FormSelectConfig = this.fieldConfig.find((c) => c.name === 'root_ca');
+      const config = this.fieldConfig.find((c) => c.name === 'root_ca') as FormSelectConfig;
       authorities.forEach((item) => {
         config.options.push({ label: item.name, value: item.id });
       });

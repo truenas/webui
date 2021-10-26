@@ -145,11 +145,19 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
         },
       },
       legendFormatter: (data: any) => {
+        const getSuffix = (converted: Conversion): string => {
+          if (converted.shortName !== undefined) {
+            return converted.shortName;
+          }
+
+          return converted.suffix !== undefined ? converted.suffix : '';
+        };
+
         const clone = { ...data };
         clone.series.forEach((item: any, index: number) => {
           if (!item.y) { return; }
           const converted = this.formatLabelValue(item.y, this.inferUnits(this.labelY), 1, true);
-          const suffix = converted.shortName !== undefined ? converted.shortName : (converted.suffix !== undefined ? converted.suffix : '');
+          const suffix = getSuffix(converted);
           clone.series[index].yHTML = this.limitDecimals(converted.value).toString() + suffix;
           if (!clone.stackedTotal) {
             clone.stackedTotal = 0;
@@ -158,7 +166,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
         });
         if (clone.stackedTotal >= 0) {
           const converted = this.formatLabelValue(clone.stackedTotal, this.inferUnits(this.labelY), 1, true);
-          const suffix = converted.shortName !== undefined ? converted.shortName : (converted.suffix !== undefined ? converted.suffix : '');
+          const suffix = getSuffix(converted);
           clone.stackedTotalHTML = this.limitDecimals(converted.value).toString() + suffix;
         }
         this.core.emit({ name: 'LegendEvent-' + this.chartId, data: clone, sender: this });
@@ -198,11 +206,11 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   makeColumn(data: ReportingData, legendKey: any): number[] {
     const result: any = [];
 
-    for (let i = 0; i < data.data.length; i++) {
+    data.data.forEach((report) => {
       // TODO: Incorrect type
-      const value = (data.data[i] as any)[legendKey];
+      const value = (report as any)[legendKey];
       result.push(value);
-    }
+    });
 
     return result;
   }
@@ -246,7 +254,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
   private processThemeColors(theme: Theme): string[] {
     this.theme = theme;
-    return theme.accentColors.map((color) => (theme as any)[color]);
+    return theme.accentColors.map((color) => theme[color]);
   }
 
   private createColorObject(): Record<string, string> {

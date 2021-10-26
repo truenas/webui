@@ -1,17 +1,18 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/volumes/volume-key';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { VolumeRekeyFormValues } from 'app/pages/storage/volumes/volume-rekey-form/volume-rekey-form-values.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
 import { EncryptionService } from 'app/services/encryption.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +22,7 @@ import { T } from 'app/translate-marker';
 export class VolumeRekeyFormComponent implements FormConfiguration {
   saveSubmitText = T('Reset Encryption');
 
-  queryCall: 'pool.query' = 'pool.query';
+  queryCall = 'pool.query' as const;
   queryKey = 'id';
   route_success: string[] = ['storage', 'pools'];
   isNew = false;
@@ -109,7 +110,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
     });
   }
 
-  customSubmit(value: any): void {
+  customSubmit(value: VolumeRekeyFormValues): void {
     this.ws.call('auth.check_user', ['root', value.passphrase]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res) {
         this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');

@@ -10,6 +10,7 @@ import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -17,7 +18,7 @@ import { ApiService } from 'app/core/services/api.service';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { ProductType } from 'app/enums/product-type.enum';
+import { ProductType, ProductTypeReadableText } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
@@ -28,7 +29,6 @@ import { SystemGeneralService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -43,6 +43,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   failed = false;
   product_type: ProductType;
+  productTypeReadableText: string;
   logo_ready = false;
   product = productText.product;
   ha_info_ready = false;
@@ -54,7 +55,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private interval: Interval;
-  exposeLegacyUI = false;
   tokenObservable: Subscription;
   HAInterval: Interval;
   isTwoFactor = false;
@@ -70,17 +70,17 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   failover_status: FailoverStatus;
   failover_statuses = {
     [FailoverStatus.Single]: '',
-    [FailoverStatus.Master]: T(`Active ${globalHelptext.Ctrlr}.`),
-    [FailoverStatus.Backup]: T(`Standby ${globalHelptext.Ctrlr}.`),
-    [FailoverStatus.Electing]: T(`Electing ${globalHelptext.Ctrlr}.`),
-    [FailoverStatus.Importing]: T('Importing pools.'),
-    [FailoverStatus.Error]: T('Failover is in an error state.'),
+    [FailoverStatus.Master]: this.translate.instant('Active {controller}.', { controller: globalHelptext.Ctrlr }),
+    [FailoverStatus.Backup]: this.translate.instant('Standby {controller}.', { controller: globalHelptext.Ctrlr }),
+    [FailoverStatus.Electing]: this.translate.instant('Electing {controller}.', { controller: globalHelptext.Ctrlr }),
+    [FailoverStatus.Importing]: this.translate.instant('Importing pools.'),
+    [FailoverStatus.Error]: this.translate.instant('Failover is in an error state.'),
   };
   failover_ips: string[] = [];
   ha_disabled_reasons: FailoverDisabledReason[] = [];
   show_reasons = false;
   reason_text = helptext.ha_disabled_reasons;
-  ha_status_text = T('Checking HA status');
+  ha_status_text = this.translate.instant('Checking HA status');
   ha_status = false;
   tc_ip: string;
   protected tc_url: string;
@@ -88,14 +88,20 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly ProductType = ProductType;
   readonly FailoverStatus = FailoverStatus;
 
-  constructor(private ws: WebSocketService, private router: Router,
-    private snackBar: MatSnackBar, public translate: TranslateService,
+  constructor(
+    private ws: WebSocketService,
+    private router: Router,
+    private snackBar: MatSnackBar,
+    public translate: TranslateService,
     private dialogService: DialogService,
     private fb: FormBuilder,
     private core: CoreService,
     private api: ApiService,
     private _autofill: AutofillMonitor,
-    private http: HttpClient, private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
+    private http: HttpClient,
+    private sysGeneralService: SystemGeneralService,
+    private localeService: LocaleService,
+  ) {
     this.ws = ws;
     const ha_status = window.sessionStorage.getItem('ha_status');
     if (ha_status && ha_status === 'true') {
@@ -115,6 +121,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
         this.logo_ready = true;
         this.product_type = res as ProductType;
+        this.productTypeReadableText = ProductTypeReadableText.get(this.product_type);
         if (this.interval) {
           clearInterval(this.interval);
         }
@@ -131,9 +138,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           this.loginToken();
         }
         window.localStorage.setItem('product_type', res);
-        if (this.product_type === ProductType.Enterprise && window.localStorage.exposeLegacyUI === 'true') {
-          this.exposeLegacyUI = true;
-        }
       });
     }
   }
@@ -149,7 +153,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit(): void {
     this.core.register({ observerClass: this, eventName: 'ThemeChanged' }).pipe(untilDestroyed(this)).subscribe((evt: ThemeChangedEvent) => {
-      if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded == true) {
+      if (this.router.url == '/sessions/signin' && evt.sender.userThemeLoaded) {
         this.redirect();
       }
     });
@@ -191,12 +195,13 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
+  disabledReason(reason: FailoverDisabledReason): FailoverDisabledReason {
+    return reason;
+  }
+
   loginToken(): void {
     let middleware_token;
-    if ((window as any)['MIDDLEWARE_TOKEN']) {
-      middleware_token = (window as any)['MIDDLEWARE_TOKEN'];
-      (window as any)['MIDDLEWARE_TOKEN'] = null;
-    } else if (window.localStorage.getItem('middleware_token')) {
+    if (window.localStorage.getItem('middleware_token')) {
       middleware_token = window.localStorage.getItem('middleware_token');
       window.localStorage.removeItem('middleware_token');
     }
@@ -253,14 +258,17 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     return false;
   }
 
+  get productSupportsHa(): boolean {
+    return this.product_type?.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale;
+  }
+
   getHAStatus(): void {
-    if ((this.product_type.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale)
-      && !this.checking_status) {
+    if (this.productSupportsHa && !this.checking_status) {
       this.checking_status = true;
-      this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe((res) => {
-        this.failover_status = res;
+      this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe((failoverStatus) => {
+        this.failover_status = failoverStatus;
         this.ha_info_ready = true;
-        if (res !== FailoverStatus.Single) {
+        if (failoverStatus !== FailoverStatus.Single) {
           this.ws.call('failover.get_ips').pipe(untilDestroyed(this)).subscribe((ips) => {
             this.failover_ips = ips;
           }, (err) => {
@@ -342,7 +350,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   loginCallback(result: boolean): void {
-    if (result === true) {
+    if (result) {
       this.successLogin();
     } else {
       this.errorLogin();
@@ -387,28 +395,16 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     this.signinData.otp = '';
     let message = '';
     if (this.ws.token === null) {
-      this.isTwoFactor ? message = T('Username, Password, or 2FA Code is incorrect.')
-        : message = T('Username or Password is incorrect.');
+      if (this.isTwoFactor) {
+        message = T('Username, Password, or 2FA Code is incorrect.');
+      } else {
+        message = T('Username or Password is incorrect.');
+      }
     } else {
       message = T('Token expired, please log back in.');
       this.ws.token = null;
     }
-    this.translate.get('close').pipe(untilDestroyed(this)).subscribe((ok: string) => {
-      this.translate.get(message).pipe(untilDestroyed(this)).subscribe((res: string) => {
-        this.snackBar.open(res, ok, { duration: 4000 });
-      });
-    });
-  }
-
-  onGoToLegacy(): void {
-    this.dialogService.confirm({
-      title: T('Warning'),
-      message: globalHelptext.legacyUIWarning,
-      hideCheckBox: true,
-      buttonMsg: T('Continue to Legacy UI'),
-    }).pipe(untilDestroyed(this)).subscribe(() => {
-      window.location.href = '/legacy/';
-    });
+    this.snackBar.open(this.translate.instant(message), this.translate.instant('close'), { duration: 4000 });
   }
 
   openIX(): void {

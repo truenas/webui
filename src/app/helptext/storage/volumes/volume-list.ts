@@ -1,5 +1,5 @@
 import { Validators } from '@angular/forms';
-import { T } from 'app/translate-marker';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export default {
   unlockDialog_password_placeholder: T('Passphrase'),
@@ -58,10 +58,6 @@ the system dataset transfers back to the TrueNAS operating system device.'),
     unknownStateA: T('The pool <i>'),
     unknownStateB: T('</i>is in the database but not connected to the machine. If it was exported by \
     mistake, reconnect the hardware and use <b>Import Pool</b>.<br /><br />'),
-    encryptWarning: T("' is encrypted! If the passphrase for\
- this encrypted pool has been lost, the data will be PERMANENTLY UNRECOVERABLE!\
- Before exporting/disconnecting encrypted pools, download and safely\
- store the encryption key and any passphrase for it."),
     destroy: T('Destroy data on this pool?'),
     cascade: T('Delete configuration of shares that used this pool?'),
     confirm: T('Confirm Export/Disconnect'),

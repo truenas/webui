@@ -3,13 +3,13 @@ import {
   Component, ElementRef, Input, OnInit, ViewChild,
 } from '@angular/core';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { AppTableConfig } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
 
 export interface InputExpandableTableConf extends AppTableConfig {
   detailsHref?: string;
   expandableTableComponent?: ExpandableTableComponent;
   limitRows?: number;
-  configure?(): any;
+  configure?: () => void;
   limitRowsByMaxHeight?: boolean;
 }
 
@@ -26,15 +26,16 @@ export enum ExpandableTableState {
 export class ExpandableTableComponent implements OnInit, AfterViewChecked {
   title = '';
   titleHref: string;
-  actions: any[];
+  actions: AppTableAction[];
   isEmpty = true;
   isExpanded = false;
   readonly ServiceStatus = ServiceStatus;
   readonly ExpandableTableState = ExpandableTableState;
 
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input('conf') tableConf: InputExpandableTableConf;
-  @Input('expandableTableState') expandableTableState: ExpandableTableState;
-  @Input('disabled') disabled: boolean;
+  @Input() expandableTableState: ExpandableTableState;
+  @Input() disabled: boolean;
 
   @ViewChild('appTable', { read: ElementRef })
   appTable: ElementRef;
@@ -74,6 +75,10 @@ export class ExpandableTableComponent implements OnInit, AfterViewChecked {
     const detailsFooterHeight = detailsRow ? detailsRow.offsetHeight : 0;
     const totalHeight = this.appTable.nativeElement.clientHeight;
     const maxRowsHeight = totalHeight - expandableHeaderHeight - tableHeaderHeight - detailsFooterHeight;
+    const customActions = this.appTable.nativeElement.querySelector('#customActions');
+    if (customActions) {
+      expandableHeader.style = 'padding-right: 0';
+    }
     if (this.tableConf.limitRowsByMaxHeight) {
       const prevRowsLimit = this.tableConf.limitRows;
       const tableRowSize = 48;

@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Navigation, Router } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
@@ -12,10 +13,10 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-list';
-import ipmiHelptext from 'app/helptext/network/ipmi/ipmi';
 import { CoreEvent } from 'app/interfaces/events';
 import { NetworkInterfacesChangedEvent } from 'app/interfaces/events/network-interfaces-changed-event.interface';
 import { Ipmi } from 'app/interfaces/ipmi.interface';
+import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Service } from 'app/interfaces/service.interface';
@@ -24,22 +25,24 @@ import { Interval } from 'app/interfaces/timeout.interface';
 import { AppTableAction, AppTableConfig, TableComponent } from 'app/pages/common/entity/table/table.component';
 import { TableService } from 'app/pages/common/entity/table/table.service';
 import { IpmiRow } from 'app/pages/network/network-dashboard.interface';
+import { NetworkInterfaceUi } from 'app/pages/network/network-interface-ui.interface';
+import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
 import {
   AppLoaderService,
   DialogService,
   StorageService,
   WebSocketService,
 } from 'app/services';
+import { IpmiService } from 'app/services/ipmi.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 import { EntityUtils } from '../common/entity/utils';
 import { CardWidgetConf } from './card-widget/card-widget.component';
 import { ConfigurationComponent } from './forms/configuration.component';
 import { InterfacesFormComponent } from './forms/interfaces-form.component';
-import { IPMIFromComponent } from './forms/ipmi-form.component';
+import { IpmiFormComponent } from './forms/ipmi-form.component';
 import { OpenvpnClientComponent } from './forms/service-openvpn-client.component';
 import { OpenvpnServerComponent } from './forms/service-openvpn-server.component';
-import { StaticRouteFormComponent } from './forms/staticroute-form.component';
 
 @UntilDestroy()
 @Component({
@@ -48,8 +51,8 @@ import { StaticRouteFormComponent } from './forms/staticroute-form.component';
   styleUrls: ['./network.component.scss'],
 })
 export class NetworkComponent extends ViewControllerComponent implements OnInit, OnDestroy {
-  protected summaryCall: 'network.general.summary' = 'network.general.summary';
-  protected configCall: 'network.configuration.config' = 'network.configuration.config';
+  protected summaryCall = 'network.general.summary' as const;
+  protected configCall = 'network.configuration.config' as const;
   formEvent$: Subject<CoreEvent>;
 
   ha_enabled = false;
@@ -66,7 +69,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   helptext = helptext;
 
   interfaceTableConf: AppTableConfig<NetworkComponent> = {
-    title: T('Interfaces'),
+    title: this.translate.instant('Interfaces'),
     queryCall: 'interface.query',
     deleteCall: 'interface.delete',
     name: 'interfaces',
@@ -80,10 +83,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     add() {
       this.parent.showInterfacesForm();
     },
-    edit(row: any) {
+    edit(row: NetworkInterfaceUi) {
       this.parent.showInterfacesForm(row.id);
     },
-    delete(row: any, table: TableComponent) {
+    delete(row: NetworkInterfaceUi, table: TableComponent) {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? T('Reset configuration for ') : T('Delete ');
       if (this.parent.ha_enabled) {
         this.parent.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
@@ -103,13 +106,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       key_props: ['name'],
     },
     confirmDeleteDialog: {
-      buildTitle: (intf: any): string => {
+      buildTitle: (intf: NetworkInterfaceUi): string => {
         if (intf.type === NetworkInterfaceType.Physical) {
           return T('Reset Configuration');
         }
         return T('Delete');
       },
-      buttonMsg: (intf: any): string => {
+      buttonMsg: (intf: NetworkInterfaceUi): string => {
         if (intf.type === NetworkInterfaceType.Physical) {
           return T('Reset Configuration');
         }
@@ -120,7 +123,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   };
 
   staticRoutesTableConf: AppTableConfig<NetworkComponent> = {
-    title: T('Static Routes'),
+    title: this.translate.instant('Static Routes'),
     queryCall: 'staticroute.query',
     deleteCall: 'staticroute.delete',
     name: 'staticRoutes',
@@ -129,11 +132,12 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       { name: T('Gateway'), prop: 'gateway' },
     ],
     parent: this,
-    add() {
-      this.parent.showStaticRouteForm();
+    add: () => {
+      this.ixModalService.open(StaticRouteFormComponent, this.translate.instant('Add Static Route'));
     },
-    edit(row: StaticRoute) {
-      this.parent.showStaticRouteForm(row.id);
+    edit: (route: StaticRoute) => {
+      const modal = this.ixModalService.open(StaticRouteFormComponent, this.translate.instant('Edit Static Route'));
+      modal.setEditingStaticRoute(route);
     },
     deleteMsg: {
       title: 'static route',
@@ -142,7 +146,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   };
 
   globalSettingsWidget: CardWidgetConf<NetworkComponent> = {
-    title: T('Global Configuration'),
+    title: this.translate.instant('Global Configuration'),
     data: {},
     parent: this,
     icon: 'router',
@@ -154,7 +158,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   };
 
   openvpnTableConf: AppTableConfig<NetworkComponent> = {
-    title: T('OpenVPN'),
+    title: this.translate.instant('OpenVPN'),
     queryCall: 'service.query',
     name: 'openVPN',
     columns: [
@@ -176,9 +180,11 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     afterGetData() {
       const state = this.parent.navigation.extras.state as { configureOpenVPN: string };
       if (state && state.configureOpenVPN) {
-        state.configureOpenVPN === 'client'
-          ? this.parent.modalService.openInSlideIn(OpenvpnClientComponent)
-          : this.parent.modalService.openInSlideIn(OpenvpnServerComponent);
+        if (state.configureOpenVPN === 'client') {
+          this.parent.modalService.openInSlideIn(OpenvpnClientComponent);
+        } else {
+          this.parent.modalService.openInSlideIn(OpenvpnServerComponent);
+        }
       }
     },
   };
@@ -193,12 +199,12 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
     edit(row: IpmiRow) {
-      this.parent.modalService.openInSlideIn(IPMIFromComponent, row.id);
+      this.parent.modalService.openInSlideIn(IpmiFormComponent, row.id);
     },
   };
 
   networkSummary: NetworkSummary;
-  impiEnabled: boolean;
+  ipmiEnabled: boolean;
 
   hasConsoleFooter = false;
   constructor(
@@ -210,6 +216,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private modalService: ModalService,
     private translate: TranslateService,
     private tableService: TableService,
+    private ipmiService: IpmiService,
+    private ixModalService: IxModalService,
   ) {
     super();
     this.getGlobalSettings();
@@ -280,7 +288,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       .call('ipmi.is_loaded')
       .pipe(untilDestroyed(this))
       .subscribe((isIpmiLoaded) => {
-        this.impiEnabled = isIpmiLoaded;
+        this.ipmiEnabled = isIpmiLoaded;
       });
   }
 
@@ -291,6 +299,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       .subscribe((advancedConfig) => {
         this.hasConsoleFooter = advancedConfig.consolemsg;
       });
+
+    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.staticRoutesTableConf.tableComponent.getData();
+    });
 
     this.checkInterfacePendingChanges();
     this.core
@@ -350,7 +362,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       .subscribe((seconds) => {
         if (seconds != null) {
           if (seconds > 0 && this.checkin_remaining == null) {
-            this.checkin_remaining = seconds;
+            this.checkin_remaining = Math.round(seconds);
             this.checkin_interval = setInterval(() => {
               if (this.checkin_remaining > 0) {
                 this.checkin_remaining -= 1;
@@ -535,69 +547,64 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.core.unregister({ observerClass: this });
   }
 
-  getInterfaceInOutInfo(tableSource: any[]): void {
+  getInterfaceInOutInfo(tableSource: NetworkInterfaceUi[]): void {
     this.ws
       .sub<ReportingRealtimeUpdate>('reporting.realtime')
       .pipe(untilDestroyed(this))
       .subscribe((evt) => {
         if (evt.interfaces) {
-          tableSource.map((row) => {
+          tableSource.forEach((row) => {
+            if (!evt.interfaces[row.id]) {
+              return;
+            }
             row.received = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].received_bytes);
             row.received_bytes = evt.interfaces[row.id].received_bytes;
             row.sent = this.storageService.convertBytestoHumanReadable(evt.interfaces[row.id].sent_bytes);
             row.sent_bytes = evt.interfaces[row.id].sent_bytes;
-            return row;
           });
         }
       });
   }
 
-  interfaceDataSourceHelper(res: any[]): any[] {
-    const rows = res;
-    for (let i = 0; i < rows.length; i++) {
+  interfaceDataSourceHelper(res: NetworkInterface[]): NetworkInterfaceUi[] {
+    return res.map((networkInterface) => {
+      const transformed = { ...networkInterface } as NetworkInterfaceUi;
       // TODO: Replace with probably enum for link_state.
-      rows[i]['link_state'] = rows[i]['state']['link_state'].replace('LINK_STATE_', '');
+      transformed['link_state'] = networkInterface['state']['link_state'].replace('LINK_STATE_', '');
       const addresses = new Set([]);
-      for (let j = 0; j < rows[i]['aliases'].length; j++) {
-        const alias = rows[i]['aliases'][j];
+      transformed.aliases.forEach((alias) => {
         // TODO: See if checks can be removed or replace with enum.
         if (alias.type.startsWith('INET')) {
           addresses.add(alias.address + '/' + alias.netmask);
         }
-      }
+      });
 
-      if (rows[i]['ipv4_dhcp'] || rows[i]['ipv6_auto']) {
-        for (let j = 0; j < rows[i]['state']['aliases'].length; j++) {
-          const alias = rows[i]['state']['aliases'][j];
+      if (transformed['ipv4_dhcp'] || transformed['ipv6_auto']) {
+        transformed.state.aliases.forEach((alias) => {
           if (alias.type.startsWith('INET')) {
             addresses.add(alias.address + '/' + alias.netmask);
           }
-        }
+        });
       }
-      if (rows[i].hasOwnProperty('failover_aliases')) {
-        for (let j = 0; j < rows[i]['failover_aliases'].length; j++) {
-          const alias = rows[i]['failover_aliases'][j];
+      if (transformed.hasOwnProperty('failover_aliases')) {
+        transformed.failover_aliases.forEach((alias) => {
           if (alias.type.startsWith('INET')) {
             addresses.add(alias.address + '/' + alias.netmask);
           }
-        }
+        });
       }
-      rows[i]['addresses'] = Array.from(addresses);
-      if (rows[i].type === NetworkInterfaceType.Physical) {
-        rows[i].active_media_type = rows[i]['state']['active_media_type'];
-        rows[i].active_media_subtype = rows[i]['state']['active_media_subtype'];
-      } else if (rows[i].type === NetworkInterfaceType.Vlan) {
-        rows[i].vlan_tag = rows[i]['vlan_tag'];
-        rows[i].vlan_parent_interface = rows[i]['vlan_parent_interface'];
-      } else if (rows[i].type === NetworkInterfaceType.Bridge) {
-        rows[i].bridge_members = rows[i]['bridge_members'];
-      } else if (rows[i].type === NetworkInterfaceType.LinkAggregation) {
-        rows[i].lagg_ports = rows[i]['lag_ports'];
-        rows[i].lagg_protocol = rows[i]['lag_protocol'];
+      transformed['addresses'] = Array.from(addresses);
+      if (networkInterface.type === NetworkInterfaceType.Physical) {
+        transformed.active_media_type = networkInterface['state']['active_media_type'];
+        transformed.active_media_subtype = networkInterface['state']['active_media_subtype'];
+      } else if (networkInterface.type === NetworkInterfaceType.LinkAggregation) {
+        transformed.lagg_ports = networkInterface['lag_ports'];
+        transformed.lagg_protocol = networkInterface['lag_protocol'];
       }
-      rows[i].mac_address = rows[i]['state']['link_address'];
-    }
-    return res;
+      transformed.mac_address = networkInterface['state']['link_address'];
+
+      return transformed;
+    });
   }
 
   ipmiDataSourceHelper(ipmi: Ipmi[]): IpmiRow[] {
@@ -613,14 +620,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       name: 'identify',
       matTooltip: T('Identify Light'),
       onClick: () => {
-        this.dialog.select(
-          this.translate.instant(T('IPMI Identify')),
-          ipmiHelptext.ipmiOptions,
-          this.translate.instant(T('IPMI flash duration')),
-          'ipmi.identify',
-          'seconds',
-        );
-        event.stopPropagation();
+        this.ipmiService.showIdentifyDialog();
       },
     }, {
       icon: 'launch',
@@ -628,7 +628,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       matTooltip: T('Manage'),
       onClick: (row: IpmiRow) => {
         window.open(`http://${row.ipaddress}`);
-        event.stopPropagation();
       },
     }];
   }
@@ -638,16 +637,9 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     configurationComponent.afterModalFormClosed = this.getGlobalSettings.bind(this);
   }
 
-  showInterfacesForm(id?: number): void {
+  showInterfacesForm(id?: string): void {
     const interfacesForm = this.modalService.openInSlideIn(InterfacesFormComponent, id);
     interfacesForm.afterModalFormClosed = this.checkInterfacePendingChanges.bind(this);
-  }
-
-  showStaticRouteForm(id?: number): void {
-    const staticRouteFormComponent = this.modalService.openInSlideIn(StaticRouteFormComponent, id);
-    if (this.staticRoutesTableConf.tableComponent) {
-      staticRouteFormComponent.afterModalFormClosed = () => this.staticRoutesTableConf.tableComponent.getData();
-    }
   }
 
   openvpnDataSourceHelper(res: any[]): any[] {
@@ -699,7 +691,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               );
             },
           );
-        event.stopPropagation();
       },
     },
     {
@@ -738,7 +729,6 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               );
             },
           );
-        event.stopPropagation();
       },
     }];
   }

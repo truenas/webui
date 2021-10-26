@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -19,13 +20,13 @@ import {
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
+import { VmDeviceFieldSet } from 'app/pages/vm/vm-device-field-set.interface';
 import {
   WebSocketService, NetworkService, VmService, StorageService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-import { T } from 'app/translate-marker';
 
 @UntilDestroy()
 @Component({
@@ -34,11 +35,11 @@ import { T } from 'app/translate-marker';
   styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
 })
 export class DeviceAddComponent implements OnInit, OnDestroy {
-  protected addCall: 'vm.device.create' = 'vm.device.create';
+  protected addCall = 'vm.device.create' as const;
   route_success: string[];
   vmid: number;
   vmname: string;
-  fieldSets: any;
+  fieldSets: VmDeviceFieldSet[];
   isCustActionVisible = false;
   selectedType = VmDeviceType.Cdrom;
   formGroup: FormGroup;
@@ -51,7 +52,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   displayFormGroup: FormGroup;
   rootpwd: FieldConfig;
   boot: FieldConfig;
-  custActions: any[];
+  custActions: { id?: string; name: string; function: () => void }[];
   error: string;
   private productType = window.localStorage.getItem('product_type') as ProductType;
 
@@ -118,7 +119,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       value: '',
       searchOptions: [],
       parent: this,
-      updater: this.updateZvolSearchOptions,
+      updater: (value: string) => this.updateZvolSearchOptions(value),
     },
     {
       name: 'type',
@@ -352,7 +353,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     // Display
     this.ws.call('vm.device.bind_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && Object.keys(res).length > 0) {
-        this.ipAddress = _.find(this.displayFieldConfig, { name: 'bind' });
+        this.ipAddress = _.find(this.displayFieldConfig, { name: 'bind' }) as FormSelectConfig;
         Object.keys(res).forEach((address) => {
           this.ipAddress.options.push({ label: address, value: address });
         });
@@ -360,7 +361,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
 
     this.ws.call('vm.resolution_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      const resolution: FormSelectConfig = _.find(this.displayFieldConfig, { name: 'resolution' });
+      const resolution = _.find(this.displayFieldConfig, { name: 'resolution' }) as FormSelectConfig;
       for (const key in res) {
         resolution.options.push({ label: key, value: res[key] });
       }
@@ -381,28 +382,28 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       const newZvol = {
         label: evt.data.id, value: '/dev/zvol/' + evt.data.id,
       };
-      const pathField: FormSelectConfig = _.find(this.diskFieldConfig, { name: 'path' });
+      const pathField = _.find(this.diskFieldConfig, { name: 'path' }) as FormSelectConfig;
       pathField.options.splice(pathField.options.findIndex((o) => o.value === 'new'), 0, newZvol);
 
       this.diskFormGroup.controls['path'].setValue(newZvol.value);
     });
     // nic
     this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.nic_attach = _.find(this.nicFieldConfig, { name: 'nic_attach' });
+      this.nic_attach = _.find(this.nicFieldConfig, { name: 'nic_attach' }) as FormSelectConfig;
       this.nic_attach.options = Object.keys(res || {}).map((nicId) => ({
         label: nicId,
         value: nicId,
       }));
     });
 
-    this.nicType = _.find(this.nicFieldConfig, { name: 'type' });
+    this.nicType = _.find(this.nicFieldConfig, { name: 'type' }) as FormSelectConfig;
     this.vmService.getNICTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 
     // pci
     this.ws.call('vm.device.passthrough_device_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.pptdev = _.find(this.pciFieldConfig, { name: 'pptdev' });
+      this.pptdev = _.find(this.pciFieldConfig, { name: 'pptdev' }) as FormSelectConfig;
       this.pptdev.options = Object.keys(res || {}).map((pptdevId) => ({
         label: pptdevId,
         value: pptdevId,
@@ -412,7 +413,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.vmid = params['pk'];
+      this.vmid = Number(params['pk']);
       this.vmname = params['name'];
       this.route_success = ['vm', String(this.vmid), 'devices', this.vmname];
     });
@@ -497,14 +498,14 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   afterInit(): void {
     this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       zvols.forEach((zvol) => {
-        const config: FormSelectConfig = _.find(this.diskFieldConfig, { name: 'path' });
+        const config = _.find(this.diskFieldConfig, { name: 'path' }) as FormSelectConfig;
         config.options.push(
           {
             label: zvol.id, value: '/dev/zvol/' + zvol.id,
           },
         );
       });
-      const config: FormSelectConfig = _.find(this.diskFieldConfig, { name: 'path' });
+      const config = _.find(this.diskFieldConfig, { name: 'path' }) as FormSelectConfig;
       config.options.push({
         label: 'Add New', value: 'new', sticky: 'bottom',
       } as any);
@@ -515,13 +516,13 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       const vmDisplayDevices = _.filter(vm[0].devices, { dtype: VmDeviceType.Display });
       if (vm[0].bootloader === VmBootloader.Grub || vm[0].bootloader === VmBootloader.UefiCsm || vmDisplayDevices) {
         if (vmDisplayDevices.length) {
-          for (const i in dtypeField.options) {
-            if (dtypeField.options[i].label === 'DISPLAY') {
-              _.pull(dtypeField.options, dtypeField.options[i]);
+          dtypeField.options.forEach((option) => {
+            if (option.label === 'DISPLAY') {
+              _.pull(dtypeField.options, option);
             }
-          }
+          });
         } else {
-          const typeField: FormSelectConfig = _.find(this.displayFieldConfig, { name: 'type' });
+          const typeField = _.find(this.displayFieldConfig, { name: 'type' }) as FormSelectConfig;
           _.pull(typeField.options, _.find(typeField.options, { value: (vmDisplayDevices[0].attributes as any).type }));
           this.displayFormGroup.controls['type'].setValue(typeField.options[0].value);
         }
@@ -591,8 +592,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.modalService.openInSlideIn(ZvolWizardComponent);
   }
 
-  updateZvolSearchOptions(value = '', parent: this): void {
-    parent.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume], ['id', '^', value]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
+  updateZvolSearchOptions(value = ''): void {
+    this.ws.call('pool.dataset.query', [[['type', '=', DatasetType.Volume], ['id', '^', value]]]).pipe(untilDestroyed(this)).subscribe((zvols) => {
       const searchedZvols: FormComboboxOption[] = [];
       zvols.forEach((zvol) => {
         searchedZvols.push(
@@ -604,7 +605,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       searchedZvols.push({
         label: 'Add New', value: 'new', sticky: 'bottom',
       });
-      const config: FormComboboxConfig = _.find(parent.diskFieldConfig, { name: 'path' });
+      const config = _.find(this.diskFieldConfig, { name: 'path' }) as FormComboboxConfig;
       config.searchOptions = searchedZvols;
     });
   }

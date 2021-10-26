@@ -24,7 +24,7 @@ export interface NotificationAlert {
 @UntilDestroy()
 @Injectable()
 export class NotificationsService {
-  private subject$ = new Subject<any>();
+  private subject$ = new Subject<NotificationAlert[]>();
   private notifications: NotificationAlert[] = [];
   private locale = 'en-US';
   private timeZone = 'UTC';
@@ -69,7 +69,7 @@ export class NotificationsService {
     });
   }
 
-  getNotifications(): Observable<any> {
+  getNotifications(): Observable<NotificationAlert[]> {
     return this.subject$.asObservable();
   }
 
@@ -86,7 +86,7 @@ export class NotificationsService {
     });
 
     this.notifications.forEach((notification) => {
-      if (notificationMap.has(notification.id) === true) {
+      if (notificationMap.has(notification.id)) {
         notification.dismissed = true;
       }
     });
@@ -103,7 +103,7 @@ export class NotificationsService {
     });
 
     this.notifications.forEach((notification) => {
-      if (notificationMap.has(notification.id) === true) {
+      if (notificationMap.has(notification.id)) {
         notification.dismissed = false;
       }
     });
@@ -128,7 +128,7 @@ export class NotificationsService {
     const dateStr = date.toUTCString();
     const dateStrLocale = date.toLocaleString(this.locale, { timeZone: this.timeZone });
     const one_shot: boolean = alert.one_shot;
-    let icon_tooltip: string = <string>alert.level;
+    let icon_tooltip = alert.level as string;
     const routeName = '/dashboard';
     let icon = 'info';
     let color = 'primary';

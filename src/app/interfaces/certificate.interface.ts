@@ -1,6 +1,6 @@
 import { CertificateDigestAlgorithm } from 'app/enums/ca-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/ca-key-type.enum';
-import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
+import { CertificateAuthority, CertificateExtensions } from 'app/interfaces/certificate-authority.interface';
 
 export interface Certificate {
   CA_type_existing: boolean;
@@ -8,6 +8,7 @@ export interface Certificate {
   CA_type_internal: boolean;
   CSR: any;
   DN: string;
+  can_be_revoked: boolean;
   cert_type: string; // Enum? "CERTIFICATE"
   cert_type_CSR: boolean;
   cert_type_existing: boolean;
@@ -27,7 +28,7 @@ export interface Certificate {
   from: string;
   id: number;
   internal: string;
-  issuer: string;
+  issuer: string | { name: string };
   key_length: number;
   key_type: string; // Enum RSA
   lifetime: number;
@@ -65,4 +66,40 @@ export interface CertificateProfile {
 
 export interface ExtendedKeyUsageChoices {
   [key: string]: string;
+}
+
+export interface CertificateCreate {
+  tos?: boolean;
+  dns_mapping?: Record<string, unknown>;
+  csr_id?: number;
+  signedby?: number;
+  key_length?: number;
+  renew_days?: number;
+  type?: number;
+  lifetime?: number;
+  serial?: number;
+  acme_directory_uri?: string;
+  certificate?: string;
+  city?: string;
+  common?: string;
+  country?: string;
+  CSR?: string;
+  ec_curve?: string;
+  email?: string;
+  key_type?: string;
+  name: string;
+  organization?: string;
+  organizational_unit?: string;
+  passphrase?: string;
+  privatekey?: string;
+  state?: string;
+  create_type: string;
+  digest_algorithm?: string;
+  san?: string;
+  cert_extensions: CertificateExtensions;
+}
+
+export interface CertificateUpdate {
+  revoked?: boolean;
+  name?: string;
 }

@@ -2,13 +2,6 @@ import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import { ChartMetadata } from 'app/interfaces/catalog.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 
-// TODO: Conflicts with ChartMetadata (lowercase d).
-export interface ChartMetaData {
-  name: string;
-  version: string;
-  latest_chart_version: string;
-}
-
 export interface UsedPort {
   port: number;
   protocol: string;
@@ -30,19 +23,19 @@ export interface ChartInfo {
 
 export interface ChartResources {
   storage_class: { [key: string]: string };
-  persistent_volumes: any[];
-  host_path_volumes: any[];
+  persistent_volumes: unknown[];
+  host_path_volumes: unknown[];
   container_images: {
     [key: string]: ChartContainerImage;
   };
   truenas_certificates: number[];
   truenas_certificate_authorities: number[];
-  cronjobs: any[];
-  deployments: any[];
-  jobs: any[];
-  persistent_volume_claims: any[];
-  pods: any[];
-  statefulsets: any[];
+  cronjobs: unknown[];
+  deployments: unknown[];
+  jobs: unknown[];
+  persistent_volume_claims: unknown[];
+  pods: unknown[];
+  statefulsets: unknown[];
 }
 
 export interface ChartReleaseCreate {
@@ -58,7 +51,7 @@ export interface ChartRelease {
   name: string;
   info: ChartInfo;
   config: { [key: string]: any };
-  hooks: any[];
+  hooks: unknown[];
   version: number;
   namespace: string;
   chart_metadata: ChartMetadata;
@@ -79,6 +72,7 @@ export interface ChartRelease {
   history: { [key: string]: string };
   resources?: ChartResources;
 
+  // TODO: Frontend field, move to another interface.
   selected?: boolean;
 }
 

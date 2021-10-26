@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as FontFaceObserver from 'fontfaceobserver';
 import { Subject } from 'rxjs';
 import { Terminal } from 'xterm';
@@ -26,7 +27,7 @@ import { CopyPasteMessageComponent } from './copy-paste-message.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TerminalComponent implements OnInit, OnDestroy {
-  @Input('conf') conf: TerminalConfiguration;
+  @Input() conf: TerminalConfiguration;
   @ViewChild('terminal', { static: true }) container: ElementRef;
 
   fontSize = 14;
@@ -44,6 +45,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     private ws: WebSocketService,
     private ss: ShellService,
     private dialog: MatDialog,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -93,7 +95,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
     if (this.shellConnected) {
       controls.push({
         name: 'fontsize',
-        label: 'Set font size',
+        label: this.translate.instant('Set font size'),
         type: 'slider',
         min: 10,
         max: 20,
@@ -104,7 +106,7 @@ export class TerminalComponent implements OnInit, OnDestroy {
       if (this.conf.customReconnectAction) {
         controls.push({
           name: 'reconnect',
-          label: 'Reconnect',
+          label: this.translate.instant('Reconnect'),
           type: 'button',
           color: 'secondary',
         });
@@ -112,20 +114,20 @@ export class TerminalComponent implements OnInit, OnDestroy {
 
       controls.push({
         name: 'restore',
-        label: 'Restore default',
+        label: this.translate.instant('Restore default'),
         type: 'button',
         color: 'primary',
-        placeholder: 'Shell Commands',
-        tooltip: `<b>Copy & Paste</b> <br/>
+        placeholder: this.translate.instant('Shell Commands'),
+        tooltip: this.translate.instant(`<b>Copy & Paste</b> <br/>
                   Context menu copy and paste operations are disabled in the Shell. Copy and paste shortcuts for Mac are <i>Command+C</i> and <i>Command+V</i>. For most operating systems, use <i>Ctrl+Insert</i> to copy and <i>Shift+Insert</i> to paste.<br/><br/>
                   <b>Kill Process</b> <br/>
-                  Kill process shortcut is <i>Crtl+C</i>.`,
+                  Kill process shortcut is <i>Crtl+C</i>.`),
       });
     } else {
       controls = [
         {
           name: 'reconnect',
-          label: 'Reconnect',
+          label: this.translate.instant('Reconnect'),
           type: 'button',
           color: 'primary',
         },

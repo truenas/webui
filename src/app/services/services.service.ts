@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Choices } from 'app/interfaces/choices.interface';
-import { OpenvpnClientConfig } from 'app/interfaces/openvpn-client-config.interface';
-import { OpenvpnServerConfig } from 'app/interfaces/openvpn-server-config.interface';
+import { OpenvpnClientConfig, OpenvpnClientConfigUpdate } from 'app/interfaces/openvpn-client-config.interface';
+import { OpenvpnServerConfig, OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
 import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
@@ -46,8 +45,11 @@ export class ServicesService {
   renewStaticKey(): Observable<OpenvpnServerConfig> {
     return this.ws.call('openvpn.server.renew_static_key');
   }
-  updateOpenVPN(call: ApiMethod, body: any): Observable<any> {
-    return this.ws.call(call, [body]);
+  updateOpenVPN(
+    call: 'openvpn.client.update' | 'openvpn.server.update',
+    body: OpenvpnClientConfigUpdate | OpenvpnServerConfigUpdate,
+  ): Observable<OpenvpnClientConfig | OpenvpnServerConfig> {
+    return this.ws.call(call, [body] as [OpenvpnClientConfigUpdate] | [OpenvpnServerConfigUpdate]);
   }
   getClientInfo(): Observable<OpenvpnClientConfig> {
     return this.ws.call('openvpn.client.config');

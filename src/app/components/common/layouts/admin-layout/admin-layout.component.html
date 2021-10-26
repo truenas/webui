@@ -89,7 +89,7 @@
     </div>
   </mat-sidenav-content>
   <!-- Notification bar -->
-  <mat-sidenav #notificationPanel mode="over" class="" align="end" (open)="onOpenNotify()" (close)="onCloseNotify()" class="notification-sidenav" position="end">
+  <mat-sidenav #notificationPanel mode="over" align="end" (open)="onOpenNotify()" (close)="onCloseNotify()" class="notification-sidenav" position="end">
     <div class="navigation-hold" fxLayout="column">
       <app-notifications [notificPanel]="notificationPanel"></app-notifications>
     </div>
@@ -97,3 +97,4 @@
 </mat-sidenav-container>
 
 <jw-modal id="slide-in-form"></jw-modal>
+<ix-slide-in id="slide-in-form"></ix-slide-in>

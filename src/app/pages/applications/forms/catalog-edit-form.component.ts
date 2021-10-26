@@ -4,8 +4,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { DialogService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
@@ -16,8 +16,8 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class CatalogEditFormComponent implements FormConfiguration {
-  queryCall: 'catalog.query' = 'catalog.query';
-  editCall: 'catalog.update' = 'catalog.update';
+  queryCall = 'catalog.query' as const;
+  editCall = 'catalog.update' as const;
   customFilter: CatalogQueryParams;
   isEntity = true;
   isEditJob = false;
@@ -67,7 +67,7 @@ export class CatalogEditFormComponent implements FormConfiguration {
       label: train,
       value: train,
     }));
-    const config: FormSelectConfig = this.fieldSets.config('preferred_trains');
+    const config = this.fieldSets.config('preferred_trains') as FormSelectConfig;
     config.options = trainOptions;
     return transformed;
   }

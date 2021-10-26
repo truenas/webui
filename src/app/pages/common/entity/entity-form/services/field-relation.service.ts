@@ -5,7 +5,11 @@ import {
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { FieldConfig, FormDictConfig, FormListConfig } from '../models/field-config.interface';
+import {
+  FieldConfig,
+  FormDictConfig,
+  FormListConfig,
+} from '../models/field-config.interface';
 import { FieldRelation, RelationGroup } from '../models/field-relation.interface';
 
 @UntilDestroy()
@@ -22,22 +26,22 @@ export class FieldRelationService {
     });
   }
 
-  getRelatedFormControls(model: FieldConfig,
+  getRelatedFormControls(config: FieldConfig,
     controlGroup: FormGroup): FormControl[] {
     const controls: FormControl[] = [];
 
-    model.relation.forEach((relGroup) => relGroup.when.forEach((rel) => {
-      if (model.name === rel.name) {
-        throw new Error(`FormControl ${model.name} cannot depend on itself`);
+    config.relation.forEach((relGroup) => relGroup.when.forEach((rel) => {
+      if (config.name === rel.name) {
+        throw new Error(`FormControl ${config.name} cannot depend on itself`);
       }
-      const control = <FormControl>controlGroup.get(rel.name);
+      const control = controlGroup.get(rel.name) as FormControl;
       if (control
           && !controls.some((controlElement) => controlElement === control)) {
         controls.push(control);
       } else {
         const subControlKeys = Object.keys(controlGroup.controls).filter((key) => key.startsWith(`${rel.name}_`));
         subControlKeys.forEach((key) => {
-          const control = <FormControl>controlGroup.get(key);
+          const control = controlGroup.get(key) as FormControl;
           if (control
               && !controls.some((controlElement) => controlElement === control)) {
             controls.push(control);
@@ -259,9 +263,11 @@ export class FieldRelationService {
     fieldConfig.isHidden = hide;
 
     if (formGroup.controls[fieldConfig.name]) {
-      disable
-        ? formGroup.controls[fieldConfig.name].disable(options)
-        : formGroup.controls[fieldConfig.name].enable(options);
+      if (disable) {
+        formGroup.controls[fieldConfig.name].disable(options);
+      } else {
+        formGroup.controls[fieldConfig.name].enable(options);
+      }
     }
   }
 

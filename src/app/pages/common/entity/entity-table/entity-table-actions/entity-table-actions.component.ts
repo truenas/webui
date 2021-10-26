@@ -14,19 +14,19 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
   @Input() entity: EntityTableComponent;
   @Input() row: any;
   @Input() icon_name = 'more_vert';
-  @Input() action: EntityTableAction;
+  @Input() action: string;
   @Input() groups = false;
 
-  actions: any[];
+  actions: EntityTableAction[];
   showMenu = true;
   key_prop: string;
 
   get isSingleAction(): boolean {
     if (!this.actions) return;
-    const hasGroups = (this.actions && this.actions[0].actionName);
+    const hasGroups = Boolean(this.actions && this.actions[0].actionName);
 
-    if (hasGroups == true) {
-      return (this.actions[0].actions.length == 1);
+    if (hasGroups) {
+      return (this.actions[0].actions?.length == 1);
     }
     return (this.actions.length == 1);
   }
@@ -65,13 +65,11 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
     e.stopPropagation();
   }
 
-  get singleAction(): any {
+  get singleAction(): EntityTableAction {
     if (this.actions[0].actions == undefined) {
       return null;
     }
     const hasGroups = (this.actions);
-    const action = this.actions && this.isSingleAction && hasGroups ? this.actions[0].actions[0] : this.actions[0];
-
-    return action;
+    return this.actions && this.isSingleAction && hasGroups ? this.actions[0].actions[0] : this.actions[0];
   }
 }
