@@ -107,23 +107,23 @@ def pytest_runtest_makereport(item):
         xfail = hasattr(report, 'wasxfail')
         if (report.skipped and xfail) or (report.failed and not xfail):
             screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
-            save_screenshot(screenshot_name)
             # look if there is a Error window
             if element_exist('//h1[contains(.,"Error")]'):
 
                 web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
                 time.sleep(2)
-                traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}.txt'
+                traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}_error.txt'
+                screenshot_error = f'screenshot/{report.nodeid.replace("::", "_")}_error.png'
                 save_traceback(traceback_name)
+                # take a screenshot of the error
+                save_screenshot(screenshot_error)
                 # Press CLOSE if exist
                 if element_exist('//button[@ix-auto="button__CLOSE"]'):
                     web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+            # take screenshot after looking for error
+            save_screenshot(screenshot_name)
             if wait_on_element(1, '//mat-icon[@id="close-icon" and text()="cancel"]', 'clickable'):
                 web_driver.find_element_by_xpath('//mat-icon[@id="close-icon" and text()="cancel"]').click()
-            # if test that use disable failover make sure to enable failover back.
-            if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
-                if element_exist('//mat-icon[@svgicon="ha_disabled"]'):
-                    enable_failover()
 
 
 def save_screenshot(name):
