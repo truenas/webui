@@ -21,7 +21,7 @@
   >
     <ngx-datatable-row-detail [rowHeight]="100" #myDetailRow>
       <ng-template let-row="row" let-expanded="expanded" ngx-datatable-row-detail-template>
-        <div *ngFor="let detail of row.details" style="padding-left:35px;">
+        <div *ngFor="let detail of row.details" class="row-details">
           <strong>{{detail.label | translate}}:</strong> {{detail.value}}
         </div>
       </ng-template>
@@ -39,14 +39,6 @@
         </div>
       </ng-template>
     </ngx-datatable-column>
-    <!-- <ngx-datatable-column
-        	 [flexGrow]="1"
-             [width]="35"
-             [sortable]="false"
-             [canAutoResize]="false"
-             [draggable]="false"
-             [resizeable]="false">
-        </ngx-datatable-column> -->
     <ngx-datatable-column
       [width]="165"
       name="{{'Disk' | translate}}"
@@ -88,15 +80,15 @@
             <mat-option value="raidz3" *ngIf="getDisks().length >= 5 && group === 'data'">{{"Raid-z3" | translate}}</mat-option>
           </mat-select>
         </mat-form-field>
-        <div style="display:inline-block; margin-left:16px;">
+        <div class="vdev-estimated">
           <p *ngIf="group === 'data' && vdev_type_disabled">{{getType() | translate}}</p>
           <span>{{"Estimated raw capacity:" | translate}} {{size}}</span>
-          <tooltip [message]=vdev_type_tooltip></tooltip>
+          <tooltip [message]="vdev_type_tooltip"></tooltip>
         </div>
       </div>
     </div>
     <div class="vdev-close">
-      <button style="margin-top: 12px;" id="vdev__close-button" mat-flat-button class="vdev-action-btn" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">
+      <button id="vdev__close-button" mat-flat-button class="vdev-action-btn close" *ngIf="removable" (click)="remove()" [disabled]="(group === 'data' && manager.vdevs['data'].length < 2)">
         <mat-icon>close</mat-icon>
       </button>
     </div>

@@ -13,11 +13,7 @@
 }
 
 .disks {
-  /* flex-basis: auto;
-	-webkit-box-flex: 1;
-	flex-grow: 1; */
   width: 510px;
-  /* max-width: 400px; */
 }
 
 .disk-details-icon {
@@ -70,6 +66,14 @@ h4 {
 
 .sizeMessage {
   margin: 0.5rem 1rem;
+
+  &.red {
+    color: var(--red);
+  }
+
+  &.orange {
+    color: var(--orange);
+  }
 }
 
 .vdev-h4 {
@@ -108,7 +112,6 @@ h4 {
 
 .fields {
   margin: 0.75rem 3rem 3rem 1rem !important;
-  /*display: flex;*/
   width: 600px;
 }
 
@@ -191,5 +194,14 @@ button.vdev-option p {
 }
 
 .encryption-select.inline {
+  padding-top: 4px;
   width: 200px;
+}
+
+.encryption-checkbox.inline {
+  padding-top: 50px;
+}
+
+.row-details {
+  padding-left: 35px;
 }

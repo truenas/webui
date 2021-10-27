@@ -45,7 +45,6 @@
 }
 
 .legend-item .legend-value {
-  /*text-align:right;*/
   display: inline-block;
   min-width: 60px;
 }
@@ -57,6 +56,18 @@
   height: 12px;
   margin: 12px 2px 0;
   width: 12px;
+
+  &.primary {
+    background-color: var(--primary);
+  }
+
+  &.defaultTheme {
+    background-color: var(--orange);
+  }
+
+  &.nonDefaultTheme {
+    background-color: var(--accent);
+  }
 }
 
 /* Charts */

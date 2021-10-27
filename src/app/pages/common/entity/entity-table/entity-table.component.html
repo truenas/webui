@@ -71,7 +71,7 @@
         mat-table
         matSort
         [dataSource]="dataSource"
-        style="min-width: {{displayedColumns.length * 25}}px; border-collapse: separate;"
+        [style.minWidth.px]="displayedColumns.length * 25"
         #newEntityTable
       >
         <ng-container *ngFor="let column of columnsProps; let i = index;">
@@ -91,7 +91,7 @@
           <!-- Expansion Chevrons -->
           <ng-container *ngIf="column == 'expansion-chevrons'" matColumnDef="{{column}}" stickyEnd>
             <th class="expansion-chevrons-column" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-header-cell *matHeaderCellDef></th>
-            <td class="expansion-chevrons-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-cell *matCellDef="let element" style="text-align:right;cursor: pointer">
+            <td class="expansion-chevrons-column" (mouseover)="onHover($event, true)" (mouseout)="onHover($event, false)" [ngClass]="{'sticky-border-left': isTableOverflow()}" mat-cell *matCellDef="let element">
               <ng-container *ngIf="hasDetails() === true">
                 <ng-container *ngIf="element === expandedElement">
                   <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-chevron-up" (mouseover)="onHover($event,true)" (mouseout)="onHover($event,false)"></mat-icon>
@@ -231,7 +231,7 @@
       </table>
     </div>
 
-    <mat-card-footer style="padding: 0 !important" *ngIf="conf.config.paging">
+    <mat-card-footer *ngIf="conf.config.paging">
       <mat-paginator
         (page)="pageChanged()"
         [pageIndex]="paginationPageIndex"

@@ -22,7 +22,7 @@
     </div>
   </div>
   <div class="container-buttons">
-    <div class="" (click)="select()" [style.margin-bottom.px]="5">
+    <div (click)="select()" [style.margin-bottom.px]="5">
       <div *ngIf="templateArrowRight;else arrowRight">
         <ng-container [ngTemplateOutlet]="templateArrowRight">
         </ng-container>
@@ -31,7 +31,7 @@
         <button mat-flat-button class="dual-list-action-btn"> <mat-icon class="arrow">arrow_forward</mat-icon> </button>
       </ng-template>
     </div>
-    <div class="" (click)="return()">
+    <div (click)="return()">
       <div *ngIf="templateArrowLeft;else arrowLeft">
         <ng-container [ngTemplateOutlet]="templateArrowLeft">
         </ng-container>

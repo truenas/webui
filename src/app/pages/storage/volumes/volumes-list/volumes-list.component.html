@@ -12,12 +12,11 @@
     >
       <mat-expansion-panel-header class="{{row.status.toLowerCase()}}">
         <mat-panel-title>
-          {{row.name}} <span *ngIf="row.name === systemdatasetPool" class="ml-1">
-            {{ '(System Dataset Pool)' | translate}}</span>
+          {{row.name}} <span *ngIf="row.name === systemdatasetPool" class="ml-1">{{ '(System Dataset Pool)' | translate}}</span>
         </mat-panel-title>
         <mat-panel-description>
           {{row.status}}&nbsp;
-          <span *ngIf="!row.healthy && row.status == PoolStatus.Online">(Unhealthy)</span>
+          <span *ngIf="!row.healthy && row.status == PoolStatus.Online">({{ 'Unhealthy' | translate }})</span>
 
           &nbsp;
           <span [style.margin-right.px]="5">
@@ -31,9 +30,9 @@
             </ng-template>
           </span>
           <span *ngIf="row.usedStr && row.availStr">
-            &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
+            &nbsp;<span class="divider">|</span>&nbsp;
             {{row.usedStr}} {{"Used" | translate}}
-            &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
+            &nbsp;<span class="divider">|</span>&nbsp;
             {{row.availStr}} {{"Free" | translate}}
           </span>
         </mat-panel-description>

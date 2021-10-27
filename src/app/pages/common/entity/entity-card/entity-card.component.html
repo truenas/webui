@@ -1,9 +1,9 @@
-<div id="{{id}}" class="flip" style="width:inherit; height:inherit;" [ngClass]="{'raised':conf.isFlipped}">
+<div id="{{id}}" class="flip" [ngClass]="{'raised':conf.isFlipped}">
   <div class="card-container" [ngClass]="{'flipped':conf.isFlipped}">
     <mat-card class="card front face animated slideInUp">
       <ng-template [ngTemplateOutlet]="front" [ngTemplateOutletContext]="{name: 'Child'}"></ng-template>
       <mat-card-footer *ngIf="actions" class="card-footer">
-        <div class="">
+        <div>
           <app-entity-card-actions [entity]="this"></app-entity-card-actions>
         </div>
       </mat-card-footer>
