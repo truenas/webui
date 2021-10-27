@@ -1,5 +1,5 @@
 <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
-<mat-card [class]="operation">
+<mat-card>
   <mat-card-content>
     <form [formGroup]="formGroup" class="ix-form-container" (submit)="onSubmit()">
       <ix-fieldset [title]="'Settings' | translate">
