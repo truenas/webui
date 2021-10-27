@@ -250,7 +250,7 @@ def verify_that_the_acl_was_not_set_to_rtacltest3(driver):
 @then('Verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1')
 def verify_the_smb_share_filesystem_has_the_acl_that_was_applied_to_rtacltest1(driver):
     """Verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1."""
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable', 'clickable')
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
     assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
     assert wait_on_element(driver, 5, '//mat-panel-title//h5//a[contains(.,"(SMB)")]', 'clickable')
