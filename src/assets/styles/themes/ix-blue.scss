@@ -848,8 +848,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     @include variable(color, --yellow-txt, $yellow-txt);
   }
 
-  // These last two were a result of a backport. 
-  // 12.1 has --contrast-lighter and --contrast-darker vars 
+  // These last two were a result of a backport.
+  // 12.1 has --contrast-lighter and --contrast-darker vars
   // but 12.0 theme service does not create these
   // so we will use --alt-bg1 instead
   .fn-theme-contrast-darker{
@@ -1551,6 +1551,8 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
 
   confirm-dialog pre,
   error-dialog pre {
+      display: block;
+      font-family: monospace;
       overflow-x: auto;
       white-space: pre-wrap;
       white-space: -moz-pre-wrap;
@@ -1768,7 +1770,7 @@ $primary-dark: darken( map-get($md-primary, 500), 8% );
     background: var(--bg1);
   }
 
-  openvpn-client-edit .buttons, 
+  openvpn-client-edit .buttons,
   openvpn-server-edit .buttons {
     margin-top: 1rem
   }
