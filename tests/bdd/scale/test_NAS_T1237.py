@@ -137,7 +137,7 @@ def verify_that_the_acl_was_set_to_rtacltest1(driver):
 @then('Verify that the ACL was set to rt-acl-test-2')
 def verify_that_the_acl_was_set_to_rtacltest2(driver):
     """Verify that the ACL was set to rt-acl-test-2."""
-    assert wait_on_element(driver, 5, f'//div[contains(text(),"rt-acl-test-1")]//button', 'clickable', 'clickable')
+    assert wait_on_element(driver, 5, f'//div[contains(text(),"rt-acl-test-1")]//button', 'clickable')
     driver.find_element_by_xpath(f'//div[contains(text(),"rt-acl-test-1")]//button').click()
     assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-acl-test-2")]//mat-icon[text()="more_vert"]', 'clickable')
     driver.find_element_by_xpath(f'//tr[contains(.,"rt-acl-test-2")]//mat-icon[text()="more_vert"]').click()
