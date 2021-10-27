@@ -26,7 +26,7 @@ import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
 import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import {
   Bootenv,
-  CloneBootenvParams,
+  CreateBootenvParams,
   SetBootenvAttributeParams,
   UpdateBootenvParams,
 } from 'app/interfaces/bootenv.interface';
@@ -316,7 +316,7 @@ export type ApiDirectory = {
   'boot.scrub': { params: void; response: void };
 
   // Bootenv
-  'bootenv.create': { params: [CloneBootenvParams]; response: string };
+  'bootenv.create': { params: CreateBootenvParams; response: string };
   'bootenv.update': { params: UpdateBootenvParams; response: string };
   'bootenv.set_attribute': { params: SetBootenvAttributeParams; response: boolean };
   'bootenv.activate': { params: [string]; response: boolean };
