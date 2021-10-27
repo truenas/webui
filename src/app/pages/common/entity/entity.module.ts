@@ -24,9 +24,6 @@ import { EntityRowDetailsComponent } from 'app/pages/common/entity/entity-table/
 import { EntityTableActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-actions/entity-table-actions.component';
 import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import { WizardSummaryComponent } from 'app/pages/common/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
-import { SmdFabSpeedDialActionsComponent } from 'app/pages/common/entity/fab-speed-dial/smd-fab-speed-dial-actions/smd-fab-speed-dial-actions.component';
-import { SmdFabSpeedDialTriggerComponent } from 'app/pages/common/entity/fab-speed-dial/smd-fab-speed-dial-trigger/smd-fab-speed-dial-trigger.component';
-import { SmdFabSpeedDialComponent } from 'app/pages/common/entity/fab-speed-dial/smd-fab-speed-dial.component';
 import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -138,9 +135,6 @@ import { TableService } from './table/table.service';
     FormUploadComponent,
     FormReadFileComponent,
     EntityJobComponent,
-    SmdFabSpeedDialTriggerComponent,
-    SmdFabSpeedDialActionsComponent,
-    SmdFabSpeedDialComponent,
     EntityWizardComponent,
     EntityTaskComponent,
     FormParagraphComponent,
@@ -177,9 +171,6 @@ import { TableService } from './table/table.service';
     EntityTableAddActionsComponent,
     EntityTableActionsComponent,
     DynamicFieldDirective,
-    SmdFabSpeedDialTriggerComponent,
-    SmdFabSpeedDialActionsComponent,
-    SmdFabSpeedDialComponent,
     EntityWizardComponent,
     EntityTaskComponent,
     EntityDialogComponent,
