@@ -1,122 +1,101 @@
-import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import {
+  ChangeDetectionStrategy, Component, OnInit, ChangeDetectorRef,
+} from '@angular/core';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
+import { Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 import { DeviceType } from 'app/enums/device-type.enum';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Device } from 'app/interfaces/device.interface';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { Option } from 'app/interfaces/option.interface';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { ModalService } from 'app/services/modal.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-isolated-pcis-form',
-  template: '<entity-form [conf]="this"></entity-form>',
-  providers: [],
+  templateUrl: './isolated-gpu-pcis-form.component.html',
+  styleUrls: ['./isolated-gpu-pcis-form.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IsolatedGpuPcisFormComponent implements FormConfiguration {
-  queryCall = 'system.advanced.config' as const;
-  updateCall = 'system.advanced.update' as const;
-  isOneColumnForm = true;
-  gpus: Device[];
+export class IsolatedGpuPcisFormComponent implements OnInit {
+  isFormLoading = false;
+  formGroup = this.fb.group({
+    isolated_gpu_pci_ids: [[] as string[]],
+  });
+  options$: Observable<Option[]> = this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(
+    tap((devices) => this.availableGpus = devices),
+    map((devices) => devices.map((gpu) => ({ label: gpu.description, value: gpu.addr.pci_slot }))),
+  );
+  availableGpus: Device[];
   private isolatedGpuPciIds: string[];
-  private advancedConfig: AdvancedConfig;
-
-  fieldSets = new FieldSets([
-    {
-      name: T("Isolated GPU PCI Id's"),
-      label: false,
-      class: 'isolated-pcis',
-      config: [
-        {
-          type: 'select',
-          placeholder: T("GPU's"),
-          name: 'gpus',
-          multiple: true,
-          options: [],
-          required: true,
-        },
-      ],
-    },
-    {
-      name: 'divider',
-      divider: true,
-    },
-  ]);
-
-  private entityForm: EntityFormComponent;
-  title = T("Isolated GPU PCI Id's");
 
   constructor(
     protected ws: WebSocketService,
-    protected loader: AppLoaderService,
     private sysGeneralService: SystemGeneralService,
-    private modalService: ModalService,
+    private modal: IxModalService,
+    private fb: FormBuilder,
+    private errorHandler: FormErrorHandlerService,
+    private translate: TranslateService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
-  afterInit(entityForm: EntityFormComponent): void {
-    this.entityForm = entityForm;
-    const gpusFormControl = this.entityForm.formGroup.controls['gpus'];
-
-    this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
-      this.gpus = gpus;
-      const gpusConf = this.fieldSets.config('gpus') as FormSelectConfig;
-      for (const item of gpus) {
-        gpusConf.options.push({ label: item.description, value: item.addr.pci_slot });
-      }
-      gpusFormControl.setValue(this.isolatedGpuPciIds);
+  ngOnInit(): void {
+    this.ws.call('system.advanced.config').pipe(
+      untilDestroyed(this),
+    ).subscribe((config) => {
+      this.isolatedGpuPciIds = config.isolated_gpu_pci_ids;
+      this.formGroup.setValue({ isolated_gpu_pci_ids: config.isolated_gpu_pci_ids });
+      this.cdr.markForCheck();
     });
 
-    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((adv_conf: AdvancedConfig) => {
-      this.isolatedGpuPciIds = adv_conf.isolated_gpu_pci_ids;
-      this.advancedConfig = adv_conf;
-    });
+    const gpusFormControl = this.formGroup.get('isolated_gpu_pci_ids');
 
     gpusFormControl.valueChanges.pipe(untilDestroyed(this)).subscribe((gpusValue: string[]) => {
-      const finalIsolatedPciIds = [...gpusValue];
+      const selectedGpus = [...gpusValue];
 
-      const gpusConf = this.fieldSets.config('gpus') as FormSelectConfig;
-      if (finalIsolatedPciIds.length >= gpusConf.options.length) {
+      if (selectedGpus.length >= this.availableGpus?.length) {
         const prevSelectedGpus = [];
-        for (const gpu of this.gpus) {
+        for (const gpu of this.availableGpus) {
           if (this.isolatedGpuPciIds.findIndex((igpi) => igpi === gpu.addr.pci_slot) >= 0) {
             prevSelectedGpus.push(gpu);
           }
         }
+        let manualValidateErrorMsg = '';
+        const atLeastOneGpu = this.translate.instant('At least 1 GPU is required by the host for it’s functions.');
+        const noGpuAvailable = this.translate.instant('With your selection, no GPU is available for the host to consume.');
         if (prevSelectedGpus.length > 0) {
-          const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
-          gpusConf.warnings = 'At least 1 GPU is required by the host for it’s functions.<p>Currently following GPU(s) have been isolated:<ol>' + listItems + '</ol></p><p>With your selection, no GPU is available for the host to consume.</p>';
+          const gpus = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
+
+          const selectedGpu = this.translate.instant('<p>Currently following GPU(s) have been isolated:<ol>{gpus}</ol></p>', { gpus });
+          manualValidateErrorMsg = `${atLeastOneGpu} ${selectedGpu} ${noGpuAvailable}`;
         } else {
-          gpusConf.warnings = 'At least 1 GPU is required by the host for it’s functions. With your selection, no GPU is available for the host to consume.';
+          manualValidateErrorMsg = `${atLeastOneGpu} ${noGpuAvailable}`;
         }
-        gpusFormControl.setErrors({ maxPCIIds: true });
+        gpusFormControl.setErrors({
+          manualValidateError: true,
+          manualValidateErrorMsg,
+        });
       } else {
-        gpusConf.warnings = null;
         gpusFormControl.setErrors(null);
       }
     });
   }
 
-  customSubmit(body: { gpus: string[] }): void {
-    this.loader.open();
-    const finalIsolatedPciIds = body.gpus;
-    this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).pipe(untilDestroyed(this)).subscribe(
-      () => {
-        this.loader.close();
-        this.entityForm.success = true;
-        this.entityForm.formGroup.markAsPristine();
-        this.modalService.closeSlideIn();
-        this.sysGeneralService.refreshSysGeneral();
-      },
-      (err) => {
-        this.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, err);
-      },
-    );
+  onSubmit(): void {
+    this.isFormLoading = true;
+    const { isolated_gpu_pci_ids } = this.formGroup.value;
+
+    this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids }]).pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.isFormLoading = false;
+      this.sysGeneralService.refreshSysGeneral();
+      this.modal.close();
+    }, (error) => {
+      this.isFormLoading = false;
+      this.errorHandler.handleWsFormError(error, this.formGroup);
+    });
   }
 }
