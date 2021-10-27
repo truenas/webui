@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
+import { IxInputHarness } from 'app/pages/common/ix-forms/components/ix-input/ix-input.harness';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
@@ -71,14 +72,8 @@ describe('BootEnvironmentFormComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    it('should add source FormControl to FormGroup', () => {
-      const controls = spectator.component.formGroup.controls;
-      const controlKeys = Object.keys(controls);
-      expect(controlKeys).toContain('source');
-    });
-
     it('should add source field to DOM ', () => {
-      const sourceFieldElement = spectator.query('.' + spectator.component.Operations.Clone);
+      const sourceFieldElement = IxInputHarness.with({ label: 'Source' });
       expect(sourceFieldElement).toBeTruthy();
     });
 
