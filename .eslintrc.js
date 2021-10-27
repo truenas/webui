@@ -109,14 +109,12 @@ module.exports = {
         "@typescript-eslint/no-shadow": "off",
         "no-case-declarations": "off",
         "no-multi-str": "off",
-        "max-classes-per-file": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "no-useless-escape": "off",
         "no-cond-assign": "off",
         "no-mixed-operators": "off",
         "default-case": "off",
         "no-prototype-builtins": "off",
-        "prefer-promise-reject-errors": "off",
         "import/no-cycle": "off",
         "no-async-promise-executor": "off",
         "@typescript-eslint/member-ordering": "off",
@@ -134,7 +132,7 @@ module.exports = {
         "@typescript-eslint/no-misused-promises": "off",
 
         // Other temporary disables
-        "@typescript-eslint/dot-notation": "off",
+        "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",

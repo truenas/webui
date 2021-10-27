@@ -14,6 +14,7 @@ import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dat
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server-form/ntp-server-form.component';
+import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { CoreComponents } from '../../core/components/core-components.module';
 import { EntityModule } from '../common/entity/entity.module';
@@ -49,7 +50,7 @@ import { KmipComponent } from './kmip/kmip.component';
 import { routing } from './system.routing';
 import { TunableFormComponent } from './tunable/tunable-form/tunable-form.component';
 import { TunableListComponent } from './tunable/tunable-list/tunable-list.component';
-import { TwoFactorComponent, QrDialogComponent } from './two-factor/two-factor.component';
+import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { UpdateComponent } from './update/update.component';
 import { EnclosureModule } from './view-enclosure/enclosure.module';
 

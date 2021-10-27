@@ -14,9 +14,9 @@ import { WidgetNetworkComponent } from 'app/pages/dashboard/components/widget-ne
 import { WidgetNicComponent } from 'app/pages/dashboard/components/widget-nic/widget-nic.component';
 import { WidgetPoolComponent } from 'app/pages/dashboard/components/widget-pool/widget-pool.component';
 import { WidgetStorageComponent } from 'app/pages/dashboard/components/widget-storage/widget-storage.component';
+import { SimpleFailoverBtnDialogComponent } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn-dialog.component';
 import {
   SimpleFailoverBtnComponent,
-  SimpleFailoverBtnDialogComponent,
 } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard/components/widget-sys-info/widget-sys-info.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';

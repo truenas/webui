@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
+import { HtmlTooltipComponent } from 'app/core/components/directives/html-tooltip/html-tooltip.component';
 import { DisplayComponent } from 'app/core/components/display/display.component';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
 import { ViewButtonComponent } from 'app/core/components/view-button/view-button.component';
@@ -66,6 +67,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ViewChartLineComponent,
     TextLimiterDirective,
     HtmlTooltipDirective,
+    HtmlTooltipComponent,
     TextLimiterTooltipComponent,
     ConvertPipe,
     FormatDateTimePipe,

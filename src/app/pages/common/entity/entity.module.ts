@@ -24,6 +24,9 @@ import { EntityRowDetailsComponent } from 'app/pages/common/entity/entity-table/
 import { EntityTableActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-actions/entity-table-actions.component';
 import { EntityTableAddActionsComponent } from 'app/pages/common/entity/entity-table/entity-table-add-actions/entity-table-add-actions.component';
 import { WizardSummaryComponent } from 'app/pages/common/entity/entity-wizard/components/wizard-summary/wizard-summary.component';
+import { SmdFabSpeedDialActionsComponent } from 'app/pages/common/entity/fab-speed-dial/smd-fab-speed-dial-actions/smd-fab-speed-dial-actions.component';
+import { SmdFabSpeedDialTriggerComponent } from 'app/pages/common/entity/fab-speed-dial/smd-fab-speed-dial-trigger/smd-fab-speed-dial-trigger.component';
+import { SmdFabSpeedDialComponent } from 'app/pages/common/entity/fab-speed-dial/smd-fab-speed-dial.component';
 import { ExpandableTableComponent } from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -83,7 +86,6 @@ import { ToolbarSliderComponent } from './entity-toolbar/components/toolbar-slid
 import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
 import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityWizardComponent } from './entity-wizard/entity-wizard.component';
-import { SmdFabSpeedDialTriggerComponent, SmdFabSpeedDialActionsComponent, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 import { TableComponent } from './table/table.component';
 import { TableService } from './table/table.service';
 
