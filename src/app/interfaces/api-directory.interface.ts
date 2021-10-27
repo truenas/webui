@@ -140,7 +140,7 @@ import {
 } from 'app/interfaces/keychain-credential.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
-import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
+import { LdapConfig, LdapConfigUpdate, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { MailConfig, MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import { Multipath } from 'app/interfaces/multipath.interface';
@@ -613,7 +613,7 @@ export type ApiDirectory = {
 
   // Ldap
   'ldap.ssl_choices': { params: void; response: string[] };
-  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };
+  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfigUpdateResult };
   'ldap.schema_choices': { params: void; response: string[] };
   'ldap.config': { params: void; response: LdapConfig };
 
