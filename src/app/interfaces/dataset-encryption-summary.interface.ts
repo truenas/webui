@@ -12,11 +12,13 @@ export interface DatasetEncryptionSummary {
 
 export interface DatasetEncryptionSummaryQueryParams {
   key_file?: boolean;
-  datasets?: {
-    name: string;
-    key: string;
-    passphrase: string;
-  }[];
+  datasets?: DatasetEncryptionSummaryQueryParamsDataset[];
+}
+
+export interface DatasetEncryptionSummaryQueryParamsDataset {
+  name: string;
+  key: string;
+  passphrase: string;
 }
 
 export interface DatasetEncryptedRootKeys {

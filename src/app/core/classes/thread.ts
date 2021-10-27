@@ -1,12 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 
-export interface ProcessTask {
-  responseEvent: string;
-  operation: any; // The main function
-  data: any[]; // Arguments for the function.
-}
-
 @Injectable()
 export class Thread extends IxAbstractObject {
   thread: Worker;
@@ -32,30 +26,16 @@ export class Thread extends IxAbstractObject {
   constructor() {
     super();
     this.maxThreads = navigator.hardwareConcurrency;
-
-    /* this.messages = new Subject();
-    this.messages.subscribe((evt:CoreEvent) => {
-      if(evt.sender == this){ return;  }
-      this.thread.postMessage(evt);
-    }); */
   }
 
   testMessages(): void {
-    // this.thread.postMessage(JSON.stringify({name:"CoreEventTest1"}));
     this.thread.postMessage({ name: 'CoreEventTest2' });
-    // this.thread.postMessage("EventTest");
   }
 
   readonly main = (): void => {
     // Some example code to show how messages can be exchanged with main thread
-    const context: Worker = window.self as any; // Needed for TypeScript not to complain. DO NOT REMOVE!
+    const context = window.self as unknown as Worker; // Needed for TypeScript not to complain. DO NOT REMOVE!
     context.postMessage('ThreadInitialized'); // This inits the worker. DO NOT REMOVE!
-
-    /* context.onmessage = (msg: MessageEvent) => {
-      let evt:CoreEvent = msg.data;
-      let response = "SUCCESS!";
-      context.postMessage({name:response, data: "e"});
-    }; */
 
     context.onerror = (err) => {
       console.error(err);
@@ -63,9 +43,6 @@ export class Thread extends IxAbstractObject {
   };
 
   createThread(): Worker {
-    // let blob = new Blob(['self.onmessage = ', fn.toString()], { type: 'text/javascript' });
-    // let blob = new Blob([fn.toString()], { type: 'text/javascript' });
-    // let url = URL.createObjectURL(blob);
     const url = 'assets/scripts/lib/data_utils.js';
     return new Worker(url);
   }

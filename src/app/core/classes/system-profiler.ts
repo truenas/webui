@@ -34,7 +34,7 @@ export interface VDevMetadata {
 
   topology?: PoolTopologyCategory;
   selectedDisk?: string;
-  slots?: any;
+  slots?: { [devName: string]: number };
 }
 
 export class SystemProfiler {
@@ -270,7 +270,7 @@ export class SystemProfiler {
       };
     }
 
-    const slots: any = { ...disk.vdev.disks };
+    const slots = { ...disk.vdev.disks };
 
     const vdev = { ...disk.vdev };
     vdev.diskEnclosures = {};

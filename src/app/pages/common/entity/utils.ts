@@ -63,13 +63,13 @@ export class EntityUtils {
             }
           }
           let errors = '';
-          field.forEach((item: any) => { errors += item + ' '; });
+          field.forEach((item: string) => { errors += item + ' '; });
           fc['hasErrors'] = true;
           fc['errors'] = errors;
         } else if (typeof field === 'string') {
           entity.error = field;
         } else {
-          field.forEach((item: any) => { entity.error += item + '<br />'; });
+          field.forEach((item: string) => { entity.error += item + '<br />'; });
         }
       }
     }

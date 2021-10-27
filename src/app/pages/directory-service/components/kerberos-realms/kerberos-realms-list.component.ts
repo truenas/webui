@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
+import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-form.component';
 import { ModalService } from 'app/services/modal.service';
 
@@ -16,7 +18,7 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
   title = 'Kerberos Realms';
   queryCall = 'kerberos.realm.query' as const;
   wsDelete = 'kerberos.realm.delete' as const;
-  keyList = ['admin_server', 'kdc', 'kpasswd_server'];
+  keyList = ['admin_server', 'kdc', 'kpasswd_server'] as const;
   protected entityList: EntityTableComponent;
 
   columns = [
@@ -37,15 +39,15 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
 
   constructor(private modalService: ModalService) { }
 
-  resourceTransformIncomingRestData(data: any[]): any[] {
+  resourceTransformIncomingRestData(data: KerberosRealm[]): KerberosRealmRow[] {
     data.forEach((row) => {
       this.keyList.forEach((key) => {
         if (row.hasOwnProperty(key)) {
-          row[key] = (row[key].join(' '));
+          (row as unknown as KerberosRealmRow)[key] = row[key].join(' ');
         }
       });
     });
-    return data;
+    return data as unknown as KerberosRealmRow[];
   }
 
   afterInit(entityList: EntityTableComponent): void {
@@ -64,19 +66,18 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
     }] as EntityTableAction[];
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(): EntityTableAction[] {
     const actions = [];
     actions.push({
       id: 'edit',
       label: T('Edit'),
-      disabled: row.disableEdit,
-      onClick: (row: any) => {
+      onClick: (row: KerberosRealmRow) => {
         this.doAdd(row.id);
       },
     }, {
       id: 'delete',
       label: T('Delete'),
-      onClick: (row: any) => {
+      onClick: (row: KerberosRealmRow) => {
         this.entityList.doDelete(row);
       },
     });

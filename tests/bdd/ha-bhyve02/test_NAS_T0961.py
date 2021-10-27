@@ -2,7 +2,12 @@
 """High Availability (tn-bhyve01) feature tests."""
 
 import time
-from function import wait_on_element, is_element_present, wait_on_element_disappear
+from function import (
+    wait_on_element,
+    is_element_present,
+    wait_on_element_disappear,
+    get
+)
 from pytest_bdd import (
     given,
     scenario,
@@ -123,7 +128,7 @@ def click_create_click_on_confirm_checkbox_and_click_create_pool(driver):
 @then('Create Pool should appear while the pool is being created')
 def create_pool_should_appear_while_the_pool_is_being_created(driver):
     """Create Pool should appear while the pool is being created."""
-    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Create Pool")]')
+    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Create Pool")]')
 
 
 @then('you should be returned to the list of Pools')
@@ -201,4 +206,55 @@ def navigate_to_dashboard(driver):
 def refresh_and_wait_for_the_second_node_to_be_up(driver):
     """refresh and wait for the second node to be up"""
     assert wait_on_element(driver, 120, '//div[contains(.,"tn-bhyve01-nodeb")]')
-    assert wait_on_element(driver, 10, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ha_enabled"]')
+    # 5 second to let the system get ready for the next step.
+    time.sleep(5)
+
+
+@then('verify the system dataset is dozer on the active node')
+def verify_the_system_dataset_is_dozer_on_the_active_node(driver):
+    """verify the system dataset is dozer on the active node."""
+    results = get(host, '/systemdataset/', ('root', root_password))
+    assert results.status_code == 200, results.text
+    assert results.json()['pool'] == 'dozer', results.text
+
+
+@then('press Initiate Failover and confirm')
+def press_Initiate_Failover_and_confirm(driver):
+    """press Initiate Failover and confirm."""
+    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    assert wait_on_element(driver, 10, '//span[text()="(Standby)"]')
+    assert wait_on_element(driver, 10, '//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]', 'clickable')
+    driver.find_element_by_xpath('//button[.//text()="Initiate Failover" and contains(@class,"mat-default")]').click()
+    assert wait_on_element(driver, 5, '//h1[text()="Initiate Failover"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[contains(@class,"confirm-checkbox")]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[contains(@class,"confirm-checkbox")]').click()
+    assert wait_on_element(driver, 5, '//button[.//text()="Failover"]', 'clickable')
+    driver.find_element_by_xpath('//button[.//text()="Failover"]').click()
+
+
+@then('wait for the login and the HA enabled status and login')
+def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
+    """wait for the login and the HA enabled status and login."""
+    assert wait_on_element(driver, 240, '//input[@data-placeholder="Username"]')
+    assert wait_on_element(driver, 10, '//input[@data-placeholder="Username"]')
+    driver.find_element_by_xpath('//input[@data-placeholder="Username"]').clear()
+    driver.find_element_by_xpath('//input[@data-placeholder="Username"]').send_keys('root')
+    driver.find_element_by_xpath('//input[@data-placeholder="Password"]').clear()
+    driver.find_element_by_xpath('//input[@data-placeholder="Password"]').send_keys(root_password)
+    assert wait_on_element(driver, 4, '//button[@name="signin_button"]', 'clickable')
+    driver.find_element_by_xpath('//button[@name="signin_button"]').click()
+    assert wait_on_element(driver, 60, '//h1[text()="Dashboard"]')
+    assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
+    if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
+        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    # Make sure HA is enable before going forward
+    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+
+
+@then('verify the system dataset is dozer on the active node after failover')
+def verify_the_system_dataset_is_dozer_on_the_active_node_after_failover(driver):
+    """verify the system dataset is dozer on the active node after failover."""
+    results = get(host, '/systemdataset/', ('root', root_password))
+    assert results.status_code == 200, results.text
+    assert results.json()['pool'] == 'dozer', results.text

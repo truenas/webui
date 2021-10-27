@@ -274,13 +274,13 @@ export class DisplayObject {
     }
 
     // this.pointerTracker = pointer(this.anchorXY.get()).start(this.anchorXY);
-    const stream = (v: any): any => {
+    const stream = (v: PointerProps): PointerProps => {
       this.inputStream$.next(v);
       return v;
     };
     this.pointerTracker = pointer(this.anchorXY.get() as PointerProps).pipe(stream, transformMap({
-      y: (v: any) => this.limit(this.constrainY ? startY : v, '<', this.boundary),
-      x: (v: any) => {
+      y: (v: number) => this.limit(this.constrainY ? startY : v, '<', this.boundary),
+      x: (v: number) => {
         // this.messageBus.emit({name:"Drag", sender:this}) // <-- this was too slow for high frequency stream
 
         this.updateStream$.next({ x: this.target.get('x'), y: this.target.get('y') });

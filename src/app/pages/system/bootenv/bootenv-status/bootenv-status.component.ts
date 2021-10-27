@@ -19,7 +19,15 @@ interface PoolDiskInfo {
   write: number;
   checksum: number;
   status: string;
-  actions?: any;
+  actions?: {
+    title: string;
+    actions: {
+      id?: string;
+      label: string;
+      onClick: (row: PoolDiskInfo) => void;
+      isHidden: boolean;
+    }[];
+  }[];
   path?: string;
 }
 
@@ -137,7 +145,12 @@ export class BootStatusListComponent implements OnInit {
       path: (data as VDev).path,
     };
 
-    let actions: any[] = [];
+    let actions: {
+      id?: string;
+      label: string;
+      onClick: (row: PoolDiskInfo) => void;
+      isHidden: boolean;
+    }[] = [];
 
     if ('type' in data && boot_pool_data && boot_pool_data.type === 'mirror' && data.path) {
       actions = [{
