@@ -3,7 +3,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/network/ipmi/ipmi';
@@ -249,7 +249,7 @@ export class IpmiFormComponent implements FormConfiguration {
   customSubmit(payload: IpmiUpdate): Subscription {
     let call$ = this.ws.call('ipmi.update', [this.channelValue, payload]);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
-      call$ = this.ws.call('failover.call_remote', ['ipmi.update', [this.channelValue, payload]]);
+      call$ = this.ws.call('failover.call_remote', ['ipmi.update', [this.channelValue, payload]]) as Observable<Ipmi>;
     }
 
     this.loader.open();
@@ -265,7 +265,7 @@ export class IpmiFormComponent implements FormConfiguration {
   loadData(filter: QueryParams<Ipmi> = []): void {
     let query$ = this.ws.call(this.queryCall, filter);
     if (this.entityEdit.formGroup.controls['remoteController'] && this.entityEdit.formGroup.controls['remoteController'].value) {
-      query$ = this.ws.call('failover.call_remote', [this.queryCall, [filter]]);
+      query$ = this.ws.call('failover.call_remote', [this.queryCall, [filter]]) as Observable<Ipmi[]>;
     }
     query$.pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((ipmi) => {

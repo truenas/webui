@@ -105,7 +105,6 @@ export class EntityCardComponent extends IxObject implements OnInit, AfterViewIn
       }
     }
 
-    // options = {limit: this.itemsPerPage, offset: offset};
     options = { limit: 0 };
     if (sort.length > 0) {
       options['sort'] = sort.join(',');

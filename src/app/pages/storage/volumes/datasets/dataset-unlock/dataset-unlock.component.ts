@@ -11,9 +11,9 @@ import * as _ from 'lodash';
 import { DatasetEncryptionType } from 'app/enums/dataset-encryption-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
 import {
-  DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams,
+  DatasetEncryptionSummary, DatasetEncryptionSummaryQueryParams, DatasetEncryptionSummaryQueryParamsDataset,
 } from 'app/interfaces/dataset-encryption-summary.interface';
-import { DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
+import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset-lock.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Subs } from 'app/interfaces/subs.interface';
@@ -325,7 +325,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     }
     for (let i = 0; i < num; i++) {
       const dataset = body.datasets[i];
-      const ds: any = { name: dataset.name };
+      const ds = { name: dataset.name } as DatasetEncryptionSummaryQueryParamsDataset;
       if (dataset.is_passphrase) {
         // don't pass empty passphrases, they won't work
         if (dataset.passphrase && dataset.passphrase !== '') {
@@ -377,7 +377,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
         unlockDialogRef.componentInstance.parent = this;
         unlockDialogRef.componentInstance.unlock_datasets = unlock;
         unlockDialogRef.componentInstance.error_datasets = errors;
-        unlockDialogRef.componentInstance.data = payload;
+        unlockDialogRef.componentInstance.data = payload as DatasetUnlockParams;
       }
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
@@ -386,7 +386,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     });
   }
 
-  unlockSubmit(payload: any): void {
+  unlockSubmit(payload: DatasetUnlockParams): void {
     payload['recursive'] = this.unlock_children_fg.value;
     const dialogRef = this.dialog.open(EntityJobComponent, {
       data: { title: helptext.unlocking_datasets_title },
