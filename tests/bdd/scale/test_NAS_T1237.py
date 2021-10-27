@@ -90,8 +90,6 @@ def create_2nd_dataset_rtacltest2_under_rtacltest1(driver, dataset_name):
     assert wait_on_element(driver, 5, '//span[contains(text(),"RETURN TO POOL LIST")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"RETURN TO POOL LIST")]').click()
 
-    
-
 
 @then('Apply ACL with both recusrive and transverse set to rt-acl-test-1')
 def apply_acl_with_both_recusrive_and_transverse_set_to_rtacltest1(driver):
@@ -143,15 +141,15 @@ def verify_that_the_acl_was_set_to_rtacltest1(driver):
 @then('Verify that the ACL was set to rt-acl-test-2')
 def verify_that_the_acl_was_set_to_rtacltest2(driver):
     """Verify that the ACL was set to rt-acl-test-2."""
-    assert wait_on_element(driver, 5, f'//mat-expansion-panel[@ix-auto="expansion-panel__tank"]//mat-icon[@fonticon="mdi-chevron-right"]')
-    driver.find_element_by_xpath(f'//mat-expansion-panel[@ix-auto="expansion-panel__tank"]//mat-icon[@fonticon="mdi-chevron-right"]').click()
+    assert wait_on_element(driver, 5, f'//div[contains(text(),"rt-acl-test-1")]//button', 'clickable')
+    driver.find_element_by_xpath(f'//div[contains(text(),"rt-acl-test-1")]//button').click()
     time.sleep(3)
     assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-acl-test-2")]//mat-icon[text()="more_vert"]')
     driver.find_element_by_xpath(f'//tr[contains(.,"rt-acl-test-2")]//mat-icon[text()="more_vert"]').click()
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(text(),"User - ericbsd")]') is False
+    assert wait_on_element(driver, 5, '//div[contains(text(),"User - ericbsd")]')
 
 
 @then(parsers.parse('Create 3rd dataset {dataset_name}'))
@@ -171,11 +169,18 @@ def create_3rd_dataset_rtacltest3(driver, dataset_name):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"RETURN TO POOL LIST")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"RETURN TO POOL LIST")]').click()
 
 
 @then(parsers.parse('Create SMB share with path {path}'))
-def create_smb_share_with_path_tankrtacltest1share():
+def create_smb_share_with_path_tankrtacltest1share(driver, path):
     """Create SMB share with path tank/rt-acl-test-1/share."""
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
+    assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
+    assert wait_on_element(driver, 7, '//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]').click()
     assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
     global smb_path
     smb_path = path
@@ -200,8 +205,11 @@ def create_smb_share_with_path_tankrtacltest1share():
 
 
 @then('Apply ACL to rt-acl-test-1 with recusrive checked')
-def apply_acl_to_rtacltest1_with_recusrive_checked():
+def apply_acl_to_rtacltest1_with_recusrive_checked(driver):
     """Apply ACL to rt-acl-test-1 with recusrive checked."""
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 10, f'//div[contains(text(),"rt-acl-test-1")]')
     time.sleep(1)
     assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-acl-test-1")]//mat-icon[text()="more_vert"]')
@@ -235,27 +243,32 @@ def apply_acl_to_rtacltest1_with_recusrive_checked():
 
 
 @then('Verify that the ACL was not set to rt-acl-test-3')
-def verify_that_the_acl_was_not_set_to_rtacltest3():
+def verify_that_the_acl_was_not_set_to_rtacltest3(driver):
     """Verify that the ACL was not set to rt-acl-test-3."""
+    assert wait_on_element(driver, 5, f'//div[contains(text(),"rt-acl-test-1")]//button', 'clickable')
+    driver.find_element_by_xpath(f'//div[contains(text(),"rt-acl-test-1")]//button').click()
+    time.sleep(3)
     assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-acl-test-3")]//mat-icon[text()="more_vert"]')
     driver.find_element_by_xpath(f'//tr[contains(.,"rt-acl-test-3")]//mat-icon[text()="more_vert"]').click()
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(text(),"Group - games")]') is False
+    assert wait_on_element(driver, 5, '//div[contains(text(),"User - games")]') is False
 
 
 @then('Verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1')
-def verify_the_smb_share_filesystem_has_the_acl_that_was_applied_to_rtacltest1():
+def verify_the_smb_share_filesystem_has_the_acl_that_was_applied_to_rtacltest1(driver):
     """Verify the SMB Share Filesystem has the ACL that was applied to rt-acl-test-1."""
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
     assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
     assert wait_on_element(driver, 5, '//mat-panel-title//h5//a[contains(.,"(SMB)")]')
     driver.find_element_by_xpath('//mat-panel-title//h5//a[contains(.,"(SMB)")]').click()
+    assert wait_on_element(driver, 5, f'//tr[contains(.,"rt-test")]//mat-icon[@ix-auto="options__rt-test"]', 'clickable')
+    driver.find_element_by_xpath(f'//tr[contains(.,"rt-test")]//mat-icon[@ix-auto="options__rt-test"]').click()
+    assert wait_on_element(driver, 5, f'//button[@ix-auto="action__rt-test_Edit Filesystem ACL"]', 'clickable')
+    driver.find_element_by_xpath(f'//button[@ix-auto="action__rt-test_Edit Filesystem ACL"]').click()
     assert wait_on_element(driver, 5, '//h1[contains(text(),"Edit POSIX.1e ACL")]')
-    assert wait_on_element(driver, 5, '//tbody/tr[@id="rt-test"]')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"Edit Filesystem ACL")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Edit Filesystem ACL")]').click()
+    assert wait_on_element(driver, 5, '//div[contains(text(),"/mnt/tank/rt-acl-test-1/share")]')
     assert wait_on_element(driver, 5, '//div[contains(text(),"User - games")]')
 
