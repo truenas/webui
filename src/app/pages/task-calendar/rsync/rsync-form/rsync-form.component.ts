@@ -48,6 +48,7 @@ export class RsyncFormComponent implements OnDestroy {
         {
           type: 'combobox',
           name: 'user',
+          label: helptext.rsync_user_label,
           placeholder: helptext.rsync_user_placeholder,
           tooltip: helptext.rsync_user_tooltip,
           options: [],

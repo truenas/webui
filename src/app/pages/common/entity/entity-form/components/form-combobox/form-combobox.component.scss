@@ -1,0 +1,16 @@
+/* Placeholder overrides */
+:host ::ng-deep input::-webkit-input-placeholder {
+  color: rgba(255,255,255, 0.3) !important;
+}
+
+:host ::ng-deep input:-moz-placeholder { /* Firefox 18- */
+  color: rgba(255,255,255, 0.3) !important;
+}
+
+:host ::ng-deep input::-moz-placeholder {  /* Firefox 19+ */
+  color: rgba(255,255,255, 0.3) !important;
+}
+
+:host ::ng-deep input:-ms-input-placeholder {
+  color: rgba(255,255,255, 0.3) !important;
+}

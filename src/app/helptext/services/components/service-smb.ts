@@ -81,7 +81,8 @@ export default {
   cifs_srv_dirmask_tooltip: T('Overrides default directory creation mask of <i>0777</i> \
  which grants directory read, write and execute access for everybody.'),
 
-  cifs_srv_admin_group_placeholder: T('Administrators Group'),
+  cifs_srv_admin_group_label: T('Administrators Group'),
+  cifs_srv_admin_group_placeholder: T('Type to search'),
   cifs_srv_admin_group_tooltip: T('Members of this group are local admins\
  and automatically have privileges to take ownership of any file in an SMB\
  share, reset permissions, and administer the SMB server through the\

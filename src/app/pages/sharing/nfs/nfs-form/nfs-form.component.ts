@@ -101,6 +101,7 @@ export class NFSFormComponent {
         {
           type: 'combobox',
           name: 'maproot_user',
+          label: helptext_sharing_nfs.label_maproot_user,
           placeholder: helptext_sharing_nfs.placeholder_maproot_user,
           tooltip: helptext_sharing_nfs.tooltip_maproot_user,
           options: [],
@@ -112,6 +113,7 @@ export class NFSFormComponent {
         {
           type: 'combobox',
           name: 'maproot_group',
+          label: helptext_sharing_nfs.label_maproot_group,
           placeholder: helptext_sharing_nfs.placeholder_maproot_group,
           tooltip: helptext_sharing_nfs.tooltip_maproot_group,
           options: [],
@@ -123,6 +125,7 @@ export class NFSFormComponent {
         {
           type: 'combobox',
           name: 'mapall_user',
+          label: helptext_sharing_nfs.label_mapall_user,
           placeholder: helptext_sharing_nfs.placeholder_mapall_user,
           tooltip: helptext_sharing_nfs.tooltip_mapall_user,
           options: [],
@@ -134,6 +137,7 @@ export class NFSFormComponent {
         {
           type: 'combobox',
           name: 'mapall_group',
+          label: helptext_sharing_nfs.label_mapall_group,
           placeholder: helptext_sharing_nfs.placeholder_mapall_group,
           tooltip: helptext_sharing_nfs.tooltip_mapall_group,
           options: [],

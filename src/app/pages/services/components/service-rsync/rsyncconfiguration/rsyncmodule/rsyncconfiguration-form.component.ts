@@ -80,6 +80,7 @@ export class RYSNCConfigurationFormComponent {
         {
           type: 'combobox',
           name: 'user',
+          label: helptext.rsyncmod_user_label,
           placeholder: helptext.rsyncmod_user_placeholder,
           tooltip: helptext.rsyncmod_user_tooltip,
           options: [],
@@ -90,6 +91,7 @@ export class RYSNCConfigurationFormComponent {
         {
           type: 'combobox',
           name: 'group',
+          label: helptext.rsyncmod_group_label,
           placeholder: helptext.rsyncmod_group_placeholder,
           tooltip: helptext.rsyncmod_group_tooltip,
           options: [],

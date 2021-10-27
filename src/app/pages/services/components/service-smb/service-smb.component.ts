@@ -180,6 +180,7 @@ export class ServiceSMBComponent {
         {
           type: 'combobox',
           name: 'admin_group',
+          label: helptext.cifs_srv_admin_group_label,
           placeholder: helptext.cifs_srv_admin_group_placeholder,
           tooltip: helptext.cifs_srv_admin_group_tooltip,
           options: [],

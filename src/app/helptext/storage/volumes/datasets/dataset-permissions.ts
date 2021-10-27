@@ -7,7 +7,8 @@ export default {
   dataset_permissions_acl_tooltip: T('Select the type that matches the type of client\
  accessing the dataset.'),
 
-  dataset_permissions_user_placeholder: T('User'),
+  dataset_permissions_user_label: T('User'),
+  dataset_permissions_user_placeholder: T('Type to search'),
   dataset_permissions_user_tooltip: T('Select the user to control the dataset. Users\
  created manually or imported from a directory service\
  appear in the drop-down menu.'),
@@ -18,7 +19,8 @@ export default {
 are submitted only when this box is set.'),
   },
 
-  dataset_permissions_group_placeholder: T('Group'),
+  dataset_permissions_group_label: T('Group'),
+  dataset_permissions_group_placeholder: T('Type to search'),
   dataset_permissions_group_tooltip: T('Select the group to control the dataset. Groups\
  created manually or imported from a directory service\
  appear in the drop-down menu.'),

@@ -63,6 +63,7 @@ export class CronFormComponent {
         {
           type: 'combobox',
           name: 'user',
+          label: helptext.cron_user_label,
           placeholder: helptext.cron_user_placeholder,
           tooltip: helptext.cron_user_tooltip,
           options: [],
