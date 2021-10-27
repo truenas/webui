@@ -34,7 +34,6 @@ describe('BootEnvironmentFormComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    // loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
   });
 
