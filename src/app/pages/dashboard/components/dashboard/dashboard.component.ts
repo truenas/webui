@@ -199,7 +199,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       to: { x: endX },
       duration: 250,
     }).start({
-      update: (v: any) => {
+      update: (v: { x: number }) => {
         carousel.set(v);
       },
       complete: () => {
@@ -642,7 +642,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  applyState(state: any[]): void {
+  applyState(state: DashConfigItem[]): void {
     // This reconciles current state with saved dashState
 
     if (!this.dashState) {

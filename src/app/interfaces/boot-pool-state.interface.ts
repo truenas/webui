@@ -1,5 +1,6 @@
 import { PoolScan, PoolTopology } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
+import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 
 export interface BootPoolState {
   error_count: number;
@@ -10,13 +11,29 @@ export interface BootPoolState {
   hostname: string;
   id: string;
   name: string;
-  properties: any;
-  root_dataset: any;
+  properties: {
+    [property: string]: ZfsProperty<unknown>;
+    allocated: ZfsProperty<number>;
+    size: ZfsProperty<number>;
+  };
+  root_dataset: BootPoolRootDataset;
   root_vdev: VDev;
   scan: PoolScan;
   status: string; // ONLINE
   status_code: string; // FEAT_DISABLED
   status_detail: string;
+}
+
+export interface BootPoolRootDataset {
+  id: string;
+  name: string;
+  pool: string;
+  type: string;
+  properties: unknown;
+  mountpoint: string;
+  encrypted: boolean;
+  encryption_root: string;
+  key_loaded: boolean;
 }
 
 export interface BootPoolFeatureItem {

@@ -4,6 +4,7 @@ import {
 import { MatDialogRef } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-unlock';
+import { DatasetUnlockParams } from 'app/interfaces/dataset-lock.interface';
 import { DatasetUnlockComponent } from 'app/pages/storage/volumes/datasets/dataset-unlock/dataset-unlock.component';
 import { DialogService } from 'app/services';
 
@@ -27,7 +28,7 @@ export class UnlockDialogComponent {
   tooltip: string;
   hideCancel = false;
   final = false;
-  data = {};
+  data = {} as DatasetUnlockParams;
   parent: DatasetUnlockComponent;
 
   constructor(

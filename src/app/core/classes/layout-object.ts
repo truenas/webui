@@ -208,7 +208,7 @@ export class LayoutObject {
       duration: 250,
       flip: 0,
     }).start({
-      update: (v: any) => {
+      update: (v: { x: number; y: number }) => {
         dragTarget.target.set(v);
       },
       complete: () => {

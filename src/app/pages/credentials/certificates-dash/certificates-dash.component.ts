@@ -106,7 +106,7 @@ export class CertificatesDashComponent implements OnInit {
               name: this.translate.instant('Status'),
               prop1: 'revoked',
               iconTooltip: this.translate.instant('Revoked'),
-              getIcon: (element: any, prop: string): string => {
+              getIcon: (element: Certificate, prop: keyof Certificate): string => {
                 if (element[prop]) {
                   return 'block';
                 }
@@ -173,7 +173,7 @@ export class CertificatesDashComponent implements OnInit {
               name: this.translate.instant('Status'),
               prop1: 'revoked',
               iconTooltip: this.translate.instant('Revoked'),
-              getIcon: (element: any, prop: string): string => {
+              getIcon: (element: Certificate, prop: keyof Certificate): string => {
                 if (element[prop]) {
                   return 'block';
                 }

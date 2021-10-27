@@ -12,7 +12,6 @@ import helptext from 'app/helptext/data-protection/data-protection-dashboard/dat
 import helptext_replication from 'app/helptext/data-protection/replication/replication';
 import helptext_smart from 'app/helptext/data-protection/smart/smart';
 import globalHelptext from 'app/helptext/global-helptext';
-import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { CloudSyncTaskUi } from 'app/interfaces/cloud-sync-task.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PeriodicSnapshotTaskUi } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -911,8 +910,12 @@ export class DataProtectionDashboardComponent implements OnInit {
     }
   }
 
-  onCheckboxToggle(card: TaskCardId, row: TaskTableRow, param: keyof TaskTableRow): void {
-    let updateCall: keyof ApiDirectory;
+  onCheckboxToggle(card: TaskCardId, row: TaskTableRow, param: 'enabled'): void {
+    let updateCall: 'pool.scrub.update'
+    | 'pool.snapshottask.update'
+    | 'replication.update'
+    | 'cloudsync.update'
+    | 'rsynctask.update';
     switch (card) {
       case TaskCardId.Scrub:
         updateCall = 'pool.scrub.update';
@@ -939,10 +942,10 @@ export class DataProtectionDashboardComponent implements OnInit {
       .subscribe(
         (updatedEntity) => {
           // Fix any (not assignable to never).
-          (row as any)[param] = updatedEntity[param];
+          row[param] = updatedEntity[param];
         },
         (err) => {
-          (row as any)[param] = !row[param];
+          row[param] = !row[param];
           new EntityUtils().handleWSError(this, err, this.dialog);
         },
       );

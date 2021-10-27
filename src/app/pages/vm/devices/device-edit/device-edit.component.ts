@@ -438,12 +438,14 @@ export class DeviceEditComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((device) => {
         if (
-          (device[0] as any).attributes.physical_sectorsize !== undefined
-          && (device[0] as any).attributes.logical_sectorsize !== undefined
+          'physical_sectorsize' in device[0].attributes
+          && device[0].attributes.physical_sectorsize !== undefined
+          && 'logical_sectorsize' in device[0].attributes
+          && device[0].attributes.logical_sectorsize !== undefined
         ) {
-          (device[0] as any).attributes['sectorsize'] = (device[0] as any).attributes.logical_sectorsize === null
+          (device[0] as any).attributes['sectorsize'] = device[0].attributes.logical_sectorsize === null
             ? 0
-            : (device[0] as any).attributes.logical_sectorsize;
+            : device[0].attributes.logical_sectorsize;
         }
         const deviceInformation = { ...device[0].attributes, ...{ order: device[0].order } };
         this.vminfo = device[0];
