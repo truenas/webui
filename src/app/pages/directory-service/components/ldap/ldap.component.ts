@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/ldap';
@@ -28,7 +28,7 @@ import { ModalService } from 'app/services/modal.service';
 })
 
 export class LdapComponent implements FormConfiguration {
-  title: string = helptext.title;
+  title = this.translate.instant(helptext.title);
   isEntity = false;
   queryCall = 'ldap.config' as const;
   updateCall = 'ldap.update' as const;
@@ -222,6 +222,7 @@ export class LdapComponent implements FormConfiguration {
     private modalService: ModalService,
     private dialogservice: DialogService,
     protected systemGeneralService: SystemGeneralService,
+    protected translate: TranslateService,
   ) { }
 
   resourceTransformIncomingRestData(data: LdapConfig): any {
@@ -325,7 +326,7 @@ export class LdapComponent implements FormConfiguration {
   errorReport(res: WebsocketError): void {
     let errorText = res.reason ? res.reason.replace('[EFAULT]', '') : null;
     if (res.reason && res.reason.includes('Invalid credentials')) {
-      errorText = T('Invalid credentials. Please try again.');
+      errorText = this.translate.instant('Invalid credentials. Please try again.');
     }
     this.entityForm.error = errorText;
   }

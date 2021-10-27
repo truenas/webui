@@ -3,8 +3,8 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { DomSanitizer } from '@angular/platform-browser';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import {
   Application, Container,
 } from 'pixi.js';
@@ -177,6 +177,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     public mediaObserver: MediaObserver,
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
+    protected translate: TranslateService,
   ) {
     this.themeUtils = new ThemeUtils();
 
@@ -1131,7 +1132,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const obj = this.system.enclosures[this.selectedEnclosure.enclosureKey];
     const currentLabel = obj.label !== obj.name ? obj.label : this.selectedEnclosure.model;
     const conf: DialogFormConfiguration = {
-      title: T('Change Enclosure Label'),
+      title: this.translate.instant('Change Enclosure Label'),
       fieldConfig: [
         {
           type: 'input',
@@ -1157,7 +1158,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           placeholder: 'Reset to default',
         },
       ],
-      saveButtonText: T('SAVE'),
+      saveButtonText: this.translate.instant('SAVE'),
       customSubmit: (entityDialog: EntityDialogComponent) => {
         this.pendingDialog = entityDialog;
         entityDialog.loader.open();

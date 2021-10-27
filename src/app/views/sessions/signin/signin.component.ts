@@ -10,7 +10,6 @@ import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -279,17 +278,17 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
             this.ha_disabled_reasons = reasons;
             this.show_reasons = false;
             if (reasons.length === 0) {
-              this.ha_status_text = T('HA is enabled.');
+              this.ha_status_text = this.translate.instant('HA is enabled.');
               this.ha_status = true;
             } else if (reasons.length === 1) {
               if (reasons[0] === FailoverDisabledReason.NoSystemReady) {
-                this.ha_status_text = T('HA is reconnecting.');
+                this.ha_status_text = this.translate.instant('HA is reconnecting.');
               } else if (reasons[0] === FailoverDisabledReason.NoFailover) {
-                this.ha_status_text = T('HA is administratively disabled.');
+                this.ha_status_text = this.translate.instant('HA is administratively disabled.');
               }
               this.ha_status = false;
             } else {
-              this.ha_status_text = T('HA is in a faulted state');
+              this.ha_status_text = this.translate.instant('HA is in a faulted state');
               this.show_reasons = true;
               this.ha_status = false;
             }
@@ -396,12 +395,12 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     let message = '';
     if (this.ws.token === null) {
       if (this.isTwoFactor) {
-        message = T('Username, Password, or 2FA Code is incorrect.');
+        message = this.translate.instant('Username, Password, or 2FA Code is incorrect.');
       } else {
-        message = T('Username or Password is incorrect.');
+        message = this.translate.instant('Username or Password is incorrect.');
       }
     } else {
-      message = T('Token expired, please log back in.');
+      message = this.translate.instant('Token expired, please log back in.');
       this.ws.token = null;
     }
     this.snackBar.open(this.translate.instant(message), this.translate.instant('close'), { duration: 4000 });

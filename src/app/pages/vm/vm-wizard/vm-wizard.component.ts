@@ -4,7 +4,6 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -54,7 +53,7 @@ export class VMWizardComponent implements WizardConfiguration {
   summary: Record<string, unknown> = {};
   isLinear = true;
   firstFormGroup: FormGroup;
-  summaryTitle = T('VM Summary');
+  summaryTitle = this.translate.instant('VM Summary');
   namesInUse: string[] = [];
   statSize: Statfs;
   displayPort: number;
@@ -154,7 +153,7 @@ export class VMWizardComponent implements WizardConfiguration {
         {
           type: 'select',
           name: 'display_type',
-          placeholder: T('Display Type'),
+          placeholder: this.translate.instant('Display Type'),
           options: [{ label: 'VNC', value: 'VNC' }, { label: 'SPICE', value: 'SPICE' }],
           required: true,
           value: 'VNC',
@@ -442,24 +441,24 @@ export class VMWizardComponent implements WizardConfiguration {
       ],
     },
     {
-      label: T('GPU'),
+      label: this.translate.instant('GPU'),
       fieldConfig: [
         {
           type: 'checkbox',
           name: 'hide_from_msr',
-          placeholder: T('Hide from MSR'),
+          placeholder: this.translate.instant('Hide from MSR'),
           value: false,
         },
         {
           type: 'checkbox',
           name: 'ensure_display_device',
-          placeholder: T('Ensure Display Device'),
-          tooltip: T('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
+          placeholder: this.translate.instant('Ensure Display Device'),
+          tooltip: this.translate.instant('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
           value: true,
         },
         {
           type: 'select',
-          placeholder: T("GPU's"),
+          placeholder: this.translate.instant("GPU's"),
           name: 'gpus',
           multiple: true,
           options: [],
@@ -626,62 +625,62 @@ export class VMWizardComponent implements WizardConfiguration {
     });
 
     this.getFormControlFromFieldName('os').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.summary[T('Guest Operating System')] = res;
+      this.summary[this.translate.instant('Guest Operating System')] = res;
       this.getFormControlFromFieldName('name').valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
-        this.summary[T('Name')] = name;
+        this.summary[this.translate.instant('Name')] = name;
       });
       this.getFormControlFromFieldName('vcpus').valueChanges.pipe(untilDestroyed(this)).subscribe((vcpus) => {
         this.vcpus = vcpus;
-        this.summary[T('Number of CPUs')] = vcpus;
+        this.summary[this.translate.instant('Number of CPUs')] = vcpus;
       });
       this.getFormControlFromFieldName('cores').valueChanges.pipe(untilDestroyed(this)).subscribe((cores) => {
         this.cores = cores;
-        this.summary[T('Number of Cores')] = cores;
+        this.summary[this.translate.instant('Number of Cores')] = cores;
       });
       this.getFormControlFromFieldName('threads').valueChanges.pipe(untilDestroyed(this)).subscribe((threads) => {
         this.threads = threads;
-        this.summary[T('Number of Threads')] = threads;
+        this.summary[this.translate.instant('Number of Threads')] = threads;
       });
 
       if (this.productType.includes(ProductType.Scale)) {
         this.getFormControlFromFieldName('cpu_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
           this.mode = mode;
-          this.summary[T('CPU Mode')] = mode;
+          this.summary[this.translate.instant('CPU Mode')] = mode;
 
           if (mode !== VmCpuMode.Custom) {
-            delete this.summary[T('CPU Model')];
+            delete this.summary[this.translate.instant('CPU Model')];
           }
         });
         this.getFormControlFromFieldName('cpu_model').valueChanges.pipe(untilDestroyed(this)).subscribe((model) => {
           this.model = model;
-          this.summary[T('CPU Model')] = model !== '' ? model : 'null';
+          this.summary[this.translate.instant('CPU Model')] = model !== '' ? model : 'null';
         });
       }
 
       this.getFormControlFromFieldName('memory').valueChanges.pipe(untilDestroyed(this)).subscribe((memory) => {
-        this.summary[T('Memory')] = Number.isNaN(this.storageService.convertHumanStringToNum(memory))
+        this.summary[this.translate.instant('Memory')] = Number.isNaN(this.storageService.convertHumanStringToNum(memory))
           ? '0 MiB'
           : this.storageService.humanReadable;
       });
 
       this.getFormControlFromFieldName('volsize').valueChanges.pipe(untilDestroyed(this)).subscribe((volsize) => {
-        this.summary[T('Disk Size')] = volsize;
+        this.summary[this.translate.instant('Disk Size')] = volsize;
       });
 
       this.getFormControlFromFieldName('disk_radio').valueChanges.pipe(untilDestroyed(this)).subscribe((disk_radio) => {
-        if (this.summary[T('Disk')] || this.summary[T('Disk Size')]) {
-          delete this.summary[T('Disk')];
-          delete this.summary[T('Disk Size')];
+        if (this.summary[this.translate.instant('Disk')] || this.summary[this.translate.instant('Disk Size')]) {
+          delete this.summary[this.translate.instant('Disk')];
+          delete this.summary[this.translate.instant('Disk Size')];
         }
         if (disk_radio) {
-          this.summary[T('Disk Size')] = this.getFormControlFromFieldName('volsize').value;
+          this.summary[this.translate.instant('Disk Size')] = this.getFormControlFromFieldName('volsize').value;
           this.getFormControlFromFieldName('volsize').valueChanges.pipe(untilDestroyed(this)).subscribe((volsize) => {
-            this.summary[T('Disk Size')] = volsize;
+            this.summary[this.translate.instant('Disk Size')] = volsize;
           });
         } else {
-          this.summary[T('Disk')] = this.getFormControlFromFieldName('hdd_path').value;
+          this.summary[this.translate.instant('Disk')] = this.getFormControlFromFieldName('hdd_path').value;
           this.getFormControlFromFieldName('hdd_path').valueChanges.pipe(untilDestroyed(this)).subscribe((existing_hdd_path) => {
-            this.summary[T('Disk')] = existing_hdd_path;
+            this.summary[this.translate.instant('Disk')] = existing_hdd_path;
           });
         }
       });
@@ -755,9 +754,9 @@ export class VMWizardComponent implements WizardConfiguration {
       });
       this.getFormControlFromFieldName('iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((iso_path) => {
         if (iso_path && iso_path !== undefined) {
-          this.summary[T('Installation Media')] = iso_path;
+          this.summary[this.translate.instant('Installation Media')] = iso_path;
         } else {
-          delete this.summary[T('Installation Media')];
+          delete this.summary[this.translate.instant('Installation Media')];
         }
       });
       this.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
@@ -1128,7 +1127,7 @@ export class VMWizardComponent implements WizardConfiguration {
         );
       }, (error) => {
         this.loader.close();
-        this.dialogService.errorReport(T('Error creating VM.'), error.reason, error.trace.formatted);
+        this.dialogService.errorReport(this.translate.instant('Error creating VM.'), error.reason, error.trace.formatted);
       });
     } else {
       for (const device of vmPayload['devices']) {
@@ -1173,7 +1172,7 @@ export class VMWizardComponent implements WizardConfiguration {
         );
       }, (error) => {
         this.loader.close();
-        this.dialogService.errorReport(T('Error creating VM.'), error.reason, error.trace.formatted);
+        this.dialogService.errorReport(this.translate.instant('Error creating VM.'), error.reason, error.trace.formatted);
       });
     }
   }

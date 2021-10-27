@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -33,16 +32,16 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
 
   columns = [
     {
-      name: T('Target'),
+      name: this.translate.instant('Target'),
       prop: 'target',
       always_display: true,
     },
     {
-      name: T('LUN ID'),
+      name: this.translate.instant('LUN ID'),
       prop: 'lunid',
     },
     {
-      name: T('Extent'),
+      name: this.translate.instant('Extent'),
       prop: 'extent',
     },
   ];
@@ -88,13 +87,13 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
       id: row.target,
       name: 'edit',
       icon: 'edit',
-      label: T('Edit'),
+      label: this.translate.instant('Edit'),
       onClick: (rowinner: IscsiTargetExtent) => { this.entityList.doEdit(rowinner.id); },
     }, {
       id: row.target,
       name: 'delete',
       icon: 'delete',
-      label: T('Delete'),
+      label: this.translate.instant('Delete'),
       onClick: (rowinner: IscsiTargetExtent) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
@@ -108,9 +107,9 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
             deleteMsg = warningMsg + deleteMsg;
 
             this.dialogService.confirm({
-              title: T('Delete'),
+              title: this.translate.instant('Delete'),
               message: deleteMsg,
-              buttonMsg: T('Delete'),
+              buttonMsg: this.translate.instant('Delete'),
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.loader.open();
               this.entityList.loaderOpen = true;

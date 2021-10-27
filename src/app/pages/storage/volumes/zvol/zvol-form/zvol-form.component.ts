@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -186,9 +185,9 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_sync_placeholder,
         tooltip: helptext.zvol_sync_tooltip,
         options: [
-          { label: T('Standard'), value: 'STANDARD' },
-          { label: T('Always'), value: 'ALWAYS' },
-          { label: T('Disabled'), value: 'DISABLED' },
+          { label: this.translate.instant('Standard'), value: 'STANDARD' },
+          { label: this.translate.instant('Always'), value: 'ALWAYS' },
+          { label: this.translate.instant('Disabled'), value: 'DISABLED' },
         ],
       },
       {
@@ -197,17 +196,17 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_compression_placeholder,
         tooltip: helptext.zvol_compression_tooltip,
         options: [
-          { label: T('Off'), value: 'OFF' },
-          { label: T('lz4 (recommended)'), value: 'LZ4' },
-          { label: T('zstd (default level, 3)'), value: 'ZSTD' },
-          { label: T('zstd-5 (slow)'), value: 'ZSTD-5' },
-          { label: T('zstd-7 (very slow)'), value: 'ZSTD-7' },
-          { label: T('zstd-fast (default level, 1)'), value: 'ZSTD-FAST' },
-          { label: T('gzip (default level, 6)'), value: 'GZIP' },
-          { label: T('gzip-1 (fastest)'), value: 'GZIP-1' },
-          { label: T('gzip-9 (maximum, slow)'), value: 'GZIP-9' },
-          { label: T('zle (runs of zeros)'), value: 'ZLE' },
-          { label: T('lzjb (legacy, not recommended)'), value: 'LZJB' },
+          { label: this.translate.instant('Off'), value: 'OFF' },
+          { label: this.translate.instant('lz4 (recommended)'), value: 'LZ4' },
+          { label: this.translate.instant('zstd (default level, 3)'), value: 'ZSTD' },
+          { label: this.translate.instant('zstd-5 (slow)'), value: 'ZSTD-5' },
+          { label: this.translate.instant('zstd-7 (very slow)'), value: 'ZSTD-7' },
+          { label: this.translate.instant('zstd-fast (default level, 1)'), value: 'ZSTD-FAST' },
+          { label: this.translate.instant('gzip (default level, 6)'), value: 'GZIP' },
+          { label: this.translate.instant('gzip-1 (fastest)'), value: 'GZIP-1' },
+          { label: this.translate.instant('gzip-9 (maximum, slow)'), value: 'GZIP-9' },
+          { label: this.translate.instant('zle (runs of zeros)'), value: 'ZLE' },
+          { label: this.translate.instant('lzjb (legacy, not recommended)'), value: 'LZJB' },
         ],
         validation: helptext.zvol_compression_validation,
         required: true,
@@ -218,9 +217,9 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_deduplication_placeholder,
         tooltip: helptext.zvol_deduplication_tooltip,
         options: [
-          { label: T('On'), value: DeduplicationSetting.On },
-          { label: T('Verify'), value: DeduplicationSetting.Verify },
-          { label: T('Off'), value: DeduplicationSetting.Off },
+          { label: this.translate.instant('On'), value: DeduplicationSetting.On },
+          { label: this.translate.instant('Verify'), value: DeduplicationSetting.Verify },
+          { label: this.translate.instant('Off'), value: DeduplicationSetting.Off },
         ],
         validation: helptext.zvol_deduplication_validation,
         required: true,
@@ -238,8 +237,8 @@ export class ZvolFormComponent implements FormConfiguration {
         placeholder: helptext.zvol_readonly_placeholder,
         tooltip: helptext.zvol_readonly_tooltip,
         options: [
-          { label: T('On'), value: OnOff.On },
-          { label: T('Off'), value: OnOff.Off },
+          { label: this.translate.instant('On'), value: OnOff.On },
+          { label: this.translate.instant('Off'), value: OnOff.Off },
         ],
       },
       {

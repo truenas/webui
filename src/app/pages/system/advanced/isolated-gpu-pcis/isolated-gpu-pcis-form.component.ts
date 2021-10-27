@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Device } from 'app/interfaces/device.interface';
@@ -29,13 +29,13 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
 
   fieldSets = new FieldSets([
     {
-      name: T("Isolated GPU PCI Id's"),
+      name: this.translate.instant("Isolated GPU PCI Id's"),
       label: false,
       class: 'isolated-pcis',
       config: [
         {
           type: 'select',
-          placeholder: T("GPU's"),
+          placeholder: this.translate.instant("GPU's"),
           name: 'gpus',
           multiple: true,
           options: [],
@@ -50,13 +50,14 @@ export class IsolatedGpuPcisFormComponent implements FormConfiguration {
   ]);
 
   private entityForm: EntityFormComponent;
-  title = T("Isolated GPU PCI Id's");
+  title = this.translate.instant("Isolated GPU PCI Id's");
 
   constructor(
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     private sysGeneralService: SystemGeneralService,
     private modalService: ModalService,
+    private translate: TranslateService,
   ) { }
 
   afterInit(entityForm: EntityFormComponent): void {

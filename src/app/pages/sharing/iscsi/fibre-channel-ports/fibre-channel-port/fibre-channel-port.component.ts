@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -83,6 +83,7 @@ export class FibreChannelPortComponent implements OnInit {
     private ws: WebSocketService,
     private entityFormService: EntityFormService,
     private iscsiService: IscsiService,
+    private translate: TranslateService,
   ) {
     const targetField = _.find(this.fieldSets[1].config, { name: 'target' }) as FormSelectConfig;
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
@@ -142,7 +143,7 @@ export class FibreChannelPortComponent implements OnInit {
     this.ws.call('fcport.update', [this.config.id, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.parent.loader.close();
-        this.parent.dialogService.info(T('Updated'), T('Fibre Channel Port ') + this.config.name + ' update successful.', '500px', 'info');
+        this.parent.dialogService.info(this.translate.instant('Updated'), this.translate.instant('Fibre Channel Port {name} update successful.', { name: this.config.name }), '500px', 'info');
       },
       (err) => {
         this.parent.loader.close();

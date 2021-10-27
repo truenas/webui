@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -107,7 +106,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
   custActions = [
     {
       id: 'FetchDataStores',
-      name: T('Fetch DataStores'),
+      name: this.translate.instant('Fetch DataStores'),
       function: () => {
         this.datastore = _.find(this.fieldConfig, { name: 'datastore' }) as FormSelectConfig;
         this.datastore.type = 'select';
@@ -116,7 +115,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           this.entityForm.formGroup.controls['hostname'].value === undefined
           || this.entityForm.formGroup.controls['username'].value === undefined
           || this.entityForm.formGroup.controls['password'].value === undefined
-        ) { this.dialogService.info(T('VM Snapshot'), T('Enter valid VMware ESXI/vSphere credentials to fetch datastores.')); } else {
+        ) { this.dialogService.info(this.translate.instant('VM Snapshot'), this.translate.instant('Enter valid VMware ESXI/vSphere credentials to fetch datastores.')); } else {
           this.passwordBlur();
         }
       },
@@ -179,10 +178,10 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
       const firstObj = this.fileSystemList.find((item) => item.name === value.filesystem);
       const secondObj = this.dataListComplete.find((item) => item.name === value.datastore);
       if (secondObj.description === '') {
-        secondObj.description = T('(No description)');
+        secondObj.description = this.translate.instant('(No description)');
       }
       this.dialogService.confirm({
-        title: T('Are you sure?'),
+        title: this.translate.instant('Are you sure?'),
         message: this.translate.instant(
           'The filesystem {filesystemName} is {filesystemDescription}, but datastore {datastoreName} is {datastoreDescription}. Is this correct?',
           {
@@ -201,7 +200,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
         },
         (e_res) => {
           this.loader.close();
-          this.dialogService.errorReport(T('Error'), e_res);
+          this.dialogService.errorReport(this.translate.instant('Error'), e_res);
         });
       });
     } else {
@@ -212,7 +211,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
       },
       (e_res) => {
         this.loader.close();
-        this.dialogService.errorReport(T('Error'), e_res);
+        this.dialogService.errorReport(this.translate.instant('Error'), e_res);
       });
     }
   }

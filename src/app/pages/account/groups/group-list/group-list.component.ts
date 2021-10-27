@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -51,7 +50,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('Group'),
+      title: this.translate.instant('Group'),
       key_props: ['group'],
     },
   };

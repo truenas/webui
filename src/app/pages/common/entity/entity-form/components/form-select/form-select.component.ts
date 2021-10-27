@@ -4,7 +4,6 @@ import {
 import { AbstractControl, FormGroup } from '@angular/forms';
 import { MatFormField } from '@angular/material/form-field';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -136,17 +135,17 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
     if (!this.shouldAlertOnOption(option) || this.disableAlert) return;
 
     const conf: DialogFormConfiguration = {
-      title: T('Alert'),
+      title: this.translate.instant('Alert'),
       message: this.config.alert.message,
       hideCancel: true,
       fieldConfig: [
         {
           type: 'checkbox',
           name: 'disable_alert',
-          placeholder: T('Don\'t show this message again'),
+          placeholder: this.translate.instant('Don\'t show this message again'),
         },
       ],
-      saveButtonText: T('OK'),
+      saveButtonText: this.translate.instant('OK'),
       customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close(true);
         if (entityDialog.formValue.disable_alert) {

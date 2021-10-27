@@ -5,8 +5,8 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/volumes/volume-key';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -26,7 +26,7 @@ import { EncryptionService } from 'app/services/encryption.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class VolumeAddkeyFormComponent implements FormConfiguration {
-  saveSubmitText = T('Add Recovery Key');
+  saveSubmitText = this.translate.instant('Add Recovery Key');
 
   queryCall = 'pool.query' as const;
   queryKey = 'id';
@@ -112,6 +112,7 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
     protected storage: StorageService,
     protected mdDialog: MatDialog,
     protected encryptionService: EncryptionService,
+    protected translate: TranslateService,
   ) {}
 
   preInit(): void {

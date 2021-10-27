@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -63,22 +62,22 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       placeholder: helptext.dtype_placeholder,
       options: [
         {
-          label: T('CD-ROM'),
+          label: this.translate.instant('CD-ROM'),
           value: VmDeviceType.Cdrom,
         }, {
-          label: T('NIC'),
+          label: this.translate.instant('NIC'),
           value: VmDeviceType.Nic,
         }, {
-          label: T('Disk'),
+          label: this.translate.instant('Disk'),
           value: VmDeviceType.Disk,
         }, {
-          label: T('Raw File'),
+          label: this.translate.instant('Raw File'),
           value: VmDeviceType.Raw,
         }, {
-          label: T('PCI Passthru Device'),
+          label: this.translate.instant('PCI Passthru Device'),
           value: VmDeviceType.Pci,
         }, {
-          label: T('Display'),
+          label: this.translate.instant('Display'),
           value: VmDeviceType.Display,
         },
       ],
@@ -545,7 +544,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.custActions = [
       {
         id: 'generate_mac_address',
-        name: T('Generate MAC Address'),
+        name: this.translate.instant('Generate MAC Address'),
         function: () => this.generateRandomMac(),
       },
     ];
