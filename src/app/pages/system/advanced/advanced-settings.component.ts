@@ -473,12 +473,10 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     if ([CardId.Kernel].includes(name)) {
-      const modal = this.ixModal.open(KernelFormComponent, T('Kernel'));
+      const modal = this.ixModal.open(KernelFormComponent);
       modal.setupForm(this.configData);
-    }
-
-    if (addComponent === ConsoleFormComponent) {
-      this.ixModal.open(ConsoleFormComponent);
+    } else if ([CardId.Console].includes(name)) {
+      this.ixModal.open(addComponent);
     } else {
       this.modalService.openInSlideIn(addComponent, id);
     }
