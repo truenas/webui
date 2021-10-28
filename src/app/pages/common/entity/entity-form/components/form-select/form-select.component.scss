@@ -1,5 +1,4 @@
 .fn-mat-select .mat-menu-panel {
-  //min-width:calc(100% - 32px);
   max-width: none !important;
 }
 
@@ -52,8 +51,14 @@ mat-option.text-wrap,
   white-space: normal !important;
 }
 
-mat-option.text-wrap {
-  min-height: 48px;
+mat-option {
+  &.text-wrap {
+    min-height: 48px;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+  }
 }
 
 .mat-menu-item.text-wrap {

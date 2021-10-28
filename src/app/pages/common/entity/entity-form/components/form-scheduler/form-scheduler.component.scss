@@ -75,11 +75,6 @@ ul.schedule-list li:nth-child(odd) {
   margin-left: 50%;
   min-height: 100%;
   padding: 0;
-  /*position:absolute;
-  top:0;
-  right:0;
-  background-color:var(--primary);
-  color:var(--primary-txt);*/
   text-align: center;
   width: 320px;
 }
@@ -93,7 +88,6 @@ ul.schedule-list li:nth-child(odd) {
 }
 
 ::ng-deep .cron-fields .mat-form-field-label,
-/*::ng-deep .cron-fields .mat-focused .mat-form-field-label,*/
 ::ng-deep .cron-fields label.mat-form-field-placeholder,
 ::ng-deep .cron-fields .mat-input-infix,
 .cron-fields .mat-form-field-should-float.mat-focused label {
@@ -162,8 +156,6 @@ mat-form-field.cron-presets {
 }
 
 .cron-fields section.m-h-d mat-form-field {
-  /*display:inline-block;
-  margin-left:16px;*/
   width: 100%;
 }
 
@@ -195,13 +187,11 @@ mat-form-field.cron-presets {
 }
 
 :host ::ng-deep thead.mat-calendar-table-header {
-  /*display:none;*/
   color: var(--fg2);
   opacity: 0.5;
 }
 
 ::ng-deep .mat-calendar-table-header tr {
-  /*border-bottom:solid 1px var(--bg1);*/
   padding: 4px;
 }
 
@@ -265,4 +255,12 @@ mat-form-field.cron-presets {
   margin: 0 !important;
   position: relative;
   top: 4px;
+}
+
+.save-button {
+  margin: 9px;
+}
+
+.text-left {
+  text-align: left;
 }

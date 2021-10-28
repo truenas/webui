@@ -182,3 +182,17 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: white !important;
   transition: background-color 5000s ease-in-out 0s;
 }
+
+.icon {
+  color: var(--fg1);
+  position: relative;
+
+  &.account,
+  &.lock {
+    top: 4px;
+  }
+
+  &.phonelink {
+    top: 2px;
+  }
+}

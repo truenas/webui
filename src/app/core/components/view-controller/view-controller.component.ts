@@ -12,7 +12,7 @@ import { CoreEvent } from 'app/interfaces/events';
 @Component({
   selector: 'viewcontroller',
   templateUrl: './view-controller.component.html',
-  styles: [':host {display:block;}'],
+  styleUrls: ['./view-controller.component.scss'],
 })
 export class ViewControllerComponent extends ViewController implements OnDestroy {
   readonly componentName = ViewControllerComponent;

@@ -11,14 +11,15 @@ import { TranslatedMessages } from 'app/interfaces/translated-messages.interface
 export class IcuTranslationsLoader extends TranslateHttpLoader {
   getTranslation(lang: string): Observable<TranslatedMessages> {
     return super.getTranslation(lang).pipe(
-      map((translations: TranslatedMessages) =>
-        Object.keys(translations).reduce((filteredMessages, key) => {
+      map((translations: TranslatedMessages) => {
+        return Object.keys(translations).reduce((filteredMessages, key) => {
           if (translations[key] !== '') {
             filteredMessages[key] = translations[key];
           }
 
           return filteredMessages;
-        }, {} as TranslatedMessages)),
+        }, {} as TranslatedMessages);
+      }),
     );
   }
 }

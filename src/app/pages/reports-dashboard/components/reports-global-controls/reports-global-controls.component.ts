@@ -7,6 +7,7 @@ import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-d
 @Component({
   selector: 'reports-global-controls',
   templateUrl: './reports-global-controls.component.html',
+  styleUrls: ['./reports-global-controls.component.scss'],
 })
 export class ReportsGlobalControlsComponent implements GlobalAction {
   config: ReportsDashboardComponent; // Reports page

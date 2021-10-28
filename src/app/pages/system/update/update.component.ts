@@ -6,7 +6,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import {
+  catchError, filter, switchMap, tap,
+} from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -92,7 +94,6 @@ export class UpdateComponent implements OnInit {
               configuration file with a new boot device. It also\
               decrypts all passwords used on this system.\
               <b>Keep the configuration file safe and protect it from unauthorized access!</b>'),
-    method_ws: 'core.download',
     saveButtonText: T('SAVE CONFIGURATION'),
     cancelButtonText: T('NO'),
     customSubmit: (entityDialog) => this.saveConfigSubmit(entityDialog),
@@ -450,7 +451,6 @@ export class UpdateComponent implements OnInit {
       }
     });
   }
-  // End button section
 
   startUpdate(): void {
     this.error = null;
@@ -475,8 +475,7 @@ export class UpdateComponent implements OnInit {
                 name: change.new.name + '-' + change.new.version,
               });
             } else if (change.operation === SystemUpdateOperationType.Delete) {
-              // FIXME: For some reason new is populated instead of
-              // old?
+              // FIXME: For some reason new is populated instead of old?
               if (change.old) {
                 this.packages.push({
                   operation: 'Delete',
@@ -617,45 +616,37 @@ export class UpdateComponent implements OnInit {
         mimetype = 'application/x-sqlite3';
       }
     }
+    this.loader.open();
 
-    entityDialog.ws.call('core.download', ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName])
-      .pipe(untilDestroyed(this)).subscribe(
-        (succ) => {
-          const url = succ[1];
-          this.storage.streamDownloadFile(this.http, url, fileName, mimetype)
-            .pipe(untilDestroyed(this)).subscribe((file: Blob) => {
-              entityDialog.dialogRef.close();
-              this.storage.downloadBlob(file, fileName);
-              this.continueUpdate();
-            }, () => {
-              entityDialog.dialogRef.close();
-              this.dialogService.confirm({
-                title: this.translate.instant(helptext.save_config_err.title),
-                message: this.translate.instant(helptext.save_config_err.message),
-                buttonMsg: this.translate.instant(helptext.save_config_err.button_text),
-              }).pipe(
-                filter(Boolean),
-                untilDestroyed(this),
-              ).subscribe(() => {
-                this.continueUpdate();
-              });
-            });
-          entityDialog.dialogRef.close();
-        },
-        () => {
-          this.dialogService.confirm({
-            title: this.translate.instant(helptext.save_config_err.title),
-            message: this.translate.instant(helptext.save_config_err.message),
-            hideCheckBox: false,
-            buttonMsg: this.translate.instant(helptext.save_config_err.button_text),
-          }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-            this.continueUpdate();
-          });
-        },
-      );
+    this.ws.call(
+      'core.download',
+      ['config.save', [{ secretseed: entityDialog.formValue['secretseed'] }], fileName],
+    ).pipe(
+      switchMap(([_, url]) => {
+        return this.storage.streamDownloadFile(this.http, url, fileName, mimetype).pipe(
+          tap((file: Blob) => {
+            this.storage.downloadBlob(file, fileName);
+          }),
+        );
+      }),
+      catchError(() => {
+        this.loader.close();
+        entityDialog.dialogRef.close(true);
+        return this.dialogService.confirm({
+          title: this.translate.instant(helptext.save_config_err.title),
+          message: this.translate.instant(helptext.save_config_err.message),
+          buttonMsg: this.translate.instant(helptext.save_config_err.button_text),
+        }).pipe(filter(Boolean));
+      }),
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.loader.close();
+      entityDialog.dialogRef.close(true);
+      this.continueUpdate();
+    });
   }
 
-  // Continutes the update (based on its type) after the Save Config dialog is closed
+  // Continues the update (based on its type) after the Save Config dialog is closed
   continueUpdate(): void {
     switch (this.updateType) {
       case 'manual':

@@ -1,5 +1,5 @@
 ##NODE temporary builder image
-from node:buster as uibuilder
+from node:16-buster as uibuilder
 COPY ./ /src-ui
 WORKDIR /src-ui
 RUN yarn install --frozen-lockfile
@@ -37,5 +37,5 @@ COPY --from=uibuilder /src-ui/dist /var/www/webui
 
 # Configure Services and Port
 CMD ["/start.sh"]
- 
+
 EXPOSE 80 443

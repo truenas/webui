@@ -1,25 +1,13 @@
 import { Overlay, OverlayRef, OverlayPositionBuilder } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
 import {
-  Directive, Component, Input, AfterViewInit, ElementRef, HostListener, ComponentRef,
+  Directive, Input, AfterViewInit, ElementRef, HostListener, ComponentRef,
 } from '@angular/core';
-
-@Component({
-  selector: 'text-limiter-tooltip',
-  template: `<div class="tooltip-container">
-              <div class="html-tooltip" [innerHTML]="html"></div>
-            </div>`,
-  styleUrls: ['./html-tooltip.directive.scss'],
-})
-
-export class HtmlTooltipComponent {
-  @Input() html = '';
-}
+import { HtmlTooltipComponent } from 'app/core/components/directives/html-tooltip/html-tooltip.component';
 
 @Directive({
   selector: '[htmlTooltip]',
 })
-
 export class HtmlTooltipDirective implements AfterViewInit {
   @Input() htmlTooltip: string;
   private overlayRef: OverlayRef;

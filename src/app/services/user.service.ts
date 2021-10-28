@@ -79,11 +79,12 @@ export class UserService {
     return this.ws
       .call('user.shell_choices', userId ? [userId] : [])
       .pipe(
-        map((choices) =>
-          Object.keys(choices || {}).map((key) => ({
+        map((choices) => {
+          return Object.keys(choices || {}).map((key) => ({
             label: choices[key],
             value: key,
-          }))),
+          }));
+        }),
       )
       .toPromise();
   }

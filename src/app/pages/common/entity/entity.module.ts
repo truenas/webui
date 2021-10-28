@@ -83,7 +83,6 @@ import { ToolbarSliderComponent } from './entity-toolbar/components/toolbar-slid
 import { EntityToolbarComponent } from './entity-toolbar/entity-toolbar.component';
 import { EntityTreeTableComponent } from './entity-tree-table/entity-tree-table.component';
 import { EntityWizardComponent } from './entity-wizard/entity-wizard.component';
-import { SmdFabSpeedDialTriggerComponent, SmdFabSpeedDialActionsComponent, SmdFabSpeedDialComponent } from './fab-speed-dial/fab-speed-dial';
 import { TableComponent } from './table/table.component';
 import { TableService } from './table/table.service';
 
@@ -136,9 +135,6 @@ import { TableService } from './table/table.service';
     FormUploadComponent,
     FormReadFileComponent,
     EntityJobComponent,
-    SmdFabSpeedDialTriggerComponent,
-    SmdFabSpeedDialActionsComponent,
-    SmdFabSpeedDialComponent,
     EntityWizardComponent,
     EntityTaskComponent,
     FormParagraphComponent,
@@ -175,9 +171,6 @@ import { TableService } from './table/table.service';
     EntityTableAddActionsComponent,
     EntityTableActionsComponent,
     DynamicFieldDirective,
-    SmdFabSpeedDialTriggerComponent,
-    SmdFabSpeedDialActionsComponent,
-    SmdFabSpeedDialComponent,
     EntityWizardComponent,
     EntityTaskComponent,
     EntityDialogComponent,

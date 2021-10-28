@@ -44,7 +44,7 @@
           </div>
 
           <ng-template #loader>
-            <mat-spinner [diameter]="40" style="margin: 0 auto;"></mat-spinner>
+            <mat-spinner [diameter]="40" class="spinner"></mat-spinner>
           </ng-template>
 
           <div *ngIf="screenType == 'Desktop'" fxFlex="53" fxFlex.xs="100" id="cpu-load-cores" class="no-flicker">
@@ -124,13 +124,12 @@
               <div *ngIf="screenType == 'Desktop'" fxFlex="23" fxFlex.xs="calc(100% - 16px)" class="legend-item core-number"><span class="label">{{"Thread:" | translate}}</span> {{legendIndex}}</div>
 
               <div fxFlex="22" fxFlex.xs="calc(50% - 16px)" class="legend-item usage">
-                <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">{{legendData[0].label}}:</span> {{legendData[0].data[legendIndex]}}%
+                <div class="legend-swatch primary"></div><span class="label">{{legendData[0].label}}:</span> {{legendData[0].data[legendIndex]}}%
               </div>
 
               <ng-container *ngIf="tempAvailable">
                 <div fxFlex="32" fxFlex.xs="calc(50% - 16px)" *ngIf="legendData[1]" class="legend-item temperature">
-                  <div class="legend-swatch" *ngIf="themeService.isDefaultTheme" style="background-color: var(--orange)"></div>
-                  <div class="legend-swatch" *ngIf="!themeService.isDefaultTheme" style="background-color: var(--accent)"></div>
+                  <div class="legend-swatch" [ngClass]="{ 'defaultTheme': themeService.isDefaultTheme, 'nonDefaultTheme': !themeService.isDefaultTheme }"></div>
                   <span class="label">{{legendData[1].label}}:</span> {{legendData[1].data[legendIndex]}}°C
                 </div>
               </ng-container>
@@ -144,13 +143,12 @@
               <div fxFlex="23" fxFlex.xs="calc(100% - 16px)" class="legend-item core-number"><span class="label">{{"Stats Per Thread" | translate}}</span></div>
 
               <div fxFlex="22" fxFlex.xs="calc(50% - 16px)" class="legend-item usage">
-                <div class="legend-swatch" style="background-color:var(--primary);"></div><span class="label">{{"Usage" | translate}}</span>
+                <div class="legend-swatch primary"></div><span class="label">{{"Usage" | translate}}</span>
               </div>
 
               <ng-container *ngIf="tempAvailable">
                 <div fxFlex="32" fxFlex.xs="calc(50% - 16px)"  class="legend-item temperature">
-                  <div class="legend-swatch" *ngIf="themeService.isDefaultTheme" style="background-color: var(--orange)"></div>
-                  <div class="legend-swatch" *ngIf="!themeService.isDefaultTheme" style="background-color: var(--accent)"></div>
+                  <div class="legend-swatch" [ngClass]="{ 'defaultTheme': themeService.isDefaultTheme, 'nonDefaultTheme': !themeService.isDefaultTheme }"></div>
                   <span class="label">{{"Temperature" | translate}}</span>
                 </div>
               </ng-container>

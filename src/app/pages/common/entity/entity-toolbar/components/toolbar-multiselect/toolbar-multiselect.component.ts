@@ -11,6 +11,7 @@ import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.i
 @Component({
   selector: 'toolbar-multiselect',
   templateUrl: './toolbar-multiselect.component.html',
+  styleUrls: ['./toolbar-multiselect.component.scss'],
 })
 export class ToolbarMultiSelectComponent extends IxAbstractObject implements OnInit {
   @ViewChild('selectTrigger') mySel: MatSelect;

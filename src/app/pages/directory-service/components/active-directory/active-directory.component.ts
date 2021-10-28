@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -40,7 +40,6 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   protected nss_info: FormSelectConfig;
   adStatus = false;
   entityEdit: EntityFormComponent;
-  protected dialogRef: MatDialogRef<EntityJobComponent, void>;
   custActions = [
     {
       id: helptext.activedirectory_custactions_basic_id,
@@ -456,17 +455,17 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   // Shows starting progress as a job dialog
   showStartingJob(jobId: number): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Start') }, disableClose: true });
-    this.dialogRef.componentInstance.jobId = jobId;
-    this.dialogRef.componentInstance.wsshow();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogRef.close();
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Start') }, disableClose: true });
+    dialogRef.componentInstance.jobId = jobId;
+    dialogRef.componentInstance.wsshow();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close();
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       new EntityUtils().handleWSError(this, error, this.dialogservice);
       this.modalService.refreshTable();
-      this.dialogRef.close();
+      dialogRef.close();
     });
   }
 }

@@ -56,7 +56,7 @@
       <div class="expansion-content">
         <div *ngFor="let containerImage of catalogApp.resources?.container_images | keyvalue; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
           <div fxLayout="row" fxLayoutAlign="center start">
-            <span fxFlex="70%" class="">{{ containerImage.key }}</span>
+            <span fxFlex="70%">{{ containerImage.key }}</span>
             <span fxFlex="30%" class="value" >{{ containerImageStatus(containerImage) | translate}}</span>
           </div>
         </div>
