@@ -82,9 +82,6 @@ span.passive {
 
 .slide.overview .left {
   padding: 0;
-  /*background-color:var(--primary);*/
-  /*background-color:var(--contrast-darker);
-  color: var(--fg2);*/
   position: relative;
 }
 
@@ -415,4 +412,6 @@ div.generic.alert .mat-icon {
   top: -24px;
 }
 
-
+.spinner {
+  margin: 0 auto;
+}

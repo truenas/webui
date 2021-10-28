@@ -4,14 +4,14 @@
   <!-- TODO: Replace with ix-input when its ready -->
   <div class="form-element" id="row-filter">
     <mat-form-field floatPlaceholder="auto">
-      <span matPrefix style="cursor: default; user-select: none;"><mat-icon>search</mat-icon></span>
+      <span matPrefix class="search-icon-wrapper"><mat-icon>search</mat-icon></span>
       <input matInput #filter placeholder="{{'Filter' | translate}} {{'Dataset Names' | translate}}"
         class="mat-input-element"
         ix-auto
         ix-auto-type="input"
         ix-auto-identifier="Filter {{entity.title}}">
       <span
-        class="reset-filter-icon"
+        class="reset-icon-wrapper"
         [class.invisible]="!filterValue || filterValue.length == 0"
         matSuffix
       >
@@ -111,7 +111,7 @@
     *ngIf="!entity.showDefaults && entity.showSpinner"
     id="entity-spinner"
     #entityspinner
-    style="margin-left: 8px;"
+    class="spinner"
   >
   </mat-spinner>
 </div>

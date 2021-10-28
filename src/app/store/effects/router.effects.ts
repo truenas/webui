@@ -11,15 +11,14 @@ export class RouterEffects {
   constructor(private actions$: Actions, private titleService: Title, private translateService: TranslateService) {}
 
   navigate$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType<RouterNavigationAction<CustomRouterState>>(routerNavigationAction),
-        tap((data: RouterNavigationAction<CustomRouterState>) => {
-          this.titleService.setTitle(
-            data.payload.routerState.title + ' - ' + window.location.hostname,
-          );
-        }),
-      ),
+    () => this.actions$.pipe(
+      ofType<RouterNavigationAction<CustomRouterState>>(routerNavigationAction),
+      tap((data: RouterNavigationAction<CustomRouterState>) => {
+        this.titleService.setTitle(
+          data.payload.routerState.title + ' - ' + window.location.hostname,
+        );
+      }),
+    ),
     { dispatch: false },
   );
 }

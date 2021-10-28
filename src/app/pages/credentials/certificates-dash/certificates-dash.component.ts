@@ -105,7 +105,7 @@ export class CertificatesDashComponent implements OnInit {
               name: T('Status'),
               prop1: 'revoked',
               iconTooltip: T('Revoked'),
-              getIcon: (element: any, prop: string): string => {
+              getIcon: (element: Certificate, prop: keyof Certificate): string => {
                 if (element[prop]) {
                   return 'block';
                 }
@@ -172,7 +172,7 @@ export class CertificatesDashComponent implements OnInit {
               name: T('Status'),
               prop1: 'revoked',
               iconTooltip: T('Revoked'),
-              getIcon: (element: any, prop: string): string => {
+              getIcon: (element: Certificate, prop: keyof Certificate): string => {
                 if (element[prop]) {
                   return 'block';
                 }

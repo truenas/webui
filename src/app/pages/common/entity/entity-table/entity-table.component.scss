@@ -16,6 +16,7 @@ div.table-container {
 }
 
 table {
+  border-collapse: separate;
   min-width: 800px;
   width: 100%;
 }
@@ -35,7 +36,9 @@ td.sticky-border-left {
 
 th.expansion-chevrons-column,
 td.expansion-chevrons-column {
+  cursor: pointer;
   padding-right: 24px !important;
+  text-align: right;
 }
 
 td.mat-cell.data-column {
@@ -44,11 +47,6 @@ td.mat-cell.data-column {
 
 .data-column {
   padding: 0 12px !important;
-}
-
-th.mat-header-cell.data-column,
-td.mat-cell.data-column {
-  //padding-left: 12px;
 }
 
 tr.details-row {
@@ -117,6 +115,10 @@ tr.details-row:hover {
   right: 0;
   top: 10px;
   z-index: 10;
+}
+
+.mat-card-footer {
+  padding: 0 !important;
 }
 
 .mat-card-title-text {

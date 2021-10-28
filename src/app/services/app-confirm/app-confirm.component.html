@@ -1,11 +1,11 @@
 <h1 mat-dialog-title>{{ title }}</h1>
 <div mat-dialog-content>{{ message }}</div>
-<div mat-dialog-actions style='justify-content: flex-end'>
+<div mat-dialog-actions fxLayoutAlign="end">
   <button
     type="button"
     color="accent"
     mat-button
-    (click)="dialogRef.close(false)">{{'Cancel'}}</button>
+    (click)="dialogRef.close(false)">{{'Cancel' | translate}}</button>
   <button
     type="button"
     mat-button

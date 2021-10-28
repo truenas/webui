@@ -24,7 +24,7 @@ def test_verify_active_directory_works_after_failover_with_new_system_dataset(dr
 
 
 @given(parsers.parse('the browser is open, navigate to "{nas_url}"'))
-def the_browser_is_open_navigate_to_tnbhyve01tnixsystemsnet(driver, nas_url):
+def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """the browser is open, navigate to "{nas_url}"."""
     global host
     host = nas_url
@@ -92,8 +92,8 @@ def change_the_Domain_for_ad_domain_and_click_Save(driver, ad_domain):
 @then('"Please wait" should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """"Please wait" should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 7, f'//span[text()="{nameserver_1}"]')
+    assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, f'//span[text()="{nameserver_1}"]')
 
 
 @then('after, click on Credentials on the left sidebar, then Directory Services')
@@ -166,7 +166,7 @@ def run_cmd_on_the_nas_with_ssh(driver, cmd):
     """run "cmd" on the NAS with ssh."""
     global results
     results = ssh_cmd(cmd, 'root', 'testing', host)
-    assert results['result'], results['output']
+    assert results['result'], f'STDOUT: {results["output"]}, STDERR: {results["stderr"]}'
 
 
 @then(parsers.parse('verify that "{ad_object}" is in  wbinfo -u output'))
@@ -215,7 +215,8 @@ def click_initiate_failover_click_the_confirm_checkbox_and_press_failover(driver
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear."""
     # to make sure the UI is refresh for the login page
-    assert wait_on_element(driver, 180, '//input[@data-placeholder="Username"]')
+    assert wait_on_element(driver, 240, '//input[@data-placeholder="Username"]')
+    assert wait_on_element(driver, 240, '//p[text()="HA is enabled."]')
 
 
 @then(parsers.parse('at the login page, enter "{user}" and "{password}"'))
@@ -231,22 +232,29 @@ def at_the_login_page_enter_user_and_password(driver, user, password):
     time.sleep(2)
 
 
-@then('on the Dashboard, wait 5 second')
-def on_the_dashboard_wait_5_second(driver):
-    """on the Dashboard, wait 5 second."""
+@then('on the Dashboard, wait for the Active Directory service')
+def on_the_dashboard_wait_for_the_active_directory_service(driver):
+    """on the Dashboard, wait for the Active Directory service."""
     assert wait_on_element(driver, 60, '//h1[text()="Dashboard"]')
-    # make sure HA is enable before going forward
-    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
-    if wait_on_element(driver, 2, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
-        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     assert wait_on_element(driver, 120, '//span[contains(.,"System Information")]')
-    time.sleep(20)
+    # Make sure HA is enable before going forward
+    assert wait_on_element(driver, 180, '//mat-icon[@svgicon="ha_enabled"]')
+    if wait_on_element(driver, 3, '//button[@ix-auto="button__I AGREE"]', 'clickable'):
+        driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    # Wait for the directories service manager button
+    assert wait_on_element(driver, 180, '//button[@id="dirservices-manager"]')
+    # Verify HA enabled again
+    assert wait_on_element(driver, 120, '//mat-icon[@svgicon="ha_enabled"]')
+    # Wait for the badge of the task-manager to go away before going forward
+    no_badge = '//span[contains(@id,"mat-badge-content") and not(contains(text(),"0"))]'
+    assert wait_on_element_disappear(driver, 120, f'//button[@id="task-manager"]{no_badge}')
 
 
 @then('after click Storage on the left sidebar Storage')
 def after_click_storage_on_the_left_sidebar_storage(driver):
     """after click Storage on the left sidebar Storage."""
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
+    assert wait_on_element(driver, 20, '//h1[text()="Dashboard"]')
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
 
 

@@ -9,9 +9,6 @@
 
 #cpu-cores-chart {
   margin: 0 16px;
-  /*position: absolute;
-  left: 0;
-  bottom: 0;*/
   width: 536px;
 }
 
@@ -22,14 +19,6 @@
 #cpu-load-wrapper {
   height: 170px;
   position: relative;
-}
-
-#cpu-load-cores {
-  /*opacity:0.5;*/
-}
-
-#cpu-load-cores-legend {
-  /*margin-top:36px;*/
 }
 
 #cpu-load-cores-legend .legend-item.chart-label {
@@ -77,8 +66,6 @@
 }
 
 .title-wrapper {
-  /*background-color:var(--blue);
-  color:#fff;*/
   height: 45%;
   padding: 16px;
   text-align: left;
@@ -123,6 +110,10 @@ h1.memory-used span.memory-used-units {
   text-align: center;
   top: 48px;
   width: 100%;
+
+  .spinner {
+    margin: 0 auto;
+  }
 }
 
 .chart-wrapper {
@@ -131,7 +122,6 @@ h1.memory-used span.memory-used-units {
 }
 
 .x-axis .start-time,
- 
 .x-axis .end-time {
   bottom: 0;
   font-family: Roboto;
@@ -178,9 +168,6 @@ h1.memory-used span.memory-used-units {
   width: calc(100% - 32px);
 }
 
-/*:host ::ng-deep .c3-axis-y g:nth-child(2n){
-  visibility:hidden;
-}*/
 
 /* MARKER */
 :host ::ng-deep .c3-chart-line .c3-circles circle._expanded_ {
@@ -196,8 +183,6 @@ h1.memory-used span.memory-used-units {
   height: calc(100vh - 96px);
   position: absolute;
   width: 100%;
-  /*top: 88px;
-  z-index: 2;*/
 }
 
 .list-subheader {

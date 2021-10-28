@@ -38,7 +38,7 @@ export interface NetworkServiceAnnouncement {
 
 export interface NetworkConfigurationActivity {
   type: NetworkActivityType;
-  activities: any[];
+  activities: string[];
 }
 
 export type NetworkActivityChoice = [

@@ -24,7 +24,7 @@
   </div>
 
   <div *ngIf="config.hideButton;else showButton">
-    <mat-card-content style="display: none;">
+    <mat-card-content class="display-none">
       <input
         *ngIf="!config.multiple; else multipleFiles"
         id="fb"
@@ -49,7 +49,7 @@
     <mat-error *ngIf="config.warnings"><div [innerHTML]="config.warnings | translate"></div></mat-error>
   </div>
   <ng-template #showButton>
-    <mat-card-content style="display: none;">
+    <mat-card-content class="display-none">
       <input id="fb" type="file" #fileInput accept="{{config.acceptedFiles}}" [formControlName]="config.name">
     </mat-card-content>
     <mat-card-actions class="buttons">

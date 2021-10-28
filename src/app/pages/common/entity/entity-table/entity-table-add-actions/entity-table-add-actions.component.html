@@ -4,7 +4,7 @@
   <!-- TODO: Replace with ix-input when its ready -->
   <div class="form-element search-field" id="row-filter">
     <mat-form-field floatPlaceholder="never">
-      <span matPrefix><mat-icon>search</mat-icon></span>
+      <span matPrefix class="search-icon-wrapper"><mat-icon>search</mat-icon></span>
       <input
         #filter
         matInput
@@ -14,7 +14,7 @@
         ix-auto-identifier="Filter {{entity.conf.title}}">
 
       <span
-        class="reset-filter-icon"
+        class="reset-icon-wrapper"
         [class.invisible]="!filterValue || filterValue.length == 0"
         matSuffix
       >
@@ -83,11 +83,9 @@
   <!-- END COLUMN FILTER -->
 
 
-  <!--<div>-->
   <!-- OLD TEMPLATE START -->
-  <div class="entity-add-actions-wrapper" style="display:inline-block; text-align:left;" *ngIf="this.totalActions> 0">
+  <div class="entity-add-actions-wrapper" *ngIf="this.totalActions> 0">
     <button
-      style="height:37px; margin-top:-1px;"
       mat-button color="primary"
       [matMenuTriggerFor]="menu"
       class="menu-toggle"
@@ -152,7 +150,6 @@
     </ng-template>
   </div>
   <!-- OLD TEMPLATE END -->
-  <!--</div>-->
 
   <ng-container *ngIf="conf && conf.custActions">
     <span *ngFor="let custBtn of conf.custActions">
@@ -188,7 +185,7 @@
     id="entity-spinner"
     *ngIf="!entity.showDefaults && entity.showSpinner"
     #entityspinner
-    style="margin-left: 8px;"
+    class="spinner"
   >
   </mat-spinner>
 

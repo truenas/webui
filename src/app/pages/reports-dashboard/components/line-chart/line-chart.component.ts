@@ -89,12 +89,6 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     this.legendAnalytic$ = new BehaviorSubject([]);
   }
 
-  applyHandledData(columns: any, linechartData: any, legendLabels: any): void {
-    this.columns = columns;
-    this.linechartData = linechartData;
-    this.legendLabel$.next(legendLabels);
-  }
-
   render(update?: boolean): void {
     this.renderGraph(update);
   }
@@ -137,7 +131,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
       axes: {
         y: {
           yRangePad: 24,
-          axisLabelFormatter: (numero: any) => {
+          axisLabelFormatter: (numero: number) => {
             const converted = this.formatLabelValue(numero, this.inferUnits(this.labelY), 1, true);
             const suffix = converted.suffix ? converted.suffix : '';
             return this.limitDecimals(converted.value).toString() + suffix;
@@ -265,7 +259,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return obj;
   }
 
-  fetchData(rrdOptions: any, timeformat?: string, culling?: number): void {
+  fetchData(rrdOptions: { start: number; end: number }, timeformat?: string, culling?: number): void {
     if (timeformat) {
       this.timeFormat = timeformat;
     }

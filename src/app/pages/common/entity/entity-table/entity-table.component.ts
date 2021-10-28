@@ -341,9 +341,11 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         // If preferred columns have been set for THIS table...
         if (column.title === this.title) {
           this.firstUse = false;
-          this.conf.columns = column.cols.filter((col) =>
-          // Remove columns if they are already present in always displayed columns
-            !this.alwaysDisplayedCols.find((item) => item.prop === col.prop));
+          this.conf.columns = column.cols.filter((col) => {
+            // Remove columns if they are already present in always displayed columns
+            return !this.alwaysDisplayedCols.find((item) => item.prop === col.prop);
+          });
+
           // Remove columns from display and preferred cols if they don't exist in the table
           const notFound: EntityTableColumnProp[] = [];
           this.conf.columns.forEach((col) => {

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { Overwrite } from 'utility-types';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiTargetExtent, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
@@ -107,7 +108,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(value: any): void {
+  beforeSubmit(value: Overwrite<IscsiTargetExtent, { lunid: string }>): void {
     if (value['lunid'] === '') {
       delete value['lunid'];
     }
