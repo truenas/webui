@@ -97,8 +97,8 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
         label: this.translate.instant('Run Now'),
         id: 'run',
         icon: 'play_arrow',
-        onClick: (row: CronjobRow) =>
-          this.dialog
+        onClick: (row: CronjobRow) => {
+          return this.dialog
             .confirm({
               title: this.translate.instant('Run Now'),
               message: this.translate.instant('Run this job now?'),
@@ -122,7 +122,8 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
                 );
               },
               (err: WebsocketError) => new EntityUtils().handleError(this, err),
-            ),
+            );
+        },
       },
       {
         name: this.config.name,

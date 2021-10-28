@@ -1,6 +1,5 @@
 name: 'Latest Docker Image - master'
 
-
 on:
   push:
     branches:

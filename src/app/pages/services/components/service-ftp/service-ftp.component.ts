@@ -461,7 +461,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
       }
     });
 
-    this.bwFields.forEach((field) =>
+    this.bwFields.forEach((field) => {
       entityEdit.formGroup.controls[field].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
         const formField = _.find(this.fieldConfig, { name: field });
         const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
@@ -471,7 +471,8 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           formField['hasErrors'] = true;
           formField['errors'] = helptext.bandwidth_err;
         }
-      }));
+      });
+    });
 
     // 'Erase' humanReadable after load to keep from accidentaly resetting values
     setTimeout(() => {
@@ -480,8 +481,10 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   }
 
   resourceTransformIncomingRestData(data: any): any {
-    this.bwFields.forEach((field) =>
-      data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0, 'KiB'));
+    this.bwFields.forEach((field) => {
+      data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0, 'KiB');
+    });
+
     this.rootlogin = data['rootlogin'];
     const certificate = data['ssltls_certificate'];
     if (certificate && certificate.id) {
@@ -506,8 +509,9 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   }
 
   beforeSubmit(data: any): void {
-    this.bwFields.forEach((field) =>
-      data[field] = this.storageService.convertHumanStringToNum(data[field]) / 1024);
+    this.bwFields.forEach((field) => {
+      data[field] = this.storageService.convertHumanStringToNum(data[field]) / 1024;
+    });
 
     const fileperm = parseInt(data['filemask'], 8);
     let filemask = (~fileperm & 0o777).toString(8);

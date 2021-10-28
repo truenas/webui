@@ -1328,9 +1328,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           }
           return this.ws.call((this.createCalls as any)[item], [payload]).toPromise();
         },
-        () =>
-        // show error ?
-          this.ws.call((this.createCalls as any)[item], [payload]).toPromise(),
+        () => {
+          // show error ?
+          this.ws.call((this.createCalls as any)[item], [payload]).toPromise();
+        },
       );
     }
   }

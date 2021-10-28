@@ -14,6 +14,7 @@ import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dat
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server-form/ntp-server-form.component';
+import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { CoreComponents } from '../../core/components/core-components.module';
 import { EntityModule } from '../common/entity/entity.module';
@@ -29,7 +30,6 @@ import { SyslogFormComponent } from './advanced/syslog-form/syslog-form.componen
 import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach/bootenv-attach-form.component';
-import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/bootenv-clone.component';
 import { BootEnvironmentFormComponent } from './bootenv/bootenv-form/bootenv-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace/bootenv-replace-form.component';
@@ -49,7 +49,7 @@ import { KmipComponent } from './kmip/kmip.component';
 import { routing } from './system.routing';
 import { TunableFormComponent } from './tunable/tunable-form/tunable-form.component';
 import { TunableListComponent } from './tunable/tunable-list/tunable-list.component';
-import { TwoFactorComponent, QrDialogComponent } from './two-factor/two-factor.component';
+import { TwoFactorComponent } from './two-factor/two-factor.component';
 import { UpdateComponent } from './update/update.component';
 import { EnclosureModule } from './view-enclosure/enclosure.module';
 
@@ -65,7 +65,6 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     AdvancedSettingsComponent,
     LocalizationFormComponent,
     BootEnvironmentListComponent,
-    BootEnvironmentCloneComponent,
     BootEnvironmentFormComponent,
     BootStatusListComponent,
     BootEnvAttachFormComponent,

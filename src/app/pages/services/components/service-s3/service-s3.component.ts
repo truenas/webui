@@ -152,11 +152,12 @@ export class ServiceS3Component implements FormConfiguration {
     this.ws
       .call('s3.bindip_choices')
       .pipe(
-        map((response) =>
-          Object.keys(response || {}).map((key) => ({
+        map((response) => {
+          return Object.keys(response || {}).map((key) => ({
             label: response[key],
             value: key,
-          }))),
+          }));
+        }),
       )
       .pipe(untilDestroyed(this)).subscribe((choices) => {
         choices.forEach((ip) => {

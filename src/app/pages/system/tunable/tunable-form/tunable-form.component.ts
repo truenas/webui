@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { TunableType } from 'app/enums/tunable-type.enum';
 import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
@@ -21,7 +22,9 @@ export class TunableFormComponent {
   get isNew(): boolean {
     return !this.editingTunable;
   }
-
+  get title(): string {
+    return this.isNew ? this.translate.instant('Add Sysctl') : this.translate.instant('Edit Sysctl');
+  }
   isFormLoading = false;
 
   form = this.fb.group({
@@ -44,6 +47,7 @@ export class TunableFormComponent {
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
+    private translate: TranslateService,
   ) {}
 
   setTunableForEdit(tunable: Tunable): void {

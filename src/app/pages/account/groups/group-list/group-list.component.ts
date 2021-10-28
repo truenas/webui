@@ -117,7 +117,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
         label: helptext.group_list_actions_label_edit,
         name: helptext.group_list_actions_id_edit,
         onClick: (group: Group) => {
-          const modal = this.modalService.open(GroupFormComponent, this.translate.instant('Edit Group'));
+          const modal = this.modalService.open(GroupFormComponent);
           modal.setupForm(group);
         },
       });
@@ -228,7 +228,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
   }
 
   doAdd(): void {
-    const modal = this.modalService.open(GroupFormComponent, this.translate.instant('Add Group'));
+    const modal = this.modalService.open(GroupFormComponent);
     modal.setupForm();
   }
 }

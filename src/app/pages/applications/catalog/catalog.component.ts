@@ -205,7 +205,7 @@ export class CatalogComponent implements OnInit {
           this.selectPool();
           return;
         case 'advanced_settings':
-          this.ixModalService.open(KubernetesSettingsComponent, this.translate.instant('Kubernetes Settings'));
+          this.ixModalService.open(KubernetesSettingsComponent);
           break;
         case 'unset_pool':
           this.doUnsetPool();
@@ -373,8 +373,9 @@ export class CatalogComponent implements OnInit {
       this.filteredCatalogApps = this.catalogApps;
     }
 
-    this.filteredCatalogApps = this.filteredCatalogApps.filter((app) =>
-      this.filteredCatalogNames.includes(app.catalog.label) && app.name !== ixChartApp);
+    this.filteredCatalogApps = this.filteredCatalogApps.filter(
+      (app) => this.filteredCatalogNames.includes(app.catalog.label) && app.name !== ixChartApp,
+    );
 
     if (this.filteredCatalogApps.length == 0) {
       if (this.filterString) {

@@ -21,4 +21,8 @@ export interface LdapConfig {
   validate_certificates: boolean;
 }
 
+export interface LdapConfigUpdateResult extends LdapConfig {
+  job_id: number;
+}
+
 export type LdapConfigUpdate = Omit<LdapConfig, 'id' | 'cert_name' | 'uri_list'>;

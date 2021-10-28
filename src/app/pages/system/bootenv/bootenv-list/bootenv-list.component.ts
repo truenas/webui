@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -143,7 +144,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: this.translate.instant('Clone'),
       id: 'clone',
       onClick: (row: BootenvRow) => {
-        this._router.navigate(['/', 'system', 'boot', 'clone', row.id]);
+        const modal = this.modalService.open(BootEnvironmentFormComponent);
+        modal.setupForm(BootEnvironmentActions.Clone, row.id);
       },
     });
 
@@ -151,8 +153,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: this.translate.instant('Rename'),
       id: 'rename',
       onClick: (row: BootenvRow) => {
-        const modal = this.modalService.open(BootEnvironmentFormComponent, this.translate.instant('Create Boot Environment'));
-        modal.setupForm(row.id);
+        const modal = this.modalService.open(BootEnvironmentFormComponent);
+        modal.setupForm(BootEnvironmentActions.Rename, row.id);
       },
     });
 
@@ -160,8 +162,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       actions.push({
         label: this.translate.instant('Delete'),
         id: 'delete',
-        onClick: (row: BootenvRow) =>
-          this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe(
+        onClick: (row: BootenvRow) => {
+          return this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe(
             (success) => {
               if (!success) {
                 this.dialog.errorReport(
@@ -176,7 +178,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
               this.updateBootState();
               this.entityList.selection.clear();
             },
-          ),
+          );
+        },
       });
     }
 
@@ -320,8 +323,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return [{
       label: this.translate.instant('Add'),
       onClick: () => {
-        const modal = this.modalService.open(BootEnvironmentFormComponent, this.translate.instant('Create Boot Environment'));
-        modal.setupForm();
+        const modal = this.modalService.open(BootEnvironmentFormComponent);
+        modal.setupForm(BootEnvironmentActions.Create);
       },
     }, {
       label: this.translate.instant('Stats/Settings'),

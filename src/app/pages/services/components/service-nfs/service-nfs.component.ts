@@ -163,8 +163,9 @@ export class ServiceNFSComponent implements FormConfiguration {
 
   private ipChoices$ = this.ws.call('nfs.bindip_choices')
     .pipe(
-      map((ips: { [ip: string]: string }) =>
-        Object.keys(ips || {}).map((key) => ({ label: key, value: key }))),
+      map((ips: { [ip: string]: string }) => {
+        return Object.keys(ips || {}).map((key) => ({ label: key, value: key }));
+      }),
     );
   private validBindIps: string[] = [];
 

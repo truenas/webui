@@ -12,7 +12,6 @@ import { IxModalService } from 'app/services/ix-modal.service';
 export class IxModalComponent implements OnInit, OnDestroy {
   @Input() id: string;
   @ViewChild(IxModalDirective, { static: true }) ixModal: IxModalDirective;
-  title = '';
   private element: HTMLElement;
 
   constructor(
@@ -63,17 +62,15 @@ export class IxModalComponent implements OnInit, OnDestroy {
       backgroundInDom.classList.remove('open');
     }
     document.body.classList.remove('ix-modal-open');
-    this.title = '';
   }
 
-  openModal<T>(modal: Type<T>, title: string): T {
+  openModal<T>(modal: Type<T>): T {
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(modal);
 
     const viewContainerRef = this.ixModal.viewContainerRef;
     viewContainerRef.clear();
 
     const componentRef = viewContainerRef.createComponent<T>(componentFactory);
-    this.title = title;
 
     const modalInDom: HTMLElement = document.querySelector(`.ix-${this.id}`);
     const backgroundInDom: HTMLElement = document.querySelector(`.ix-${this.id}-background`);
