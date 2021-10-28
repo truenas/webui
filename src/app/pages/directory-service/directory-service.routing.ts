@@ -3,7 +3,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
-import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
 import { IdmapListComponent } from './components/idmap/idmap-list.component';
 import { LdapComponent } from './components/ldap/ldap.component';
@@ -31,10 +30,6 @@ export const routes: Routes = [{
       path: 'kerberosrealms',
       component: KerberosRealmsListComponent,
       data: { title: 'Kerberos Realms', breadcrumb: 'Kerberos Realms', icon: 'apps' },
-    }, {
-      path: 'kerberossettings',
-      data: { title: 'Kerberos Settings', breadcrumb: 'Kerberos Settings', icon: 'settings' },
-      component: KerberosSettingsComponent,
     }, {
       path: 'kerberoskeytabs',
       component: KerberosKeytabsListComponent,

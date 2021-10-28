@@ -1,4 +1,6 @@
-import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import {
+  BaseHarnessFilters, ComponentHarness, HarnessPredicate, parallel, TestKey,
+} from '@angular/cdk/testing';
 import { MatChipHarness, MatChipListHarness } from '@angular/material/chips/testing';
 import { MatChipInputHarness } from '@angular/material/chips/testing/chip-input-harness';
 import { IxFormControlHarness } from 'app/pages/common/ix-forms/interfaces/ix-form-control-harness.interface';
@@ -40,12 +42,7 @@ export class IxChipsHarness extends ComponentHarness implements IxFormControlHar
       return [];
     }
 
-    const values: string[] = [];
-    for (const chip of chips) {
-      values.push(await chip.getText());
-    }
-
-    return values;
+    return parallel(() => chips.map((chip) => chip.getText()));
   }
 
   async setValue(values: string[]): Promise<void> {
@@ -62,16 +59,14 @@ export class IxChipsHarness extends ComponentHarness implements IxFormControlHar
       return;
     }
 
-    for (const chip of chips) {
-      await chip.remove();
-    }
+    await parallel(() => chips.map((chip) => chip.remove()));
   }
 
   async addChips(values: string[]): Promise<void> {
     const input = await this.getChipInputHarness();
     for (const value of values) {
       await input.setValue(value);
-      await input.blur();
+      await input.sendSeparatorKey(TestKey.ENTER);
     }
   }
 }

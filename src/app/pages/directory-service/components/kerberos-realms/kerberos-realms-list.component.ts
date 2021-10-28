@@ -47,9 +47,9 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
     return realms.map((realm) => {
       return {
         ...realm,
-        kdc_string: realm.kdc?.join(' '),
-        admin_server_string: realm.admin_server?.join(' '),
-        kpasswd_server_string: realm.kpasswd_server?.join(' '),
+        kdc_string: realm.kdc?.join(', '),
+        admin_server_string: realm.admin_server?.join(', '),
+        kpasswd_server_string: realm.kpasswd_server?.join(', '),
       };
     });
   }
@@ -74,11 +74,7 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
         id: 'edit',
         label: T('Edit'),
         onClick: (realm: KerberosRealmRow) => {
-          const modal = this.modalService.open(
-            KerberosRealmsFormComponent,
-            this.translate.instant('Edit Kerberos Realm'),
-          );
-
+          const modal = this.modalService.open(KerberosRealmsFormComponent);
           modal.setRealmForEdit(realm);
         },
       },
@@ -93,9 +89,6 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.modalService.open(
-      KerberosRealmsFormComponent,
-      this.translate.instant('Add Kerberos Realm'),
-    );
+    this.modalService.open(KerberosRealmsFormComponent);
   }
 }

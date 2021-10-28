@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
@@ -37,12 +38,19 @@ export class KerberosRealmsFormComponent {
     kpasswd_server: `${helptext.krbrealm_form_kpasswd_server_tooltip} ${helptext.multiple_values}`,
   };
 
+  get title(): string {
+    return this.isNew
+      ? this.translate.instant('Add Kerberos Realm')
+      : this.translate.instant('Edit Kerberos Realm');
+  }
+
   constructor(
     private ws: WebSocketService,
     private modalService: IxModalService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
+    private translate: TranslateService,
   ) {}
 
   setRealmForEdit(realm: KerberosRealm): void {

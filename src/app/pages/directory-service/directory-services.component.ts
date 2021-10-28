@@ -35,11 +35,14 @@ enum DirectoryServicesCardId {
   Ldap = 'ldap',
   Idmap = 'idmap',
   KerberosSettings = 'kerberos-settings',
-  KerberosRealms = 'kerberos-realms',
   KerberosKeytab = 'kerberos-keytab',
 }
 
-type DataCard = { id: DirectoryServicesCardId; title: string; items: Option[] };
+interface DataCard {
+  id: DirectoryServicesCardId;
+  title: string;
+  items: Option[];
+}
 
 @UntilDestroy()
 @Component({
@@ -130,16 +133,10 @@ export class DirectoryServicesComponent implements OnInit {
       { name: T('Password Server'), prop: 'kpasswd_server' },
     ],
     add: () => {
-      this.ixModalService.open(
-        KerberosRealmsFormComponent,
-        this.translate.instant('Add Kerberos Realm'),
-      );
+      this.ixModalService.open(KerberosRealmsFormComponent);
     },
     edit: (realm: KerberosRealm) => {
-      const modal = this.ixModalService.open(
-        KerberosRealmsFormComponent,
-        this.translate.instant('Edit Kerberos Realm'),
-      );
+      const modal = this.ixModalService.open(KerberosRealmsFormComponent);
       modal.setRealmForEdit(realm);
     },
   };
@@ -158,11 +155,11 @@ export class DirectoryServicesComponent implements OnInit {
     columns: [
       { name: 'Name', prop: 'name' },
     ],
-    add() {
-      this.parent.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab);
+    add: () => {
+      this.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab);
     },
-    edit(row) {
-      this.parent.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab, row.id);
+    edit: (row) => {
+      this.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab, row.id);
     },
   };
 
@@ -188,11 +185,11 @@ export class DirectoryServicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshCards();
-    merge([
+    merge(
       this.modalService.onClose$,
       this.ixModalService.onClose$,
       this.modalService.refreshTable$,
-    ])
+    )
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.refreshCards();
@@ -348,12 +345,18 @@ export class DirectoryServicesComponent implements OnInit {
       }),
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => this.modalService.openInSlideIn(component, id));
+    ).subscribe(() => {
+      if (component === KerberosSettingsComponent) {
+        this.ixModalService.open(component);
+      } else {
+        this.modalService.openInSlideIn(component, id);
+      }
+    });
   }
 
   refreshTables(): void {
     [this.kerberosRealmsTableConf, this.idmapTableConf, this.kerberosKeytabTableConf].forEach((config) => {
-      if (config?.tableComponent) {
+      if (config.tableComponent) {
         config.tableComponent.getData();
       }
     });
