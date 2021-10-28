@@ -8,7 +8,7 @@
     <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
   </div>
 
-  <div class="outlined input-container" [class.disabled]="isDisabled">
+  <div class="input-container" [class.disabled]="isDisabled">
     <mat-select
       [(ngModel)]="value"
       [required]="required"
