@@ -163,8 +163,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       actions.push({
         label: T('Delete'),
         id: 'delete',
-        onClick: (row: BootenvRow) =>
-          this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe(
+        onClick: (row: BootenvRow) => {
+          return this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe(
             (success) => {
               if (!success) {
                 this.dialog.errorReport(
@@ -179,7 +179,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
               this.updateBootState();
               this.entityList.selection.clear();
             },
-          ),
+          );
+        },
       });
     }
 
