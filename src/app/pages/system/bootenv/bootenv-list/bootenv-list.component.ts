@@ -145,7 +145,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: T('Clone'),
       id: 'clone',
       onClick: (row: BootenvRow) => {
-        const modal = this.modalService.open(BootEnvironmentFormComponent, this.translate.instant('Clone Boot Environment'));
+        const modal = this.modalService.open(BootEnvironmentFormComponent);
         modal.setupForm(BootEnvironmentActions.Clone, row.id);
       },
     });
@@ -154,7 +154,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: T('Rename'),
       id: 'rename',
       onClick: (row: BootenvRow) => {
-        const modal = this.modalService.open(BootEnvironmentFormComponent, this.translate.instant('Rename Boot Environment'));
+        const modal = this.modalService.open(BootEnvironmentFormComponent);
         modal.setupForm(BootEnvironmentActions.Rename, row.id);
       },
     });
@@ -324,7 +324,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return [{
       label: T('Add'),
       onClick: () => {
-        const modal = this.modalService.open(BootEnvironmentFormComponent, this.translate.instant('Create Boot Environment'));
+        const modal = this.modalService.open(BootEnvironmentFormComponent);
         modal.setupForm(BootEnvironmentActions.Create);
       },
     }, {

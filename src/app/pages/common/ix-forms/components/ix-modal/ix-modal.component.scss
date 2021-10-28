@@ -50,30 +50,6 @@
   width: 800px;
 }
 
-.ix-slidein-title-bar {
-  align-items: center;
-  background-color: var(--bg2);
-  border-bottom: 2px solid rgba(255, 255, 255, 0.05);
-  height: 75px;
-  margin: 0 -15px 10px;
-  padding: 0 30px;
-  position: sticky;
-  top: 0;
-  z-index: 20000;
-}
-
-.ix-formtitle {
-  color: var(--fg1);
-}
-
-#ix-close-icon {
-  color: var(--fg1);
-  cursor: pointer;
-  position: absolute;
-  right: 30px;
-  z-index: 10;
-}
-
 .ix-modal-body {
   background: #fff;
 

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/network/static-routes/static-routes';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
@@ -21,7 +22,9 @@ export class StaticRouteFormComponent {
   get isNew(): boolean {
     return !this.editingRoute;
   }
-
+  get title(): string {
+    return this.isNew ? this.translate.instant('Add Static Route') : this.translate.instant('Edit Static Route');
+  }
   isFormLoading = false;
 
   form = this.fb.group({
@@ -42,6 +45,7 @@ export class StaticRouteFormComponent {
     private modalService: IxModalService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
+    private translate: TranslateService,
   ) {}
 
   setEditingStaticRoute(route: StaticRoute): void {
