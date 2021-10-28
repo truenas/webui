@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -40,7 +39,6 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
 
   constructor(
     private modalService: IxModalService,
-    private translate: TranslateService,
   ) { }
 
   resourceTransformIncomingRestData(realms: KerberosRealm[]): KerberosRealmRow[] {
