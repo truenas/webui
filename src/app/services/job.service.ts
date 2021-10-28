@@ -40,9 +40,9 @@ export class JobService {
 
     if (job.error) {
       if (job.logs_path) {
-        this.dialog.errorReport(T('Error'), job.error, job.exception, job);
+        this.dialog.errorReport(T('Error'), `<pre>${job.error}</pre>`, job.exception, job);
       } else {
-        this.dialog.errorReport(T('Error'), job.error, job.exception);
+        this.dialog.errorReport(T('Error'), `<pre>${job.error}</pre>`, job.exception);
       }
     } else if (job.logs_excerpt === '') {
       this.dialog.report(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
