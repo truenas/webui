@@ -2,19 +2,15 @@ name: CI
 on: [pull_request]
 jobs:
   build:
-    name: Yarn Test
+    name: Build and Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: borales/actions-yarn@v2.1.0
+      - uses: actions/setup-node@v2
         with:
-          cmd: install --frozen-lockfile # will run `yarn install` command
-      - uses: borales/actions-yarn@v2.1.0
-        with:
-          cmd: run extract # test against yarn run extract to make sure it doesn't break PO files
-      - uses: borales/actions-yarn@v2.1.0
-        with:
-          cmd: test:pr # creates environment file and runs jest/spectator unit tests
-      - uses: borales/actions-yarn@v2.1.0
-        with:
-          cmd: build:prod:aot # will run `yarn build:prod:aot` command
+          node-version: '16'
+          cache: 'yarn'
+      - run: yarn install --frozen-lockfile
+      - run: yarn run extract
+      - run: yarn test:pr
+      - run: yarn build:prod:aot
