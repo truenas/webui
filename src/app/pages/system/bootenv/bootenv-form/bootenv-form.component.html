@@ -1,4 +1,4 @@
-<ix-modal-header [title]="'Create Boot Environment' | translate" [loading]="isFormLoading"></ix-modal-header>
+<ix-modal-header [title]="title" [loading]="isFormLoading"></ix-modal-header>
 <mat-card>
   <mat-card-content>
     <form [formGroup]="formGroup" class="ix-form-container" (submit)="onSubmit()">
@@ -9,6 +9,15 @@
           [required]="true"
           [tooltip]="tooltips.name"
           ></ix-input>
+        <ng-container *ngIf="operation === Operations.Clone">
+          <ix-input
+            formControlName="source"
+            [label]="'Source' | translate"
+            [required]="true"
+            [tooltip]="tooltips.source"
+            [class]="Operations.Clone"
+          ></ix-input>
+        </ng-container>
       </ix-fieldset>
 
       <div class="form-actions">

@@ -7,6 +7,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -144,7 +145,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: T('Clone'),
       id: 'clone',
       onClick: (row: BootenvRow) => {
-        this._router.navigate(['/', 'system', 'boot', 'clone', row.id]);
+        const modal = this.modalService.open(BootEnvironmentFormComponent);
+        modal.setupForm(BootEnvironmentActions.Clone, row.id);
       },
     });
 
@@ -153,7 +155,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       id: 'rename',
       onClick: (row: BootenvRow) => {
         const modal = this.modalService.open(BootEnvironmentFormComponent);
-        modal.setupForm(row.id);
+        modal.setupForm(BootEnvironmentActions.Rename, row.id);
       },
     });
 
@@ -322,7 +324,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: T('Add'),
       onClick: () => {
         const modal = this.modalService.open(BootEnvironmentFormComponent);
-        modal.setupForm();
+        modal.setupForm(BootEnvironmentActions.Create);
       },
     }, {
       label: T('Stats/Settings'),

@@ -26,7 +26,7 @@ import { CheckUserQuery, LoginParams } from 'app/interfaces/auth.interface';
 import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import {
   Bootenv,
-  CloneBootenvParams,
+  CreateBootenvParams,
   SetBootenvAttributeParams,
   UpdateBootenvParams,
 } from 'app/interfaces/bootenv.interface';
@@ -38,7 +38,7 @@ import {
   CatalogUpdate, GetItemDetailsParams,
 } from 'app/interfaces/catalog.interface';
 import {
-  CertificateAuthority,
+  CertificateAuthority, CertificateAuthoritySignRequest,
   CertificateAuthorityUpdate,
 } from 'app/interfaces/certificate-authority.interface';
 import {
@@ -97,7 +97,8 @@ import {
 import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interface';
 import { DynamicDnsConfig, DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
-import { FailoverConfig, FailoverUpdate } from 'app/interfaces/failover.interface';
+import { FailoverConfig, FailoverRemoteCall, FailoverUpdate } from 'app/interfaces/failover.interface';
+import { FibreChannelPort } from 'app/interfaces/fibre-channel-port.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
@@ -139,7 +140,7 @@ import {
 } from 'app/interfaces/keychain-credential.interface';
 import { KmipConfig, KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kubernetes-config.interface';
-import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
+import { LdapConfig, LdapConfigUpdate, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { MailConfig, MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
 import { Multipath } from 'app/interfaces/multipath.interface';
@@ -315,7 +316,7 @@ export type ApiDirectory = {
   'boot.scrub': { params: void; response: void };
 
   // Bootenv
-  'bootenv.create': { params: [CloneBootenvParams]; response: string };
+  'bootenv.create': { params: CreateBootenvParams; response: string };
   'bootenv.update': { params: UpdateBootenvParams; response: string };
   'bootenv.set_attribute': { params: SetBootenvAttributeParams; response: boolean };
   'bootenv.activate': { params: [string]; response: boolean };
@@ -350,7 +351,7 @@ export type ApiDirectory = {
   'certificateauthority.update': { params: [number, Partial<CertificateAuthorityUpdate>]; response: CertificateAuthority };
   'certificateauthority.delete': { params: [id: number]; response: boolean };
   'certificateauthority.profiles': { params: void; response: CertificateProfiles };
-  'certificateauthority.ca_sign_csr': { params: any; response: any };
+  'certificateauthority.ca_sign_csr': { params: [CertificateAuthoritySignRequest]; response: CertificateAuthority };
 
   // Chart
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
@@ -462,7 +463,7 @@ export type ApiDirectory = {
   'failover.status': { params: void; response: FailoverStatus };
   'failover.update': { params: [FailoverUpdate]; response: FailoverConfig };
   'failover.force_master': { params: void; response: boolean };
-  'failover.call_remote': { params: any; response: any };
+  'failover.call_remote': { params: FailoverRemoteCall; response: unknown };
   'failover.get_ips': { params: void; response: string[] };
   'failover.node': { params: void; response: string };
   'failover.disabled_reasons': { params: void; response: FailoverDisabledReason[] };
@@ -472,7 +473,7 @@ export type ApiDirectory = {
   'failover.upgrade': { params: void; response: boolean };
 
   // FCPort
-  'fcport.query': { params: any; response: any };
+  'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
   'fcport.update': { params: any; response: any };
 
   // DS Cache
@@ -493,7 +494,7 @@ export type ApiDirectory = {
     params: [SshSemiAutomaticSetup];
     response: KeychainSshCredentials;
   };
-  'keychaincredential.setup_ssh_connection': { params: [SshConnectionSetup]; response: any };
+  'keychaincredential.setup_ssh_connection': { params: [SshConnectionSetup]; response: KeychainSshCredentials };
 
   // Kubernetes
   'kubernetes.config': { params: void; response: KubernetesConfig };
@@ -526,8 +527,8 @@ export type ApiDirectory = {
   'interface.lag_ports_choices': { params: [id: string]; response: Choices };
   'interface.vlan_parent_interface_choices': { params: void; response: Choices };
   'interface.query': { params: QueryParams<NetworkInterface>; response: NetworkInterface[] };
-  'interface.create': { params: any; response: any };
-  'interface.update': { params: any; response: any };
+  'interface.create': { params: any; response: NetworkInterface };
+  'interface.update': { params: any; response: NetworkInterface };
   'interface.delete': { params: [id: string]; response: string };
   'interface.has_pending_changes': { params: void; response: boolean };
   'interface.checkin_waiting': { params: void; response: number | null };
@@ -612,7 +613,7 @@ export type ApiDirectory = {
 
   // Ldap
   'ldap.ssl_choices': { params: void; response: string[] };
-  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfig };
+  'ldap.update': { params: [LdapConfigUpdate]; response: LdapConfigUpdateResult };
   'ldap.schema_choices': { params: void; response: string[] };
   'ldap.config': { params: void; response: LdapConfig };
 
@@ -668,7 +669,7 @@ export type ApiDirectory = {
   'pool.dataset.query_encrypted_roots_keys': { params: void; response: DatasetEncryptedRootKeys };
   'pool.dataset.recommended_zvol_blocksize': { params: [name: string]; response: string };
   'pool.dataset.set_quota': { params: [dataset: string, quotas: SetDatasetQuota[]]; response: void };
-  'pool.dataset.unlock': { params: DatasetUnlockParams; response: DatasetUnlockResult };
+  'pool.dataset.unlock': { params: [path: string, params: DatasetUnlockParams]; response: DatasetUnlockResult };
   'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.dataset.update': { params: any; response: Dataset };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
