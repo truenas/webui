@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
@@ -30,7 +30,7 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ActiveDirectoryComponent implements FormConfiguration {
-  title: string = helptext.title;
+  title = this.translate.instant(helptext.title);
   queryCall = 'activedirectory.config' as const;
   updateCall = 'activedirectory.update' as const;
   isEntity = false;
@@ -306,6 +306,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     protected dialog: MatDialog,
     protected systemGeneralService: SystemGeneralService,
     protected dialogservice: DialogService,
+    protected translate: TranslateService,
   ) { }
 
   resourceTransformIncomingRestData(data: ActiveDirectoryConfig): ActiveDirectoryConfigUi {
@@ -455,7 +456,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   // Shows starting progress as a job dialog
   showStartingJob(jobId: number): void {
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Start') }, disableClose: true });
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Start') }, disableClose: true });
     dialogRef.componentInstance.jobId = jobId;
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

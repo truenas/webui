@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -136,12 +135,12 @@ export class DataProtectionDashboardComponent implements OnInit {
           dataSourceHelper: this.scrubDataSourceHelper,
           emptyEntityLarge: false,
           columns: [
-            { name: T('Pool'), prop: 'pool_name' },
-            { name: T('Description'), prop: 'description', hiddenIfEmpty: true },
-            { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: T('Next Run'), prop: 'next_run', width: '80px' },
+            { name: this.translate.instant('Pool'), prop: 'pool_name' },
+            { name: this.translate.instant('Description'), prop: 'description', hiddenIfEmpty: true },
+            { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
+            { name: this.translate.instant('Next Run'), prop: 'next_run', width: '80px' },
             {
-              name: T('Enabled'),
+              name: this.translate.instant('Enabled'),
               prop: 'enabled',
               width: '50px',
               checkbox: true,
@@ -149,7 +148,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             },
           ],
           deleteMsg: {
-            title: T('Scrub Task'),
+            title: this.translate.instant('Scrub Task'),
             key_props: ['pool_name'],
           },
           parent: this,
@@ -177,23 +176,23 @@ export class DataProtectionDashboardComponent implements OnInit {
           queryCall: 'pool.snapshottask.query',
           deleteCall: 'pool.snapshottask.delete',
           deleteMsg: {
-            title: T('Periodic Snapshot Task'),
+            title: this.translate.instant('Periodic Snapshot Task'),
             key_props: ['dataset', 'naming_schema', 'keepfor'],
           },
           columns: [
-            { name: T('Pool/Dataset'), prop: 'dataset' },
-            { name: T('Keep for'), prop: 'keepfor' },
-            { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: T('Next Run'), prop: 'next_run' },
+            { name: this.translate.instant('Pool/Dataset'), prop: 'dataset' },
+            { name: this.translate.instant('Keep for'), prop: 'keepfor' },
+            { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
+            { name: this.translate.instant('Next Run'), prop: 'next_run' },
             {
-              name: T('Enabled'),
+              name: this.translate.instant('Enabled'),
               prop: 'enabled',
               width: '50px',
               checkbox: true,
               onChange: (row: PeriodicSnapshotTaskUi) => this.onCheckboxToggle(TaskCardId.Snapshot, row, 'enabled'),
             },
             {
-              name: T('State'),
+              name: this.translate.instant('State'),
               prop: 'state',
               state: 'state',
               button: true,
@@ -221,24 +220,24 @@ export class DataProtectionDashboardComponent implements OnInit {
           queryCall: 'replication.query',
           deleteCall: 'replication.delete',
           deleteMsg: {
-            title: T('Replication Task'),
+            title: this.translate.instant('Replication Task'),
             key_props: ['name'],
           },
           dataSourceHelper: this.replicationDataSourceHelper,
           getActions: this.getReplicationActions.bind(this),
           isActionVisible: this.isActionVisible,
           columns: [
-            { name: T('Name'), prop: 'name' },
-            { name: T('Last Snapshot'), prop: 'task_last_snapshot' },
+            { name: this.translate.instant('Name'), prop: 'name' },
+            { name: this.translate.instant('Last Snapshot'), prop: 'task_last_snapshot' },
             {
-              name: T('Enabled'),
+              name: this.translate.instant('Enabled'),
               prop: 'enabled',
               width: '50px',
               checkbox: true,
               onChange: (row: ReplicationTaskUi) => this.onCheckboxToggle(TaskCardId.Replication, row, 'enabled'),
             },
             {
-              name: T('State'),
+              name: this.translate.instant('State'),
               prop: 'state',
               button: true,
               state: 'state',
@@ -264,29 +263,29 @@ export class DataProtectionDashboardComponent implements OnInit {
           queryCall: 'cloudsync.query',
           deleteCall: 'cloudsync.delete',
           deleteMsg: {
-            title: T('Cloud Sync Task'),
+            title: this.translate.instant('Cloud Sync Task'),
             key_props: ['description'],
           },
           dataSourceHelper: this.cloudsyncDataSourceHelper,
           getActions: this.getCloudsyncActions.bind(this),
           isActionVisible: this.isActionVisible,
           columns: [
-            { name: T('Description'), prop: 'description' },
-            { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
+            { name: this.translate.instant('Description'), prop: 'description' },
+            { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
             {
-              name: T('Next Run'),
+              name: this.translate.instant('Next Run'),
               prop: 'next_run',
               width: '80px',
             },
             {
-              name: T('Enabled'),
+              name: this.translate.instant('Enabled'),
               width: '50px',
               prop: 'enabled',
               checkbox: true,
               onChange: (row: CloudSyncTaskUi) => this.onCheckboxToggle(TaskCardId.CloudSync, row, 'enabled'),
             },
             {
-              name: T('State'),
+              name: this.translate.instant('State'),
               prop: 'state',
               state: 'state',
               button: true,
@@ -312,23 +311,23 @@ export class DataProtectionDashboardComponent implements OnInit {
           queryCall: 'rsynctask.query',
           deleteCall: 'rsynctask.delete',
           deleteMsg: {
-            title: T('Rsync Task'),
+            title: this.translate.instant('Rsync Task'),
             key_props: ['remotehost', 'remotemodule'],
           },
           columns: [
-            { name: T('Path'), prop: 'path' },
-            { name: T('Remote Host'), prop: 'remotehost' },
-            { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
-            { name: T('Next Run'), prop: 'next_run' },
+            { name: this.translate.instant('Path'), prop: 'path' },
+            { name: this.translate.instant('Remote Host'), prop: 'remotehost' },
+            { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
+            { name: this.translate.instant('Next Run'), prop: 'next_run' },
             {
-              name: T('Enabled'),
+              name: this.translate.instant('Enabled'),
               prop: 'enabled',
               width: '50px',
               checkbox: true,
               onChange: (row: RsyncTaskUi) => this.onCheckboxToggle(TaskCardId.Rsync, row, 'enabled'),
             },
             {
-              name: T('State'),
+              name: this.translate.instant('State'),
               prop: 'state',
               state: 'state',
               button: true,
@@ -357,7 +356,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           queryCall: 'smart.test.query',
           deleteCall: 'smart.test.delete',
           deleteMsg: {
-            title: T('S.M.A.R.T. Test'),
+            title: this.translate.instant('S.M.A.R.T. Test'),
             key_props: ['type', 'desc'],
           },
           dataSourceHelper: this.smartTestsDataSourceHelper,
@@ -415,10 +414,10 @@ export class DataProtectionDashboardComponent implements OnInit {
     const cloudsyncData = data.map((task) => {
       const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.credential = task.credentials.name;
-      task.cron_schedule = task.enabled ? formattedCronSchedule : T('Disabled');
+      task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       task.frequency = this.parent.taskService.getTaskCronDescription(formattedCronSchedule);
-      task.next_run = task.enabled ? this.parent.taskService.getTaskNextRun(formattedCronSchedule) : T('Disabled');
-      task.next_run_time = task.enabled ? this.parent.taskService.getTaskNextTime(formattedCronSchedule) : T('Disabled');
+      task.next_run = task.enabled ? this.parent.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
+      task.next_run_time = task.enabled ? this.parent.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
@@ -529,12 +528,12 @@ export class DataProtectionDashboardComponent implements OnInit {
       {
         icon: 'play_arrow',
         name: 'run',
-        matTooltip: T('Run Now'),
+        matTooltip: this.translate.instant('Run Now'),
         onClick: (row) => {
           this.dialog
             .confirm({
-              title: this.translate.instant(T('Run Now')),
-              message: this.translate.instant(T('Replicate <i>{name}</i> now?'), { name: row.name }),
+              title: this.translate.instant('Run Now'),
+              message: this.translate.instant('Replicate <i>{name}</i> now?', { name: row.name }),
               hideCheckBox: true,
             })
             .pipe(filter(Boolean), untilDestroyed(this))
@@ -546,7 +545,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                 .subscribe(
                   (jobId: number) => {
                     this.dialog.info(
-                      T('Task started'),
+                      this.translate.instant('Task started'),
                       this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
                       '500px',
                       'info',
@@ -569,7 +568,7 @@ export class DataProtectionDashboardComponent implements OnInit {
       },
       {
         name: 'restore',
-        matTooltip: T('Restore'),
+        matTooltip: this.translate.instant('Restore'),
         icon: 'restore',
         onClick: (row) => {
           const conf: DialogFormConfiguration = {
@@ -623,13 +622,13 @@ export class DataProtectionDashboardComponent implements OnInit {
     return [
       {
         icon: 'play_arrow',
-        matTooltip: T('Run Now'),
+        matTooltip: this.translate.instant('Run Now'),
         name: 'run',
         onClick: (row) => {
           this.dialog
             .confirm({
-              title: T('Run Now'),
-              message: T('Run this cloud sync now?'),
+              title: this.translate.instant('Run Now'),
+              message: this.translate.instant('Run this cloud sync now?'),
               hideCheckBox: true,
             })
             .pipe(filter(Boolean), untilDestroyed(this))
@@ -641,8 +640,8 @@ export class DataProtectionDashboardComponent implements OnInit {
                 .subscribe(
                   (jobId: number) => {
                     this.dialog.info(
-                      T('Task Started'),
-                      this.translate.instant(T('Cloud sync <i>{taskName}</i> has started.'), { taskName: row.description }),
+                      this.translate.instant('Task Started'),
+                      this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
                       '500px',
                       'info',
                       true,
@@ -664,13 +663,13 @@ export class DataProtectionDashboardComponent implements OnInit {
       },
       {
         icon: 'stop',
-        matTooltip: T('Stop'),
+        matTooltip: this.translate.instant('Stop'),
         name: 'stop',
         onClick: (row) => {
           this.dialog
             .confirm({
-              title: T('Stop'),
-              message: T('Stop this cloud sync?'),
+              title: this.translate.instant('Stop'),
+              message: this.translate.instant('Stop this cloud sync?'),
               hideCheckBox: true,
             })
             .pipe(filter(Boolean), untilDestroyed(this))
@@ -681,8 +680,8 @@ export class DataProtectionDashboardComponent implements OnInit {
                 .subscribe(
                   () => {
                     this.dialog.info(
-                      T('Task Stopped'),
-                      this.translate.instant(T('Cloud sync <i>{taskName}</i> stopped.'), { taskName: row.description }),
+                      this.translate.instant('Task Stopped'),
+                      this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
                       '500px',
                       'info',
                       true,
@@ -714,8 +713,8 @@ export class DataProtectionDashboardComponent implements OnInit {
                 .subscribe(
                   (jobId: number) => {
                     this.dialog.info(
-                      T('Task Started'),
-                      this.translate.instant(T('Cloud sync <i>{taskName}</i> has started.'), { taskName: row.description }),
+                      this.translate.instant('Task Started'),
+                      this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
                       '500px',
                       'info',
                       true,
@@ -737,11 +736,11 @@ export class DataProtectionDashboardComponent implements OnInit {
       },
       {
         icon: 'restore',
-        matTooltip: T('Restore'),
+        matTooltip: this.translate.instant('Restore'),
         name: 'restore',
         onClick: (row) => {
           const conf: DialogFormConfiguration = {
-            title: T('Restore Cloud Sync Task'),
+            title: this.translate.instant('Restore Cloud Sync Task'),
             fieldConfig: [
               {
                 type: 'input',
@@ -758,8 +757,8 @@ export class DataProtectionDashboardComponent implements OnInit {
                 validation: helptext_cloudsync.transfer_mode_validation,
                 required: true,
                 options: [
-                  { label: T('SYNC'), value: TransferMode.Sync },
-                  { label: T('COPY'), value: TransferMode.Copy },
+                  { label: this.translate.instant('SYNC'), value: TransferMode.Sync },
+                  { label: this.translate.instant('COPY'), value: TransferMode.Copy },
                 ],
                 value: TransferMode.Copy,
               },
@@ -827,13 +826,13 @@ export class DataProtectionDashboardComponent implements OnInit {
     return [
       {
         icon: 'play_arrow',
-        matTooltip: T('Run Now'),
+        matTooltip: this.translate.instant('Run Now'),
         name: 'run',
         onClick: (row) => {
           this.dialog
             .confirm({
-              title: T('Run Now'),
-              message: T('Run this rsync now?'),
+              title: this.translate.instant('Run Now'),
+              message: this.translate.instant('Run this rsync now?'),
               hideCheckBox: true,
             })
             .pipe(filter(Boolean), untilDestroyed(this))
@@ -845,8 +844,8 @@ export class DataProtectionDashboardComponent implements OnInit {
                 .subscribe(
                   (jobId: number) => {
                     this.dialog.info(
-                      T('Task Started'),
-                      this.translate.instant(T('Rsync task <i>{ taskName }</i> started.'), { taskName: `${row.remotehost} – ${row.remotemodule}` }),
+                      this.translate.instant('Task Started'),
+                      this.translate.instant('Rsync task <i>{ taskName }</i> started.', { taskName: `${row.remotehost} – ${row.remotemodule}` }),
                       '500px',
                       'info',
                       true,
@@ -902,7 +901,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         row.state.warnings.forEach((warning: string) => {
           list += warning + '\n';
         });
-        this.dialog.errorReport(T('Warning'), `<pre>${list}</pre>`);
+        this.dialog.errorReport(this.translate.instant('Warning'), `<pre>${list}</pre>`);
       } else {
         this.job.showLogs(row.job);
       }

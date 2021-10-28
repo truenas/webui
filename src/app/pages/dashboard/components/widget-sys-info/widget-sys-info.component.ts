@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
@@ -29,7 +28,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   @Input() isPassive = false;
   @Input() enclosureSupport = false;
 
-  title: string = T('System Info');
+  title: string = this.translate.instant('System Info');
   data: SystemInfo;
   memory: string;
   imagePath = 'assets/images/';
@@ -42,7 +41,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   failoverBtnLabel = 'FAILOVER TO STANDBY';
   updateAvailable = false;
   private _updateBtnStatus = 'default';
-  updateBtnLabel: string = T('Check for Updates');
+  updateBtnLabel: string = this.translate.instant('Check for Updates');
   private _themeAccentColors: string[];
   manufacturer = '';
   buildDate: string;
@@ -146,7 +145,7 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   get updateBtnStatus(): string {
     if (this.updateAvailable) {
       this._updateBtnStatus = 'default';
-      this.updateBtnLabel = T('Updates Available');
+      this.updateBtnLabel = this.translate.instant('Updates Available');
     }
     return this._updateBtnStatus;
   }
@@ -197,9 +196,9 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
 
     if (days > 0) {
       if (days === 1) {
-        this.uptimeString += days + T(' day, ');
+        this.uptimeString += days + this.translate.instant(' day, ');
       } else {
-        this.uptimeString += days + T(' days, ') + `${hrs}:${pmin}`;
+        this.uptimeString += days + this.translate.instant(' days, ') + `${hrs}:${pmin}`;
       }
     } else if (hrs > 0) {
       this.uptimeString += `${hrs}:${pmin}`;

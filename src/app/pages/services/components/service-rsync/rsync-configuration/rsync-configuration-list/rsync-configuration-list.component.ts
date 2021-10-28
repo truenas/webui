@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService } from '@ngx-translate/core';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
@@ -8,7 +8,7 @@ import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-t
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class RsyncConfigurationListComponent implements EntityTableConfig {
-  title = 'RSYNC Modules';
+  title = this.translate.instant('RSYNC Modules');
   queryCall = 'rsyncmod.query' as const;
   hasDetails = true;
   wsDelete = 'rsyncmod.delete' as const;
@@ -17,31 +17,33 @@ export class RsyncConfigurationListComponent implements EntityTableConfig {
   protected route_delete: string[] = ['services', 'rsync', 'rsync-module', 'delete'];
 
   columns = [
-    { name: T('Name'), prop: 'name' },
-    { name: T('Comment'), prop: 'comment' },
-    { name: T('Path'), prop: 'path' },
-    { name: T('Mode'), prop: 'mode' },
-    { name: T('Maximum connections'), prop: 'maxconn', hidden: true },
-    { name: T('User'), prop: 'user', hidden: true },
-    { name: T('Group'), prop: 'group', hidden: true },
-    { name: T('Enabled'), prop: 'enabled' },
-    { name: T('Host Allow'), prop: 'hostsallow', hidden: true },
-    { name: T('Host Deny'), prop: 'hostsdeny', hidden: true },
-    { name: T('Auxiliary parameters'), prop: 'auxiliary', hidden: true },
+    { name: this.translate.instant('Name'), prop: 'name' },
+    { name: this.translate.instant('Comment'), prop: 'comment' },
+    { name: this.translate.instant('Path'), prop: 'path' },
+    { name: this.translate.instant('Mode'), prop: 'mode' },
+    { name: this.translate.instant('Maximum connections'), prop: 'maxconn', hidden: true },
+    { name: this.translate.instant('User'), prop: 'user', hidden: true },
+    { name: this.translate.instant('Group'), prop: 'group', hidden: true },
+    { name: this.translate.instant('Enabled'), prop: 'enabled' },
+    { name: this.translate.instant('Host Allow'), prop: 'hostsallow', hidden: true },
+    { name: this.translate.instant('Host Deny'), prop: 'hostsdeny', hidden: true },
+    { name: this.translate.instant('Auxiliary parameters'), prop: 'auxiliary', hidden: true },
   ];
   config = {
     paging: true,
     sorting: { columns: this.columns },
   };
 
+  constructor(protected translate: TranslateService) {}
+
   dataHandler(entityTable: EntityTableComponent): void {
     const rows = entityTable.rows;
     rows.forEach((row) => {
       row.details = [];
-      row.details.push({ label: T('Maximum connections'), value: row['maxconn'] },
-        { label: T('Host Allow'), value: row['hostsallow'] },
-        { label: T('Host Deny'), value: row['hostsdeny'] },
-        { label: T('Auxiliary parameters'), value: row['auxiliary'] });
+      row.details.push({ label: this.translate.instant('Maximum connections'), value: row['maxconn'] },
+        { label: this.translate.instant('Host Allow'), value: row['hostsallow'] },
+        { label: this.translate.instant('Host Deny'), value: row['hostsdeny'] },
+        { label: this.translate.instant('Auxiliary parameters'), value: row['auxiliary'] });
     });
   }
 }

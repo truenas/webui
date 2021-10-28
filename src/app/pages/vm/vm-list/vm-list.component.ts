@@ -4,7 +4,6 @@ import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -41,7 +40,7 @@ import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
   providers: [VmService, MessageService],
 })
 export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit {
-  title = T('Virtual Machines');
+  title = this.translate.instant('Virtual Machines');
   queryCall = 'vm.query' as const;
   wsDelete = 'vm.delete' as const;
   route_add: string[] = ['vm', 'wizard'];
@@ -53,20 +52,20 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   entityList: EntityTableComponent<VirtualMachineRow>;
   columns = [
-    { name: T('Name') as string, prop: 'name', always_display: true },
+    { name: this.translate.instant('Name') as string, prop: 'name', always_display: true },
     {
-      name: T('State') as string, prop: 'state', always_display: true, toggle: true,
+      name: this.translate.instant('State') as string, prop: 'state', always_display: true, toggle: true,
     },
-    { name: T('Autostart') as string, prop: 'autostart', checkbox: true },
-    { name: T('Virtual CPUs') as string, prop: 'vcpus', hidden: true },
-    { name: T('Cores') as string, prop: 'cores', hidden: true },
-    { name: T('Threads') as string, prop: 'threads', hidden: true },
-    { name: T('Memory Size') as string, prop: 'memory', hidden: true },
-    { name: T('Boot Loader Type') as string, prop: 'bootloader', hidden: true },
-    { name: T('System Clock') as string, prop: 'time', hidden: true },
-    { name: T('Display Port') as string, prop: 'port', hidden: true },
-    { name: T('Description') as string, prop: 'description', hidden: true },
-    { name: T('Shutdown Timeout') as string, prop: 'shutdown_timeout', hidden: true },
+    { name: this.translate.instant('Autostart') as string, prop: 'autostart', checkbox: true },
+    { name: this.translate.instant('Virtual CPUs') as string, prop: 'vcpus', hidden: true },
+    { name: this.translate.instant('Cores') as string, prop: 'cores', hidden: true },
+    { name: this.translate.instant('Threads') as string, prop: 'threads', hidden: true },
+    { name: this.translate.instant('Memory Size') as string, prop: 'memory', hidden: true },
+    { name: this.translate.instant('Boot Loader Type') as string, prop: 'bootloader', hidden: true },
+    { name: this.translate.instant('System Clock') as string, prop: 'time', hidden: true },
+    { name: this.translate.instant('Display Port') as string, prop: 'port', hidden: true },
+    { name: this.translate.instant('Description') as string, prop: 'description', hidden: true },
+    { name: this.translate.instant('Shutdown Timeout') as string, prop: 'shutdown_timeout', hidden: true },
   ];
   config = {
     paging: true,
@@ -109,7 +108,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   ) {
     if (this.productType !== ProductType.Scale) {
       // TODO: Check if it can be removed
-      this.columns.push({ name: T('Com Port'), prop: 'com_port', hidden: true });
+      this.columns.push({ name: this.translate.instant('Com Port'), prop: 'com_port', hidden: true });
     }
   }
 
@@ -219,13 +218,13 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           {
             type: 'checkbox',
             name: 'force_after_timeout',
-            placeholder: T('Force Stop After Timeout'),
-            tooltip: T('Force the VM to stop if it has not already \
+            placeholder: this.translate.instant('Force Stop After Timeout'),
+            tooltip: this.translate.instant('Force the VM to stop if it has not already \
  stopped within the specified shutdown timeout. Without this option selected, the VM will \
  receive the shutdown signal, but may or may not complete the shutdown process.'),
           },
         ],
-        saveButtonText: T('Stop'),
+        saveButtonText: this.translate.instant('Stop'),
         customSubmit: (entityDialog: EntityDialogComponent) => {
           entityDialog.dialogRef.close(true);
           const forceValue = false; // We are not exposing this in the UI
@@ -291,7 +290,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
         }
         this.dialogRef.close(false);
         this.dialogService.info(
-          T('Finished'),
+          this.translate.instant('Finished'),
           this.translate.instant('If {vmName} is still running, the Guest OS did not respond as expected. It is possible to use <i>Power Off</i> or the <i>Force Stop After Timeout</i> option to stop the VM.', { vmName: row.name }),
           '450px',
           'info',
@@ -353,7 +352,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     return [{
       id: 'START',
       icon: 'play_arrow',
-      label: T('Start'),
+      label: this.translate.instant('Start'),
       onClick: (start_row: VirtualMachineRow) => {
         this.onSliderChange(start_row);
       },
@@ -361,7 +360,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       id: 'RESTART',
       icon: 'replay',
-      label: T('Restart'),
+      label: this.translate.instant('Restart'),
       onClick: (restart_row: VirtualMachineRow) => {
         this.doRowAction(restart_row, this.wsMethods.restart);
       },
@@ -369,7 +368,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       id: 'POWER_OFF',
       icon: 'power_settings_new',
-      label: T('Power Off'),
+      label: this.translate.instant('Power Off'),
       onClick: (power_off_row: VirtualMachineRow) => {
         this.doRowAction(row, this.wsMethods.poweroff, [power_off_row.id]);
       },
@@ -377,7 +376,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       id: 'STOP',
       icon: 'stop',
-      label: T('Stop'),
+      label: this.translate.instant('Stop'),
       onClick: (stop_row: VirtualMachineRow) => {
         this.onSliderChange(stop_row);
       },
@@ -385,7 +384,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       id: 'EDIT',
       icon: 'edit',
-      label: T('Edit'),
+      label: this.translate.instant('Edit'),
       onClick: (edit_row: VirtualMachineRow) => {
         this.router.navigate(new Array('').concat(['vm', 'edit', String(edit_row.id)]));
       },
@@ -393,26 +392,26 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       id: 'DELETE',
       icon: 'delete',
-      label: T('Delete'),
+      label: this.translate.instant('Delete'),
       onClick: (delete_row: VirtualMachineRow) => {
         const conf: DialogFormConfiguration = {
-          title: T('Delete Virtual Machine'),
+          title: this.translate.instant('Delete Virtual Machine'),
           fieldConfig: [
             {
               type: 'checkbox',
               name: 'zvols',
-              placeholder: T('Delete Virtual Machine Data?'),
+              placeholder: this.translate.instant('Delete Virtual Machine Data?'),
               value: false,
-              tooltip: T('Set to remove the data associated with this \
+              tooltip: this.translate.instant('Set to remove the data associated with this \
  Virtual Machine (which will result in data loss if the data is not backed up). Unset to \
  leave the data intact.'),
             },
             {
               type: 'checkbox',
               name: 'force',
-              placeholder: T('Force Delete?'),
+              placeholder: this.translate.instant('Force Delete?'),
               value: false,
-              tooltip: T('Set to ignore the Virtual \
+              tooltip: this.translate.instant('Set to ignore the Virtual \
  Machine status during the delete operation. Unset to prevent deleting \
  the Virtual Machine when it is still active or has an undefined state.'),
             },
@@ -426,7 +425,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
               hideErrMsg: true,
             },
           ],
-          saveButtonText: T('Delete'),
+          saveButtonText: this.translate.instant('Delete'),
           customSubmit: (entityDialog: EntityDialogComponent) => {
             entityDialog.dialogRef.close(true);
             const params = [
@@ -445,7 +444,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       id: 'DEVICES',
       icon: 'device_hub',
-      label: T('Devices'),
+      label: this.translate.instant('Devices'),
       onClick: (devices_row: VirtualMachineRow) => {
         this.router.navigate(new Array('').concat(['vm', String(devices_row.id), 'devices', devices_row.name]));
       },
@@ -453,20 +452,20 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       id: 'CLONE',
       icon: 'filter_none',
-      label: T('Clone'),
+      label: this.translate.instant('Clone'),
       onClick: (clone_row: VirtualMachineRow) => {
         const conf: DialogFormConfiguration = {
-          title: T('Name'),
+          title: this.translate.instant('Name'),
           fieldConfig: [
             {
               type: 'input',
               inputType: 'text',
               name: 'name',
-              placeholder: T('Enter a Name (optional)'),
+              placeholder: this.translate.instant('Enter a Name (optional)'),
               required: false,
             },
           ],
-          saveButtonText: T('Clone'),
+          saveButtonText: this.translate.instant('Clone'),
           customSubmit: (entityDialog: EntityDialogComponent) => {
             entityDialog.dialogRef.close(true);
             const params = [clone_row.id];
@@ -482,7 +481,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       id: 'DISPLAY',
       icon: 'settings_ethernet',
-      label: T('Display'),
+      label: this.translate.instant('Display'),
       onClick: (display_vm: VirtualMachineRow) => {
         this.loader.open();
         this.ws.call('vm.get_display_devices', [display_vm.id]).pipe(untilDestroyed(this)).subscribe((display_devices_res) => {
@@ -512,15 +511,15 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           } else {
             this.loader.close();
             const conf: DialogFormConfiguration = {
-              title: T('Display Device'),
-              message: T('Pick a display device to open'),
+              title: this.translate.instant('Display Device'),
+              message: this.translate.instant('Pick a display device to open'),
               fieldConfig: [{
                 type: 'radio',
                 name: 'display_device',
                 options: display_devices_res.map((d) => ({ label: d.attributes.type, value: d.id })),
                 validation: [Validators.required],
               }],
-              saveButtonText: T('Open'),
+              saveButtonText: this.translate.instant('Open'),
               parent: this,
               customSubmit: (entityDialog: EntityDialogComponent) => {
                 const display_device = _.find(display_devices_res, { id: entityDialog.formValue.display_device });
@@ -559,7 +558,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       id: 'SERIAL',
       icon: 'keyboard_arrow_right',
-      label: T('Serial'),
+      label: this.translate.instant('Serial'),
       onClick: (vm: VirtualMachineRow) => {
         this.router.navigate(new Array('').concat(['vm', 'serial', String(vm.id)]));
       },
@@ -567,7 +566,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     {
       id: 'LOGS',
       icon: 'content_paste',
-      label: T('Download Logs'),
+      label: this.translate.instant('Download Logs'),
       onClick: (vm: VirtualMachineRow) => {
         const path = `/var/log/libvirt/bhyve/${vm.id}_${vm.name}.log`;
         const filename = `${vm.id}_${vm.name}.log`;
@@ -593,17 +592,17 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
 
   showPasswordDialog(display_vm: VirtualMachineRow, display_device: VmDisplayDevice): void {
     const pass_conf: DialogFormConfiguration = {
-      title: T('Enter password'),
-      message: T('Enter password to unlock this display device'),
+      title: this.translate.instant('Enter password'),
+      message: this.translate.instant('Enter password to unlock this display device'),
       fieldConfig: [{
         type: 'input',
         name: 'password',
         togglePw: true,
         inputType: 'password',
-        placeholder: T('Password'),
+        placeholder: this.translate.instant('Password'),
         validation: [Validators.required],
       }],
-      saveButtonText: T('Open'),
+      saveButtonText: this.translate.instant('Open'),
       parent: this,
       customSubmit: (passDialog: EntityDialogComponent) => {
         this.loader.open();

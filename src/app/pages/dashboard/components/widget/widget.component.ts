@@ -2,7 +2,6 @@ import {
   Component, Input, Output, EventEmitter,
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { IxObject } from 'app/core/classes/ix-object';
 import { CoreServiceInjector } from 'app/core/services/core-service-injector';
@@ -20,7 +19,7 @@ export class WidgetComponent extends IxObject {
   @Input() rendered?: boolean = true;
   @Input() configurable = false;
   @Output() back = new EventEmitter();
-  title: string = T('Widget Base Class');
+  title: string = this.translate.instant('Widget Base Class');
   chartSize: number;
 
   // public configurable: boolean = true;

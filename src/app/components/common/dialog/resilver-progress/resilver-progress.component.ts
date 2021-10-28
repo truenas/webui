@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
@@ -20,9 +19,9 @@ export class ResilverProgressDialogComponent implements OnInit {
   progressTotalPercent = 0;
   state: PoolScanState;
   resilveringDetails: ResilverData;
-  title = T('Resilvering Status');
-  description = T('Resilvering pool: ');
-  statusLabel = T('Status: ');
+  title = this.translate.instant('Resilvering Status');
+  description = this.translate.instant('Resilvering pool: ');
+  statusLabel = this.translate.instant('Status: ');
   diskName: string;
 
   readonly PoolScanState = PoolScanState;

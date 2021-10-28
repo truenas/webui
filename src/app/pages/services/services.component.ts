@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, map, switchMap } from 'rxjs/operators';
@@ -28,7 +27,7 @@ interface ServiceRow extends Service {
 export class ServicesComponent implements EntityTableConfig, OnInit {
   @ViewChild('servicetable', { static: false }) serviceTable: EntityTableComponent;
 
-  title = T('Services');
+  title = this.translate.instant('Services');
   isFooterConsoleOpen: boolean;
   queryCall = 'service.query' as const;
   queryCallOption: QueryParams<Service> = [[], { order_by: ['service'] }];
@@ -37,15 +36,15 @@ export class ServicesComponent implements EntityTableConfig, OnInit {
   inlineActions = true;
 
   columns = [
-    { name: T('Name'), prop: 'name', always_display: true },
+    { name: this.translate.instant('Name'), prop: 'name', always_display: true },
     {
-      name: T('Running'),
+      name: this.translate.instant('Running'),
       prop: 'state',
       toggle: true,
       always_display: true,
     },
     {
-      name: T('Start Automatically'),
+      name: this.translate.instant('Start Automatically'),
       prop: 'enable',
       checkbox: true,
       always_display: true,
@@ -118,7 +117,7 @@ export class ServicesComponent implements EntityTableConfig, OnInit {
       name: parentRow.service,
       icon: 'edit',
       id: 'Configure',
-      label: T('Configure'),
+      label: this.translate.instant('Configure'),
       onClick: (row: ServiceRow) => {
         if (row.service === ServiceName.OpenVpnClient || row.service === ServiceName.OpenVpnServer) {
           const navigationExtras: NavigationExtras = { state: { configureOpenVPN: row.service.replace('openvpn_', '') } };
@@ -153,20 +152,20 @@ export class ServicesComponent implements EntityTableConfig, OnInit {
             }
 
             return this.dialog.confirm({
-              title: T('Alert'),
+              title: this.translate.instant('Alert'),
               message: msg == '' ? this.translate.instant('Stop {serviceName}?', { serviceName }) : msg,
               hideCheckBox: true,
-              buttonMsg: T('Stop'),
+              buttonMsg: this.translate.instant('Stop'),
             });
           }),
           filter(Boolean),
         ).pipe(untilDestroyed(this)).subscribe(() => this.updateService(rpc, service));
       } else {
         this.dialog.confirm({
-          title: T('Alert'),
+          title: this.translate.instant('Alert'),
           message: this.translate.instant('Stop {serviceName}?', { serviceName }),
           hideCheckBox: true,
-          buttonMsg: T('Stop'),
+          buttonMsg: this.translate.instant('Stop'),
         }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
           this.updateService(rpc, service);
         });
@@ -188,7 +187,7 @@ export class ServicesComponent implements EntityTableConfig, OnInit {
       if (res) {
         if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
           this.dialog.info(
-            T('Service failed to stop'),
+            this.translate.instant('Service failed to stop'),
             this.translate.instant('{serviceName} service failed to stop.', { serviceName }),
           );
         }
@@ -199,7 +198,7 @@ export class ServicesComponent implements EntityTableConfig, OnInit {
       } else {
         if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
           this.dialog.info(
-            T('Service failed to start'),
+            this.translate.instant('Service failed to start'),
             this.translate.instant('{serviceName} service failed to start.', { serviceName }),
           );
         }

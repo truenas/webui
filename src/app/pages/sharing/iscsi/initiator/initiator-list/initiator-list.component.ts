@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService } from '@ngx-translate/core';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 @Component({
@@ -10,30 +10,30 @@ import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-t
   `,
 })
 export class InitiatorListComponent implements EntityTableConfig {
-  tableTitle = T('Initiators Groups');
+  tableTitle = this.translate.instant('Initiators Groups');
   queryCall = 'iscsi.initiator.query' as const;
   route_add: string[] = ['sharing', 'iscsi', 'initiators', 'add'];
   route_edit: string[] = ['sharing', 'iscsi', 'initiators', 'edit'];
   wsDelete = 'iscsi.initiator.delete' as const;
 
-  route_add_tooltip = 'Add Initiator';
+  route_add_tooltip = this.translate.instant('Add Initiator');
 
   columns = [
     {
-      name: T('Group ID'),
+      name: this.translate.instant('Group ID'),
       prop: 'id',
       always_display: true,
     },
     {
-      name: T('Initiators'),
+      name: this.translate.instant('Initiators'),
       prop: 'initiators',
     },
     {
-      name: T('Authorized Networks'),
+      name: this.translate.instant('Authorized Networks'),
       prop: 'auth_network',
     },
     {
-      name: T('Description'),
+      name: this.translate.instant('Description'),
       prop: 'comment',
     },
   ];
@@ -42,10 +42,13 @@ export class InitiatorListComponent implements EntityTableConfig {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Initiator',
+      title: this.translate.instant('Initiator'),
       key_props: ['id'],
     },
   };
 
-  constructor(protected router: Router) {}
+  constructor(
+    protected router: Router,
+    protected translate: TranslateService,
+  ) {}
 }

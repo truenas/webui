@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { helptext_system_failover } from 'app/helptext/system/failover';
@@ -32,8 +32,8 @@ export class FailoverComponent implements FormConfiguration {
   confirmSubmit = false;
   saveSubmitText = helptext_system_failover.save_button_text;
   confirmSubmitDialog = {
-    title: T('Disable Failover'),
-    message: T(''),
+    title: this.translate.instant('Disable Failover'),
+    message: this.translate.instant(''),
     hideCheckbox: false,
   };
   master_fg: FormControl;
@@ -42,7 +42,7 @@ export class FailoverComponent implements FormConfiguration {
   custActions = [
     {
       id: 'sync_to_peer',
-      name: T('Sync to Peer'),
+      name: this.translate.instant('Sync to Peer'),
       function: () => {
         const params = [{ reboot: false }];
         const ds = this.dialog.confirm({
@@ -73,7 +73,7 @@ export class FailoverComponent implements FormConfiguration {
     },
     {
       id: 'sync_from_peer',
-      name: T('Sync from Peer'),
+      name: this.translate.instant('Sync from Peer'),
       function: () => {
         this.dialog.confirm({
           title: helptext_system_failover.dialog_sync_from_peer_title,
@@ -135,6 +135,7 @@ export class FailoverComponent implements FormConfiguration {
     private dialog: DialogService,
     private ws: WebSocketService,
     protected matDialog: MatDialog,
+    protected translate: TranslateService,
   ) {}
 
   afterInit(entityEdit: EntityFormComponent): void {
@@ -150,8 +151,8 @@ export class FailoverComponent implements FormConfiguration {
         this.dialog.confirm({
           title: helptext_system_failover.master_dialog_title,
           message: helptext_system_failover.master_dialog_warning,
-          buttonMsg: T('Continue'),
-          cancelMsg: T('Cancel'),
+          buttonMsg: this.translate.instant('Continue'),
+          cancelMsg: this.translate.instant('Cancel'),
           disableClose: true,
         }).pipe(untilDestroyed(this)).subscribe((confirm) => {
           if (!confirm) {
@@ -174,7 +175,7 @@ export class FailoverComponent implements FormConfiguration {
     return this.ws.call('failover.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.alreadyDisabled = body['disabled'];
       this.load.close();
-      this.dialog.info(T('Settings saved.'), '', '300px', 'info', true).pipe(untilDestroyed(this)).subscribe(() => {
+      this.dialog.info(this.translate.instant('Settings saved.'), '', '300px', 'info', true).pipe(untilDestroyed(this)).subscribe(() => {
         if (body.disabled && !body.master) {
           this.ws.logout();
         }

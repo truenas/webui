@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Navigation, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
@@ -74,30 +73,30 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     deleteCall: 'interface.delete',
     name: 'interfaces',
     columns: [
-      { name: T('Name'), prop: 'name', state: { prop: 'link_state' } },
-      { name: T('IP Addresses'), prop: 'addresses', listview: true },
+      { name: this.translate.instant('Name'), prop: 'name', state: { prop: 'link_state' } },
+      { name: this.translate.instant('IP Addresses'), prop: 'addresses', listview: true },
     ],
     dataSourceHelper: this.interfaceDataSourceHelper,
     getInOutInfo: this.getInterfaceInOutInfo.bind(this),
     parent: this,
-    add() {
-      this.parent.showInterfacesForm();
+    add: () => {
+      this.showInterfacesForm();
     },
-    edit(row: NetworkInterfaceUi) {
-      this.parent.showInterfacesForm(row.id);
+    edit: (row: NetworkInterfaceUi) => {
+      this.showInterfacesForm(row.id);
     },
-    delete(row: NetworkInterfaceUi, table: TableComponent) {
-      const deleteAction = row.type === NetworkInterfaceType.Physical ? T('Reset configuration for ') : T('Delete ');
-      if (this.parent.ha_enabled) {
-        this.parent.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
+    delete: (row: NetworkInterfaceUi, table: TableComponent) => {
+      const deleteAction = row.type === NetworkInterfaceType.Physical ? this.translate.instant('Reset configuration for ') : this.translate.instant('Delete ');
+      if (this.ha_enabled) {
+        this.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
-        this.parent.tableService.delete(table, row, deleteAction);
+        this.tableService.delete(table, row, deleteAction);
       }
     },
-    afterGetData() {
-      const state = this.parent.navigation.extras.state as { editInterface: string };
+    afterGetData: () => {
+      const state = this.navigation.extras.state as { editInterface: string };
       if (state && state.editInterface) {
-        this.parent.modalService.openInSlideIn(InterfacesFormComponent, state.editInterface);
+        this.modalService.openInSlideIn(InterfacesFormComponent, state.editInterface);
       }
     },
     afterDelete: this.afterDelete.bind(this),
@@ -108,15 +107,15 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     confirmDeleteDialog: {
       buildTitle: (intf: NetworkInterfaceUi): string => {
         if (intf.type === NetworkInterfaceType.Physical) {
-          return T('Reset Configuration');
+          return this.translate.instant('Reset Configuration');
         }
-        return T('Delete');
+        return this.translate.instant('Delete');
       },
       buttonMsg: (intf: NetworkInterfaceUi): string => {
         if (intf.type === NetworkInterfaceType.Physical) {
-          return T('Reset Configuration');
+          return this.translate.instant('Reset Configuration');
         }
-        return T('Delete');
+        return this.translate.instant('Delete');
       },
       message: helptext.delete_dialog_text,
     },
@@ -128,8 +127,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     deleteCall: 'staticroute.delete',
     name: 'staticRoutes',
     columns: [
-      { name: T('Destination'), prop: 'destination' },
-      { name: T('Gateway'), prop: 'gateway' },
+      { name: this.translate.instant('Destination'), prop: 'destination' },
+      { name: this.translate.instant('Gateway'), prop: 'gateway' },
     ],
     parent: this,
     add: () => {
@@ -152,8 +151,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     icon: 'router',
     showGroupTitle: true,
     name: 'globalSettings',
-    onclick() {
-      this.parent.showConfigForm();
+    onclick: () => {
+      this.showConfigForm();
     },
   };
 
@@ -162,44 +161,44 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     queryCall: 'service.query',
     name: 'openVPN',
     columns: [
-      { name: T('Service'), prop: 'service_label' },
-      { name: T('State'), prop: 'state' },
+      { name: this.translate.instant('Service'), prop: 'service_label' },
+      { name: this.translate.instant('State'), prop: 'state' },
     ],
     hideHeader: true,
     parent: this,
     dataSourceHelper: this.openvpnDataSourceHelper,
     getActions: this.getOpenVpnActions.bind(this),
     isActionVisible: this.isOpenVpnActionVisible,
-    edit(row: Service) {
+    edit: (row: Service) => {
       if (row.service === ServiceName.OpenVpnClient) {
-        this.parent.modalService.openInSlideIn(OpenvpnClientComponent, row.id);
+        this.modalService.openInSlideIn(OpenvpnClientComponent, row.id);
       } else if (row.service === ServiceName.OpenVpnServer) {
-        this.parent.modalService.openInSlideIn(OpenvpnServerComponent, row.id);
+        this.modalService.openInSlideIn(OpenvpnServerComponent, row.id);
       }
     },
-    afterGetData() {
-      const state = this.parent.navigation.extras.state as { configureOpenVPN: string };
+    afterGetData: () => {
+      const state = this.navigation.extras.state as { configureOpenVPN: string };
       if (state && state.configureOpenVPN) {
         if (state.configureOpenVPN === 'client') {
-          this.parent.modalService.openInSlideIn(OpenvpnClientComponent);
+          this.modalService.openInSlideIn(OpenvpnClientComponent);
         } else {
-          this.parent.modalService.openInSlideIn(OpenvpnServerComponent);
+          this.modalService.openInSlideIn(OpenvpnServerComponent);
         }
       }
     },
   };
 
   ipmiTableConf: AppTableConfig<NetworkComponent> = {
-    title: T('IPMI'),
+    title: this.translate.instant('IPMI'),
     queryCall: 'ipmi.query',
-    columns: [{ name: T('Channel'), prop: 'channelLabel' }],
+    columns: [{ name: this.translate.instant('Channel'), prop: 'channelLabel' }],
     hideHeader: true,
     parent: this,
     dataSourceHelper: (ipmi) => this.ipmiDataSourceHelper(ipmi),
     getActions: this.getIpmiActions.bind(this),
     isActionVisible: this.isIpmiActionVisible,
-    edit(row: IpmiRow) {
-      this.parent.modalService.openInSlideIn(IpmiFormComponent, row.id);
+    edit: (row: IpmiRow) => {
+      this.modalService.openInSlideIn(IpmiFormComponent, row.id);
     },
   };
 
@@ -259,16 +258,16 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
 
         this.globalSettingsWidget.data.hostname = networkConfig.hostname;
         this.globalSettingsWidget.data.domain = networkConfig.domain;
-        this.globalSettingsWidget.data.netwait = networkConfig.netwait_enabled ? T('ENABLED') : T('DISABLED');
+        this.globalSettingsWidget.data.netwait = networkConfig.netwait_enabled ? this.translate.instant('ENABLED') : this.translate.instant('DISABLED');
         const tempArr: string[] = [];
         if (networkConfig.service_announcement.netbios) {
-          tempArr.push(T('NETBIOS-NS'));
+          tempArr.push(this.translate.instant('NETBIOS-NS'));
         }
         if (networkConfig.service_announcement.mdns) {
-          tempArr.push(T('mDNS'));
+          tempArr.push(this.translate.instant('mDNS'));
         }
         if (networkConfig.service_announcement.wsd) {
-          tempArr.push(T('WS-DISCOVERY'));
+          tempArr.push(this.translate.instant('WS-DISCOVERY'));
         }
         this.globalSettingsWidget.data.service_announcement = tempArr.join(', ');
         this.globalSettingsWidget.data.additional_domains = networkConfig.domains.length > 0 ? networkConfig.domains.join(', ') : '---';
@@ -276,11 +275,11 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         this.globalSettingsWidget.data.hostnameDB = networkConfig.hosts !== '' ? networkConfig.hosts : '---';
 
         if (networkConfig.activity.type === NetworkActivityType.Deny) {
-          this.globalSettingsWidget.data.outbound = T('Allow All');
+          this.globalSettingsWidget.data.outbound = this.translate.instant('Allow All');
         } else if (networkConfig.activity.activities.length === 0) {
-          this.globalSettingsWidget.data.outbound = T('Deny All');
+          this.globalSettingsWidget.data.outbound = this.translate.instant('Deny All');
         } else {
-          this.globalSettingsWidget.data.outbound = T('Allow ') + networkConfig.activity.activities.join(', ');
+          this.globalSettingsWidget.data.outbound = this.translate.instant('Allow ') + networkConfig.activity.activities.join(', ');
         }
       });
 
@@ -618,14 +617,14 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     return [{
       icon: 'highlight',
       name: 'identify',
-      matTooltip: T('Identify Light'),
+      matTooltip: this.translate.instant('Identify Light'),
       onClick: () => {
         this.ipmiService.showIdentifyDialog();
       },
     }, {
       icon: 'launch',
       name: 'manage',
-      matTooltip: T('Manage'),
+      matTooltip: this.translate.instant('Manage'),
       onClick: (row: IpmiRow) => {
         window.open(`http://${row.ipaddress}`);
       },
@@ -657,7 +656,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     return [{
       icon: 'stop',
       name: 'stop',
-      matTooltip: T('Stop'),
+      matTooltip: this.translate.instant('Stop'),
       onChanging: false,
       onClick: (row: any) => {
         row.onChanging = true;
@@ -668,7 +667,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
             (res) => {
               if (res) {
                 this.dialog.info(
-                  this.translate.instant(T('Service failed to stop')),
+                  this.translate.instant('Service failed to stop'),
                   this.translate.instant('OpenVPN {serviceLabel} service failed to stop.', {
                     serviceLabel: row.service_label,
                   }),
@@ -696,7 +695,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     {
       icon: 'play_arrow',
       name: 'start',
-      matTooltip: T('Start'),
+      matTooltip: this.translate.instant('Start'),
       onClick: (row: any) => {
         row.onChanging = true;
         this.ws
@@ -709,7 +708,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
                 row.onChanging = false;
               } else {
                 this.dialog.info(
-                  this.translate.instant(T('Service failed to start')),
+                  this.translate.instant('Service failed to start'),
                   this.translate.instant('OpenVPN {serviceLabel} service failed to start.', {
                     serviceLabel: row.service_label,
                   }),

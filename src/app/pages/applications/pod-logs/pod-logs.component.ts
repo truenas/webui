@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -92,7 +91,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
             title: helptext.podLogs.nopod.title,
             message: helptext.podLogs.nopod.message,
             hideCheckBox: true,
-            buttonMsg: T('Close'),
+            buttonMsg: this.translate.instant('Close'),
             hideCancel: true,
           });
         }

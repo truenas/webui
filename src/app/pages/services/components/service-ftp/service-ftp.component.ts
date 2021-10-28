@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -446,8 +445,8 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
         this.dialog.confirm({
           title: helptext.rootlogin_dialog_title,
           message: helptext.rootlogin_dialog_message,
-          buttonMsg: T('Continue'),
-          cancelMsg: T('Cancel'),
+          buttonMsg: this.translate.instant('Continue'),
+          cancelMsg: this.translate.instant('Cancel'),
           disableClose: true,
         }).pipe(untilDestroyed(this)).subscribe((confirm) => {
           if (!confirm) {

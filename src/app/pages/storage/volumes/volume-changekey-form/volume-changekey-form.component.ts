@@ -3,8 +3,8 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/volumes/volume-key';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -25,7 +25,7 @@ import { EncryptionService } from 'app/services/encryption.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class VolumeChangekeyFormComponent implements FormConfiguration {
-  saveSubmitText = T('Change Passphrase');
+  saveSubmitText = this.translate.instant('Change Passphrase');
 
   queryCall = 'pool.query' as const;
   queryKey = 'id';
@@ -84,7 +84,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
   custActions = [
     {
       id: 'download_encrypt_key',
-      name: T('Download Encryption Key'),
+      name: this.translate.instant('Download Encryption Key'),
       disabled: true,
       function: () => {
         this.ws.call('auth.check_user', ['root', this.admin_pw]).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -98,7 +98,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     },
     {
       id: 'custom_cancel',
-      name: T('Cancel'),
+      name: this.translate.instant('Cancel'),
       function: () => {
         this.router.navigate(new Array('/').concat(
           this.route_return,
@@ -122,6 +122,7 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     public mdDialog: MatDialog,
     protected encryptionService: EncryptionService,
+    protected translate: TranslateService,
   ) {
 
   }

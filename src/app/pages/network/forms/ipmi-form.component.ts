@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -26,7 +25,7 @@ import { IpmiService } from 'app/services/ipmi.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class IpmiFormComponent implements FormConfiguration {
-  title = T('IPMI');
+  title = this.translate.instant('IPMI');
   queryCall = 'ipmi.query' as const;
 
   protected entityEdit: EntityFormComponent;
@@ -255,7 +254,7 @@ export class IpmiFormComponent implements FormConfiguration {
     this.loader.open();
     return call$.pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
-      this.dialog.info(T('Settings saved.'), '', '300px', 'info', true);
+      this.dialog.info(this.translate.instant('Settings saved.'), '', '300px', 'info', true);
     }, (res) => {
       this.loader.close();
       new EntityUtils().handleWSError(this.entityEdit, res);

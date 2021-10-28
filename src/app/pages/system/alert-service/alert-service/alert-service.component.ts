@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
@@ -104,13 +104,13 @@ export class AlertServiceComponent implements FormConfiguration {
           placeholder: helptext.level_placeholder,
           tooltip: helptext.level_tooltip,
           options: [
-            { label: T('Info'), value: AlertLevel.Info },
-            { label: T('Notice'), value: AlertLevel.Notice },
-            { label: T('Warning'), value: AlertLevel.Warning },
-            { label: T('Error'), value: AlertLevel.Error },
-            { label: T('Critical'), value: AlertLevel.Critical },
-            { label: T('Alert'), value: AlertLevel.Alert },
-            { label: T('Emergency'), value: AlertLevel.Emergency },
+            { label: this.translate.instant('Info'), value: AlertLevel.Info },
+            { label: this.translate.instant('Notice'), value: AlertLevel.Notice },
+            { label: this.translate.instant('Warning'), value: AlertLevel.Warning },
+            { label: this.translate.instant('Error'), value: AlertLevel.Error },
+            { label: this.translate.instant('Critical'), value: AlertLevel.Critical },
+            { label: this.translate.instant('Alert'), value: AlertLevel.Alert },
+            { label: this.translate.instant('Emergency'), value: AlertLevel.Emergency },
           ],
           value: AlertLevel.Warning,
         },
@@ -677,7 +677,7 @@ export class AlertServiceComponent implements FormConfiguration {
   custActions = [
     {
       id: 'authenticate',
-      name: T('SEND TEST ALERT'),
+      name: this.translate.instant('SEND TEST ALERT'),
       function: () => {
         this.entityFormService.clearFormError(this.fieldConfig);
         const testPayload = this.generatePayload(_.cloneDeep(this.entityForm.formGroup.value));
@@ -687,9 +687,9 @@ export class AlertServiceComponent implements FormConfiguration {
           (wasAlertSent) => {
             this.loader.close();
             if (wasAlertSent) {
-              this.dialogService.info(T('Succeeded'), T('Test alert sent!'), '500px', 'info');
+              this.dialogService.info(this.translate.instant('Succeeded'), this.translate.instant('Test alert sent!'), '500px', 'info');
             } else {
-              this.dialogService.info(T('Failed'), T('Failed sending test alert!'));
+              this.dialogService.info(this.translate.instant('Failed'), this.translate.instant('Failed sending test alert!'));
             }
           },
           (err: WebsocketError) => {
@@ -708,6 +708,7 @@ export class AlertServiceComponent implements FormConfiguration {
     protected entityFormService: EntityFormService,
     protected loader: AppLoaderService,
     protected dialogService: DialogService,
+    protected translate: TranslateService,
   ) { }
 
   preInit(): void {
@@ -747,7 +748,7 @@ export class AlertServiceComponent implements FormConfiguration {
       return chatId;
     });
     if (wrongChatIds.length > 0) {
-      this.dialogService.info(T('Failed'), T('The following Telegram chat ID(s) must be numbers!') + '\n\n' + wrongChatIds.join(', '));
+      this.dialogService.info(this.translate.instant('Failed'), this.translate.instant('The following Telegram chat ID(s) must be numbers!') + '\n\n' + wrongChatIds.join(', '));
       throw new Error('Telegram-chat_ids must be an array of integer');
     }
     // Avoid duplicated chat IDs

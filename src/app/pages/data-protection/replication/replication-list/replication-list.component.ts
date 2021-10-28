@@ -1,7 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -45,7 +44,7 @@ import { ModalService } from 'app/services/modal.service';
   ],
 })
 export class ReplicationListComponent implements EntityTableConfig {
-  title = T('Replication Tasks');
+  title = this.translate.instant('Replication Tasks');
   queryCall = 'replication.query' as const;
   wsDelete = 'replication.delete' as const;
   route_add: string[] = ['tasks', 'replication', 'wizard'];
@@ -55,26 +54,26 @@ export class ReplicationListComponent implements EntityTableConfig {
   asyncView = true;
 
   columns = [
-    { name: T('Name'), prop: 'name', always_display: true },
-    { name: T('Direction'), prop: 'direction' },
-    { name: T('Transport'), prop: 'transport', hidden: true },
-    { name: T('SSH Connection'), prop: 'ssh_connection', hidden: true },
-    { name: T('Source Dataset'), prop: 'source_datasets', hidden: true },
-    { name: T('Target Dataset'), prop: 'target_dataset', hidden: true },
-    { name: T('Recursive'), prop: 'recursive', hidden: true },
-    { name: T('Auto'), prop: 'auto', hidden: true },
-    { name: T('Enabled'), prop: 'enabled', checkbox: true },
+    { name: this.translate.instant('Name'), prop: 'name', always_display: true },
+    { name: this.translate.instant('Direction'), prop: 'direction' },
+    { name: this.translate.instant('Transport'), prop: 'transport', hidden: true },
+    { name: this.translate.instant('SSH Connection'), prop: 'ssh_connection', hidden: true },
+    { name: this.translate.instant('Source Dataset'), prop: 'source_datasets', hidden: true },
+    { name: this.translate.instant('Target Dataset'), prop: 'target_dataset', hidden: true },
+    { name: this.translate.instant('Recursive'), prop: 'recursive', hidden: true },
+    { name: this.translate.instant('Auto'), prop: 'auto', hidden: true },
+    { name: this.translate.instant('Enabled'), prop: 'enabled', checkbox: true },
     {
-      name: T('State'), prop: 'state', button: true, state: 'state',
+      name: this.translate.instant('State'), prop: 'state', button: true, state: 'state',
     },
-    { name: T('Last Snapshot'), prop: 'task_last_snapshot' },
+    { name: this.translate.instant('Last Snapshot'), prop: 'task_last_snapshot' },
   ];
 
   config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('Replication Task'),
+      title: this.translate.instant('Replication Task'),
       key_props: ['name'],
     },
   };
@@ -100,7 +99,7 @@ export class ReplicationListComponent implements EntityTableConfig {
       return {
         ...task,
         ssh_connection: task.ssh_credentials ? (task.ssh_credentials as any).name : '-',
-        task_last_snapshot: task.state.last_snapshot ? task.state.last_snapshot : T('No snapshots sent yet'),
+        task_last_snapshot: task.state.last_snapshot ? task.state.last_snapshot : this.translate.instant('No snapshots sent yet'),
       };
     });
   }
@@ -111,10 +110,10 @@ export class ReplicationListComponent implements EntityTableConfig {
         id: parentrow.name,
         icon: 'play_arrow',
         name: 'run',
-        label: T('Run Now'),
+        label: this.translate.instant('Run Now'),
         onClick: (row: ReplicationTaskUi) => {
           this.dialog.confirm({
-            title: T('Run Now'),
+            title: this.translate.instant('Run Now'),
             message: this.translate.instant('Replicate <i>{name}</i> now?', { name: row.name }),
             hideCheckBox: true,
           }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
@@ -122,7 +121,7 @@ export class ReplicationListComponent implements EntityTableConfig {
             this.ws.call('replication.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
               (jobId: number) => {
                 this.dialog.info(
-                  T('Task started'),
+                  this.translate.instant('Task started'),
                   this.translate.instant('Replication <i>{name}</i> has started.', { name: row.name }),
                   '500px',
                   'info',
@@ -144,7 +143,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         actionName: (parentrow as any).description,
         id: 'restore',
         name: 'restore',
-        label: T('Restore'),
+        label: this.translate.instant('Restore'),
         icon: 'restore',
         onClick: (row: ReplicationTaskUi) => {
           const conf: DialogFormConfiguration = {
@@ -191,7 +190,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         id: parentrow.name,
         icon: 'edit',
         name: 'edit',
-        label: T('Edit'),
+        label: this.translate.instant('Edit'),
         onClick: (row: ReplicationTaskUi) => {
           this.doEdit(row.id);
         },
@@ -200,7 +199,7 @@ export class ReplicationListComponent implements EntityTableConfig {
         id: parentrow.name,
         icon: 'delete',
         name: 'delete',
-        label: T('Delete'),
+        label: this.translate.instant('Delete'),
         onClick: (row: ReplicationTaskUi) => {
           this.entityList.doDelete(row);
         },
@@ -217,7 +216,7 @@ export class ReplicationListComponent implements EntityTableConfig {
       if (row.state.state === JobState.Running) {
         this.entityList.runningStateButton(row.job.id);
       } else if (row.state.state === JobState.Hold) {
-        this.dialog.info(T('Task is on hold'), row.state.reason, '500px', 'info', true);
+        this.dialog.info(this.translate.instant('Task is on hold'), row.state.reason, '500px', 'info', true);
       } else if (row.state.warnings && row.state.warnings.length > 0) {
         let list = '';
         row.state.warnings.forEach((warning: string) => {

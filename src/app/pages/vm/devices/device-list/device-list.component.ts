@@ -1,6 +1,5 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -38,9 +37,9 @@ export class DeviceListComponent implements EntityTableConfig {
   queryCallOption: [[Partial<QueryFilter<VmDevice>>]] = [[['vm', '=']]];
   protected loaderOpen = false;
   columns = [
-    { name: T('Device ID'), prop: 'id', always_display: true },
-    { name: T('Device'), prop: 'dtype' },
-    { name: T('Order'), prop: 'order' },
+    { name: this.translate.instant('Device ID'), prop: 'id', always_display: true },
+    { name: this.translate.instant('Device'), prop: 'dtype' },
+    { name: this.translate.instant('Order'), prop: 'order' },
   ];
   rowIdentifier = 'id';
   title: string;
@@ -51,7 +50,7 @@ export class DeviceListComponent implements EntityTableConfig {
 
   globalConfig = {
     id: 'config',
-    tooltip: T('Close (return to VM list)'),
+    tooltip: this.translate.instant('Close (return to VM list)'),
     icon: 'highlight_off',
     onClick: () => {
       this.router.navigate(['/', 'vm']);
@@ -78,7 +77,7 @@ export class DeviceListComponent implements EntityTableConfig {
       id: row.id,
       name: 'edit',
       icon: 'edit',
-      label: T('Edit'),
+      label: this.translate.instant('Edit'),
       onClick: (edit_row: VmDevice) => {
         this.router.navigate(['/', 'vm', this.pk, 'devices', this.vm, 'edit', String(edit_row.id), edit_row.dtype]);
       },
@@ -87,7 +86,7 @@ export class DeviceListComponent implements EntityTableConfig {
       id: row.id,
       name: 'delete',
       icon: 'delete',
-      label: T('Delete'),
+      label: this.translate.instant('Delete'),
       onClick: (delete_row: VmDevice) => {
         this.deviceDelete(delete_row);
       },
@@ -96,10 +95,10 @@ export class DeviceListComponent implements EntityTableConfig {
       id: row.id,
       name: 'reorder',
       icon: 'reorder',
-      label: T('Change Device Order'),
+      label: this.translate.instant('Change Device Order'),
       onClick: (row1: VmDevice) => {
         const conf: DialogFormConfiguration = {
-          title: T('Change Device Order'),
+          title: this.translate.instant('Change Device Order'),
           message: this.translate.instant('Change order for <b>{vmDevice}</b>', { vmDevice: `${row1.dtype} ${row1.id}` }),
           parent: this,
           fieldConfig: [{
@@ -107,7 +106,7 @@ export class DeviceListComponent implements EntityTableConfig {
             name: 'order',
           },
           ],
-          saveButtonText: T('Save'),
+          saveButtonText: this.translate.instant('Save'),
           preInit(entityDialog: EntityDialogComponent) {
             _.find(entityDialog.fieldConfig, { name: 'order' })['value'] = row1.order;
           },
@@ -134,7 +133,7 @@ export class DeviceListComponent implements EntityTableConfig {
       id: row.id,
       name: 'details',
       icon: 'list',
-      label: T('Details'),
+      label: this.translate.instant('Details'),
       onClick: (device: VmDevice) => {
         let details = '';
         Object.entries(device.attributes).forEach(([attribute, attributeValue]) => {
@@ -153,10 +152,10 @@ export class DeviceListComponent implements EntityTableConfig {
 
   deviceDelete(row: VmDevice): void {
     this.dialogService.confirm({
-      title: T('Delete'),
+      title: this.translate.instant('Delete'),
       message: this.translate.instant('Delete <b>{vmDevice}</b>', { vmDevice: `${row.dtype} ${row.id}` }),
       hideCheckBox: true,
-      buttonMsg: T('Delete Device'),
+      buttonMsg: this.translate.instant('Delete Device'),
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.loader.open();
       this.loaderOpen = true;

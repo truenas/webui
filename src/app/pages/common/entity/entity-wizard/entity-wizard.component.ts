@@ -7,7 +7,6 @@ import {
 } from '@angular/forms';
 import { MatStep, MatStepper } from '@angular/material/stepper';
 import { Router, ActivatedRoute } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -37,8 +36,8 @@ export class EntityWizardComponent implements OnInit {
   summaryValue: any;
   summaryFieldConfigs: FieldConfig[] = [];
 
-  saveSubmitText: string = T('Save');
-  customNextText = T('Next');
+  saveSubmitText: string = this.translate.instant('Save');
+  customNextText = this.translate.instant('Next');
   get formArray(): AbstractControl | null { return this.formGroup.get('formArray'); }
 
   constructor(
@@ -189,7 +188,7 @@ export class EntityWizardComponent implements OnInit {
           } else if (this.conf.route_success) {
             this.router.navigate(new Array('/').concat(this.conf.route_success));
           } else {
-            this.dialog.info(T('Settings saved'), '', '300px', 'info', true);
+            this.dialog.info(this.translate.instant('Settings saved'), '', '300px', 'info', true);
           }
         },
         (res) => {

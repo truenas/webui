@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
@@ -41,7 +40,7 @@ import { ZvolFormComponent } from '../zvol/zvol-form/zvol-form.component';
   templateUrl: './volumes-list.component.html',
 })
 export class VolumesListComponent extends EntityTableComponent implements OnInit, OnDestroy {
-  title = T('Pools');
+  title = this.translate.instant('Pools');
   zfsPoolRows: VolumesListPool[] = [];
   conf = new VolumesListTableConfig(
     this,
@@ -109,10 +108,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.FirstUse,
     large: true,
-    title: T('No Pools'),
-    message: `${T('It seems you haven\'t configured pools yet.')} ${T('Please click the button below to create a pool.')}`,
+    title: this.translate.instant('No Pools'),
+    message: `${this.translate.instant('It seems you haven\'t configured pools yet.')} ${this.translate.instant('Please click the button below to create a pool.')}`,
     button: {
-      label: T('Create pool'),
+      label: this.translate.instant('Create pool'),
       action: this.createPool.bind(this),
     },
   };
@@ -295,7 +294,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.showDefaults = true;
       this.showSpinner = false;
 
-      this.dialogService.errorReport(T('Error getting pool data.'), res.message, res.stack);
+      this.dialogService.errorReport(this.translate.instant('Error getting pool data.'), res.message, res.stack);
     });
   }
 
@@ -309,14 +308,14 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     const addDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent, id);
     addDatasetComponent.setParent(id);
     addDatasetComponent.setVolId(pool);
-    addDatasetComponent.setTitle(T('Add Dataset'));
+    addDatasetComponent.setTitle(this.translate.instant('Add Dataset'));
   }
 
   editDataset(pool: string, id: string): void {
     const editDatasetComponent = this.modalService.openInSlideIn(DatasetFormComponent, id);
     editDatasetComponent.setPk(id);
     editDatasetComponent.setVolId(pool);
-    editDatasetComponent.setTitle(T('Edit Dataset'));
+    editDatasetComponent.setTitle(this.translate.instant('Edit Dataset'));
   }
 
   createPool(): void {

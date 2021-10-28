@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { DomSanitizer } from '@angular/platform-browser';
+import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
 import { MINI } from 'app/core/classes/hardware/mini';
 import { MINIX } from 'app/core/classes/hardware/mini-x';
@@ -24,13 +25,16 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
 
   temperatureScales = false;
 
-  constructor(public el: ElementRef,
+  constructor(
+    public el: ElementRef,
     protected core: CoreService,
     public sanitizer: DomSanitizer,
     public mediaObserver: MediaObserver,
     public cdr: ChangeDetectorRef,
-    public dialogService: DialogService) {
-    super(el, core, sanitizer, mediaObserver, cdr, dialogService);
+    public dialogService: DialogService,
+    protected translate: TranslateService,
+  ) {
+    super(el, core, sanitizer, mediaObserver, cdr, dialogService, translate);
     this.pixiWidth = 960 * 0.6; // PIXI needs an explicit number. Make sure the template flex width matches this
     this.pixiHeight = 480;
   }

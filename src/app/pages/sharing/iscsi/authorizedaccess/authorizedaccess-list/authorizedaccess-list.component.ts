@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService } from '@ngx-translate/core';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 
 @Component({
@@ -10,25 +10,25 @@ import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-t
   `,
 })
 export class AuthorizedAccessListComponent implements EntityTableConfig {
-  tableTitle = 'Authorized Access';
+  tableTitle = this.translate.instant('Authorized Access');
   queryCall = 'iscsi.auth.query' as const;
   wsDelete = 'iscsi.auth.delete' as const;
   route_add: string[] = ['sharing', 'iscsi', 'auth', 'add'];
   route_edit: string[] = ['sharing', 'iscsi', 'auth', 'edit'];
-  route_add_tooltip = 'Add Authorized Access';
+  route_add_tooltip = this.translate.instant('Add Authorized Access');
 
   columns = [
     {
-      name: T('Group ID'),
+      name: this.translate.instant('Group ID'),
       prop: 'tag',
       always_display: true,
     },
     {
-      name: T('User'),
+      name: this.translate.instant('User'),
       prop: 'user',
     },
     {
-      name: T('Peer User'),
+      name: this.translate.instant('Peer User'),
       prop: 'peeruser',
     },
   ];
@@ -37,10 +37,13 @@ export class AuthorizedAccessListComponent implements EntityTableConfig {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Authorized Access',
+      title: this.translate.instant('Authorized Access'),
       key_props: ['tag'],
     },
   };
 
-  constructor(protected router: Router) {}
+  constructor(
+    protected router: Router,
+    protected translate: TranslateService,
+  ) {}
 }

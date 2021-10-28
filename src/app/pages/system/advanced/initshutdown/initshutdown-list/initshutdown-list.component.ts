@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { ModalService } from 'app/services/modal.service';
@@ -21,25 +21,28 @@ export class InitshutdownListComponent implements EntityTableConfig {
   protected entityList: EntityTableComponent;
 
   columns = [
-    { name: T('Type'), prop: 'type' },
-    { name: T('Command'), prop: 'command', hidden: true },
-    { name: T('Script'), prop: 'script', hidden: true },
-    { name: T('Description'), prop: 'comment' },
-    { name: T('When'), prop: 'when' },
-    { name: T('Enabled'), prop: 'enabled' },
-    { name: T('Timeout'), prop: 'timeout', hidden: true },
+    { name: this.translate.instant('Type'), prop: 'type' },
+    { name: this.translate.instant('Command'), prop: 'command', hidden: true },
+    { name: this.translate.instant('Script'), prop: 'script', hidden: true },
+    { name: this.translate.instant('Description'), prop: 'comment' },
+    { name: this.translate.instant('When'), prop: 'when' },
+    { name: this.translate.instant('Enabled'), prop: 'enabled' },
+    { name: this.translate.instant('Timeout'), prop: 'timeout', hidden: true },
   ];
   rowIdentifier = 'type';
   config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('Init/Shutdown Script'),
+      title: this.translate.instant('Init/Shutdown Script'),
       key_props: ['type', 'command', 'script'],
     },
   };
 
-  constructor(public modalService: ModalService) {}
+  constructor(
+    public modalService: ModalService,
+    protected translate: TranslateService,
+  ) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;

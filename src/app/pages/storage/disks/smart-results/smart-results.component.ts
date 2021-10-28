@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -25,12 +24,12 @@ export class SmartResultsComponent implements EntityTableConfig {
   };
 
   columns = [
-    { name: T('ID'), prop: 'num', always_display: true },
-    { name: T('Description'), prop: 'description' },
-    { name: T('Status'), prop: 'status' },
-    { name: T('Remaining'), prop: 'remaining', hidden: true },
-    { name: T('Lifetime'), prop: 'lifetime', hidden: true },
-    { name: T('Error'), prop: 'lba_of_first_error', hidden: true },
+    { name: this.translate.instant('ID'), prop: 'num', always_display: true },
+    { name: this.translate.instant('Description'), prop: 'description' },
+    { name: this.translate.instant('Status'), prop: 'status' },
+    { name: this.translate.instant('Remaining'), prop: 'remaining', hidden: true },
+    { name: this.translate.instant('Lifetime'), prop: 'lifetime', hidden: true },
+    { name: this.translate.instant('Error'), prop: 'lba_of_first_error', hidden: true },
   ];
   config = {
     paging: true,

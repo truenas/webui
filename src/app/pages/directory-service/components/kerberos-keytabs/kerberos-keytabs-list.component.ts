@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/directory-service/kerberos-keytabs-form-list';
 import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -14,25 +14,28 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class KerberosKeytabsListComponent implements EntityTableConfig {
-  title = 'Kerberos Keytabs';
+  title = this.translate.instant('Kerberos Keytabs');
   queryCall = 'kerberos.keytab.query' as const;
   wsDelete = 'kerberos.keytab.delete' as const;
   protected entityList: EntityTableComponent;
 
   columns = [
-    { name: 'Name', prop: 'name', always_display: true },
+    { name: this.translate.instant('Name'), prop: 'name', always_display: true },
   ];
   rowIdentifier = 'name';
   config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: helptext.kkt_list_delmsg_title,
+      title: this.translate.instant(helptext.kkt_list_delmsg_title),
       key_props: helptext.kkt_list_delmsgkey_props,
     },
   };
 
-  constructor(private modalService: ModalService) { }
+  constructor(
+    private modalService: ModalService,
+    private translate: TranslateService,
+  ) { }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
@@ -43,7 +46,7 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
 
   getAddActions(): EntityTableAction[] {
     return [{
-      label: T('Add'),
+      label: this.translate.instant('Add'),
       onClick: () => {
         this.doAdd();
       },
@@ -54,14 +57,14 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
     const actions = [];
     actions.push({
       id: 'edit',
-      label: T('Edit'),
+      label: this.translate.instant('Edit'),
       disabled: row.disableEdit,
       onClick: (row: KerberosKeytab) => {
         this.doAdd(row.id);
       },
     }, {
       id: 'delete',
-      label: T('Delete'),
+      label: this.translate.instant('Delete'),
       onClick: (row: KerberosKeytab) => {
         this.entityList.doDelete(row);
       },

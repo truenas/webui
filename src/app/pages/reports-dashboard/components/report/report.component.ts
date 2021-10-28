@@ -9,7 +9,6 @@ import {
 } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
@@ -90,7 +89,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   }
 
   legendData: any = {};
-  subtitle: string = T('% of all cores');
+  subtitle: string = this.translate.instant('% of all cores');
   altTitle = '';
   altSubtitle = '';
   widgetColorCssVar = 'var(--primary)';
