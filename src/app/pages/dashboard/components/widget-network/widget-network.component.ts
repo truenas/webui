@@ -295,8 +295,9 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   getIpAddress(nic: BaseNetworkInterface): string {
     let ip = '–';
     if (nic.state.aliases) {
-      const addresses = nic.state.aliases.filter((item: NetworkInterfaceAlias) =>
-        [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
+      const addresses = nic.state.aliases.filter((item: NetworkInterfaceAlias) => {
+        return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);
+      });
 
       if (addresses.length > 0) {
         ip = addresses[0].address + '/' + addresses[0].netmask;

@@ -224,11 +224,12 @@ export class StorageService {
 
   poolUnlockServiceOptions(id: number): Observable<Option[]> {
     return this.ws.call('pool.unlock_services_restart_choices', [id]).pipe(
-      map((response: Choices) =>
-        Object.keys(response || {}).map((serviceId) => ({
+      map((response: Choices) => {
+        return Object.keys(response || {}).map((serviceId) => ({
           label: response[serviceId],
           value: serviceId,
-        }))),
+        }));
+      }),
     );
   }
 
