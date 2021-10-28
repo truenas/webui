@@ -1,3 +1,4 @@
+<ix-modal-header [title]="'Localization Settings' | translate" [loading]="isFormLoading"></ix-modal-header>
 <mat-card>
   <mat-card-content>
     <form [formGroup]="formGroup" class="ix-form-container" (submit)="submit()">
@@ -37,9 +38,8 @@
         ></ix-select>
       </ix-fieldset>
       <div class="form-actions">
-        <button mat-button type="submit" [disabled]="formGroup.invalid || formIsLoading" color="primary">{{ 'Save' | translate }}</button>
+        <button mat-button type="submit" [disabled]="formGroup.invalid || isFormLoading" color="primary">{{ 'Save' | translate }}</button>
       </div>
     </form>
-    <mat-progress-bar *ngIf="formIsLoading" mode="indeterminate"></mat-progress-bar>
   </mat-card-content>
 </mat-card>

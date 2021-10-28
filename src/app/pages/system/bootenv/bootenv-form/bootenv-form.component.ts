@@ -30,6 +30,7 @@ export class BootEnvironmentFormComponent {
   Operations = BootEnvironmentActions;
   operation: BootEnvironmentActions = BootEnvironmentActions.Create;
   currentName?: string;
+  title: string;
 
   formGroup = this.formBuilder.group({
     name: ['', [Validators.required, regexValidator(this.bootEnvService.bootenv_name_regex)]],
@@ -56,6 +57,7 @@ export class BootEnvironmentFormComponent {
 
     switch (this.operation) {
       case this.Operations.Rename:
+        this.title = this.translate.instant('Rename Boot Environment');
         this.currentName = name;
         this.formGroup.patchValue({
           name,
@@ -66,6 +68,7 @@ export class BootEnvironmentFormComponent {
         };
         break;
       case this.Operations.Clone:
+        this.title = this.translate.instant('Clone Boot Environment');
         this.currentName = name;
 
         this.formGroup.addControl(
@@ -79,6 +82,7 @@ export class BootEnvironmentFormComponent {
         };
         break;
       default:
+        this.title = this.translate.instant('Create Boot Environment');
         this.tooltips = {
           name: helptext_system_bootenv.create_name_tooltip,
         };

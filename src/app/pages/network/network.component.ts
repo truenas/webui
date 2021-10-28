@@ -133,10 +133,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     ],
     parent: this,
     add: () => {
-      this.ixModalService.open(StaticRouteFormComponent, this.translate.instant('Add Static Route'));
+      this.ixModalService.open(StaticRouteFormComponent);
     },
     edit: (route: StaticRoute) => {
-      const modal = this.ixModalService.open(StaticRouteFormComponent, this.translate.instant('Edit Static Route'));
+      const modal = this.ixModalService.open(StaticRouteFormComponent);
       modal.setEditingStaticRoute(route);
     },
     deleteMsg: {

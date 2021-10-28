@@ -19,6 +19,7 @@ import { IxSelectComponent } from 'app/pages/common/ix-forms/components/ix-selec
 import { IxTextareaComponent } from 'app/pages/common/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxUserComboboxComponent } from 'app/pages/common/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
+import { IxModalHeaderComponent } from './components/ix-modal/components/ix-modal-header/ix-modal-header.component';
 
 @NgModule({
   imports: [
@@ -40,6 +41,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxFieldsetComponent,
     IxModalComponent,
     IxModalDirective,
+    IxModalHeaderComponent,
     IxCheckboxComponent,
     IxFormErrorsComponent,
     IxUserComboboxComponent,
@@ -51,6 +53,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxSelectComponent,
     IxComboboxComponent,
     IxModalComponent,
+    IxModalHeaderComponent,
     IxFieldsetComponent,
     IxModalDirective,
     IxUserComboboxComponent,
