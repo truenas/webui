@@ -7,7 +7,8 @@ from function import (
     is_element_present,
     attribute_value_exist,
     run_cmd,
-    post
+    post,
+    wait_on_element_disappear
 )
 from pytest_bdd import (
     given,
@@ -49,20 +50,19 @@ def you_should_be_on_the_dashboard_click_on_sharing_then_windows_sharessmb(drive
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//span[contains(.,"root")]')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Sharing"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Windows Shares (SMB)"]').click()
-
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
+    assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
+    
 
 @then('The Windows Shares(SMB) page should open, Click Add')
 def the_windows_sharessmb_page_should_open_click_add(driver):
     """The Windows Shares(SMB) page should open, Click Add."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Samba")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__Samba_ADD"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Samba_ADD"]').click()
+    assert wait_on_element(driver, 7, '//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]', 'clickable')
+    driver.find_element_by_xpath('//mat-card[contains(.,"Windows (SMB) Shares")]//button[contains(.,"Add")]').click()
+    assert wait_on_element(driver, 5, '//h3[contains(text(),"Add SMB")]')
     assert wait_on_element(driver, 5, '//h4[contains(.,"Basic")]')  
-
+    
 
 
 @then(parsers.parse('Set Path to the LDAP dataset "{path}", Input "{smbname}" as name, Click to enable, Input "{description}" as description, and Click Summit'))
@@ -82,31 +82,29 @@ def set_path_to_the_ldap_dataset_mnttankericbsd_dataset_input_eric_share_as_name
     if not checkbox_checked:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Enabled"]').click()
     assert attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Enabled"]', 'class', 'mat-checkbox-checked')
-    time.sleep(1)
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Description"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Description"]').send_keys(description)
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
-
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     
-@then(parsers.parse('"{smbname}" should be added, Click on service and the Service page should open'))
-def test_eric_smb_share_should_be_added_click_on_service_and_the_service_page_should_open(driver, smbname):
-    """"{smbname}" should be added, Click on service and the Service page should open."""
-    assert wait_on_element(driver, 5, '//div[contains(.,"Samba")]')
-    assert wait_on_element(driver, 5, f'//div[contains(.,"{smbname}")]')
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Services"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Services"]').click()
-    assert wait_on_element(driver, 5, '//services')
-
+    
+@then(parsers.parse('{sharename} should be added, Click on service and the Service page should open'))
+def sharename_should_be_added_click_on_service_and_the_service_page_should_open(driver, sharename):
+    """{sharename} should be added, Click on service and the Service page should open."""
+    assert wait_on_element(driver, 5, '//div[contains(.,"SMB")]')
+    assert wait_on_element(driver, 5, f'//div[contains(.,"{sharename}")]')
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
+    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
+    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
 
 @then('If the SMB serivce is not started start the service, and click on SMB Start Automatically checkbox')
 def if_the_smb_serivce_is_not_started_start_the_service_and_click_on_smb_start_automatically_checkbox(driver):
     """If the SMB serivce is not started start the service, and click on SMB Start Automatically checkbox."""
     time.sleep(1)
     assert wait_on_element(driver, 5, '//services')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__S3_Actions"]')
     # Scroll to SMB service
     element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
