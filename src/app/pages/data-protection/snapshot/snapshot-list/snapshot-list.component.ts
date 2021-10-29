@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
@@ -19,7 +18,7 @@ import { TaskService } from 'app/services/task.service';
   providers: [TaskService, StorageService],
 })
 export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshotTaskUi> {
-  title = T('Periodic Snapshot Tasks');
+  title = this.translate.instant('Periodic Snapshot Tasks');
   queryCall = 'pool.snapshottask.query' as const;
   updateCall = 'pool.snapshottask.update' as const;
   wsDelete = 'pool.snapshottask.delete' as const;
@@ -30,18 +29,18 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   asyncView = true;
 
   columns = [
-    { name: T('Pool/Dataset'), prop: 'dataset', always_display: true },
-    { name: T('Recursive'), prop: 'recursive' },
-    { name: T('Naming Schema'), prop: 'naming_schema' },
-    { name: T('When'), prop: 'when' },
-    { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
-    { name: T('Next Run'), prop: 'next_run', hidden: true },
-    { name: T('Keep snapshot for'), prop: 'keepfor', hidden: true },
-    { name: T('Legacy'), prop: 'legacy', hidden: true },
-    { name: T('VMware Sync'), prop: 'vmware_sync', hidden: true },
-    { name: T('Enabled'), prop: 'enabled', selectable: true },
+    { name: this.translate.instant('Pool/Dataset'), prop: 'dataset', always_display: true },
+    { name: this.translate.instant('Recursive'), prop: 'recursive' },
+    { name: this.translate.instant('Naming Schema'), prop: 'naming_schema' },
+    { name: this.translate.instant('When'), prop: 'when' },
+    { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
+    { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
+    { name: this.translate.instant('Keep snapshot for'), prop: 'keepfor', hidden: true },
+    { name: this.translate.instant('Legacy'), prop: 'legacy', hidden: true },
+    { name: this.translate.instant('VMware Sync'), prop: 'vmware_sync', hidden: true },
+    { name: this.translate.instant('Enabled'), prop: 'enabled', selectable: true },
     {
-      name: T('State'), prop: 'state', state: 'state', button: true,
+      name: this.translate.instant('State'), prop: 'state', state: 'state', button: true,
     },
   ];
   rowIdentifier = 'id';
@@ -49,7 +48,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('Periodic Snapshot Task'),
+      title: this.translate.instant('Periodic Snapshot Task'),
       key_props: ['dataset', 'naming_schema', 'keepfor'],
     },
   };
@@ -74,7 +73,7 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
       const transformedTask = {
         ...task,
         keepfor: `${task.lifetime_value} ${task.lifetime_unit}(S)`,
-        when: this.translate.instant(T('From {task_begin} to {task_end}'), { task_begin: task.schedule.begin, task_end: task.schedule.end }),
+        when: this.translate.instant('From {task_begin} to {task_end}', { task_begin: task.schedule.begin, task_end: task.schedule.end }),
         cron_schedule: `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`,
       } as PeriodicSnapshotTaskUi;
 

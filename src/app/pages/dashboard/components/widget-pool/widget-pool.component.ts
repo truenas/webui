@@ -12,7 +12,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
@@ -206,7 +205,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     };
 
     this.path = [
-      { name: T('overview'), template: this.overview },
+      { name: this.translate.instant('overview'), template: this.overview },
       { name: 'empty', template: this.empty },
       { name: 'empty', template: this.empty },
       { name: 'empty', template: this.empty },
@@ -431,11 +430,11 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
 
     if (this.poolHealth.errors.length > 0) {
-      this.poolHealth.level = T('error');
+      this.poolHealth.level = this.translate.instant('error');
     } else if (this.poolHealth.warnings.length > 0) {
-      this.poolHealth.level = T('warn');
+      this.poolHealth.level = this.translate.instant('warn');
     } else {
-      this.poolHealth.level = T('safe');
+      this.poolHealth.level = this.translate.instant('safe');
     }
 
     if (condition === 'locked') {

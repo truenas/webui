@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService } from '@ngx-translate/core';
 import { ProductType } from 'app/enums/product-type.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -15,20 +15,20 @@ import { WebSocketService } from 'app/services';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class TunableListComponent implements EntityTableConfig {
-  title: string = T('Tunables');
-  title_scale: string = T('Sysctl');
+  title: string = this.translate.instant('Tunables');
+  title_scale: string = this.translate.instant('Sysctl');
   wsDelete = 'tunable.delete' as const;
   queryCall = 'tunable.query' as const;
 
   route_edit: string[] = ['system', 'tunable', 'edit'];
   protected route_success: string[] = ['system', 'tunable'];
   route_add: string[] = ['system', 'tunable', 'add'];
-  route_add_tooltip: string = T('Add Tunable');
+  route_add_tooltip: string = this.translate.instant('Add Tunable');
 
   protected route_edit_scale: string[] = ['system', 'sysctl', 'edit'];
   protected route_success_scale: string[] = ['system', 'advanced'];
   protected route_add_scale: string[] = ['system', 'sysctl', 'add'];
-  protected route_add_tooltip_scale = T('Add Sysctl');
+  protected route_add_tooltip_scale = this.translate.instant('Add Sysctl');
 
   protected product_type: ProductType;
 
@@ -38,7 +38,7 @@ export class TunableListComponent implements EntityTableConfig {
   multiActions = [
     {
       id: 'mdelete',
-      label: T('Delete'),
+      label: this.translate.instant('Delete'),
       icon: 'delete',
       enable: true,
       ttpos: 'above' as TooltipPosition,
@@ -49,11 +49,11 @@ export class TunableListComponent implements EntityTableConfig {
   ];
 
   columns = [
-    { name: T('Variable'), prop: 'var', always_display: true },
-    { name: T('Value'), prop: 'value' },
-    { name: T('Type'), prop: 'type' },
-    { name: T('Description'), prop: 'comment' },
-    { name: T('Enabled'), prop: 'enabled' },
+    { name: this.translate.instant('Variable'), prop: 'var', always_display: true },
+    { name: this.translate.instant('Value'), prop: 'value' },
+    { name: this.translate.instant('Type'), prop: 'type' },
+    { name: this.translate.instant('Description'), prop: 'comment' },
+    { name: this.translate.instant('Enabled'), prop: 'enabled' },
   ];
   rowIdentifier = 'var';
 
@@ -61,17 +61,20 @@ export class TunableListComponent implements EntityTableConfig {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('Tunable') as string,
+      title: this.translate.instant('Tunable') as string,
       key_props: ['var'],
     },
     multiSelect: true,
   };
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected _injector: Injector,
-    protected _appRef: ApplicationRef) {}
+    protected _appRef: ApplicationRef,
+    protected translate: TranslateService,
+  ) {}
 
   preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
@@ -81,7 +84,7 @@ export class TunableListComponent implements EntityTableConfig {
       this.route_edit = this.route_edit_scale;
       this.route_success = this.route_success_scale;
       this.route_add_tooltip = this.route_add_tooltip_scale;
-      this.config.deleteMsg.title = T('Sysctl');
+      this.config.deleteMsg.title = this.translate.instant('Sysctl');
       this.title = this.title_scale;
     }
   }

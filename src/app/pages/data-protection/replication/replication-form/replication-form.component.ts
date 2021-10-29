@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -62,21 +61,21 @@ export class ReplicationFormComponent implements FormConfiguration {
   pk: number;
   protected retentionPolicyChoice = [
     {
-      label: T('Same as Source'),
+      label: this.translate.instant('Same as Source'),
       value: RetentionPolicy.Source,
     },
     {
-      label: T('Custom'),
+      label: this.translate.instant('Custom'),
       value: RetentionPolicy.Custom,
     },
     {
-      label: T('None'),
+      label: this.translate.instant('None'),
       value: RetentionPolicy.None,
     },
   ];
   custActions = [{
     id: 'wizard_add',
-    name: T('Switch to Wizard'),
+    name: this.translate.instant('Switch to Wizard'),
     function: () => {
       this.modalService.closeSlideIn();
       const message = { action: 'open', component: 'replicationWizard', row: this.pk };
@@ -106,11 +105,11 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.direction_tooltip,
           options: [
             {
-              label: T('PUSH'),
+              label: this.translate.instant('PUSH'),
               value: Direction.Push,
             },
             {
-              label: T('PULL'),
+              label: this.translate.instant('PULL'),
               value: Direction.Pull,
             },
           ],
@@ -134,15 +133,15 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.transport_tooltip,
           options: [
             {
-              label: T('SSH'),
+              label: this.translate.instant('SSH'),
               value: TransportMode.SSH,
             },
             {
-              label: T('SSH+NETCAT'),
+              label: this.translate.instant('SSH+NETCAT'),
               value: TransportMode.Netcat,
             },
             {
-              label: T('LOCAL'),
+              label: this.translate.instant('LOCAL'),
               value: TransportMode.Local,
             },
           ],
@@ -163,23 +162,23 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.logging_level_tooltip,
           options: [
             {
-              label: T('DEFAULT'),
+              label: this.translate.instant('DEFAULT'),
               value: LoggingLevel.Default,
             },
             {
-              label: T('DEBUG'),
+              label: this.translate.instant('DEBUG'),
               value: LoggingLevel.Debug,
             },
             {
-              label: T('INFO'),
+              label: this.translate.instant('INFO'),
               value: LoggingLevel.Info,
             },
             {
-              label: T('WARNING'),
+              label: this.translate.instant('WARNING'),
               value: LoggingLevel.Warning,
             },
             {
-              label: T('ERROR'),
+              label: this.translate.instant('ERROR'),
               value: LoggingLevel.Error,
             },
           ],
@@ -233,11 +232,11 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.netcat_active_side_tooltip,
           options: [
             {
-              label: T('LOCAL'),
+              label: this.translate.instant('LOCAL'),
               value: NetcatMode.Local,
             },
             {
-              label: T('REMOTE'),
+              label: this.translate.instant('REMOTE'),
               value: NetcatMode.Remote,
             },
           ],
@@ -331,19 +330,19 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.compression_tooltip,
           options: [
             {
-              label: T('Disabled'),
+              label: this.translate.instant('Disabled'),
               value: CompressionType.Disabled, // should set it to be null before submit
             },
             {
-              label: T('lz4 (fastest)'),
+              label: this.translate.instant('lz4 (fastest)'),
               value: CompressionType.LZ4,
             },
             {
-              label: T('pigz (all rounder)'),
+              label: this.translate.instant('pigz (all rounder)'),
               value: CompressionType.PIGZ,
             },
             {
-              label: T('plzip (best compression)'),
+              label: this.translate.instant('plzip (best compression)'),
               value: CompressionType.PLZIP,
             },
           ],
@@ -762,15 +761,15 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.readonly_tooltip,
           options: [
             {
-              label: T('SET'),
+              label: this.translate.instant('SET'),
               value: ReadOnlyMode.Set,
             },
             {
-              label: T('REQUIRE'),
+              label: this.translate.instant('REQUIRE'),
               value: ReadOnlyMode.Require,
             },
             {
-              label: T('IGNORE'),
+              label: this.translate.instant('IGNORE'),
               value: ReadOnlyMode.Ignore,
             },
           ],
@@ -789,11 +788,11 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: repwizardhelptext.encryption_key_format_tooltip,
           options: [
             {
-              label: T('HEX'),
+              label: this.translate.instant('HEX'),
               value: ReplicationEncryptionKeyFormat.Hex,
             },
             {
-              label: T('PASSPHRASE'),
+              label: this.translate.instant('PASSPHRASE'),
               value: ReplicationEncryptionKeyFormat.Passphrase,
             },
           ],
@@ -962,23 +961,23 @@ export class ReplicationFormComponent implements FormConfiguration {
           tooltip: helptext.lifetime_unit_tooltip,
           options: [
             {
-              label: T('Hour(s)'),
+              label: this.translate.instant('Hour(s)'),
               value: LifetimeUnit.Hour,
             },
             {
-              label: T('Day(s)'),
+              label: this.translate.instant('Day(s)'),
               value: LifetimeUnit.Day,
             },
             {
-              label: T('Week(s)'),
+              label: this.translate.instant('Week(s)'),
               value: LifetimeUnit.Week,
             },
             {
-              label: T('Month(s)'),
+              label: this.translate.instant('Month(s)'),
               value: LifetimeUnit.Month,
             },
             {
-              label: T('Year(s)'),
+              label: this.translate.instant('Year(s)'),
               value: LifetimeUnit.Year,
             },
           ],
@@ -1172,8 +1171,13 @@ export class ReplicationFormComponent implements FormConfiguration {
       .pipe(untilDestroyed(this)).subscribe(
         (res) => {
           this.form_message.type = res.eligible === 0 ? 'warning' : 'info';
-          this.form_message.content = T(
-            `${res.eligible} of ${res.total} existing snapshots of dataset ${this.entityForm.formGroup.controls['target_dataset_PUSH'].value} would be replicated with this task.`,
+          this.form_message.content = this.translate.instant(
+            '{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.',
+            {
+              eligible: res.eligible,
+              total: res.total,
+              targetDataset: this.entityForm.formGroup.controls['target_dataset_PUSH'].value,
+            },
           );
         },
         (err) => {
@@ -1554,7 +1558,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       for (const item of ['target_dataset_PUSH', 'source_datasets_PULL']) {
         const fieldConfig = this.fieldSets.config(item);
         fieldConfig.hasErrors = true;
-        fieldConfig.errors = T('Please select a valid SSH Connection');
+        fieldConfig.errors = this.translate.instant('Please select a valid SSH Connection');
       }
       return;
     }

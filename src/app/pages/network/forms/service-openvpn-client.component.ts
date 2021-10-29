@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -16,7 +17,7 @@ import { ServicesService } from 'app/services';
 })
 export class OpenvpnClientComponent implements FormConfiguration {
   queryCall = 'openvpn.client.config' as const;
-  title = helptext.client.formTitle;
+  title = this.translate.instant(helptext.client.formTitle);
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -123,7 +124,10 @@ export class OpenvpnClientComponent implements FormConfiguration {
     },
   ];
 
-  constructor(protected services: ServicesService) { }
+  constructor(
+    protected services: ServicesService,
+    protected translate: TranslateService,
+  ) { }
 
   afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body: OpenvpnClientConfigUpdate) => {

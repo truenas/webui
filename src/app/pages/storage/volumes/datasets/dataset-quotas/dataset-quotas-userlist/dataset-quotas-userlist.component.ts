@@ -1,7 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -36,22 +35,22 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
 
   columns = [
     {
-      name: T('Name'), prop: 'name', always_display: true, minWidth: 150,
+      name: this.translate.instant('Name'), prop: 'name', always_display: true, minWidth: 150,
     },
-    { name: T('ID'), prop: 'id', hidden: true },
-    { name: T('Data Quota'), prop: 'quota', hidden: false },
-    { name: T('DQ Used'), prop: 'used_bytes', hidden: false },
-    { name: T('DQ % Used'), prop: 'used_percent', hidden: false },
-    { name: T('Object Quota'), prop: 'obj_quota', hidden: false },
-    { name: T('Objects Used'), prop: 'obj_used', hidden: false },
-    { name: T('OQ % Used'), prop: 'obj_used_percent', hidden: false },
+    { name: this.translate.instant('ID'), prop: 'id', hidden: true },
+    { name: this.translate.instant('Data Quota'), prop: 'quota', hidden: false },
+    { name: this.translate.instant('DQ Used'), prop: 'used_bytes', hidden: false },
+    { name: this.translate.instant('DQ % Used'), prop: 'used_percent', hidden: false },
+    { name: this.translate.instant('Object Quota'), prop: 'obj_quota', hidden: false },
+    { name: this.translate.instant('Objects Used'), prop: 'obj_used', hidden: false },
+    { name: this.translate.instant('OQ % Used'), prop: 'obj_used_percent', hidden: false },
   ];
   rowIdentifier = 'name';
   config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('User'),
+      title: this.translate.instant('User'),
       key_props: ['name'],
     },
   };
@@ -63,7 +62,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
 
   getAddActions(): EntityTableAction[] {
     return [{
-      label: T('Toggle Display'),
+      label: this.translate.instant('Toggle Display'),
       onClick: () => {
         this.toggleDisplay();
       },
@@ -75,7 +74,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
     const actions = [];
     actions.push({
       icon: 'edit',
-      label: T('Edit'),
+      label: this.translate.instant('Edit'),
       name: 'edit',
       onClick: () => {
         this.loader.open();
@@ -156,14 +155,14 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
                 this.entityList.getData();
               }, (err) => {
                 this.loader.close();
-                this.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
+                this.dialogService.errorReport(this.translate.instant('Error'), err.reason, err.trace.formatted);
               });
             },
           };
           this.dialogService.dialogFormWide(conf);
         }, (err) => {
           this.loader.close();
-          this.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
+          this.dialogService.errorReport(this.translate.instant('Error'), err.reason, err.trace.formatted);
         });
       },
     });

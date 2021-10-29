@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/data-protection/resync/resync-form';
@@ -68,8 +68,8 @@ export class RsyncFormComponent implements FormConfiguration {
           placeholder: helptext.rsync_direction_placeholder,
           tooltip: helptext.rsync_direction_tooltip,
           options: [
-            { label: T('Push'), value: Direction.Push },
-            { label: T('Pull'), value: Direction.Pull },
+            { label: this.translate.instant('Push'), value: Direction.Push },
+            { label: this.translate.instant('Pull'), value: Direction.Pull },
           ],
           required: true,
           validation: helptext.rsync_direction_validation,
@@ -248,6 +248,7 @@ export class RsyncFormComponent implements FormConfiguration {
     protected taskService: TaskService,
     protected userService: UserService,
     protected modalService: ModalService,
+    protected translate: TranslateService,
   ) {}
 
   afterInit(entityForm: EntityFormComponent): void {

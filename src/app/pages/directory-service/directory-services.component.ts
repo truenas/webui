@@ -1,6 +1,5 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { Component, OnInit, Type } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -65,12 +64,12 @@ export class DirectoryServicesComponent implements OnInit {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      { name: T('Name'), prop: 'name' },
-      { name: T('Backend'), prop: 'idmap_backend' },
-      { name: T('DNS Domain Name'), prop: 'dns_domain_name' },
-      { name: T('Range Low'), prop: 'range_low' },
-      { name: T('Range High'), prop: 'range_high' },
-      { name: T('Certificate'), prop: 'cert_name' },
+      { name: this.translate.instant('Name'), prop: 'name' },
+      { name: this.translate.instant('Backend'), prop: 'idmap_backend' },
+      { name: this.translate.instant('DNS Domain Name'), prop: 'dns_domain_name' },
+      { name: this.translate.instant('Range Low'), prop: 'range_low' },
+      { name: this.translate.instant('Range High'), prop: 'range_high' },
+      { name: this.translate.instant('Certificate'), prop: 'cert_name' },
 
     ],
     add: () => {
@@ -83,7 +82,7 @@ export class DirectoryServicesComponent implements OnInit {
       return [
         {
           id: 'delete',
-          label: T('Delete'),
+          label: this.translate.instant('Delete'),
           name: 'delete',
           icon: 'delete',
           onClick: (row: Idmap) => {
@@ -127,10 +126,10 @@ export class DirectoryServicesComponent implements OnInit {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      { name: T('Realm'), prop: 'realm' },
-      { name: T('KDC'), prop: 'kdc' },
-      { name: T('Admin Server'), prop: 'admin_server' },
-      { name: T('Password Server'), prop: 'kpasswd_server' },
+      { name: this.translate.instant('Realm'), prop: 'realm' },
+      { name: this.translate.instant('KDC'), prop: 'kdc' },
+      { name: this.translate.instant('Admin Server'), prop: 'admin_server' },
+      { name: this.translate.instant('Password Server'), prop: 'kpasswd_server' },
     ],
     add: () => {
       this.ixModalService.open(KerberosRealmsFormComponent);

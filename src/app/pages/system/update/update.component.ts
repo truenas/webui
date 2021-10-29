@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -69,33 +68,33 @@ export class UpdateComponent implements OnInit {
   isHA: boolean;
   sysUpdateMessage = globalHelptext.sysUpdateMessage;
   sysUpdateMsgPt2 = globalHelptext.sysUpdateMessagePt2;
-  updatecheck_tooltip = T('Check the update server daily for \
+  updatecheck_tooltip = this.translate.instant('Check the update server daily for \
                                   any updates on the chosen train. \
                                   Automatically download an update if \
                                   one is available. Click \
                                   <i>APPLY PENDING UPDATE</i> to install \
                                   the downloaded update.');
   train_version: string = null;
-  updateTitle = this.translate.instant(T('Update'));
+  updateTitle = this.translate.instant('Update');
 
   protected saveConfigFieldConf: FieldConfig[] = [
     {
       type: 'checkbox',
       name: 'secretseed',
-      placeholder: T('Include Password Secret Seed'),
+      placeholder: this.translate.instant('Include Password Secret Seed'),
     },
   ];
   saveConfigFormConf: DialogFormConfiguration = {
-    title: T('Save configuration settings from this machine before updating?'),
-    message: T('<b>WARNING:</b> This configuration file contains system\
+    title: this.translate.instant('Save configuration settings from this machine before updating?'),
+    message: this.translate.instant('<b>WARNING:</b> This configuration file contains system\
               passwords and other sensitive data.<br>'),
     fieldConfig: this.saveConfigFieldConf,
-    warning: T('Including the Password Secret Seed allows using this\
+    warning: this.translate.instant('Including the Password Secret Seed allows using this\
               configuration file with a new boot device. It also\
               decrypts all passwords used on this system.\
               <b>Keep the configuration file safe and protect it from unauthorized access!</b>'),
-    saveButtonText: T('SAVE CONFIGURATION'),
-    cancelButtonText: T('NO'),
+    saveButtonText: this.translate.instant('SAVE CONFIGURATION'),
+    cancelButtonText: this.translate.instant('NO'),
     customSubmit: (entityDialog) => this.saveConfigSubmit(entityDialog),
     parent: this,
   };
@@ -234,10 +233,10 @@ export class UpdateComponent implements OnInit {
 
   applyFailoverUpgrade(): void {
     this.dialogService.confirm({
-      title: this.translate.instant(T('Finish Upgrade?')),
+      title: this.translate.instant('Finish Upgrade?'),
       message: '',
       hideCheckBox: true,
-      buttonMsg: T('Continue'),
+      buttonMsg: this.translate.instant('Continue'),
     }).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
         this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
@@ -264,12 +263,12 @@ export class UpdateComponent implements OnInit {
 
     let warning = '';
     if (this.fullTrainList[event].description.includes('[nightly]')) {
-      warning = T('Changing to a nightly train is one-way. Changing back to a stable train is not supported! ');
+      warning = this.translate.instant('Changing to a nightly train is one-way. Changing back to a stable train is not supported! ');
     }
 
     this.dialogService.confirm({
       title: this.translate.instant('Switch Train'),
-      message: warning + T('Switch update trains?'),
+      message: warning + this.translate.instant('Switch update trains?'),
     }).pipe(untilDestroyed(this)).subscribe((train_res: boolean) => {
       if (train_res) {
         this.train = event;
@@ -389,7 +388,7 @@ export class UpdateComponent implements OnInit {
         this.showSpinner = false;
       },
       (err) => {
-        this.general_update_error = `${err.reason.replace('>', '').replace('<', '')}: ${T('Automatic update check failed. Please check system network settings.')}`;
+        this.general_update_error = `${err.reason.replace('>', '').replace('<', '')}: ${this.translate.instant('Automatic update check failed. Please check system network settings.')}`;
         this.showSpinner = false;
       },
       () => {
@@ -505,13 +504,13 @@ export class UpdateComponent implements OnInit {
             }
           });
         } else if (update.status === SystemUpdateStatus.Unavailable) {
-          this.dialogService.info(T('Check Now'), T('No updates available.'));
+          this.dialogService.info(this.translate.instant('Check Now'), this.translate.instant('No updates available.'));
         }
       },
       (err) => {
         this.loader.close();
         new EntityUtils().handleWSError(this, err, this.dialogService);
-        this.dialogService.errorReport(T('Error checking for updates.'), err.reason, err.trace.formatted);
+        this.dialogService.errorReport(this.translate.instant('Error checking for updates.'), err.reason, err.trace.formatted);
       },
       () => {
         this.loader.close();
@@ -533,10 +532,10 @@ export class UpdateComponent implements OnInit {
     }
 
     this.ds = this.dialogService.confirm({
-      title: this.translate.instant(T('Download Update')),
+      title: this.translate.instant('Download Update'),
       message: this.translate.instant(downloadMsg),
       hideCheckBox: true,
-      buttonMsg: this.translate.instant(T('Download')),
+      buttonMsg: this.translate.instant('Download'),
       secondaryCheckBox: true,
       secondaryCheckBoxMsg: this.translate.instant(confirmMsg),
       method: this.updateMethod,
@@ -552,7 +551,7 @@ export class UpdateComponent implements OnInit {
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogRef.close(false);
-            this.dialogService.info(T('Updates successfully downloaded'), '', '450px', 'info', true);
+            this.dialogService.info(this.translate.instant('Updates successfully downloaded'), '', '450px', 'info', true);
             this.pendingupdates();
           });
           this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
@@ -657,8 +656,8 @@ export class UpdateComponent implements OnInit {
           ? this.translate.instant('The standby controller will be automatically restarted to finalize the update. Apply updates and restart the standby controller?')
           : this.translate.instant('The system will reboot and be briefly unavailable while applying updates. Apply updates and reboot?');
         this.dialogService.confirm({
-          title: this.translate.instant(T('Apply Pending Updates')),
-          message: this.translate.instant(T(message)),
+          title: this.translate.instant('Apply Pending Updates'),
+          message: this.translate.instant(message),
         }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
           this.update();
         });

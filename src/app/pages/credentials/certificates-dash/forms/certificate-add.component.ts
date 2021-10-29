@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { helptext_system_ca } from 'app/helptext/system/ca';
@@ -638,9 +638,15 @@ export class CertificateAddComponent implements WizardConfiguration {
   usageField: FormSelectConfig;
   private currentProfile: CertificateProfile;
 
-  constructor(protected ws: WebSocketService, protected dialog: MatDialog,
-    protected systemGeneralService: SystemGeneralService, private modalService: ModalService,
-    protected loader: AppLoaderService, private dialogService: DialogService) {
+  constructor(
+    protected ws: WebSocketService,
+    protected dialog: MatDialog,
+    protected systemGeneralService: SystemGeneralService,
+    private modalService: ModalService,
+    protected loader: AppLoaderService,
+    private dialogService: DialogService,
+    private translate: TranslateService,
+  ) {
     this.getType = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: string) => {
       this.type = rowId;
     });
@@ -1014,7 +1020,7 @@ export class CertificateAddComponent implements WizardConfiguration {
   }
 
   customSubmit(data: any): void {
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Creating Certificate') }, disableClose: true });
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Creating Certificate') }, disableClose: true });
     dialogRef.componentInstance.setCall(this.addWsCall, [data]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

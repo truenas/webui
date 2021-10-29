@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'primeng/api';
@@ -37,7 +36,7 @@ interface PoolDiskInfo {
   templateUrl: './bootenv-status.component.html',
 })
 export class BootStatusListComponent implements OnInit {
-  title = T('Boot Pool Status');
+  title = this.translate.instant('Boot Pool Status');
   protected queryCall = 'boot.get_state' as const;
   protected pk: number;
   poolScan: {
@@ -53,12 +52,12 @@ export class BootStatusListComponent implements OnInit {
   treeTableConfig: EntityTreeTable = {
     tableData: [],
     columns: [
-      { name: T('Name'), prop: 'name' },
-      { name: T('Read'), prop: 'read' },
-      { name: T('Write'), prop: 'write' },
-      { name: T('Checksum'), prop: 'checksum' },
-      { name: T('Status'), prop: 'status' },
-      { name: T('Actions'), prop: 'actions' },
+      { name: this.translate.instant('Name'), prop: 'name' },
+      { name: this.translate.instant('Read'), prop: 'read' },
+      { name: this.translate.instant('Write'), prop: 'write' },
+      { name: this.translate.instant('Checksum'), prop: 'checksum' },
+      { name: this.translate.instant('Status'), prop: 'status' },
+      { name: this.translate.instant('Actions'), prop: 'actions' },
     ],
   };
 
@@ -155,14 +154,14 @@ export class BootStatusListComponent implements OnInit {
     if ('type' in data && boot_pool_data && boot_pool_data.type === 'mirror' && data.path) {
       actions = [{
         id: 'edit',
-        label: T('Detach'),
+        label: this.translate.instant('Detach'),
         onClick: (row: PoolDiskInfo) => {
           this.detach(row.name);
         },
         isHidden: false,
       },
       {
-        label: T('Replace'),
+        label: this.translate.instant('Replace'),
         onClick: (row: PoolDiskInfo) => {
           this.router.navigate(['/', 'system', 'boot', 'replace', row.name]);
         },
@@ -173,7 +172,7 @@ export class BootStatusListComponent implements OnInit {
     if ('type' in data && boot_pool_data && boot_pool_data.type === 'disk' && data.path && !this.oneDisk) {
       actions = [
         {
-          label: T('Replace'),
+          label: this.translate.instant('Replace'),
           onClick: (row: PoolDiskInfo) => {
             this.router.navigate(['/', 'system', 'boot', 'replace', row.name]);
           },
@@ -184,14 +183,14 @@ export class BootStatusListComponent implements OnInit {
     if ('type' in data && boot_pool_data && boot_pool_data.type === 'disk' && data.path && this.oneDisk) {
       actions = [
         {
-          label: T('Attach'),
+          label: this.translate.instant('Attach'),
           onClick: (row: PoolDiskInfo) => {
             this.router.navigate(['/', 'system', 'boot', 'attach', row.name]);
           },
           isHidden: false,
         },
         {
-          label: T('Replace'),
+          label: this.translate.instant('Replace'),
           onClick: (row: PoolDiskInfo) => {
             this.router.navigate(['/', 'system', 'boot', 'replace', row.name]);
           },
@@ -200,7 +199,7 @@ export class BootStatusListComponent implements OnInit {
     }
 
     if (actions.length) {
-      item.actions = [{ actions, title: T('Actions') }];
+      item.actions = [{ actions, title: this.translate.instant('Actions') }];
     }
 
     return item;

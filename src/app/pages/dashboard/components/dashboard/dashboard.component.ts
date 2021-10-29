@@ -2,7 +2,6 @@ import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
@@ -84,8 +83,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   emptyDashConf: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    title: T('Dashboard is Empty!'),
-    message: T('You have hidden all of your available widgets. Use the dashboard configuration form to add widgets.'),
+    title: this.translate.instant('Dashboard is Empty!'),
+    message: this.translate.instant('You have hidden all of your available widgets. Use the dashboard configuration form to add widgets.'),
     button: {
       label: 'Configure Dashboard',
       action: () => {

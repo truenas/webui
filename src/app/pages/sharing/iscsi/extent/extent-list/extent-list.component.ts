@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -19,34 +19,34 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
   `,
 })
 export class ExtentListComponent implements EntityTableConfig {
-  tableTitle = 'Extents';
+  tableTitle = this.translate.instant('Extents');
   protected entityTable: EntityTableComponent;
   queryCall = 'iscsi.extent.query' as const;
   route_add: string[] = ['sharing', 'iscsi', 'extent', 'add'];
-  route_add_tooltip = 'Add Extent';
+  route_add_tooltip = this.translate.instant('Add Extent');
   route_edit: string[] = ['sharing', 'iscsi', 'extent', 'edit'];
   wsDelete = 'iscsi.extent.delete' as const;
 
   columns = [
     {
-      name: T('Extent Name'),
+      name: this.translate.instant('Extent Name'),
       prop: 'name',
       always_display: true,
     },
     {
-      name: T('Description'),
+      name: this.translate.instant('Description'),
       prop: 'comment',
     },
     {
-      name: T('Serial'),
+      name: this.translate.instant('Serial'),
       prop: 'serial',
     },
     {
-      name: T('NAA'),
+      name: this.translate.instant('NAA'),
       prop: 'naa',
     },
     {
-      name: T('Enabled'),
+      name: this.translate.instant('Enabled'),
       prop: 'enabled',
     },
   ];
@@ -54,23 +54,28 @@ export class ExtentListComponent implements EntityTableConfig {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Extent',
+      title: this.translate.instant('Extent'),
       key_props: ['name'],
     },
   };
+
+  constructor(
+    protected router: Router,
+    protected translate: TranslateService,
+  ) {}
 
   getActions(): EntityTableAction[] {
     return [{
       name: 'edit',
       id: 'edit',
       icon: 'edit',
-      label: T('Edit'),
+      label: this.translate.instant('Edit'),
       onClick: (rowinner: IscsiExtent) => { this.entityTable.doEdit(rowinner.id); },
     }, {
       name: 'delete',
       id: 'delete',
       icon: 'delete',
-      label: T('Delete'),
+      label: this.translate.instant('Delete'),
       onClick: (rowinner: IscsiExtent) => { this.doDelete(rowinner); },
     }] as EntityTableAction[];
   }
@@ -81,7 +86,7 @@ export class ExtentListComponent implements EntityTableConfig {
     const isFile = row.type === IscsiExtentType.File;
     const deleteMsg = entityTable.getDeleteMessage(row);
     const conf: DialogFormConfiguration = {
-      title: T('Delete iSCSI extent ') + row.name + '?',
+      title: this.translate.instant('Delete iSCSI extent {name}?', { name: row.name }),
       fieldConfig: [
         {
           type: 'paragraph',
@@ -91,18 +96,18 @@ export class ExtentListComponent implements EntityTableConfig {
         {
           type: 'checkbox',
           name: 'remove',
-          placeholder: T('Remove file?'),
+          placeholder: this.translate.instant('Remove file?'),
           isHidden: !isFile,
           value: false,
         },
         {
           type: 'checkbox',
           name: 'force',
-          placeholder: T('Force'),
+          placeholder: this.translate.instant('Force'),
           value: false,
         },
       ],
-      saveButtonText: T('Delete'),
+      saveButtonText: this.translate.instant('Delete'),
       customSubmit: (entityDialog: EntityDialogComponent) => {
         const value = entityDialog.formValue;
         entityTable.loader.open();
@@ -122,8 +127,6 @@ export class ExtentListComponent implements EntityTableConfig {
     };
     this.entityTable.dialogService.dialogForm(conf);
   }
-
-  constructor(protected router: Router) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityTable = entityList;

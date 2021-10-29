@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { AbstractControl, FormGroup, Validators } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { helptext_system_ca } from 'app/helptext/system/ca';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
@@ -565,9 +565,14 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   private currenProfile: CertificateProfile;
   private entityForm: EntityWizardComponent;
 
-  constructor(protected ws: WebSocketService, private modalService: ModalService,
-    protected loader: AppLoaderService, private dialogService: DialogService,
-    protected systemGeneralService: SystemGeneralService) {}
+  constructor(
+    protected ws: WebSocketService,
+    private modalService: ModalService,
+    protected loader: AppLoaderService,
+    private dialogService: DialogService,
+    protected systemGeneralService: SystemGeneralService,
+    protected translate: TranslateService,
+  ) {}
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
@@ -878,7 +883,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       this.modalService.closeSlideIn();
     }, (error) => {
       this.loader.close();
-      this.dialogService.errorReport(T('Error creating CA.'), error.reason, error.trace.formatted);
+      this.dialogService.errorReport(this.translate.instant('Error creating CA.'), error.reason, error.trace.formatted);
     });
   }
 }

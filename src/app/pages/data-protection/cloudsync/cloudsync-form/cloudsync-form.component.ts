@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router, ActivatedRoute } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'angular-tree-component';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
@@ -67,8 +67,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.direction_placeholder,
           tooltip: helptext.direction_tooltip,
           options: [
-            { label: T('PUSH'), value: Direction.Push },
-            { label: T('PULL'), value: Direction.Pull },
+            { label: this.translate.instant('PUSH'), value: Direction.Push },
+            { label: this.translate.instant('PULL'), value: Direction.Pull },
           ],
           value: Direction.Pull,
           required: true,
@@ -79,9 +79,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.transfer_mode_placeholder,
           tooltip: helptext.transfer_mode_warning_sync + ' ' + helptext.transfer_mode_warning_copy + ' ' + helptext.transfer_mode_warning_move,
           options: [
-            { label: T('SYNC'), value: TransferMode.Sync },
-            { label: T('COPY'), value: TransferMode.Copy },
-            { label: T('MOVE'), value: TransferMode.Move },
+            { label: this.translate.instant('SYNC'), value: TransferMode.Sync },
+            { label: this.translate.instant('COPY'), value: TransferMode.Copy },
+            { label: this.translate.instant('MOVE'), value: TransferMode.Move },
           ],
           value: TransferMode.Copy,
           required: true,
@@ -460,7 +460,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     protected cloudcredentialService: CloudCredentialService,
     protected job: JobService,
-    protected modalService: ModalService) {
+    protected modalService: ModalService,
+    protected translate: TranslateService) {
     this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((providers) => {
       this.providers = providers;
     });
@@ -656,7 +657,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           ...prevErrors,
           misMatchDirectories: true,
         });
-        folder_source_field.warnings = T('All selected directories must be at the same level i.e., must have the same parent directory.');
+        folder_source_field.warnings = this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.');
       } else {
         delete prevErrors.misMatchDirectories;
         if (Object.keys(prevErrors).length) {
@@ -698,7 +699,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           ...prevErrors,
           misMatchDirectories: true,
         });
-        path_source_field.warnings = T('All selected directories must be at the same level i.e., must have the same parent directory.');
+        path_source_field.warnings = this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.');
       } else {
         delete prevErrors.misMatchDirectories;
         if (Object.keys(prevErrors).length) {
@@ -753,15 +754,15 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
               // update bucket fields name and tooltips based on provider
               if (item.provider == 'AZUREBLOB' || item.provider == 'HUBIC') {
-                this.bucket_field.placeholder = T('Container');
-                this.bucket_field.tooltip = T('Select the pre-defined container to use.');
-                this.bucket_input_field.placeholder = T('Container');
-                this.bucket_input_field.tooltip = T('Input the pre-defined container to use.');
+                this.bucket_field.placeholder = this.translate.instant('Container');
+                this.bucket_field.tooltip = this.translate.instant('Select the pre-defined container to use.');
+                this.bucket_input_field.placeholder = this.translate.instant('Container');
+                this.bucket_input_field.tooltip = this.translate.instant('Input the pre-defined container to use.');
               } else {
-                this.bucket_field.placeholder = T('Bucket');
-                this.bucket_field.tooltip = T('Select the pre-defined S3 bucket to use.');
-                this.bucket_input_field.placeholder = T('Bucket');
-                this.bucket_input_field.tooltip = T('Input the pre-defined S3 bucket to use.');
+                this.bucket_field.placeholder = this.translate.instant('Bucket');
+                this.bucket_field.tooltip = this.translate.instant('Select the pre-defined S3 bucket to use.');
+                this.bucket_input_field.placeholder = this.translate.instant('Bucket');
+                this.bucket_input_field.tooltip = this.translate.instant('Input the pre-defined S3 bucket to use.');
               }
 
               this.getBuckets(item).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -792,10 +793,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
                 this.setDisabled('bucket', true, true);
                 this.setDisabled('bucket_input', false, false);
                 this.dialog.confirm({
-                  title: err.extra ? err.extra.excerpt : (T('Error: ') + err.error),
+                  title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
                   message: err.reason,
                   hideCheckBox: true,
-                  buttonMsg: T('Fix Credential'),
+                  buttonMsg: this.translate.instant('Fix Credential'),
                 }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
                   this.router.navigate(['/', 'system', 'cloudcredentials', 'edit', String(item.id)]);
                 });

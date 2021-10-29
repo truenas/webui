@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
@@ -63,12 +62,12 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
   treeTableConfig: EntityTreeTable = {
     tableData: [],
     columns: [
-      { name: T('Name'), prop: 'name' },
-      { name: T('Read'), prop: 'read' },
-      { name: T('Write'), prop: 'write' },
-      { name: T('Checksum'), prop: 'checksum' },
-      { name: T('Status'), prop: 'status' },
-      { name: T('Actions'), prop: 'actions', hidden: false },
+      { name: this.translate.instant('Name'), prop: 'name' },
+      { name: this.translate.instant('Read'), prop: 'read' },
+      { name: this.translate.instant('Write'), prop: 'write' },
+      { name: this.translate.instant('Checksum'), prop: 'checksum' },
+      { name: this.translate.instant('Status'), prop: 'status' },
+      { name: this.translate.instant('Actions'), prop: 'actions', hidden: false },
     ],
   };
 
