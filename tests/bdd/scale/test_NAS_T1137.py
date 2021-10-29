@@ -7,7 +7,7 @@ from function import (
     is_element_present,
     attribute_value_exist,
     run_cmd,
-    post,
+    ssh_cmd,
     wait_on_element_disappear
 )
 from pytest_bdd import (
@@ -90,34 +90,17 @@ def set_path_to_the_ldap_dataset_mnttankericbsd_dataset_input_eric_share_as_name
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     
     
-@then(parsers.parse('{sharename} should be added, Click on service and the Service page should open'))
-def sharename_should_be_added_click_on_service_and_the_service_page_should_open(driver, sharename):
-    """{sharename} should be added, Click on service and the Service page should open."""
+@then(parsers.parse('{sharename} should be added, start service if its not running'))
+def sharename_should_be_added_start_service_if_its_not_running(driver, sharename):
+    """{sharename} should be added, start service if its not running."""
     assert wait_on_element(driver, 5, '//div[contains(.,"SMB")]')
     assert wait_on_element(driver, 5, f'//div[contains(.,"{sharename}")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
-    driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
-
-@then('If the SMB serivce is not started start the service, and click on SMB Start Automatically checkbox')
-def if_the_smb_serivce_is_not_started_start_the_service_and_click_on_smb_start_automatically_checkbox(driver):
-    """If the SMB serivce is not started start the service, and click on SMB Start Automatically checkbox."""
-    time.sleep(1)
-    assert wait_on_element(driver, 5, '//services')
-    # Scroll to SMB service
-    element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
-    driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
-    driver.find_element_by_xpath('//div[@ix-auto="value__SMB"]')
-    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__SMB_Running"]', 'class', 'mat-checked')
-    if not value_exist:
-        driver.find_element_by_xpath('//div[@ix-auto="overlay__SMB_Running"]').click()
-    time.sleep(2)
-    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__SMB_Start Automatically"]', 'class', 'mat-checkbox-checked')
-    if not value_exist:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__SMB_Start Automatically"]').click()
-
+    if not is_element_present(driver, '//mat-card[contains(.,"Windows (SMB) Shares")]//span[contains(.,"RUNNING")]'):
+        assert wait_on_element(driver, 10, '//mat-icon[text()="more_vert"]', 'clickable')
+        driver.find_element_by_xpath('//mat-icon[text()="more_vert"]').click()        
+        assert wait_on_element(driver, 10, 'button[normalize-space(text())="Turn On Service"]', 'clickable')
+        driver.find_element_by_xpath('button[normalize-space(text())="Turn On Service"]').click()
+        assert wait_on_element(driver, 20, '//mat-card[contains(.,"Windows (SMB) Shares")]//span[contains(.,"RUNNING")]')        
 
 @then(parsers.parse('Send a file to the share with nas_IP/"{smbname}" and "{user}" and "{password}"'))
 def send_a_file_to_the_share_with_nas_iperic_share_and_ericbsd_and_testing1234(driver, nas_ip, smbname, user, password):
@@ -130,11 +113,13 @@ def send_a_file_to_the_share_with_nas_iperic_share_and_ericbsd_and_testing1234(d
 
 
 @then('Verify that the is on nas_ip with root and password')
-def verify_that_the_is_on_nas_ip_with_root_and_password():
+def verify_that_the_is_on_nas_ip_with_root_and_password(driver, root_password, nas_ip):
     """Verify that the is on nas_ip with root and password."""
-    results = post(nas_url, 'filesystem/stat/', ("root", root_password), f'{smb_path}/testfile.txt')
-    assert results.status_code == 200, results.text
-
+    global results
+    cmd = 'ls -la /mnt/tank/ericbsd_dataset'
+    results = ssh_cmd(cmd, 'root', root_password, nas_ip)
+    assert results['result'], results['output']
+    assert 'testfile' in results['output'], results['output']
 
 
 @then(parsers.parse('send a file to the share should fail with NAS IP/"{smbname}" and {user2}%{password2}'))
@@ -149,10 +134,8 @@ def send_a_file_to_the_share_should_fail_with_nas_iperic_share_and_footesting(dr
 @then(parsers.parse('verify that the file is not on the NAS'))
 def verify_that_the_file_is_not_on_the_nas(drive, nas_ip, root_password):
     """verify that the file is not on the NAS."""
-    results = post(nas_ip, 'filesystem/stat/', ("root", root_password), f'{smb_path}/testfile2.txt')
-    assert results.status_code == 200, results.text is False
-    ## return to dashboard
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
-
+    global results
+    cmd = 'ls -la /mnt/tank/wheel_dataset/'
+    results = ssh_cmd(cmd, 'root', root_password, nas_ip)
+    assert results['result'], results['output']
+    assert 'testfile' in results['output'], results['output'] is False
