@@ -1,5 +1,6 @@
 import { ComponentHarness } from '@angular/cdk/testing';
 import { IxCheckboxHarness } from 'app/pages/common/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxChipsHarness } from 'app/pages/common/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxComboboxHarness } from 'app/pages/common/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxInputHarness } from 'app/pages/common/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/pages/common/ix-forms/components/ix-select/ix-select.harness';
@@ -12,6 +13,7 @@ const childSelectors = [
   IxSelectHarness,
   IxTextareaHarness,
   IxComboboxHarness,
+  IxChipsHarness,
 ] as const;
 
 type SupportedFormControlHarness = InstanceType<(typeof childSelectors)[number]>;

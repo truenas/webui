@@ -5,9 +5,9 @@ import helptext from 'app/helptext/directory-service/kerberos-realms-form-list';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
-import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-form.component';
-import { ModalService } from 'app/services/modal.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 
 @UntilDestroy()
 @Component({
@@ -23,9 +23,9 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
 
   columns = [
     { name: this.translate.instant('Realm'), prop: 'realm', always_display: true },
-    { name: this.translate.instant('KDC'), prop: 'kdc' },
-    { name: this.translate.instant('Admin Server'), prop: 'admin_server' },
-    { name: this.translate.instant('Password Server'), prop: 'kpasswd_server' },
+    { name: this.translate.instant('KDC'), prop: 'kdc_string' },
+    { name: this.translate.instant('Admin Server'), prop: 'admin_server_string' },
+    { name: this.translate.instant('Password Server'), prop: 'kpasswd_server_string' },
   ];
   rowIdentifier = 'realm';
   config = {
@@ -38,24 +38,24 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
   };
 
   constructor(
-    private modalService: ModalService,
+    private modalService: IxModalService,
     private translate: TranslateService,
   ) { }
 
-  resourceTransformIncomingRestData(data: KerberosRealm[]): KerberosRealmRow[] {
-    data.forEach((row) => {
-      this.keyList.forEach((key) => {
-        if (row.hasOwnProperty(key)) {
-          (row as unknown as KerberosRealmRow)[key] = row[key].join(' ');
-        }
-      });
+  resourceTransformIncomingRestData(realms: KerberosRealm[]): KerberosRealmRow[] {
+    return realms.map((realm) => {
+      return {
+        ...realm,
+        kdc_string: realm.kdc?.join(', '),
+        admin_server_string: realm.admin_server?.join(', '),
+        kpasswd_server_string: realm.kpasswd_server?.join(', '),
+      };
     });
-    return data as unknown as KerberosRealmRow[];
   }
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -63,32 +63,31 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
   getAddActions(): EntityTableAction[] {
     return [{
       label: this.translate.instant('Add'),
-      onClick: () => {
-        this.doAdd();
-      },
+      onClick: () => this.doAdd(),
     }] as EntityTableAction[];
   }
 
   getActions(): EntityTableAction[] {
-    const actions = [];
-    actions.push({
-      id: 'edit',
-      label: this.translate.instant('Edit'),
-      onClick: (row: KerberosRealmRow) => {
-        this.doAdd(row.id);
+    return [
+      {
+        id: 'edit',
+        label: this.translate.instant('Edit'),
+        onClick: (realm: KerberosRealmRow) => {
+          const modal = this.modalService.open(KerberosRealmsFormComponent);
+          modal.setRealmForEdit(realm);
+        },
       },
-    }, {
-      id: 'delete',
-      label: this.translate.instant('Delete'),
-      onClick: (row: KerberosRealmRow) => {
-        this.entityList.doDelete(row);
+      {
+        id: 'delete',
+        label: this.translate.instant('Delete'),
+        onClick: (realm: KerberosRealmRow) => {
+          this.entityList.doDelete(realm);
+        },
       },
-    });
-
-    return actions as EntityTableAction[];
+    ] as EntityTableAction[];
   }
 
-  doAdd(id?: number): void {
-    this.modalService.openInSlideIn(KerberosRealmsFormComponent, id);
+  doAdd(): void {
+    this.modalService.open(KerberosRealmsFormComponent);
   }
 }

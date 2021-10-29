@@ -8,6 +8,7 @@ import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxCheckboxComponent } from 'app/pages/common/ix-forms/components/ix-checkbox/ix-checkbox.component';
+import { IxChipsComponent } from 'app/pages/common/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/pages/common/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxFieldsetComponent } from 'app/pages/common/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFormErrorsComponent } from 'app/pages/common/ix-forms/components/ix-form-errors/ix-form-errors.component';
@@ -45,6 +46,7 @@ import { IxModalHeaderComponent } from './components/ix-modal/components/ix-moda
     IxFormErrorsComponent,
     IxUserComboboxComponent,
     IxTextareaComponent,
+    IxChipsComponent,
   ],
   exports: [
     IxInputComponent,
@@ -58,6 +60,7 @@ import { IxModalHeaderComponent } from './components/ix-modal/components/ix-moda
     IxCheckboxComponent,
     IxFormErrorsComponent,
     IxTextareaComponent,
+    IxChipsComponent,
   ],
 })
 export class IxFormsModule {}
