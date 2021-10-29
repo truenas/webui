@@ -82,6 +82,7 @@ export class ServiceUPSComponent {
         {
           type: 'combobox',
           name: 'driver',
+          label: helptext.ups_driver_label,
           placeholder: helptext.ups_driver_placeholder,
           tooltip: helptext.ups_driver_tooltip,
           required: true,
@@ -101,6 +102,7 @@ export class ServiceUPSComponent {
         {
           type: 'combobox',
           name: 'port',
+          label: helptext.ups_port_label,
           placeholder: helptext.ups_port_placeholder,
           options: [],
           tooltip: helptext.ups_port_tooltip,

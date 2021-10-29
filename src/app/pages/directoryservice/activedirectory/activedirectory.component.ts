@@ -1,5 +1,8 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job';
+import { T } from 'app/translate-marker';
 import * as _ from 'lodash';
 
 import { EntityUtils } from '../../common/entity/utils';
@@ -338,11 +341,16 @@ export class ActiveDirectoryComponent {
     return true;
   }
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    protected _injector: Injector, protected _appRef: ApplicationRef,
+    protected _injector: Injector,
+    protected _appRef: ApplicationRef,
     protected systemGeneralService: SystemGeneralService,
-    protected dialogservice: DialogService) {}
+    protected dialogservice: DialogService,
+    protected dialog: MatDialog,
+  ) {}
 
   resourceTransformIncomingRestData(data) {
     data['netbiosalias'] = data['netbiosalias'].join(' ');
@@ -479,6 +487,27 @@ export class ActiveDirectoryComponent {
           { label: item, value: item },
         );
       });
+    });
+
+    if (value.job_id) {
+      this.showStartingJob(value.job_id);
+    }
+  }
+
+  // Shows starting progress as a job dialog
+  showStartingJob(jobId: number): void {
+    const dialogRef = this.dialog.open(
+      EntityJobComponent,
+      { data: { title: T('Configuring Active Directory') }, disableClose: true },
+    );
+    dialogRef.componentInstance.jobId = jobId;
+    dialogRef.componentInstance.wsshow();
+    dialogRef.componentInstance.success.subscribe(() => {
+      dialogRef.close();
+    });
+    dialogRef.componentInstance.failure.subscribe((error) => {
+      new EntityUtils().handleWSError(this, error, this.dialogservice);
+      dialogRef.close();
     });
   }
 }

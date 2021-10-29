@@ -80,7 +80,8 @@ export const helptext_system_general = {
   },
 
   stg_language: {
-    placeholder: T('Language'),
+    label: T('Language'),
+    placeholder: T('Type to search'),
     tooltip: T('Select a language from the drop-down menu.'),
   },
 
@@ -94,7 +95,8 @@ export const helptext_system_general = {
   },
 
   stg_timezone: {
-    placeholder: T('Timezone'),
+    label: T('Timezone'),
+    placeholder: T('Type to search'),
     tooltip: T('Select a time zone.'),
   },
 

@@ -1,6 +1,7 @@
 <div id="{{config.name}}" class="dynamic-field form-select" [formGroup]="group" [ngClass]="fieldShow" [class.has-tooltip]="config.tooltip" *ngIf="!config['isHidden']"
 ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}"><div>
     <mat-form-field *ngIf="config.inputType != 'file' else elseBlock">
+      <mat-label>{{config.label | translate}}</mat-label>
       <input matInput [type]="config.inputType ? config.inputType : 'text'"
         list="options"
 		  	[placeholder]="config.placeholder | translate"
@@ -8,7 +9,7 @@ ix-auto ix-auto-type="combobox" ix-auto-identifier="{{config.placeholder}}"><div
 		  	[formControlName]="config.name"
 		  	[readonly]="config.readonly"
         [required]="config.required"
-        (keyup)="updateSearchOptions($event.target.value)"
+        (keyup)="searchChanged($event)"
         [matAutocomplete]="autoComplete"
         >
        <mat-autocomplete #autoComplete="matAutocomplete">

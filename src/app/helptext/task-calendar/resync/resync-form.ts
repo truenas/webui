@@ -15,7 +15,8 @@ export default {
  destinations.'),
   rsync_path_validation: [Validators.required],
 
-  rsync_user_placeholder: T('User'),
+  rsync_user_label: T('User'),
+  rsync_user_placeholder: T('Type to search'),
   rsync_user_tooltip: T('Select the user to run the rsync task. The user\
                 selected must have permissions to write to the\
                 specified directory on the remote host.'),

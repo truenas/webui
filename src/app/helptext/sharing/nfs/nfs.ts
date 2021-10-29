@@ -67,25 +67,29 @@ export const helptext_sharing_nfs = {
  <i>(www.freenas.com)</i>. Leave empty to allow all.',
   ),
 
-  placeholder_maproot_user: T('Maproot User'),
+  label_maproot_user: T('Maproot User'),
+  placeholder_maproot_user: T('Type to search'),
   tooltip_maproot_user: T(
     'When a user is selected, the <i>root</i> user is\
  limited to the permissions of that user.',
   ),
 
-  placeholder_maproot_group: T('Maproot Group'),
+  label_maproot_group: T('Maproot Group'),
+  placeholder_maproot_group: T('Type to search'),
   tooltip_maproot_group: T(
     'When a group is selected, the <i>root</i> user is also\
  limited to the permissions of that group.',
   ),
 
-  placeholder_mapall_user: T('Mapall User'),
+  label_mapall_user: T('Mapall User'),
+  placeholder_mapall_user: T('Type to search'),
   tooltip_mapall_user: T(
     'The specified permissions of that user are used\
  by all clients.',
   ),
 
-  placeholder_mapall_group: T('Mapall Group'),
+  label_mapall_group: T('Mapall Group'),
+  placeholder_mapall_group: T('Type to search'),
   tooltip_mapall_group: T(
     'The specified permissions of that group are used\
  by all clients.',

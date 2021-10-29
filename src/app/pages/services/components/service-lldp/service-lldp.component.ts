@@ -32,6 +32,7 @@ export class ServiceLLDPComponent {
         {
           type: 'combobox',
           name: 'country',
+          label: helptext.lldp_country_label,
           placeholder: helptext.lldp_country_placeholder,
           tooltip: helptext.lldp_country_tooltip,
           options: [],
