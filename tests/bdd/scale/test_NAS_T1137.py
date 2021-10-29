@@ -123,7 +123,7 @@ def verify_that_the_is_on_nas_ip_with_root_and_password(driver, root_password, n
 
 
 @then(parsers.parse('send a file to the share should fail with NAS IP/"{smbname}" and {user2}%{password2}'))
-def send_a_file_to_the_share_should_fail_with_nas_iperic_share_and_footesting(drive, smbname, user2, password2, nas_ip):
+def send_a_file_to_the_share_should_fail_with_nas_iperic_share_and_footesting(driver, smbname, user2, password2, nas_ip):
     """send a file to the share should fail with NAS IP/"{smbname}" and {user2}{password2}."""
     run_cmd('touch testfile2.txt')
     results = run_cmd(f'smbclient //{nas_ip}/{smbname} -W AD01 -U {user2}%{password2} -c "put testfile2.txt testfile2.txt"')
@@ -132,7 +132,7 @@ def send_a_file_to_the_share_should_fail_with_nas_iperic_share_and_footesting(dr
     assert results['result'], results['output']
 
 @then(parsers.parse('verify that the file is not on the NAS'))
-def verify_that_the_file_is_not_on_the_nas(drive, nas_ip, root_password):
+def verify_that_the_file_is_not_on_the_nas(driver, nas_ip, root_password):
     """verify that the file is not on the NAS."""
     global results
     cmd = 'ls -la /mnt/tank/wheel_dataset/'
