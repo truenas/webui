@@ -62,7 +62,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   @Input() localControls?: boolean = true;
   @Input() dateFormat?: DateTime;
   @Input() report: Report;
-  @Input() multipathTitle?: string;
   @Input() identifier?: string;
   // TODO: Make boolean
   @Input() retroLogo?: string | number;
@@ -76,11 +75,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   readonly ProductType = ProductType;
 
   get reportTitle(): string {
-    let trimmed = this.report.title.replace(/[\(\)]/g, '');
-    if (this.multipathTitle) {
-      trimmed = trimmed.replace(this.identifier, '');
-      return trimmed;
-    }
+    const trimmed = this.report.title.replace(/[\(\)]/g, '');
     return this.identifier ? trimmed.replace(/{identifier}/, this.identifier) : this.report.title;
   }
 

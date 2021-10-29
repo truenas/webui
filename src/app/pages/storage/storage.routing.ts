@@ -14,7 +14,6 @@ import { DiskFormComponent } from './disks/disk-form/disk-form.component';
 import { DiskListComponent } from './disks/disk-list/disk-list.component';
 import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
-import { MultipathsComponent } from './multipaths/multipaths.component';
 import { SnapshotAddComponent } from './snapshots/snapshot-add/snapshot-add.component';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clone.component';
 import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
@@ -219,11 +218,6 @@ export const routes: Routes = [
             data: { title: 'S.M.A.R.T. Test Results', breadcrumb: 'S.M.A.R.T. Test Results' },
           },
         ],
-      },
-      {
-        path: 'multipaths',
-        data: { title: 'Multipaths', breadcrumb: 'Multipaths', icon: 'view_stream' },
-        component: MultipathsComponent,
       },
       {
         path: 'import-disk',

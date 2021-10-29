@@ -20,7 +20,6 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { MultipathDisk } from 'app/pages/reports-dashboard/multipath-disk.interface';
 import {
   SystemGeneralService,
   WebSocketService,
@@ -51,7 +50,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
   retroLogo: string;
 
-  multipathTitles: { [disk: string]: string } = {};
   diskReports: Report[];
   otherReports: Report[];
   activeReports: Report[] = [];
@@ -135,27 +133,13 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
       }
     });
 
-    this.diskQueries();
+    this.diskQuery();
   }
 
-  diskQueries(): void {
-    this.ws.call('multipath.query').pipe(untilDestroyed(this)).subscribe((multipath_res) => {
-      let multipathDisks: MultipathDisk[] = [];
-      multipath_res.forEach((m) => {
-        const children = m.children.map((child) => {
-          return {
-            disk: m.name.replace('multipath/', ''),
-            name: child.name,
-            status: child.status,
-          };
-        });
-        multipathDisks = multipathDisks.concat(children);
-      });
-
-      this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((res) => {
-        this.parseDisks(res, multipathDisks);
-        this.core.emit({ name: 'ReportingGraphsRequest', sender: this });
-      });
+  diskQuery(): void {
+    this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((res) => {
+      this.parseDisks(res);
+      this.core.emit({ name: 'ReportingGraphsRequest', sender: this });
     });
   }
 
@@ -481,32 +465,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.visibleReports = visible;
   }
 
-  parseDisks(disks: Disk[], multipathDisks: MultipathDisk[]): void {
+  parseDisks(disks: Disk[]): void {
     const uniqueNames = disks
       .filter((disk) => !disk.devname.includes('multipath'))
       .map((disk) => disk.devname);
 
-    const activeDisks = multipathDisks.filter((disk) => disk.status == 'ACTIVE');
-
-    const multipathTitles: { [disk: string]: string } = {};
-
-    const multipathNames = activeDisks.map((disk) => {
-      const label = disk.disk; // disk.name + ' (multipath : ' + disk.disk  + ')';
-      // Update activeReports with multipathTitles
-      multipathTitles[disk.name] = label;
-      return {
-        label: disk.disk, value: disk.name, labelIcon: 'multipath', labelIconType: 'custom',
-      };
-    });
-
-    this.multipathTitles = multipathTitles;
-
-    const diskDevices = uniqueNames.map((devname) => {
+    this.diskDevices = uniqueNames.map((devname) => {
       const spl = devname.split(' ');
       return { label: devname, value: spl[0] };
     });
-
-    this.diskDevices = diskDevices.concat(multipathNames);
   }
 
   showConfigForm(): void {

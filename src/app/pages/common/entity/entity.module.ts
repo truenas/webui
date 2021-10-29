@@ -31,8 +31,6 @@ import { DocsService } from 'app/services/docs.service';
 import { JobService } from 'app/services/index';
 import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
 import { EntityCardComponent } from './entity-card/entity-card.component';
-import { EntityComingsoonComponent } from './entity-comingsoon/entity-comingsoon.component';
-import { EntityDashboardComponent } from './entity-dashboard/entity-dashboard.component';
 import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
 import { EntityEmptyComponent } from './entity-empty/entity-empty.component';
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
@@ -88,10 +86,25 @@ import { TableService } from './table/table.service';
 
 @NgModule({
   imports: [
-    CommonModule, FormsModule, ReactiveFormsModule, DragDropModule, RouterModule,
-    MaterialModule, ColorPickerModule, NgxDatatableModule, CdkTableModule, TreeModule.forRoot(),
-    NgxUploaderModule, FlexLayoutModule, TranslateModule, CdkTreeModule,
-    OverlayModule, A11yModule, TreeTableModule, NgxFilesizeModule, CommonDirectivesModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    DragDropModule,
+    RouterModule,
+    MaterialModule,
+    ColorPickerModule,
+    NgxDatatableModule,
+    CdkTableModule,
+    TreeModule.forRoot(),
+    NgxUploaderModule,
+    FlexLayoutModule,
+    TranslateModule,
+    CdkTreeModule,
+    OverlayModule,
+    A11yModule,
+    TreeTableModule,
+    NgxFilesizeModule,
+    CommonDirectivesModule,
     TooltipModule,
   ],
   declarations: [
@@ -150,10 +163,8 @@ import { TableService } from './table/table.service';
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,
     FormStatusComponent,
-    EntityComingsoonComponent,
     TableComponent,
     ExpandableTableComponent,
-    EntityDashboardComponent,
     EntityEmptyComponent,
     FormDictComponent,
     WizardSummaryComponent,
@@ -184,7 +195,6 @@ import { TableService } from './table/table.service';
     ToolbarMenuComponent,
     ToolbarMultimenuComponent,
     ToolbarMultiSelectComponent,
-    EntityComingsoonComponent,
     TableComponent,
     ExpandableTableComponent,
     CdkTreeModule,

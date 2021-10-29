@@ -2131,8 +2131,6 @@
   "Move existing keys from the current key server to a new key server.  To switch to a different key server, key synchronization must be <i>Enabled</i>, then  enable this setting, update the key server connection configuration, and click <b>SAVE</b>.": "",
   "Multi-domain support. Enter additional domains to  secure. Separate domains by pressing <code>Enter</code>  For example, if the primary domain is <i>example.com</i>,  entering <i>www.example.com</i> secures both addresses.": "",
   "Multicast DNS. Uses the system <i>Hostname</i> to  advertise enabled and running services. For example, this controls if  the server appears under <i>Network</i> on MacOS clients.": "",
-  "Multipath Name": "",
-  "Multipaths": "",
   "Must be part of a pool to check errors": "",
   "Must match Windows workgroup name.  When this is unconfigured and Active Directory or LDAP are active,  TrueNAS will detect and set the correct workgroup from these services.": "",
   "Mutual secret password. Required when Peer User is set. Must be different than the <i>Secret</i>.": "",

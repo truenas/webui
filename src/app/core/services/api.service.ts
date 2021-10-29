@@ -6,7 +6,6 @@ import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface'
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { Multipath } from 'app/interfaces/multipath.interface';
 import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
@@ -86,13 +85,6 @@ export class ApiService {
         args: [] as QueryParams<Disk>[],
         namespace: 'disk.query',
         responseEvent: 'DisksData',
-      },
-    },
-    MultipathRequest: {
-      apiCall: {
-        args: [] as QueryParams<Multipath>[],
-        namespace: 'multipath.query',
-        responseEvent: 'MultipathData',
       },
     },
     EnclosureDataRequest: {
