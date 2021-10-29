@@ -2,11 +2,9 @@ import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { DiskStandby } from 'app/enums/disk-standby.enum';
 import helptext from 'app/helptext/storage/disks/disks';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
@@ -104,23 +102,6 @@ export class DiskFormComponent implements FormConfiguration {
           options: helptext.disk_form_hddstandby_options,
         },
         {
-          type: 'checkbox',
-          name: 'hddstandby_force',
-          placeholder: helptext.force_hdd_standby.placeholder,
-          tooltip: helptext.force_hdd_standby.tooltip,
-          relation: [
-            {
-              action: RelationAction.Disable,
-              when: [
-                {
-                  name: 'hddstandby',
-                  value: DiskStandby.AlwaysOn,
-                },
-              ],
-            },
-          ],
-        },
-        {
           type: 'select',
           name: 'advpowermgmt',
           placeholder: helptext.disk_form_advpowermgmt_placeholder,
@@ -207,18 +188,7 @@ export class DiskFormComponent implements FormConfiguration {
     });
   }
 
-  afterInit(entityEdit: EntityFormComponent): void {
-    entityEdit.formGroup.controls['hddstandby'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: DiskStandby) => {
-      if (value === DiskStandby.AlwaysOn) {
-        entityEdit.formGroup.controls['hddstandby_force'].setValue(false);
-      }
-    });
-  }
-
   beforeSubmit(value: any): void {
-    if (!value.hddstandby_force) {
-      value.hddstandby_force = false;
-    }
     if (value.passwd === '') {
       delete value.passwd;
     }
