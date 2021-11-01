@@ -27,8 +27,8 @@ export class IxInputComponent implements ControlValueAccessor {
 
   formControl = new FormControl(this).value as FormControl;
 
-  value = '';
-  formatted = '';
+  value: string | number = '';
+  formatted: string | number = '';
   isDisabled = false;
   shouldUpdateValueAsap = false;
 
@@ -46,7 +46,7 @@ export class IxInputComponent implements ControlValueAccessor {
     return !!this.parseAndFormatInput;
   }
 
-  writeValue(value: string): void {
+  writeValue(value: string | number): void {
     let parsed = value;
     let formatted = value;
     if (this.isInputMasked && value) {

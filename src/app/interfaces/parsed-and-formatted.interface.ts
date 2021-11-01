@@ -1,3 +1,3 @@
 export interface ParseAndFormatIxInput {
-  (value: string): { parsed: string; formatted: string };
+  (value: string | number): { parsed: string | number; formatted: string | number };
 }
