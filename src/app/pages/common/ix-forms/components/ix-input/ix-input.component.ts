@@ -42,20 +42,21 @@ export class IxInputComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
-  get isInputMasked(): boolean {
-    return !!this.format;
-  }
-
   writeValue(value: string | number): void {
     let parsed = value;
     let formatted = value;
-    if (this.isInputMasked && value) {
-      parsed = this.parse(value);
-      formatted = this.format(value);
-      /** This flag exists because when default value is used, onChange is not registered yet
-       * So parsed value isn't immediately updated
-       */
-      this.shouldUpdateValueAsap = true;
+    if (value) {
+      if (this.parse) {
+        parsed = this.parse(value);
+        /** This flag exists because when default value is used, onChange is not registered yet
+         * So parsed value isn't immediately updated. Furthermore, if the user submits the form with
+         * default value, the submitted value isn't parsed in that case either.
+         */
+        this.shouldUpdateValueAsap = true;
+      }
+      if (this.format) {
+        formatted = this.format(value);
+      }
     }
     this.value = parsed;
     this.formatted = formatted;
@@ -84,7 +85,7 @@ export class IxInputComponent implements ControlValueAccessor {
   input(value: string): void {
     this.value = value;
     this.formatted = value;
-    if (this.isInputMasked && !!value) {
+    if (this.parse && !!value) {
       this.value = this.parse(value);
     }
     this.onChange(this.value);
@@ -103,11 +104,13 @@ export class IxInputComponent implements ControlValueAccessor {
 
   blur(): void {
     this.onTouch();
-    if (this.isInputMasked && !!this.value) {
-      const parsed = this.parse(this.value);
-      const formatted = this.format(this.value);
-      this.value = parsed;
-      this.formatted = formatted;
+    if (this.value) {
+      if (this.parse) {
+        this.value = this.parse(this.value);
+      }
+      if (this.format) {
+        this.formatted = this.format(this.value);
+      }
     }
     this.onChange(this.value);
     this.cdr.markForCheck();
