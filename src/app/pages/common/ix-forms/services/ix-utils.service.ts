@@ -15,15 +15,15 @@ export class IxUtilsService {
     }
     let parsed = '';
     let formatted = '';
-    const vm_memory_requested = this.storageService.convertHumanStringToNum(value);
-    if (Number.isNaN(vm_memory_requested)) {
-      console.error(vm_memory_requested);
+    const memoryInNumbers = this.storageService.convertHumanStringToNum(value);
+    if (Number.isNaN(memoryInNumbers)) {
+      console.error(memoryInNumbers);
     } else if (value.replace(/\s/g, '').match(/[^0-9]/g) === null) {
       formatted = this.storageService.convertBytestoHumanReadable(value.replace(/\s/g, ''), 0);
     } else {
       formatted = this.storageService.humanReadable;
     }
-    parsed = vm_memory_requested.toString();
+    parsed = memoryInNumbers.toString();
     return { parsed, formatted };
   };
 }
