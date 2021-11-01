@@ -19,8 +19,6 @@ import { styler, tween } from 'popmotion';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { DisksDataEvent } from 'app/interfaces/events/disks-data-event.interface';
-import { MultipathDataEvent } from 'app/interfaces/events/multipath-event.interface';
-import { Multipath } from 'app/interfaces/multipath.interface';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
@@ -169,7 +167,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     level: 'safe',
   };
 
-  currentMultipathDetails: Multipath;
   currentDiskDetails: Disk;
   get currentDiskDetailsKeys(): (keyof Disk)[] {
     return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) as (keyof Disk)[] : [];
@@ -213,23 +210,9 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
     this.cdr.detectChanges();
 
-    this.core.register({ observerClass: this, eventName: 'MultipathData' }).pipe(untilDestroyed(this)).subscribe((evt: MultipathDataEvent) => {
-      this.currentMultipathDetails = evt.data[0];
-
-      const activeDisk = evt.data[0].children.find((prop) => prop.status == 'ACTIVE');
-      this.core.emit({ name: 'DisksRequest', data: [[['name', '=', activeDisk.name]]] });
-    });
-
     this.core.register({ observerClass: this, eventName: 'DisksData' }).pipe(untilDestroyed(this)).subscribe((evt: DisksDataEvent) => {
       const currentPath = this.path[this.currentSlideIndex];
-      let currentName = 'unknown';
-      if (currentPath?.dataSource) {
-        if (this.currentMultipathDetails) {
-          currentName = this.checkMultipathLabel(currentPath.dataSource.disk);
-        } else if (currentPath.dataSource.disk) {
-          currentName = currentPath.dataSource.disk;
-        }
-      }
+      const currentName = currentPath?.dataSource?.disk || 'unknown';
 
       if ((!currentName || currentName === 'unknown') && evt.data.length == 0) {
         this.currentDiskDetails = null;
@@ -292,54 +275,25 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     this.checkVolumeHealth();
   }
 
-  getDiskDetails(key: string, value: string, isMultipath?: boolean): void {
-    if (isMultipath && key == 'name') {
-      const v = 'multipath/' + this.checkMultipathLabel(value);
-      this.core.emit({ name: 'MultipathRequest', data: [[[key, '=', v]]] });
-    } else if (!isMultipath) {
-      delete this.currentMultipathDetails;
-      this.core.emit({ name: 'DisksRequest', data: [[[key, '=', value]]] });
-    } else {
-      console.warn('If this is a multipath disk, you must query by name!');
-    }
+  getDiskDetails(key: string, value: string): void {
+    this.core.emit({ name: 'DisksRequest', data: [[[key, '=', value]]] });
   }
 
-  checkMultipathLabel(name: string): string {
-    if (name == null) {
-      name = 'N/A';
-    }
-    const truth = this.checkMultipath(name);
-    let diskName = name;
-    if (truth) {
-      const str = name.replace('multipath/', '');
-      const spl = str.split('p');
-      diskName = spl[0];
-    }
-    return diskName;
-  }
-
-  checkMultipath(name: string): boolean {
-    if (name) {
-      const truth = name.startsWith('multipath/');
-      return truth;
-    }
-    return false;
-  }
-
-  trimMultipath(disk: string): { isMultipath?: boolean; name: string; fullName?: string } {
+  /**
+   * @deprecated Multipath is not supported
+   */
+  trimMultipath(disk: string): { name: string; fullName?: string } {
     if (!disk || disk == null) {
       return { name: disk };
     }
 
-    const isMultipath = disk.includes('multipath/');
-    const fullName = isMultipath ? disk.replace('multipath/', '') : disk;
+    const fullName = disk;
 
     const spl = fullName.split('-');
     const suffix = spl.length > 1 ? '...  ' : '';
     const name = spl[0] + suffix;
 
     return {
-      isMultipath,
       name,
       fullName,
     };

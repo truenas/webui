@@ -143,7 +143,6 @@ import { KubernetesConfig, KubernetesConfigUpdate } from 'app/interfaces/kuberne
 import { LdapConfig, LdapConfigUpdate, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
 import { LldpConfig, LldpConfigUpdate } from 'app/interfaces/lldp-config.interface';
 import { MailConfig, MailConfigUpdate, SendMailParams } from 'app/interfaces/mail-config.interface';
-import { Multipath } from 'app/interfaces/multipath.interface';
 import {
   NetworkActivityChoice,
   NetworkConfiguration,
@@ -500,9 +499,6 @@ export type ApiDirectory = {
   'kubernetes.config': { params: void; response: KubernetesConfig };
   'kubernetes.update': { params: [Partial<KubernetesConfigUpdate>]; response: KubernetesConfig };
   'kubernetes.bindip_choices': { params: void; response: Choices };
-
-  // Multipath
-  'multipath.query': { params: QueryParams<Multipath>; response: Multipath[] };
 
   // Mail
   'mail.config': { params: void; response: MailConfig };

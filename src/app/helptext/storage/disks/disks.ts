@@ -36,12 +36,6 @@ export default {
     { label: '330', value: DiskStandby.Minutes330 },
   ],
 
-  force_hdd_standby: {
-    placeholder: T('Force HDD Standby'),
-    tooltip: T('Allows the drive to enter standby, even when non-physical S.M.A.R.T. \
- operations could prevent the drive from sleeping.'),
-  },
-
   disk_form_advpowermgmt_placeholder: T('Advanced Power Management'),
   disk_form_advpowermgmt_tooltip: T('Select a power management profile from the menu.'),
   disk_form_advpowermgmt_options: [
