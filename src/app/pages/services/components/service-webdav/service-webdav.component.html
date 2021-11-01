@@ -1,0 +1,70 @@
+<mat-card class="form-card">
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <ix-fieldset [title]="helptext.fieldset_title">
+        <ix-select
+          [formControlName]="protocol.fcName"
+          [label]="protocol.label"
+          [tooltip]="protocol.tooltip"
+          [options]="protocol.options"
+          (ngModelChange)="onChangeProtocal($event)"
+        ></ix-select>
+        <ix-input
+          *ngIf="!tcpport.hidden"
+          [formControlName]="tcpport.fcName"
+          [label]="tcpport.label"
+          [tooltip]="tcpport.tooltip"
+        ></ix-input>
+        <ix-input
+          *ngIf="!tcpportssl.hidden"
+          [formControlName]="tcpportssl.fcName"
+          [label]="tcpportssl.label"
+          [tooltip]="tcpportssl.tooltip"
+        ></ix-input>
+        <ix-select
+          *ngIf="!certssl.hidden"
+          [formControlName]="certssl.fcName"
+          [label]="certssl.label"
+          [tooltip]="certssl.tooltip"
+          [options]="certssl.options"
+        ></ix-select>
+        <ix-select
+          [formControlName]="htauth.fcName"
+          [label]="htauth.label"
+          [tooltip]="htauth.tooltip"
+          [options]="htauth.options"
+          (ngModelChange)="onChangeHtAuth($event)"
+        ></ix-select>
+        <ix-input
+          *ngIf="pwdRequired"
+          [formControlName]="password.fcName"
+          [label]="password.label"
+          [tooltip]="password.tooltip"
+          type="password"
+          [togglePw]="true"
+        ></ix-input>
+        <ix-input
+          *ngIf="pwdRequired"
+          [formControlName]="password2.fcName"
+          [label]="password2.label"
+          type="password"
+        ></ix-input>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isFormLoading"
+          color="primary"
+        >{{ 'Save' }}</button>
+        <button
+          mat-button
+          color="accent"
+          class="ml-05"
+          (click)="cancel()"
+        >{{ 'Cancel' }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

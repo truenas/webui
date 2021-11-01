@@ -76,3 +76,14 @@
   max-width: 16px;
   width: auto;
 }
+
+.input-container .mat-icon-button {
+  height: 24px;
+  line-height: 24px;
+  opacity: 0.5;
+  width: 24px;
+}
+
+.security-disc {
+  -webkit-text-security: disc;
+}
