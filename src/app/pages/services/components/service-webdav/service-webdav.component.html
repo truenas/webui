@@ -7,7 +7,7 @@
           [label]="protocol.label"
           [tooltip]="protocol.tooltip"
           [options]="protocol.options"
-          (ngModelChange)="onChangeProtocal($event)"
+          (ngModelChange)="onProtocolChange($event)"
         ></ix-select>
         <ix-input
           *ngIf="!tcpport.hidden"
@@ -33,7 +33,7 @@
           [label]="htauth.label"
           [tooltip]="htauth.tooltip"
           [options]="htauth.options"
-          (ngModelChange)="onChangeHtAuth($event)"
+          (ngModelChange)="onHtAuthChange($event)"
         ></ix-select>
         <ix-input
           *ngIf="pwdRequired"
@@ -41,7 +41,6 @@
           [label]="password.label"
           [tooltip]="password.tooltip"
           type="password"
-          [togglePw]="true"
         ></ix-input>
         <ix-input
           *ngIf="pwdRequired"
@@ -55,15 +54,15 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid || isFormLoading"
+          [disabled]="form.invalid"
           color="primary"
-        >{{ 'Save' }}</button>
+        >{{ 'Save' | translate }}</button>
         <button
           mat-button
           color="accent"
           class="ml-05"
           (click)="cancel()"
-        >{{ 'Cancel' }}</button>
+        >{{ 'Cancel' | translate }}</button>
       </div>
     </form>
   </mat-card-content>

@@ -19,7 +19,6 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() type: string;
-  @Input() togglePw: boolean;
   @Input() autocomplete = 'off';
   @Input() autocapitalize = 'off';
 
@@ -50,12 +49,12 @@ export class IxInputComponent implements ControlValueAccessor {
     this.onTouch = onTouched;
   }
 
-  shouldShowToggle(): boolean {
-    return this.type === 'password' && this.togglePw;
+  shouldShowPasswordToggle(): boolean {
+    return this.type === 'password';
   }
 
   shouldShowResetInput(): boolean {
-    return !this.isDisabled && this.hasValue() && !this.shouldShowToggle();
+    return !this.isDisabled && this.hasValue() && this.type !== 'password';
   }
 
   getType(): string {
@@ -80,7 +79,7 @@ export class IxInputComponent implements ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  togglePW(): void {
+  onPasswordToggled(): void {
     this.showPassword = !this.showPassword;
   }
 }

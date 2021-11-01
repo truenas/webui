@@ -9,3 +9,9 @@ export interface WebdavConfig {
 }
 
 export type WebdavConfigUpdate = Omit<WebdavConfig, 'id'>;
+
+export enum Protocal {
+  HTTP = 'HTTP',
+  HTTPS = 'HTTPS',
+  HTTPHTTPS = 'HTTPHTTPS',
+}

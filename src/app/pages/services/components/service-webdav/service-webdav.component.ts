@@ -8,11 +8,10 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { Observable, of } from 'rxjs';
+import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/services/components/service-webdav';
-import { Option } from 'app/interfaces/option.interface';
-import { WebdavConfig, WebdavConfigUpdate } from 'app/interfaces/webdav-config.interface';
+import { WebdavConfig, WebdavConfigUpdate, Protocal } from 'app/interfaces/webdav-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import {
@@ -27,13 +26,11 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceWebdavComponent implements OnInit {
-  isFormLoading = false;
-
   form = this.fb.group({
     protocol: [''],
     tcpport: [null as number, [Validators.min(1), Validators.max(65535)]],
     tcpportssl: [null as number, [Validators.min(1), Validators.max(65535)]],
-    certssl: [null as any],
+    certssl: [null as number | string],
     htauth: [''],
     password: [''],
     password2: ['', [this.validationService.matchOtherValidator('password')]],
@@ -41,49 +38,28 @@ export class ServiceWebdavComponent implements OnInit {
 
   readonly helptext = helptext;
 
-  protocol: {
-    readonly fcName: 'protocol';
-    label: string;
-    tooltip: string;
-    options: Observable<Option[]>;
-  } = {
+  protocol = {
     fcName: 'protocol',
     label: helptext.protocol_placeholder,
     tooltip: helptext.protocol_tooltip,
     options: of(helptext.protocol_options),
   };
 
-  tcpport: {
-    readonly fcName: 'tcpport';
-    label: string;
-    tooltip: string;
-    hidden: boolean;
-  } = {
+  tcpport = {
     fcName: 'tcpport',
     label: helptext.tcpport_placeholder,
     tooltip: helptext.tcpport_tooltip,
     hidden: false,
   };
 
-  tcpportssl: {
-    readonly fcName: 'tcpportssl';
-    label: string;
-    tooltip: string;
-    hidden: boolean;
-  } = {
+  tcpportssl = {
     fcName: 'tcpportssl',
     label: helptext.tcpportssl_placeholder,
     tooltip: helptext.tcpportssl_tooltip,
     hidden: false,
   };
 
-  certssl: {
-    readonly fcName: 'certssl';
-    label: string;
-    tooltip: string;
-    options: Observable<Option[]>;
-    hidden: boolean;
-  } = {
+  certssl = {
     fcName: 'certssl',
     label: helptext.certssl_placeholder,
     tooltip: helptext.certssl_tooltip,
@@ -103,32 +79,20 @@ export class ServiceWebdavComponent implements OnInit {
     hidden: false,
   };
 
-  htauth: {
-    readonly fcName: 'htauth';
-    label: string;
-    tooltip: string;
-    options: Observable<Option[]>;
-  } = {
+  htauth = {
     fcName: 'htauth',
     label: helptext.htauth_placeholder,
     tooltip: helptext.htauth_tooltip,
     options: of(helptext.htauth_options),
   };
 
-  password: {
-    readonly fcName: 'password';
-    label: string;
-    tooltip: string;
-  } = {
+  password = {
     fcName: 'password',
     label: helptext.password_placeholder,
     tooltip: helptext.password_tooltip,
   };
 
-  password2: {
-    readonly fcName: 'password2';
-    label: string;
-  } = {
+  password2 = {
     fcName: 'password2',
     label: helptext.password2_placeholder,
   };
@@ -149,37 +113,34 @@ export class ServiceWebdavComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.isFormLoading = true;
     this.loader.open();
 
     this.ws.call('webdav.config').pipe(untilDestroyed(this)).subscribe(
       (config: WebdavConfig) => {
         this.form.patchValue(config);
-        this.isFormLoading = false;
         this.loader.close();
         this.cdr.markForCheck();
       },
       (error) => {
-        this.isFormLoading = false;
         this.loader.close();
         new EntityUtils().handleWSError(null, error, this.dialogService);
       },
     );
   }
 
-  onChangeProtocal(value: string): void {
+  onProtocolChange(value: string): void {
     switch (value) {
-      case 'HTTP':
+      case Protocal.HTTP:
         this.tcpport.hidden = false;
         this.tcpportssl.hidden = true;
         this.certssl.hidden = true;
         break;
-      case 'HTTPS':
+      case Protocal.HTTPS:
         this.tcpport.hidden = true;
         this.tcpportssl.hidden = false;
         this.certssl.hidden = false;
         break;
-      case 'HTTPHTTPS':
+      case Protocal.HTTPHTTPS:
         this.tcpport.hidden = false;
         this.tcpportssl.hidden = false;
         this.certssl.hidden = false;
@@ -189,7 +150,7 @@ export class ServiceWebdavComponent implements OnInit {
     }
   }
 
-  onChangeHtAuth(value: string): void {
+  onHtAuthChange(value: string): void {
     if (value === 'NONE') {
       this.form.controls.password.setValue('');
       this.form.controls.password2.setValue('');
@@ -200,17 +161,14 @@ export class ServiceWebdavComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isFormLoading = true;
     this.loader.open();
 
     const values = this.form.value;
     delete values.password2;
     this.ws.call('webdav.update', [values] as [WebdavConfigUpdate]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
       this.loader.close();
       this.router.navigate(['/', 'services']);
     }, (error) => {
-      this.isFormLoading = false;
       this.loader.close();
       this.errorHandler.handleWsFormError(error, this.form);
       this.cdr.markForCheck();

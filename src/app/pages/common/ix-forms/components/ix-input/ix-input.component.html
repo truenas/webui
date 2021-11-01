@@ -16,7 +16,7 @@
     [class.security-disc]="isSecurity()"
     [required]="required"
     [disabled]="isDisabled"
-    type="getType()"
+    [type]="getType()"
     [(ngModel)]="value"
     (ngModelChange)="onChange($event)"
     (blur)="onTouch()"
@@ -27,13 +27,10 @@
     <mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
   </span>
   <button
-    *ngIf="shouldShowToggle()"
+    *ngIf="type === 'password'"
     mat-icon-button type="button"
     class="toggle_pw"
-    (click)="togglePW()"
-    ix-auto
-    ix-auto-type="button"
-    ix-auto-identifier="{{label}}_toggle-pw">
+    (click)="onPasswordToggled()">
     <i class="material-icons" matTooltip="Hide" *ngIf="showPassword">visibility</i>
     <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
   </button>
