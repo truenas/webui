@@ -45,11 +45,9 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 @when('you should be on the dashboard, click on Sharing then Windows Shares(SMB)')
 def you_should_be_on_the_dashboard_click_on_sharing_then_windows_sharessmb(driver):
     """you should be on the dashboard, click on Sharing then Windows Shares(SMB)."""
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Shares"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shares"]').click()
     assert wait_on_element(driver, 5, '//div[contains(.,"Shares")]')
@@ -71,10 +69,9 @@ def set_path_to_the_ldap_dataset_mnttankericbsd_dataset_input_eric_share_as_name
     time.sleep(1)
     global smb_path
     smb_path = path
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]')
+    assert wait_on_element(driver, 5, '//input[@ix-auto="input__path"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__path"]').send_keys(path)
-    time.sleep(1)
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys(smbname)
