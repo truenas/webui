@@ -413,3 +413,4 @@ def both_controllers_should_show_model_and_version_on_the_dashboard(driver):
     license1 = driver.find_element_by_xpath('(//strong[contains(.,"License:")])[1]/..').text
     license2 = driver.find_element_by_xpath('(//strong[contains(.,"License:")])[2]/..').text
     assert license1 == license2
+    time.sleep(5)
