@@ -39,7 +39,8 @@
           formControlName="memory_size"
           [label]="'Memory Size'"
           [tooltip]="'Allocate RAM for the VM. Minimum value is 256 MiB.'"
-          [parseAndFormatInput]="parseAndFormatInput"
+          [parse]="parse"
+          [format]="format"
         ></ix-input>
 
         <ix-input

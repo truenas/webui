@@ -91,7 +91,8 @@ export class GuiFormComponent {
     });
   }
 
-  parseAndFormatInput = this.ixUtilsService.memorySizeParsingAndFormatting;
+  format = this.ixUtilsService.memorySizeFormatting;
+  parse = this.ixUtilsService.memorySizeParsing;
   reconnect(href: string): void {
     if (this.ws.connected) {
       this.loader.close();

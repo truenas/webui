@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { ParseAndFormatIxInput } from 'app/interfaces/parsed-and-formatted.interface';
 
 @UntilDestroy()
 @Component({
@@ -23,7 +22,8 @@ export class IxInputComponent implements ControlValueAccessor {
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
-  @Input() parseAndFormatInput: ParseAndFormatIxInput;
+  @Input() format: (value: string | number) => string = (value: string | number) => value.toString();
+  @Input() parse: (value: string | number) => string | number = (value: string | number) => value;
 
   formControl = new FormControl(this).value as FormControl;
 
@@ -43,16 +43,15 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   get isInputMasked(): boolean {
-    return !!this.parseAndFormatInput;
+    return !!this.format;
   }
 
   writeValue(value: string | number): void {
     let parsed = value;
     let formatted = value;
     if (this.isInputMasked && value) {
-      const parsedAndFormatted = this.parseAndFormatInput(value);
-      parsed = parsedAndFormatted.parsed;
-      formatted = parsedAndFormatted.formatted;
+      parsed = this.parse(value);
+      formatted = this.format(value);
       /** This flag exists because when default value is used, onChange is not registered yet
        * So parsed value isn't immediately updated
        */
@@ -86,8 +85,7 @@ export class IxInputComponent implements ControlValueAccessor {
     this.value = value;
     this.formatted = value;
     if (this.isInputMasked && !!value) {
-      const { parsed } = this.parseAndFormatInput(value);
-      this.value = parsed;
+      this.value = this.parse(value);
     }
     this.onChange(this.value);
   }
@@ -106,7 +104,8 @@ export class IxInputComponent implements ControlValueAccessor {
   blur(): void {
     this.onTouch();
     if (this.isInputMasked && !!this.value) {
-      const { parsed, formatted } = this.parseAndFormatInput(this.value);
+      const parsed = this.parse(this.value);
+      const formatted = this.format(this.value);
       this.value = parsed;
       this.formatted = formatted;
     }

@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { ParseAndFormatIxInput } from 'app/interfaces/parsed-and-formatted.interface';
 import { StorageService } from 'app/services';
 
 @Injectable()
@@ -8,12 +7,11 @@ export class IxFormatterService {
     private storageService: StorageService,
   ) {}
 
-  memorySizeParsingAndFormatting: ParseAndFormatIxInput = (value: string) => {
+  memorySizeFormatting: (val: string | number) => string = (value: string | number) => {
     value = value.toString();
     if (!value) {
-      return { parsed: '', formatted: '' };
+      return '';
     }
-    let parsed = '';
     let formatted = '';
     const memoryInNumbers = this.storageService.convertHumanStringToNum(value);
     if (Number.isNaN(memoryInNumbers)) {
@@ -23,7 +21,14 @@ export class IxFormatterService {
     } else {
       formatted = this.storageService.humanReadable;
     }
-    parsed = memoryInNumbers.toString();
-    return { parsed, formatted };
+    return formatted;
+  };
+
+  memorySizeParsing: (val: string) => number = (value: string) => {
+    value = value.toString();
+    if (!value) {
+      return NaN;
+    }
+    return this.storageService.convertHumanStringToNum(value);
   };
 }
