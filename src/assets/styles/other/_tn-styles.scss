@@ -1564,11 +1564,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  app-disk-form #hddstandby_force {
-    position: relative;
-    top: 14px;
-  }
-
   .entity-table-cell-error {
     color: var(--red) !important;
   }
