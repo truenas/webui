@@ -3,7 +3,7 @@ import { ParseAndFormatIxInput } from 'app/interfaces/parsed-and-formatted.inter
 import { StorageService } from 'app/services';
 
 @Injectable()
-export class IxUtilsService {
+export class IxFormatterService {
   constructor(
     private storageService: StorageService,
   ) {}

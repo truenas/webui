@@ -16,7 +16,7 @@ import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/s
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { IxUtilsService } from 'app/pages/common/ix-forms/services/ix-utils.service';
+import { IxFormatterService } from 'app/pages/common/ix-forms/services/ix-utils.service';
 import {
   DialogService, StorageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
@@ -58,7 +58,7 @@ export class GuiFormComponent {
   readonly helptext = helptext;
 
   constructor(
-    private ixUtilsService: IxUtilsService,
+    private ixUtilsService: IxFormatterService,
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
     private modalService: IxModalService,
