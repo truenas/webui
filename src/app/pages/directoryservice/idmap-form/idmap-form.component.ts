@@ -207,13 +207,17 @@ export class IdmapFormComponent {
           options: helptext.idmap.linked_service.options,
         },
         {
-          type: 'input',
+          type: 'select',
           name: 'ldap_server',
           placeholder: helptext.idmap.ldap_server.placeholder,
           tooltip: helptext.idmap.ldap_server.tooltip,
+          options: [
+            { label: 'Standalone', value: 'STANDALONE' },
+            { label: 'AD', value: 'AD' },
+          ],
         },
         {
-          type: 'input',
+          type: 'checkbox',
           name: 'ldap_realm',
           placeholder: helptext.idmap.ldap_realm.placeholder,
           tooltip: helptext.idmap.ldap_realm.tooltip,
@@ -231,7 +235,7 @@ export class IdmapFormComponent {
           tooltip: helptext.idmap.bind_path_group.tooltip,
         },
         {
-          type: 'input',
+          type: 'checkbox',
           name: 'user_cn',
           placeholder: helptext.idmap.user_cn.placeholder,
           tooltip: helptext.idmap.user_cn.tooltip,
