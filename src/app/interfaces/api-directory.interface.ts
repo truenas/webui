@@ -210,7 +210,7 @@ import {
   SupportConfig, SupportConfigUpdate,
 } from 'app/interfaces/support.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
-import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import {
   SystemUpdate,
@@ -815,7 +815,7 @@ export type ApiDirectory = {
   // SystemDataset
   'systemdataset.pool_choices': { params: void; response: Choices };
   'systemdataset.config': { params: void; response: SystemDatasetConfig };
-  'systemdataset.update': { params: [{ [poolName: string]: string }]; response: SystemDatasetConfig };
+  'systemdataset.update': { params: [SystemDatasetUpdate]; response: SystemDatasetConfig };
 
   // Service
   'service.started': { params: [ServiceName]; response: boolean };

@@ -467,14 +467,14 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     await this.showFirstTimeWarningIfNeeded();
-    if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
+    if ([CardId.Console, CardId.Kernel].includes(name)) {
       this.sysGeneralService.sendConfigData(this.configData as any);
     }
 
     if ([CardId.Kernel].includes(name)) {
       const modal = this.ixModal.open(KernelFormComponent);
       modal.setupForm(this.configData);
-    } else if ([CardId.Console].includes(name)) {
+    } else if ([CardId.Console, CardId.Syslog].includes(name)) {
       this.ixModal.open(addComponent);
     } else {
       this.modalService.openInSlideIn(addComponent, id);

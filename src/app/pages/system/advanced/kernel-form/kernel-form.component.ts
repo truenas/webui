@@ -1,7 +1,7 @@
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -57,6 +57,7 @@ export class KernelFormComponent {
     }, (res) => {
       this.isFormLoading = false;
       new EntityUtils().handleWSError(this, res);
+      this.cdr.markForCheck();
     });
   }
 }
