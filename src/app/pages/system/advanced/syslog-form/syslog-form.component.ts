@@ -1,5 +1,5 @@
 import {
-  Component, ChangeDetectionStrategy, ChangeDetectorRef, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -30,9 +30,7 @@ export class SyslogFormComponent implements OnInit {
     syslog: [false],
   });
 
-  readonly isTlsTransport$ = this.form.controls['syslog_transport'].value$.pipe(
-    map((value) => value === SyslogTransport.Tls),
-  );
+  readonly isTlsTransport$ = this.form.select((values) => values.syslog_transport === SyslogTransport.Tls);
 
   readonly tooltips = {
     fqdn_syslog: helptext.fqdn_tooltip,
