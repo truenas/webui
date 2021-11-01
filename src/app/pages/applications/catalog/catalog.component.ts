@@ -373,8 +373,9 @@ export class CatalogComponent implements OnInit {
       this.filteredCatalogApps = this.catalogApps;
     }
 
-    this.filteredCatalogApps = this.filteredCatalogApps.filter((app) =>
-      this.filteredCatalogNames.includes(app.catalog.label) && app.name !== ixChartApp);
+    this.filteredCatalogApps = this.filteredCatalogApps.filter(
+      (app) => this.filteredCatalogNames.includes(app.catalog.label) && app.name !== ixChartApp,
+    );
 
     if (this.filteredCatalogApps.length == 0) {
       if (this.filterString) {

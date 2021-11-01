@@ -1,19 +1,22 @@
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/directory-service/ldap';
 import global_helptext from 'app/helptext/global-helptext';
 import { FormConfiguration, FormCustomAction } from 'app/interfaces/entity-form.interface';
-import { LdapConfig, LdapConfigUpdate } from 'app/interfaces/ldap-config.interface';
+import { LdapConfig, LdapConfigUpdate, LdapConfigUpdateResult } from 'app/interfaces/ldap-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   SystemGeneralService,
   WebSocketService,
@@ -26,9 +29,8 @@ import { ModalService } from 'app/services/modal.service';
   selector: 'app-ldap',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-
 export class LdapComponent implements FormConfiguration {
-  title: string = helptext.title;
+  title = this.translate.instant(helptext.title);
   isEntity = false;
   queryCall = 'ldap.config' as const;
   updateCall = 'ldap.update' as const;
@@ -60,7 +62,7 @@ export class LdapComponent implements FormConfiguration {
       name: helptext.ldap_custactions_clearcache_name,
       function: () => {
         this.systemGeneralService.refreshDirServicesCache().pipe(untilDestroyed(this)).subscribe(() => {
-          this.dialogservice.info(helptext.ldap_custactions_clearcache_dialog_title,
+          this.dialogService.info(helptext.ldap_custactions_clearcache_dialog_title,
             helptext.ldap_custactions_clearcache_dialog_message);
         });
       },
@@ -217,11 +219,13 @@ export class LdapComponent implements FormConfiguration {
   }
 
   constructor(
-    protected router: Router,
-    protected ws: WebSocketService,
+    private router: Router,
+    private ws: WebSocketService,
     private modalService: ModalService,
-    private dialogservice: DialogService,
-    protected systemGeneralService: SystemGeneralService,
+    private dialogService: DialogService,
+    private matDialog: MatDialog,
+    private systemGeneralService: SystemGeneralService,
+    private translate: TranslateService,
   ) { }
 
   resourceTransformIncomingRestData(data: LdapConfig): any {
@@ -325,8 +329,35 @@ export class LdapComponent implements FormConfiguration {
   errorReport(res: WebsocketError): void {
     let errorText = res.reason ? res.reason.replace('[EFAULT]', '') : null;
     if (res.reason && res.reason.includes('Invalid credentials')) {
-      errorText = T('Invalid credentials. Please try again.');
+      errorText = this.translate.instant('Invalid credentials. Please try again.');
     }
     this.entityForm.error = errorText;
+  }
+
+  responseOnSubmit(result: LdapConfigUpdateResult): void {
+    if (result.job_id) {
+      this.showUpdateJob(result.job_id);
+    }
+  }
+
+  showUpdateJob(jobId: number): void {
+    const dialogRef = this.matDialog.open(
+      EntityJobComponent,
+      {
+        data: { title: this.translate.instant('Setting up LDAP') },
+        disableClose: true,
+      },
+    );
+    dialogRef.componentInstance.jobId = jobId;
+    dialogRef.componentInstance.wsshow();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close();
+      this.modalService.refreshTable();
+    });
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      new EntityUtils().handleWSError(this, error, this.dialogService);
+      this.modalService.refreshTable();
+      dialogRef.close();
+    });
   }
 }

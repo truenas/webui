@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { FormControl, ValidationErrors, Validators } from '@angular/forms';
 import { MatSelectChange } from '@angular/material/select';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -614,12 +614,12 @@ export class DatasetFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'acltype',
-          placeholder: T('ACL Type'),
+          placeholder: this.translate.instant('ACL Type'),
           options: [
-            { label: T('Inherit'), value: DatasetAclType.Inherit },
-            { label: T('Off'), value: DatasetAclType.Off },
-            { label: T('NFSv4'), value: DatasetAclType.Nfsv4 },
-            { label: T('POSIX'), value: DatasetAclType.Posix },
+            { label: this.translate.instant('Inherit'), value: DatasetAclType.Inherit },
+            { label: this.translate.instant('Off'), value: DatasetAclType.Off },
+            { label: this.translate.instant('NFSv4'), value: DatasetAclType.Nfsv4 },
+            { label: this.translate.instant('POSIX'), value: DatasetAclType.Posix },
           ],
           required: false,
           value: DatasetAclType.Inherit,
@@ -645,10 +645,10 @@ export class DatasetFormComponent implements FormConfiguration {
           placeholder: helptext.dataset_form_aclmode_placeholder,
           tooltip: helptext.dataset_form_aclmode_tooltip,
           options: [
-            { label: T('Inherit'), value: AclMode.Inherit },
-            { label: T('Passthrough'), value: AclMode.Passthrough },
-            { label: T('Restricted'), value: AclMode.Restricted },
-            { label: T('Discard'), value: AclMode.Discard },
+            { label: this.translate.instant('Inherit'), value: AclMode.Inherit },
+            { label: this.translate.instant('Passthrough'), value: AclMode.Passthrough },
+            { label: this.translate.instant('Restricted'), value: AclMode.Restricted },
+            { label: this.translate.instant('Discard'), value: AclMode.Discard },
           ],
           value: AclMode.Inherit,
           relation: [
@@ -920,6 +920,7 @@ export class DatasetFormComponent implements FormConfiguration {
     protected dialogService: DialogService,
     protected storageService: StorageService,
     protected modalService: ModalService,
+    protected translate: TranslateService,
   ) { }
 
   initial(entityForm: EntityFormComponent): void {
@@ -1638,6 +1639,6 @@ export class DatasetFormComponent implements FormConfiguration {
   }
 
   setTitle(title: string): void {
-    this.title = T(title);
+    this.title = this.translate.instant(title);
   }
 }

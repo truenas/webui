@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -86,7 +86,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           type: 'button',
           name: 'oauth_signin_button',
           isHidden: true,
-          customEventActionLabel: T('Log in to Provider'),
+          customEventActionLabel: this.translate.instant('Log in to Provider'),
           value: '',
           customEventMethod: () => {
             this.logInToProvider();
@@ -955,7 +955,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         {
           type: 'checkbox',
           name: 'advanced-S3',
-          placeholder: T('Advanced Settings'),
+          placeholder: this.translate.instant('Advanced Settings'),
           isHidden: true,
           value: false,
           relation: [
@@ -1235,7 +1235,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   custActions = [
     {
       id: 'validCredential',
-      name: T('Verify Credential'),
+      name: this.translate.instant('Verify Credential'),
       buttonColor: 'default',
       function: () => {
         this.entityForm.loader.open();
@@ -1269,7 +1269,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       },
     }, {
       id: 'customSave',
-      name: T('Save'),
+      name: this.translate.instant('Save'),
       buttonType: 'submit',
       buttonColor: 'primary',
     },
@@ -1284,6 +1284,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     protected dialog: DialogService,
     protected replicationService: ReplicationService,
     private modalService: ModalService,
+    protected translate: TranslateService,
   ) {
     this.modalService.getRow$
       .pipe(take(1), untilDestroyed(this))
@@ -1437,7 +1438,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       (res) => {
         this.entityForm.loader.close();
         if (res.valid) {
-          this.dialog.info(T('Valid'), T('The Credential is valid.'), '500px', 'info');
+          this.dialog.info(this.translate.instant('Valid'), this.translate.instant('The Credential is valid.'), '500px', 'info');
         } else {
           this.dialog.errorReport('Error', res.excerpt, res.error);
         }
@@ -1453,6 +1454,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     window.open(this.oauthURL + '?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
     const controls = this.entityForm.formGroup.controls;
     const dialogService = this.dialog;
+    const translate = this.translate;
     const getOnedriveList = this.getOnedriveList.bind(this);
 
     const method = (message: OauthMessage): void => doAuth(message, this.selectedProvider);
@@ -1462,7 +1464,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     function doAuth(message: OauthMessage, selectedProvider: string): void {
       if ('oauth_portal' in message.data) {
         if (message.data.error) {
-          dialogService.errorReport(T('Error'), message.data.error);
+          dialogService.errorReport(translate.instant('Error'), message.data.error);
         } else {
           for (const prop in message.data.result) {
             let targetProp = prop;

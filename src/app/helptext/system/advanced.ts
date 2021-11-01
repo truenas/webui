@@ -126,7 +126,6 @@ export const helptext_system_advanced = {
       { label: T('Notice'), value: 'F_NOTICE' },
       { label: T('Info'), value: 'F_INFO' },
       { label: T('Debug'), value: 'F_DEBUG' },
-      { label: T('Is Debug'), value: 'F_IS_DEBUG' },
     ],
   },
 

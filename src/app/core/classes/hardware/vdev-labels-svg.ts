@@ -30,7 +30,7 @@ export class VDevLabelsSVG {
   highlightedDiskName: string;
   selectedDisk: EnclosureDisk;
 
-  private trays: Record<string, any> = {};
+  private trays: Record<string, { x: number; y: number; width: number; height: number }> = {};
 
   constructor(chassis: ChassisView, app: Application, theme: Theme, disk: EnclosureDisk) {
     this.selectedDisk = disk;

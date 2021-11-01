@@ -2,10 +2,10 @@ import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
@@ -37,7 +37,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   firstFormGroup: FormGroup;
   summaryTitle = 'Pool Import Summary';
   subs: Subs;
-  saveSubmitText = T('Import');
+  saveSubmitText = this.translate.instant('Import');
   entityWizard: EntityWizardComponent;
   protected productType: ProductType;
   protected importIndex = 2;
@@ -192,6 +192,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     protected dialogService: DialogService,
     public messageService: MessageService,
     public modalService: ModalService,
+    protected translate: TranslateService,
   ) {
   }
 
@@ -210,11 +211,11 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
 
   decryptDisks(stepper: MatStepper): void {
     if (this.devices_fg.status === 'INVALID') {
-      this.dialogService.info(T('Disk Selection Required'), T('Select one or more disks to decrypt.'));
+      this.dialogService.info(this.translate.instant('Disk Selection Required'), this.translate.instant('Select one or more disks to decrypt.'));
       return;
     }
     if (!this.subs) {
-      this.dialogService.info(T('Encryption Key Required'), T('Select a key before decrypting the disks.'));
+      this.dialogService.info(this.translate.instant('Encryption Key Required'), this.translate.instant('Select a key before decrypting the disks.'));
     }
     const formData: FormData = new FormData();
     const params = [this.devices_fg.value];
@@ -239,7 +240,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.close(false);
-      this.dialogService.errorReport(T('Error decrypting disks'), res.error, res.exception);
+      this.dialogService.errorReport(this.translate.instant('Error decrypting disks'), res.error, res.exception);
     });
   }
 
@@ -303,7 +304,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     (entityWizard.formArray.get([this.importIndex]).get('guid') as FormGroup)
       .valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         const pool = _.find(this.guid.options, { value: res });
-        this.summary[T('Pool to import')] = pool['label'];
+        this.summary[this.translate.instant('Pool to import')] = pool['label'];
         const pool_label = pool.label.split(' ');
         if (pool.label.length > 0) {
           this.pool = pool_label[0];
@@ -341,8 +342,8 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
         this.errorReport(res);
       });
     } else {
-      const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Importing Pool') }, disableClose: true });
-      dialogRef.componentInstance.setDescription(T('Importing Pool...'));
+      const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Importing Pool') }, disableClose: true });
+      dialogRef.componentInstance.setDescription(this.translate.instant('Importing Pool...'));
       dialogRef.componentInstance.setCall('pool.import_pool', [{ guid: value.guid }]);
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
@@ -363,9 +364,9 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
 
   errorReport(res: any): void {
     if (res.reason && res.trace) {
-      this.dialogService.errorReport(T('Error importing pool'), res.reason, res.trace.formatted);
+      this.dialogService.errorReport(this.translate.instant('Error importing pool'), res.reason, res.trace.formatted);
     } else if (res.error && res.exception) {
-      this.dialogService.errorReport(T('Error importing pool'), res.error, res.exception);
+      this.dialogService.errorReport(this.translate.instant('Error importing pool'), res.error, res.exception);
     } else {
       console.error(res);
     }

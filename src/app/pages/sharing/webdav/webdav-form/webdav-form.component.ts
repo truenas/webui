@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -25,7 +24,7 @@ export class WebdavFormComponent implements FormConfiguration {
   addCall = 'sharing.webdav.create' as const;
   editCall = 'sharing.webdav.update' as const;
   isEntity = true;
-  title: string = T('Add WebDAV');
+  title: string = this.translate.instant('Add WebDAV');
   confirmSubmit = true;
   confirmSubmitDialog = {
     title: helptext_sharing_webdav.warning_dialog_title,
@@ -100,7 +99,7 @@ export class WebdavFormComponent implements FormConfiguration {
     entityForm.formGroup.controls['perm'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       this.confirmSubmit = value;
     });
-    this.title = entityForm.isNew ? T('Add WebDAV') : T('Edit WebDAV');
+    this.title = entityForm.isNew ? this.translate.instant('Add WebDAV') : this.translate.instant('Edit WebDAV');
   }
 
   afterSave(): void {

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -197,10 +196,10 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
       });
       users.forEach((user) => {
         user.details = [];
-        user.details.push({ label: T('GID'), value: user.group['bsdgrp_gid'] },
-          { label: T('Home Directory'), value: user.home },
-          { label: T('Shell'), value: user.shell },
-          { label: T('Email'), value: user.email });
+        user.details.push({ label: this.translate.instant('GID'), value: user.group['bsdgrp_gid'] },
+          { label: this.translate.instant('Home Directory'), value: user.home },
+          { label: this.translate.instant('Shell'), value: user.shell },
+          { label: this.translate.instant('Email'), value: user.email });
       });
     });
     if (this.prefService.preferences.hide_builtin_users) {

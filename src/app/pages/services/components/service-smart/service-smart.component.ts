@@ -1,7 +1,7 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService } from '@ngx-translate/core';
 import { SmartPowerMode } from 'app/enums/smart-power.mode';
 import helptext from 'app/helptext/services/components/service-smart';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -17,11 +17,11 @@ import { WebSocketService } from 'app/services';
 export class ServiceSMARTComponent implements FormConfiguration {
   queryCall = 'smart.config' as const;
   route_success: string[] = ['services'];
-  title = helptext.formTitle;
+  title = this.translate.instant(helptext.formTitle);
 
   fieldSets: FieldSet[] = [
     {
-      name: helptext.smart_fieldset_general,
+      name: this.translate.instant(helptext.smart_fieldset_general),
       label: true,
       config: [
         {
@@ -38,10 +38,10 @@ export class ServiceSMARTComponent implements FormConfiguration {
           placeholder: helptext.smart_powermode_placeholder,
           tooltip: helptext.smart_powermode_tooltip,
           options: [
-            { label: T('Never'), value: SmartPowerMode.Never },
-            { label: T('Sleep'), value: SmartPowerMode.Sleep },
-            { label: T('Standby'), value: SmartPowerMode.Standby },
-            { label: T('Idle'), value: SmartPowerMode.Idle },
+            { label: this.translate.instant('Never'), value: SmartPowerMode.Never },
+            { label: this.translate.instant('Sleep'), value: SmartPowerMode.Sleep },
+            { label: this.translate.instant('Standby'), value: SmartPowerMode.Standby },
+            { label: this.translate.instant('Idle'), value: SmartPowerMode.Idle },
           ],
           required: true,
           validation: [Validators.required],
@@ -81,6 +81,7 @@ export class ServiceSMARTComponent implements FormConfiguration {
     protected ws: WebSocketService,
     protected _injector: Injector,
     protected _appRef: ApplicationRef,
+    protected translate: TranslateService,
   ) {}
 
   afterInit(entityEdit: EntityFormComponent): void {

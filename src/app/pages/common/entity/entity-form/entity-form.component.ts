@@ -15,7 +15,6 @@ import {
   FormBuilder, FormControl, FormGroup, FormArray, AbstractControl,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -59,9 +58,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   wsfg: AbstractControl;
   wsResponseIdx: any;
   queryResponse: any;
-  saveSubmitText: string = T('Save');
+  saveSubmitText: string = this.translate.instant('Save');
   showPassword = false;
-  successMessage: string = T('Settings saved.');
+  successMessage: string = this.translate.instant('Settings saved.');
 
   loaderOpen = false;
   keepLoaderOpen = false;
@@ -247,7 +246,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           }
         } else {
           if (this.conf.saveSubmitText === undefined) {
-            this.saveSubmitText = T('Save');
+            this.saveSubmitText = this.translate.instant('Save');
           }
           if (this.conf.addCall) {
             this.submitFunction = this.addCall;
@@ -446,7 +445,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           : false,
         buttonMsg: this.conf.confirmSubmitDialog.hasOwnProperty('button')
           ? this.conf.confirmSubmitDialog['button']
-          : T('Ok'),
+          : this.translate.instant('Ok'),
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.doSubmit(event);
       });

@@ -2,7 +2,6 @@ import {
   Component, AfterViewInit, OnDestroy, Input, ViewChild, ElementRef, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -58,16 +57,17 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   title = 'Interface';
 
   path: Slide[] = [
-    { name: T('overview') },
-    { name: T('empty') },
-    { name: T('empty') },
+    { name: this.translate.instant('overview') },
+    { name: this.translate.instant('empty') },
+    { name: this.translate.instant('empty') },
   ];
 
   get ipAddresses(): NetworkInterfaceAlias[] {
     if (!this.nicState && !this.nicState.aliases) { return []; }
 
-    return this.nicState.aliases.filter((item) =>
-      [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
+    return this.nicState.aliases.filter((item) => {
+      return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);
+    });
   }
 
   get vlanAddresses(): any[] {
@@ -75,8 +75,9 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     if (this.path[2].name == 'empty' || this.nicState.vlans.length == 0 || !this.nicState.vlans[parseInt(this.path[2].index)]) { return []; }
 
     const vlan = this.nicState.vlans[parseInt(this.path[2].index)];
-    return vlan.aliases.filter((item: any) =>
-      [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
+    return vlan.aliases.filter((item: any) => {
+      return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);
+    });
   }
 
   get linkState(): string {
@@ -149,8 +150,9 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
   vlanAliases(vlanIndex: string | number): NetworkInterfaceAlias[] {
     if (typeof vlanIndex == 'string') { vlanIndex = parseInt(vlanIndex); }
     const vlan = this.nicState.vlans[vlanIndex];
-    return vlan.aliases.filter((item) =>
-      [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
+    return vlan.aliases.filter((item) => {
+      return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);
+    });
   }
 
   manageInterface(nicState: DashboardNicState): void {

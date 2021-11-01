@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -31,14 +30,14 @@ export class SMBListComponent implements EntityTableConfig {
   productType = window.localStorage.getItem('product_type') as ProductType;
   emptyTableConfigMessages = {
     first_use: {
-      title: T('No SMB Shares'),
-      message: T('It seems you haven\'t setup any SMB Shares yet. Please click the button below to add an SMB Share.'),
+      title: this.translate.instant('No SMB Shares'),
+      message: this.translate.instant('It seems you haven\'t setup any SMB Shares yet. Please click the button below to add an SMB Share.'),
     },
     no_page_data: {
-      title: T('No SMB Shares'),
-      message: T('The system could not retrieve any SMB Shares from the database. Please click the button below to add an SMB Share.'),
+      title: this.translate.instant('No SMB Shares'),
+      message: this.translate.instant('The system could not retrieve any SMB Shares from the database. Please click the button below to add an SMB Share.'),
     },
-    buttonText: T('Add SMB Share'),
+    buttonText: this.translate.instant('Add SMB Share'),
   };
 
   columns = [
@@ -60,8 +59,8 @@ export class SMBListComponent implements EntityTableConfig {
   confirmDeleteDialog = {
     message: shared.delete_share_message,
     isMessageComplete: true,
-    button: T('Unshare'),
-    buildTitle: (share: SmbShare) => `${T('Unshare')} ${share.name}`,
+    button: this.translate.instant('Unshare'),
+    buildTitle: (share: SmbShare) => `${this.translate.instant('Unshare')} ${share.name}`,
   };
 
   constructor(
@@ -97,7 +96,7 @@ export class SMBListComponent implements EntityTableConfig {
         id: row.name,
         icon: 'edit',
         name: 'edit',
-        label: T('Edit'),
+        label: this.translate.instant('Edit'),
         onClick: (row: SmbShare) => this.entityList.doEdit(row.id),
       },
       {
@@ -158,7 +157,7 @@ export class SMBListComponent implements EntityTableConfig {
         id: row.name,
         icon: 'delete',
         name: 'delete',
-        label: T('Delete'),
+        label: this.translate.instant('Delete'),
         onClick: (row: SmbShare) => this.entityList.doDelete(row),
       },
     ] as EntityTableAction[];

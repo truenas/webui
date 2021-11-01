@@ -2,7 +2,6 @@ import {
   Component, AfterViewInit, OnDestroy, Input,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ChartData, ChartOptions } from 'chart.js';
@@ -52,7 +51,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   readonly emptyTypes = EmptyType;
   private utils: WidgetUtils;
   LinkState = LinkState;
-  title = T('Network');
+  title = this.translate.instant('Network');
   nicInfoMap: NicInfoMap = {};
   paddingX = 16;
   paddingTop = 16;
@@ -145,7 +144,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   loadingEmptyConfig = {
     type: EmptyType.Loading,
     large: false,
-    title: T('Loading'),
+    title: this.translate.instant('Loading'),
   };
 
   constructor(
@@ -295,8 +294,9 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   getIpAddress(nic: BaseNetworkInterface): string {
     let ip = '–';
     if (nic.state.aliases) {
-      const addresses = nic.state.aliases.filter((item: NetworkInterfaceAlias) =>
-        [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type));
+      const addresses = nic.state.aliases.filter((item: NetworkInterfaceAlias) => {
+        return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);
+      });
 
       if (addresses.length > 0) {
         ip = addresses[0].address + '/' + addresses[0].netmask;

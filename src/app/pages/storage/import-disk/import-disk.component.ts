@@ -3,8 +3,8 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import helptext from 'app/helptext/storage/import-disk/import-disk';
@@ -102,6 +102,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     protected dialogService: DialogService,
     protected job: JobService,
     protected core: CoreService,
+    protected translate: TranslateService,
   ) {}
 
   preInit(entityForm: EntityFormComponent): void {
@@ -121,7 +122,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
         this.msdosfs_locale.options.push({ label: locale, value: locale });
       });
     }, (res) => {
-      this.dialogService.errorReport(T('Error getting locales'), res.message, res.stack);
+      this.dialogService.errorReport(this.translate.instant('Error getting locales'), res.message, res.stack);
       this.initialized = true;
     });
 
@@ -169,7 +170,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
       });
       this.initialized = true;
     }, (res) => {
-      this.dialogService.errorReport(T('Error getting disk data'), res.message, res.stack);
+      this.dialogService.errorReport(this.translate.instant('Error getting disk data'), res.message, res.stack);
       this.initialized = true;
     });
   }
@@ -180,20 +181,20 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     if (payload.fs_type === 'msdosfs' && payload.msdosfs_locale) {
       fs_options['locale'] = payload.msdosfs_locale;
     }
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Importing Disk') } });
-    this.dialogRef.componentInstance.setDescription(T('Importing Disk...'));
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Importing Disk') } });
+    this.dialogRef.componentInstance.setDescription(this.translate.instant('Importing Disk...'));
     this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options, payload.dst_path]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: Job<any>) => {
       this.dialogRef.close();
       this.entityForm.success = true;
-      this.job.showLogs(job_res, T('Disk Imported: Log Summary'), T('Close'));
+      this.job.showLogs(job_res, this.translate.instant('Disk Imported: Log Summary'), this.translate.instant('Close'));
       this.custActions = [
         {
           id: 'view_import_log',
           name: 'View Import Log',
           function: () => {
-            this.job.showLogs(job_res, T('Logs'), T('Close'));
+            this.job.showLogs(job_res, this.translate.instant('Logs'), this.translate.instant('Close'));
           },
         },
       ];
@@ -201,13 +202,13 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     this.dialogRef.componentInstance.aborted.pipe(untilDestroyed(this)).subscribe((job) => {
       this.dialogRef.close();
       this.entityForm.success = false;
-      this.job.showLogs(job, T('Disk Import Aborted: Log Summary'), T('Close'));
+      this.job.showLogs(job, this.translate.instant('Disk Import Aborted: Log Summary'), this.translate.instant('Close'));
       this.custActions = [
         {
           id: 'view_import_log',
           name: 'View Import Log',
           function: () => {
-            this.job.showLogs(job, T('Logs'), T('Close'));
+            this.job.showLogs(job, this.translate.instant('Logs'), this.translate.instant('Close'));
           },
         },
       ];

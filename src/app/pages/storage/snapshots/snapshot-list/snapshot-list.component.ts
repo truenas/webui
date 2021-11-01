@@ -2,7 +2,6 @@ import { Component, Type } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -270,9 +269,9 @@ export class SnapshotListComponent implements EntityTableConfig {
 
   doDelete(item: SnapshotListRow): void {
     this.entityList.dialogService.confirm({
-      title: T('Delete'),
+      title: this.translate.instant('Delete'),
       message: this.translate.instant('Delete snapshot {name}?', { name: item.name }),
-      buttonMsg: T('Delete'),
+      buttonMsg: this.translate.instant('Delete'),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
@@ -346,7 +345,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     this.dialogService.confirm({
       title: 'Delete',
       message: multiDeleteMsg,
-      buttonMsg: T('Delete'),
+      buttonMsg: this.translate.instant('Delete'),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.startMultiDeleteProgress(selected));
@@ -354,7 +353,7 @@ export class SnapshotListComponent implements EntityTableConfig {
 
   startMultiDeleteProgress(selected: SnapshotListRow[]): void {
     const params = this.wsMultiDeleteParams(selected);
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Deleting Snapshots') }, disableClose: true });
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Deleting Snapshots') }, disableClose: true });
     dialogRef.componentInstance.setCall(this.wsMultiDelete, params as CoreBulkQuery);
     dialogRef.componentInstance.submit();
 

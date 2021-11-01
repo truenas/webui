@@ -1,5 +1,5 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormParagraphConfig, FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
 
 @UntilDestroy()
@@ -327,21 +328,5 @@ export class TwoFactorComponent implements FormConfiguration {
       this.dialog.errorReport(helptext.two_factor.error,
         err.reason, err.trace.formatted);
     });
-  }
-}
-
-@UntilDestroy()
-@Component({
-  selector: 'qr-dialog',
-  templateUrl: 'qr-dialog.html',
-})
-export class QrDialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<QrDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { qrInfo: string },
-  ) {}
-
-  onNoClick(): void {
-    this.dialogRef.close();
   }
 }

@@ -3,8 +3,8 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { DomSanitizer } from '@angular/platform-browser';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import {
   Application, Container,
 } from 'pixi.js';
@@ -177,6 +177,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     public mediaObserver: MediaObserver,
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
+    protected translate: TranslateService,
   ) {
     this.themeUtils = new ThemeUtils();
 
@@ -514,7 +515,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
-  createExtractedEnclosure(profile: any): void {
+  createExtractedEnclosure(profile: EnclosureMetadata): void {
     const raw_enclosure = this.system.enclosures[profile.enclosureKey];
     let chassis: Chassis;
 
@@ -597,7 +598,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
           this.optimizeChassisOpacity(enclosure);
 
-          profile.disks.forEach((disk: any) => {
+          profile.disks.forEach((disk) => {
             this.setDiskHealthState(disk, enclosure);
           });
           this.extractEnclosure(enclosure, profile);
@@ -609,7 +610,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     enclosure.load();
   }
 
-  extractEnclosure(enclosure: ChassisView, profile: any): void {
+  extractEnclosure(enclosure: ChassisView, profile: EnclosureMetadata): void {
     const canvas = this.app.renderer.plugins.extract.canvas(enclosure.container);
     this.controllerEvent$.next({ name: 'EnclosureCanvas', data: { canvas, profile }, sender: this });
     this.container.removeChild(enclosure.container);
@@ -732,7 +733,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       to: { scale: 1, opacity: 1 },
       duration: 360,
     }).start({
-      update: (v: any) => { el.set(v); },
+      update: (v: { scale: number; opacity: number }) => { el.set(v); },
       complete: () => {
         if (this.currentView == 'details') {
           this.labels.events$.next({ name: 'OverlayReady', data: { vdev: this.selectedVdev, overlay: this.domLabels }, sender: this });
@@ -764,7 +765,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       },
       duration,
     }).start({
-      update: (v: any) => { el.set(v); },
+      update: (v: { opacity: number; x: number }) => { el.set(v); },
       complete: () => {
         if (this.exitingView == 'details' && this.currentView !== 'details') {
           this.selectedDisk = null;
@@ -1131,7 +1132,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const obj = this.system.enclosures[this.selectedEnclosure.enclosureKey];
     const currentLabel = obj.label !== obj.name ? obj.label : this.selectedEnclosure.model;
     const conf: DialogFormConfiguration = {
-      title: T('Change Enclosure Label'),
+      title: this.translate.instant('Change Enclosure Label'),
       fieldConfig: [
         {
           type: 'input',
@@ -1157,7 +1158,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           placeholder: 'Reset to default',
         },
       ],
-      saveButtonText: T('SAVE'),
+      saveButtonText: this.translate.instant('SAVE'),
       customSubmit: (entityDialog: EntityDialogComponent) => {
         this.pendingDialog = entityDialog;
         entityDialog.loader.open();

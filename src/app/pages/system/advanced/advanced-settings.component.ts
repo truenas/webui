@@ -3,7 +3,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Type } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
@@ -77,9 +76,9 @@ export class AdvancedSettingsComponent implements OnInit {
 
   emptyPageConf: EmptyConfig = {
     type: EmptyType.NoPageData,
-    title: T('No sysctls configured'),
+    title: this.translate.instant('No sysctls configured'),
     large: false,
-    message: T('To configure sysctls, click the "Add" button.'),
+    message: this.translate.instant('To configure sysctls, click the "Add" button.'),
   };
   isHA = false;
   formEvent$: Subject<CoreEvent>;
@@ -92,7 +91,7 @@ export class AdvancedSettingsComponent implements OnInit {
     queryCall: 'cronjob.query',
     deleteCall: 'cronjob.delete',
     deleteMsg: {
-      title: T('Cron Job'),
+      title: this.translate.instant('Cron Job'),
       key_props: ['user', 'command', 'description'],
     },
     getActions: (): AppTableAction<CronjobRow>[] => {
@@ -100,10 +99,10 @@ export class AdvancedSettingsComponent implements OnInit {
         {
           name: 'play',
           icon: 'play_arrow',
-          matTooltip: T('Run job'),
+          matTooltip: this.translate.instant('Run job'),
           onClick: (row: CronjobRow): void => {
             this.dialog
-              .confirm({ title: T('Run Now'), message: T('Run this job now?'), hideCheckBox: true })
+              .confirm({ title: this.translate.instant('Run Now'), message: this.translate.instant('Run this job now?'), hideCheckBox: true })
               .pipe(
                 filter((run) => !!run),
                 switchMap(() => this.ws.call('cronjob.run', [row.id])),
@@ -111,10 +110,10 @@ export class AdvancedSettingsComponent implements OnInit {
               .pipe(untilDestroyed(this)).subscribe(
                 () => {
                   const message = row.enabled
-                    ? T('This job is scheduled to run again ' + row.next_run + '.')
-                    : T('This job will not run again until it is enabled.');
+                    ? this.translate.instant('This job is scheduled to run again {nextRun}.', { nextRun: row.next_run })
+                    : this.translate.instant('This job will not run again until it is enabled.');
                   this.dialog.info(
-                    T('Job ' + row.description + ' Completed Successfully'),
+                    this.translate.instant('Job {job} Completed Successfully', { job: row.description }),
                     message,
                     '500px',
                     'info',
@@ -131,12 +130,12 @@ export class AdvancedSettingsComponent implements OnInit {
     parent: this,
     dataSourceHelper: this.cronDataSourceHelper,
     columns: [
-      { name: T('Users'), prop: 'user' },
-      { name: T('Command'), prop: 'command' },
-      { name: T('Description'), prop: 'description' },
-      { name: T('Schedule'), prop: 'cron_schedule' },
-      { name: T('Enabled'), prop: 'enabled' },
-      { name: T('Next Run'), prop: 'next_run' },
+      { name: this.translate.instant('Users'), prop: 'user' },
+      { name: this.translate.instant('Command'), prop: 'command' },
+      { name: this.translate.instant('Description'), prop: 'description' },
+      { name: this.translate.instant('Schedule'), prop: 'cron_schedule' },
+      { name: this.translate.instant('Enabled'), prop: 'enabled' },
+      { name: this.translate.instant('Next Run'), prop: 'next_run' },
     ],
     add() {
       this.parent.onSettingsPressed(CardId.Cron);
@@ -152,19 +151,19 @@ export class AdvancedSettingsComponent implements OnInit {
     queryCall: 'initshutdownscript.query',
     deleteCall: 'initshutdownscript.delete',
     deleteMsg: {
-      title: T('Init/Shutdown Script'),
+      title: this.translate.instant('Init/Shutdown Script'),
       key_props: ['type', 'command', 'script'],
     },
     parent: this,
     emptyEntityLarge: false,
     columns: [
-      { name: T('Type'), prop: 'type' },
-      { name: T('Command'), prop: 'command' },
-      { name: T('Script'), prop: 'script' },
-      { name: T('Description'), prop: 'comment' },
-      { name: T('When'), prop: 'when' },
-      { name: T('Enabled'), prop: 'enabled' },
-      { name: T('Timeout'), prop: 'timeout' },
+      { name: this.translate.instant('Type'), prop: 'type' },
+      { name: this.translate.instant('Command'), prop: 'command' },
+      { name: this.translate.instant('Script'), prop: 'script' },
+      { name: this.translate.instant('Description'), prop: 'comment' },
+      { name: this.translate.instant('When'), prop: 'when' },
+      { name: this.translate.instant('Enabled'), prop: 'enabled' },
+      { name: this.translate.instant('Timeout'), prop: 'timeout' },
     ],
     add() {
       this.parent.onSettingsPressed(CardId.InitShutdown);
@@ -185,10 +184,10 @@ export class AdvancedSettingsComponent implements OnInit {
     parent: this,
     emptyEntityLarge: false,
     columns: [
-      { name: T('Var'), prop: 'var' },
-      { name: T('Value'), prop: 'value' },
-      { name: T('Enabled'), prop: 'enabled' },
-      { name: T('Description'), prop: 'comment' },
+      { name: this.translate.instant('Var'), prop: 'var' },
+      { name: this.translate.instant('Value'), prop: 'value' },
+      { name: this.translate.instant('Enabled'), prop: 'enabled' },
+      { name: this.translate.instant('Description'), prop: 'comment' },
     ],
     add: async () => {
       await this.showFirstTimeWarningIfNeeded();
@@ -256,7 +255,7 @@ export class AdvancedSettingsComponent implements OnInit {
         controls: [
           {
             name: 'save_debug',
-            label: T('Save Debug'),
+            label: this.translate.instant('Save Debug'),
             type: 'button',
             value: 'click',
             color: 'primary',
@@ -394,10 +393,10 @@ export class AdvancedSettingsComponent implements OnInit {
         },
         {
           id: CardId.SystemDatasetPool,
-          title: T('System Dataset Pool'),
+          title: this.translate.instant('System Dataset Pool'),
           items: [
             {
-              label: T('System Dataset Pool'),
+              label: this.translate.instant('System Dataset Pool'),
               value: this.systemDatasetPool,
             },
           ],
@@ -409,17 +408,17 @@ export class AdvancedSettingsComponent implements OnInit {
           (pciId: string) => pciId === gpu.addr.pci_slot,
         ) > -1).map((gpu: Device) => gpu.description).join(', ');
         const gpuCard = {
-          title: T('Isolated GPU Device(s)'),
+          title: this.translate.instant('Isolated GPU Device(s)'),
           id: CardId.Gpus,
-          items: [{ label: T('Isolated GPU Device(s)'), value: isolatedGpus }],
+          items: [{ label: this.translate.instant('Isolated GPU Device(s)'), value: isolatedGpus }],
         } as DataCard;
 
         if (isolatedGpus.length == 0) {
           gpuCard.emptyConf = {
             type: EmptyType.NoPageData,
-            title: T('No Isolated GPU Device(s) configured'),
+            title: this.translate.instant('No Isolated GPU Device(s) configured'),
             large: false,
-            message: T('To configure Isolated GPU Device(s), click the "Configure" button.'),
+            message: this.translate.instant('To configure Isolated GPU Device(s), click the "Configure" button.'),
           };
         }
         this.dataCards.push(gpuCard);
@@ -511,7 +510,7 @@ export class AdvancedSettingsComponent implements OnInit {
             (res) => {
               const url = res[1];
               this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-                data: { title: T('Saving Debug') },
+                data: { title: this.translate.instant('Saving Debug') },
                 disableClose: true,
               });
               this.dialogRef.componentInstance.jobId = res[0];

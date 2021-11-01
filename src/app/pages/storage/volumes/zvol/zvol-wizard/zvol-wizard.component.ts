@@ -4,7 +4,6 @@ import {
 } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
@@ -106,7 +105,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
 
   wizardConfig: Wizard[] = [
     {
-      label: T('Select Path'),
+      label: this.translate.instant('Select Path'),
       fieldConfig: [
         {
           type: 'explorer',
@@ -114,9 +113,9 @@ export class ZvolWizardComponent implements WizardConfiguration {
           initial: '/mnt/',
           explorerType: 'directory',
           name: 'path',
-          placeholder: T('ZFS Volume'),
+          placeholder: this.translate.instant('ZFS Volume'),
           value: '/nonexistent',
-          tooltip: T('Choose a path to the user\'s\
+          tooltip: this.translate.instant('Choose a path to the user\'s\
  home directory. If the directory exists and matches the username,\
  it is set as the user\'s home directory. When the path does not\
  end with a subdirectory matching the username, a new subdirectory is\
@@ -126,7 +125,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
       ],
     },
     {
-      label: T('Add ZVol'),
+      label: this.translate.instant('Add ZVol'),
       fieldConfig: [
         {
           type: 'input',
@@ -197,9 +196,9 @@ export class ZvolWizardComponent implements WizardConfiguration {
           placeholder: helptext.zvol_sync_placeholder,
           tooltip: helptext.zvol_sync_tooltip,
           options: [
-            { label: T('Standard'), value: 'STANDARD' },
-            { label: T('Always'), value: 'ALWAYS' },
-            { label: T('Disabled'), value: 'DISABLED' },
+            { label: this.translate.instant('Standard'), value: 'STANDARD' },
+            { label: this.translate.instant('Always'), value: 'ALWAYS' },
+            { label: this.translate.instant('Disabled'), value: 'DISABLED' },
           ],
         },
         {
@@ -208,17 +207,17 @@ export class ZvolWizardComponent implements WizardConfiguration {
           placeholder: helptext.zvol_compression_placeholder,
           tooltip: helptext.zvol_compression_tooltip,
           options: [
-            { label: T('Off'), value: 'OFF' },
-            { label: T('lz4 (recommended)'), value: 'LZ4' },
-            { label: T('zstd (default level, 3)'), value: 'ZSTD' },
-            { label: T('zstd-5 (slow)'), value: 'ZSTD-5' },
-            { label: T('zstd-7 (very slow)'), value: 'ZSTD-7' },
-            { label: T('zstd-fast (default level, 1)'), value: 'ZSTD-FAST' },
-            { label: T('gzip (default level, 6)'), value: 'GZIP' },
-            { label: T('gzip-1 (fastest)'), value: 'GZIP-1' },
-            { label: T('gzip-9 (maximum, slow)'), value: 'GZIP-9' },
-            { label: T('zle (runs of zeros)'), value: 'ZLE' },
-            { label: T('lzjb (legacy, not recommended)'), value: 'LZJB' },
+            { label: this.translate.instant('Off'), value: 'OFF' },
+            { label: this.translate.instant('lz4 (recommended)'), value: 'LZ4' },
+            { label: this.translate.instant('zstd (default level, 3)'), value: 'ZSTD' },
+            { label: this.translate.instant('zstd-5 (slow)'), value: 'ZSTD-5' },
+            { label: this.translate.instant('zstd-7 (very slow)'), value: 'ZSTD-7' },
+            { label: this.translate.instant('zstd-fast (default level, 1)'), value: 'ZSTD-FAST' },
+            { label: this.translate.instant('gzip (default level, 6)'), value: 'GZIP' },
+            { label: this.translate.instant('gzip-1 (fastest)'), value: 'GZIP-1' },
+            { label: this.translate.instant('gzip-9 (maximum, slow)'), value: 'GZIP-9' },
+            { label: this.translate.instant('zle (runs of zeros)'), value: 'ZLE' },
+            { label: this.translate.instant('lzjb (legacy, not recommended)'), value: 'LZJB' },
           ],
           validation: helptext.zvol_compression_validation,
           required: true,
@@ -229,9 +228,9 @@ export class ZvolWizardComponent implements WizardConfiguration {
           placeholder: helptext.zvol_deduplication_placeholder,
           tooltip: helptext.zvol_deduplication_tooltip,
           options: [
-            { label: T('On'), value: DeduplicationSetting.On },
-            { label: T('Verify'), value: DeduplicationSetting.Verify },
-            { label: T('Off'), value: DeduplicationSetting.Off },
+            { label: this.translate.instant('On'), value: DeduplicationSetting.On },
+            { label: this.translate.instant('Verify'), value: DeduplicationSetting.Verify },
+            { label: this.translate.instant('Off'), value: DeduplicationSetting.Off },
           ],
           validation: helptext.zvol_deduplication_validation,
           required: true,
@@ -453,33 +452,33 @@ export class ZvolWizardComponent implements WizardConfiguration {
             this.parent += '/';
           }
         }
-        this.summary[T('Dataset Path')] = this.parent;
+        this.summary[this.translate.instant('Dataset Path')] = this.parent;
         (entityWizard.formArray.get([0]) as FormGroup).controls['path'].setValue(this.parent);
       }
     });
     zvolEntityForm.controls['name'].valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
-      this.summary[T('Zvol Name')] = name;
+      this.summary[this.translate.instant('Zvol Name')] = name;
     });
     zvolEntityForm.controls['comments'].valueChanges.pipe(untilDestroyed(this)).subscribe((comments) => {
-      this.summary[T('Comments')] = comments;
+      this.summary[this.translate.instant('Comments')] = comments;
     });
     zvolEntityForm.controls['volsize'].valueChanges.pipe(untilDestroyed(this)).subscribe((volsize) => {
-      this.summary[T('Zvol Size')] = volsize;
+      this.summary[this.translate.instant('Zvol Size')] = volsize;
     });
     zvolEntityForm.controls['force_size'].valueChanges.pipe(untilDestroyed(this)).subscribe((force_size) => {
-      this.summary[T('Force Size')] = force_size;
+      this.summary[this.translate.instant('Force Size')] = force_size;
     });
     zvolEntityForm.controls['sync'].valueChanges.pipe(untilDestroyed(this)).subscribe((sync) => {
-      this.summary[T('Sync')] = sync;
+      this.summary[this.translate.instant('Sync')] = sync;
     });
     zvolEntityForm.controls['compression'].valueChanges.pipe(untilDestroyed(this)).subscribe((compression) => {
-      this.summary[T('Compression Level')] = compression;
+      this.summary[this.translate.instant('Compression Level')] = compression;
     });
     zvolEntityForm.controls['deduplication'].valueChanges.pipe(untilDestroyed(this)).subscribe((deduplication) => {
-      this.summary[T('ZFS Deduplication')] = deduplication;
+      this.summary[this.translate.instant('ZFS Deduplication')] = deduplication;
     });
     zvolEntityForm.controls['sparse'].valueChanges.pipe(untilDestroyed(this)).subscribe((sparse) => {
-      this.summary[T('Sparse')] = sparse;
+      this.summary[this.translate.instant('Sparse')] = sparse;
     });
     zvolEntityForm.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: keyof ZvolWizardComponent['reverseZvolBlockSizeMap']) => {
       const res_number = parseInt(this.reverseZvolBlockSizeMap[res], 10);
@@ -491,7 +490,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize').warnings = null;
         }
       }
-      this.summary[T('Block Size')] = res;
+      this.summary[this.translate.instant('Block Size')] = res;
     });
   }
 

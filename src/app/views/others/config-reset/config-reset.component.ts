@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -56,9 +55,9 @@ export class ConfigResetComponent implements OnInit {
   }
 
   resetConfigSubmit(): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Resetting. Please wait...') }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Resetting. Please wait...') }, disableClose: true });
     this.dialogRef.componentInstance.setCall('config.reset', [{ reboot: true }]);
-    this.dialogRef.componentInstance.setDescription(T('Resetting system configuration to default settings. The system will restart.'));
+    this.dialogRef.componentInstance.setDescription(this.translate.instant('Resetting system configuration to default settings. The system will restart.'));
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close();

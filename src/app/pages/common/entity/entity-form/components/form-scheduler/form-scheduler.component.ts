@@ -5,7 +5,6 @@ import {
 } from '@angular/core';
 import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { MatMonthView } from '@angular/material/datepicker';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as parser from 'cron-parser';
@@ -199,33 +198,33 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   }
 
   customOption: CronPreset = {
-    label: T('Custom'),
+    label: this.translate.instant('Custom'),
     value: this.crontab,
-    description: T('Create custom schedule'),
+    description: this.translate.instant('Create custom schedule'),
   };
 
   selectedOption: CronPreset;
 
   presets: CronPreset[] = [
     {
-      label: T('Hourly'),
+      label: this.translate.instant('Hourly'),
       value: '0 * * * *',
-      description: T('at the start of each hour'),
+      description: this.translate.instant('at the start of each hour'),
     },
     {
-      label: T('Daily'),
+      label: this.translate.instant('Daily'),
       value: '0 0 * * *',
-      description: T('at 00:00 (12:00 AM)'),
+      description: this.translate.instant('at 00:00 (12:00 AM)'),
     },
     {
-      label: T('Weekly'),
+      label: this.translate.instant('Weekly'),
       value: '0 0 * * sun',
-      description: T('on Sundays at 00:00 (12:00 AM)'),
+      description: this.translate.instant('on Sundays at 00:00 (12:00 AM)'),
     },
     {
-      label: T('Monthly'),
+      label: this.translate.instant('Monthly'),
       value: '0 0 1 * *',
-      description: T('on the first day of the month at 00:00 (12:00 AM)'),
+      description: this.translate.instant('on the first day of the month at 00:00 (12:00 AM)'),
     },
   ];
 
@@ -255,7 +254,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     if (!p.value) {
       this.crontab = '0 0 * * *';
       this.convertPreset('0 0 * * *');
-      this._preset = this.customOption; // { label: T('Custom'), value: this.crontab };
+      this._preset = this.customOption; // { label: this.translate.instant('Custom'), value: this.crontab };
     } else {
       this.crontab = p.value;
       this.convertPreset(p.value);

@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -174,6 +174,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     protected mdDialog: MatDialog,
     protected dialog: DialogService,
     protected router: Router,
+    protected translate: TranslateService,
   ) { }
 
   preInit(entityEdit: EntityFormComponent): void {
@@ -221,8 +222,8 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     recursive.valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       if (value) {
         this.dialog.confirm({
-          title: T('Warning'),
-          message: T('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'),
+          title: this.translate.instant('Warning'),
+          message: this.translate.instant('Setting permissions recursively will affect this directory and any others below it. This might make data inaccessible.'),
         }).pipe(
           filter((confirmed) => !confirmed),
           untilDestroyed(this),
@@ -276,8 +277,8 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   }
 
   customSubmit(data: DatasetPermissionsUpdate[1]): void {
-    const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Saving Permissions') } });
-    dialogRef.componentInstance.setDescription(T('Saving Permissions...'));
+    const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Saving Permissions') } });
+    dialogRef.componentInstance.setDescription(this.translate.instant('Saving Permissions...'));
     dialogRef.componentInstance.setCall(this.updateCall, [this.datasetId, data]);
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

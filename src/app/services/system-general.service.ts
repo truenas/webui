@@ -136,11 +136,12 @@ export class SystemGeneralService {
 
   kbdMapChoices(): Observable<Option[]> {
     return this.ws.call('system.general.kbdmap_choices').pipe(
-      map((response) =>
-        Object.keys(response || {}).map((key) => ({
+      map((response) => {
+        return Object.keys(response || {}).map((key) => ({
           label: `${response[key]} (${key})`,
           value: key,
-        }))),
+        }));
+      }),
     );
   }
 
@@ -166,11 +167,12 @@ export class SystemGeneralService {
 
   timezoneChoices(): Observable<Option[]> {
     return this.ws.call('system.general.timezone_choices').pipe(
-      map((response) =>
-        Object.keys(response || {}).map((key) => ({
+      map((response) => {
+        return Object.keys(response || {}).map((key) => ({
           label: response[key],
           value: key,
-        }))),
+        }));
+      }),
     );
   }
 

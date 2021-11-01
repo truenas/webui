@@ -1,8 +1,21 @@
 import { Component, Input } from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 
 export interface CardWidgetConf<P> {
   title: string;
-  data: any;
+  data: {
+    nameserver?: Option[];
+    ipv4?: string[];
+    ipv6?: string[];
+    hostname?: string;
+    domain?: string;
+    netwait?: string;
+    service_announcement?: string;
+    additional_domains?: string;
+    httpproxy?: string;
+    hostnameDB?: string;
+    outbound?: string;
+  };
   parent: P;
   icon?: string;
   showGroupTitle?: boolean;
