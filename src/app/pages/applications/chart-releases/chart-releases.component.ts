@@ -4,7 +4,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -514,7 +513,7 @@ export class ChartReleasesComponent implements OnInit {
           title: helptext.podConsole.nopod.title,
           message: helptext.podConsole.nopod.message,
           hideCheckBox: true,
-          buttonMsg: T('Close'),
+          buttonMsg: this.translate.instant('Close'),
           hideCancel: true,
         });
       } else {
@@ -553,7 +552,7 @@ export class ChartReleasesComponent implements OnInit {
           title: helptext.podConsole.nopod.title,
           message: helptext.podConsole.nopod.message,
           hideCheckBox: true,
-          buttonMsg: T('Close'),
+          buttonMsg: this.translate.instant('Close'),
           hideCancel: true,
         });
       } else {

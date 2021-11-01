@@ -1,7 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -9,11 +8,12 @@ import { DatasetQuotaType } from 'app/enums/dataset-quota-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
-import { QueryParams } from 'app/interfaces/query-api.interface';
+import { QueryFilter, QueryParams } from 'app/interfaces/query-api.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { DatasetQuotaRow } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quota-row.interface';
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
@@ -35,22 +35,22 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
 
   columns = [
     {
-      name: T('Name'), prop: 'name', always_display: true, minWidth: 150,
+      name: this.translate.instant('Name'), prop: 'name', always_display: true, minWidth: 150,
     },
-    { name: T('ID'), prop: 'id', hidden: true },
-    { name: T('Data Quota'), prop: 'quota', hidden: false },
-    { name: T('DQ Bytes Used'), prop: 'used_bytes', hidden: false },
-    { name: T('DQ % Used'), prop: 'used_percent', hidden: false },
-    { name: T('Object Quota'), prop: 'obj_quota', hidden: false },
-    { name: T('OQ Objs Used'), prop: 'obj_used', hidden: false },
-    { name: T('OQ % Used'), prop: 'obj_used_percent', hidden: false },
+    { name: this.translate.instant('ID'), prop: 'id', hidden: true },
+    { name: this.translate.instant('Data Quota'), prop: 'quota', hidden: false },
+    { name: this.translate.instant('DQ Bytes Used'), prop: 'used_bytes', hidden: false },
+    { name: this.translate.instant('DQ % Used'), prop: 'used_percent', hidden: false },
+    { name: this.translate.instant('Object Quota'), prop: 'obj_quota', hidden: false },
+    { name: this.translate.instant('OQ Objs Used'), prop: 'obj_used', hidden: false },
+    { name: this.translate.instant('OQ % Used'), prop: 'obj_used_percent', hidden: false },
   ];
   rowIdentifier = 'name';
   config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('Group'),
+      title: this.translate.instant('Group'),
       key_props: ['name'],
     },
   };
@@ -62,7 +62,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
 
   getAddActions(): EntityTableAction[] {
     return [{
-      label: T('Toggle Display'),
+      label: this.translate.instant('Toggle Display'),
       onClick: () => {
         this.toggleDisplay();
       },
@@ -70,16 +70,16 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
     ] as EntityTableAction[];
   }
 
-  getActions(row: any): EntityTableAction[] {
+  getActions(row: DatasetQuotaRow): EntityTableAction[] {
     const actions = [];
     actions.push({
-      id: row.id,
       icon: 'edit',
-      label: T('Edit'),
+      label: this.translate.instant('Edit'),
       name: 'edit',
       onClick: () => {
         this.loader.open();
-        this.ws.call('pool.dataset.get_quota', [this.pk, DatasetQuotaType.Group, [['id', '=', row.id]]]).pipe(untilDestroyed(this)).subscribe((res) => {
+        const params = [['id', '=', row.id] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
+        this.ws.call('pool.dataset.get_quota', [this.pk, DatasetQuotaType.Group, params]).pipe(untilDestroyed(this)).subscribe((res) => {
           this.loader.close();
           const conf: DialogFormConfiguration<this> = {
             title: helptext.groups.dialog.title,
@@ -155,14 +155,14 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
                 this.entityList.getData();
               }, (err) => {
                 this.loader.close();
-                this.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
+                this.dialogService.errorReport(this.translate.instant('Error'), err.reason, err.trace.formatted);
               });
             },
           };
           this.dialogService.dialogFormWide(conf);
         }, (err) => {
           this.loader.close();
-          this.dialogService.errorReport(T('Error'), err.reason, err.trace.formatted);
+          this.dialogService.errorReport(this.translate.instant('Error'), err.reason, err.trace.formatted);
         });
       },
     });

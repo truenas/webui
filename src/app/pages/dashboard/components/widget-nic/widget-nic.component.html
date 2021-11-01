@@ -1,6 +1,6 @@
 <div *ngIf="rendered" class="widget stats-widget" ngClass.xs="double-height xs">
   <div class="card-container  front">
-    <mat-card style="overflow:hidden" class="front" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
+    <mat-card class="front overflow-hidden" fxLayout="row" fxLayoutWrap fxLayoutAlign="space-between stretch">
       <mat-card-content #carouselparent>
         <mat-toolbar-row class="view-{{currentSlideName}}">
 
@@ -24,7 +24,7 @@
 
           <div class="controls">
 
-            <button mat-icon-button class="" (click)="manageInterface(nicState)"
+            <button mat-icon-button (click)="manageInterface(nicState)"
                 [ix-auto]="nicState.name" ix-auto-type="button" ix-auto-identifier="configure">
               <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-pencil"
                   matTooltip="{{'Configure' | translate}} {{nicState.name}}"
@@ -34,7 +34,7 @@
             </button>
 
             <button
-              mat-icon-button class=""
+              mat-icon-button
               (click)="router.navigate(['reportsdashboard/network'])"
               [ix-auto]="nicState.name"
               ix-auto-type="button" ix-auto-identifier="networkReports"

@@ -4,7 +4,6 @@ import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -39,7 +38,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   isHA = false;
   isUpdateRunning = false;
   updateMethod = 'update.update';
-  saveSubmitText = T('Apply Update');
+  saveSubmitText = this.translate.instant('Apply Update');
   fieldConfig: FieldConfig[] = [
     {
       type: 'paragraph',
@@ -243,7 +242,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   }
 
   showRunningUpdate(jobId: number): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant(T('Update')) } });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
     if (this.isHA) {
       this.dialogRef.componentInstance.disableProgressValue(true);
     }

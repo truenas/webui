@@ -49,7 +49,6 @@ export interface Disk {
   enclosure: EnclosureSlot;
   expiretime: string;
   hddstandby: DiskStandby;
-  hddstandby_force: string;
   identifier: string;
   informational: string;
   model: string;
@@ -95,7 +94,6 @@ export interface DiskUpdate {
   advpowermgmt?: DiskPowerLevel;
   description?: string;
   hddstandby?: DiskStandby;
-  hddstandby_force?: boolean;
   passwd?: string;
   smartoptions?: string;
   critical?: number;

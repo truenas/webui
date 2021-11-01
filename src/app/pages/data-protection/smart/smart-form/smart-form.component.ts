@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { take } from 'rxjs/operators';
 import { SmartTestType } from 'app/enums/smart-test-type.enum';
 import helptext from 'app/helptext/data-protection/smart/smart';
@@ -66,19 +66,19 @@ export class SmartFormComponent implements FormConfiguration {
           tooltip: helptext.smarttest_type_tooltip,
           options: [
             {
-              label: T('LONG'),
+              label: this.translate.instant('LONG'),
               value: SmartTestType.Long,
             },
             {
-              label: T('SHORT'),
+              label: this.translate.instant('SHORT'),
               value: SmartTestType.Short,
             },
             {
-              label: T('CONVEYANCE'),
+              label: this.translate.instant('CONVEYANCE'),
               value: SmartTestType.Conveyance,
             },
             {
-              label: T('OFFLINE'),
+              label: this.translate.instant('OFFLINE'),
               value: SmartTestType.Offline,
             },
           ],
@@ -105,7 +105,11 @@ export class SmartFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ]);
 
-  constructor(protected ws: WebSocketService, protected modalService: ModalService) {
+  constructor(
+    protected ws: WebSocketService,
+    protected modalService: ModalService,
+    protected translate: TranslateService,
+  ) {
     this.disk_field = this.fieldSets.config('disks') as FormSelectConfig;
     this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
       (choices) => {

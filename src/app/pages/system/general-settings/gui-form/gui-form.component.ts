@@ -30,7 +30,6 @@ import { IxModalService } from 'app/services/ix-modal.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GuiFormComponent {
-  title = helptext.guiPageTitle;
   isFormLoading = true;
   configData: SystemGeneralConfig;
 

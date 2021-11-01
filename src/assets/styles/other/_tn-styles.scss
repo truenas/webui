@@ -1564,11 +1564,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     }
   }
 
-  app-disk-form #hddstandby_force {
-    position: relative;
-    top: 14px;
-  }
-
   .entity-table-cell-error {
     color: var(--red) !important;
   }
@@ -1771,7 +1766,12 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     opacity: 0.38;
   }
 
-  .reset-filter-icon {
+  .search-icon-wrapper {
+    cursor: default;
+    user-select: none;
+  }
+
+  .reset-icon-wrapper {
     cursor: pointer;
     opacity: 0.5;
     user-select: none;

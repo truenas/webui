@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
 import {
   TREE_ACTIONS, KEYS, IActionMapping, TreeNode, ITreeOptions,
@@ -38,7 +37,7 @@ export class FormExplorerComponent implements Field, OnInit {
       },
       click: (tree, node, $event) => {
         if (node.isRoot && !this.rootSelectable) {
-          this.config.warnings = T('Root node is not a valid value');
+          this.config.warnings = this.translate.instant('Root node is not a valid value');
           return;
         }
         this.config.warnings = null;

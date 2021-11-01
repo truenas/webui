@@ -1,7 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialogRef } from '@angular/material/dialog';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 
@@ -13,8 +12,8 @@ import { ApiMethod } from 'app/interfaces/api-directory.interface';
 export class ConfirmDialogComponent {
   title: string;
   message: string;
-  buttonMsg: string = T('Continue');
-  cancelMsg: string = T('Cancel');
+  buttonMsg: string = this.translate.instant('Continue');
+  cancelMsg: string = this.translate.instant('Cancel');
   hideCheckBox = false;
   isSubmitEnabled = false;
   secondaryCheckBox = false;

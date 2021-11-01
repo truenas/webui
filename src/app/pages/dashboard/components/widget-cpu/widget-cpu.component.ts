@@ -4,7 +4,6 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
@@ -44,8 +43,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   cpuAvg: GaugeConfig;
-  title: string = T('CPU');
-  subtitle: string = T('% of all cores');
+  title: string = this.translate.instant('CPU');
+  subtitle: string = this.translate.instant('% of all cores');
   configurable = false;
   chartId = UUID.UUID();
   coreCount: number;

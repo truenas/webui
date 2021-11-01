@@ -947,7 +947,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
     });
   }
 
-  ipValidator(name: string): ValidatorFn {
+  ipValidator(name: 'auth_network'): ValidatorFn {
     return (control: FormControl) => {
       const config = this.wizardConfig[2].fieldConfig.find((c) => c.name === name);
       let counter = 0;
@@ -965,7 +965,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
       if (errors) {
         config.hasErrors = true;
-        config.errors = (helptext_sharing_iscsi as any)[name].error;
+        config.errors = helptext_sharing_iscsi[name].error;
       } else {
         config.hasErrors = false;
         config.errors = '';

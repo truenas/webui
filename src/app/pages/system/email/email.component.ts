@@ -4,8 +4,8 @@ import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { MatRadioChange } from '@angular/material/radio/radio';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
@@ -43,7 +43,7 @@ export class EmailComponent implements FormConfiguration {
   customSubmit = this.saveConfigSubmit;
   custActions = [{
     id: 'send_mail',
-    name: T('Send Test Mail'),
+    name: this.translate.instant('Send Test Mail'),
     function: () => {
       if (this.rootEmail) {
         const value = _.cloneDeep(this.entityEdit.formGroup.value);
@@ -66,19 +66,19 @@ export class EmailComponent implements FormConfiguration {
           value.pass = value.pass || this.entityEdit.data.pass;
 
           mailObj['subject'] += ' hostname: ' + systemInfo.hostname;
-          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('EMAIL') }, disableClose: true });
+          this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('EMAIL') }, disableClose: true });
           this.dialogRef.componentInstance.setCall('mail.send', [mailObj, value]);
           this.dialogRef.componentInstance.submit();
           this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
             this.dialogRef.close(false);
-            this.dialogservice.info(T('Email'), T('Test email sent!'), '500px', 'info');
+            this.dialogservice.info(this.translate.instant('Email'), this.translate.instant('Test email sent!'), '500px', 'info');
           });
           this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((e_res) => {
             this.dialogRef.componentInstance.setDescription(e_res.error);
           });
         });
       } else {
-        this.dialogservice.info(T('email'), T('Configure the root user email address.'));
+        this.dialogservice.info(this.translate.instant('email'), this.translate.instant('Configure the root user email address.'));
       }
     },
   },
@@ -147,9 +147,9 @@ export class EmailComponent implements FormConfiguration {
           placeholder: helptext_system_email.security.placeholder,
           tooltip: helptext_system_email.security.tooltip,
           options: [
-            { label: T('Plain (No Encryption)'), value: MailSecurity.Plain },
-            { label: T('SSL (Implicit TLS)'), value: MailSecurity.Ssl },
-            { label: T('TLS (STARTTLS)'), value: MailSecurity.Tls },
+            { label: this.translate.instant('Plain (No Encryption)'), value: MailSecurity.Plain },
+            { label: this.translate.instant('SSL (Implicit TLS)'), value: MailSecurity.Ssl },
+            { label: this.translate.instant('TLS (STARTTLS)'), value: MailSecurity.Tls },
           ],
         },
         {
@@ -211,7 +211,7 @@ export class EmailComponent implements FormConfiguration {
             const doAuth = (message: OauthMessage<OAuthData>): void => {
               if (message.data.oauth_portal) {
                 if (message.data.error) {
-                  dialogService.errorReport(T('Error'), message.data.error);
+                  dialogService.errorReport(this.translate.instant('Error'), message.data.error);
                 } else {
                   this.oauthCreds$.next(message.data.result);
                   this.checkForOauthCreds();
@@ -238,6 +238,7 @@ export class EmailComponent implements FormConfiguration {
     private dialogservice: DialogService,
     private dialog: MatDialog,
     private loader: AppLoaderService,
+    private translate: TranslateService,
   ) {}
 
   resourceTransformIncomingRestData(data: MailConfig): MailConfig {

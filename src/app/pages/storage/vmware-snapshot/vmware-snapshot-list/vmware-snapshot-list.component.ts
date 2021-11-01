@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService } from '@ngx-translate/core';
 import { VmwareSnapshot } from 'app/interfaces/vmware.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
@@ -18,20 +18,25 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
   wsDelete = 'vmware.delete' as const;
 
   columns = [
-    { name: 'Hostname', prop: 'hostname', always_display: true }, { name: 'Username', prop: 'username' },
-    { name: 'filesystem', prop: 'filesystem' }, { name: 'datastore', prop: 'datastore' },
+    { name: 'Hostname', prop: 'hostname', always_display: true },
+    { name: 'Username', prop: 'username' },
+    { name: 'filesystem', prop: 'filesystem' },
+    { name: 'datastore', prop: 'datastore' },
   ];
   rowIdentifier = 'hostname';
   config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'VMware Snapshot',
+      title: this.translate.instant('VMware Snapshot'),
       key_props: ['hostname', 'filesystem'],
     },
   };
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    protected translate: TranslateService,
+  ) {}
 
   isActionVisible(actionId: string): boolean {
     if (actionId == 'edit' || actionId == 'add') {
@@ -46,7 +51,7 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
         id: row.hostname,
         icon: 'delete',
         name: 'delete',
-        label: T('Delete'),
+        label: this.translate.instant('Delete'),
         onClick: (row: VmwareSnapshot) => {
           this.entityList.doDelete(row);
         },
@@ -55,7 +60,7 @@ export class VmwareSnapshotListComponent implements EntityTableConfig {
         id: row.hostname,
         icon: 'edit',
         name: 'edit',
-        label: T('Edit'),
+        label: this.translate.instant('Edit'),
         onClick: (row: VmwareSnapshot) => {
           this.router.navigate(['/', 'storage', 'vmware-snapshots', 'edit', row.id]);
         },

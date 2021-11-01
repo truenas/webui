@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
@@ -33,8 +32,8 @@ export class WidgetControllerComponent extends WidgetComponent implements OnDest
 
   @Output() launcher = new EventEmitter<DashConfigItem>();
 
-  title: string = T('Dashboard');
-  subtitle: string = T('Navigation');
+  title: string = this.translate.instant('Dashboard');
+  subtitle: string = this.translate.instant('Navigation');
   widgetColorCssVar = 'var(--accent)';
   configurable = false;
   screenType = 'Desktop'; // Desktop || Mobile

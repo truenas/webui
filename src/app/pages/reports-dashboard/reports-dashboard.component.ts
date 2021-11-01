@@ -5,8 +5,8 @@ import {
 import {
   Router, ActivatedRoute,
 } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject, BehaviorSubject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
@@ -20,7 +20,6 @@ import { Disk } from 'app/interfaces/storage.interface';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { MultipathDisk } from 'app/pages/reports-dashboard/multipath-disk.interface';
 import {
   SystemGeneralService,
   WebSocketService,
@@ -51,7 +50,6 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
   retroLogo: string;
 
-  multipathTitles: { [disk: string]: string } = {};
   diskReports: Report[];
   otherReports: Report[];
   activeReports: Report[] = [];
@@ -75,7 +73,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
   protected isEntity = true;
   diskDevices: Option[] = [];
   diskMetrics: Option[] = [];
-  saveSubmitText = T('Generate Reports');
+  saveSubmitText = this.translate.instant('Generate Reports');
   actionButtonsAlign = 'left';
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[];
@@ -89,6 +87,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     private core: CoreService,
     private route: ActivatedRoute,
     protected ws: WebSocketService,
+    protected translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -134,27 +133,13 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
       }
     });
 
-    this.diskQueries();
+    this.diskQuery();
   }
 
-  diskQueries(): void {
-    this.ws.call('multipath.query').pipe(untilDestroyed(this)).subscribe((multipath_res) => {
-      let multipathDisks: MultipathDisk[] = [];
-      multipath_res.forEach((m) => {
-        const children = m.children.map((child) => {
-          return {
-            disk: m.name.replace('multipath/', ''),
-            name: child.name,
-            status: child.status,
-          };
-        });
-        multipathDisks = multipathDisks.concat(children);
-      });
-
-      this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((res) => {
-        this.parseDisks(res, multipathDisks);
-        this.core.emit({ name: 'ReportingGraphsRequest', sender: this });
-      });
+  diskQuery(): void {
+    this.ws.call('disk.query').pipe(untilDestroyed(this)).subscribe((res) => {
+      this.parseDisks(res);
+      this.core.emit({ name: 'ReportingGraphsRequest', sender: this });
     });
   }
 
@@ -187,15 +172,15 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
 
   generateTabs(): void {
     const labels: string[] = [
-      T('CPU'),
-      T('Disk'),
-      T('Memory'),
-      T('Network'),
-      T('NFS'),
-      T('Partition'),
-      T('System'),
-      T('Target'),
-      T('ZFS'),
+      this.translate.instant('CPU'),
+      this.translate.instant('Disk'),
+      this.translate.instant('Memory'),
+      this.translate.instant('Network'),
+      this.translate.instant('NFS'),
+      this.translate.instant('Partition'),
+      this.translate.instant('System'),
+      this.translate.instant('Target'),
+      this.translate.instant('ZFS'),
     ];
     const UPS = this.otherReports.find((report) => report.title.startsWith('UPS'));
 
@@ -350,8 +335,8 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
           // type: 'multimenu',
           type: 'multiselect',
           name: 'devices',
-          label: T('Devices'),
-          placeholder: T('Devices'),
+          label: this.translate.instant('Devices'),
+          placeholder: this.translate.instant('Devices'),
           disabled: false,
           multiple: true,
           options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
@@ -363,12 +348,12 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
         {
           type: 'multiselect',
           name: 'metrics',
-          label: T('Metrics'),
-          placeholder: T('Metrics'),
-          customTriggerValue: T('Select Reports'),
+          label: this.translate.instant('Metrics'),
+          placeholder: this.translate.instant('Metrics'),
+          customTriggerValue: this.translate.instant('Select Reports'),
           disabled: false,
           multiple: true,
-          options: this.diskMetrics ? this.diskMetrics : [T('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
+          options: this.diskMetrics ? this.diskMetrics : [this.translate.instant('Not Available')], // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
           value: selectedDisks ? this.diskMetrics : undefined,
         },
       ],
@@ -386,24 +371,24 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
             type: 'select',
             name: 'devices',
             width: 'calc(50% - 16px)',
-            placeholder: T('Choose a Device'),
+            placeholder: this.translate.instant('Choose a Device'),
             options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
             required: true,
             multiple: true,
-            tooltip: T('Choose a device for your report.'),
+            tooltip: this.translate.instant('Choose a device for your report.'),
             class: 'inline',
           },
           {
             type: 'select',
             name: 'metrics',
             width: 'calc(50% - 16px)',
-            placeholder: T('Choose a metric'),
+            placeholder: this.translate.instant('Choose a metric'),
 
             // eg. [{label:'temperature',value:'temperature'},{label:'operations', value:'disk_ops'}],
             options: this.diskMetrics ? this.diskMetrics : [{ label: 'None available', value: 'negative' }],
             required: true,
             multiple: true,
-            tooltip: T('Choose a metric to display.'),
+            tooltip: this.translate.instant('Choose a metric to display.'),
             class: 'inline',
           },
         ],
@@ -480,37 +465,20 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     this.visibleReports = visible;
   }
 
-  parseDisks(disks: Disk[], multipathDisks: MultipathDisk[]): void {
+  parseDisks(disks: Disk[]): void {
     const uniqueNames = disks
       .filter((disk) => !disk.devname.includes('multipath'))
       .map((disk) => disk.devname);
 
-    const activeDisks = multipathDisks.filter((disk) => disk.status == 'ACTIVE');
-
-    const multipathTitles: { [disk: string]: string } = {};
-
-    const multipathNames = activeDisks.map((disk) => {
-      const label = disk.disk; // disk.name + ' (multipath : ' + disk.disk  + ')';
-      // Update activeReports with multipathTitles
-      multipathTitles[disk.name] = label;
-      return {
-        label: disk.disk, value: disk.name, labelIcon: 'multipath', labelIconType: 'custom',
-      };
-    });
-
-    this.multipathTitles = multipathTitles;
-
-    const diskDevices = uniqueNames.map((devname) => {
+    this.diskDevices = uniqueNames.map((devname) => {
       const spl = devname.split(' ');
       return { label: devname, value: spl[0] };
     });
-
-    this.diskDevices = diskDevices.concat(multipathNames);
   }
 
   showConfigForm(): void {
     const formComponent = this.modalService.openInSlideIn(ReportsConfigComponent);
-    formComponent.title = T('Reports Configuration');
+    formComponent.title = this.translate.instant('Reports Configuration');
     formComponent.isOneColumnForm = true;
     formComponent.afterModalFormSaved = () => {
       this.modalService.closeSlideIn();

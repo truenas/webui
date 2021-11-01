@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -66,8 +65,8 @@ export class BackupCredentialsComponent implements OnInit {
           deleteCall: 'cloudsync.credentials.delete',
           name: 'cloudCreds',
           columns: [
-            { name: T('Name'), prop: 'name' },
-            { name: T('Provider'), prop: 'provider' },
+            { name: this.translate.instant('Name'), prop: 'name' },
+            { name: this.translate.instant('Provider'), prop: 'provider' },
           ],
           hideHeader: false,
           parent: this,
@@ -88,7 +87,7 @@ export class BackupCredentialsComponent implements OnInit {
           name: 'sshConnections',
           dataSourceHelper: this.sshConnectionsDataSourceHelper,
           columns: [
-            { name: T('Name'), prop: 'name' },
+            { name: this.translate.instant('Name'), prop: 'name' },
           ],
           hideHeader: true,
           parent: this,
@@ -109,15 +108,15 @@ export class BackupCredentialsComponent implements OnInit {
           getActions: this.sshKeyPairActions.bind(this),
           dataSourceHelper: this.sshKeyPairsDataSourceHelper,
           columns: [
-            { name: T('Name'), prop: 'name' },
+            { name: this.translate.instant('Name'), prop: 'name' },
           ],
           hideHeader: true,
           parent: this,
           add: () => {
-            this.ixModalService.open(SshKeypairFormComponent, this.translate.instant('SSH Keypairs'));
+            this.ixModalService.open(SshKeypairFormComponent);
           },
           edit: (row: KeychainSshKeyPair) => {
-            const modal = this.ixModalService.open(SshKeypairFormComponent, this.translate.instant('SSH Keypairs'));
+            const modal = this.ixModalService.open(SshKeypairFormComponent);
             modal.setKeypairForEditing(row);
           },
         },

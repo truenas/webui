@@ -131,3 +131,10 @@ export interface CertificateAuthority {
   type: number;
   until: string;
 }
+
+export interface CertificateAuthoritySignRequest {
+  ca_id: number;
+  csr_cert_id: number;
+  name: string;
+  cert_extensions?: CertificateExtensions;
+}

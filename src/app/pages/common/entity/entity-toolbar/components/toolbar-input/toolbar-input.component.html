@@ -1,7 +1,7 @@
 <div class="toolbar-input form-element" id="row-filter">
   <div class="toolbar-input-placeholder" *ngIf="isShowPlaceholder()">{{ config.placeholder | translate }}</div>
   <mat-form-field>
-    <span matPrefix style="cursor: default; user-select: none;"><mat-icon>search</mat-icon></span>
+    <span matPrefix class="search-icon-wrapper"><mat-icon>search</mat-icon></span>
     <mat-label>{{ config.placeholder | translate }}</mat-label>
     <input
       matInput
@@ -18,7 +18,7 @@
     <span
       [ngClass]="{'invisible': !filterValue || filterValue.length == 0}"
       matSuffix
-      style="cursor: pointer; user-select: none;"
+      class="reset-icon-wrapper"
     >
       <mat-icon (click)="reset()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
     </span>

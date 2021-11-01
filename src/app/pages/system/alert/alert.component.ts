@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -43,13 +43,13 @@ export class AlertConfigComponent implements OnInit {
   fieldConfig: FieldConfig[] = [];
   protected settingOptions: Option[] = [];
   protected warningOptions: Option[] = [
-    { label: T('INFO'), value: AlertLevel.Info },
-    { label: T('NOTICE'), value: AlertLevel.Notice },
-    { label: T('WARNING'), value: AlertLevel.Warning },
-    { label: T('ERROR'), value: AlertLevel.Error },
-    { label: T('CRITICAL'), value: AlertLevel.Critical },
-    { label: T('ALERT'), value: AlertLevel.Alert },
-    { label: T('EMERGENCY'), value: AlertLevel.Emergency },
+    { label: this.translate.instant('INFO'), value: AlertLevel.Info },
+    { label: this.translate.instant('NOTICE'), value: AlertLevel.Notice },
+    { label: this.translate.instant('WARNING'), value: AlertLevel.Warning },
+    { label: this.translate.instant('ERROR'), value: AlertLevel.Error },
+    { label: this.translate.instant('CRITICAL'), value: AlertLevel.Critical },
+    { label: this.translate.instant('ALERT'), value: AlertLevel.Alert },
+    { label: this.translate.instant('EMERGENCY'), value: AlertLevel.Emergency },
   ];
   formGroup: FormGroup;
   isReady = false;
@@ -63,6 +63,7 @@ export class AlertConfigComponent implements OnInit {
     private entityFormService: EntityFormService,
     protected loader: AppLoaderService,
     public dialog: DialogService,
+    protected translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -75,7 +76,7 @@ export class AlertConfigComponent implements OnInit {
             label = policy + ' (Default)';
           }
 
-          return { label, value: label };
+          return { label, value: policy };
         });
       },
       (error) => {
@@ -108,7 +109,7 @@ export class AlertConfigComponent implements OnInit {
                 type: 'select',
                 name: categoryClass.id + '_level',
                 inlineLabel: categoryClass.title,
-                placeholder: T('Set Warning Level'),
+                placeholder: this.translate.instant('Set Warning Level'),
                 tooltip: helptext.level_tooltip,
                 options: warningOptions,
                 value: categoryClass.level,
@@ -117,7 +118,7 @@ export class AlertConfigComponent implements OnInit {
                 type: 'select',
                 name: categoryClass.id + '_policy',
                 inlineLabel: ' ',
-                placeholder: T('Set Frequency'),
+                placeholder: this.translate.instant('Set Frequency'),
                 tooltip: helptext.policy_tooltip,
                 options: this.settingOptions,
                 value: AlertPolicy.Immediately,
@@ -233,7 +234,7 @@ export class AlertConfigComponent implements OnInit {
     this.ws
       .call(this.editCall, [payload])
       .pipe(untilDestroyed(this)).subscribe(
-        () => this.dialog.info(T('Settings saved'), '', '300px', 'info', true),
+        () => this.dialog.info(this.translate.instant('Settings saved'), '', '300px', 'info', true),
         (error) => new EntityUtils().handleWSError(this, error, this.dialog),
       )
       .add(() => this.loader.close());

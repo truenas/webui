@@ -2,8 +2,8 @@ import {
   Component,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subject, Subscriber } from 'rxjs';
 import helptext from 'app/helptext/shell/shell';
@@ -33,6 +33,7 @@ export class PodShellComponent implements TerminalConfiguration {
     private ws: WebSocketService,
     private dialogService: DialogService,
     private aroute: ActivatedRoute,
+    private translate: TranslateService,
   ) {}
 
   preInit(): Observable<void> {
@@ -51,7 +52,7 @@ export class PodShellComponent implements TerminalConfiguration {
               title: helptext.podConsole.nopod.title,
               message: helptext.podConsole.nopod.message,
               hideCheckBox: true,
-              buttonMsg: T('Close'),
+              buttonMsg: this.translate.instant('Close'),
               hideCancel: true,
             });
           } else {

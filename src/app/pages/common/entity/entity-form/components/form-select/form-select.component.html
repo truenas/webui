@@ -59,7 +59,6 @@
               *ngIf="option.disable && !option.hiddenFromDisplay"
               [value]="option.value"
               disabled
-              style="opacity: 0.5"
               ix-auto
               ix-auto-type="option"
               ix-auto-identifier="{{ config.placeholder }}_{{ option.label }}"
@@ -101,7 +100,6 @@
         <ng-container>
           <mat-option
             disabled
-            style="opacity: 0.5"
             ix-auto
             ix-auto-type="option"
             ix-auto-identifier="{{ config.placeholder }}_zeroState"

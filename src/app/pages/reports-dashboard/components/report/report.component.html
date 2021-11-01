@@ -11,10 +11,6 @@
         <mat-card-title fxFlex="65%">
           <h3 class="mat-card-title-text">
             {{ reportTitle }}
-            <span *ngIf="multipathTitle">
-              {{ multipathTitle }}
-              <mat-icon class="multipath-icon" role="img" svgIcon="multipath"></mat-icon>
-            </span>
           </h3>
         </mat-card-title>
         <!-- Controls/Tools -->
@@ -96,9 +92,9 @@
                 <span *ngIf="data && legendData">
                   <h4>
                     <strong>{{ 'Start' | translate }}:</strong>
-                    <span style="font-weight: normal;">&nbsp;&nbsp;{{ startTime }}</span>
+                    <span class="font-normal">&nbsp;&nbsp;{{ startTime }}</span>
                     <br ngClass.gt-sm="hidden" />
-                    <span style="margin-left: 0;" class="text-small"> ({{ timezone }})</span>
+                    <span class="text-small m-0"> ({{ timezone }})</span>
                   </h4>
                 </span>
               </div>
@@ -109,9 +105,9 @@
                 <span *ngIf="data && legendData">
                   <h4>
                     <strong>{{ 'End' | translate }}:</strong>
-                    <span style="font-weight: normal;">&nbsp;&nbsp;{{ endTime }}</span>
+                    <span class="font-normal">&nbsp;&nbsp;{{ endTime }}</span>
                     <br ngClass.gt-sm="hidden" />
-                    <span style="opacity: 0;" class="text-small"> ({{ timezone }})</span>
+                    <span class="text-small text-invisible"> ({{ timezone }})</span>
                   </h4>
                 </span>
               </div>
@@ -125,7 +121,7 @@
               <span *ngIf="data && legendData && legendData.xHTML">
                 <h4>
                   <strong>{{ 'Time' | translate }}:</strong>
-                  <span *ngIf="legendData && legendData.xHTML" style="font-weight: normal;">
+                  <span *ngIf="legendData && legendData.xHTML" class="font-normal">
                     &nbsp;&nbsp;
                     {{ legendData.xHTML }}
                   </span>
@@ -159,7 +155,7 @@
 
                   <span *ngIf="legendData && legendData.series">
                     <span class="tooltip-value">
-                      <span style="font-weight: normal;"> : {{ legendData.series[i].yHTML }}</span>
+                      <span class="font-normal"> : {{ legendData.series[i].yHTML }}</span>
                     </span>
                   </span>
                 </td>

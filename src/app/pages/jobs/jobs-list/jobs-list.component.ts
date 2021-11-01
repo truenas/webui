@@ -5,7 +5,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
@@ -54,13 +53,13 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    title: T('No jobs are available.'),
-    message: T('Please be patient...'),
+    title: this.translate.instant('No jobs are available.'),
+    message: this.translate.instant('Please be patient...'),
   };
   loadingConfig: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
-    title: T('Loading...'),
+    title: this.translate.instant('Loading...'),
   };
   readonly JobState = JobState;
   readonly JobViewLogState = JobViewLogState;

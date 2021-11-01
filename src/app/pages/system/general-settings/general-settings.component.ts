@@ -256,10 +256,10 @@ export class GeneralSettingsComponent implements OnInit {
             { name: helptext_ntp.maxpoll.label, prop: 'maxpoll', width: '60px' },
           ],
           add: () => {
-            this.ixModalService.open(NtpServerFormComponent, this.translate.instant('Add NTP Server'));
+            this.ixModalService.open(NtpServerFormComponent);
           },
           edit: (server: NtpServer) => {
-            const modal = this.ixModalService.open(NtpServerFormComponent, this.translate.instant('Edit NTP Server'));
+            const modal = this.ixModalService.open(NtpServerFormComponent);
             modal.setupForm(server);
           },
         },
@@ -270,10 +270,10 @@ export class GeneralSettingsComponent implements OnInit {
   doAdd(name: string): void {
     switch (name) {
       case 'gui':
-        this.ixModalService.open(GuiFormComponent, this.translate.instant('GUI'));
+        this.ixModalService.open(GuiFormComponent);
         break;
       default:
-        const localizationFormModal = this.ixModalService.open(LocalizationFormComponent, this.translate.instant('Localization Settings'));
+        const localizationFormModal = this.ixModalService.open(LocalizationFormComponent);
         localizationFormModal.setupForm(this.localizationSettings);
         break;
     }

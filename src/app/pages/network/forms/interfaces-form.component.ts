@@ -1,8 +1,8 @@
 import { Component, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
 import isCidr from 'is-cidr';
 import * as _ from 'lodash';
@@ -320,17 +320,22 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
   confirmSubmit = false;
   confirmSubmitDialog = {
-    title: T('Save Network Interface Changes'),
-    message: T('Network connectivity will be interrupted. Proceed?'),
+    title: this.translate.instant('Save Network Interface Changes'),
+    message: this.translate.instant('Network connectivity will be interrupted. Proceed?'),
     hideCheckbox: false,
   };
 
   title: string;
   afterModalFormClosed: () => void;
 
-  constructor(protected router: Router, protected route: ActivatedRoute,
-    protected networkService: NetworkService, protected dialog: DialogService,
-    protected ws: WebSocketService) {
+  constructor(
+    protected router: Router,
+    protected route: ActivatedRoute,
+    protected networkService: NetworkService,
+    protected dialog: DialogService,
+    protected ws: WebSocketService,
+    protected translate: TranslateService,
+  ) {
     super();
   }
 

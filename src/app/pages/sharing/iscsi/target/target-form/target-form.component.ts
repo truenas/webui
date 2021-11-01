@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -143,7 +142,7 @@ export class TargetFormComponent implements FormConfiguration {
     },
   ];
   fieldConfig: FieldConfig[];
-  title: string = T('Add ISCSI Target');
+  title: string = this.translate.instant('Add ISCSI Target');
   pk: number;
   protected entityForm: EntityFormComponent;
   constructor(protected router: Router,
@@ -232,7 +231,7 @@ export class TargetFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
-    this.title = entityForm.isNew ? T('Add ISCSI Target') : T('Edit ISCSI Target');
+    this.title = entityForm.isNew ? this.translate.instant('Add ISCSI Target') : this.translate.instant('Edit ISCSI Target');
   }
 
   customEditCall(value: IscsiTargetUpdate): void {

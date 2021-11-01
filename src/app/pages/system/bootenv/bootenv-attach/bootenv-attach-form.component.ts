@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
@@ -52,6 +52,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     protected dialog: MatDialog,
     protected dialogService: DialogService,
+    protected translate: TranslateService,
   ) {}
 
   preInit(entityForm: EntityFormComponent): void {
@@ -75,7 +76,7 @@ export class BootEnvAttachFormComponent implements FormConfiguration {
   }
 
   customSubmit(entityForm: { dev: string; expand: boolean }): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Attach Device') }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Attach Device') }, disableClose: true });
     this.dialogRef.componentInstance.setDescription('Attaching Device...');
     this.dialogRef.componentInstance.setCall('boot.attach', [entityForm.dev, { expand: entityForm.expand }]);
     this.dialogRef.componentInstance.submit();

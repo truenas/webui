@@ -1,8 +1,8 @@
 import {
   Component, OnDestroy, OnInit, ViewChild,
 } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -28,7 +28,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
   isWaiting = false;
   values: any[] = [];
   preferences: UserPreferences;
-  saveSubmitText = T('Update Preferences');
+  saveSubmitText = this.translate.instant('Update Preferences');
   multiStateSubmit = true;
   isEntity = true;
   private themeOptions: Option[] = [];
@@ -36,7 +36,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
   fieldSetDisplay = 'no-margins';// default | carousel | stepper
   fieldSets: FieldSet[] = [
     {
-      name: T('General Preferences'),
+      name: this.translate.instant('General Preferences'),
       class: 'preferences',
       label: true,
       config: [],
@@ -46,6 +46,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
   constructor(
     private themeService: ThemeService,
     private core: CoreService,
+    private translate: TranslateService,
   ) {}
 
   ngOnInit(): void {
@@ -128,52 +129,50 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
       {
         type: 'select',
         name: 'userTheme',
-        placeholder: T('Choose Theme'),
+        placeholder: this.translate.instant('Choose Theme'),
         options: this.themeOptions,
         value: prefs.userTheme == 'default' ? DefaultTheme.name : prefs.userTheme,
-        tooltip: T('Choose a preferred theme.'),
+        tooltip: this.translate.instant('Choose a preferred theme.'),
         class: 'inline',
       },
       {
         type: 'checkbox',
         name: 'preferIconsOnly',
-        placeholder: T('Prefer buttons with icons only'),
+        placeholder: this.translate.instant('Prefer buttons with icons only'),
         value: prefs.preferIconsOnly,
-        tooltip: T('Preserve screen space with icons and tooltips instead of text labels.'),
+        tooltip: this.translate.instant('Preserve screen space with icons and tooltips instead of text labels.'),
         class: 'inline',
       },
       {
         type: 'checkbox',
         name: 'allowPwToggle',
-        placeholder: T('Enable Password Toggle'),
+        placeholder: this.translate.instant('Enable Password Toggle'),
         value: prefs.allowPwToggle,
-        tooltip: T(
-          'When set, an <i>eye</i> icon appears next to password fields. Clicking the icon reveals the password.',
-        ),
+        tooltip: this.translate.instant('When set, an <i>eye</i> icon appears next to password fields. Clicking the icon reveals the password.'),
         class: 'inline',
       },
       {
         type: 'checkbox',
         name: 'tableDisplayedColumns',
-        placeholder: T('Reset Table Columns to Default'),
+        placeholder: this.translate.instant('Reset Table Columns to Default'),
         value: false,
-        tooltip: T('Reset all tables to display default columns.'),
+        tooltip: this.translate.instant('Reset all tables to display default columns.'),
         class: 'inline',
       },
       {
         type: 'checkbox',
         name: 'retroLogo',
-        placeholder: T('Retro Logo'),
+        placeholder: this.translate.instant('Retro Logo'),
         value: prefs.retroLogo,
-        tooltip: T('Revert branding back to FreeNAS'),
+        tooltip: this.translate.instant('Revert branding back to FreeNAS'),
         class: 'inline',
       },
       {
         type: 'checkbox',
         name: 'reset',
-        placeholder: T('Reset All Preferences to Default'),
+        placeholder: this.translate.instant('Reset All Preferences to Default'),
         value: false,
-        tooltip: T('Reset all user preferences to their default values. (Custom themes are preserved)'),
+        tooltip: this.translate.instant('Reset all user preferences to their default values. (Custom themes are preserved)'),
         class: 'inline',
       },
     ];

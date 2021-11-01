@@ -14,7 +14,6 @@ import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-
 import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
 import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach/bootenv-attach-form.component';
-import { BootEnvironmentCloneComponent } from './bootenv/bootenv-clone/bootenv-clone.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace/bootenv-replace-form.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
@@ -54,10 +53,6 @@ export const routes: Routes = [
         path: '',
         component: BootEnvironmentListComponent,
         data: { title: T('Boot Environments'), breadcrumb: T('Boot Environments') },
-      }, {
-        path: 'clone/:pk',
-        component: BootEnvironmentCloneComponent,
-        data: { title: T('Clone'), breadcrumb: T('Clone') },
       }, {
         path: 'status',
         component: BootStatusListComponent,

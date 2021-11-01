@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
@@ -72,8 +71,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   loaderOpen = false;
   help = helptext;
 
-  submitTitle: string = T('Create');
-  protected extendedSubmitTitle: string = T('Add Vdevs');
+  submitTitle: string = this.translate.instant('Create');
+  protected extendedSubmitTitle: string = this.translate.instant('Add Vdevs');
 
   protected needs_disk = true;
   protected needsDiskMessage = helptext.manager_needsDiskMessage;
@@ -322,12 +321,12 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.disks = res.map((disk) => {
         const details: Option[] = [];
         if (disk.rotationrate) {
-          details.push({ label: T('Rotation Rate'), value: disk.rotationrate });
+          details.push({ label: this.translate.instant('Rotation Rate'), value: disk.rotationrate });
         }
-        details.push({ label: T('Model'), value: disk.model });
-        details.push({ label: T('Serial'), value: disk.serial });
+        details.push({ label: this.translate.instant('Model'), value: disk.model });
+        details.push({ label: this.translate.instant('Serial'), value: disk.serial });
         if (disk.enclosure) {
-          details.push({ label: T('Enclosure'), value: disk.enclosure.number });
+          details.push({ label: this.translate.instant('Enclosure'), value: disk.enclosure.number });
         }
         return {
           ...disk,
@@ -529,7 +528,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     }
     if (this.disknumError) {
       this.dialog.confirm({
-        title: T('Warning'),
+        title: this.translate.instant('Warning'),
         message: disknumErr,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.doSubmit();
@@ -558,15 +557,15 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   doSubmit(): void {
-    let confirmButton: string = T('Create Pool');
+    let confirmButton: string = this.translate.instant('Create Pool');
     let diskWarning: string = this.diskAddWarning;
     if (!this.isNew) {
-      confirmButton = T('Add Vdevs');
+      confirmButton = this.translate.instant('Add Vdevs');
       diskWarning = this.diskExtendWarning;
     }
 
     this.dialog.confirm({
-      title: T('Warning'),
+      title: this.translate.instant('Warning'),
       message: diskWarning,
       buttonMsg: confirmButton,
     })
@@ -653,9 +652,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   openDialog(): void {
     if (this.isEncrypted) {
       this.dialog.confirm({
-        title: T('Warning'),
+        title: this.translate.instant('Warning'),
         message: this.encryption_message,
-        buttonMsg: T('I Understand'),
+        buttonMsg: this.translate.instant('I Understand'),
       }).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res) {
           this.isEncrypted = true;
@@ -767,7 +766,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   checkPoolName(): void {
     if (_.find(this.existing_pools, { name: this.name })) {
-      this.poolError = T('A pool with this name already exists.');
+      this.poolError = this.translate.instant('A pool with this name already exists.');
     } else {
       this.poolError = null;
     }

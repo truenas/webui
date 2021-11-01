@@ -1,21 +1,16 @@
 :host {
+  color: var(--fg1);
   display: block;
 
   margin-bottom: 12px;
   margin-top: 18px;
-}
-
-.full-width {
-  color: var(--fg1);
-  width: 100%;
-}
-
-.container {
   padding: 8px 0;
 }
 
 .tooltip {
   margin-left: 8px;
+
+  vertical-align: -4px;
 }
 
 .input-container {
@@ -43,7 +38,7 @@
 }
 
 .label-container {
-  margin-bottom: 5px;
+  margin-bottom: 1px;
   margin-left: 1px;
 }
 
