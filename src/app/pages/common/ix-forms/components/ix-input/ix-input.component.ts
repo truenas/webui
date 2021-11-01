@@ -22,8 +22,8 @@ export class IxInputComponent implements ControlValueAccessor {
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
-  @Input() format: (value: string | number) => string = (value: string | number) => value.toString();
-  @Input() parse: (value: string | number) => string | number = (value: string | number) => value;
+  @Input() format: (value: string | number) => string;
+  @Input() parse: (value: string | number) => string | number;
 
   formControl = new FormControl(this).value as FormControl;
 
