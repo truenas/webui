@@ -8,6 +8,7 @@ import { ValidationService, IdmapService, DialogService } from '../../../service
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 import helptext from '../../../helptext/directoryservice/idmap';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-idmap-form',
@@ -212,8 +213,8 @@ export class IdmapFormComponent {
           placeholder: helptext.idmap.ldap_server.placeholder,
           tooltip: helptext.idmap.ldap_server.tooltip,
           options: [
-            { label: 'Standalone', value: 'STANDALONE' },
-            { label: 'AD', value: 'AD' },
+            { label: T('Standalone'), value: 'STANDALONE' },
+            { label: T('AD'), value: 'AD' },
           ],
         },
         {
