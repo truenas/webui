@@ -25,13 +25,20 @@
           [tooltip]="tooltips.syslog_transport"
           [options]="transportOptions"
         ></ix-select>
-        <ix-select
-          *ngIf="isTlsTransport$ | async"
-          formControlName="syslog_tls_certificate"
-          [label]="'Syslog TLS Certificate' | translate"
-          [tooltip]="tooltips.syslog_transport"
-          [options]="certificateOptions"
-        ></ix-select>
+
+        <ng-container *ngIf="isTlsTransport$ | async">
+          <ix-select
+            formControlName="syslog_tls_certificate"
+            [label]="'Syslog TLS Certificate' | translate"
+            [tooltip]="tooltips.syslog_transport"
+            [options]="certificateOptions"
+          ></ix-select>
+          <ix-select
+            formControlName="syslog_tls_certificate_authority"
+            [label]="'Syslog TLS Certificate Authority' | translate"
+            [options]="certificateAuthorityOptions"
+          ></ix-select>
+        </ng-container>
         <ix-checkbox
           formControlName="syslog"
           [label]="'Use System Dataset' | translate"

@@ -792,6 +792,8 @@ export type ApiDirectory = {
   'system.general.ui_httpsprotocols_choices': { params: void; response: Choices };
   'system.build_time': { params: void; response: ApiTimestamp };
   'system.product_type': { params: void; response: ProductType };
+  'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
+  'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
 
   // Support
   'support.is_available': { params: void; response: boolean };

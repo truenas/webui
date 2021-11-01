@@ -1141,6 +1141,7 @@
   "Syslog Level": "",
   "Syslog Server": "",
   "Syslog TLS Certificate": "",
+  "Syslog TLS Certificate Authority": "",
   "Syslog Transport": "",
   "System Time Zone:": "",
   "System failed to save configuration settings. Check the network connection.  To proceed with the system upgrade <b>without</b> saving a current backup of the configuration setting, select  the <i>Confirm</i> checkbox and click <i>Proceed with Update</i>.": "",

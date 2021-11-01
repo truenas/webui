@@ -6,6 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptext_system_advanced, helptext_system_advanced as helptext } from 'app/helptext/system/advanced';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
@@ -25,6 +26,7 @@ export class SyslogFormComponent implements OnInit {
     syslogserver: [''],
     syslog_transport: [null as SyslogTransport],
     syslog_tls_certificate: [null as number],
+    syslog_tls_certificate_authority: [null as number],
     syslog: [false],
   });
 
@@ -43,13 +45,10 @@ export class SyslogFormComponent implements OnInit {
 
   readonly levelOptions = of(helptext_system_advanced.sysloglevel.options);
   readonly transportOptions = of(helptext_system_advanced.syslog_transport.options);
-  readonly certificateOptions = this.ws.call('certificate.query').pipe(
-    map((certificates) => {
-      return certificates.map((certificate) => ({
-        label: certificate.name,
-        value: certificate.id,
-      }));
-    }),
+  readonly certificateOptions = this.ws.call('system.advanced.syslog_certificate_choices').pipe(choicesToOptions());
+  readonly certificateAuthorityOptions = this.ws.call('system.advanced.syslog_certificate_authority_choices').pipe(
+    choicesToOptions(),
+    map((options) => [{ label: '---', value: null }, ...options]),
   );
 
   constructor(

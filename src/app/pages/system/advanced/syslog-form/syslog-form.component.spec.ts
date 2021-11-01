@@ -6,7 +6,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { Certificate } from 'app/interfaces/certificate.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
@@ -36,10 +35,14 @@ describe('SyslogFormComponent', () => {
         mockCall('systemdataset.config', {
           syslog: true,
         } as SystemDatasetConfig),
-        mockCall('certificate.query', [
-          { id: 1, name: 'Certificate 1' },
-          { id: 2, name: 'Certificate 2' },
-        ] as Certificate[]),
+        mockCall('system.advanced.syslog_certificate_choices', {
+          'Certificate 1': '1',
+          'Certificate 2': '2',
+        }),
+        mockCall('system.advanced.syslog_certificate_authority_choices', {
+          'Authority 1': '1',
+          'Authority 2': '2',
+        }),
         mockCall('system.advanced.update'),
         mockJob('systemdataset.update'),
       ]),
@@ -94,13 +97,14 @@ describe('SyslogFormComponent', () => {
     expect(ws.job).toHaveBeenCalledWith('systemdataset.update', [{ syslog: false }]);
   });
 
-  it('shows certificate field when transport is TLS and saves it', async () => {
+  it('shows certificate fields when transport is TLS and saves it', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'Syslog Transport': SyslogTransport.Tls,
     });
     await form.fillForm({
       'Syslog TLS Certificate': 'Certificate 2',
+      'Syslog TLS Certificate Authority': 'Authority 2',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -110,6 +114,7 @@ describe('SyslogFormComponent', () => {
       expect.objectContaining({
         syslog_transport: SyslogTransport.Tls,
         syslog_tls_certificate: 2,
+        syslog_tls_certificate_authority: 2,
       }),
     ]);
   });
