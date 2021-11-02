@@ -8,6 +8,7 @@ import { ValidationService, IdmapService, DialogService } from '../../../service
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils } from '../../common/entity/utils';
 import helptext from '../../../helptext/directoryservice/idmap';
+import { T } from 'app/translate-marker';
 
 @Component({
   selector: 'app-idmap-form',
@@ -207,13 +208,17 @@ export class IdmapFormComponent {
           options: helptext.idmap.linked_service.options,
         },
         {
-          type: 'input',
+          type: 'select',
           name: 'ldap_server',
           placeholder: helptext.idmap.ldap_server.placeholder,
           tooltip: helptext.idmap.ldap_server.tooltip,
+          options: [
+            { label: T('Standalone'), value: 'STANDALONE' },
+            { label: T('AD'), value: 'AD' },
+          ],
         },
         {
-          type: 'input',
+          type: 'checkbox',
           name: 'ldap_realm',
           placeholder: helptext.idmap.ldap_realm.placeholder,
           tooltip: helptext.idmap.ldap_realm.tooltip,
@@ -231,7 +236,7 @@ export class IdmapFormComponent {
           tooltip: helptext.idmap.bind_path_group.tooltip,
         },
         {
-          type: 'input',
+          type: 'checkbox',
           name: 'user_cn',
           placeholder: helptext.idmap.user_cn.placeholder,
           tooltip: helptext.idmap.user_cn.tooltip,
