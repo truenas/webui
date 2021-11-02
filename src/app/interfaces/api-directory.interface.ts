@@ -353,6 +353,10 @@ export type ApiDirectory = {
   'certificateauthority.profiles': { params: void; response: CertificateProfiles };
   'certificateauthority.ca_sign_csr': { params: [CertificateAuthoritySignRequest]; response: CertificateAuthority };
 
+  // Syslog Certificates and CAs
+  'system.advanced.syslog_certificate_choices': { params: void; response: Certificate[] };
+  'system.advanced.syslog_certificate_authority_choices': { params: void; response: CertificateAuthority[] };
+
   // Chart
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };

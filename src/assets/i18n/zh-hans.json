@@ -301,6 +301,7 @@
   "Successfully expanded pool <i>{poolName}</i>": "",
   "Successfully replaced disk {disk}.": "",
   "Successfully reset encryption for pool: {pool}": "",
+  "Syslog TLS Certificate Authority": "",
   "TCP": "",
   "TDB": "",
   "TFTP": "",

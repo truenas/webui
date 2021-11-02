@@ -674,6 +674,7 @@
   "Synchronize": "",
   "Sysctl": "",
   "Syslog": "",
+  "Syslog TLS Certificate Authority": "",
   "Syslog Transport": "",
   "TCP": "",
   "TDB": "",

@@ -3348,6 +3348,7 @@
   "Syslog Level": "",
   "Syslog Server": "",
   "Syslog TLS Certificate": "",
+  "Syslog TLS Certificate Authority": "",
   "Syslog Transport": "",
   "System": "",
   "System Clock": "",

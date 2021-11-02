@@ -160,6 +160,10 @@ export const helptext_system_advanced = {
  the TLS protocol connection to the remote system log server.'),
   },
 
+  syslog_tls_certificate_authority: {
+    placeholder: T('Syslog TLS Certificate Authority'),
+  },
+
   first_time: {
     title: T('Warning'),
     message: T('Changing Advanced settings can be dangerous when done incorrectly. Please use caution before saving.'),

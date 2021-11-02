@@ -71,8 +71,25 @@ export class SyslogFormComponent implements FormConfiguration {
           type: 'select',
           name: 'syslog_tls_certificate',
           placeholder: helptext_system_advanced.syslog_tls_certificate.placeholder,
-          required: true,
           tooltip: helptext_system_advanced.syslog_tls_certificate.tooltip,
+          options: [],
+          relation: [
+            {
+              action: RelationAction.Show,
+              when: [
+                {
+                  name: 'syslog_transport',
+                  value: 'TLS',
+                },
+              ],
+            },
+          ],
+        },
+        {
+          type: 'select',
+          name: 'syslog_tls_certificate_authority',
+          placeholder: helptext_system_advanced.syslog_tls_certificate_authority.placeholder,
+          required: true,
           options: [],
           relation: [
             {
@@ -133,10 +150,16 @@ export class SyslogFormComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    const syslog_tls_certificate_field = _.find(this.fieldSets[0].config, { name: 'syslog_tls_certificate' }) as FormSelectConfig;
-    this.ws.call('certificate.query').pipe(untilDestroyed(this)).subscribe((certs) => {
+    const syslogTlsCertificateField = _.find(this.fieldSets[0].config, { name: 'syslog_tls_certificate' }) as FormSelectConfig;
+    this.ws.call('system.advanced.syslog_certificate_choices').pipe(untilDestroyed(this)).subscribe((certs) => {
       for (const cert of certs) {
-        syslog_tls_certificate_field.options.push({ label: cert.name, value: cert.id });
+        syslogTlsCertificateField.options.push({ label: cert.name, value: cert.id });
+      }
+    });
+    const syslogTlsCertificateAuthorityField = _.find(this.fieldSets[0].config, { name: 'syslog_tls_certificate_authority' }) as FormSelectConfig;
+    this.ws.call('system.advanced.syslog_certificate_choices').pipe(untilDestroyed(this)).subscribe((certs) => {
+      for (const cert of certs) {
+        syslogTlsCertificateAuthorityField.options.push({ label: cert.name, value: cert.id });
       }
     });
   }
