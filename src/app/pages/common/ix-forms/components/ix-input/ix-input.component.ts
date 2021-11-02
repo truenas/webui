@@ -49,10 +49,6 @@ export class IxInputComponent implements ControlValueAccessor {
     this.onTouch = onTouched;
   }
 
-  shouldShowPasswordToggle(): boolean {
-    return this.type === 'password';
-  }
-
   shouldShowResetInput(): boolean {
     return !this.isDisabled && this.hasValue() && this.type !== 'password';
   }
