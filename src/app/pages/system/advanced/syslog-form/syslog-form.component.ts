@@ -4,10 +4,12 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { Subscription } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptext_system_advanced } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -151,17 +153,33 @@ export class SyslogFormComponent implements FormConfiguration {
 
   preInit(): void {
     const syslogTlsCertificateField = _.find(this.fieldSets[0].config, { name: 'syslog_tls_certificate' }) as FormSelectConfig;
-    this.ws.call('system.advanced.syslog_certificate_choices').pipe(untilDestroyed(this)).subscribe((certs) => {
-      for (const cert of certs) {
-        syslogTlsCertificateField.options.push({ label: cert.name, value: cert.id });
-      }
-    });
+    this.ws.call('system.advanced.syslog_certificate_choices').pipe(
+      map((choices) => {
+        const options: Option[] = [];
+        for (const choice in choices) {
+          options.push({ label: choices[choice], value: choice });
+        }
+        return options;
+      }),
+      untilDestroyed(this),
+    )
+      .subscribe((options) => {
+        syslogTlsCertificateField.options.push(...options);
+      });
     const syslogTlsCertificateAuthorityField = _.find(this.fieldSets[0].config, { name: 'syslog_tls_certificate_authority' }) as FormSelectConfig;
-    this.ws.call('system.advanced.syslog_certificate_choices').pipe(untilDestroyed(this)).subscribe((certs) => {
-      for (const cert of certs) {
-        syslogTlsCertificateAuthorityField.options.push({ label: cert.name, value: cert.id });
-      }
-    });
+    this.ws.call('system.advanced.syslog_certificate_authority_choices').pipe(
+      map((choices) => {
+        const options: Option[] = [];
+        for (const choice in choices) {
+          options.push({ label: choices[choice], value: choice });
+        }
+        return options;
+      }),
+      untilDestroyed(this),
+    )
+      .subscribe((options) => {
+        syslogTlsCertificateAuthorityField.options.push(...options);
+      });
   }
 
   afterInit(entityEdit: EntityFormComponent): void {

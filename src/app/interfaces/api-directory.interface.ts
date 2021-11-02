@@ -354,8 +354,8 @@ export type ApiDirectory = {
   'certificateauthority.ca_sign_csr': { params: [CertificateAuthoritySignRequest]; response: CertificateAuthority };
 
   // Syslog Certificates and CAs
-  'system.advanced.syslog_certificate_choices': { params: void; response: Certificate[] };
-  'system.advanced.syslog_certificate_authority_choices': { params: void; response: CertificateAuthority[] };
+  'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
+  'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
 
   // Chart
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
