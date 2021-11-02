@@ -402,6 +402,7 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 60, '//div[contains(.,"tn-bhyve03-nodea")]')
     assert wait_on_element(driver, 180, '//div[contains(.,"tn-bhyve03-nodeb")]')
+    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
 
 
 @then('Both controllers should show version and license on the dashboard.')
@@ -413,4 +414,3 @@ def both_controllers_should_show_model_and_version_on_the_dashboard(driver):
     license1 = driver.find_element_by_xpath('(//strong[contains(.,"License:")])[1]/..').text
     license2 = driver.find_element_by_xpath('(//strong[contains(.,"License:")])[2]/..').text
     assert license1 == license2
-    time.sleep(5)

@@ -113,7 +113,7 @@ def change_the_users_email_and_click_save(driver, email):
     """Change the users email for "{email}" and click save."""
     global user_email
     user_email = email
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'clickable')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys(email)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
