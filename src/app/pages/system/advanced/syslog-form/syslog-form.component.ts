@@ -8,6 +8,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import { helptext_system_advanced, helptext_system_advanced as helptext } from 'app/helptext/system/advanced';
+import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
@@ -25,8 +26,8 @@ export class SyslogFormComponent implements OnInit {
     sysloglevel: [null as SyslogLevel],
     syslogserver: [''],
     syslog_transport: [null as SyslogTransport],
-    syslog_tls_certificate: [null as number],
-    syslog_tls_certificate_authority: [null as number],
+    syslog_tls_certificate: [null as string],
+    syslog_tls_certificate_authority: [null as string],
     syslog: [false],
   });
 
@@ -43,11 +44,12 @@ export class SyslogFormComponent implements OnInit {
 
   readonly levelOptions = of(helptext_system_advanced.sysloglevel.options);
   readonly transportOptions = of(helptext_system_advanced.syslog_transport.options);
-  readonly certificateOptions = this.ws.call('system.advanced.syslog_certificate_choices').pipe(choicesToOptions());
-  readonly certificateAuthorityOptions = this.ws.call('system.advanced.syslog_certificate_authority_choices').pipe(
+  readonly certificateOptions = this.ws.call('system.advanced.syslog_certificate_choices').pipe(
     choicesToOptions(),
     map((options) => [{ label: '---', value: null }, ...options]),
   );
+  readonly certificateAuthorityOptions = this.ws.call('system.advanced.syslog_certificate_authority_choices')
+    .pipe(choicesToOptions());
 
   constructor(
     private fb: FormBuilder,
@@ -65,7 +67,22 @@ export class SyslogFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const { syslog, ...configUpdate } = this.form.value;
+    const { syslog, ...values } = this.form.value;
+    let configUpdate: Partial<AdvancedConfigUpdate> = {
+      syslog_transport: values.syslog_transport,
+      fqdn_syslog: values.fqdn_syslog,
+      syslogserver: values.syslogserver,
+      sysloglevel: values.sysloglevel,
+    };
+
+    if (values.syslog_transport === SyslogTransport.Tls) {
+      configUpdate = {
+        ...configUpdate,
+        syslog_tls_certificate: parseInt(values.syslog_tls_certificate),
+        syslog_tls_certificate_authority: parseInt(values.syslog_tls_certificate_authority),
+      };
+    }
+
     this.isFormLoading = true;
     this.ws.call('system.advanced.update', [configUpdate]).pipe(
       switchMap(() => this.ws.job('systemdataset.update', [{ syslog }])),
@@ -93,6 +110,8 @@ export class SyslogFormComponent implements OnInit {
           this.isFormLoading = false;
           this.form.patchValue({
             ...advancedConfig,
+            syslog_tls_certificate: String(advancedConfig.syslog_tls_certificate),
+            syslog_tls_certificate_authority: String(advancedConfig.syslog_tls_certificate_authority),
             syslog,
           });
         },

@@ -36,12 +36,12 @@ describe('SyslogFormComponent', () => {
           syslog: true,
         } as SystemDatasetConfig),
         mockCall('system.advanced.syslog_certificate_choices', {
-          'Certificate 1': '1',
-          'Certificate 2': '2',
+          1: 'Certificate 1',
+          2: 'Certificate 2',
         }),
         mockCall('system.advanced.syslog_certificate_authority_choices', {
-          'Authority 1': '1',
-          'Authority 2': '2',
+          1: 'Authority 1',
+          2: 'Authority 2',
         }),
         mockCall('system.advanced.update'),
         mockJob('systemdataset.update'),
