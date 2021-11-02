@@ -15,7 +15,7 @@ import { WebdavConfig, WebdavConfigUpdate, Protocal } from 'app/interfaces/webda
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import {
-  SystemGeneralService, WebSocketService, ValidationService, DialogService, AppLoaderService,
+  SystemGeneralService, WebSocketService, ValidationService, DialogService,
 } from 'app/services';
 
 @UntilDestroy()
@@ -26,6 +26,9 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServiceWebdavComponent implements OnInit {
+  isFormLoading = false;
+  pwdRequired = true;
+
   form = this.fb.group({
     protocol: [''],
     tcpport: [null as number, [Validators.min(1), Validators.max(65535)]],
@@ -97,8 +100,6 @@ export class ServiceWebdavComponent implements OnInit {
     label: helptext.password2_placeholder,
   };
 
-  pwdRequired = true;
-
   constructor(
     private fb: FormBuilder,
     protected router: Router,
@@ -108,21 +109,20 @@ export class ServiceWebdavComponent implements OnInit {
     protected validationService: ValidationService,
     private cdr: ChangeDetectorRef,
     private dialogService: DialogService,
-    private loader: AppLoaderService,
     private errorHandler: FormErrorHandlerService,
   ) {}
 
   ngOnInit(): void {
-    this.loader.open();
+    this.isFormLoading = true;
 
     this.ws.call('webdav.config').pipe(untilDestroyed(this)).subscribe(
       (config: WebdavConfig) => {
         this.form.patchValue(config);
-        this.loader.close();
+        this.isFormLoading = false;
         this.cdr.markForCheck();
       },
       (error) => {
-        this.loader.close();
+        this.isFormLoading = false;
         new EntityUtils().handleWSError(null, error, this.dialogService);
       },
     );
@@ -161,15 +161,15 @@ export class ServiceWebdavComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.loader.open();
+    this.isFormLoading = true;
 
     const values = this.form.value;
     delete values.password2;
     this.ws.call('webdav.update', [values] as [WebdavConfigUpdate]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.loader.close();
+      this.isFormLoading = false;
       this.router.navigate(['/', 'services']);
     }, (error) => {
-      this.loader.close();
+      this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);
       this.cdr.markForCheck();
     });

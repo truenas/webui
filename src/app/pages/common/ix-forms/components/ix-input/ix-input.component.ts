@@ -57,7 +57,7 @@ export class IxInputComponent implements ControlValueAccessor {
     return this.type === 'password' ? 'text' : this.type;
   }
 
-  isSecurity(): boolean {
+  isPasswordField(): boolean {
     return this.type === 'password' && !this.showPassword;
   }
 

@@ -54,13 +54,12 @@
         <button
           mat-button
           type="submit"
-          [disabled]="form.invalid"
+          [disabled]="form.invalid || isFormLoading"
           color="primary"
         >{{ 'Save' | translate }}</button>
         <button
           mat-button
           color="accent"
-          class="ml-05"
           (click)="cancel()"
         >{{ 'Cancel' | translate }}</button>
       </div>

@@ -84,6 +84,8 @@
   width: 24px;
 }
 
-.security-disc {
+.password-field {
+  font-family: text-security-disc;
+  /* Use -webkit-text-security if the browser supports it */
   -webkit-text-security: disc;
 }
