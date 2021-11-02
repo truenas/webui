@@ -1,0 +1,42 @@
+<div *ngIf="label" class="label-container">
+  <label class="label">
+    {{label}}
+    <span *ngIf="required" class="required">*</span>
+  </label>
+  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+</div>
+
+<div class="input-container" [class.disabled]="isDisabled">
+  <input
+    matInput
+    type="text"
+    autocomplete="off"
+    [(ngModel)]="value"
+    [required]="required"
+    [disabled]="isDisabled"
+    (ngModelChange)="onChange($event)"
+    (blur)="onTouch()"
+  >
+</div>
+<div *ngIf="!isDisabled" class="tree-container">
+  <tree-root
+    #tree
+    [nodes]="nodes"
+    [options]="treeOptions"
+    (select)="onSelectionUpdated($event)"
+    (deselect)="onSelectionUpdated($event)"
+  >
+    <!-- Do not remove #treeNodeTemplate even though it appears to be unused -->
+    <ng-template #treeNodeTemplate let-node>
+      <ng-container *ngIf="typeNode(node) as node">
+        <mat-icon *ngIf="node.hasChildren; else fileIcon">folder</mat-icon>
+        <ng-template #fileIcon><mat-icon>insert_drive_file</mat-icon></ng-template>
+
+        <span class="node-name">{{node.data.name}}</span>
+      </ng-container>
+    </ng-template>
+  </tree-root>
+</div>
+
+<ix-form-errors [control]="controlDirective.control" [label]="label"></ix-form-errors>
+<mat-hint *ngIf="hint">{{hint}}</mat-hint>

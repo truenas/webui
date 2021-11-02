@@ -5,6 +5,7 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { helptext_sharing_iscsi } from 'app/helptext/sharing';
@@ -102,7 +103,7 @@ export class ExtentFormComponent implements FormConfiguration {
         },
         {
           type: 'explorer',
-          explorerType: 'file',
+          explorerType: ExplorerType.File,
           initial: '/mnt',
           name: 'path',
           placeholder: helptext_sharing_iscsi.extent_placeholder_path,

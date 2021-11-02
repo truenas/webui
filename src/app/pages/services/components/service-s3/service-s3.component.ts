@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import helptext from 'app/helptext/services/components/service-s3';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
@@ -77,7 +78,7 @@ export class ServiceS3Component implements FormConfiguration {
         {
           type: 'explorer',
           initial: '/mnt',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           name: 'storage_path',
           placeholder: helptext.storage_path_placeholder,
           tooltip: helptext.storage_path_tooltip,

@@ -10,6 +10,7 @@ import { Observable } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { DeduplicationSetting } from 'app/enums/deduplication-setting.enum';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/storage/volumes/zvol-form';
@@ -111,7 +112,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
           type: 'explorer',
           class: 'meExplorer',
           initial: '/mnt/',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           name: 'path',
           placeholder: this.translate.instant('ZFS Volume'),
           value: '/nonexistent',

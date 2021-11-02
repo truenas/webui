@@ -9,6 +9,7 @@ import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset-source.enum';
 import { Direction } from 'app/enums/direction.enum';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
@@ -145,7 +146,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.source_datasets_placeholder,
               tooltip: helptext.source_datasets_tooltip,
               initial: '',
-              explorerType: 'directory',
+              explorerType: ExplorerType.Directory,
               multiple: true,
               customTemplateStringOptions: {
                 displayField: 'Path',
@@ -299,7 +300,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.target_dataset_placeholder,
               tooltip: helptext.target_dataset_tooltip,
               initial: '',
-              explorerType: 'directory',
+              explorerType: ExplorerType.Directory,
               customTemplateStringOptions: {
                 displayField: 'Path',
                 isExpandedField: 'expanded',

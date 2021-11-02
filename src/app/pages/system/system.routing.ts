@@ -1,6 +1,7 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
@@ -9,7 +10,6 @@ import { ShellComponent } from '../shell/shell.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
-import { InitshutdownFormComponent } from './advanced/initshutdown/initshutdown-form/initshutdown-form.component';
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
@@ -185,11 +185,11 @@ export const routes: Routes = [
         data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts' },
       }, {
         path: 'add',
-        component: InitshutdownFormComponent,
+        component: InitShutdownFormComponent,
         data: { title: 'Add', breadcrumb: 'Add' },
       }, {
         path: 'edit/:pk',
-        component: InitshutdownFormComponent,
+        component: InitShutdownFormComponent,
         data: { title: 'Edit', breadcrumb: 'Edit' },
       }],
     },

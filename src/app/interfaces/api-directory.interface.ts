@@ -962,7 +962,7 @@ export type ApiDirectory = {
 
   // InitShutdownScript
   'initshutdownscript.query': { params: QueryParams<InitShutdownScript>; response: InitShutdownScript[] };
-  'initshutdownscript.create': { params: CreateInitShutdownScript; response: InitShutdownScript };
+  'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
   'initshutdownscript.update': { params: UpdateInitShutdownScriptParams; response: InitShutdownScript };
   'initshutdownscript.delete': { params: [id: number]; response: boolean };
 };

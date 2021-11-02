@@ -1,0 +1,64 @@
+<ix-modal-header [title]="title" [loading]="isFormLoading"></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-input
+          formControlName="comment"
+          [label]="'Description' | translate"
+          [tooltip]="tooltips.comment"
+        ></ix-input>
+        <ix-select
+          formControlName="type"
+          [label]="'Type' | translate"
+          [tooltip]="tooltips.type"
+          [options]="typeOptions$"
+        ></ix-select>
+        <ix-input
+          *ngIf="isCommand$ | async; else selectScript"
+          formControlName="command"
+          [label]="'Command' | translate"
+          [required]="true"
+          [tooltip]="tooltips.command"
+        ></ix-input>
+        <ng-template #selectScript>
+          <ix-explorer
+            formControlName="script"
+            [label]="'Script' | translate"
+            [required]="true"
+            [tooltip]="tooltips.script"
+            [nodeProvider]="treeNodeProvider"
+          ></ix-explorer>
+        </ng-template>
+
+        <ix-select
+          formControlName="when"
+          [label]="'When' | translate"
+          [required]="true"
+          [tooltip]="tooltips.when"
+          [options]="whenOptions$"
+        ></ix-select>
+        <ix-checkbox
+          formControlName="enabled"
+          [label]="'Enabled' | translate"
+          [tooltip]="tooltips.enabled"
+        ></ix-checkbox>
+        <ix-input
+          formControlName="timeout"
+          type="number"
+          [label]="'Timeout' | translate"
+          [tooltip]="tooltips.timeout"
+        ></ix-input>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isFormLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

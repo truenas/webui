@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -262,7 +263,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               },
               {
                 type: 'explorer',
-                explorerType: 'directory',
+                explorerType: ExplorerType.Directory,
                 name: 'path',
                 placeholder: helptext.path_placeholder,
                 tooltip: helptext.path_tooltip,

@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { RsyncModuleMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/services/components/service-rsync';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -44,7 +45,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
       }, {
         type: 'explorer',
         initial: '/mnt',
-        explorerType: 'directory',
+        explorerType: ExplorerType.Directory,
         placeholder: helptext.rsyncmod_path_placeholder,
         name: 'path',
         tooltip: helptext.rsyncmod_path_tooltip,

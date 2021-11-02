@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -55,7 +56,7 @@ export class NFSFormComponent implements FormConfiguration {
               placeholder: helptext_sharing_nfs.placeholder_path,
               tooltip: helptext_sharing_nfs.tooltip_path,
               type: 'explorer',
-              explorerType: 'directory',
+              explorerType: ExplorerType.Directory,
               initial: '/mnt',
               required: true,
               validation: helptext_sharing_nfs.validators_path,
