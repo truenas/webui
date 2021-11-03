@@ -3,15 +3,15 @@ export interface WebdavConfig {
   htauth: string;
   id: number;
   password: string;
-  protocol: string;
+  protocol: WebdavProtocol;
   tcpport: number;
   tcpportssl: number;
 }
 
 export type WebdavConfigUpdate = Omit<WebdavConfig, 'id'>;
 
-export enum Protocal {
-  HTTP = 'HTTP',
-  HTTPS = 'HTTPS',
-  HTTPHTTPS = 'HTTPHTTPS',
+export enum WebdavProtocol {
+  Http = 'HTTP',
+  Https = 'HTTPS',
+  HttpHttps = 'HTTPHTTPS',
 }

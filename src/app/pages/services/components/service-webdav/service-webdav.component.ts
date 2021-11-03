@@ -11,7 +11,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/services/components/service-webdav';
-import { WebdavConfig, WebdavConfigUpdate, Protocal } from 'app/interfaces/webdav-config.interface';
+import { WebdavConfig, WebdavConfigUpdate, WebdavProtocol } from 'app/interfaces/webdav-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import {
@@ -30,7 +30,7 @@ export class ServiceWebdavComponent implements OnInit {
   pwdRequired = true;
 
   form = this.fb.group({
-    protocol: [''],
+    protocol: [null as WebdavProtocol],
     tcpport: [null as number, [Validators.min(1), Validators.max(65535)]],
     tcpportssl: [null as number, [Validators.min(1), Validators.max(65535)]],
     certssl: [null as number | string],
@@ -126,38 +126,42 @@ export class ServiceWebdavComponent implements OnInit {
         new EntityUtils().handleWSError(null, error, this.dialogService);
       },
     );
-  }
 
-  onProtocolChange(value: string): void {
-    switch (value) {
-      case Protocal.HTTP:
-        this.tcpport.hidden = false;
-        this.tcpportssl.hidden = true;
-        this.certssl.hidden = true;
-        break;
-      case Protocal.HTTPS:
-        this.tcpport.hidden = true;
-        this.tcpportssl.hidden = false;
-        this.certssl.hidden = false;
-        break;
-      case Protocal.HTTPHTTPS:
-        this.tcpport.hidden = false;
-        this.tcpportssl.hidden = false;
-        this.certssl.hidden = false;
-        break;
-      default:
-        break;
-    }
-  }
+    this.form.controls.protocol.valueChanges.pipe(untilDestroyed(this)).subscribe(
+      (value: WebdavProtocol) => {
+        switch (value) {
+          case WebdavProtocol.Http:
+            this.tcpport.hidden = false;
+            this.tcpportssl.hidden = true;
+            this.certssl.hidden = true;
+            break;
+          case WebdavProtocol.Https:
+            this.tcpport.hidden = true;
+            this.tcpportssl.hidden = false;
+            this.certssl.hidden = false;
+            break;
+          case WebdavProtocol.HttpHttps:
+            this.tcpport.hidden = false;
+            this.tcpportssl.hidden = false;
+            this.certssl.hidden = false;
+            break;
+          default:
+            break;
+        }
+      },
+    );
 
-  onHtAuthChange(value: string): void {
-    if (value === 'NONE') {
-      this.form.controls.password.setValue('');
-      this.form.controls.password2.setValue('');
-      this.pwdRequired = false;
-    } else {
-      this.pwdRequired = true;
-    }
+    this.form.controls.htauth.valueChanges.pipe(untilDestroyed(this)).subscribe(
+      (value: string) => {
+        if (value === 'NONE') {
+          this.form.controls.password.setValue('');
+          this.form.controls.password2.setValue('');
+          this.pwdRequired = false;
+        } else {
+          this.pwdRequired = true;
+        }
+      },
+    );
   }
 
   onSubmit(): void {

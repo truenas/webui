@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Observable, of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
-import { WebdavConfig } from 'app/interfaces/webdav-config.interface';
+import { WebdavConfig, WebdavProtocol } from 'app/interfaces/webdav-config.interface';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
@@ -28,7 +28,7 @@ describe('ServiceWebdavComponent', () => {
     providers: [
       mockWebsocket([
         mockCall('webdav.config', {
-          protocol: 'HTTPHTTPS',
+          protocol: WebdavProtocol.HttpHttps,
           tcpport: 8080,
           tcpportssl: 8081,
           certssl: 1,
@@ -92,7 +92,7 @@ describe('ServiceWebdavComponent', () => {
     await saveButton.click();
 
     expect(ws.call).toHaveBeenCalledWith('webdav.update', [{
-      protocol: 'HTTPHTTPS',
+      protocol: WebdavProtocol.HttpHttps,
       tcpport: '8000',
       tcpportssl: '8001',
       certssl: 1,

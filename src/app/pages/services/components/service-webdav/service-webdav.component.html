@@ -7,7 +7,6 @@
           [label]="protocol.label"
           [tooltip]="protocol.tooltip"
           [options]="protocol.options"
-          (ngModelChange)="onProtocolChange($event)"
         ></ix-select>
         <ix-input
           *ngIf="!tcpport.hidden"
@@ -33,7 +32,6 @@
           [label]="htauth.label"
           [tooltip]="htauth.tooltip"
           [options]="htauth.options"
-          (ngModelChange)="onHtAuthChange($event)"
         ></ix-select>
         <ix-input
           *ngIf="pwdRequired"
