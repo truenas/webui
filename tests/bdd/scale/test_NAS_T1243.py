@@ -17,8 +17,8 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1243.feature', 'SCALE UI: Verify that changing an encryption key format to PASSPHRASE functions')
-def test_scale_ui_verify_that_changing_an_encryption_key_format_to_passphrase_functions():
+@scenario('features/NAS-T1243.feature', 'Verify that changing an encryption key format to PASSPHRASE functions')
+def test_verify_that_changing_an_encryption_key_format_to_passphrase_functions():
     """SCALE UI: Verify that changing an encryption key format to PASSPHRASE functions."""
 
 
