@@ -29,7 +29,6 @@ export class IxInputComponent implements ControlValueAccessor {
 
   value: string | number = '';
   formatted: string | number = '';
-  shouldUpdateValueAsap = false;
   isDisabled = false;
 
   onChange: (value: string | number) => void = (): void => {};
@@ -43,31 +42,19 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   writeValue(value: string | number): void {
-    let parsed = value;
     let formatted = value;
     if (value) {
-      if (this.parse) {
-        parsed = this.parse(value);
-        /** This flag exists because when default value is used, onChange is not registered yet
-         * So parsed value isn't immediately updated. Furthermore, if the user submits the form with
-         * default value, the submitted value isn't parsed in that case either.
-         */
-        this.shouldUpdateValueAsap = true;
-      }
       if (this.format) {
         formatted = this.format(value);
       }
     }
-    this.value = parsed;
     this.formatted = formatted;
+    this.value = value;
     this.cdr.markForCheck();
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
     this.onChange = onChange;
-    if (this.shouldUpdateValueAsap) {
-      this.onChange(this.value);
-    }
   }
 
   registerOnTouched(onTouched: () => void): void {
