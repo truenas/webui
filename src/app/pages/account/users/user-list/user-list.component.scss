@@ -1,0 +1,26 @@
+.cdk-column-expandedDetail {
+  overflow: hidden;
+  width: 100%;
+}
+
+.cdk-column-actions {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.mat-row {
+  &.details-row {
+    height: 0;
+    min-height: 0;
+
+    td {
+      overflow: hidden;
+      width: 100%;
+    }
+  }
+}
+
+.ix-table-details {
+  padding-bottom: 16px;
+  padding-top: 16px;
+}

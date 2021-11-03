@@ -36,6 +36,7 @@ import { JobService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 import { EntityModule } from '../common/entity/entity.module';
+import { IxTablesModule } from '../common/ix-tables/ix-tables.module';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from './disks/disk-form/disk-form.component';
 import { DiskListComponent } from './disks/disk-list/disk-list.component';
@@ -45,6 +46,7 @@ import { SnapshotAddComponent } from './snapshots/snapshot-add/snapshot-add.comp
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clone.component';
 import { SnapshotDetailsComponent } from './snapshots/snapshot-list/components/snapshot-details.component';
 import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
+import { SnapshotTableComponent } from './snapshots/snapshot-table/snapshot-table.component';
 import { routing } from './storage.routing';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot/vmware-snapshot-form.component';
@@ -69,6 +71,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
     NgxFilesizeModule, CommonDirectivesModule, CdkAccordionModule,
     TooltipModule, CoreComponents,
+    IxTablesModule,
   ],
   declarations: [
     VolumesListComponent,
@@ -112,8 +115,9 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     EditNfsAceComponent,
     EditPosixAceComponent,
     SelectPresetModalComponent,
+    SnapshotTableComponent,
   ],
-  exports: [VolumesListControlsComponent],
+  exports: [VolumesListControlsComponent, SnapshotTableComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
   providers: [
     UserService,

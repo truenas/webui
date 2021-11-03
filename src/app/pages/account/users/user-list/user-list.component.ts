@@ -1,8 +1,18 @@
-import { Component } from '@angular/core';
+import {
+  trigger, state, animate, style, transition,
+} from '@angular/animations';
+import {
+  Component, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild,
+} from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort, Sort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store, select } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/user-list';
@@ -12,8 +22,9 @@ import { User } from 'app/interfaces/user.interface';
 import { UserListRow } from 'app/pages/account/users/user-list/user-list-row.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService, UserService,
@@ -21,15 +32,31 @@ import {
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { UserLoadAction } from 'app/store/actions/user.actions';
+import { AppState } from 'app/store/reducers/index';
+import {
+  selectAllUser, selectUserTotal, selectUserLoading, selectUserError,
+} from 'app/store/selectors/user.selectors';
 import { UserFormComponent } from '../user-form/user-form.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-user-list',
-  template: '<entity-table [title]="title" [conf]="this"></entity-table>',
+  templateUrl: './user-list.component.html',
+  styleUrls: ['./user-list.component.scss'],
   providers: [UserService],
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
-export class UserListComponent implements EntityTableConfig<UserListRow> {
+export class UserListComponent implements OnInit, AfterViewInit {
+  @ViewChild(MatSort, { static: false }) sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+
   title = 'Users';
   route_add: string[] = ['account', 'users', 'add'];
   route_add_tooltip = 'Add User';
@@ -49,7 +76,8 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
       this.toggleBuiltins();
     },
   };
-
+  filter = '';
+  displayedColumns: string[] = [];
   columns = [
     {
       name: 'Username', prop: 'username', always_display: true, minWidth: 150,
@@ -80,16 +108,30 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
       name: 'Microsoft Account', prop: 'microsoft_account', hidden: true, minWidth: 170,
     },
     { name: 'Samba Authentication', prop: 'smb', hidden: true },
+    { name: 'Actions', prop: 'actions' },
   ];
   rowIdentifier = 'username';
-  config = {
-    paging: true,
-    sorting: { columns: this.columns },
-    deleteMsg: {
-      title: 'User',
-      key_props: ['username'],
-    },
+  // config = {
+  //   paging: true,
+  //   sorting: { columns: this.columns },
+  //   deleteMsg: {
+  //     title: 'User',
+  //     key_props: ['username'],
+  //   },
+  // };
+
+  dataSource: MatTableDataSource<User>;
+  loading: boolean;
+  private subscription: Subscription = new Subscription();
+  error$: Observable<boolean>;
+  userTotal = 0;
+  pageSize = 50;
+  defaultSort: Sort = { active: 'username', direction: 'desc' };
+  emptyConf: EmptyConfig = {
+    title: this.translate.instant('No Users'),
+    large: true,
   };
+  expanded = false;
 
   isActionVisible(actionId: string, row: UserListRow): boolean {
     if (actionId === 'delete' && row.builtin) {
@@ -98,23 +140,78 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
     return true;
   }
 
-  constructor(private router: Router,
-    protected dialogService: DialogService, protected loader: AppLoaderService,
-    protected ws: WebSocketService, protected prefService: PreferencesService,
-    private translate: TranslateService, private modalService: ModalService) {
+  constructor(
+    private router: Router,
+    protected dialogService: DialogService,
+    protected loader: AppLoaderService,
+    protected ws: WebSocketService,
+    protected prefService: PreferencesService,
+    private translate: TranslateService,
+    private modalService: ModalService,
+    public store$: Store<AppState>,
+    private cdr: ChangeDetectorRef,
+  ) { }
+
+  ngOnInit(): void {
+    console.info('on init');
+
+    this.store$.pipe(select(selectAllUser)).pipe(
+      untilDestroyed(this),
+    ).subscribe(
+      (users) => this.initializeData(users),
+    );
+
+    this.store$.pipe(
+      select(selectUserTotal),
+      untilDestroyed(this),
+    ).subscribe(
+      (total) => this.userTotal = total,
+    );
+
+    this.subscription.add(this.store$.pipe(
+      select(selectUserLoading),
+      untilDestroyed(this),
+    ).subscribe(
+      (loading) => {
+        if (loading) {
+          this.dataSource = new MatTableDataSource([]);
+        }
+        this.loading = loading;
+      },
+    ));
+
+    this.error$ = this.store$.pipe(select(selectUserError));
+
+    // setTimeout(() => {
+    //   if (this.prefService.preferences.showUserListMessage) {
+    //     this.showOneTimeBuiltinMsg();
+    //   }
+    // }, 2000);
   }
 
-  afterInit(entityList: EntityTableComponent): void {
-    this.entityList = entityList;
-    setTimeout(() => {
-      if (this.prefService.preferences.showUserListMessage) {
-        this.showOneTimeBuiltinMsg();
-      }
-    }, 2000);
+  ngAfterViewInit(): void {
+    this.loadUsers();
+    this.displayedColumns = this.columns.filter((column) => !column.hidden).map((column) => column.prop);
+  }
 
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.entityList.getData();
-    });
+  initializeData(users: User[]): void {
+    console.info('initializeData', users.length);
+    this.dataSource = new MatTableDataSource(users.length ? users : []);
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    this.cdr.markForCheck();
+  }
+
+  private loadUsers(): void {
+    console.info('loadUsers');
+    this.store$.dispatch(new UserLoadAction({
+      search: this.filter.toLocaleLowerCase(),
+      offset: 0,
+      // pageIndex: this.paginator.pageIndex,
+      // pageSize: this.paginator.pageSize,
+      // sortDirection: this.sort.direction,
+      // sortField: this.sort.active,
+    }));
   }
 
   getActions(row: UserListRow): EntityTableAction<UserListRow>[] {
@@ -253,5 +350,15 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
 
   doAdd(): void {
     this.modalService.openInSlideIn(UserFormComponent);
+  }
+
+  doEdit(id: number): void {
+    this.modalService.openInSlideIn(UserFormComponent, id);
+  }
+
+  expandRow(element: any): void {
+    this.expanded = this.expanded === element ? null : element;
+    this.cdr.markForCheck();
+    console.info('element', element, this.expanded);
   }
 }

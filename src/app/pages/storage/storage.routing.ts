@@ -1,5 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { SnapshotTableComponent } from 'app/pages/storage/snapshots/snapshot-table/snapshot-table.component';
 import { DatasetQuotasGrouplistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-grouplist/dataset-quotas-grouplist.component';
 import { DatasetQuotasUserlistComponent } from 'app/pages/storage/volumes/datasets/dataset-quotas/dataset-quotas-userlist/dataset-quotas-userlist.component';
 import { DatasetAclEditorComponent } from 'app/pages/storage/volumes/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
@@ -16,7 +17,6 @@ import { SmartResultsComponent } from './disks/smart-results/smart-results.compo
 import { ImportDiskComponent } from './import-disk/import-disk.component';
 import { SnapshotAddComponent } from './snapshots/snapshot-add/snapshot-add.component';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clone.component';
-import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot/vmware-snapshot-form.component';
 import { DatasetFormComponent } from './volumes/datasets/dataset-form/dataset-form.component';
@@ -151,7 +151,7 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            component: SnapshotListComponent,
+            component: SnapshotTableComponent,
             data: { title: 'Snapshots', breadcrumb: 'Snapshots' },
           },
           {

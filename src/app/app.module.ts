@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
@@ -35,6 +36,7 @@ import { ErdService } from 'app/services/erd.service';
 import { IxModalService } from 'app/services/ix-modal.service';
 import { NotificationsService } from 'app/services/notifications.service';
 import { RouterEffects } from 'app/store/effects/router.effects';
+import { UserEffects } from 'app/store/effects/user.effects';
 import { reducers } from 'app/store/reducers';
 import { CustomRouterStateSerializer } from 'app/store/serializers/custom-router-serializer';
 import { AppComponent } from './app.component';
@@ -63,6 +65,7 @@ import { AuthService } from './services/auth/auth.service';
 import { NavigationService } from './services/navigation/navigation.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { WebSocketService } from './services/ws.service';
+import { SnapshotEffects } from './store/effects/storage-snapshot.effects';
 
 @NgModule({
   imports: [
@@ -106,7 +109,8 @@ import { WebSocketService } from './services/ws.service';
     StoreRouterConnectingModule.forRoot({
       serializer: CustomRouterStateSerializer,
     }),
-    EffectsModule.forRoot([RouterEffects]),
+    EffectsModule.forRoot([RouterEffects, UserEffects, SnapshotEffects]),
+    StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: false }),
   ],
   declarations: [
     AppComponent,

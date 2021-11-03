@@ -1,0 +1,12 @@
+<ix-table [dataSource]="dataSource" [columns]="columns" matSort matSortDisableClear="true" [loading]="loading">
+  <ng-container ix-table-toolbar-before>
+    <mat-spinner *ngIf="loading" [diameter]="24"></mat-spinner>
+  </ng-container>
+  <ng-container ix-table-toolbar-after>
+    <button type="button" mat-button (click)="doAdd()">{{ 'Add Snapshot' | translate }}</button>
+  </ng-container>
+
+  <ng-container ix-table-paginator>
+    <mat-paginator [length]="total" [pageSize]="50" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
+  </ng-container>
+</ix-table>
