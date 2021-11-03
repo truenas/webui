@@ -67,15 +67,6 @@ def click_encryption_options(driver):
     assert wait_on_element(driver, 10, '//h1[contains(.,"Edit Encryption Options")]')
 
 
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Passphrase"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Passphrase"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Passphrase"]').send_keys(abcd1234)
-    
-    
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-
 @then('set key type to passphrase')
 def set_key_type_to_passphrase(driver):
     """set key type to passphrase."""
@@ -85,17 +76,16 @@ def set_key_type_to_passphrase(driver):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Encryption Type_Passphrase"]').click()
 
 
-
 @then('enter acbd1234 and 1234abcd and verify that an error shows')
 def enter_acbd1234_and_1234abcd_and_verify_that_an_error_shows(driver):
     """enter acbd1234 and 1234abcd and verify that an error shows."""
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Passphrase"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Passphrase"]').send_keys(abcd1234)
+    driver.find_element_by_xpath('//input[@ix-auto="input__Passphrase"]').send_keys("abcd1234")
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Confirm Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Passphrase"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Passphrase"]').send_keys(1234abcd)
-    assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match."]')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Passphrase"]').send_keys("1234abcd")
+    assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]')
 
 
 @then('enter abcd1234 for both fields and confirm and save')
@@ -103,11 +93,11 @@ def enter_abcd1234_for_both_fields_and_confirm_and_save(driver):
     """enter abcd1234 for both fields and confirm and save."""
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Confirm Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Passphrase"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Passphrase"]').send_keys(abcd1234)
-    assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match."]') is False
+    driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Passphrase"]').send_keys("abcd1234")
+    assert wait_on_element(driver, 10, '//mat-error[contains(.,"The passwords do not match.")]') is False
     
-    assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__Confirm"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Confirm"]').click()   
+    assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()   
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
@@ -128,8 +118,8 @@ def lock_the_pool_when_the_pool_page_reloads(driver):
 
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__FORCE UNMOUNT"]').click()       
-    assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__CONFIRM""]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM""]').click()   
+    assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
+    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()   
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__LOCK"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__LOCK"]').click()
 
@@ -145,18 +135,18 @@ def unlock_the_pool(driver):
     driver.find_element_by_xpath('//button[normalize-space(text())="Unlock"]').click() 
     assert wait_on_element(driver, 10, '//h1[contains(.,"Unlock Datasets")]')
     
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Dataset Passphrase""]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase""]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase""]').send_keys(abcd1234)
+    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Dataset Passphrase"]', 'inputable')
+    driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').clear()
+    driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').send_keys("abcd1234")
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
     assert wait_on_element(driver, 10, '//p[contains(.,"These datasets will be unlocked with the provided credentials.")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="CONTINUE"]', 'clickable')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
 
     assert wait_on_element(driver, 10, '//p[contains(.,"These datasets were successfully unlocked.")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="CONTINUE"]', 'clickable')
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
 
     assert wait_on_element(driver, 10, '//mat-icon[@fonticon="mdi-lock-open-variant"]')
