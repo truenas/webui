@@ -19,10 +19,11 @@ nav.view-nav-bar {
 
 .view-card {
   margin: 0 auto;
-  max-width: 960px;
+  max-width: 1200px;
   min-height: 480px;
-  min-width: 960px;
+  min-width: 640px;
   padding: 0;
+  width: auto;
 }
 
 .view-card .mat-toolbar {
@@ -142,12 +143,6 @@ nav.view-nav-bar {
   line-height: 85%;
   text-align: left;
   word-break: break-word;
-  /*
-  text-align: left;
-  font-weight: 300;
-  font-size: 120%;
-  line-height: 85%;
-   */
 }
 
 .view-card .disk-advanced-details .detail {
@@ -238,7 +233,6 @@ nav.view-nav-bar {
 
 div.vdev-disk {
   margin: 0;
-  /*border-left: solid 2px var(--blue);*/
   padding: 0 8px 0 0;
 }
 
@@ -262,7 +256,6 @@ div.vdev-disk {
   width: 6px;
 }
 
-/*.view-card .mat-toolbar#Disks-toolbar,*/
 .view-card mat-card-content#Disks-content {
   display: none;
 }
@@ -272,7 +265,6 @@ div.vdev-disk {
 }
 
 
-/*.view-card#Disks .mat-toolbar#Disks-toolbar,*/
 .view-card#Disks .mat-card-content#Disks-content {
   background: var(--contrast-darkest);
   opacity: 1;
@@ -281,16 +273,6 @@ div.vdev-disk {
 
 .semibold {
   font-weight: 500;
-}
-
-/* lt-lg */
-.view-card.md {
-  width: 750px;
-}
-
-.view-card.sm
-.view-card.xs {
-  width: 640px;
 }
 
 .view-card #disks-overview svg,
@@ -303,7 +285,18 @@ div.vdev-disk {
 }
 
 .view-card.rackmount .dom-overlay#visualizer {
+  left: calc((100% - 960px) * 0.5); /* canvas width - .view-card width */
   width: auto;
+}
+
+.view-card.rackmount.md .dom-overlay#visualizer {
+  transform: scale(0.75);
+}
+
+//.view-card.rackmount.md .dom-overlay#visualizer ,
+.view-card.rackmount.sm .dom-overlay#visualizer ,
+.view-card.rackmount.xs .dom-overlay#visualizer {
+  transform: scale(0.75);
 }
 
 /* MINI OVERRIDES */
