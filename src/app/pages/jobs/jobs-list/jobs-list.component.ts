@@ -49,6 +49,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
   filterString = '';
+  jobTableIndexes = [JobTab.All, JobTab.Active, JobTab.Failed];
   selectedIndex: JobTab = 0;
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
@@ -145,6 +146,8 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   }
 
   onTabChange(tab: MatTabChangeEvent): void {
+    this.paginationPageIndex = 0;
+    this.paginationPageSize = 10;
     this.selectedIndex = tab.index;
     switch (this.selectedIndex) {
       case JobTab.Failed:
@@ -161,5 +164,10 @@ export class JobsListComponent implements OnInit, AfterViewInit {
         this.onLogsSidebarClosed();
         break;
     }
+  }
+
+  onPageChange(e: { pageIndex: number; pageSize: number }): void {
+    this.paginationPageIndex = e.pageIndex;
+    this.paginationPageSize = e.pageSize;
   }
 }
