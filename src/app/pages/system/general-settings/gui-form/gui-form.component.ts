@@ -44,7 +44,7 @@ export class GuiFormComponent {
     crash_reporting: [false, [Validators.required]],
     usage_collection: [false, [Validators.required]],
     ui_consolemsg: [false, [Validators.required]],
-    memory_size: [2097152],
+    memory_size: [4],
   });
 
   options = {

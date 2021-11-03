@@ -23,7 +23,7 @@ export class StorageService {
   SMARToptions: string;
   advPowerMgt: DiskPowerLevel;
   humanReadable: string;
-  IECUnits = ['KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+  IECUnits = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
   constructor(protected ws: WebSocketService) {}
 
@@ -268,8 +268,14 @@ export class StorageService {
     }
 
     const IECUnitsStr = this.IECUnits.join('|');
-    const shortUnitsStr = this.IECUnits.map((unit) => unit.charAt(0) + unit.charAt(2)).join('|');
+    const shortUnitsStr = this.IECUnits.map((unit) => {
+      if (unit.length > 1) {
+        return unit.charAt(0) + unit.charAt(2);
+      }
+      return 'BYTES';
+    }).join('|');
     const humanUnitsStr = this.IECUnits.map((unit) => unit.charAt(0)).join('|');
+
     const allUnitsStr = (IECUnitsStr + '|' + shortUnitsStr + '|' + humanUnitsStr).toUpperCase();
     const unitsRE = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
 
@@ -277,6 +283,9 @@ export class StorageService {
     if (unitStr.match(unitsRE)) {
       // always return IEC units
       // could take a parameter to return short or human units
+      if (unitStr.toLowerCase() === 'b' || unitStr.toLowerCase() === 'bytes') {
+        return 'B';
+      }
       return unitStr.charAt(0).toUpperCase() + 'iB';
     }
     return undefined;
@@ -290,7 +299,7 @@ export class StorageService {
     if (!unitStr) {
       return 1;
     }
-    return (1024 ** (this.IECUnits.indexOf(unitStr) + 1));
+    return (1024 ** (this.IECUnits.indexOf(unitStr)));
   }
 
   // sample data, input and return values
@@ -355,6 +364,7 @@ export class StorageService {
     if (!unit && allowedUnits) {
       unit = allowedUnits[0];
     }
+
     // error when unit is present and...
     if ((unit)
           // ...allowedUnits are passed in but unit is not in allowed Units
@@ -392,7 +402,7 @@ export class StorageService {
     } else if (minUnits) {
       units = minUnits;
     } else {
-      units = hideBytes ? '' : 'bytes';
+      units = hideBytes ? '' : 'B';
     }
     return `${bytes.toFixed(dec)} ${units}`;
   }
