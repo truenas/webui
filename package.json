@@ -130,7 +130,7 @@
     "q": "~1.5.1",
     "rxjs": "~6.6.0",
     "stylefire": "~7.0.2",
-    "text-security": "^3.2.1",
+    "text-security": "~3.2.1",
     "tslib": "~2.3.1",
     "utility-types": "~3.10.0",
     "what-is-my-ip-address": "~1.0.3",
