@@ -301,7 +301,7 @@ div.vdev-disk {
 
 /* MINI OVERRIDES */
 .view-card.mini {
-  min-width: 960px;
+  min-width: 640px;
 }
 
 .view-card.mini .alert {
@@ -379,6 +379,7 @@ div.vdev-disk {
 
 .view-card.mini #disks-details {
   background-color: unset;
+  min-width: 320px;
   padding: 16px;
 }
 
@@ -503,7 +504,6 @@ div.vdev-disk {
 .mini .mat-card-content {
   background-color: var(--contrast-color-darker);
   background-color: var(--contrast-darker);
-  height: 600px;
   min-height: 600px;
 }
 
