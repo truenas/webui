@@ -21,7 +21,7 @@
   </mat-toolbar>
 
   <mat-card-content #cardcontent
-    fxLayout="row">
+    fxLayout="row wrap">
     <div id="chassis" fxFlex="60%">
       <!-- LEGEND -->
       <div class="header-container" id="legend">
@@ -41,13 +41,13 @@
 
 
       <!-- VISUALIZER -->
-      <div #disksoverview id="disks-overview" [class]="currentView">
-        <div #visualizer class="visualizer dom-overlay" id="visualizer"></div>
+      <div fxLayout="row" #disksoverview id="disks-overview" [class]="currentView">
+        <!--<div #visualizer class="visualizer dom-overlay" id="visualizer"></div>-->
 
         <!-- DISK NAMES -->
-        <div class="disks-overlay names" *ngIf="enclosure && enclosure.driveTrayObjects">
+        <div fxFlex class="disks-overlay names" *ngIf="enclosure && enclosure.driveTrayObjects">
           <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
-            <div class="slot-label-wrapper" style.top="calc({{stackPositions()[i].y}}px + 6px)">
+            <div class="slot-label-wrapper" [style.top]="'calc(' + stackPositions()[i].y + 'px + 6px)'">
               <div>
                 <div class="slot-label fn-theme-primary">
                   <strong>{{i + 1}}</strong>
@@ -62,10 +62,14 @@
           </ng-container>
         </div>
 
+        <!--<div fxFlex="320px" id="visualizer-wrapper">-->
+        <div #visualizer class="visualizer dom-overlay" id="visualizer"></div>
+        <!--</div>-->
+
         <!-- DISK STATUS -->
-        <div *ngIf="enclosure" class="disks-overlay status">
+        <div fxFlex *ngIf="enclosure" class="disks-overlay status">
           <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
-            <div *ngIf="findDiskBySlotNumber(i + 1)" style.top="calc({{stackPositions()[i].y}}px + 8px);">
+            <div *ngIf="findDiskBySlotNumber(i + 1)" [style.top]="'calc(' + stackPositions()[i].y + 'px + 8px)'">
               <div class="status-icon">
                 <mat-icon
                   [ngClass]="{'online': findDiskBySlotNumber(i + 1).status == 'ONLINE', 'alert':findDiskBySlotNumber(i + 1).status !== 'ONLINE' && findDiskBySlotNumber(i + 1).status !== 'AVAILABLE'}"

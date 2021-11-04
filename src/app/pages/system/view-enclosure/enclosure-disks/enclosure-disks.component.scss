@@ -333,18 +333,22 @@ div.vdev-disk {
   margin-top: 16px;
 }
 
-.view-card.mini .dom-overlay#visualizer { left: 0 !important; }
+.view-card.mini .dom-overlay#visualizer {
+  margin: 0 auto;
+  position: relative;
+  width: 320px;
+}
 
 .view-card.mini #legend {
   padding: 16px;
-  position: absolute;
-  width: 60%;
+  position: relative;
+  width: 100%;
   z-index: 12;
 }
 
 .view-card.mini #disks-overview {
   height: calc(600px - 96px);
-  margin-top: 48px;
+  top: -48px;
 }
 
 .view-card.mini.mini-xl #disks-overview {
@@ -376,12 +380,6 @@ div.vdev-disk {
 .view-card.mini #disks-details {
   background-color: unset;
   padding: 16px;
-}
-
-.view-card.mini #disks-details,
-.view-card.mini #disks-overview {
-  padding-bottom: 64px;
-
 }
 
 .view-card.mini #disks-details .back-btn {
