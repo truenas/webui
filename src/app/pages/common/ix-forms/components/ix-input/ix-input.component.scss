@@ -1,3 +1,5 @@
+@import '~text-security/text-security.css';
+
 :host {
   color: var(--fg1);
   display: block;
@@ -75,4 +77,17 @@
   height: auto;
   max-width: 16px;
   width: auto;
+}
+
+.input-container .mat-icon-button {
+  height: 24px;
+  line-height: 24px;
+  opacity: 0.5;
+  width: 24px;
+}
+
+.password-field {
+  font-family: text-security-disc;
+  /* Use -webkit-text-security if the browser supports it */
+  -webkit-text-security: disc;
 }
