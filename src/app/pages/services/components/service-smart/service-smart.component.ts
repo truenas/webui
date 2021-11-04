@@ -1,90 +1,102 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { FormBuilder } from '@ngneat/reactive-forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { SmartPowerMode } from 'app/enums/smart-power.mode';
+import { of } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-smart';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { WebSocketService } from 'app/services';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { DialogService, WebSocketService } from 'app/services';
+import { SmartPowerMode } from '../../../../enums/smart-power.mode';
+import { EntityUtils } from '../../../common/entity/utils';
 
+@UntilDestroy()
 @Component({
-  selector: 'smart-edit',
-  template: '<entity-form [conf]="this"></entity-form>',
+  templateUrl: './service-smart.component.html',
+  styleUrls: ['./service-smart.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
+export class ServiceSmartComponent implements OnInit {
+  isFormLoading = false;
 
-export class ServiceSMARTComponent implements FormConfiguration {
-  queryCall = 'smart.config' as const;
-  route_success: string[] = ['services'];
-  title = this.translate.instant(helptext.formTitle);
+  form = this.fb.group({
+    interval: [0, Validators.required],
+    powermode: [null as SmartPowerMode, Validators.required],
+    difference: [0, Validators.required],
+    informational: [0, Validators.required],
+    critical: [0, Validators.required],
+  });
 
-  fieldSets: FieldSet[] = [
-    {
-      name: this.translate.instant(helptext.smart_fieldset_general),
-      label: true,
-      config: [
-        {
-          type: 'input',
-          name: 'interval',
-          placeholder: helptext.smart_interval_placeholder,
-          tooltip: helptext.smart_interval_tooltip,
-          required: true,
-          validation: [Validators.required],
-        },
-        {
-          type: 'select',
-          name: 'powermode',
-          placeholder: helptext.smart_powermode_placeholder,
-          tooltip: helptext.smart_powermode_tooltip,
-          options: [
-            { label: this.translate.instant('Never'), value: SmartPowerMode.Never },
-            { label: this.translate.instant('Sleep'), value: SmartPowerMode.Sleep },
-            { label: this.translate.instant('Standby'), value: SmartPowerMode.Standby },
-            { label: this.translate.instant('Idle'), value: SmartPowerMode.Idle },
-          ],
-          required: true,
-          validation: [Validators.required],
-        },
-        {
-          type: 'input',
-          name: 'difference',
-          placeholder: helptext.smart_difference_placeholder,
-          tooltip: helptext.smart_difference_tooltip,
-          required: true,
-          validation: [Validators.required],
-        },
-        {
-          type: 'input',
-          name: 'informational',
-          placeholder: helptext.smart_informational_placeholder,
-          tooltip: helptext.smart_informational_tooltip,
-          required: true,
-          validation: [Validators.required],
-        },
-        {
-          type: 'input',
-          name: 'critical',
-          placeholder: helptext.smart_critical_placeholder,
-          tooltip: helptext.smart_critical_tooltip,
-          required: true,
-          validation: [Validators.required],
-        },
-      ],
-    },
-    { name: 'divider', divider: true },
-  ];
+  readonly tooltips = {
+    interval: helptext.smart_interval_tooltip,
+    powermode: helptext.smart_powermode_tooltip,
+    difference: helptext.smart_difference_tooltip,
+    informational: helptext.smart_informational_tooltip,
+    critical: helptext.smart_critical_tooltip,
+  };
+
+  readonly powermodeOptions$ = of([
+    { label: this.translate.instant('Never'), value: SmartPowerMode.Never },
+    { label: this.translate.instant('Sleep'), value: SmartPowerMode.Sleep },
+    { label: this.translate.instant('Standby'), value: SmartPowerMode.Standby },
+    { label: this.translate.instant('Idle'), value: SmartPowerMode.Idle },
+  ]);
 
   constructor(
-    protected router: Router,
-    protected route: ActivatedRoute,
-    protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
-    protected translate: TranslateService,
+    private ws: WebSocketService,
+    private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder,
+    private translate: TranslateService,
+    private dialogService: DialogService,
+    private router: Router,
   ) {}
 
-  afterInit(entityEdit: EntityFormComponent): void {
-    entityEdit.submitFunction = (body) => this.ws.call('smart.update', [body]);
+  ngOnInit(): void {
+    this.isFormLoading = true;
+    this.ws.call('smart.config')
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (config) => {
+          this.form.patchValue(config);
+          this.isFormLoading = false;
+        },
+        (error) => {
+          new EntityUtils().handleWSError(null, error, this.dialogService);
+          this.isFormLoading = false;
+        },
+      );
+  }
+
+  onSubmit(): void {
+    const values = this.form.value;
+
+    // Converting to numbers is only necessary for unit tests,
+    // which don't play nicely with numbers in inputs.
+    const params = {
+      interval: Number(values.interval),
+      powermode: values.powermode,
+      difference: Number(values.difference),
+      informational: Number(values.informational),
+      critical: Number(values.critical),
+    };
+
+    this.isFormLoading = true;
+    this.ws.call('smart.update', [params])
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        () => {
+          this.isFormLoading = false;
+          this.router.navigate(['/services']);
+        },
+        (error) => {
+          this.isFormLoading = false;
+          this.errorHandler.handleWsFormError(error, this.form);
+          this.cdr.markForCheck();
+        },
+      );
   }
 }
