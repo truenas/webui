@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { WebdavProtocol } from 'app/interfaces/webdav-config.interface';
 
 export default {
   protocol_placeholder: T('Protocol'),
@@ -6,9 +7,9 @@ export default {
  <i>HTTPS</i> encrypts the connection.\
  <i>HTTP+HTTPS</i> allows both types of connections.'),
   protocol_options: [
-    { label: 'HTTP', value: 'HTTP' },
-    { label: 'HTTPS', value: 'HTTPS' },
-    { label: 'HTTP+HTTPS', value: 'HTTPHTTPS' },
+    { label: 'HTTP', value: WebdavProtocol.Http },
+    { label: 'HTTPS', value: WebdavProtocol.Https },
+    { label: 'HTTP+HTTPS', value: WebdavProtocol.HttpHttps },
   ],
 
   tcpport_placeholder: T('HTTP Port'),
