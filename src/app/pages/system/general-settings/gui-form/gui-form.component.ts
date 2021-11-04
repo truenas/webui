@@ -16,7 +16,7 @@ import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/s
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { IxFormatterService } from 'app/pages/common/ix-forms/services/ix-formatter.service';
+import { IxFormatter } from 'app/pages/common/ix-forms/services/ix-formatter.service';
 import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
@@ -44,7 +44,7 @@ export class GuiFormComponent {
     crash_reporting: [false, [Validators.required]],
     usage_collection: [false, [Validators.required]],
     ui_consolemsg: [false, [Validators.required]],
-    memory_size: [2097152],
+    memory_size: [4],
   });
 
   options = {
@@ -66,7 +66,6 @@ export class GuiFormComponent {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
-    private ixFormatter: IxFormatterService,
   ) {
     this.sysGeneralService.getGeneralConfig$.pipe(
       untilDestroyed(this),
@@ -89,8 +88,8 @@ export class GuiFormComponent {
     });
   }
 
-  format = this.ixFormatter.memorySizeFormatting;
-  parse = this.ixFormatter.memorySizeParsing;
+  format = IxFormatter.memorySizeFormatting;
+  parse = IxFormatter.memorySizeParsing;
 
   reconnect(href: string): void {
     if (this.ws.connected) {

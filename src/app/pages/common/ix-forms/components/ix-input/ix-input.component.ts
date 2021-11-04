@@ -91,9 +91,9 @@ export class IxInputComponent implements ControlValueAccessor {
 
   blur(): void {
     this.onTouch();
-    if (this.value) {
+    if (this.formatted) {
       if (this.parse) {
-        this.value = this.parse(this.value);
+        this.value = this.parse(this.formatted);
       }
       if (this.format) {
         this.formatted = this.format(this.value);
