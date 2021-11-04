@@ -91,11 +91,15 @@ export class IxInputComponent implements ControlValueAccessor {
 
   blur(): void {
     this.onTouch();
-    if (this.formatted) {
+    if (this.value) {
+      if (this.parse) {
+        this.value = this.parse(this.value);
+      }
       if (this.format) {
-        this.formatted = this.format(this.formatted);
+        this.formatted = this.format(this.value);
       }
     }
+    this.onChange(this.value);
     this.cdr.markForCheck();
   }
 }
