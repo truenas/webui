@@ -34,7 +34,6 @@ import { WebSocketService } from './services/ws.service';
 import { RestService } from './services/rest.service';
 import { AppLoaderService } from './services/app-loader/app-loader.service';
 
-import { ENV_PROVIDERS } from '../environments/environment';
 import { AppLoaderComponent } from './services/app-loader/app-loader.component';
 import { AppLoaderModule } from './services/app-loader/app-loader.module';
 import { NotificationsService } from 'app/services/notifications.service';
@@ -109,7 +108,7 @@ export function createTranslateLoader(http: HttpClient) {
     AppLoaderService,
     NotificationsService,
     ErdService,
-    ENV_PROVIDERS],
+  ],
   bootstrap: [
     AppComponent,
   ],
