@@ -185,7 +185,6 @@
           <div *ngIf="system && system.pools && enclosurePools; else loading" fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >{{ enclosurePools.length }}</div>
             <div class="title"> {{ 'Pools in Enclosure' | translate }}</div>
-            <!--<div class="subtitle">{{system.profile.length > 1 ? system.profile.length - 1 : 'No' }} other enclosures detected</div>-->
             <div *ngIf="unhealthyPools && unhealthyPools.length == 1" class="subtitle">Pool "{{unhealthyPools[0].name}}" is {{unhealthyPools[0].status}}.</div>
             <div *ngIf="unhealthyPools && unhealthyPools.length > 1" class="subtitle">{{unhealthyPools[0]}} and {{unhealthyPools.length - 1}} other pools are not healthy.</div>
             <div *ngIf="unhealthyPools && unhealthyPools.length < 1" class="subtitle">{{ 'All pools are online.' | translate }}</div>
@@ -243,6 +242,13 @@
 
               <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
+                  <div class="label">{{ 'Model' | translate }}</div>
+                  <div class="value">{{selectedDisk.model}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
                   <div class="label">{{ 'Serial' | translate }}</div>
                   <div class="value">{{selectedDisk.serial}}</div>
                 </div>
@@ -290,10 +296,17 @@
                 </div>
               </div>
 
-              <div fxFlex="calc(75% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
                   <div class="label">{{ 'Description' | translate }}</div>
                   <div class="value">{{selectedDisk.description ? selectedDisk.description : 'None'}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(50% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">{{ 'Rotation Rate' | translate }}</div>
+                  <div class="value">{{selectedDisk.rotationrate}}{{'RPM' | translate}}</div>
                 </div>
               </div>
 

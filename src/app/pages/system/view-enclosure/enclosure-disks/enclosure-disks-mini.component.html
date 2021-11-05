@@ -101,8 +101,10 @@
                 <span *ngIf="selectedVdev.topology"> {{ $any(selectedVdev.topology) == 'None' ? '' : '(' + selectedVdev.topology.toUpperCase() + ')'}}</span>
               </li>
 
+              <li><strong>{{ 'Model' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.model}}</li>
               <li><strong>{{ 'Serial' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.serial}}</li>
               <li><strong>{{ 'Status' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.status}}</li>
+              <li><strong>{{ 'Rotation Rate' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.rotationrate}}</li>
               <li><strong>{{ 'Advanced Power Management' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.advpowermgmt}}</li>
               <li><strong>{{ 'S.M.A.R.T. Enabled' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.togglesmart ? 'Yes' : 'No'}}</li>
               <li><strong>{{ 'S.M.A.R.T. Options' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.smartoptions ? selectedDisk.smartoptions : 'None'}}</li>

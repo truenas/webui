@@ -2408,6 +2408,7 @@
   "REQUIRE": "",
   "RFC2307": "",
   "RID": "",
+  "RPM": "",
   "RSYNC Modules": "",
   "Randomly generate an encryption key for securing this dataset. Disabling requires manually      defining the encryption key.<br> WARNING: the encryption key is the only means to decrypt the information stored in this      dataset. Store the encryption key in a secure location.": "",
   "Range High": "",
