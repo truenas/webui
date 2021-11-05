@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { ServiceDDNSComponent } from 'app/pages/services/components/service-dynamicdns/service-dynamicdns.component';
 import { ServiceFTPComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceLLDPComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';

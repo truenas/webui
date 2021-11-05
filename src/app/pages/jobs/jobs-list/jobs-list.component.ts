@@ -54,8 +54,7 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    title: this.translate.instant('No jobs are available.'),
-    message: this.translate.instant('Please be patient...'),
+    title: this.translate.instant('There are no jobs.'),
   };
   loadingConfig: EmptyConfig = {
     type: EmptyType.Loading,
@@ -153,15 +152,18 @@ export class JobsListComponent implements OnInit, AfterViewInit {
       case JobTab.Failed:
         this.store.selectFailedJobs();
         this.onLogsSidebarClosed();
+        this.emptyConfig.title = this.translate.instant('There are no failed jobs.');
         break;
       case JobTab.Active:
         this.store.selectRunningJobs();
         this.onLogsSidebarClosed();
+        this.emptyConfig.title = this.translate.instant('There are no active jobs.');
         break;
       case JobTab.All:
       default:
         this.store.selectAllJobs();
         this.onLogsSidebarClosed();
+        this.emptyConfig.title = this.translate.instant('There are no jobs.');
         break;
     }
   }
