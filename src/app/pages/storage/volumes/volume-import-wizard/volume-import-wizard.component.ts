@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
+import { Router } from '@angular/router';
 import {
   UntilDestroy, untilDestroyed,
 } from '@ngneat/until-destroy';
@@ -186,6 +187,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   hideCancel = true;
 
   constructor(
+    private router: Router,
     protected ws: WebSocketService,
     protected loader: AppLoaderService,
     protected dialog: MatDialog,
@@ -348,6 +350,32 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       dialogRef.componentInstance.submit();
       dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         dialogRef.close(false);
+
+        if (this.pool) {
+          this.modalService.closeSlideIn();
+          this.modalService.refreshTable();
+          this.ws.call('pool.dataset.query', [[['pool', '=', this.pool]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
+            for (const dataset of datasets) {
+              if (dataset.encrypted && dataset.locked) {
+                this.dialogService.confirm({
+                  title: helptext.unlock_dataset_dialog_title,
+                  message: helptext.unlock_dataset_dialog_message,
+                  hideCheckBox: true,
+                  buttonMsg: helptext.unlock_dataset_dialog_button,
+                }).pipe(untilDestroyed(this)).subscribe((unlock) => {
+                  if (unlock) {
+                    const route_unlock = ['storage'].concat(['id', this.pool, 'dataset', 'unlock', this.pool]);
+                    this.router.navigate(new Array('/').concat(route_unlock));
+                  }
+                });
+                break;
+              }
+            }
+          }, (err) => {
+            new EntityUtils().handleWSError(this, err, this.dialogService);
+          });
+        }
+
         if (this.pool) {
           this.modalService.closeSlideIn();
           this.modalService.refreshTable();
