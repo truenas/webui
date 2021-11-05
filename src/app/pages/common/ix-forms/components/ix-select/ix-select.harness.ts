@@ -1,4 +1,4 @@
-import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
+import { ComponentHarness, HarnessPredicate, parallel } from '@angular/cdk/testing';
 import { MatSelectHarness, SelectHarnessFilters } from '@angular/material/select/testing';
 import { IxFormControlHarness } from 'app/pages/common/ix-forms/interfaces/ix-form-control-harness.interface';
 
@@ -42,12 +42,26 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
   }
 
   /**
-   *
-   * @param optionLabel label of the option that is to be assigned
+   * @param newLabels option label or labels to be selected
    */
-  async setValue(optionLabel: string): Promise<void> {
-    const harness = (await this.getSelectHarness());
-    await harness.open();
-    await harness.clickOptions({ text: optionLabel });
+  async setValue(newLabels: string | string[]): Promise<void> {
+    const select = (await this.getSelectHarness());
+    await select.open();
+
+    if (await select.isMultiple()) {
+      // Unselect old options manually
+      if (!(await select.isEmpty())) {
+        const selectedOptions = await select.getOptions({ isSelected: true });
+        await parallel(() => selectedOptions.map((option) => option.click()));
+      }
+
+      const labelsToClick = Array.isArray(newLabels) ? newLabels : [newLabels];
+      await parallel(() => {
+        return (labelsToClick).map((label) => select.clickOptions({ text: label }));
+      });
+      return;
+    }
+
+    await select.clickOptions({ text: newLabels as string });
   }
 }
