@@ -29,11 +29,11 @@ import { KernelFormComponent } from './advanced/kernel-form/kernel-form.componen
 import { SyslogFormComponent } from './advanced/syslog-form/syslog-form.component';
 import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
-import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach/bootenv-attach-form.component';
 import { BootEnvironmentFormComponent } from './bootenv/bootenv-form/bootenv-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
-import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace/bootenv-replace-form.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
+import { BootPoolAttachFormComponent } from './bootenv/bootpool-attach/bootpool-attach-form.component';
+import { BootPoolReplaceFormComponent } from './bootenv/bootpool-replace/bootpool-replace-form.component';
 import { EmailComponent } from './email/email.component';
 import { FailoverComponent } from './failover/failover.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
@@ -67,8 +67,8 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     BootEnvironmentListComponent,
     BootEnvironmentFormComponent,
     BootStatusListComponent,
-    BootEnvAttachFormComponent,
-    BootEnvReplaceFormComponent,
+    BootPoolAttachFormComponent,
+    BootPoolReplaceFormComponent,
     TunableListComponent,
     TunableFormComponent,
     UpdateComponent,
