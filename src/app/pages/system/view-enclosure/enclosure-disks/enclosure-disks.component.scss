@@ -357,12 +357,7 @@ div.vdev-disk {
 
 .view-card.mini #disks-details,
 .view-card.mini .dom-overlay#visualizer {
-  height: calc(600px - 48px);
-}
-
-.view-card.mini.mini-xl #disks-details,
-.view-card.mini.mini-xl .dom-overlay#visualizer {
-  height: calc(640px - 48px);
+  height: auto;
 }
 
 .view-card.mini #general-overview {
@@ -374,7 +369,7 @@ div.vdev-disk {
 }
 
 .view-card.mini.mini-xl #drive-temps {
-  height: calc(320px - 16px - 48px);
+  height: auto;
 }
 
 .view-card.mini #disks-details {
@@ -428,6 +423,7 @@ div.vdev-disk {
 }
 
 .mini .disk-basic-details {
+  min-height: 200px;
   padding: 8px;
 }
 
