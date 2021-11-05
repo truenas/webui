@@ -45,6 +45,10 @@ nav.view-nav-bar {
   opacity: 0;
 }
 
+.view-card.rackmount #disks-details.disk-selected {
+  height: auto;
+}
+
 .view-card #disks-details {
   height: 250px;
   padding: 0;
@@ -78,6 +82,10 @@ nav.view-nav-bar {
 .view-card .tiles.active {
   background-color: rgba(0, 0, 0, 0.1);
   background-color: var(--contrast-darker);
+}
+
+.view-card .disk-advanced-details .details-wrapper {
+  padding-bottom: 16px;
 }
 
 .view-card .primary-number {

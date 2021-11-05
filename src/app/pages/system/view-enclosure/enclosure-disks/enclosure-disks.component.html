@@ -218,7 +218,7 @@
 
     <!-- DETAILS/DISK -->
     <ng-template #details>
-      <div  #diskdetails id="disks-details">
+      <div  #diskdetails id="disks-details" [class]="selectedVdev ? 'disk-selected' : '' ">
         <div class="details-wrapper" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
 
           <div fxFlex="25" class="disk-basic-details" fxLayout="column" fxLayoutAlign="center center">
