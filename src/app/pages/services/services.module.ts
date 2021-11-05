@@ -24,7 +24,6 @@ import { ServiceWebdavComponent } from 'app/pages/services/components/service-we
 import { AppConfirmModule } from 'app/services/app-confirm/app-confirm.module';
 import { UserService } from 'app/services/user.service';
 import { EntityModule } from '../common/entity/entity.module';
-import { IxFormsModule } from '../common/ix-forms/ix-forms.module';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServicesComponent } from './services.component';
 import { routing } from './services.routing';
