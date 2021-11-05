@@ -306,7 +306,10 @@
               <div fxFlex="calc(50% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
                   <div class="label">{{ 'Rotation Rate' | translate }}</div>
-                  <div class="value">{{selectedDisk.rotationrate}}{{'RPM' | translate}}</div>
+                  <div class="value">
+                    <ng-container *ngIf="selectedDisk && selectedDisk.rotationrate; else flash">{{selectedDisk.rotationrate}}{{'RPM' | translate}}</ng-container>
+                    <ng-template #flash>{{'Not Available' | translate}}</ng-template>
+                  </div>
                 </div>
               </div>
 
