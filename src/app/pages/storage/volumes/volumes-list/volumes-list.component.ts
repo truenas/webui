@@ -139,6 +139,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         'keyformat',
         'mountpoint',
         'pbkdf2iters',
+        'origin',
       ],
     },
   }];
