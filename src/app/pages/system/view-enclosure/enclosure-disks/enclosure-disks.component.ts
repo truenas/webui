@@ -203,14 +203,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     core.register({ observerClass: this, eventName: 'MediaChange' }).pipe(untilDestroyed(this)).subscribe((evt: MediaChangeEvent) => {
       this.mqAlias = evt.data.mqAlias;
-
-      if (evt.data.mqAlias == 'xs' || evt.data.mqAlias == 'sm' || evt.data.mqAlias == 'md') {
-        core.emit({ name: 'ForceSidenav', data: 'close', sender: this });
-        this.resizeView();
-      } else {
-        core.emit({ name: 'ForceSidenav', data: 'open', sender: this });
-      }
-
       this.resizeView();
     });
 
@@ -1101,13 +1093,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   resizeView(): void {
+    // Layout helper code goes in here...
     const visualizer = this.overview.nativeElement.querySelector('#visualizer');
-    const left = this.cardWidth < 960 ? ((960 - this.cardWidth) / 2 * -1) : 0;
-
-    setTimeout(() => {
-      visualizer.style.left = left.toString() + 'px';
-      this.cdr.detectChanges(); // Force change detection
-    }, 50);
+    visualizer.classList.add('resized');
   }
 
   enclosureOverride(view: string): void {

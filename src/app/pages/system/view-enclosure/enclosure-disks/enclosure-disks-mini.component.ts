@@ -35,7 +35,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     protected translate: TranslateService,
   ) {
     super(el, core, sanitizer, mediaObserver, cdr, dialogService, translate);
-    this.pixiWidth = 960 * 0.6; // PIXI needs an explicit number. Make sure the template flex width matches this
+    this.pixiWidth = 320;// 960 * 0.6; // PIXI needs an explicit number. Make sure the template flex width matches this
     this.pixiHeight = 480;
   }
 
@@ -78,7 +78,7 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     this.setupEnclosureEvents();
 
     // Slight adjustment to align with external html elements
-    this.container.setTransform(-30);
+    this.container.setTransform(0);
   }
 
   // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
