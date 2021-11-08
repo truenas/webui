@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { Weekday } from 'app/enums/weekday.enum';
 import { Option } from '../interfaces/option.interface';
 
 @Injectable({ providedIn: 'root' })
@@ -8,29 +9,29 @@ export class CalendarService {
     private translate: TranslateService,
   ) {}
 
-  getCalendarOptions(): Option[] {
+  getWeekdayOptions(): Option[] {
     return [
       {
         label: this.translate.instant('Monday'),
-        value: 1,
+        value: Weekday.Monday,
       }, {
         label: this.translate.instant('Tuesday'),
-        value: 2,
+        value: Weekday.Tuesday,
       }, {
         label: this.translate.instant('Wednesday'),
-        value: 3,
+        value: Weekday.Wednesday,
       }, {
         label: this.translate.instant('Thursday'),
-        value: 4,
+        value: Weekday.Thursday,
       }, {
         label: this.translate.instant('Friday'),
-        value: 5,
+        value: Weekday.Friday,
       }, {
         label: this.translate.instant('Saturday'),
-        value: 6,
+        value: Weekday.Saturday,
       }, {
         label: this.translate.instant('Sunday'),
-        value: 7,
+        value: Weekday.Sunday,
       },
     ];
   }

@@ -7,6 +7,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
+import { Weekday } from 'app/enums/weekday.enum';
 import helptext from 'app/helptext/storage/resilver/resilver';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { DialogService, TaskService, WebSocketService } from 'app/services';
@@ -26,7 +27,15 @@ export class ResilverConfigComponent implements OnInit {
     enabled: [true],
     begin: [''],
     end: [''],
-    weekday: [[1, 2, 3, 4, 5, 6, 7], Validators.required],
+    weekday: [[
+      Weekday.Monday,
+      Weekday.Tuesday,
+      Weekday.Wednesday,
+      Weekday.Thursday,
+      Weekday.Friday,
+      Weekday.Saturday,
+      Weekday.Sunday,
+    ], Validators.required],
   });
 
   readonly tooltips = {
@@ -36,7 +45,7 @@ export class ResilverConfigComponent implements OnInit {
     weekday: helptext.weekday_tooltip,
   };
 
-  daysOfWeek$ = of(this.calendarService.getCalendarOptions());
+  daysOfWeek$ = of(this.calendarService.getWeekdayOptions());
   timeOptions$ = of(this.taskService.getTimeOptions());
 
   constructor(
