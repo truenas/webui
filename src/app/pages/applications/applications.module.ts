@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { CatalogFormComponent } from 'app/pages/applications/forms/catalog-form/catalog-form.component';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import { MaterialModule } from 'app/app-material.module';
 import { AppCommonModule } from 'app/components/common/app-common.module';
@@ -23,7 +24,7 @@ import { CatalogAddFormComponent } from './forms/catalog-add-form.component';
 import { CatalogEditFormComponent } from './forms/catalog-edit-form.component';
 import { ChartFormComponent } from './forms/chart-form.component';
 import { ChartWizardComponent } from './forms/chart-wizard.component';
-import { PullImageFormComponent } from './forms/pull-image-form.component';
+import { PullImageFormComponent } from './forms/pull-image-form/pull-image-form.component';
 import { KubernetesSettingsComponent } from './kubernetes-settings/kubernetes-settings.component';
 import { ManageCatalogsComponent } from './manage-catalogs/manage-catalogs.component';
 import { PodLogsComponent } from './pod-logs/pod-logs.component';
@@ -63,6 +64,7 @@ import { PodShellComponent } from './pod-shell/pod-shell.component';
     CatalogEditFormComponent,
     PullImageFormComponent,
     KubernetesSettingsComponent,
+    CatalogFormComponent,
   ],
 })
 export class ApplicationsModule { }
