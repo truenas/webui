@@ -12,8 +12,6 @@ import { WebSocketService } from './ws.service';
 
 @Injectable()
 export class IscsiService {
-  protected volumeResource = 'storage/volume';
-
   constructor(protected ws: WebSocketService) {}
 
   getIpChoices(): Observable<Choices> {

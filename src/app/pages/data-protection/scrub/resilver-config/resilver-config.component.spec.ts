@@ -2,52 +2,42 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { Device } from 'app/interfaces/device.interface';
+import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
-import { IsolatedGpuPcisFormComponent } from 'app/pages/system/advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
-import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { DialogService, LanguageService, WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
+import { ResilverConfigComponent } from './resilver-config.component';
 
-describe('IsolatedGpuPcisFormComponent', () => {
-  let spectator: Spectator<IsolatedGpuPcisFormComponent>;
+describe('ResilverConfigComponent', () => {
+  let spectator: Spectator<ResilverConfigComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
-  const mockDeviceFirst = {
-    addr: {
-      pci_slot: '0000:00:01.0',
-    },
-    description: 'Fake HD Graphics',
-  } as Device;
-  const mockDeviceSecond = {
-    addr: {
-      pci_slot: '0000:00:02.0',
-    },
-    description: 'Intel Corporation HD Graphics 510',
-  } as Device;
-
   const createComponent = createComponentFactory({
-    component: IsolatedGpuPcisFormComponent,
+    component: ResilverConfigComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [
       mockWebsocket([
-        mockCall('device.get_info', [mockDeviceFirst, mockDeviceSecond]),
-        mockCall('system.advanced.config', {
-          isolated_gpu_pci_ids: ['0000:00:02.0'],
-        } as AdvancedConfig),
-        mockCall('system.advanced.update'),
+        mockCall('pool.resilver.config', {
+          enabled: true,
+          begin: '08:00',
+          end: '10:00',
+          weekday: [1, 3, 5],
+        } as ResilverConfig),
+        mockCall('pool.resilver.update'),
       ]),
-      mockProvider(SystemGeneralService),
       mockProvider(IxModalService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
+      mockProvider(Router),
+      mockProvider(LanguageService),
     ],
   });
 
@@ -57,26 +47,38 @@ describe('IsolatedGpuPcisFormComponent', () => {
     ws = spectator.inject(WebSocketService);
   });
 
-  it('loads current settings and shows them', async () => {
+  it('loads and shows current resilver settings when form is opened', async () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
     expect(values).toEqual({
-      "GPU's": ['Intel Corporation HD Graphics 510'],
+      Enabled: true,
+      Begin: '08:00:00',
+      End: '10:00:00',
+      'Days of the Week': ['Monday', 'Wednesday', 'Friday'],
     });
   });
 
-  it('saves updated settings when Save is pressed', async () => {
+  it('saves resilver config and redirects to data protection when saved is pressed', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      "GPU's": 'Fake HD Graphics',
+      Enabled: false,
+      Begin: '09:00:00',
+      End: '11:15:00',
+      'Days of the Week': ['Monday', 'Tuesday'],
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.call).toHaveBeenCalledWith('system.advanced.update', [{
-      isolated_gpu_pci_ids: ['0000:00:01.0'],
-    }]);
+    expect(ws.call).toHaveBeenCalledWith(
+      'pool.resilver.update',
+      [{
+        enabled: false,
+        begin: '09:00',
+        end: '11:15',
+        weekday: [1, 2],
+      }],
+    );
   });
 });
