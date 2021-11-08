@@ -209,7 +209,7 @@ import {
   SupportConfig, SupportConfigUpdate,
 } from 'app/interfaces/support.interface';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
-import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
+import { SystemDatasetConfig, SystemDatasetUpdate } from 'app/interfaces/system-dataset-config.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import {
   SystemUpdate,
@@ -788,6 +788,8 @@ export type ApiDirectory = {
   'system.general.ui_httpsprotocols_choices': { params: void; response: Choices };
   'system.build_time': { params: void; response: ApiTimestamp };
   'system.product_type': { params: void; response: ProductType };
+  'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
+  'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
 
   // Support
   'support.is_available': { params: void; response: boolean };
@@ -811,7 +813,7 @@ export type ApiDirectory = {
   // SystemDataset
   'systemdataset.pool_choices': { params: void; response: Choices };
   'systemdataset.config': { params: void; response: SystemDatasetConfig };
-  'systemdataset.update': { params: [{ [poolName: string]: string }]; response: SystemDatasetConfig };
+  'systemdataset.update': { params: [SystemDatasetUpdate]; response: SystemDatasetConfig };
 
   // Service
   'service.started': { params: [ServiceName]; response: boolean };
