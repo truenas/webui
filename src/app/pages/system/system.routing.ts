@@ -13,9 +13,9 @@ import { InitshutdownFormComponent } from './advanced/initshutdown/initshutdown-
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
-import { BootEnvAttachFormComponent } from './bootenv/bootenv-attach/bootenv-attach-form.component';
+import { BootPoolAttachFormComponent } from './bootenv/boot-pool-attach/boot-pool-attach-form.component';
+import { BootPoolReplaceFormComponent } from './bootenv/boot-pool-replace/boot-pool-replace-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
-import { BootEnvReplaceFormComponent } from './bootenv/bootenv-replace/bootenv-replace-form.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
 import { EmailComponent } from './email/email.component';
 import { FailoverComponent } from './failover/failover.component';
@@ -59,11 +59,11 @@ export const routes: Routes = [
         data: { title: T('Status'), breadcrumb: T('Status') },
       }, {
         path: 'attach/:pk',
-        component: BootEnvAttachFormComponent,
+        component: BootPoolAttachFormComponent,
         data: { title: T('Attach'), breadcrumb: ('Attach') },
       }, {
         path: 'replace/:pk',
-        component: BootEnvReplaceFormComponent,
+        component: BootPoolReplaceFormComponent,
         data: { title: T('Replace'), breadcrumb: T('Replace') },
       },
       ],
