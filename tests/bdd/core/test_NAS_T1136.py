@@ -263,21 +263,23 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     """click on {folder1} then click on the test folder."""
     assert wait_on_element(driver, 5, f'//span[text()="{folder1}"]', 'clickable')
     driver.find_element_by_xpath(f'//span[text()="{folder1}"]').click()
-    assert wait_on_element(driver, 5, f'//nav[contains(.,"{folder1}")]//span[text()="{folder1}"]')
-    assert wait_on_element(driver, 5, '//span[text()="test"]', 'clickable')
+    time.sleep(0.5)
+    assert wait_on_element(driver, 7, f'//nav[contains(.,"{folder1}")]//span[text()="{folder1}"]')
+    assert wait_on_element(driver, 7, '//span[text()="test"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="test"]').click()
+    time.sleep(0.5)
 
 
 @then('verify all files are in the test folder')
 def verify_all_files_are_in_the_test_folder(driver):
     """verify all files are in the test folder."""
-    assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//span[text()="test"]')
-    assert wait_on_element(driver, 5, '//span[text()="Explaining_BSD.pdf"]', 'clickable')
+    assert wait_on_element(driver, 7, '//nav[contains(.,"test")]//span[text()="test"]')
+    assert wait_on_element(driver, 7, '//span[text()="Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]', 'clickable')
     assert wait_on_element(driver, 5, '//span[text()="music"]', 'clickable')
     driver.find_element_by_xpath('//span[text()="music"]').click()
-    assert wait_on_element(driver, 5, '//nav[contains(.,"music")]//span[text()="music"]')
-    assert wait_on_element(driver, 5, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
+    assert wait_on_element(driver, 7, '//nav[contains(.,"music")]//span[text()="music"]')
+    assert wait_on_element(driver, 7, '//span[text()="Mr_Smith_Pequeñas_Guitarras.mp3"]', 'clickable')
     assert wait_on_element(driver, 5, '//nav[contains(.,"test")]//a[contains(.,"test")]', 'clickable')
     driver.find_element_by_xpath('//nav[contains(.,"test")]//a[contains(.,"test")]').click()
 
