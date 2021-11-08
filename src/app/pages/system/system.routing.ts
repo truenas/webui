@@ -13,10 +13,10 @@ import { InitshutdownFormComponent } from './advanced/initshutdown/initshutdown-
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
+import { BootPoolAttachFormComponent } from './bootenv/boot-pool-attach/boot-pool-attach-form.component';
+import { BootPoolReplaceFormComponent } from './bootenv/boot-pool-replace/boot-pool-replace-form.component';
 import { BootEnvironmentListComponent } from './bootenv/bootenv-list/bootenv-list.component';
 import { BootStatusListComponent } from './bootenv/bootenv-status/bootenv-status.component';
-import { BootPoolAttachFormComponent } from './bootenv/bootpool-attach/bootpool-attach-form.component';
-import { BootPoolReplaceFormComponent } from './bootenv/bootpool-replace/bootpool-replace-form.component';
 import { EmailComponent } from './email/email.component';
 import { FailoverComponent } from './failover/failover.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';

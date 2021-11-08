@@ -6,6 +6,7 @@ import { Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
@@ -15,25 +16,22 @@ import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'bootpool-attach-form',
-  templateUrl: './bootpool-attach-form.component.html',
-  styleUrls: ['./bootpool-attach-form.component.scss'],
+  templateUrl: './boot-pool-attach-form.component.html',
+  styleUrls: ['./boot-pool-attach-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootPoolAttachFormComponent {
   isFormLoading = false;
-  route_success: string[] = ['system', 'boot'];
-  route_cancel: string[] = ['system', 'boot', 'status'];
 
   form = this.fb.group({
     dev: ['', Validators.required],
-    expand: [false as boolean],
+    expand: [false],
   });
 
   dev = {
     fcName: 'dev',
-    label: helptext_system_bootenv.dev_placeholder,
-    tooltip: helptext_system_bootenv.dev_tooltip,
+    label: this.translate.instant(helptext_system_bootenv.dev_placeholder),
+    tooltip: this.translate.instant(helptext_system_bootenv.dev_tooltip),
     options: this.ws.call('disk.get_unused').pipe(
       map((disks) => {
         const options = disks.map((disk) => ({
@@ -51,14 +49,15 @@ export class BootPoolAttachFormComponent {
 
   expand = {
     fcName: 'expand',
-    label: helptext_system_bootenv.expand_placeholder,
-    tooltip: helptext_system_bootenv.expand_tooltip,
+    label: this.translate.instant(helptext_system_bootenv.expand_placeholder),
+    tooltip: this.translate.instant(helptext_system_bootenv.expand_tooltip),
   };
 
   constructor(
     private fb: FormBuilder,
     protected router: Router,
     private dialogService: DialogService,
+    private translate: TranslateService,
     protected ws: WebSocketService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
@@ -74,7 +73,7 @@ export class BootPoolAttachFormComponent {
         this.dialogService.info(helptext_system_bootenv.attach_dialog.title,
           `<i>${dev}</i> ${helptext_system_bootenv.attach_dialog.message}`, '300px', 'info', true)
           .pipe(untilDestroyed(this)).subscribe(() => {
-            this.router.navigate(this.route_success);
+            this.router.navigate(['system', 'boot']);
           });
       }
     }, (error) => {
@@ -85,6 +84,6 @@ export class BootPoolAttachFormComponent {
   }
 
   cancel(): void {
-    this.router.navigate(this.route_cancel);
+    this.router.navigate(['system', 'boot', 'status']);
   }
 }

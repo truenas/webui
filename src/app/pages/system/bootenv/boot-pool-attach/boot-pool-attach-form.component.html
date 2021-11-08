@@ -1,4 +1,4 @@
-<mat-card class="form-card">
+<mat-card class="card">
   <mat-progress-bar *ngIf="isFormLoading" mode="indeterminate"></mat-progress-bar>
   <mat-card-content>
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
@@ -6,8 +6,14 @@
         <ix-select
           [formControlName]="dev.fcName"
           [label]="dev.label"
+          [tooltip]="dev.tooltip"
           [options]="dev.options"
         ></ix-select>
+        <ix-checkbox
+          [formControlName]="expand.fcName"
+          [label]="expand.label"
+          [tooltip]="expand.tooltip"
+        ></ix-checkbox>
       </ix-fieldset>
 
       <div class="form-actions">
