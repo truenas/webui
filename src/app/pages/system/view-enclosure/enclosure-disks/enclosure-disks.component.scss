@@ -45,6 +45,10 @@ nav.view-nav-bar {
   opacity: 0;
 }
 
+.view-card.rackmount #disks-details.disk-selected {
+  height: auto;
+}
+
 .view-card #disks-details {
   height: 250px;
   padding: 0;
@@ -78,6 +82,10 @@ nav.view-nav-bar {
 .view-card .tiles.active {
   background-color: rgba(0, 0, 0, 0.1);
   background-color: var(--contrast-darker);
+}
+
+.view-card .disk-advanced-details .details-wrapper {
+  padding-bottom: 16px;
 }
 
 .view-card .primary-number {
@@ -357,12 +365,7 @@ div.vdev-disk {
 
 .view-card.mini #disks-details,
 .view-card.mini .dom-overlay#visualizer {
-  height: calc(600px - 48px);
-}
-
-.view-card.mini.mini-xl #disks-details,
-.view-card.mini.mini-xl .dom-overlay#visualizer {
-  height: calc(640px - 48px);
+  height: auto;
 }
 
 .view-card.mini #general-overview {
@@ -374,7 +377,7 @@ div.vdev-disk {
 }
 
 .view-card.mini.mini-xl #drive-temps {
-  height: calc(320px - 16px - 48px);
+  height: auto;
 }
 
 .view-card.mini #disks-details {
@@ -428,6 +431,7 @@ div.vdev-disk {
 }
 
 .mini .disk-basic-details {
+  min-height: 200px;
   padding: 8px;
 }
 
