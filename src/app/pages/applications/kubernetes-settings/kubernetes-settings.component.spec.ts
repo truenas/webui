@@ -33,6 +33,7 @@ describe('KubernetesSettingsComponent', () => {
           route_v4_interface: 'enp0s7',
           route_v4_gateway: '10.123.45.1',
           configure_gpus: true,
+          servicelb: true,
           cluster_cidr: '172.16.0.0/16',
           service_cidr: '172.17.0.0/16',
           cluster_dns_ip: '172.17.0.1',
@@ -79,6 +80,7 @@ describe('KubernetesSettingsComponent', () => {
       'Route v4 Gateway': '10.123.45.1',
       'Enable Container Image Updates': true,
       'Enable GPU support': true,
+      'Enable Integrated Loadbalancer': true,
       'Cluster CIDR': '172.16.0.0/16',
       'Service CIDR': '172.17.0.0/16',
       'Cluster DNS IP': '172.17.0.1',
@@ -93,6 +95,7 @@ describe('KubernetesSettingsComponent', () => {
       'Route v4 Gateway': '10.123.45.13',
       'Enable Container Image Updates': false,
       'Enable GPU support': false,
+      'Enable Integrated Loadbalancer': false,
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -104,6 +107,7 @@ describe('KubernetesSettingsComponent', () => {
       route_v4_interface: 'enp0s8',
       route_v4_gateway: '10.123.45.13',
       configure_gpus: false,
+      servicelb: false,
       cluster_cidr: '172.16.0.0/16',
       service_cidr: '172.17.0.0/16',
       cluster_dns_ip: '172.17.0.1',

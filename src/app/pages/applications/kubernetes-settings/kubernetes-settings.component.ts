@@ -34,6 +34,7 @@ export class KubernetesSettingsComponent implements OnInit {
     route_v4_gateway: [''],
     enable_container_image_update: [true],
     configure_gpus: [true],
+    servicelb: [true],
     cluster_cidr: ['', Validators.required],
     service_cidr: ['', Validators.required],
     cluster_dns_ip: ['', Validators.required],
