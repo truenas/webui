@@ -211,10 +211,11 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     combineLatest([
       this.ws.call('pool.query'),
       this.ws.call(this.datasetQuery, this.datasetQueryOptions),
-    ]).pipe(untilDestroyed(this)).subscribe(async ([pools, datasets]) => {
-      this.zfsPoolRows = await Promise.all(pools.map(async (originalPool) => {
+      this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]),
+    ]).pipe(untilDestroyed(this)).subscribe(([pools, datasets, isUpgradedPools]) => {
+      this.zfsPoolRows = pools.map((originalPool) => {
         const pool = { ...originalPool } as VolumesListPool;
-        pool.is_upgraded = await this.ws.call('pool.is_upgraded', [pool.id]).toPromise();
+        pool.is_upgraded = !!isUpgradedPools.find((_pool) => _pool.id === pool.id);
 
         /* Filter out system datasets */
         const pChild = datasets.find((set) => set.name === pool.name);
@@ -279,7 +280,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
         }
 
         return pool;
-      }));
+      });
 
       this.zfsPoolRows = this.sorter.tableSorter(this.zfsPoolRows, 'name', 'asc');
 

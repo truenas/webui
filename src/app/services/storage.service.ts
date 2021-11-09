@@ -184,7 +184,11 @@ export class StorageService {
 
       sorter = [];
       for (const elem of timeArr) {
-        sorter.push(format(elem, 'yyyy-MM-dd HH:mm:ss')); // formate should matched locale service
+        try {
+          sorter.push(format(elem, 'yyyy-MM-dd HH:mm:ss')); // formate should matched locale service
+        } catch (e: unknown) {
+          console.error(e);
+        }
       }
     } else {
       sorter = tempArr.sort(myCollator.compare);
