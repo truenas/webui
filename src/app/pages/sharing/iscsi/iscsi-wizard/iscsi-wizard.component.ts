@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import {
-  Validators, FormControl, ValidationErrors, ValidatorFn, FormGroup,
+  Validators, FormControl, ValidationErrors, FormGroup,
 } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -14,6 +14,7 @@ import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { ipv4or6cidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
@@ -414,7 +415,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
           placeholder: helptext_sharing_iscsi.auth_network.placeholder,
           tooltip: helptext_sharing_iscsi.auth_network.tooltip,
           hasErrors: false,
-          validation: [this.ipValidator('auth_network')],
+          validation: [ipv4or6cidrValidator()],
         },
       ],
       skip: false,
@@ -566,6 +567,20 @@ export class IscsiWizardComponent implements WizardConfiguration {
     this.entityWizard.formArray.get([0]).get('disk').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       const disableZvolGroup = !(value == 'NEW' && this.entityWizard.formArray.get([0]).get('type').value == IscsiExtentType.Disk);
       this.disablefieldGroup(this.zvolFieldGroup, disableZvolGroup, 0);
+    });
+
+    const authNetworkControl = this.entityWizard.formArray.get([2]).get('auth_network');
+    authNetworkControl.valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
+      const authNetworkConfig = _.find(this.wizardConfig[2].fieldConfig, { name: 'auth_network' }) as FormSelectConfig;
+
+      if (authNetworkControl.hasError('ip2')) {
+        authNetworkControl.errors.ip2 = null;
+        authNetworkConfig.hasErrors = true;
+        authNetworkConfig.warnings = helptext_sharing_iscsi['auth_network'].error;
+      } else {
+        authNetworkConfig.hasErrors = false;
+        authNetworkConfig.warnings = '';
+      }
     });
 
     this.entityWizard.formArray.get([0]).get('dataset').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
@@ -946,34 +961,6 @@ export class IscsiWizardComponent implements WizardConfiguration {
         );
       }
     });
-  }
-
-  ipValidator(name: 'auth_network'): ValidatorFn {
-    return (control: FormControl) => {
-      const config = this.wizardConfig[2].fieldConfig.find((c) => c.name === name);
-      let counter = 0;
-      if (control.value) {
-        control.value.forEach((item: any) => {
-          if (!this.networkService.authNetworkValidator(item)) {
-            counter++;
-          }
-        });
-      }
-
-      const errors = control.value && control.value.length > 0 && counter > 0
-        ? { validIPs: true }
-        : null;
-
-      if (errors) {
-        config.hasErrors = true;
-        config.errors = helptext_sharing_iscsi[name].error;
-      } else {
-        config.hasErrors = false;
-        config.errors = '';
-      }
-
-      return errors;
-    };
   }
 
   blurFilesize(): void {

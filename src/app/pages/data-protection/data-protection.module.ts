@@ -7,8 +7,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { MaterialModule } from 'app/app-material.module';
-import { ResilverComponent } from 'app/pages/data-protection/scrub/resilver/resilver.component';
 import { EntityModule } from '../common/entity/entity.module';
+import { IxFormsModule } from '../common/ix-forms/ix-forms.module';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
@@ -18,6 +18,7 @@ import { ReplicationListComponent } from './replication/replication-list/replica
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
 import { RsyncFormComponent } from './rsync/rsync-form/rsync-form.component';
 import { RsyncListComponent } from './rsync/rsync-list/rsync-list.component';
+import { ResilverConfigComponent } from './scrub/resilver-config/resilver-config.component';
 import { ScrubFormComponent } from './scrub/scrub-form/scrub-form.component';
 import { ScrubListComponent } from './scrub/scrub-list/scrub-list.component';
 import { SmartFormComponent } from './smart/smart-form/smart-form.component';
@@ -39,6 +40,7 @@ import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.co
     FormsModule,
     ReactiveFormsModule,
     TranslateModule,
+    IxFormsModule,
   ],
   declarations: [
     SnapshotListComponent,
@@ -55,7 +57,7 @@ import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.co
     CloudsyncListComponent,
     CloudsyncFormComponent,
     DataProtectionDashboardComponent,
-    ResilverComponent,
+    ResilverConfigComponent,
   ],
 })
 export class DataProtectionModule {}
