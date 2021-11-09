@@ -106,7 +106,7 @@
               <li><strong>{{ 'Status' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.status}}</li>
               <li>
                 <strong>{{ 'Rotation Rate' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;
-                <ng-container *ngIf="selectedDisk && selectedDisk.rotationrate; else flash">{{selectedDisk.rotationrate}}{{'RPM' | translate}}</ng-container>
+                <ng-container *ngIf="selectedDisk.rotationrate; else flash">{{selectedDisk.rotationrate}}{{'RPM' | translate}}</ng-container>
                 <ng-template #flash>{{'Not Available' | translate}}</ng-template>
               </li>
               <li><strong>{{ 'Advanced Power Management' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.advpowermgmt}}</li>

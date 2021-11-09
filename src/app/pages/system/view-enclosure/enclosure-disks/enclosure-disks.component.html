@@ -307,7 +307,7 @@
                 <div>
                   <div class="label">{{ 'Rotation Rate' | translate }}</div>
                   <div class="value">
-                    <ng-container *ngIf="selectedDisk && selectedDisk.rotationrate; else flash">{{selectedDisk.rotationrate}}{{'RPM' | translate}}</ng-container>
+                    <ng-container *ngIf="selectedDisk.rotationrate; else flash">{{selectedDisk.rotationrate}}{{'RPM' | translate}}</ng-container>
                     <ng-template #flash>{{'Not Available' | translate}}</ng-template>
                   </div>
                 </div>
