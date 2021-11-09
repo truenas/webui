@@ -4,6 +4,11 @@ import { Injectable } from '@angular/core';
 export class IxFormatterService {
   readonly IecUnits = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
+  /**
+   * Formats any memory size human readable string into a normalized size reading, e.g., '2m' to '2 MiB'
+   * @param value The string to be formatted
+   * @returns Formatted string
+   */
   memorySizeFormatting: (val: string | number) => string = (value: string | number) => {
     value = value.toString();
     if (!value) {
@@ -18,6 +23,12 @@ export class IxFormatterService {
     return formatted;
   };
 
+  /**
+   * Parses passed in human readable memory size string into a normalized value.
+   * If no units are provided, MiB is used as default unit
+   * @param value The value to be parsed
+   * @returns The parsed value
+   */
   memorySizeParsing: (val: string) => number = (value: string) => {
     value = value.toString();
     if (!value) {
@@ -31,7 +42,14 @@ export class IxFormatterService {
     return humanStringToNum;
   };
 
-  // Converts a number from bytes to the most natural human readable format
+  /**
+   * Converts a number from bytes to the most natural human readable format
+   * @param rawBytes Bytes to be converted
+   * @param decimalPlaces Number of decimal places that the final value should be rounded off to
+   * @param minUnits If no unit is provided, what minimum base unit should be assumed
+   * @param hideBytes If the value is in bytes, should the 'B' sign be added
+   * @returns A human readable string with appropriate units
+   */
   convertBytestoHumanReadable = (
     rawBytes: number | string,
     decimalPlaces?: number,
@@ -57,129 +75,99 @@ export class IxFormatterService {
     return `${bytes.toFixed(dec)} ${units}`;
   };
 
-  // sample data, input and return values
-  // input       normalized       number value
-  // '12345'     '12345'          12345
-  // '512x'      ''               null
-  // '0'         '0'              0
-  // '0b'        ''               null
-  // '',         '0'              0
-  // '4MB',      '4 MiB'          4*1024**2 (4,194,304)
-  // '16KiB'     '16 KiB'         16*1024   (16,384)
-  // 'g'         ''               null
-  // ' t1'       ''               null
-  // '   5   m'  '5 MiB'          5*1024**2 (5,242,880)
-  // '1m',       '1 MiB'          1024**2   (1,048,576)
-  // '    T'     ''               null
-  // '2 MiB  '   '2 MiB'          2*1024**2 (2,097,152)
-  // '2 MiB x8'  ''               null
-  // '256 k'     '256 KiB'        256*1024  (262,144)
-  // 'm4m k'     ''               null
-  // '4m k'      ''               null
-  // '1.2m'      ''               null
-  // '12k4'      ''               null
-  // '12.4k'     ''               null
-  // ' 10G'      '10 GiB'         10*1024**3 (10,737,418,240)
-
-  // hstr = the human string from the form;
-  // dec = allow decimals;
-  // allowedUnits (optional) should include any or all of 'kmgtp', the first letters of KiB, Mib, etc. The first letter
-  // is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB. If you don't pass in allowedUnits,
-  // all of the above are accepted AND no unit is attached to an unlabeled number, so 256 is considered 256 bytes.
+  /**
+   * Converts a human readable size string with units into bytes. Any invalid letters result in null returned
+   * @param hstr The string to be converted
+   * @param dec Does the passed string has a decimal point values
+   * @param allowedUnits allowedUnits should include any or all of 'bkmgtp', the first letters of KiB, Mib, etc.
+   * The first letter is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB.
+   * If you don't pass in allowedUnits, all of the above are accepted AND no unit is attached to an unlabeled number,
+   * so 256 is considered 256 bytes.
+   * @returns The passed human readable string converted into number of bytes
+   */
   convertHumanStringToNum = (hstr: string, dec = false, allowedUnits?: string): number => {
-    let num = '0';
-    let unit = '';
+    const { unit, number } = this.getNumberAndUnitFromHumanString(hstr, dec, allowedUnits);
 
-    // empty value is evaluated as zero
-    if (!hstr) {
-      return null;
-    }
-
-    // remove whitespace
-    hstr = hstr.replace(/\s+/g, '');
-
-    // get leading number
-    let match = [];
-    if (dec) {
-      match = hstr.match(/^(\d+(\.\d+)?)/);
-    } else {
-      match = hstr.match(/^(\d+)/);
-    }
-    if (match && match.length > 1) {
-      num = match[1];
-    } else {
-      // leading number is required
-      return null;
-    }
-
-    // get optional unit
-    unit = hstr.replace(num, '');
-    if (!unit && allowedUnits) {
-      unit = allowedUnits[0];
-    }
-
-    // error when unit is present and...
-    if ((unit)
-          // ...allowedUnits are passed in but unit is not in allowed Units
-          && (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase())
-          // ...when allowedUnits are not passed in and unit is not recognized
-          || !(unit = this.normalizeUnit(unit)))) {
-      return null;
-    }
-
-    return Number(num) * this.convertUnitToNum(unit);
+    return Number(number) * this.convertUnitToNum(unit);
   };
 
+  /**
+   * Reformats a human readable size string into a more standardized format, e.g., '2m' to '2 MiB'.
+   * Any invalid letters result in null returned
+   * @param hstr The string to be converted
+   * @param dec Does the passed string has a decimal point values
+   * @param allowedUnits allowedUnits should include any or all of 'bkmgtp', the first letters of KiB, Mib, etc.
+   * The first letter is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB.
+   * If you don't pass in allowedUnits, all of the above are accepted AND no unit is attached to an unlabeled number,
+   * so 256 is considered 256 bytes.
+   * @returns The passed human readable string converted into number of bytes
+   */
   reformatHumanString = (hstr: string, dec = false, allowedUnits?: string): string => {
-    let num = '0';
-    let unit = '';
-
-    // empty value is evaluated as zero
-    if (!hstr) {
-      return null as string;
-    }
-
-    // remove whitespace
-    hstr = hstr.replace(/\s+/g, '');
-
-    // get leading number
-    let match = [];
-    if (dec) {
-      match = hstr.match(/^(\d+(\.\d+)?)/);
-    } else {
-      match = hstr.match(/^(\d+)/);
-    }
-    if (match && match.length > 1) {
-      num = match[1];
-    } else {
-      // leading number is required
-      return null as string;
-    }
-
-    // get optional unit
-    unit = hstr.replace(num, '');
-    if (!unit && allowedUnits) {
-      unit = allowedUnits[0];
-    }
-
-    // error when unit is present and...
-    if ((unit)
-          // ...allowedUnits are passed in but unit is not in allowed Units
-          && (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase())
-          // ...when allowedUnits are not passed in and unit is not recognized
-          || !(unit = this.normalizeUnit(unit)))) {
-      return null as string;
-    }
-
+    const { unit, number } = this.getNumberAndUnitFromHumanString(hstr, dec, allowedUnits);
     const spacer = (unit) ? ' ' : '';
 
-    return num.toString() + spacer + unit;
+    return number.toString() + spacer + unit;
   };
 
-  normalizeUnit = (unitStr: string): string => {
-    // normalize short units ("MB") or human units ("M") to IEC units ("MiB")
-    // unknown values return undefined
+  /**
+   * Converts passed in human readable string into two parts. The digit value in numbers and the unit that's applied.
+   * @param hstr The human readable size string
+   * @param dec Does the value has decimal point values
+   * @param allowedUnits allowedUnits should include any or all of 'bkmgtp', the first letters of KiB, Mib, etc.
+   * The first letter is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB.
+   * If you don't pass in allowedUnits, all of the above are accepted AND no unit is attached to an unlabeled number,
+   * so 256 is considered 256 bytes.
+   * @returns The passed human readable string converted into number and unit seperately
+   */
+  getNumberAndUnitFromHumanString(hstr: string, dec = false, allowedUnits?: string): { number: string; unit: string } {
+    let num = '0';
+    let unit = '';
 
+    // empty value is evaluated as zero
+    if (!hstr) {
+      return { number: null, unit: null };
+    }
+
+    // remove whitespace
+    hstr = hstr.replace(/\s+/g, '');
+
+    // get leading number
+    let match = [];
+    if (dec) {
+      match = hstr.match(/^(\d+(\.\d+)?)/);
+    } else {
+      match = hstr.match(/^(\d+)/);
+    }
+    if (match && match.length > 1) {
+      num = match[1];
+    } else {
+      // leading number is required
+      return { number: null, unit: null };
+    }
+
+    // get optional unit
+    unit = hstr.replace(num, '');
+    if (!unit && allowedUnits) {
+      unit = allowedUnits[0];
+    }
+
+    // error when unit is present and...
+    if ((unit)
+          // ...allowedUnits are passed in but unit is not in allowed Units
+          && (allowedUnits && !allowedUnits.toLowerCase().includes(unit[0].toLowerCase())
+          // ...when allowedUnits are not passed in and unit is not recognized
+          || !(unit = this.normalizeUnit(unit)))) {
+      return { number: null, unit: null };
+    }
+    return { number: num, unit };
+  }
+
+  /**
+   * Normalize short units ("MB") or human units ("M") to IEC units ("MiB")
+   * @param unitStr The unit string to be normalized
+   * @returns Normalized unit string based on the passed value
+   */
+  normalizeUnit = (unitStr: string): string => {
     // empty unit is valid, just return
     if (!unitStr) {
       return '';
@@ -209,10 +197,12 @@ export class IxFormatterService {
     return undefined;
   };
 
+  /**
+   * Convert IEC ("MiB"), short ("MB"), or human ("M") units to number of bytes. Unknown units are evaluated as 1
+   * @param unitStr The unit string to be converted
+   * @returns Number of bytes
+   */
   convertUnitToNum = (unitStr: string): number => {
-    // convert IEC ("MiB"), short ("MB"), or human ("M") units to numbers
-    // unknown units are evaluated as 1
-
     unitStr = this.normalizeUnit(unitStr);
     if (!unitStr) {
       return 1;
