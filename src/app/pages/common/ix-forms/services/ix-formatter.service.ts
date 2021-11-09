@@ -85,7 +85,11 @@ export class IxFormatterService {
    * so 256 is considered 256 bytes.
    * @returns The passed human readable string converted into number of bytes
    */
-  convertHumanStringToNum = (hstr: string, dec = false, allowedUnits?: string): number => {
+  convertHumanStringToNum = (
+    hstr: string,
+    dec = false,
+    allowedUnits?: 'bkmgtp' | 'kmgtp' | 'mgtp' | 'gtp' | 'tp' | 'p',
+  ): number => {
     const { unit, number } = this.getNumberAndUnitFromHumanString(hstr, dec, allowedUnits);
 
     return Number(number) * this.convertUnitToNum(unit);
@@ -102,7 +106,11 @@ export class IxFormatterService {
    * so 256 is considered 256 bytes.
    * @returns The passed human readable string converted into number of bytes
    */
-  reformatHumanString = (hstr: string, dec = false, allowedUnits?: string): string => {
+  reformatHumanString = (
+    hstr: string,
+    dec = false,
+    allowedUnits?: 'bkmgtp' | 'kmgtp' | 'mgtp' | 'gtp' | 'tp' | 'p',
+  ): string => {
     const { unit, number } = this.getNumberAndUnitFromHumanString(hstr, dec, allowedUnits);
     const spacer = (unit) ? ' ' : '';
 
@@ -119,7 +127,11 @@ export class IxFormatterService {
    * so 256 is considered 256 bytes.
    * @returns The passed human readable string converted into number and unit seperately
    */
-  getNumberAndUnitFromHumanString(hstr: string, dec = false, allowedUnits?: string): { number: string; unit: string } {
+  getNumberAndUnitFromHumanString(
+    hstr: string,
+    dec = false,
+    allowedUnits?: 'bkmgtp' | 'kmgtp' | 'mgtp' | 'gtp' | 'tp' | 'p',
+  ): { number: string; unit: string } {
     let num = '0';
     let unit = '';
 
