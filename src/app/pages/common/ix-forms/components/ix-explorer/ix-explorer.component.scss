@@ -52,4 +52,14 @@
   border-right: solid 1px var(--lines);
   font-size: 12px;
   padding-top: 2px;
+
+  ::ng-deep .tree-node {
+    // Wrap long file names
+    word-break: break-all;
+  }
+}
+
+.loading-error {
+  font-size: 12px;
+  margin-top: 2px;
 }

@@ -1,9 +1,9 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormArray, FormGroup, Validators } from '@angular/forms';
+import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ITreeOptions, TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';

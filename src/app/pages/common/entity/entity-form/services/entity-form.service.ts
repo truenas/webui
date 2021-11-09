@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import {
   AbstractControl, FormArray, FormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
-import { TreeNode } from 'angular-tree-component';
+import { TreeNode } from '@circlon/angular-tree-component';
 import * as _ from 'lodash';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';

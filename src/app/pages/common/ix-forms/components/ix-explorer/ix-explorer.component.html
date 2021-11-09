@@ -23,8 +23,8 @@
     #tree
     [nodes]="nodes"
     [options]="treeOptions"
-    (select)="onSelectionUpdated($event)"
-    (deselect)="onSelectionUpdated($event)"
+    (select)="onNodeSelect($event)"
+    (deselect)="onSelectionChanged()"
   >
     <!-- Do not remove #treeNodeTemplate even though it appears to be unused -->
     <ng-template #treeNodeTemplate let-node>
@@ -38,5 +38,9 @@
   </tree-root>
 </div>
 
+
+<mat-error *ngIf="loadingError" class="loading-error">
+  {{loadingError}}
+</mat-error>
 <ix-form-errors [control]="controlDirective.control" [label]="label"></ix-form-errors>
 <mat-hint *ngIf="hint">{{hint}}</mat-hint>

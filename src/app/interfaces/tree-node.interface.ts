@@ -1,4 +1,4 @@
-import { TreeNode as OriginalTreeNode } from 'angular-tree-component';
+import { TreeNode as OriginalTreeNode } from '@circlon/angular-tree-component';
 
 /**
  * This is basically a TreeNode from 'angular-tree-component'

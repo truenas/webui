@@ -1,6 +1,6 @@
 /**
  * Older variant of data inside of a TreeNode
- * @see TreeNodeData
+ * @see ExplorerNodeData
  * for newer variant
  */
 export interface ListdirChild {

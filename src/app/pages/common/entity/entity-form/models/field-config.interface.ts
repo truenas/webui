@@ -1,7 +1,7 @@
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatRadioChange } from '@angular/material/radio/radio';
-import { ITreeOptions } from 'angular-tree-component';
+import { ITreeOptions } from '@circlon/angular-tree-component';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';

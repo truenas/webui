@@ -29,10 +29,16 @@
           cdkAutosizeMinRows="1"
           cdkAutosizeMaxRows="4"></textarea>
           <ng-template #textInput>
-            <input matInput type="text" [placeholder]="config.placeholder | translate" [formControlName]="config.name" [required]="config.required"
-                  ix-auto
-                  ix-auto-type="input"
-                  ix-auto-identifier="{{config.name}}">
+            <input
+              matInput
+              type="text"
+              [placeholder]="config.placeholder | translate"
+              [formControlName]="config.name"
+              [required]="config.required"
+              ix-auto
+              ix-auto-type="input"
+              ix-auto-identifier="{{config.name}}"
+            >
           </ng-template>
         </mat-form-field>
       </div>

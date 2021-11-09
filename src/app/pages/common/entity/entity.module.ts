@@ -8,9 +8,9 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
-import { TreeModule } from 'angular-tree-component';
 import { ColorPickerModule } from 'ngx-color-picker';
 import { NgxFilesizeModule } from 'ngx-filesize';
 import { NgxUploaderModule } from 'ngx-uploader';
@@ -95,7 +95,7 @@ import { TableService } from './table/table.service';
     ColorPickerModule,
     NgxDatatableModule,
     CdkTableModule,
-    TreeModule.forRoot(),
+    TreeModule,
     NgxUploaderModule,
     FlexLayoutModule,
     TranslateModule,

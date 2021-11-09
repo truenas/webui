@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
 import {
   TREE_ACTIONS, KEYS, IActionMapping, TreeNode, ITreeOptions,
-} from 'angular-tree-component';
+} from '@circlon/angular-tree-component';
+import { TranslateService } from '@ngx-translate/core';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { FormExplorerConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';

@@ -132,11 +132,11 @@ export class AdvancedSettingsComponent implements OnInit {
       { name: this.translate.instant('Enabled'), prop: 'enabled' },
       { name: this.translate.instant('Next Run'), prop: 'next_run' },
     ],
-    add: () => {
-      this.onSettingsPressed(CardId.Cron);
+    add: async () => {
+      await this.onSettingsPressed(CardId.Cron);
     },
-    edit: (row) => {
-      this.onSettingsPressed(CardId.Cron, row.id);
+    edit: async (row) => {
+      await this.onSettingsPressed(CardId.Cron, row.id);
     },
   };
 

@@ -92,7 +92,10 @@ export class InitShutdownFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const values = this.form.value;
+    const values = {
+      ...this.form.value,
+      timeout: Number(this.form.value.timeout),
+    };
 
     this.isFormLoading = true;
     let request$: Observable<unknown>;

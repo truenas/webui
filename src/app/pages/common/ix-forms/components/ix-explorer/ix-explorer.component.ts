@@ -2,17 +2,19 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit, ViewChild,
 } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { UntilDestroy } from '@ngneat/until-destroy';
 import {
   IActionMapping,
   ITreeOptions,
   KEYS,
   TREE_ACTIONS,
   TreeComponent,
-  TreeModel,
-} from 'angular-tree-component';
-import { Observable } from 'rxjs';
+} from '@circlon/angular-tree-component';
+import { UntilDestroy } from '@ngneat/until-destroy';
+import { findKey } from 'lodash';
+import { Observable, of } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { TreeNode, ExplorerNodeData } from 'app/interfaces/tree-node.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 
 export type TreeNodeProvider = (parent: TreeNode<ExplorerNodeData>) => Observable<ExplorerNodeData[]>;
 
@@ -36,6 +38,7 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
   value = '';
   isDisabled = false;
   nodes: ExplorerNodeData[] = [];
+  loadingError: string;
 
   onChange: (value: string) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -51,7 +54,7 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
     },
     keys: {
       [KEYS.ENTER]: (tree, node, $event) => {
-        TREE_ACTIONS.FOCUS(tree, node, $event);
+        TREE_ACTIONS.TOGGLE_SELECTED(tree, node, $event);
       },
     },
   };
@@ -59,9 +62,18 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
   readonly treeOptions: ITreeOptions = {
     idField: 'path',
     displayField: 'name',
-    // TODO: Handle loading errors
-    getChildren: (node) => this.nodeProvider(node).toPromise(),
+    getChildren: (node) => this.nodeProvider(node).pipe(
+      tap(() => {
+        this.loadingError = null;
+      }),
+      catchError((error: WebsocketError | Error) => {
+        this.loadingError = 'reason' in error ? error.reason : error.message;
+        this.cdr.markForCheck();
+        return of([]);
+      }),
+    ).toPromise(),
     actionMapping: this.actionMapping,
+    useTriState: false,
   };
 
   constructor(
@@ -99,8 +111,23 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
     this.cdr.markForCheck();
   }
 
-  onSelectionUpdated(event: { treeModel: TreeModel }): void {
-    const newValue = Object.keys(event.treeModel.selectedLeafNodeIds)[0];
+  onNodeSelect(event: { node: TreeNode<ExplorerNodeData> }): void {
+    // TODO: If you ever need to implement multiple selection adjust code here
+    // Ensure only one node is selected
+    const treeState = {
+      ...this.tree.treeModel.getState(),
+      selectedLeafNodeIds: {
+        [event.node.id]: true,
+      },
+    };
+
+    this.tree.treeModel.setState(treeState);
+
+    this.onSelectionChanged();
+  }
+
+  onSelectionChanged(): void {
+    const newValue = findKey(this.tree.treeModel.selectedLeafNodeIds, (isSelected) => isSelected);
 
     if (newValue === this.value) {
       return;
@@ -110,7 +137,9 @@ export class IxExplorerComponent implements OnInit, ControlValueAccessor {
     this.onChange(newValue);
   }
 
-  // TODO: Use directive from: https://stackoverflow.com/questions/55458421/ng-template-typed-variable ?
+  /**
+   * Provides typing in templates
+   */
   typeNode(node: TreeNode<ExplorerNodeData>): TreeNode<ExplorerNodeData> {
     return node;
   }
