@@ -92,6 +92,9 @@ export class IxFormatterService {
   ): number => {
     const { unit, number } = this.getNumberAndUnitFromHumanString(hstr, dec, allowedUnits);
 
+    if (number === null) {
+      return NaN;
+    }
     return Number(number) * this.convertUnitToNum(unit);
   };
 
@@ -114,7 +117,7 @@ export class IxFormatterService {
     const { unit, number } = this.getNumberAndUnitFromHumanString(hstr, dec, allowedUnits);
     const spacer = (unit) ? ' ' : '';
 
-    return number.toString() + spacer + unit;
+    return number !== null ? number.toString() + spacer + unit : '';
   };
 
   /**
