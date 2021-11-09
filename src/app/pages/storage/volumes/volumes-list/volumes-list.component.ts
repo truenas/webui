@@ -212,10 +212,10 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.ws.call('pool.query'),
       this.ws.call(this.datasetQuery, this.datasetQueryOptions),
       this.ws.call('pool.query', [[], { extra: { is_upgraded: true } }]),
-    ]).pipe(untilDestroyed(this)).subscribe(([pools, datasets, isUpgradedPools]) => {
+    ]).pipe(untilDestroyed(this)).subscribe(([pools, datasets, upgradedPools]) => {
       this.zfsPoolRows = pools.map((originalPool) => {
         const pool = { ...originalPool } as VolumesListPool;
-        pool.is_upgraded = !!isUpgradedPools.find((_pool) => _pool.id === pool.id);
+        pool.is_upgraded = !!upgradedPools.find((_pool) => _pool.id === pool.id);
 
         /* Filter out system datasets */
         const pChild = datasets.find((set) => set.name === pool.name);
