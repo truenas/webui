@@ -1,7 +1,6 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { GeneralSettingsComponent } from 'app/pages/system/general-settings/general-settings.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
@@ -183,17 +182,8 @@ export const routes: Routes = [
         path: '',
         component: InitshutdownListComponent,
         data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts' },
-      }, {
-        path: 'add',
-        component: InitShutdownFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: InitShutdownFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }],
-    },
-    ],
+    }],
   },
 ];
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);
