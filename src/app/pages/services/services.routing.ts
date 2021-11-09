@@ -7,7 +7,7 @@ import { ServiceLLDPComponent } from './components/service-lldp/service-lldp.com
 import { ServiceNFSComponent } from './components/service-nfs/service-nfs.component';
 import { ServiceRSYNCComponent } from './components/service-rsync/service-rsync.component';
 import { ServiceS3Component } from './components/service-s3/service-s3.component';
-import { ServiceSMARTComponent } from './components/service-smart/service-smart.component';
+import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServiceSMBComponent } from './components/service-smb/service-smb.component';
 import { ServiceSNMPComponent } from './components/service-snmp/service-snmp.component';
 import { ServiceSSHComponent } from './components/service-ssh/service-ssh.component';
@@ -74,7 +74,7 @@ export const routes: Routes = [
   {
     data: { title: 'S.M.A.R.T.', breadcrumb: 'S.M.A.R.T.' },
     path: 'smartd',
-    component: ServiceSMARTComponent,
+    component: ServiceSmartComponent,
   },
   {
     data: { title: 'NFS', breadcrumb: 'NFS' },
