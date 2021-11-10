@@ -4,7 +4,6 @@ import {
 import {
   Component, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy,
 } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -53,7 +52,6 @@ import { UserFormComponent } from '../user-form/user-form.component';
 })
 export class UserListComponent implements OnInit, AfterViewInit, IxTableAdvanced<UserListRow>, IxTableExpandableRow {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   protected usr_lst: [User[]?] = [];
   protected grp_lst: [Group[]?] = [];
@@ -142,7 +140,6 @@ export class UserListComponent implements OnInit, AfterViewInit, IxTableAdvanced
     this.dataSource = new MatTableDataSource(users.length ? users : []);
     this.userTotal = users.length;
     this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
     this.cdr.markForCheck();
   }
 

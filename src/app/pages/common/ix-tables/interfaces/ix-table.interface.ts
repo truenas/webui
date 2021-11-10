@@ -43,4 +43,4 @@ export interface IxTableExpandableRow<T = any> {
 /**
  * Advanced Table includes IxTable<T>, IxTablePaginator, IxTableSort
  */
-export interface IxTableAdvanced<T = any> extends IxTable<T>, IxTablePaginator, IxTableSort {}
+export interface IxTableAdvanced<T = any> extends IxTable<T>, IxTableSort {}

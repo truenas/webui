@@ -2,16 +2,11 @@ import {
   Component, ChangeDetectionStrategy, ViewChild, Input,
   ContentChild, ContentChildren, QueryList, AfterContentInit, ChangeDetectorRef,
 } from '@angular/core';
-import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
 import {
   MatColumnDef, MatHeaderRowDef, MatNoDataRow, MatRowDef, MatTable, MatTableDataSource,
 } from '@angular/material/table';
-import { UntilDestroy } from '@ngneat/until-destroy';
-import { Observable } from 'rxjs';
 import { IxTableService } from 'app/pages/common/ix-tables/services/ix-table.service';
 
-@UntilDestroy()
 @Component({
   selector: 'ix-table',
   templateUrl: './ix-table.component.html',
@@ -25,12 +20,8 @@ export class IxTableComponent<T> implements AfterContentInit {
   @ContentChildren(MatColumnDef) columnDefs: QueryList<MatColumnDef>;
   @ContentChild(MatNoDataRow) noDataRow: MatNoDataRow;
   @ViewChild(MatTable, { static: true }) table: MatTable<T>;
-  @ViewChild(MatSort, { static: false }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
   @Input() dataSource: MatTableDataSource<T>;
-  @Input() error$: Observable<boolean>;
-  @Input() title: string;
   @Input() multiTemplateDataRows: boolean;
   @Input() fixedLayout: boolean;
 

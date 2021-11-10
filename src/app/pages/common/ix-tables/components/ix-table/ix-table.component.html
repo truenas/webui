@@ -1,20 +1,9 @@
-<div class="ix-table-header" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px">
-  <h2 class="ix-table-title">{{ title | translate }}</h2>
-  <div class="ix-table-toolbar" fxLayout="row" fxLayoutAlign="flex-end center" fxLayoutGap="8px">
-    <ng-content select="[ix-table-toolbar]"></ng-content>
-  </div>
-</div>
-
-<div class="ix-table-container">
-  <table
-    mat-table
-    class="ix-table"
-    [dataSource]="dataSource"
-    [multiTemplateDataRows]="multiTemplateDataRows"
-    [fixedLayout]="fixedLayout"
-  >
-    <ng-content></ng-content>
-  </table>
-
-  <ng-content select="[ix-table-paginator]"></ng-content>
-</div>
+<table
+  mat-table
+  class="ix-table"
+  [dataSource]="dataSource"
+  [multiTemplateDataRows]="multiTemplateDataRows"
+  [fixedLayout]="fixedLayout"
+>
+  <ng-content></ng-content>
+</table>
