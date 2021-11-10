@@ -1,3 +1,5 @@
+import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
+
 export interface AdvancedConfig {
   advancedmode: boolean;
   anonstats: boolean;
@@ -20,8 +22,8 @@ export interface AdvancedConfig {
   serialspeed: string;
   swapondrive: number;
   syslog_tls_certificate: number;
-  syslog_transport: string; // Enum? UDP
-  sysloglevel: string; // Enum? F_CRIT
+  syslog_transport: SyslogTransport;
+  sysloglevel: SyslogLevel;
   syslogserver: string;
   traceback: boolean;
   uploadcrash: boolean;

@@ -411,7 +411,8 @@ entity-form-list .list-action-block-wrapper .form-element select {
 
 .login-form .form-element input[type = 'password'],
 .login-form .form-element .has_toggle_pw input {
-  top: -6px;
+  padding: 0;
+  top: -8px;
 }
 
 .login-form .form-element button.toggle_pw {

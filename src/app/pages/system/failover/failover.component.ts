@@ -33,7 +33,7 @@ export class FailoverComponent implements FormConfiguration {
   saveSubmitText = helptext_system_failover.save_button_text;
   confirmSubmitDialog = {
     title: this.translate.instant('Disable Failover'),
-    message: this.translate.instant(''),
+    message: '',
     hideCheckbox: false,
   };
   master_fg: FormControl;

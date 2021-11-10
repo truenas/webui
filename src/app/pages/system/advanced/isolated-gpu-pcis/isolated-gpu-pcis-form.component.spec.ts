@@ -40,7 +40,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
       mockWebsocket([
         mockCall('device.get_info', [mockDeviceFirst, mockDeviceSecond]),
         mockCall('system.advanced.config', {
-          isolated_gpu_pci_ids: [],
+          isolated_gpu_pci_ids: ['0000:00:02.0'],
         } as AdvancedConfig),
         mockCall('system.advanced.update'),
       ]),
@@ -62,7 +62,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      "GPU's": [],
+      "GPU's": ['Intel Corporation HD Graphics 510'],
     });
   });
 

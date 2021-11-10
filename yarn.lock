@@ -12769,6 +12769,11 @@ text-extensions@^1.0.0:
   resolved "https://registry.yarnpkg.com/text-extensions/-/text-extensions-1.9.0.tgz#1853e45fee39c945ce6f6c36b2d659b5aabc2a26"
   integrity sha512-wiBrwC1EhBelW12Zy26JeOUkQ5mRu+5o8rpsJk5+2t+Y5vE7e842qtZDQ2g1NpX/29HdyFeJ4nSIhI47ENSxlQ==
 
+text-security@~3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/text-security/-/text-security-3.2.1.tgz#4c3e4eb3a4a1c76c27c144b8ffe0590f24feecdd"
+  integrity sha512-MjDQ3lyLeLqcGqZfQCZ6kvjQiuNfJaicdgIczPJDtD4tj0vIPT8WwIOKTi8wgXCVS/F1WJmapO3SppXemrwbIA==
+
 text-table@0.2.0, text-table@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/text-table/-/text-table-0.2.0.tgz#7f5ee823ae805207c00af2df4a84ec3fcfa570b4"
