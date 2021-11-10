@@ -6,12 +6,12 @@
         <ix-input
           formControlName="comment"
           [label]="'Description' | translate"
-          [tooltip]="tooltips.comment"
+          [tooltip]="tooltips.comment | translate"
         ></ix-input>
         <ix-select
           formControlName="type"
           [label]="'Type' | translate"
-          [tooltip]="tooltips.type"
+          [tooltip]="tooltips.type | translate"
           [options]="typeOptions$"
         ></ix-select>
         <ix-input
@@ -19,14 +19,14 @@
           formControlName="command"
           [label]="'Command' | translate"
           [required]="true"
-          [tooltip]="tooltips.command"
+          [tooltip]="tooltips.command | translate"
         ></ix-input>
         <ng-template #selectScript>
           <ix-explorer
             formControlName="script"
             [label]="'Script' | translate"
             [required]="true"
-            [tooltip]="tooltips.script"
+            [tooltip]="tooltips.script | translate"
             [nodeProvider]="treeNodeProvider"
           ></ix-explorer>
         </ng-template>
@@ -35,19 +35,19 @@
           formControlName="when"
           [label]="'When' | translate"
           [required]="true"
-          [tooltip]="tooltips.when"
+          [tooltip]="tooltips.when | translate"
           [options]="whenOptions$"
         ></ix-select>
         <ix-checkbox
           formControlName="enabled"
           [label]="'Enabled' | translate"
-          [tooltip]="tooltips.enabled"
+          [tooltip]="tooltips.enabled | translate"
         ></ix-checkbox>
         <ix-input
           formControlName="timeout"
           type="number"
           [label]="'Timeout' | translate"
-          [tooltip]="tooltips.timeout"
+          [tooltip]="tooltips.timeout | translate"
         ></ix-input>
       </ix-fieldset>
 

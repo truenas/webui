@@ -24,7 +24,6 @@ export class FormExplorerComponent implements Field, OnInit {
   fieldShow: string;
   nodes: any; // TODO: Likely ListdirChild[]
 
-  private displayFieldName: string;
   private rootSelectable: boolean;
 
   private actionMapping: IActionMapping = {
@@ -92,7 +91,6 @@ export class FormExplorerComponent implements Field, OnInit {
       this.config.customTemplateStringOptions.explorer = this;
     }
 
-    this.displayFieldName = 'subTitle';
     this.nodes = [{
       name: this.config.initial,
       subTitle: this.config.initial,
@@ -100,7 +98,7 @@ export class FormExplorerComponent implements Field, OnInit {
       expanded: !this.rootSelectable,
     }];
 
-    this.customTemplateStringOptions.displayField = this.displayFieldName;
+    this.customTemplateStringOptions.displayField = 'subTitle';
   }
 
   getChildren(node: TreeNode): Promise<ListdirChild[]> {
