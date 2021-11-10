@@ -21,6 +21,17 @@
 }
 
 .ix-table-details {
-  padding-bottom: 16px;
-  padding-top: 16px;
+  .mat-divider {
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+
+  .details {
+    padding: 16px;
+  }
+
+  .actions {
+    padding: 8px 16px;
+  }
 }

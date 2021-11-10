@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
@@ -28,6 +29,7 @@ import { UserListComponent } from './users/user-list/user-list.component';
     TranslateModule,
     IxFormsModule,
     IxTablesModule,
+    FlexLayoutModule,
   ],
   declarations: [
     GroupListComponent,

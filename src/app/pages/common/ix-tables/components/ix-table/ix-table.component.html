@@ -1,32 +1,7 @@
 <div class="ix-table-header" fxLayout="row" fxLayoutAlign="space-between center" fxLayoutGap="8px">
   <h2 class="ix-table-title">{{ title | translate }}</h2>
   <div class="ix-table-toolbar" fxLayout="row" fxLayoutAlign="flex-end center" fxLayoutGap="8px">
-    <ng-content select="[ix-table-toolbar-before]"></ng-content>
-
-    <div class="ix-table-searchbar">
-      <div class="form-element search-field" id="row-filter">
-        <mat-form-field floatPlaceholder="never">
-          <span matPrefix class="search-icon-wrapper"><mat-icon>search</mat-icon></span>
-          <input
-            #filter
-            matInput
-            class="ix-table-search"
-            [placeholder]="'Filter' | translate"
-            (keyup)="filterSubject.next($event.target.value)"
-          >
-
-          <span
-            class="reset-icon-wrapper"
-            [class.invisible]="filter?.value?.length == 0"
-            matSuffix
-          >
-            <mat-icon (click)="filter.value = null; resetFilter()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-          </span>
-        </mat-form-field>
-      </div>
-    </div>
-
-    <ng-content select="[ix-table-toolbar-after]"></ng-content>
+    <ng-content select="[ix-table-toolbar]"></ng-content>
   </div>
 </div>
 
@@ -37,27 +12,7 @@
     [dataSource]="dataSource"
     [multiTemplateDataRows]="multiTemplateDataRows"
   >
-    <ng-container *ngIf="columns?.length; then defaultRows; else customRows"></ng-container>
-
-    <ng-template #defaultRows>
-      <ng-container *ngFor="let column of columns;" [matColumnDef]="column.prop">
-        <th mat-header-cell *matHeaderCellDef> {{ column.name | translate }} </th>
-        <td mat-cell *matCellDef="let element">{{ element[column.prop] }}</td>
-      </ng-container>
-
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let element; columns: displayedColumns;"></tr>
-
-      <tr class="mat-row mat-no-data-row" *matNoDataRow>
-        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          <entity-empty [conf]="loading ? loadingConf : emptyConf"></entity-empty>
-        </td>
-      </tr>
-    </ng-template>
-
-    <ng-template #customRows>
-      <ng-content></ng-content>
-    </ng-template>
+    <ng-content></ng-content>
   </table>
 
   <ng-content select="[ix-table-paginator]"></ng-content>

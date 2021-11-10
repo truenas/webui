@@ -1,5 +1,4 @@
 <ix-table
-  [title]="title"
   [dataSource]="dataSource"
   matSort
   matSortDisableClear="true"
@@ -7,60 +6,103 @@
   [matSortDirection]="defaultSort.direction"
   [multiTemplateDataRows]="true"
 >
-  <ng-container ix-table-toolbar-after>
-    <button type="button" mat-button (click)="doAdd()">{{ 'Add User' | translate }}</button>
+  <ng-container ix-table-toolbar>
+    <button
+      type="button"
+      mat-button
+      color="primary"
+      (click)="doAdd()"
+      [matTooltip]="'Create a new user' | translate"
+    >{{ 'Add' | translate }}</button>
+
+    <!-- <ix-table-search> -->
+
+    <button type="button" mat-icon-button color="primary" (click)="toggleBuiltins()" [matTooltip]="helptext.globalConfigTooltip">
+      <mat-icon>settings</mat-icon>
+    </button>
   </ng-container>
 
   <ng-container matColumnDef="username">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Username' | translate }} </th>
-    <td mat-cell *matCellDef="let element">{{ element.username }}</td>
+    <td mat-cell *matCellDef="let element; dataSource: dataSource">{{ element.username }}</td>
   </ng-container>
 
   <ng-container matColumnDef="uid">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'UID' | translate }} </th>
-    <td mat-cell *matCellDef="let element">{{ element.uid }}</td>
+    <td mat-cell *matCellDef="let element; dataSource: dataSource">{{ element.uid }}</td>
   </ng-container>
 
   <ng-container matColumnDef="builtin">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Builtin' | translate }} </th>
-    <td mat-cell *matCellDef="let element">{{ element.builtin }}</td>
+    <td mat-cell *matCellDef="let element; dataSource: dataSource">{{ element.builtin }}</td>
   </ng-container>
 
   <ng-container matColumnDef="home">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Home' | translate }} </th>
-    <td mat-cell *matCellDef="let element">{{ element.home }}</td>
+    <td mat-cell *matCellDef="let element; dataSource: dataSource">{{ element.home }}</td>
   </ng-container>
 
   <ng-container matColumnDef="full_name">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Full Name' | translate }} </th>
-    <td mat-cell *matCellDef="let element">{{ element.full_name }}</td>
+    <td mat-cell *matCellDef="let element; dataSource: dataSource">{{ element.full_name }}</td>
   </ng-container>
 
   <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef> {{ 'Actions' | translate }} </th>
-    <td mat-cell *matCellDef="let element">
-      <button mat-icon-button type="button" (click)="doEdit(element.id)">
-        <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-pencil"
-          matTooltip="{{'Edit' | translate}}"
-          matTooltipPosition="above"
-          aria-label="Edit User"
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let element; dataSource: dataSource">
+      <button mat-icon-button type="button" (click)="$event.stopPropagation(); expandRow(element)">
+        <mat-icon
+          role="img"
+          fontSet="mdi-set"
+          [fontIcon]="expandedRow === element ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+          [matTooltip]="'Expand Row' | translate"
+          aria-label="Expand Row"
         ></mat-icon>
       </button>
     </td>
   </ng-container>
 
   <ng-container matColumnDef="expandedDetail">
-    <td mat-cell *matCellDef="let element" [attr.colspan]="displayedColumns.length">
-      <div class="ix-table-details" [@detailExpand]="element == expanded ? 'expanded' : 'collapsed'">
-        <div><strong>{{ 'GID' | translate }}:</strong> {{ element?.group?.bsdgrp_gid }}</div>
-        <div><strong>{{ 'Home Directory' | translate }}:</strong> {{ element.home }}</div>
-        <div><strong>{{ 'Shell' | translate }}:</strong> {{ element.shell }}</div>
-        <div><strong>{{ 'Email' | translate }}:</strong> {{ element.email }}</div>
-        <div><strong>{{ 'Password Disabled' | translate }}:</strong> {{ element.password_disabled }}</div>
-        <div><strong>{{ 'Lock User' | translate }}:</strong> {{ element.locked }}</div>
-        <div><strong>{{ 'Permit Sudo' | translate }}:</strong> {{ element.sudo }}</div>
-        <div><strong>{{ 'Microsoft Account' | translate }}:</strong> {{ element.microsoft_account }}</div>
-        <div><strong>{{ 'Samba Authentication' | translate }}:</strong> {{ element.smb }}</div>
+    <td mat-cell *matCellDef="let element; dataSource: dataSource" [attr.colspan]="displayedColumns.length">
+      <div class="ix-table-details" [@detailExpand]="element === expandedRow ? 'expanded' : 'collapsed'">
+        <section class="details">
+          <div><strong>{{ 'GID' | translate }}:</strong> {{ element?.group?.bsdgrp_gid }}</div>
+          <div><strong>{{ 'Home Directory' | translate }}:</strong> {{ element.home }}</div>
+          <div><strong>{{ 'Shell' | translate }}:</strong> {{ element.shell }}</div>
+          <div><strong>{{ 'Email' | translate }}:</strong> {{ element.email }}</div>
+          <div><strong>{{ 'Password Disabled' | translate }}:</strong> {{ element.password_disabled }}</div>
+          <div><strong>{{ 'Lock User' | translate }}:</strong> {{ element.locked }}</div>
+          <div><strong>{{ 'Permit Sudo' | translate }}:</strong> {{ element.sudo }}</div>
+          <div><strong>{{ 'Microsoft Account' | translate }}:</strong> {{ element.microsoft_account }}</div>
+          <div><strong>{{ 'Samba Authentication' | translate }}:</strong> {{ element.smb }}</div>
+        </section>
+
+        <mat-divider></mat-divider>
+
+        <div class="actions" fxLayout="row" fxLayoutGap="8px">
+          <button
+            mat-button
+            type="button"
+            (click)="doEdit(element)"
+          >
+            <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="center center">
+              <mat-icon [matTooltip]="'Edit' | translate" aria-label="Edit User">edit</mat-icon>
+              <span>{{ 'Edit' | translate }}</span>
+            </div>
+          </button>
+
+          <button
+            *ngIf="!element.builtin"
+            mat-button
+            type="button"
+            (click)="doDelete(element)"
+          >
+            <div fxLayout="row" fxLayoutGap="8px" fxLayoutAlign="center center">
+              <mat-icon [matTooltip]="'Delete' | translate" aria-label="Delete User">delete</mat-icon>
+              <span>{{ 'Delete' | translate }}</span>
+            </div>
+          </button>
+        </div>
       </div>
     </td>
   </ng-container>
@@ -69,13 +111,14 @@
   <tr mat-row *matRowDef="let element; columns: displayedColumns;"
     (click)="expandRow(element)"
     class="element-row"
-    [ngClass]="{'expanded-row': expanded === element}"
+    [style.cursor]="'pointer'"
+    [ngClass]="{'expanded-row': expandedRow === element}"
   ></tr>
-  <tr mat-row class="details-row" [hidden]="expanded !== row" *matRowDef="let row; columns: ['expandedDetail'];"></tr>
+  <tr mat-row class="details-row" [hidden]="expandedRow !== row" *matRowDef="let row; columns: ['expandedDetail'];"></tr>
 
   <tr class="mat-row" *matNoDataRow>
     <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-      <entity-empty [conf]="emptyConf"></entity-empty>
+      <entity-empty [conf]="loading ? loadingConf : emptyConf"></entity-empty>
     </td>
   </tr>
 

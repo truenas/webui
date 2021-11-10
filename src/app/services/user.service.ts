@@ -88,4 +88,8 @@ export class UserService {
       )
       .toPromise();
   }
+
+  deleteUser(id: number, deleteGroup: boolean = false): void {
+    this.ws.call('user.delete', [id, { delete_group: deleteGroup }]);
+  }
 }

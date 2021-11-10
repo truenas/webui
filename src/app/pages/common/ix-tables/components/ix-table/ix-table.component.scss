@@ -1,56 +1,62 @@
-.ix-table-header {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 16px;
-
+::ng-deep {
   .ix-table-header {
-    align-items: center;
     display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+
+    .ix-table-header {
+      align-items: center;
+      display: flex;
+    }
   }
-}
 
-.ix-table-title {
-  color: var(--fg2);
-}
+  .ix-table-title {
+    color: var(--fg2);
+  }
 
-.ix-table-container {
-  border: 1px solid var(--lines);
-  margin-top: 8px;
+  .ix-table-container {
+    border: 1px solid var(--lines);
+    margin-top: 8px;
 
-  table {
-    table-layout: fixed;
-    width: 100%;
+    .ix-table {
+      table-layout: fixed;
+      width: 100%;
 
-    tr.mat-header-row {
-      height: 48px;
+      .mat-header-row {
+        height: 48px;
 
-      &:hover {
-        background-color: var(--fg1);
+        &:hover {
+          background-color: var(--fg1);
+        }
+      }
+
+      .mat-header-cell,
+      .mat-cell,
+      .mat-footer-cell {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .mat-header-cell {
+        background-color: var(--bg2);
+        color: var(--fg2);
+        letter-spacing: 0.3px;
+      }
+
+      .mat-cell {
+        color: var(--fg2);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &.mat-column-actions {
+          padding-right: 8px;
+        }
       }
     }
 
-    .mat-header-cell,
-    .mat-cell,
-    .mat-footer-cell {
-      padding-left: 16px;
-      padding-right: 16px;
+    .mat-no-data-row .mat-cell {
+      padding: 16px;
     }
-
-    th.mat-header-cell {
-      background-color: var(--bg2);
-      color: var(--fg2);
-      letter-spacing: 0.3px;
-    }
-
-    td.mat-cell {
-      color: var(--fg2);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-  }
-
-  .mat-no-data-row .mat-cell {
-    padding: 16px;
   }
 }

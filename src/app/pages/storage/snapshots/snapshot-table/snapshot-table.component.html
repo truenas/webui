@@ -1,8 +1,6 @@
-<ix-table [dataSource]="dataSource" [columns]="columns" matSort matSortDisableClear="true" [loading]="loading">
-  <ng-container ix-table-toolbar-before>
+<ix-table [dataSource]="dataSource" matSort matSortDisableClear="true">
+  <ng-container ix-table-toolbar>
     <mat-spinner *ngIf="loading" [diameter]="24"></mat-spinner>
-  </ng-container>
-  <ng-container ix-table-toolbar-after>
     <button type="button" mat-button (click)="doAdd()">{{ 'Add Snapshot' | translate }}</button>
   </ng-container>
 
