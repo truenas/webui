@@ -154,4 +154,15 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     #assert wait_on_element_disappear(driver, 90, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 10, '//label[contains(.,"Select Pool")]')   
+    #wait for slide out to disappear and menu elements be clickable again
+    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')  
+
+    #if not is_element_present(driver, '//h1[contains(.,"Restart SMB Service")]'):
+    #    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+    #    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
+    #else:
+    #    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__CONFIRM"]', 'clickable')
+    #    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__CONFIRM"]').click()
+    #    assert wait_on_element(driver, 7, '//button[ix-auto="button__CONTINUE"]', 'clickable')
+    #    driver.find_element_by_xpath('//button[ix-auto="button__CONTINUE"]').click()
+    

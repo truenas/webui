@@ -104,8 +104,8 @@ def click_create_confirm_the_warning_checkbox_and_click_create_pool(driver):
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CREATE POOL"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CREATE POOL"]').click()
     assert wait_on_element_disappear(driver, 60, '//h6[contains(.,"Create Pool")]')
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__DONE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__DONE"]').click()
+    assert wait_on_element(driver, 7, '//button[contains(text(),"Done")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(text(),"Done")]').click()
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
 
 @then('the pool should be listed on the storage page')
