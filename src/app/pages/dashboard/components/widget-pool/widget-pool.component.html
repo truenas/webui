@@ -109,7 +109,7 @@
                           </span>
                           <span *ngIf="poolState.status == PoolStatus.Online || poolState.status == PoolStatus.Healthy"
                             class="{{poolHealth.level}} icon">
-                            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                            <mat-icon role="img" fontSet="mdi-set" [fontIcon]="poolHealth.isHealthy ? 'mdi-check-circle' : 'mdi-alert'"></mat-icon>
                           </span>
                         </ng-template>
                       </div>
