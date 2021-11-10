@@ -27,12 +27,25 @@
             <span class="icons">
               <span *ngIf="column.prop === 'name' && element.data.hasOwnProperty('is_encrypted_root') && element.data.hasOwnProperty('non_encrypted_on_encrypted')">
                 &nbsp;
-                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-lock-open-variant" *ngIf="element.data.is_encrypted_root && !element.data.locked">
-                </mat-icon>
-                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-lock" *ngIf="element.data.is_encrypted_root && element.data.locked">
-                </mat-icon>
-                <mat-icon svgIcon="anti-lock" *ngIf="element.data.non_encrypted_on_encrypted || (!element.data.encrypted && element.data.has_encrypted_children)">
-                </mat-icon>
+                <mat-icon
+                  role="img"
+                  fontSet="mdi-set"
+                  fontIcon="mdi-lock-open-variant" 
+                  *ngIf="element.data.is_encrypted_root && !element.data.locked"
+                  [matTooltip]="'Encrypted dataset is unlocked' | translate"
+                ></mat-icon>
+                <mat-icon 
+                  role="img" 
+                  fontSet="mdi-set" 
+                  [matTooltip]="'Encrypted dataset is locked' | translate"
+                  fontIcon="mdi-lock" 
+                  *ngIf="element.data.is_encrypted_root && element.data.locked"
+                ></mat-icon>
+                <mat-icon 
+                  svgIcon="anti-lock" 
+                  *ngIf="element.data.non_encrypted_on_encrypted || (!element.data.encrypted && element.data.has_encrypted_children)"
+                  [matTooltip]="'Pool has encrypted children' | translate"
+                ></mat-icon>
               </span>
             </span>
           </div>
