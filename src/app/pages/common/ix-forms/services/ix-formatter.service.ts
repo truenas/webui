@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class IxFormatterService {
-  readonly IecUnits = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+  readonly iecUnits = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
   /**
    * Formats any memory size human readable string into a normalized size reading, e.g., '2m' to '2 MiB'
@@ -66,7 +66,7 @@ export class IxFormatterService {
         bytes = bytes / 1024;
         i++;
       } while (bytes >= 1024 && i < 4);
-      units = this.IecUnits[i];
+      units = this.iecUnits[i];
     } else if (minUnits) {
       units = minUnits;
     } else {
@@ -92,10 +92,7 @@ export class IxFormatterService {
   ): number => {
     const { unit, number } = this.getNumberAndUnitFromHumanString(hstr, dec, allowedUnits);
 
-    if (number === null) {
-      return NaN;
-    }
-    return Number(number) * this.convertUnitToNum(unit);
+    return number === null ? null : Number(number) * this.convertUnitToNum(unit);
   };
 
   /**
@@ -188,14 +185,14 @@ export class IxFormatterService {
       return '';
     }
 
-    const IecUnitsStr = this.IecUnits.join('|');
-    const shortUnitsStr = this.IecUnits.map((unit) => {
+    const IecUnitsStr = this.iecUnits.join('|');
+    const shortUnitsStr = this.iecUnits.map((unit) => {
       if (unit.length > 1) {
         return unit.charAt(0) + unit.charAt(2);
       }
       return 'BYTES';
     }).join('|');
-    const humanUnitsStr = this.IecUnits.map((unit) => unit.charAt(0)).join('|');
+    const humanUnitsStr = this.iecUnits.map((unit) => unit.charAt(0)).join('|');
 
     const allUnitsStr = (IecUnitsStr + '|' + shortUnitsStr + '|' + humanUnitsStr).toUpperCase();
     const unitsRE = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
@@ -222,6 +219,6 @@ export class IxFormatterService {
     if (!unitStr) {
       return 1;
     }
-    return (1024 ** (this.IecUnits.indexOf(unitStr)));
+    return (1024 ** (this.iecUnits.indexOf(unitStr)));
   };
 }

@@ -12,10 +12,6 @@ describe('IxFormatterService', () => {
     spectator = createService();
   });
 
-  it('should instantiate', () => {
-    expect(spectator).toBeTruthy();
-  });
-
   describe('memorySizeFormatting', () => {
     it('should return empty string when invalid size string is passed', () => {
       const formatted = spectator.service.memorySizeFormatting('2u');
@@ -34,9 +30,9 @@ describe('IxFormatterService', () => {
   });
 
   describe('memorySizeParsing', () => {
-    it('should return NaN when invalid size string is passed', () => {
+    it('should return null when invalid size string is passed', () => {
       const parsed = spectator.service.memorySizeParsing('2u');
-      expect(parsed).toBe(NaN);
+      expect(parsed).toBe(null);
     });
 
     it('should return value converted in bytes when valid size string is passed', () => {
