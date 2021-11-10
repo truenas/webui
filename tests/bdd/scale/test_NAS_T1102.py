@@ -154,4 +154,4 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     #assert wait_on_element_disappear(driver, 90, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 10, '//mat-select')   
+    assert wait_on_element_disappear(driver, 10, '//label[contains(.,"Select Pool")]')   
