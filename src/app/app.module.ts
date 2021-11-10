@@ -65,7 +65,6 @@ import { AuthService } from './services/auth/auth.service';
 import { NavigationService } from './services/navigation/navigation.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
 import { WebSocketService } from './services/ws.service';
-import { SnapshotEffects } from './store/effects/storage-snapshot.effects';
 
 @NgModule({
   imports: [
@@ -109,7 +108,7 @@ import { SnapshotEffects } from './store/effects/storage-snapshot.effects';
     StoreRouterConnectingModule.forRoot({
       serializer: CustomRouterStateSerializer,
     }),
-    EffectsModule.forRoot([RouterEffects, UserEffects, SnapshotEffects]),
+    EffectsModule.forRoot([RouterEffects, UserEffects]),
     StoreDevtoolsModule.instrument({ maxAge: 25, logOnly: false }),
   ],
   declarations: [

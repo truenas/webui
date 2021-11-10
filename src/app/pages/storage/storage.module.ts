@@ -46,7 +46,6 @@ import { SnapshotAddComponent } from './snapshots/snapshot-add/snapshot-add.comp
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clone.component';
 import { SnapshotDetailsComponent } from './snapshots/snapshot-list/components/snapshot-details.component';
 import { SnapshotListComponent } from './snapshots/snapshot-list/snapshot-list.component';
-import { SnapshotTableComponent } from './snapshots/snapshot-table/snapshot-table.component';
 import { routing } from './storage.routing';
 import { VmwareSnapshotListComponent } from './vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { VmwareSnapshotFormComponent } from './vmware-snapshot/vmware-snapshot/vmware-snapshot-form.component';
@@ -115,9 +114,8 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     EditNfsAceComponent,
     EditPosixAceComponent,
     SelectPresetModalComponent,
-    SnapshotTableComponent,
   ],
-  exports: [VolumesListControlsComponent, SnapshotTableComponent],
+  exports: [VolumesListControlsComponent],
   entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
   providers: [
     UserService,

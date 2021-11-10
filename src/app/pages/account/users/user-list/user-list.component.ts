@@ -196,6 +196,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     ).subscribe(() => {
       this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
       this.prefService.savePreferences();
+      this.getDataFromStore();
     });
   }
 
