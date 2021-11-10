@@ -14,13 +14,20 @@
     color: var(--fg2);
   }
 
+  .ix-table-toolbar {
+    color: var(--fg2);
+  }
+
   .ix-table-container {
     border: 1px solid var(--lines);
     margin-top: 8px;
 
     .ix-table {
-      table-layout: fixed;
       width: 100%;
+
+      &.mat-table-fixed-layout {
+        table-layout: fixed;
+      }
 
       .mat-header-row {
         height: 48px;

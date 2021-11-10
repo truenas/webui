@@ -33,6 +33,7 @@ import { AppState } from 'app/store/reducers/index';
 import {
   selectAllUser, selectUserLoading, selectUserError,
 } from 'app/store/selectors/user.selectors';
+import { IxTableAdvanced, IxTableExpandableRow } from '../../../common/ix-tables/interfaces/ix-table.interface';
 import { UserFormComponent } from '../user-form/user-form.component';
 
 @UntilDestroy()
@@ -50,7 +51,7 @@ import { UserFormComponent } from '../user-form/user-form.component';
     ]),
   ],
 })
-export class UserListComponent implements OnInit, AfterViewInit {
+export class UserListComponent implements OnInit, AfterViewInit, IxTableAdvanced<UserListRow>, IxTableExpandableRow {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
   @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
 
@@ -64,6 +65,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
   private subscription: Subscription = new Subscription();
   error$: Observable<boolean>;
   userTotal = 0;
+  pageIndex = 1;
   pageSize = 50;
   defaultSort: Sort = { active: 'uid', direction: 'asc' };
   emptyConf: EmptyConfig = {
@@ -92,21 +94,15 @@ export class UserListComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
-    this.getDataFromStore();
-
-    setTimeout(() => {
-      if (this.prefService.preferences.showUserListMessage) {
-        this.showOneTimeBuiltinMsg();
-      }
-    }, 2000);
+    this.getData();
   }
 
-  getDataFromStore(): void {
+  getData(): void {
     this.store$.pipe(select(selectAllUser)).pipe(
       untilDestroyed(this),
     ).subscribe(
       (users) => {
-        this.initializeData(this.resourceTransformIncomingRestData(users));
+        this.initializeData(this.transformData(users));
       },
     );
 
@@ -123,10 +119,22 @@ export class UserListComponent implements OnInit, AfterViewInit {
     ));
 
     this.error$ = this.store$.pipe(select(selectUserError));
+
+    this.ws.call('group.query').pipe(
+      untilDestroyed(this),
+    ).subscribe((groups) => {
+      this.grp_lst.push(groups);
+    });
   }
 
   ngAfterViewInit(): void {
     this.loadUsers();
+
+    setTimeout(() => {
+      if (this.prefService.preferences.showUserListMessage) {
+        this.showOneTimeBuiltinMsg();
+      }
+    }, 2000);
   }
 
   initializeData(users: UserListRow[]): void {
@@ -139,10 +147,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
   }
 
   private loadUsers(): void {
-    this.store$.dispatch(new UserLoadAction({
-      search: this.filter.toLocaleLowerCase(),
-      offset: 0,
-    }));
+    this.store$.dispatch(new UserLoadAction());
   }
 
   ableToDeleteGroup(id: number): boolean {
@@ -155,19 +160,19 @@ export class UserListComponent implements OnInit, AfterViewInit {
     return false;
   }
 
-  resourceTransformIncomingRestData(rawUsers: User[]): UserListRow[] {
+  transformData(rawUsers: User[]): UserListRow[] {
     const users = [...rawUsers] as UserListRow[];
     this.usr_lst = [];
     this.grp_lst = [];
     this.usr_lst.push(users);
     if (this.prefService.preferences.hide_builtin_users) {
-      const newData: UserListRow[] = [];
+      const customUsers: UserListRow[] = [];
       users.forEach((user) => {
         if (!user.builtin || user.username === 'root') {
-          newData.push(user);
+          customUsers.push(user);
         }
       });
-      return newData;
+      return customUsers;
     }
     return users;
   }
@@ -196,7 +201,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     ).subscribe(() => {
       this.prefService.preferences.hide_builtin_users = !this.prefService.preferences.hide_builtin_users;
       this.prefService.savePreferences();
-      this.getDataFromStore();
+      this.getData();
     });
   }
 

@@ -32,6 +32,7 @@ export class IxTableComponent<T> implements AfterContentInit {
   @Input() error$: Observable<boolean>;
   @Input() title: string;
   @Input() multiTemplateDataRows: boolean;
+  @Input() fixedLayout: boolean;
 
   constructor(
     private cdr: ChangeDetectorRef,

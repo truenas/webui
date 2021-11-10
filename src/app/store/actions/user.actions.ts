@@ -11,7 +11,6 @@ export enum UserActionType {
 
 export class UserLoadAction implements Action {
   readonly type = UserActionType.Loading;
-  constructor(public payload: { search: string; offset: number }) {}
 }
 
 export class UserLoadSuccessAction implements Action {
@@ -21,7 +20,7 @@ export class UserLoadSuccessAction implements Action {
 
 export class UserLoadFailAction implements Action {
   readonly type = UserActionType.LoadFailure;
-  constructor(public error: any) {}
+  constructor(public error: boolean) {}
 }
 
 export type UserAction = UserLoadAction | UserLoadSuccessAction | UserLoadFailAction;

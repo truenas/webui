@@ -15,7 +15,6 @@ export class UserEffects {
   loadUsers$ = createEffect(() => {
     return this.actions$
       .pipe(ofType<UserLoadAction>(UserActionType.Loading),
-        map((action) => action.payload),
         switchMap(() => {
           return this.ws.call('user.query').pipe(
             map((response: User[]) => new UserLoadSuccessAction(response)),

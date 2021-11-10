@@ -5,6 +5,7 @@
   [matSortActive]="defaultSort.active"
   [matSortDirection]="defaultSort.direction"
   [multiTemplateDataRows]="true"
+  [fixedLayout]="true"
 >
   <ng-container ix-table-toolbar>
     <button
@@ -17,7 +18,7 @@
 
     <!-- <ix-table-search> -->
 
-    <button type="button" mat-icon-button color="primary" (click)="toggleBuiltins()" [matTooltip]="helptext.globalConfigTooltip">
+    <button type="button" mat-icon-button (click)="toggleBuiltins()" [matTooltip]="helptext.globalConfigTooltip">
       <mat-icon>settings</mat-icon>
     </button>
   </ng-container>
@@ -123,6 +124,6 @@
   </tr>
 
   <ng-container ix-table-paginator>
-    <mat-paginator [length]="userTotal" [pageSize]="50" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
+    <mat-paginator [length]="userTotal" [pageIndex]="pageIndex" [pageSize]="pageSize" [pageSizeOptions]="[10, 20, 50, 100]"></mat-paginator>
   </ng-container>
 </ix-table>
