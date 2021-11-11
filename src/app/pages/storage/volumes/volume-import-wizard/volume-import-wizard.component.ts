@@ -364,7 +364,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
                 hideCheckBox: true,
                 buttonMsg: helptext.unlock_dataset_dialog_button,
               }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                this.router.navigate(['storage', 'id', this.pool, 'dataset', 'unlock', this.pool]);
+                this.router.navigate(['/storage', 'id', this.pool, 'dataset', 'unlock', this.pool]);
               });
             }
           }, (err) => {
