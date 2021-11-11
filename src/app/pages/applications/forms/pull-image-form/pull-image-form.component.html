@@ -2,31 +2,31 @@
 <mat-card>
   <mat-card-content>
     <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
-      <ix-fieldset [title]="'Docker Registry Authentication' | translate">
-        <ix-input
-          formControlName="username"
-          [label]="'Username' | translate"
-          [tooltip]="tooltips.username"
-        ></ix-input>
-        <ix-input
-          formControlName="password"
-          [label]="'Password' | translate"
-          type="password"
-          [required]="true"
-          [tooltip]="tooltips.password"
-        ></ix-input>
-      </ix-fieldset>
       <ix-fieldset>
         <ix-input
           formControlName="from_image"
           [label]="'Image Name' | translate"
           [required]="true"
-          [tooltip]="tooltips.from_image"
+          [tooltip]="tooltips.from_image | translate"
         ></ix-input>
         <ix-input
           formControlName="tag"
           [label]="'Image Tag' | translate"
-          [tooltip]="tooltips.tag"
+          [tooltip]="tooltips.tag | translate"
+        ></ix-input>
+      </ix-fieldset>
+      <ix-fieldset [title]="'Docker Registry Authentication' | translate">
+        <p class="hint">{{ 'Optional. Only needed for private images.' | translate }}</p>
+        <ix-input
+          formControlName="username"
+          [label]="'Username' | translate"
+          [tooltip]="tooltips.username | translate"
+        ></ix-input>
+        <ix-input
+          formControlName="password"
+          [label]="'Password' | translate"
+          type="password"
+          [tooltip]="tooltips.password | translate"
         ></ix-input>
       </ix-fieldset>
 

@@ -4,30 +4,30 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { PullImageFormComponent } from 'app/pages/applications/forms/pull-image-form/pull-image-form.component';
+import { Catalog, CatalogTrain } from 'app/interfaces/catalog.interface';
+import { CatalogEditFormComponent } from 'app/pages/applications/forms/catalog-edit-form/catalog-edit-form.component';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
-import { DialogService, WebSocketService } from 'app/services';
+import { WebSocketService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
 
-describe('PullImageFormComponent', () => {
-  let spectator: Spectator<PullImageFormComponent>;
+describe('CatalogEditFormComponent', () => {
+  let spectator: Spectator<CatalogEditFormComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
   const createComponent = createComponentFactory({
-    component: PullImageFormComponent,
+    component: CatalogEditFormComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
     ],
     providers: [
       mockWebsocket([
-        mockCall('container.image.pull'),
+        mockCall('catalog.update'),
       ]),
       mockProvider(IxModalService),
       mockProvider(FormErrorHandlerService),
-      mockProvider(DialogService),
     ],
   });
 
@@ -35,27 +35,41 @@ describe('PullImageFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
+
+    spectator.component.setCatalogForEdit({
+      id: 'official',
+      label: 'Official',
+      trains: {
+        test: {},
+        stable: {},
+        incubator: {},
+      } as { [trainName: string]: CatalogTrain },
+      preferred_trains: ['test'],
+    } as Catalog);
   });
 
-  it('pulls docker image when form is submitted', async () => {
+  it('shows catalog name and preferred trains when catalog is open for editing', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    const values = await form.getValues();
+
+    expect(values).toEqual({
+      'Catalog Name': 'Official',
+      'Preferred Trains': ['test'],
+    });
+  });
+
+  it('saves catalog updates when form is saved', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      Username: 'john',
-      Password: '12345678',
-      'Image Name': 'private/redis',
-      'Image Tag': 'stable',
+      'Preferred Trains': ['stable', 'incubator'],
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
     await saveButton.click();
 
-    expect(ws.job).toHaveBeenCalledWith('container.image.pull', [{
-      docker_authentication: {
-        username: 'john',
-        password: '12345678',
-      },
-      from_image: 'private/redis',
-      tag: 'stable',
-    }]);
+    expect(ws.call).toHaveBeenCalledWith('catalog.update', [
+      'official',
+      { preferred_trains: ['stable', 'incubator'] },
+    ]);
   });
 });

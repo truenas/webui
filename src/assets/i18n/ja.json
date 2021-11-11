@@ -1945,6 +1945,7 @@
   "Operation": "",
   "Optional description. Portals are automatically assigned a numeric group.": "",
   "Optional user-friendly name.": "",
+  "Optional. Only needed for private images.": "",
   "Optional: Add passphrase and recovery key": "",
   "Optional: Choose installation media image": "",
   "Options": "",
