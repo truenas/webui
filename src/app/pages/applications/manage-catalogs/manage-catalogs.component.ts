@@ -142,13 +142,6 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     ];
   }
 
-  // TODO: Remove?
-  // TODO: Remove
-  resourceTransformIncomingRestData(d: Catalog[]): Catalog[] {
-    const data = Object.assign([], d);
-    return data;
-  }
-
   doAdd(): void {
     this.modalService.open(CatalogAddFormComponent);
   }

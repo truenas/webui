@@ -75,6 +75,7 @@ export class PullImageFormComponent {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       dialogRef.close();
       this.modalService.close();
     });

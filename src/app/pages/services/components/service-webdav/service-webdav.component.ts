@@ -124,6 +124,7 @@ export class ServiceWebdavComponent implements OnInit {
       (error) => {
         this.isFormLoading = false;
         new EntityUtils().handleWSError(null, error, this.dialogService);
+        this.cdr.markForCheck();
       },
     );
 
@@ -171,6 +172,7 @@ export class ServiceWebdavComponent implements OnInit {
     delete values.password2;
     this.ws.call('webdav.update', [values] as [WebdavConfigUpdate]).pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.router.navigate(['/', 'services']);
     }, (error) => {
       this.isFormLoading = false;

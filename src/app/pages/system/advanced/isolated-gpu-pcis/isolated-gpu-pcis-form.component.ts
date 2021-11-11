@@ -91,11 +91,13 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.sysGeneralService.refreshSysGeneral();
       this.modal.close();
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.formGroup);
+      this.cdr.markForCheck();
     });
   }
 }

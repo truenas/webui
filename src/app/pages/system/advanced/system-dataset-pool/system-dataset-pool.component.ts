@@ -51,10 +51,12 @@ export class SystemDatasetPoolComponent implements OnInit {
         (config) => {
           this.isFormLoading = false;
           this.form.patchValue(config);
+          this.cdr.markForCheck();
         },
         (error) => {
           this.isFormLoading = false;
           new EntityUtils().handleWSError(null, error, this.dialogService);
+          this.cdr.markForCheck();
         },
       );
   }
@@ -71,6 +73,7 @@ export class SystemDatasetPoolComponent implements OnInit {
       () => {
         this.isFormLoading = false;
         this.sysGeneralService.refreshSysGeneral();
+        this.cdr.markForCheck();
         this.modalService.close();
       },
       (error) => {

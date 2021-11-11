@@ -89,6 +89,7 @@ export class SyslogFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.modalService.close();
       this.sysGeneralService.refreshSysGeneral();
     }, (res) => {
@@ -108,6 +109,7 @@ export class SyslogFormComponent implements OnInit {
       .subscribe(
         ([advancedConfig, { syslog }]) => {
           this.isFormLoading = false;
+          this.cdr.markForCheck();
           this.form.patchValue({
             ...advancedConfig,
             syslog_tls_certificate: String(advancedConfig.syslog_tls_certificate),

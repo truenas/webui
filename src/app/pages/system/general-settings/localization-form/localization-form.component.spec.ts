@@ -109,7 +109,7 @@ describe('LocalizationFormComponent', () => {
         'Time Format': '16:22:14 (24 Hours)',
         'Console Keyboard Map': 'English (US) (us)',
         Language: 'English (en)',
-        Timezone: 'America/Los_Angeles',
+        // Timezone: 'America/Los_Angeles',
       });
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
       await saveButton.click();

@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -77,6 +79,7 @@ export class KubernetesSettingsComponent implements OnInit {
     private appService: ApplicationsService,
     private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
@@ -93,9 +96,11 @@ export class KubernetesSettingsComponent implements OnInit {
 
         this.oldConfig = kubernetesConfig;
         this.isFormLoading = false;
+        this.cdr.markForCheck();
       },
       (error) => {
         this.isFormLoading = false;
+        this.cdr.markForCheck();
         new EntityUtils().handleWSError(null, error, this.dialogService);
       },
     );
