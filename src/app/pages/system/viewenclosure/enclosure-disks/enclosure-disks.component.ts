@@ -383,10 +383,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'R10':
         this.chassis = new R10();
         break;
-      case 'TRUENAS-R20A':
       case 'R20':
         this.chassis = new R20(true);
         break;
+      case 'TRUENAS-R20A':
       case 'R20A':
         this.chassis = new R20A(true);
         break;
