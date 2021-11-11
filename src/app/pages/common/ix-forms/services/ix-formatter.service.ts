@@ -83,28 +83,6 @@ export class IxFormatterService {
   };
 
   /**
-   * Reformats a human readable size string into a more standardized format, e.g., '2m' to '2 MiB'.
-   * Any invalid letters result in null returned
-   * @param hstr The string to be converted
-   * @param dec Does the passed string has a decimal point values
-   * @param allowedUnits allowedUnits should include any or all of 'bkmgtp', the first letters of KiB, Mib, etc.
-   * The first letter is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB.
-   * If you don't pass in allowedUnits, all of the above are accepted AND no unit is attached to an unlabeled number,
-   * so 256 is considered 256 bytes.
-   * @returns The passed human readable string converted into number of bytes
-   */
-  reformatHumanString = (
-    hstr: string,
-    dec = false,
-    allowedUnits?: 'bkmgtp' | 'kmgtp' | 'mgtp' | 'gtp' | 'tp' | 'p',
-  ): string => {
-    const { unit, number } = this.getNumberAndUnitFromHumanString(hstr, dec, allowedUnits);
-    const spacer = (unit) ? ' ' : '';
-
-    return number !== null ? number.toString() + spacer + unit : '';
-  };
-
-  /**
    * Converts passed in human readable string into two parts. The digit value in numbers and the unit that's applied.
    * @param hstr The human readable size string
    * @param dec Does the value has decimal point values
