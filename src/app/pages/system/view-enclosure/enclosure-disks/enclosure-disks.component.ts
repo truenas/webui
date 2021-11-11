@@ -27,6 +27,7 @@ import { M50 } from 'app/core/classes/hardware/m50';
 import { R10 } from 'app/core/classes/hardware/r10';
 import { R20 } from 'app/core/classes/hardware/r20';
 import { R20A } from 'app/core/classes/hardware/r20a';
+import { R20B } from 'app/core/classes/hardware/r20b';
 import { R40 } from 'app/core/classes/hardware/r40';
 import { R50 } from 'app/core/classes/hardware/r50';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
@@ -397,17 +398,20 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       this.clearDisk();
     }
     const enclosure = this.system.enclosures[profile.enclosureKey];
+    enclosure.model = 'R20';
     switch (enclosure.model) {
       case 'R10':
         this.chassis = new R10();
+        break;
+      case 'R20':
+        this.chassis = new R20(true);
         break;
       case 'TRUENAS-R20A':
       case 'R20A':
         this.chassis = new R20A(true);
         break;
-      case 'R20':
       case 'R20B':
-        this.chassis = new R20(true);
+        this.chassis = new R20B(true);
         break;
       case 'R40':
         this.chassis = new R40();
