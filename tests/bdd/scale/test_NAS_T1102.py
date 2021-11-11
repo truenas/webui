@@ -150,11 +150,14 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
     driver.find_element_by_xpath('//div[@class="ix-modal-body"]//button[contains(.,"Save")]').click()
 
 
+
 @then('Please wait should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     #assert wait_on_element_disappear(driver, 90, '//h6[contains(.,"Please wait")]')
     #wait for slide out to disappear and menu elements be clickable again
+    assert wait_on_element(driver, 10, '//mat-progress-bar')
+    time.sleep(10)   
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')  
 
     #if not is_element_present(driver, '//h1[contains(.,"Restart SMB Service")]'):
