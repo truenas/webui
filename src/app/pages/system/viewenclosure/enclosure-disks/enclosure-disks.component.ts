@@ -20,7 +20,6 @@ import { R20B } from 'app/core/classes/hardware/r20b';
 import { R40 } from 'app/core/classes/hardware/r40';
 import { R50 } from 'app/core/classes/hardware/r50';
 import { M50 } from 'app/core/classes/hardware/m50';
-// import { M50Rear } from 'app/core/classes/hardware/m50_rear';
 import { ES12 } from 'app/core/classes/hardware/es12';
 import { E16 } from 'app/core/classes/hardware/e16';
 import { E24 } from 'app/core/classes/hardware/e24';
@@ -405,9 +404,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         const rearChassis = !!this.system.rearIndex;
         this.chassis = new M50(rearChassis);
         break;
-      /* case "M Series Rear Bays":
-        this.chassis = new M50Rear();
-        break; */
       case 'X Series':
       case 'ES12':
         this.chassis = new ES12();
@@ -568,10 +564,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           enclosure.container.name = enclosure.model + '_for_extraction';
           enclosure.container.width = enclosure.container.width / 2;
           enclosure.container.height = enclosure.container.height / 2;
-          enclosure.container.x = 0; // this.app._options.width / 2 - enclosure.container.width / 2;
-          enclosure.container.y = 0; // this.app._options.height / 2 - enclosure.container.height / 2;
-          // enclosure.chassis.alpha = 0.75;
-          // enclosure.chassis.alpha = 0.35;
+          enclosure.container.x = 0;
+          enclosure.container.y = 0;
+
           this.optimizeChassisOpacity(enclosure);
 
           profile.disks.forEach((disk, index) => {
@@ -587,11 +582,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   extractEnclosure(enclosure, profile) {
-    // let extractor = new PIXI.extract.CanvasExtract(this.renderer);
     const canvas = this.app.renderer.plugins.extract.canvas(enclosure.container);
     this.controllerEvents.next({ name: 'EnclosureCanvas', data: { canvas, profile }, sender: this });
     this.container.removeChild(enclosure.container);
-    // delete enclosure;
   }
 
   destroyEnclosure() {
@@ -658,7 +651,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'details':
         this.container.alpha = 1;
         this.setDisksDisabled();
-        // this.setDisksHealthState();
         this.setDisksPoolState();
         const vdev = this.system.getVdevInfo(this.selectedDisk.devname);
         this.selectedVdev = vdev;
@@ -778,7 +770,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   setDisksEnabledState(enclosure?) {
     if (!enclosure) { enclosure = this.enclosure; }
     enclosure.driveTrayObjects.forEach((dt, index) => {
-      // let disk = this.findDiskBySlotNumber(index + 1);
       const disk = this.findDiskBySlotNumber(dt.id);
       dt.enabled = !!disk;
     });
