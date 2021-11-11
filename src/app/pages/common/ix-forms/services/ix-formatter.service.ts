@@ -5,22 +5,13 @@ export class IxFormatterService {
   readonly iecUnits = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
   /**
-   * Formats any memory size human readable string into a normalized size reading, e.g., '2m' to '2 MiB'
+   * Formats any memory size in bytes to human readable string, e.g., '2147483648' to '2 GiB'
    * @param value The string to be formatted
    * @returns Formatted string
    */
   memorySizeFormatting: (val: string | number) => string = (value: string | number) => {
     value = value.toString();
-    if (!value) {
-      return '';
-    }
-    let formatted = '';
-    if (value.replace(/\s/g, '').match(/[^0-9]/g) === null) {
-      formatted = this.convertBytestoHumanReadable(value.replace(/\s/g, ''), 0);
-    } else {
-      formatted = this.reformatHumanString(value);
-    }
-    return formatted;
+    return !value || Number.isNaN(Number(value)) ? '' : this.convertBytestoHumanReadable(value, 0);
   };
 
   /**
@@ -34,12 +25,8 @@ export class IxFormatterService {
     if (!value) {
       return null;
     }
-    let humanStringToNum = this.convertHumanStringToNum(value);
-    if (humanStringToNum === Number(value)) {
-      value += 'mb';
-      humanStringToNum = this.convertHumanStringToNum(value);
-    }
-    return humanStringToNum;
+    const humanStringToNum = this.convertHumanStringToNum(value);
+    return (humanStringToNum !== Number(value)) ? humanStringToNum : this.convertHumanStringToNum(value + 'mb');
   };
 
   /**

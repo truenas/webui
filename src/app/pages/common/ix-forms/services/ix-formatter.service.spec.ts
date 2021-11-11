@@ -18,8 +18,8 @@ describe('IxFormatterService', () => {
       expect(formatted).toBe('');
     });
 
-    it('should return normalized string when valid size string is passed', () => {
-      const formatted = spectator.service.memorySizeFormatting('2gb');
+    it('should return formatted size string when valid size in bytes is passed', () => {
+      const formatted = spectator.service.memorySizeFormatting('2147483648');
       expect(formatted).toBe('2 GiB');
     });
 
