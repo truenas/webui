@@ -655,6 +655,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     return {
       ...data,
       aliases: transformedAliases,
+      mtu: data.mtu || data.state?.mtu,
     };
   }
 
