@@ -159,7 +159,7 @@ def please_wait_should_appear_while_settings_are_being_applied(driver):
     assert wait_on_element(driver, 10, '//mat-progress-bar')
     time.sleep(10)   
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')  
-
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
     #if not is_element_present(driver, '//h1[contains(.,"Restart SMB Service")]'):
     #    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     #    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
