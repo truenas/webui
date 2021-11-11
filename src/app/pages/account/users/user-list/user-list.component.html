@@ -14,7 +14,8 @@
   </button>
 </ix-table-toolbar>
 
-<ix-table
+<table
+  ix-table
   [dataSource]="dataSource"
   matSort
   matSortDisableClear="true"
@@ -23,10 +24,7 @@
   [multiTemplateDataRows]="true"
   [fixedLayout]="true"
 >
-  <ng-container matColumnDef="username">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'Username' | translate }} </th>
-    <td mat-cell *matCellDef="let element; dataSource: dataSource">{{ element.username }}</td>
-  </ng-container>
+  <ix-table-column name="username" [headerText]="'Username' | translate"></ix-table-column>
 
   <ng-container matColumnDef="uid">
     <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ 'UID' | translate }} </th>
@@ -122,6 +120,6 @@
       <entity-empty [conf]="loading ? loadingConf : emptyConf"></entity-empty>
     </td>
   </tr>
-</ix-table>
+</table>
 
 <ix-table-paginator [dataSource]="dataSource"></ix-table-paginator>

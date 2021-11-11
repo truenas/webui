@@ -7,10 +7,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
-import { helptext_system_ntpservers as helptext_ntp } from 'app/helptext/system/ntp-servers';
 import { CoreEvent } from 'app/interfaces/events';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
-import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -22,7 +20,6 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
-import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import { SystemGeneralService, DialogService, StorageService } from 'app/services';
 import { IxModalService } from 'app/services/ix-modal.service';
@@ -38,7 +35,6 @@ export class GeneralSettingsComponent implements OnInit {
   dataCards: DataCard[] = [];
   supportTitle = helptext.supportTitle;
   localeData: DataCard;
-  ntpServersData: DataCard;
   configData: SystemGeneralConfig;
   subs: Subs;
   formEvent$: Subject<CoreEvent>;
@@ -124,10 +120,6 @@ export class GeneralSettingsComponent implements OnInit {
     this.getDataCardData();
     this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getDataCardData();
-    });
-
-    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.ntpServersData?.tableConf?.tableComponent.getData();
     });
 
     this.formEvent$ = new Subject();
@@ -234,36 +226,6 @@ export class GeneralSettingsComponent implements OnInit {
           this.dataCards.push(this.localeData);
         });
       });
-
-      this.ntpServersData = {
-        id: 'ntp',
-        title: helptext.ntpTitle,
-        tableConf: {
-          title: helptext.ntpTitle,
-          queryCall: 'system.ntpserver.query',
-          deleteCall: 'system.ntpserver.delete',
-          deleteMsg: {
-            title: '',
-            key_props: ['address'],
-          },
-          parent: this,
-          columns: [
-            { name: helptext_ntp.address.label, prop: 'address' },
-            { name: helptext_ntp.burst.label, prop: 'burst', width: '40px' },
-            { name: helptext_ntp.iburst.label, prop: 'iburst', width: '40px' },
-            { name: helptext_ntp.prefer.label, prop: 'prefer', width: '40px' },
-            { name: helptext_ntp.minpoll.label, prop: 'minpoll', width: '60px' },
-            { name: helptext_ntp.maxpoll.label, prop: 'maxpoll', width: '60px' },
-          ],
-          add: () => {
-            this.ixModalService.open(NtpServerFormComponent);
-          },
-          edit: (server: NtpServer) => {
-            const modal = this.ixModalService.open(NtpServerFormComponent);
-            modal.setupForm(server);
-          },
-        },
-      };
     });
   }
 

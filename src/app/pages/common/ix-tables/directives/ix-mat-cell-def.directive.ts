@@ -5,15 +5,15 @@ import { Observable } from 'rxjs';
 
 @Directive({
   selector: '[matCellDef]',
-  providers: [{ provide: CdkCellDef, useExisting: TypedMatCellDefDirective }],
+  providers: [{ provide: CdkCellDef, useExisting: IxCellDefDirective }],
 })
-export class TypedMatCellDefDirective<T> extends MatCellDef {
+export class IxCellDefDirective<T> extends MatCellDef {
   // leveraging syntactic-sugar syntax when we use *matCellDef
   @Input() matCellDefDataSource: T[] | Observable<T[]> | MatTableDataSource<T>;
 
   // ngTemplateContextGuard flag to help with the Language Service
   static ngTemplateContextGuard<T>(
-    dir: TypedMatCellDefDirective<T>,
+    dir: IxCellDefDirective<T>,
     ctx: unknown,
   ): ctx is { $implicit: T; index: number } {
     return true;

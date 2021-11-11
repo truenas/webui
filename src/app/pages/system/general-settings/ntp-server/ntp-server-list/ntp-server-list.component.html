@@ -1,0 +1,32 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'NTP Servers' | translate }}</h3>
+    <div class="actions action-icon">
+      <button mat-button color="default" (click)="doAdd()">
+        {{ 'Add' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+  <mat-card-content>
+    <table ix-table [dataSource]="dataSource" class="mat-elevation-z0">
+      <ix-table-column name="address" [headerText]="'Address' | translate"></ix-table-column>
+      <ix-table-column name="burst" [headerText]="'Burst' | translate" width="40px"></ix-table-column>
+      <ix-table-column name="iburst" [headerText]="'IBurst' | translate" width="40px"></ix-table-column>
+      <ix-table-column name="prefer" [headerText]="'Prefer' | translate" width="40px"></ix-table-column>
+      <ix-table-column name="minpoll" [headerText]="'Min Poll' | translate" width="60px"></ix-table-column>
+      <ix-table-column name="maxpoll" [headerText]="'Max Poll' | translate" width="60px"></ix-table-column>
+
+      <ix-table-column name="actions" [headerText]="null">
+        <ng-template let-data="data">
+          <button type="button" mat-icon-button (click)="$event.stopPropagation(); doDelete(data)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </ng-template>
+      </ix-table-column>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let server; columns: displayedColumns;" (click)="doEdit(server)" [style.cursor]="'pointer'"></tr>
+    </table>
+  </mat-card-content>
+</mat-card>
+

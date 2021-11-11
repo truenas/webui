@@ -1,43 +1,50 @@
+/* eslint-disable @angular-eslint/use-component-view-encapsulation */
+/* eslint-disable @angular-eslint/no-host-metadata-property */
+
 import {
-  Component, ChangeDetectionStrategy, ViewChild, Input,
-  ContentChild, ContentChildren, QueryList, AfterContentInit, ChangeDetectorRef,
+  _DisposeViewRepeaterStrategy,
+  _VIEW_REPEATER_STRATEGY,
+} from '@angular/cdk/collections';
+import {
+  CDK_TABLE_TEMPLATE,
+  CdkTable,
+  CDK_TABLE,
+  _CoalescedStyleScheduler,
+  _COALESCED_STYLE_SCHEDULER,
+  STICKY_POSITIONING_LISTENER,
+} from '@angular/cdk/table';
+import {
+  ChangeDetectionStrategy, Component, ViewEncapsulation,
 } from '@angular/core';
-import {
-  MatColumnDef, MatHeaderRowDef, MatNoDataRow, MatRowDef, MatTable, MatTableDataSource,
-} from '@angular/material/table';
-import { IxTableService } from 'app/pages/common/ix-tables/services/ix-table.service';
+import { MatTable } from '@angular/material/table';
 
+/**
+ * Wrapper for the CdkTable with own design styles.
+ */
 @Component({
-  selector: 'ix-table',
-  templateUrl: './ix-table.component.html',
+  selector: 'ix-table, table[ix-table]',
+  exportAs: 'ixTable',
+  template: CDK_TABLE_TEMPLATE,
   styleUrls: ['./ix-table.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [IxTableService],
+  host: {
+    class: 'ix-table',
+    '[class.ix-table-fixed-layout]': 'fixedLayout',
+  },
+  providers: [
+    { provide: _VIEW_REPEATER_STRATEGY, useClass: _DisposeViewRepeaterStrategy },
+    { provide: CdkTable, useExisting: IxTableComponent },
+    { provide: CDK_TABLE, useExisting: IxTableComponent },
+    { provide: _COALESCED_STYLE_SCHEDULER, useClass: _CoalescedStyleScheduler },
+    { provide: STICKY_POSITIONING_LISTENER, useValue: null },
+  ],
+  encapsulation: ViewEncapsulation.None,
+  // See note on CdkTable for explanation on why this uses the default change detection strategy.
+  changeDetection: ChangeDetectionStrategy.Default,
 })
-export class IxTableComponent<T> implements AfterContentInit {
-  @ContentChildren(MatHeaderRowDef) headerRowDefs: QueryList<MatHeaderRowDef>;
-  @ContentChildren(MatRowDef) rowDefs: QueryList<MatRowDef<T>>;
-  @ContentChildren(MatColumnDef) columnDefs: QueryList<MatColumnDef>;
-  @ContentChild(MatNoDataRow) noDataRow: MatNoDataRow;
-  @ViewChild(MatTable, { static: true }) table: MatTable<T>;
+export class IxTableComponent<T> extends MatTable<T> {
+  /** Overrides the sticky CSS class set by the `CdkTable`. */
+  protected override stickyCssClass = 'mat-table-sticky';
 
-  @Input() dataSource: MatTableDataSource<T>;
-  @Input() multiTemplateDataRows: boolean;
-  @Input() fixedLayout: boolean;
-
-  constructor(
-    private cdr: ChangeDetectorRef,
-  ) {}
-
-  update(): void {
-    this.columnDefs.forEach((columnDef) => this.table.addColumnDef(columnDef));
-    this.rowDefs.forEach((rowDef) => this.table.addRowDef(rowDef));
-    this.headerRowDefs.forEach((headerRowDef) => this.table.addHeaderRowDef(headerRowDef));
-    this.table.setNoDataRow(this.noDataRow);
-    this.cdr.markForCheck();
-  }
-
-  ngAfterContentInit(): void {
-    this.update();
-  }
+  /** Overrides the need to add position: sticky on every sticky cell element in `CdkTable`. */
+  protected override needsPositionStickyOnElement = false;
 }

@@ -1,5 +1,8 @@
-::ng-deep {
+:host {
+  display: block;
+
   .ix-table-toolbar {
     color: var(--fg2);
+    margin-bottom: 16px;
   }
 }

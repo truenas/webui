@@ -36,7 +36,6 @@ import { JobService } from 'app/services';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 import { EntityModule } from '../common/entity/entity.module';
-import { IxTablesModule } from '../common/ix-tables/ix-tables.module';
 import { DiskBulkEditComponent } from './disks/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent } from './disks/disk-form/disk-form.component';
 import { DiskListComponent } from './disks/disk-list/disk-list.component';
@@ -70,7 +69,6 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
     NgxFilesizeModule, CommonDirectivesModule, CdkAccordionModule,
     TooltipModule, CoreComponents,
-    IxTablesModule,
   ],
   declarations: [
     VolumesListComponent,

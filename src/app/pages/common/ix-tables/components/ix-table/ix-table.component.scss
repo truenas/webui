@@ -1,45 +1,56 @@
-:host ::ng-deep {
-  border: 1px solid var(--lines);
-  display: block;
-  margin-top: 8px;
+.mat-card-content :host {
+  border: 0 !important;
+}
 
-  .ix-table {
-    width: 100%;
+.ix-table.cdk-table {
+  border-spacing: 0;
+  display: table;
+  width: 100%;
 
-    &.mat-table-fixed-layout {
-      table-layout: fixed;
+  &.ix-table-fixed-layout {
+    table-layout: fixed;
+  }
+
+  .mat-header-row,
+  .mat-row,
+  .mat-footer-row {
+    height: 48px;
+  }
+
+  .mat-header-cell,
+  .mat-cell,
+  .mat-footer-cell {
+    border-bottom: 1px solid var(--lines);
+    padding-left: 8px;
+    padding-right: 8px;
+    text-align: left;
+
+    &:first-of-type {
+      padding-left: 24px;
     }
 
-    .mat-header-row {
-      height: 48px;
-
-      &:hover {
-        background-color: var(--fg1);
-      }
+    &:last-of-type {
+      padding-right: 24px;
     }
+  }
 
-    .mat-header-cell,
-    .mat-cell,
-    .mat-footer-cell {
-      padding-left: 16px;
+  .mat-header-cell {
+    background-color: var(--bg2);
+    color: var(--fg2);
+    letter-spacing: 0.3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .mat-cell {
+    color: var(--fg2);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &.mat-column-actions {
       padding-right: 16px;
-    }
-
-    .mat-header-cell {
-      background-color: var(--bg2);
-      color: var(--fg2);
-      letter-spacing: 0.3px;
-    }
-
-    .mat-cell {
-      color: var(--fg2);
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-
-      &.mat-column-actions {
-        padding-right: 8px;
-      }
     }
   }
 
@@ -47,3 +58,4 @@
     padding: 16px;
   }
 }
+

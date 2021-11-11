@@ -1,0 +1,13 @@
+<ng-container matColumnDef>
+  <th mat-header-cell *matHeaderCellDef [attr.width]="width">{{ headerText }}</th>
+  <td mat-cell *matCellDef="let data" [attr.width]="width">
+    <ng-content
+      *ngTemplateOutlet="templateRef; context:{data: data}"
+      [ngIf]="templateRef"
+    ></ng-content>
+
+    <ng-container *ngIf="!templateRef">
+      {{ dataAccessor(data, name) }}
+    </ng-container>
+  </td>
+</ng-container>

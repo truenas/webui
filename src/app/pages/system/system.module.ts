@@ -10,10 +10,11 @@ import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
-import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server-form/ntp-server-form.component';
+import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { CoreComponents } from '../../core/components/core-components.module';
@@ -38,6 +39,7 @@ import { EmailComponent } from './email/email.component';
 import { FailoverComponent } from './failover/failover.component';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
 import { GuiFormComponent } from './general-settings/gui-form/gui-form.component';
+import { NtpServerListComponent } from './general-settings/ntp-server/ntp-server-list/ntp-server-list.component';
 import { EulaComponent } from './general-settings/support/eula/eula.component';
 import { LicenseComponent } from './general-settings/support/license/license.component';
 import { ProactiveComponent } from './general-settings/support/proactive/proactive.component';
@@ -55,7 +57,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
 
 @NgModule({
   imports: [
-    EntityModule, CommonModule, FormsModule, IxFormsModule,
+    EntityModule, CommonModule, FormsModule, IxFormsModule, IxTableModule,
     ReactiveFormsModule, NgxUploaderModule, routing,
     MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
     EnclosureModule, CommonDirectivesModule, QRCodeModule,
@@ -100,6 +102,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     CronFormComponent,
     CronListComponent,
     SystemDatasetPoolComponent,
+    NtpServerListComponent,
   ],
   providers: [
     TranslateService,
