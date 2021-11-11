@@ -70,7 +70,7 @@ def lock_the_pool_when_the_pool_page_reloads(driver):
 
 
 @then('enter 1234abcd and verify that an error shows')
-def enter_1234abcd_and_verify_that_an_error_shows():
+def enter_1234abcd_and_verify_that_an_error_shows(driver):
     """enter 1234abcd and verify that an error shows."""
 
     assert wait_on_element(driver, 5, '//tr[contains(.,"encrypted_tank")]//mat-icon[text()="more_vert"]', 'clickable')
@@ -82,10 +82,11 @@ def enter_1234abcd_and_verify_that_an_error_shows():
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Dataset Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').send_keys("1234abcd")
-
+    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 10, '//p[contains(.,"The following datasets cannot be unlocked.")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CANCEL"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CANCEL"]').click()
+    assert wait_on_element(driver, 5, '//mat-dialog-container//button[@ix-auto="button__CANCEL"]', 'clickable')
+    driver.find_element_by_xpath('//mat-dialog-container//button[@ix-auto="button__CANCEL"]').click()
 
 
 @then('enter abcd1234 and confirm')
