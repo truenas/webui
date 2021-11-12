@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 @Injectable()
 export class IxFormatterService {
-  readonly iecUnits = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+  readonly iecUnits: readonly string[] = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
 
   /**
    * Formats any memory size in bytes to human readable string, e.g., '2147483648' to '2 GiB'
