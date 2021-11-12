@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 
@@ -189,7 +190,7 @@ const basicTypeData = [
         required: true,
         placeholder: 'Host Path',
         type: 'explorer',
-        explorerType: 'file',
+        explorerType: ExplorerType.File,
         initial: '/mnt',
       },
     ],

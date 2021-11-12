@@ -17,9 +17,9 @@
     [required]="required"
     [disabled]="isDisabled"
     [type]="getType()"
-    [(ngModel)]="value"
-    (ngModelChange)="onChange($event)"
-    (blur)="onTouch()"
+    [value]="formatted"
+    (input)="input($event.target.value)"
+    (blur)="blur()"
     [autocomplete]="autocomplete"
     [autocapitalize]="autocapitalize"
   >

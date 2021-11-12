@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { TreeNode } from 'angular-tree-component';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, take, tap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
@@ -22,14 +23,18 @@ import { Schedule } from 'app/interfaces/schedule.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
-  FieldConfig, FormExplorerConfig, FormInputConfig, FormParagraphConfig, FormSelectConfig,
+  FieldConfig,
+  FormExplorerConfig,
+  FormInputConfig,
+  FormParagraphConfig,
+  FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
 import {
-  WebSocketService, DialogService, CloudCredentialService, AppLoaderService, JobService,
+  AppLoaderService, CloudCredentialService, DialogService, JobService, WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -97,7 +102,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         {
           type: 'explorer',
           initial: '/mnt',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           tristate: false,
           name: 'path_destination',
           placeholder: helptext.path_placeholder,
@@ -109,7 +114,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         {
           type: 'explorer',
           initial: '/mnt',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           name: 'path_source',
           placeholder: helptext.path_placeholder,
           value: '/mnt',
@@ -170,7 +175,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           initial: '/',
           value: '/',
           tristate: false,
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           customTemplateStringOptions: {
             displayField: 'Path',
             isExpandedField: 'expanded',
@@ -192,7 +197,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           tooltip: helptext.folder_tooltip,
           initial: '/',
           value: '/',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           customTemplateStringOptions: {
             displayField: 'Path',
             isExpandedField: 'expanded',

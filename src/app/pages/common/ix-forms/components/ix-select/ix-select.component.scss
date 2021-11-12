@@ -27,6 +27,9 @@
   padding: 7px;
   position: relative;
 
+  &:focus-within {
+    border-color: var(--primary);
+  }
 
   &.disabled {
     opacity: 0.38;

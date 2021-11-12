@@ -8,6 +8,7 @@ import { combineLatest, Observable, of } from 'rxjs';
 import {
   catchError, debounceTime, map, switchMap, take, tap,
 } from 'rxjs/operators';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -58,7 +59,7 @@ export class SMBFormComponent implements FormConfiguration {
         {
           type: 'explorer',
           initial: '/mnt',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           name: 'path',
           placeholder: helptext_sharing_smb.placeholder_path,
           tooltip: helptext_sharing_smb.tooltip_path,
