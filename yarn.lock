@@ -1326,6 +1326,14 @@
     terminal-link "^2.1.1"
     yargs "^16.2.0"
 
+"@circlon/angular-tree-component@~11.0.4":
+  version "11.0.4"
+  resolved "https://registry.yarnpkg.com/@circlon/angular-tree-component/-/angular-tree-component-11.0.4.tgz#7fb5ca294331d45d4d2a01cb7afc7197a45aa905"
+  integrity sha512-Ck86mG6Z9eWG03RiOACDzrCjuzEDXU8rcEDi0aw0+Ku62x6ZY2mx8G0VX3CLEkS1BAXM2ef6luOIcoSKAKtDaA==
+  dependencies:
+    mobx "~4.14.1"
+    tslib "^2.0.0"
+
 "@commitlint/cli@~13.1.0":
   version "13.1.0"
   resolved "https://registry.yarnpkg.com/@commitlint/cli/-/cli-13.1.0.tgz#3608bb24dbef41aaa0729ffe65c7f9b57409626a"
@@ -3238,14 +3246,6 @@ angular-svg-icon@~9.0.0:
   version "9.0.0"
   resolved "https://registry.yarnpkg.com/angular-svg-icon/-/angular-svg-icon-9.0.0.tgz#2713a0fb223c40c0735b4f1311958bca56fbf119"
   integrity sha512-qnVuoNcbxoX6vbuiDcyQ9S84xu6cdNbqZ86sy8srY+SmyJRSfDnDHc7E++8IaT9/M7VY16JXQsUATqM70vU8/g==
-
-angular-tree-component@~8.5.6:
-  version "8.5.6"
-  resolved "https://registry.yarnpkg.com/angular-tree-component/-/angular-tree-component-8.5.6.tgz#b32ea769e17b8e4462b31b5b67c17269a7295fa5"
-  integrity sha512-cxNem6872diZz9kIGqrjSJbKt0P3WSq9wTqZIeVJ8zsddI4Y6ShAVZlZNXUMRyJq246c9pJ6JJEAOzKVLk9xgA==
-  dependencies:
-    lodash "^4.17.11"
-    mobx "^4.15.1"
 
 angular2-qrcode@~2.0.3:
   version "2.0.3"
@@ -9389,10 +9389,10 @@ mkdirp@^1.0.3, mkdirp@^1.0.4, mkdirp@~1.0.4:
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-1.0.4.tgz#3eb5ed62622756d79a5f0e2a221dfebad75c2f7e"
   integrity sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==
 
-mobx@^4.15.1:
-  version "4.15.7"
-  resolved "https://registry.yarnpkg.com/mobx/-/mobx-4.15.7.tgz#933281268c3b4658b6cf2526e872cf78ea48ab95"
-  integrity sha512-X4uQvuf2zYKHVO5kRT5Utmr+J9fDnRgxWWnSqJ4oiccPTQU38YG+/O3nPmOhUy4jeHexl7XJJpWDBgEnEfp+8w==
+mobx@~4.14.1:
+  version "4.14.1"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-4.14.1.tgz#0dc5622523363f6f5b467a5a0c4c99846b789748"
+  integrity sha512-Oyg7Sr7r78b+QPYLufJyUmxTWcqeQ96S1nmtyur3QL8SeI6e0TqcKKcxbG+sVJLWANhHQkBW/mDmgG5DDC4fdw==
 
 moment-timezone@^0.5.31, moment-timezone@~0.5.33:
   version "0.5.33"

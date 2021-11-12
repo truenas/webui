@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Direction } from 'app/enums/direction.enum';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/data-protection/resync/resync-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -44,7 +45,7 @@ export class RsyncFormComponent implements FormConfiguration {
           type: 'explorer',
           initial: '/mnt',
           name: 'path',
-          explorerType: 'file',
+          explorerType: ExplorerType.File,
           placeholder: helptext.rsync_path_placeholder,
           tooltip: helptext.rsync_path_tooltip,
           required: true,
@@ -128,7 +129,7 @@ export class RsyncFormComponent implements FormConfiguration {
           type: 'explorer',
           initial: '/mnt',
           name: 'remotepath',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           placeholder: helptext.rsync_remotepath_placeholder,
           tooltip: helptext.rsync_remotepath_tooltip,
         },

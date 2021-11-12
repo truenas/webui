@@ -10,6 +10,7 @@ import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
@@ -22,7 +23,6 @@ import { AdvancedSettingsComponent } from './advanced/advanced-settings.componen
 import { ConsoleFormComponent } from './advanced/console-form/console-form.component';
 import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
-import { InitshutdownFormComponent } from './advanced/initshutdown/initshutdown-form/initshutdown-form.component';
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { IsolatedGpuPcisFormComponent } from './advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from './advanced/kernel-form/kernel-form.component';
@@ -95,7 +95,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     IsolatedGpuPcisFormComponent,
     KernelFormComponent,
     SyslogFormComponent,
-    InitshutdownFormComponent,
+    InitShutdownFormComponent,
     InitshutdownListComponent,
     CronFormComponent,
     CronListComponent,

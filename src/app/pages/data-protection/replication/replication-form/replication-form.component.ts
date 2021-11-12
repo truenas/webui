@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { CompressionType } from 'app/enums/compression-type.enum';
 import { Direction } from 'app/enums/direction.enum';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { LoggingLevel } from 'app/enums/logging-level.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
@@ -406,7 +407,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         {
           type: 'explorer',
           initial: '',
-          explorerType: 'dataset',
+          explorerType: ExplorerType.Dataset,
           multiple: true,
           tristate: false,
           name: 'source_datasets_PUSH',
@@ -435,7 +436,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           placeholder: helptext.source_datasets_placeholder,
           tooltip: helptext.source_datasets_placeholder,
           initial: '',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           customTemplateStringOptions: {
             useCheckbox: true,
             useTriState: false,
@@ -706,7 +707,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           placeholder: helptext.target_dataset_placeholder,
           tooltip: helptext.target_dataset_tooltip,
           initial: '',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           customTemplateStringOptions: {
             displayField: 'Path',
             isExpandedField: 'expanded',
@@ -734,7 +735,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         {
           type: 'explorer',
           initial: '',
-          explorerType: 'dataset',
+          explorerType: ExplorerType.Dataset,
           name: 'target_dataset_PULL',
           placeholder: helptext.target_dataset_placeholder,
           tooltip: helptext.target_dataset_placeholder,

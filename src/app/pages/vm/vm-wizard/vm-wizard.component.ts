@@ -12,6 +12,7 @@ import { catchError, map } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
@@ -424,7 +425,7 @@ export class VMWizardComponent implements WizardConfiguration {
           placeholder: helptext.upload_iso_path_placeholder,
           initial: '/mnt',
           tooltip: helptext.upload_iso_path_tooltip,
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           isHidden: true,
         },
         {

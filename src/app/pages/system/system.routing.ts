@@ -9,7 +9,6 @@ import { ShellComponent } from '../shell/shell.component';
 import { AdvancedSettingsComponent } from './advanced/advanced-settings.component';
 import { CronFormComponent } from './advanced/cron/cron-form/cron-form.component';
 import { CronListComponent } from './advanced/cron/cron-list/cron-list.component';
-import { InitshutdownFormComponent } from './advanced/initshutdown/initshutdown-form/initshutdown-form.component';
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
@@ -183,17 +182,8 @@ export const routes: Routes = [
         path: '',
         component: InitshutdownListComponent,
         data: { title: 'Init/Shutdown Scripts', breadcrumb: 'Init/Shutdown Scripts' },
-      }, {
-        path: 'add',
-        component: InitshutdownFormComponent,
-        data: { title: 'Add', breadcrumb: 'Add' },
-      }, {
-        path: 'edit/:pk',
-        component: InitshutdownFormComponent,
-        data: { title: 'Edit', breadcrumb: 'Edit' },
       }],
-    },
-    ],
+    }],
   },
 ];
 export const routing: ModuleWithProviders<RouterModule> = RouterModule.forChild(routes);

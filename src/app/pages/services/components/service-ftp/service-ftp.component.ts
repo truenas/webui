@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/services/components/service-ftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -125,7 +126,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
         {
           type: 'explorer',
           initial: '/mnt',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           name: 'anonpath',
           placeholder: helptext.anonpath_placeholder,
           tooltip: helptext.anonpath_tooltip,

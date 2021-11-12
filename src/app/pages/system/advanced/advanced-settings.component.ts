@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
-import { Subject } from 'rxjs';
+import { merge, Subject } from 'rxjs';
 import {
   filter, switchMap, take, tap,
 } from 'rxjs/operators';
@@ -19,9 +19,10 @@ import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
+import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -29,7 +30,7 @@ import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/ta
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
+import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
@@ -74,12 +75,6 @@ export class AdvancedSettingsComponent implements OnInit {
   entityForm: EntityFormComponent;
   isFirstTime = true;
 
-  emptyPageConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('No sysctls configured'),
-    large: false,
-    message: this.translate.instant('To configure sysctls, click the "Add" button.'),
-  };
   isHA = false;
   formEvent$: Subject<CoreEvent>;
   actionsConfig: GlobalActionConfig;
@@ -137,11 +132,11 @@ export class AdvancedSettingsComponent implements OnInit {
       { name: this.translate.instant('Enabled'), prop: 'enabled' },
       { name: this.translate.instant('Next Run'), prop: 'next_run' },
     ],
-    add() {
-      this.parent.onSettingsPressed(CardId.Cron);
+    add: async () => {
+      await this.onSettingsPressed(CardId.Cron);
     },
-    edit(row) {
-      this.parent.onSettingsPressed(CardId.Cron, row.id);
+    edit: async (row) => {
+      await this.onSettingsPressed(CardId.Cron, row.id);
     },
   };
 
@@ -165,11 +160,15 @@ export class AdvancedSettingsComponent implements OnInit {
       { name: this.translate.instant('Enabled'), prop: 'enabled' },
       { name: this.translate.instant('Timeout'), prop: 'timeout' },
     ],
-    add() {
-      this.parent.onSettingsPressed(CardId.InitShutdown);
+    add: async () => {
+      await this.showFirstTimeWarningIfNeeded();
+      this.ixModal.open(InitShutdownFormComponent);
     },
-    edit(row) {
-      this.parent.onSettingsPressed(CardId.InitShutdown, row.id);
+    edit: async (script: InitShutdownScript) => {
+      await this.showFirstTimeWarningIfNeeded();
+
+      const modal = this.ixModal.open(InitShutdownFormComponent);
+      modal.setScriptForEdit(script);
     },
   };
 
@@ -228,15 +227,11 @@ export class AdvancedSettingsComponent implements OnInit {
       this.getDataCardData();
     });
 
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshTables();
-    });
-
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshTables();
-    });
-
-    this.ixModal.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    merge(
+      this.modalService.refreshTable$,
+      this.modalService.onClose$,
+      this.ixModal.onClose$,
+    ).pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
@@ -432,7 +427,6 @@ export class AdvancedSettingsComponent implements OnInit {
     | SyslogFormComponent
     | TunableFormComponent
     | CronFormComponent
-    | InitshutdownFormComponent
     | SystemDatasetPoolComponent
     | IsolatedGpuPcisFormComponent
     >;
@@ -452,9 +446,6 @@ export class AdvancedSettingsComponent implements OnInit {
         break;
       case CardId.Cron:
         addComponent = CronFormComponent;
-        break;
-      case CardId.InitShutdown:
-        addComponent = InitshutdownFormComponent;
         break;
       case CardId.SystemDatasetPool:
         addComponent = SystemDatasetPoolComponent;

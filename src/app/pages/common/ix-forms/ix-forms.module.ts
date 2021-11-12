@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TreeModule } from '@circlon/angular-tree-component';
 import { TranslateModule } from '@ngx-translate/core';
 import { MarkdownModule } from 'ngx-markdown';
 import { MaterialModule } from 'app/app-material.module';
@@ -10,6 +11,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxCheckboxComponent } from 'app/pages/common/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/pages/common/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/pages/common/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxExplorerComponent } from 'app/pages/common/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/pages/common/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFormErrorsComponent } from 'app/pages/common/ix-forms/components/ix-form-errors/ix-form-errors.component';
 import { IxInputComponent } from 'app/pages/common/ix-forms/components/ix-input/ix-input.component';
@@ -33,6 +35,7 @@ import { IxModalHeaderComponent } from './components/ix-modal/components/ix-moda
     CommonDirectivesModule,
     TooltipModule,
     TranslateModule,
+    TreeModule,
   ],
   declarations: [
     IxInputComponent,
@@ -47,6 +50,7 @@ import { IxModalHeaderComponent } from './components/ix-modal/components/ix-moda
     IxUserComboboxComponent,
     IxTextareaComponent,
     IxChipsComponent,
+    IxExplorerComponent,
   ],
   exports: [
     IxInputComponent,
@@ -61,6 +65,7 @@ import { IxModalHeaderComponent } from './components/ix-modal/components/ix-moda
     IxFormErrorsComponent,
     IxTextareaComponent,
     IxChipsComponent,
+    IxExplorerComponent,
   ],
 })
 export class IxFormsModule {}
