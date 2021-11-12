@@ -31,7 +31,6 @@ import { CoreServices } from 'app/core/services/core-services.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
-import { SystemGeneralService } from 'app/services';
 import { ErdService } from 'app/services/erd.service';
 import { IxModalService } from 'app/services/ix-modal.service';
 import { NotificationsService } from 'app/services/notifications.service';
@@ -176,10 +175,7 @@ export class AppModule {
    * This is good to prevent injecting the service as constructor parameter.
    * */
   static injector: Injector;
-  constructor(injector: Injector, private sysGeneralService: SystemGeneralService) {
-    this.sysGeneralService.getSysInfo().subscribe((data) => {
-      Sentry.setTag('nas.version', data.version);
-    });
+  constructor(injector: Injector) {
     setCoreServiceInjector(injector);
   }
 }
