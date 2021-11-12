@@ -5,8 +5,8 @@ export interface CardWidgetConf<P> {
   title: string;
   data: {
     nameserver?: Option[];
-    ipv4?: string[];
-    ipv6?: string[];
+    ipv4?: (string | { ip: string; dhcp: boolean })[];
+    ipv6?: (string | { ip: string; dhcp: boolean })[];
     hostname?: string;
     domain?: string;
     netwait?: string;

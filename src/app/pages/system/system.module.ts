@@ -8,6 +8,7 @@ import { MarkdownModule } from 'ngx-markdown';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
@@ -59,7 +60,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     ReactiveFormsModule, NgxUploaderModule, routing,
     MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
     EnclosureModule, CommonDirectivesModule, QRCodeModule,
-    TooltipModule, CoreComponents,
+    TooltipModule, CoreComponents, CastModule,
   ],
   declarations: [
     AdvancedSettingsComponent,

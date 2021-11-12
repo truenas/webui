@@ -15,7 +15,7 @@
           <div class="section-title">{{ 'Nameservers' | translate}}</div>
           <mat-list-item *ngFor="let nameserver of conf.data.nameserver" class="card-list-item">
             <span class="label">{{ nameserver.label | translate }}:</span>
-            <span class="value">{{ nameserver.value | translate }}</span>
+            <span class="value">{{ nameserver.value | cast | translate }}</span>
           </mat-list-item>
         </mat-list>
         <mat-list *ngIf="conf.data.ipv4 && conf.data.ipv4.length > 0">

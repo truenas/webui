@@ -49,7 +49,7 @@ import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-p
 import { KernelFormComponent } from './kernel-form/kernel-form.component';
 import { SyslogFormComponent } from './syslog-form/syslog-form.component';
 
-enum CardId {
+enum AdvancedCardId {
   Console = 'console',
   Syslog = 'syslog',
   Kernel = 'kernel',
@@ -67,7 +67,7 @@ enum CardId {
   providers: [DatePipe, UserService],
 })
 export class AdvancedSettingsComponent implements OnInit {
-  dataCards: DataCard[] = [];
+  dataCards: DataCard<AdvancedCardId>[] = [];
   configData: AdvancedConfig;
   syslog: boolean;
   systemDatasetPool: string;
@@ -138,10 +138,10 @@ export class AdvancedSettingsComponent implements OnInit {
       { name: this.translate.instant('Next Run'), prop: 'next_run' },
     ],
     add() {
-      this.parent.onSettingsPressed(CardId.Cron);
+      this.parent.onSettingsPressed(AdvancedCardId.Cron);
     },
     edit(row) {
-      this.parent.onSettingsPressed(CardId.Cron, row.id);
+      this.parent.onSettingsPressed(AdvancedCardId.Cron, row.id);
     },
   };
 
@@ -166,10 +166,10 @@ export class AdvancedSettingsComponent implements OnInit {
       { name: this.translate.instant('Timeout'), prop: 'timeout' },
     ],
     add() {
-      this.parent.onSettingsPressed(CardId.InitShutdown);
+      this.parent.onSettingsPressed(AdvancedCardId.InitShutdown);
     },
     edit(row) {
-      this.parent.onSettingsPressed(CardId.InitShutdown, row.id);
+      this.parent.onSettingsPressed(AdvancedCardId.InitShutdown, row.id);
     },
   };
 
@@ -200,7 +200,7 @@ export class AdvancedSettingsComponent implements OnInit {
     },
   };
 
-  readonly CardId = CardId;
+  readonly CardId = AdvancedCardId;
 
   constructor(
     private ws: WebSocketService,
@@ -312,7 +312,7 @@ export class AdvancedSettingsComponent implements OnInit {
       this.dataCards = [
         {
           title: helptext_system_advanced.fieldset_console,
-          id: CardId.Console,
+          id: AdvancedCardId.Console,
           items: [
             {
               label: helptext_system_advanced.consolemenu_placeholder,
@@ -338,7 +338,7 @@ export class AdvancedSettingsComponent implements OnInit {
         },
         {
           title: helptext_system_advanced.fieldset_syslog,
-          id: CardId.Syslog,
+          id: AdvancedCardId.Syslog,
           items: [
             {
               label: helptext_system_advanced.fqdn_placeholder,
@@ -364,7 +364,7 @@ export class AdvancedSettingsComponent implements OnInit {
         },
         {
           title: helptext_system_advanced.fieldset_kernel,
-          id: CardId.Kernel,
+          id: AdvancedCardId.Kernel,
           items: [
             {
               label: helptext_system_advanced.autotune_placeholder,
@@ -377,22 +377,22 @@ export class AdvancedSettingsComponent implements OnInit {
           ],
         },
         {
-          id: CardId.Cron,
+          id: AdvancedCardId.Cron,
           title: helptext_system_advanced.fieldset_cron,
           tableConf: this.cronTableConf,
         },
         {
-          id: CardId.InitShutdown,
+          id: AdvancedCardId.InitShutdown,
           title: helptext_system_advanced.fieldset_initshutdown,
           tableConf: this.initShutdownTableConf,
         },
         {
-          id: CardId.Sysctl,
+          id: AdvancedCardId.Sysctl,
           title: helptext_system_advanced.fieldset_sysctl,
           tableConf: this.sysctlTableConf,
         },
         {
-          id: CardId.SystemDatasetPool,
+          id: AdvancedCardId.SystemDatasetPool,
           title: this.translate.instant('System Dataset Pool'),
           items: [
             {
@@ -409,9 +409,9 @@ export class AdvancedSettingsComponent implements OnInit {
         ) > -1).map((gpu: Device) => gpu.description).join(', ');
         const gpuCard = {
           title: this.translate.instant('Isolated GPU Device(s)'),
-          id: CardId.Gpus,
+          id: AdvancedCardId.Gpus,
           items: [{ label: this.translate.instant('Isolated GPU Device(s)'), value: isolatedGpus }],
-        } as DataCard;
+        } as DataCard<AdvancedCardId>;
 
         if (isolatedGpus.length == 0) {
           gpuCard.emptyConf = {
@@ -426,7 +426,7 @@ export class AdvancedSettingsComponent implements OnInit {
     });
   }
 
-  async onSettingsPressed(name: CardId, id?: number): Promise<void> {
+  async onSettingsPressed(name: AdvancedCardId, id?: number): Promise<void> {
     let addComponent: Type<ConsoleFormComponent
     | KernelFormComponent
     | SyslogFormComponent
@@ -438,28 +438,28 @@ export class AdvancedSettingsComponent implements OnInit {
     >;
 
     switch (name) {
-      case CardId.Console:
+      case AdvancedCardId.Console:
         addComponent = ConsoleFormComponent;
         break;
-      case CardId.Kernel:
+      case AdvancedCardId.Kernel:
         addComponent = KernelFormComponent;
         break;
-      case CardId.Syslog:
+      case AdvancedCardId.Syslog:
         addComponent = SyslogFormComponent;
         break;
-      case CardId.Sysctl:
+      case AdvancedCardId.Sysctl:
         addComponent = TunableFormComponent;
         break;
-      case CardId.Cron:
+      case AdvancedCardId.Cron:
         addComponent = CronFormComponent;
         break;
-      case CardId.InitShutdown:
+      case AdvancedCardId.InitShutdown:
         addComponent = InitshutdownFormComponent;
         break;
-      case CardId.SystemDatasetPool:
+      case AdvancedCardId.SystemDatasetPool:
         addComponent = SystemDatasetPoolComponent;
         break;
-      case CardId.Gpus:
+      case AdvancedCardId.Gpus:
         addComponent = IsolatedGpuPcisFormComponent;
         break;
       default:
@@ -467,14 +467,21 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     await this.showFirstTimeWarningIfNeeded();
-    if ([CardId.Console, CardId.Kernel].includes(name)) {
+    if ([AdvancedCardId.Console, AdvancedCardId.Kernel].includes(name)) {
       this.sysGeneralService.sendConfigData(this.configData as any);
     }
 
-    if ([CardId.Kernel].includes(name)) {
+    if ([AdvancedCardId.Kernel].includes(name)) {
       const modal = this.ixModal.open(KernelFormComponent);
       modal.setupForm(this.configData);
-    } else if ([CardId.Console, CardId.Syslog, CardId.Gpus, CardId.SystemDatasetPool].includes(name)) {
+    } else if (
+      [
+        AdvancedCardId.Console,
+        AdvancedCardId.Syslog,
+        AdvancedCardId.Gpus,
+        AdvancedCardId.SystemDatasetPool,
+      ].includes(name)
+    ) {
       this.ixModal.open(addComponent);
     } else {
       this.modalService.openInSlideIn(addComponent, id);

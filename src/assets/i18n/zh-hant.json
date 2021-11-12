@@ -674,7 +674,6 @@
   "Delete the passphrase from  the encryption key. Invalidates an existing pool recovery key file. A  dialog prompts to back up the encryption key.": "",
   "Delete the selected item?": "",
   "Delete the zvol {zvolName} and all snapshots of it?": "",
-  "Delete this item?": "",
   "Delete user primary group ": "",
   "Delete {n, plural, one {# user} other {# users}} with this primary group?": "",
   "Delete {name}?": "",

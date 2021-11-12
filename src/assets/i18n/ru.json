@@ -252,7 +252,6 @@
   "Delete Server": "",
   "Delete snapshot {name}?": "",
   "Delete the zvol {zvolName} and all snapshots of it?": "",
-  "Delete this item?": "",
   "Delete {n, plural, one {# user} other {# users}} with this primary group?": "",
   "Delete {name}?": "",
   "Deleting Snapshots": "",
