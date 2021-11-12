@@ -34,6 +34,6 @@
     "strictOutputEventTypes": false,
     "strictDomEventTypes": false,
     "strictContextGenerics": false,
-    "strictLiteralTypes": false,
+    "strictLiteralTypes": false
   }
 }
