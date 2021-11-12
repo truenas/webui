@@ -10,6 +10,9 @@ export class IxFormatterService {
    * @returns Formatted string
    */
   memorySizeFormatting: (val: string | number) => string = (value: string | number) => {
+    if (!value) {
+      return '';
+    }
     value = value.toString();
     return !value || Number.isNaN(Number(value)) ? '' : this.convertBytestoHumanReadable(value, 0);
   };
@@ -21,11 +24,11 @@ export class IxFormatterService {
    * @returns The parsed value
    */
   memorySizeParsing: (val: string) => number = (value: string) => {
-    value = value.toString();
     if (!value) {
       return null;
     }
     const humanStringToNum = this.convertHumanStringToNum(value);
+    // Default unit is MiB so if the user passed in no unit, we assume unit is MiB
     return (humanStringToNum !== Number(value)) ? humanStringToNum : this.convertHumanStringToNum(value + 'mb');
   };
 
