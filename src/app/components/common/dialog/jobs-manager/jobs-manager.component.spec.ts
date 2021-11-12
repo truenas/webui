@@ -33,6 +33,13 @@ describe('JobsManagerComponent', () => {
       $date: 1632411439081,
     },
   } as Job;
+  const waitingJob = {
+    method: 'cloudsync.sync',
+    state: JobState.Waiting,
+    time_started: {
+      $date: 1632411439081,
+    },
+  } as Job;
   const failedJob = {
     method: 'cloudsync.sync',
     state: JobState.Failed,
@@ -54,7 +61,7 @@ describe('JobsManagerComponent', () => {
       JobsManagerStore,
       DialogService,
       mockWebsocket([
-        mockCall('core.get_jobs', [runningJob, failedJob]),
+        mockCall('core.get_jobs', [runningJob, waitingJob, failedJob]),
       ]),
       mockProvider(MatDialogRef),
       {
@@ -78,8 +85,8 @@ describe('JobsManagerComponent', () => {
   });
 
   it('checks component header is present', () => {
-    expect(spectator.query('.jobs-header h3')).toHaveExactText('Running Jobs');
-    expect(spectator.query('.jobs-header span')).toHaveText('1 in progress, 1 failed');
+    expect(spectator.query('.jobs-header h3')).toHaveExactText('Task Manager');
+    expect(spectator.query('.jobs-header span')).toHaveText('1 in progress, 1 in waiting, 1 failed');
   });
 
   it('checks component footer is present', () => {
@@ -90,17 +97,25 @@ describe('JobsManagerComponent', () => {
     const jobs = spectator.queryAll('app-job-item');
     const dateTimePipe = new FormatDateTimePipe(spectator.inject(SystemGeneralService));
 
-    expect(jobs).toHaveLength(2);
+    expect(jobs).toHaveLength(3);
 
     expect(jobs[0].querySelector('.job-description')).toHaveExactText('cloudsync.sync');
     expect(jobs[0].querySelector('.job-progress-description')).toHaveText('progress description');
     expect(jobs[0].querySelector('.job-icon-failed')).toBeFalsy();
+    expect(jobs[0].querySelector('.job-icon-waiting')).toBeFalsy();
     expect(jobs[0].querySelector('.job-icon-abort')).toBeTruthy();
 
     expect(jobs[1].querySelector('.job-description')).toHaveExactText('cloudsync.sync');
-    expect(jobs[1].querySelector('.job-time')).toHaveText(`Stopped: ${dateTimePipe.transform(failedJob.time_finished.$date)}`);
-    expect(jobs[1].querySelector('.job-icon-failed')).toBeTruthy();
+    expect(jobs[1].querySelector('.job-time')).toHaveText(`Waiting: ${dateTimePipe.transform(waitingJob.time_started.$date)}`);
+    expect(jobs[1].querySelector('.job-icon-failed')).toBeFalsy();
+    expect(jobs[1].querySelector('.job-icon-waiting')).toBeTruthy();
     expect(jobs[1].querySelector('.job-icon-abort')).toBeFalsy();
+
+    expect(jobs[2].querySelector('.job-description')).toHaveExactText('cloudsync.sync');
+    expect(jobs[2].querySelector('.job-time')).toHaveText(`Stopped: ${dateTimePipe.transform(failedJob.time_finished.$date)}`);
+    expect(jobs[2].querySelector('.job-icon-failed')).toBeTruthy();
+    expect(jobs[2].querySelector('.job-icon-waiting')).toBeFalsy();
+    expect(jobs[2].querySelector('.job-icon-abort')).toBeFalsy();
   });
 
   it('shows confirm dialog if user clicks on the abort button', () => {

@@ -8,4 +8,5 @@ export enum JobState {
   Success = 'SUCCESS',
   Finished = 'FINISHED',
   Locked = 'LOCKED',
+  Waiting = 'WAITING',
 }

@@ -1,9 +1,10 @@
 <mat-dialog-content>
   <div class="jobs-header" fxLayout="row" fxLayoutAlign="space-between baseline" fxLayoutGap="8px">
-    <h3>{{ 'Running Jobs' | translate }}</h3>
+    <h3>{{ 'Task Manager' | translate }}</h3>
 
     <span *ngIf="jobs.length">
       {{ '{n} in progress' | translate: { n: numberOfRunningJobs$ | async } }},
+      {{ '{n} in waiting' | translate: { n: numberOfWaitingJobs$ | async } }},
       {{ '{n} failed' | translate: { n: numberOfFailedJobs$ | async } }}
     </span>
   </div>
