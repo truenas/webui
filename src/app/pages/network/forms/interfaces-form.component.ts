@@ -13,7 +13,8 @@ import {
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { LinkAggregationNetworkInterface, NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormListConfig, FormSelectConfig, FormInputConfig,
@@ -563,6 +564,15 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         this.entityForm.setDisabled('xmit_hash_policy', true, true);
       }
     });
+
+    this.entityForm.formGroup.get('lag_ports').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string[]) => {
+      this.lag_ports.options.sort((a: Option, b: Option) => {
+        if (!value) return 0;
+        if (!value.includes(a.value.toString())) return 1;
+        if (!value.includes(b.value.toString())) return -1;
+        return value.indexOf(a.value.toString()) - value.indexOf(b.value.toString());
+      });
+    });
   }
 
   clean(data: any): any {
@@ -631,10 +641,17 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     const id = data.id;
     this.setType(type);
     if (type === NetworkInterfaceType.LinkAggregation) {
+      const lag_ports = (data as LinkAggregationNetworkInterface).lag_ports;
       this.networkService.getLaggPortsChoices(id).pipe(untilDestroyed(this)).subscribe((choices) => {
         for (const key in choices) {
           this.lag_ports.options.push({ label: choices[key], value: key });
         }
+        this.lag_ports.options.sort((a: Option, b: Option) => {
+          if (!lag_ports) return 0;
+          if (!lag_ports.includes(a.value.toString())) return 1;
+          if (!lag_ports.includes(b.value.toString())) return -1;
+          return lag_ports.indexOf(a.value.toString()) - lag_ports.indexOf(b.value.toString());
+        });
       });
 
       this.networkService.getLaggProtocolChoices().pipe(untilDestroyed(this)).subscribe((res) => {
