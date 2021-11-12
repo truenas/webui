@@ -30,4 +30,8 @@ export interface CardWidgetConf<P> {
 })
 export class CardWidgetComponent {
   @Input() conf: CardWidgetConf<unknown>;
+
+  asObject(value: string | { ip: string; dhcp: boolean }): { ip: string; dhcp: boolean } {
+    return value as { ip: string; dhcp: boolean };
+  }
 }

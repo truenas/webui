@@ -8,9 +8,9 @@
     <div [innerHTML]="instructions" [ngStyle]="{marginTop:'10px', marginBottom: '-1rem'}"></div>
     <div id="double-confirm-mask" [ngStyle]="{opacity: '.38', position: 'relative', top: '35px'}"><pre>{{conf['name']}}</pre></div>
   </div>
-  <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
+  <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" fieldShow="show">
     <button
-      *ngIf="field.hideButton===false"
+      *ngIf="isButtonVisible(field)"
       mat-icon-button
       type="button"
       (click)="togglePW()"

@@ -19,6 +19,9 @@ export interface ControlConfig {
   selectedValue?: any;
   tooltip?: string;
   class?: string;
+  min?: number;
+  max?: number;
+  step?: number;
 }
 
 export interface ToolbarConfig {

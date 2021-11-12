@@ -26,7 +26,7 @@
             <span class="value">
               <ul class="sub-ip-list">
                 <li class="ip-list" *ngFor="let item of conf.data.ipv4">
-                  {{item.ip || item}} <span *ngIf="item.dhcp">{{'(DHCP)'}}</span>
+                  {{asObject(item).ip || item}} <span *ngIf="asObject(item).dhcp">{{'(DHCP)'}}</span>
                 </li>
               </ul>
             </span>
@@ -39,7 +39,7 @@
             <span class="value">
               <ul class="sub-ip-list">
                 <li class="ip-list" *ngFor="let item of conf.data.ipv6">
-                  {{item.ip || item}} <span *ngIf="item.dhcp">{{'(DHCP)'}}</span>
+                  {{asObject(item).ip || item}} <span *ngIf="asObject(item).dhcp">{{'(DHCP)'}}</span>
                 </li>
               </ul>
             </span>
