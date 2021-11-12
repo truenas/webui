@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, Input, OnInit, OnDestroy,
+  Component, ElementRef, Input, OnInit, OnDestroy, HostListener,
 } from '@angular/core';
 import { ModalService } from 'app/services/modal.service';
 
@@ -9,6 +9,9 @@ import { ModalService } from 'app/services/modal.service';
   styleUrls: ['./modal.component.scss'],
 })
 export class ModalComponent implements OnInit, OnDestroy {
+  @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(): void {
+    this.close();
+  }
   @Input() id: string;
   private element: HTMLElement;
   conf: any;
