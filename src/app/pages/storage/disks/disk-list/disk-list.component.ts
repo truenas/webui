@@ -358,23 +358,23 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
   }
 
   generateManualTestSummary(res: ManualSmartTest[]): void {
-    let success_note = '<h4>Expected Finished Time:</h4>';
+    let successNote = '<h4>Expected Finished Time:</h4>';
     let hasSuccessNote = false;
-    let fail_note = '<h4>Errors:</h4>';
+    let failNote = '<h4>Errors:</h4>';
     let hasFailNote = false;
 
     res.forEach((test) => {
       if (test.expected_result_time) {
         hasSuccessNote = true;
-        success_note += `<b>${test.disk}</b>: ${this.localeService.formatDateTime(test.expected_result_time.$date)}<br>`;
+        successNote += `<b>${test.disk}</b>: ${this.localeService.formatDateTime(test.expected_result_time.$date)}<br>`;
       } else if (test.error) {
         hasFailNote = true;
-        fail_note += `<b>${test.disk}</b><br>${test.error}<br>`;
+        failNote += `<b>${test.disk}</b><br>${test.error}<br>`;
       }
     });
     this.dialogService.info(
       this.translate.instant('Manual Test Summary'),
-      (hasSuccessNote ? success_note + '<br>' : '') + (hasFailNote ? fail_note : ''),
+      (hasSuccessNote ? successNote + '<br>' : '') + (hasFailNote ? failNote : ''),
       '600px',
       'info',
       true,

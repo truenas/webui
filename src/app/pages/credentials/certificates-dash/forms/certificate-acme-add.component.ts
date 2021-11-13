@@ -154,9 +154,9 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     });
 
     this.ws.call('certificate.acme_server_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      const acme_directory_uri = _.find(this.fieldSets[0].config, { name: 'acme_directory_uri' }) as FormSelectConfig;
+      const acmeDirectoryUri = _.find(this.fieldSets[0].config, { name: 'acme_directory_uri' }) as FormSelectConfig;
       for (const key in choices) {
-        acme_directory_uri.options.push({ label: choices[key], value: key });
+        acmeDirectoryUri.options.push({ label: choices[key], value: key });
       }
       entityForm.formGroup.controls['acme_directory_uri'].setValue(Object.keys(choices)[0]);
     });
@@ -186,11 +186,11 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
             }
 
             const controls = listFields[i];
-            const name_text_fc: FormParagraphConfig = _.find(controls, { name: 'name_text' });
-            const auth_fc = _.find(controls, { name: 'authenticators' }) as FormSelectConfig;
+            const nameTextConfig: FormParagraphConfig = _.find(controls, { name: 'name_text' });
+            const authConfig = _.find(controls, { name: 'authenticators' }) as FormSelectConfig;
             (this.domainList.controls[i] as FormGroup).controls['name_text'].setValue(domains[i]);
-            name_text_fc.paraText = '<b>' + domains[i] + '</b>';
-            auth_fc.options = this.dns_map.options;
+            nameTextConfig.paraText = '<b>' + domains[i] + '</b>';
+            authConfig.options = this.dns_map.options;
           }
         }
       });
@@ -198,9 +198,9 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   }
 
   customSubmit(value: any): void {
-    const dns_mapping: any = { };
+    const dnsMapping: any = { };
     value.domains.forEach((domain: any) => {
-      dns_mapping[domain.name_text] = domain.authenticators;
+      dnsMapping[domain.name_text] = domain.authenticators;
     });
 
     const payload = value;
@@ -208,7 +208,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     delete payload['identifier'];
     payload['csr_id'] = this.csrOrg.id;
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
-    payload['dns_mapping'] = dns_mapping;
+    payload['dns_mapping'] = dnsMapping;
     delete payload['domains'];
     this.dialogRef = this.dialog.open(EntityJobComponent, {
       data: {

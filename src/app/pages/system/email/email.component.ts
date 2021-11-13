@@ -57,10 +57,10 @@ export class EmailComponent implements FormConfiguration {
         delete value.send_mail_method;
         delete value.oauth_applied;
 
-        const product_type = window.localStorage.getItem('product_type') as ProductType;
+        const productType = window.localStorage.getItem('product_type') as ProductType;
         const mailObj = {
           subject: 'TrueNAS Test Message',
-          text: `This is a test message from TrueNAS ${product_type}.`,
+          text: `This is a test message from TrueNAS ${productType}.`,
         };
         this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
           value.pass = value.pass || this.entityEdit.data.pass;
@@ -309,7 +309,7 @@ export class EmailComponent implements FormConfiguration {
 
   saveConfigSubmit(emailConfig: any): void {
     this.loader.open();
-    const is_smtp_method = this.sendMailMethod.value;
+    const isSmtpMethod = this.sendMailMethod.value;
 
     if (emailConfig.pass && typeof emailConfig.pass === 'string' && emailConfig.pass.trim() === '') {
       delete emailConfig.pass;
@@ -322,7 +322,7 @@ export class EmailComponent implements FormConfiguration {
       };
       emailConfig.oauth = oauth;
 
-      if (!is_smtp_method) {
+      if (!isSmtpMethod) {
         // switches from SMTP to Gmail Oauth method and disable smtp
         emailConfig.smtp = false;
         this.smtp.setValue(false);
@@ -331,7 +331,7 @@ export class EmailComponent implements FormConfiguration {
       emailConfig.oauth = null;
     }
 
-    if (is_smtp_method) {
+    if (isSmtpMethod) {
       // switches from Gmail Oauth to SMTP method and remove oauth data
       emailConfig.oauth = null;
       this.oauthCreds$.next({});

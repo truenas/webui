@@ -859,16 +859,16 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     let deleteMsg: string = this.translate.instant('Delete the selected item?');
     if (this.conf.config.deleteMsg) {
       deleteMsg = action + this.conf.config.deleteMsg.title;
-      let msg_content = ' <b>' + item[this.conf.config.deleteMsg.key_props[0]];
+      let message = ' <b>' + item[this.conf.config.deleteMsg.key_props[0]];
       if (this.conf.config.deleteMsg.key_props.length > 1) {
         for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
           if (item[this.conf.config.deleteMsg.key_props[i]] !== '') {
-            msg_content = msg_content + ' - ' + item[this.conf.config.deleteMsg.key_props[i]];
+            message = message + ' - ' + item[this.conf.config.deleteMsg.key_props[i]];
           }
         }
       }
-      msg_content += '</b>?';
-      deleteMsg += msg_content;
+      message += '</b>?';
+      deleteMsg += message;
     }
 
     deleteMsg = this.translate.instant(deleteMsg);
@@ -987,28 +987,28 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     let deleteMsg = 'Delete the selected items?';
     if (this.conf.config.deleteMsg) {
       deleteMsg = 'Delete selected ' + this.conf.config.deleteMsg.title + '(s)?';
-      let msg_content = '<ul>';
+      let message = '<ul>';
       items.forEach((item) => {
-        let sub_msg_content;
+        let subMessage;
         if (this.conf.config.deleteMsg.key_props.length > 1) {
-          sub_msg_content = '<li><strong>' + item[this.conf.config.deleteMsg.key_props[0]] + '</strong>';
-          sub_msg_content += '<ul class="nested-list">';
+          subMessage = '<li><strong>' + item[this.conf.config.deleteMsg.key_props[0]] + '</strong>';
+          subMessage += '<ul class="nested-list">';
 
           for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
             if (item[this.conf.config.deleteMsg.key_props[i]] != '') {
-              sub_msg_content += '<li>' + item[this.conf.config.deleteMsg.key_props[i]] + '</li>';
+              subMessage += '<li>' + item[this.conf.config.deleteMsg.key_props[i]] + '</li>';
             }
           }
-          sub_msg_content += '</ul>';
+          subMessage += '</ul>';
         } else {
-          sub_msg_content = '<li>' + item[this.conf.config.deleteMsg.key_props[0]];
+          subMessage = '<li>' + item[this.conf.config.deleteMsg.key_props[0]];
         }
 
-        sub_msg_content += '</li>';
-        msg_content += sub_msg_content;
+        subMessage += '</li>';
+        message += subMessage;
       });
-      msg_content += '</ul>';
-      deleteMsg += msg_content;
+      message += '</ul>';
+      deleteMsg += message;
     }
     deleteMsg = this.translate.instant(deleteMsg);
 

@@ -182,9 +182,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
       this.translate.instant('Target'),
       this.translate.instant('ZFS'),
     ];
-    const UPS = this.otherReports.find((report) => report.title.startsWith('UPS'));
+    const ups = this.otherReports.find((report) => report.title.startsWith('UPS'));
 
-    if (UPS) {
+    if (ups) {
       labels.splice(8, 0, 'UPS');
     }
 

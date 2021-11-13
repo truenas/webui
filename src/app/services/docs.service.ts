@@ -16,26 +16,26 @@ export class DocsService {
         const replace = new RegExp('--' + url + '--', 'g');
         message = message.replace(replace, urls[url as keyof typeof urls]);
       }
-      const running_version = window.localStorage.getItem('running_version');
-      if (running_version) {
-        const web_version = '?runningversion=' + running_version;
-        const version = running_version.split('-');
+      const runningVersion = window.localStorage.getItem('running_version');
+      if (runningVersion) {
+        const webVersion = '?runningversion=' + runningVersion;
+        const version = runningVersion.split('-');
         version.shift();
-        const doc_version = version.join('-');
+        const docVersion = version.join('-');
         if (version && version.length > 1) {
-          message = message.replace(/--version--/g, doc_version);
+          message = message.replace(/--version--/g, docVersion);
         }
-        if (web_version) {
-          message = message.replace(/--webversion--/g, web_version);
+        if (webVersion) {
+          message = message.replace(/--webversion--/g, webVersion);
         }
-        if (running_version) {
-          message = message.replace(/--runningversion--/g, running_version);
+        if (runningVersion) {
+          message = message.replace(/--runningversion--/g, runningVersion);
         }
       }
 
-      const product_type = window.localStorage.getItem('product_type') as ProductType;
-      message = message.replace(/--nas--/g, `truenas ${product_type}`);
-      message = message.replace(/--NAS--/g, `TrueNAS ${product_type}`);
+      const productType = window.localStorage.getItem('product_type') as ProductType;
+      message = message.replace(/--nas--/g, `truenas ${productType}`);
+      message = message.replace(/--NAS--/g, `TrueNAS ${productType}`);
     }
 
     return message;

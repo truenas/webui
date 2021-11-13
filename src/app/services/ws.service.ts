@@ -240,8 +240,7 @@ export class WebSocketService {
 
       // cleanup routine
       observer.complete = () => {
-        const unsub_payload = { id: uuid, msg: 'unsub' };
-        this.send(unsub_payload);
+        this.send({ id: uuid, msg: 'unsub' });
         this.pendingSubs[nom].observers[uuid].unsubscribe();
         delete this.pendingSubs[nom].observers[uuid];
         if (!this.pendingSubs[nom].observers) { delete this.pendingSubs[nom]; }

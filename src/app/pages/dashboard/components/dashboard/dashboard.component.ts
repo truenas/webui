@@ -359,13 +359,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     data.forEach((dataset) => {
       if (typeof dataset == undefined || !dataset) { return; }
-      const used_pct = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
+      const usedPercent = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
       const zvol = {
         avail: dataset.available.parsed,
         id: dataset.id,
         name: dataset.name,
         used: dataset.used.parsed,
-        used_pct: (used_pct * 100).toFixed(0) + '%',
+        used_pct: (usedPercent * 100).toFixed(0) + '%',
       };
 
       vd[zvol.id] = zvol;
