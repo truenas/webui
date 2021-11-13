@@ -3,7 +3,7 @@ import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { helptext_sharing_smb } from 'app/helptext/sharing/smb/smb';
+import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SmbSharesec } from 'app/interfaces/smb-share.interface';
@@ -26,7 +26,7 @@ export class SMBAclComponent implements FormConfiguration {
 
   fieldSets: FieldSet[] = [
     {
-      name: helptext_sharing_smb.share_acl_basic,
+      name: helptextSharingSmb.share_acl_basic,
       label: true,
       class: 'basic',
       width: '100%',
@@ -34,14 +34,14 @@ export class SMBAclComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'share_name',
-          placeholder: helptext_sharing_smb.share_name_placeholder,
-          tooltip: helptext_sharing_smb.share_name_tooltip,
+          placeholder: helptextSharingSmb.share_name_placeholder,
+          tooltip: helptextSharingSmb.share_name_tooltip,
           readonly: true,
         },
       ],
     },
     {
-      name: helptext_sharing_smb.share_acl_entries,
+      name: helptextSharingSmb.share_acl_entries,
       label: true,
       class: 'entries',
       width: '100%',
@@ -55,32 +55,32 @@ export class SMBAclComponent implements FormConfiguration {
             {
               type: 'input',
               name: 'ae_who_sid',
-              placeholder: helptext_sharing_smb.ae_who_sid_placeholder,
-              tooltip: helptext_sharing_smb.ae_who_sid_tooltip,
+              placeholder: helptextSharingSmb.ae_who_sid_placeholder,
+              tooltip: helptextSharingSmb.ae_who_sid_tooltip,
               required: true,
               validation: [Validators.required],
             },
             {
               type: 'input',
               name: 'ae_who_name_domain',
-              placeholder: helptext_sharing_smb.ae_who_name_domain_placeholder,
-              tooltip: helptext_sharing_smb.ae_who_name_domain_tooltip,
+              placeholder: helptextSharingSmb.ae_who_name_domain_placeholder,
+              tooltip: helptextSharingSmb.ae_who_name_domain_tooltip,
               class: 'inline',
               width: '50%',
             },
             {
               type: 'input',
               name: 'ae_who_name_name',
-              placeholder: helptext_sharing_smb.ae_who_name_name_placeholder,
-              tooltip: helptext_sharing_smb.ae_who_name_name_tooltip,
+              placeholder: helptextSharingSmb.ae_who_name_name_placeholder,
+              tooltip: helptextSharingSmb.ae_who_name_name_tooltip,
               class: 'inline',
               width: '50%',
             },
             {
               type: 'select',
               name: 'ae_perm',
-              placeholder: helptext_sharing_smb.ae_perm_placeholder,
-              tooltip: helptext_sharing_smb.ae_perm_tooltip,
+              placeholder: helptextSharingSmb.ae_perm_placeholder,
+              tooltip: helptextSharingSmb.ae_perm_tooltip,
               options: [
                 {
                   label: 'FULL',
@@ -103,8 +103,8 @@ export class SMBAclComponent implements FormConfiguration {
             {
               type: 'select',
               name: 'ae_type',
-              placeholder: helptext_sharing_smb.ae_type_placeholder,
-              tooltip: helptext_sharing_smb.ae_type_tooltip,
+              placeholder: helptextSharingSmb.ae_type_placeholder,
+              tooltip: helptextSharingSmb.ae_type_tooltip,
               options: [
                 {
                   label: 'ALLOWED',

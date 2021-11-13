@@ -5,8 +5,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
-import { helptext_system_ca } from 'app/helptext/system/ca';
-import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { helptextSystemCa } from 'app/helptext/system/ca';
+import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -191,10 +191,10 @@ export class CertificatesDashComponent implements OnInit {
           delete(row: CertificateAuthority, table: TableComponent) {
             if (row.signed_certificates > 0) {
               this.parent.dialogService.confirm({
-                title: helptext_system_ca.delete_error.title,
-                message: helptext_system_ca.delete_error.message,
+                title: helptextSystemCa.delete_error.title,
+                message: helptextSystemCa.delete_error.message,
                 hideCheckBox: true,
-                buttonMsg: helptext_system_ca.delete_error.button,
+                buttonMsg: helptextSystemCa.delete_error.button,
                 hideCancel: true,
               });
             } else {
@@ -266,8 +266,8 @@ export class CertificatesDashComponent implements OnInit {
                 .subscribe((file) => {
                   this.storage.downloadBlob(file, fileName);
                 }, (err) => {
-                  this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-                    helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+                  this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
+                    helptextSystemCertificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
                 });
             },
             (err) => {
@@ -284,8 +284,8 @@ export class CertificatesDashComponent implements OnInit {
                 .subscribe((file) => {
                   this.storage.downloadBlob(file, keyName);
                 }, (err) => {
-                  this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-                    helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+                  this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
+                    helptextSystemCertificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
                 });
             },
             (err) => {
@@ -345,7 +345,7 @@ export class CertificatesDashComponent implements OnInit {
     const acmeAction = {
       icon: 'beenhere',
       name: 'sign_CSR',
-      matTooltip: helptext_system_ca.list.action_sign,
+      matTooltip: helptextSystemCa.list.action_sign,
       onClick: (rowinner: CertificateAuthority) => {
         this.dialogService.dialogForm(this.signCSRFormConf);
         this.caId = rowinner.id;
@@ -393,24 +393,24 @@ export class CertificatesDashComponent implements OnInit {
     {
       type: 'select',
       name: 'csr_cert_id',
-      placeholder: helptext_system_ca.sign.csr_cert_id.placeholder,
-      tooltip: helptext_system_ca.sign.csr_cert_id.tooltip,
+      placeholder: helptextSystemCa.sign.csr_cert_id.placeholder,
+      tooltip: helptextSystemCa.sign.csr_cert_id.tooltip,
       required: true,
       options: this.unsignedCAs,
     },
     {
       type: 'input',
       name: 'name',
-      placeholder: helptext_system_ca.edit.name.placeholder,
-      tooltip: helptext_system_ca.sign.name.tooltip,
+      placeholder: helptextSystemCa.edit.name.placeholder,
+      tooltip: helptextSystemCa.sign.name.tooltip,
     },
   ];
 
   signCSRFormConf: DialogFormConfiguration = {
-    title: helptext_system_ca.sign.fieldset_certificate,
+    title: helptextSystemCa.sign.fieldset_certificate,
     fieldConfig: this.signCSRFieldConf,
     method_ws: 'certificateauthority.ca_sign_csr',
-    saveButtonText: helptext_system_ca.sign.sign,
+    saveButtonText: helptextSystemCa.sign.sign,
     customSubmit: (entityDialog) => this.doSignCSR(entityDialog),
     parent: this,
   };
@@ -428,7 +428,7 @@ export class CertificatesDashComponent implements OnInit {
       this.getCards();
     }, (err: WebsocketError) => {
       entityDialog.loader.close();
-      this.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
+      this.dialogService.errorReport(helptextSystemCa.error, err.reason, err.trace.formatted);
     });
   }
 }

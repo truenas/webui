@@ -175,12 +175,9 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
 
   ableToDeleteGroup(id: number): boolean {
     const user = _.find(this.usr_lst[0], { id });
-    const group_users = _.find(this.grp_lst[0], { id: user.group.id }).users;
+    const groupUsers = _.find(this.grp_lst[0], { id: user.group.id }).users;
     // Show checkbox if deleting the last member of a group
-    if (group_users.length === 1) {
-      return true;
-    }
-    return false;
+    return groupUsers.length === 1;
   }
 
   resourceTransformIncomingRestData(rawUsers: User[]): UserListRow[] {

@@ -5,7 +5,7 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -38,12 +38,12 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   private getRow = new Subscription();
   private rowNum: number;
   private dns_map: FormSelectConfig;
-  title = helptext_system_certificates.list.action_create_acme_certificate;
+  title = helptextSystemCertificates.list.action_create_acme_certificate;
   protected isOneColumnForm = true;
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
-      name: helptext_system_certificates.acme.fieldset_acme,
+      name: helptextSystemCertificates.acme.fieldset_acme,
       label: false,
       class: 'acme',
       width: '100%',
@@ -51,35 +51,35 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'identifier',
-          placeholder: helptext_system_certificates.acme.identifier.placeholder,
-          tooltip: helptext_system_certificates.acme.identifier.tooltip,
+          placeholder: helptextSystemCertificates.acme.identifier.placeholder,
+          tooltip: helptextSystemCertificates.acme.identifier.tooltip,
           required: true,
-          validation: helptext_system_certificates.add.name.validation,
+          validation: helptextSystemCertificates.add.name.validation,
           hasErrors: false,
           errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).',
         },
         {
           type: 'checkbox',
           name: 'tos',
-          placeholder: helptext_system_certificates.acme.tos.placeholder,
-          tooltip: helptext_system_certificates.acme.tos.tooltip,
+          placeholder: helptextSystemCertificates.acme.tos.placeholder,
+          tooltip: helptextSystemCertificates.acme.tos.tooltip,
           required: true,
         },
         {
           type: 'input',
           name: 'renew_days',
-          placeholder: helptext_system_certificates.acme.renew_day.placeholder,
-          tooltip: helptext_system_certificates.acme.renew_day.tooltip,
+          placeholder: helptextSystemCertificates.acme.renew_day.placeholder,
+          tooltip: helptextSystemCertificates.acme.renew_day.tooltip,
           inputType: 'number',
           required: true,
           value: 10,
-          validation: helptext_system_certificates.acme.renew_day.validation,
+          validation: helptextSystemCertificates.acme.renew_day.validation,
         },
         {
           type: 'select',
           name: 'acme_directory_uri',
-          placeholder: helptext_system_certificates.acme.dir_uri.placeholder,
-          tooltip: helptext_system_certificates.acme.dir_uri.tooltip,
+          placeholder: helptextSystemCertificates.acme.dir_uri.placeholder,
+          tooltip: helptextSystemCertificates.acme.dir_uri.tooltip,
           required: true,
           options: [
           ],
@@ -112,8 +112,8 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
             {
               type: 'select',
               name: 'authenticators',
-              placeholder: helptext_system_certificates.acme.authenticator.placeholder,
-              tooltip: helptext_system_certificates.acme.authenticator.tooltip,
+              placeholder: helptextSystemCertificates.acme.authenticator.placeholder,
+              tooltip: helptextSystemCertificates.acme.authenticator.tooltip,
               required: true,
               options: [],
             },
@@ -213,7 +213,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     this.dialogRef = this.dialog.open(EntityJobComponent, {
       data: {
         title: (
-          helptext_system_certificates.acme.job_dialog_title),
+          helptextSystemCertificates.acme.job_dialog_title),
       },
       disableClose: true,
     });
@@ -230,7 +230,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
       if (err.error.includes('[EFAULT')) {
         new EntityUtils().handleWSError(this.entityForm, err);
       } else {
-        this.dialogService.errorReport(helptext_system_certificates.acme.error_dialog.title,
+        this.dialogService.errorReport(helptextSystemCertificates.acme.error_dialog.title,
           err.exc_info.type, err.exception);
       }
     });

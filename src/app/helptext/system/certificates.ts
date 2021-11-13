@@ -2,7 +2,7 @@ import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 
-export const helptext_system_certificates = {
+export const helptextSystemCertificates = {
   add: {
     title: T('Add Certificate'),
     title_csr: T('Add CSR'),

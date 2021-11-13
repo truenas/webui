@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { filter, map } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { helptext_sharing_webdav, helptext_sharing_smb, helptext_sharing_nfs } from 'app/helptext/sharing';
+import { helptext_sharing_webdav, helptextSharingSmb, helptextSharingNfs } from 'app/helptext/sharing';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -174,10 +174,10 @@ export class SharesDashboardComponent implements AfterViewInit {
           emptyEntityLarge: false,
           parent: this,
           columns: [
-            { name: helptext_sharing_nfs.column_path, prop: 'paths', showLockedStatus: true },
-            { name: helptext_sharing_nfs.column_comment, prop: 'comment', hiddenIfEmpty: true },
+            { name: helptextSharingNfs.column_path, prop: 'paths', showLockedStatus: true },
+            { name: helptextSharingNfs.column_comment, prop: 'comment', hiddenIfEmpty: true },
             {
-              name: helptext_sharing_nfs.column_enabled,
+              name: helptextSharingNfs.column_enabled,
               prop: 'enabled',
               width: '60px',
               checkbox: true,
@@ -320,11 +320,11 @@ export class SharesDashboardComponent implements AfterViewInit {
           emptyEntityLarge: false,
           parent: this,
           columns: [
-            { name: helptext_sharing_smb.column_name, prop: 'name' },
-            { name: helptext_sharing_smb.column_path, prop: 'path', showLockedStatus: true },
-            { name: helptext_sharing_smb.column_comment, prop: 'comment', hiddenIfEmpty: true },
+            { name: helptextSharingSmb.column_name, prop: 'name' },
+            { name: helptextSharingSmb.column_path, prop: 'path', showLockedStatus: true },
+            { name: helptextSharingSmb.column_comment, prop: 'comment', hiddenIfEmpty: true },
             {
-              name: helptext_sharing_smb.column_enabled,
+              name: helptextSharingSmb.column_enabled,
               prop: 'enabled',
               width: '60px',
               checkbox: true,
