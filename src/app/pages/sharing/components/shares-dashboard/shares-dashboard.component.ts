@@ -7,7 +7,7 @@ import _ from 'lodash';
 import { filter, map } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { helptext_sharing_webdav, helptextSharingSmb, helptextSharingNfs } from 'app/helptext/sharing';
+import { helptextSharingWebdav, helptextSharingSmb, helptextSharingNfs } from 'app/helptext/sharing';
 import { ApiDirectory } from 'app/interfaces/api-directory.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -261,26 +261,26 @@ export class SharesDashboardComponent implements AfterViewInit {
           hideEntityEmpty: true,
           parent: this,
           columns: [
-            { prop: 'name', name: helptext_sharing_webdav.column_name },
-            { prop: 'comment', name: helptext_sharing_webdav.column_comment, hiddenIfEmpty: true },
-            { prop: 'path', name: helptext_sharing_webdav.column_path, showLockedStatus: true },
+            { prop: 'name', name: helptextSharingWebdav.column_name },
+            { prop: 'comment', name: helptextSharingWebdav.column_comment, hiddenIfEmpty: true },
+            { prop: 'path', name: helptextSharingWebdav.column_path, showLockedStatus: true },
             {
               prop: 'perm',
-              name: helptext_sharing_webdav.column_perm,
+              name: helptextSharingWebdav.column_perm,
               checkbox: true,
               width: '70px',
-              tooltip: helptext_sharing_webdav.column_perm_tooltip,
+              tooltip: helptextSharingWebdav.column_perm_tooltip,
             },
             {
               prop: 'ro',
-              name: helptext_sharing_webdav.column_ro,
+              name: helptextSharingWebdav.column_ro,
               width: '60px',
               checkbox: true,
               onChange: (row: WebDavShare) => this.onCheckboxToggle(ShareType.WebDAV, row, 'ro'),
             },
             {
               prop: 'enabled',
-              name: helptext_sharing_webdav.column_enabled,
+              name: helptextSharingWebdav.column_enabled,
               width: '60px',
               checkbox: true,
               onChange: (row: WebDavShare) => this.onCheckboxToggle(ShareType.WebDAV, row, 'enabled'),

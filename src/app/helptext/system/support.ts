@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_system_support = {
+export const helptextSystemSupport = {
   proactive: {
     title: T('Proactive Support'),
     instructions: T('Silver / Gold Coverage Customers can enable iXsystems Proactive Support. This \

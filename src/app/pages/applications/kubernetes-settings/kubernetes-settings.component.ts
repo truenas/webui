@@ -102,7 +102,7 @@ export class KubernetesSettingsComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const { enable_container_image_update, ...values } = this.form.value;
+    const { enable_container_image_update: enableContainerImageUpdate, ...values } = this.form.value;
 
     (
       this.wereReInitFieldsChanged(values)
@@ -117,7 +117,7 @@ export class KubernetesSettingsComponent implements OnInit {
         this.loader.open();
         return forkJoin([
           this.ws.job('kubernetes.update', [values]),
-          this.appService.updateContainerConfig(enable_container_image_update),
+          this.appService.updateContainerConfig(enableContainerImageUpdate),
         ]).pipe(
           tap(() => {
             this.loader.close();

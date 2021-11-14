@@ -85,9 +85,9 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
 
   onSubmit(): void {
     this.isFormLoading = true;
-    const { isolated_gpu_pci_ids } = this.formGroup.value;
+    const isolatedGpuPciIds = this.formGroup.controls['isolated_gpu_pci_ids'].value;
 
-    this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids }]).pipe(
+    this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: isolatedGpuPciIds }]).pipe(
       untilDestroyed(this),
     ).subscribe(() => {
       this.isFormLoading = false;

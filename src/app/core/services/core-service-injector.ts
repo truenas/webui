@@ -5,7 +5,7 @@ import { Injector } from '@angular/core';
  * `ReflectiveInjector.resolveAndCreate(MyService)` would create a new instance
  * of the service).
  */
-// eslint-disable-next-line import/no-mutable-exports
+// eslint-disable-next-line import/no-mutable-exports,@typescript-eslint/naming-convention
 export let CoreServiceInjector: Injector;
 
 /**
