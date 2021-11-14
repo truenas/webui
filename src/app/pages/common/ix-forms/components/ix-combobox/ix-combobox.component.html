@@ -16,7 +16,7 @@
       [value]="selectedOption?.label"
       [placeholder]="placeholder"
       [disabled]="isDisabled"
-      (input)="onChanged($event.target.value)"
+      (input)="onChanged(ixInput.value)"
       (blur)="onTouch()"
       [matAutocomplete]="auto"
     >

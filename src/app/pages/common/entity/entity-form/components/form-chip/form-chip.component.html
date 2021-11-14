@@ -47,7 +47,7 @@
           [matChipInputFor]="chipList"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
           (matChipInputTokenEnd)="add($event)"
-          (keyup)="updateSearchOptions($event.target.value)"
+          (keyup)="updateSearchOptions(chipInput.value)"
           [matAutocomplete]="autoComplete"
         >
         <mat-autocomplete #autoComplete="matAutocomplete" (optionSelected)="selected($event)">

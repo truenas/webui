@@ -24,16 +24,7 @@
     "enableIvy": true,
     "allowEmptyCodegenFiles": true,
     "strictInjectionParameters": true,
-    "fullTemplateTypeCheck": true,
     "strictTemplates": true,
-    "strictInputAccessModifiers": false,
-    "strictNullInputTypes": false,
-    "strictAttributeTypes": false,
-    "strictSafeNavigationTypes": false,
-    "strictDomLocalRefTypes": false,
-    "strictOutputEventTypes": false,
-    "strictDomEventTypes": false,
-    "strictContextGenerics": false,
-    "strictLiteralTypes": false
+    "strictInputAccessModifiers": true
   }
 }
