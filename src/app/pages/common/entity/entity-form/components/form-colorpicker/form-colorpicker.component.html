@@ -10,10 +10,11 @@
   <div (click)="togglePicker()" class="color-swatch" [style.background-color]="colorProxy"></div>
   <mat-form-field class="full-width">
     <input
+      #input
       matInput
       [placeholder]="config.placeholder | translate"
-      [(value)]="colorProxy"
-      (input)="colorProxy=$event.target.value"
+      [value]="colorProxy"
+      (input)="colorProxy=input.value"
     >
 
     <input
