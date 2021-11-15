@@ -41,10 +41,4 @@ import { MatTable } from '@angular/material/table';
   // See note on CdkTable for explanation on why this uses the default change detection strategy.
   changeDetection: ChangeDetectionStrategy.Default,
 })
-export class IxTableComponent<T> extends MatTable<T> {
-  /** Overrides the sticky CSS class set by the `CdkTable`. */
-  protected override stickyCssClass = 'mat-table-sticky';
-
-  /** Overrides the need to add position: sticky on every sticky cell element in `CdkTable`. */
-  protected override needsPositionStickyOnElement = false;
-}
+export class IxTableComponent<T> extends MatTable<T> {}

@@ -11,19 +11,23 @@
     table-layout: fixed;
   }
 
-  .mat-header-row,
-  .mat-row,
-  .mat-footer-row {
+  thead tr,
+  tbody tr,
+  tfoot tr {
     height: 48px;
   }
 
-  .mat-header-cell,
-  .mat-cell,
-  .mat-footer-cell {
+  thead th,
+  tbody td,
+  tfoot td {
     border-bottom: 1px solid var(--lines);
+    color: var(--fg2);
+    overflow: hidden;
     padding-left: 8px;
     padding-right: 8px;
     text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 
     &:first-of-type {
       padding-left: 24px;
@@ -34,27 +38,23 @@
     }
   }
 
-  .mat-header-cell {
+  thead th {
     background-color: var(--bg2);
-    color: var(--fg2);
+    font-size: 12px;
+    font-weight: 500;
     letter-spacing: 0.3px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
-  .mat-cell {
-    color: var(--fg2);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  tbody td {
+    font-size: 14px;
 
-    &.mat-column-actions {
+    &:last-of-type {
       padding-right: 16px;
+      text-align: right;
     }
   }
 
-  .mat-no-data-row .mat-cell {
+  .ix-no-data-row td {
     padding: 16px;
   }
 }

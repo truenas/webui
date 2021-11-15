@@ -2,7 +2,7 @@
   <th mat-header-cell *matHeaderCellDef [attr.width]="width">{{ headerText }}</th>
   <td mat-cell *matCellDef="let data" [attr.width]="width">
     <ng-content
-      *ngTemplateOutlet="templateRef; context:{data: data}"
+      *ngTemplateOutlet="templateRef; context:{ $implicit: data }"
       [ngIf]="templateRef"
     ></ng-content>
 
