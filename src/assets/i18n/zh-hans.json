@@ -78,7 +78,6 @@
   "Delete <b>{vmDevice}</b>": "",
   "Delete Dataset <i><b>{datasetName}</b></i>": "",
   "Delete snapshot {name}?": "",
-  "Delete this item?": "",
   "Delete {n, plural, one {# user} other {# users}} with this primary group?": "",
   "Delete {name}?": "",
   "Device Busy": "",

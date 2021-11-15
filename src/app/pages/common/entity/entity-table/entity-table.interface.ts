@@ -82,8 +82,11 @@ export interface EntityTableAction<Row = any> {
   icon: string;
   label: string;
   onClick: (row?: Row) => void;
+  title?: string;
   disabled?: boolean;
   actions?: EntityTableAction[];
+  matTooltip?: string;
+  ttposition?: TooltipPosition;
 }
 
 export interface EntityTableMultiAction<Row = any> {

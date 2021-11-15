@@ -169,4 +169,9 @@ export class EntityDialogComponent<P = any> implements OnInit {
   toggleSubmit(data: MatCheckboxChange): void {
     this.submitEnabled = data.checked;
   }
+
+  isButtonVisible(field: FieldConfig): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+    return 'hideButton' in field && field.hideButton === false;
+  }
 }
