@@ -696,13 +696,13 @@ export class ApiService {
     if (evt.data) {
       cloneDef.apiCall.args = evt.data;
 
-      if (def.preProcessor && !async_calls.includes(def.apiCall.namespace)) {
-        cloneDef.apiCall = def.preProcessor(cloneDef.apiCall, this);
+      if (cloneDef.preProcessor && !async_calls.includes(cloneDef.apiCall.namespace)) {
+        cloneDef.apiCall = cloneDef.preProcessor(cloneDef.apiCall, this);
       }
 
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if (def.preProcessor && async_calls.includes(def.apiCall.namespace)) {
-        cloneDef.apiCall = await def.preProcessor(cloneDef.apiCall, this);
+      if (cloneDef.preProcessor && async_calls.includes(cloneDef.apiCall.namespace)) {
+        cloneDef.apiCall = await cloneDef.preProcessor(cloneDef.apiCall, this);
         if (!cloneDef.apiCall) {
           this.core.emit({ name: 'VmStopped', data: { id: evt.data[0] } });
           return;
@@ -717,8 +717,8 @@ export class ApiService {
         }
 
         // PostProcess
-        if (def.postProcessor) {
-          res = def.postProcessor(res, evt.data, this.core);
+        if (cloneDef.postProcessor) {
+          res = cloneDef.postProcessor(res, evt.data, this.core);
         }
         if (this.debug) {
           console.log(call.responseEvent);
@@ -738,8 +738,8 @@ export class ApiService {
       });
     } else {
       // PreProcessor: ApiDefinition manipulates call to be sent out.
-      if (def.preProcessor) {
-        cloneDef.apiCall = def.preProcessor(def.apiCall);
+      if (cloneDef.preProcessor) {
+        cloneDef.apiCall = cloneDef.preProcessor(cloneDef.apiCall);
       }
 
       const call = cloneDef.apiCall;// this.parseEventWs(evt);
@@ -750,8 +750,8 @@ export class ApiService {
         }
 
         // PostProcess
-        if (def.postProcessor) {
-          res = def.postProcessor(res, evt.data, this.core);
+        if (cloneDef.postProcessor) {
+          res = cloneDef.postProcessor(res, evt.data, this.core);
         }
 
         // this.core.emit({name:call.responseEvent, data:res, sender:evt.data }); // OLD WAY
