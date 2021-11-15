@@ -291,14 +291,14 @@ export class ExtentFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
-    const extent_disk_field = _.find(this.fieldConfig, { name: 'disk' }) as FormSelectConfig;
+    const extentDiskField = _.find(this.fieldConfig, { name: 'disk' }) as FormSelectConfig;
     // get device options
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
       const options = [];
       for (const i in res) {
         options.push({ label: res[i], value: i });
       }
-      extent_disk_field.options = _.sortBy(options, ['label']);
+      extentDiskField.options = _.sortBy(options, ['label']);
     });
 
     this.extent_type_control = entityForm.formGroup.controls['type'];
@@ -314,8 +314,8 @@ export class ExtentFormComponent implements FormConfiguration {
         this.avail_threshold_field.isHidden = false;
       } else {
         this.avail_threshold_field.isHidden = true;
-        if (this.pk && value != undefined && _.find(extent_disk_field.options, { value }) === undefined) {
-          extent_disk_field.options.push({ label: value, value });
+        if (this.pk && value != undefined && _.find(extentDiskField.options, { value }) === undefined) {
+          extentDiskField.options.push({ label: value, value });
         }
       }
     });

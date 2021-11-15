@@ -12,7 +12,7 @@ import { IxFormsModule } from '../common/ix-forms/ix-forms.module';
 import { CloudsyncFormComponent } from './cloudsync/cloudsync-form/cloudsync-form.component';
 import { CloudsyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { DataProtectionDashboardComponent } from './components/data-protection-dashboard/data-protection-dashboard.component';
-import { DataProtectionRoutes } from './data-protection.routing';
+import { dataProtectionRoutes } from './data-protection.routing';
 import { ReplicationFormComponent } from './replication/replication-form/replication-form.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
 import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
@@ -35,7 +35,7 @@ import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.co
       provide: DateAdapter,
       useFactory: adapterFactory,
     }),
-    RouterModule.forChild(DataProtectionRoutes),
+    RouterModule.forChild(dataProtectionRoutes),
     EntityModule,
     FormsModule,
     ReactiveFormsModule,

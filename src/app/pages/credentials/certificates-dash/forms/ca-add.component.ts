@@ -586,9 +586,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     });
 
     this.ws.call('certificate.ec_curve_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      const ec_curves_field = this.getTarget('ec_curve') as FormSelectConfig;
+      const ecCurvesConfig = this.getTarget('ec_curve') as FormSelectConfig;
       for (const key in res) {
-        ec_curves_field.options.push({ label: res[key], value: key });
+        ecCurvesConfig.options.push({ label: res[key], value: key });
       }
     });
 
@@ -843,7 +843,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       delete data.passphrase2;
     }
     if (data.create_type === 'CA_CREATE_INTERNAL' || data.create_type === 'CA_CREATE_INTERMEDIATE') {
-      const cert_extensions = {
+      const certExtensions = {
         BasicConstraints: {},
         AuthorityKeyIdentifier: {},
         ExtendedKeyUsage: {},
@@ -851,23 +851,23 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       };
       Object.keys(data).forEach((key) => {
         if (key.startsWith('BasicConstraints') || key.startsWith('AuthorityKeyIdentifier') || key.startsWith('ExtendedKeyUsage') || key.startsWith('KeyUsage')) {
-          const type_prop = key.split('-');
+          const typeProp = key.split('-');
           if (data[key] === '') {
             data[key] = null;
           }
           if (data[key]) {
-            if (type_prop.length === 1) {
+            if (typeProp.length === 1) {
               for (const item of data[key]) {
-                (cert_extensions as any)[type_prop[0]][item] = true;
+                (certExtensions as any)[typeProp[0]][item] = true;
               }
             } else {
-              (cert_extensions as any)[type_prop[0]][type_prop[1]] = data[key];
+              (certExtensions as any)[typeProp[0]][typeProp[1]] = data[key];
             }
           }
           delete data[key];
         }
       });
-      data['cert_extensions'] = cert_extensions;
+      data['cert_extensions'] = certExtensions;
 
       delete data['profiles'];
     }

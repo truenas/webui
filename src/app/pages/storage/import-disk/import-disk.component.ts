@@ -178,13 +178,13 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
 
   customSubmit(payload: any): void {
     this.custActions = [];
-    const fs_options: Record<string, unknown> = {};
+    const fsOptions: Record<string, unknown> = {};
     if (payload.fs_type === 'msdosfs' && payload.msdosfs_locale) {
-      fs_options['locale'] = payload.msdosfs_locale;
+      fsOptions['locale'] = payload.msdosfs_locale;
     }
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Importing Disk') } });
     this.dialogRef.componentInstance.setDescription(this.translate.instant('Importing Disk...'));
-    this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options, payload.dst_path]);
+    this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fsOptions, payload.dst_path]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: Job<any>) => {
       this.dialogRef.close();
