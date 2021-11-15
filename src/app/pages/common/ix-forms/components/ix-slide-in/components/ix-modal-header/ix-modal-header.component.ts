@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @Component({
   selector: 'ix-modal-header',
@@ -10,5 +10,5 @@ export class IxModalHeaderComponent {
   @Input() title: string;
   @Input() loading: boolean;
 
-  constructor(public modal: IxModalService) {}
+  constructor(public slideInService: IxSlideInService) {}
 }

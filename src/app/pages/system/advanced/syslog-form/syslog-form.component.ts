@@ -11,7 +11,7 @@ import { helptext_system_advanced, helptext_system_advanced as helptext } from '
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -55,7 +55,7 @@ export class SyslogFormComponent implements OnInit {
     private fb: FormBuilder,
     private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -89,7 +89,7 @@ export class SyslogFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       this.isFormLoading = false;
-      this.modalService.close();
+      this.slideInService.close();
       this.sysGeneralService.refreshSysGeneral();
     }, (res) => {
       this.isFormLoading = false;

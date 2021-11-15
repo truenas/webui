@@ -16,7 +16,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
@@ -62,7 +62,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
     protected ws: WebSocketService,
     protected prefService: PreferencesService,
     private translate: TranslateService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
   ) {}
 
   resourceTransformIncomingRestData(data: Group[]): Group[] {
@@ -87,7 +87,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
       }
     }, 2000);
 
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -117,7 +117,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
         label: helptext.group_list_actions_label_edit,
         name: helptext.group_list_actions_id_edit,
         onClick: (group: Group) => {
-          const modal = this.modalService.open(GroupFormComponent);
+          const modal = this.slideInService.open(GroupFormComponent);
           modal.setupForm(group);
         },
       });
@@ -228,7 +228,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
   }
 
   doAdd(): void {
-    const modal = this.modalService.open(GroupFormComponent);
+    const modal = this.slideInService.open(GroupFormComponent);
     modal.setupForm();
   }
 }

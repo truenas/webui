@@ -17,7 +17,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import {
   AppLoaderService, DialogService, WebSocketService,
 } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -73,7 +73,7 @@ export class KubernetesSettingsComponent implements OnInit {
     protected ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private appService: ApplicationsService,
     private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,
@@ -121,7 +121,7 @@ export class KubernetesSettingsComponent implements OnInit {
         ]).pipe(
           tap(() => {
             this.loader.close();
-            this.modalService.close();
+            this.slideInService.close();
           }),
           catchError((error) => {
             this.loader.close();

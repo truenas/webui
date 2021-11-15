@@ -11,7 +11,7 @@ import { LocalizationSettings } from 'app/interfaces/localization-settings.inter
 import { Option } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
@@ -102,7 +102,7 @@ export class LocalizationFormComponent {
     public localeService: LocaleService,
     protected ws: WebSocketService,
     protected langService: LanguageService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
   ) { }
 
@@ -133,7 +133,7 @@ export class LocalizationFormComponent {
     this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.sysGeneralService.refreshSysGeneral();
       this.isFormLoading = false;
-      this.modalService.close();
+      this.slideInService.close();
       this.setTimeOptions(body.timezone);
       this.langService.setLanguage(body.language);
     }, (error) => {

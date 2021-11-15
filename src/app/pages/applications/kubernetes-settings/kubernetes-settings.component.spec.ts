@@ -14,7 +14,7 @@ import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('KubernetesSettingsComponent', () => {
   let spectator: Spectator<KubernetesSettingsComponent>;
@@ -56,7 +56,7 @@ describe('KubernetesSettingsComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(AppLoaderService),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
     ],
   });

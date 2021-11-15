@@ -17,7 +17,7 @@ import {
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { BootEnvService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -47,7 +47,7 @@ export class BootEnvironmentFormComponent {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private bootEnvService: BootEnvService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
@@ -101,10 +101,10 @@ export class BootEnvironmentFormComponent {
 
         this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe(() => {
           this.isFormLoading = false;
-          this.modalService.close();
+          this.slideInService.close();
         }, (error) => {
           this.isFormLoading = false;
-          this.modalService.close();
+          this.slideInService.close();
           this.errorHandler.handleWsFormError(error, this.formGroup);
         });
 
@@ -119,10 +119,10 @@ export class BootEnvironmentFormComponent {
 
         this.ws.call('bootenv.update', renameParams).pipe(untilDestroyed(this)).subscribe(() => {
           this.isFormLoading = false;
-          this.modalService.close();
+          this.slideInService.close();
         }, (error) => {
           this.isFormLoading = false;
-          this.modalService.close();
+          this.slideInService.close();
           this.errorHandler.handleWsFormError(error, this.formGroup);
         });
 
@@ -135,10 +135,10 @@ export class BootEnvironmentFormComponent {
 
         this.ws.call('bootenv.create', cloneParams).pipe(untilDestroyed(this)).subscribe(() => {
           this.isFormLoading = false;
-          this.modalService.close();
+          this.slideInService.close();
         }, (error) => {
           this.isFormLoading = false;
-          this.modalService.close();
+          this.slideInService.close();
           this.errorHandler.handleWsFormError(error, this.formGroup);
         });
 

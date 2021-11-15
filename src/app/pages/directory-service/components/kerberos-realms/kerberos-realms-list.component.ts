@@ -7,7 +7,7 @@ import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entit
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 import { KerberosRealmRow } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realm-row.interface';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +38,7 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
   };
 
   constructor(
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
   ) { }
 
@@ -55,7 +55,7 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -73,7 +73,7 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
         id: 'edit',
         label: this.translate.instant('Edit'),
         onClick: (realm: KerberosRealmRow) => {
-          const modal = this.modalService.open(KerberosRealmsFormComponent);
+          const modal = this.slideInService.open(KerberosRealmsFormComponent);
           modal.setRealmForEdit(realm);
         },
       },
@@ -88,6 +88,6 @@ export class KerberosRealmsListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.modalService.open(KerberosRealmsFormComponent);
+    this.slideInService.open(KerberosRealmsFormComponent);
   }
 }

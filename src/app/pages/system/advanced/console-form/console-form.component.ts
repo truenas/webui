@@ -11,7 +11,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -51,7 +51,7 @@ export class ConsoleFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private sysGeneralService: SystemGeneralService,
@@ -86,7 +86,7 @@ export class ConsoleFormComponent implements OnInit {
     this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
       this.sysGeneralService.refreshSysGeneral();
-      this.modalService.close();
+      this.slideInService.close();
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);

@@ -9,7 +9,7 @@ import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { DialogService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { SmartPowerMode } from '../../../../enums/smart-power.mode';
 import { SmartConfig } from '../../../../interfaces/smart-test.interface';
 import { ServiceSmartComponent } from './service-smart.component';
@@ -35,7 +35,7 @@ describe('ServiceSmartComponent', () => {
         } as SmartConfig),
         mockCall('smart.update'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
       mockProvider(Router),
