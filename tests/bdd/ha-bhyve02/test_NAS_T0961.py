@@ -183,8 +183,8 @@ def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
     """click on System Dataset Pool select dozer, click Save."""
     assert wait_on_element(driver, 5, '//mat-select', 'clickable')
     driver.find_element_by_xpath('//mat-select').click()
-    assert wait_on_element(driver, 5, f'//mat-option[contains(text(),"{pool_name}")]')
-    driver.find_element_by_xpath(f'//mat-option[contains(text(),"{pool_name}")]').click()
+    assert wait_on_element(driver, 5, f'//mat-option[contains(.,"{pool_name}")]')
+    driver.find_element_by_xpath(f'//mat-option[contains(.,"{pool_name}")]').click()
     assert wait_on_element(driver, 30, '//button[contains(.,"Save") and @type="submit"]', 'clickable')
     driver.find_element_by_xpath('//button[contains(.,"Save") and @type="submit"]').click()
 
