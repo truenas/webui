@@ -15,6 +15,7 @@ import { helptext_system_general as helptext } from 'app/helptext/system/general
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import IxValidators from 'app/pages/common/ix-forms/ix-validators.class';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import {
   DialogService, SystemGeneralService, WebSocketService,
@@ -43,6 +44,13 @@ export class GuiFormComponent {
     crash_reporting: [false, [Validators.required]],
     usage_collection: [false, [Validators.required]],
     ui_consolemsg: [false, [Validators.required]],
+    cidr_port: [
+      '',
+      [
+        IxValidators.ipCidrV4orCidrV6('Invalid Cidr notation IP'),
+        IxValidators.required('CIDR Port is required.'),
+      ],
+    ],
   });
 
   options = {

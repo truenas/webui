@@ -37,6 +37,11 @@
         ></ix-input>
 
         <ix-input
+          formControlName="cidr_port"
+          [label]="'CIDR Port'"
+        ></ix-input>
+
+        <ix-input
           formControlName="ui_httpsport"
           [label]="helptext.ui_httpsport.label | translate"
           [tooltip]="helptext.ui_httpsport.tooltip | translate"
