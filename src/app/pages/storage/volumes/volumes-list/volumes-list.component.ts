@@ -18,6 +18,7 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
 import {
   VolumesListDataset,
@@ -97,8 +98,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.messageService,
       this.http,
       this.validationService,
-    ),
-  };
+    ) as EntityTableConfig,
+  } as EntityTableComponent;
 
   expanded = false;
   paintMe = true;

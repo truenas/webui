@@ -7,6 +7,7 @@ import { MaterialModule } from 'app/app-material.module';
 import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import { EntityModule } from '../common/entity/entity.module';
@@ -44,6 +45,7 @@ import { PodShellComponent } from './pod-shell/pod-shell.component';
     ImgFallbackModule,
     TerminalModule,
     IxFormsModule,
+    CastModule,
   ],
   declarations: [
     ApplicationsComponent,

@@ -15,7 +15,7 @@ import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { VolumeDataEvent } from 'app/interfaces/events/volume-data-event.interface';
-import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
+import { EntityToolbarActionConfig } from 'app/interfaces/global-action.interface';
 import {
   NetworkInterface,
   NetworkInterfaceState,
@@ -51,7 +51,7 @@ export type DashboardNicState = NetworkInterfaceState & {
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   formEvents$: Subject<CoreEvent> = new Subject();
-  actionsConfig: GlobalActionConfig;
+  actionsConfig: EntityToolbarActionConfig;
 
   screenType = 'Desktop'; // Desktop || Mobile
   optimalDesktopWidth = '100%';

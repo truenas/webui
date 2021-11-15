@@ -1,9 +1,0 @@
-<span *ngFor="let action of actions">
-  <button
-    *ngIf="!entity.conf.isActionVisible || entity.conf.isActionVisible.bind(entity.conf)(action.id, row)"
-    mat-button color="primary"
-    (click)="action.onClick(this.row)"
-  >
-    <span>{{ action?.label | translate }}</span>
-  </button>
-</span>
