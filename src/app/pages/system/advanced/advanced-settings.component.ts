@@ -13,7 +13,7 @@ import {
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Device } from 'app/interfaces/device.interface';

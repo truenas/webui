@@ -13,7 +13,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import globalHelptext from 'app/helptext/global-helptext';
-import { helptext_system_update as helptext } from 'app/helptext/system/update';
+import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
