@@ -146,12 +146,12 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
 
   resourceTransformIncomingRestData(data: Cronjob[]): CronjobRow[] {
     return data.map((job) => {
-      const cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
+      const cronSchedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
 
       return {
         ...job,
-        cron_schedule,
-        next_run: this.taskService.getTaskNextRun(cron_schedule),
+        cron_schedule: cronSchedule,
+        next_run: this.taskService.getTaskNextRun(cronSchedule),
       };
     });
   }

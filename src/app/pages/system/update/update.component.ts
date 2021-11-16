@@ -124,23 +124,23 @@ export class UpdateComponent implements OnInit {
 
   parseTrainName(name: string): string[] {
     const version = [];
-    let sw_version = '';
+    let swVersion = '';
     let branch = '';
     let split: string[] = [];
     let sdk = '';
     if (name.match(/-SDK$/)) {
       split = name.split('-');
-      sw_version = split[1];
+      swVersion = split[1];
       branch = split[2];
       sdk = split[3];
-      version.push(sw_version);
+      version.push(swVersion);
       version.push(branch);
       version.push(sdk);
     } else {
       split = name.split('-');
-      sw_version = split[1];
+      swVersion = split[1];
       branch = split[2];
-      version.push(sw_version);
+      version.push(swVersion);
       version.push(branch);
     }
     return version;

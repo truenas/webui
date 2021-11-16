@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_sharing_smb = {
+export const helptextSharingSmb = {
   fieldset_basic: T('Basic'),
   fieldset_advanced: T('Advanced'),
   fieldset_access: T('Access'),

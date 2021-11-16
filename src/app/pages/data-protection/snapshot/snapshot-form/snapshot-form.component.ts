@@ -137,12 +137,12 @@ export class SnapshotFormComponent implements FormConfiguration {
     protected storageService: StorageService,
     protected dialog: DialogService,
     protected modalService: ModalService) {
-    const begin_field = this.fieldSets.config('begin') as FormSelectConfig;
-    const end_field = this.fieldSets.config('end') as FormSelectConfig;
-    const time_options = this.taskService.getTimeOptions();
-    time_options.forEach((option) => {
-      begin_field.options.push({ label: option.label, value: option.value });
-      end_field.options.push({ label: option.label, value: option.value });
+    const beginField = this.fieldSets.config('begin') as FormSelectConfig;
+    const endField = this.fieldSets.config('end') as FormSelectConfig;
+    const timeOptions = this.taskService.getTimeOptions();
+    timeOptions.forEach((option) => {
+      beginField.options.push({ label: option.label, value: option.value });
+      endField.options.push({ label: option.label, value: option.value });
     });
   }
 
@@ -157,9 +157,9 @@ export class SnapshotFormComponent implements FormConfiguration {
     this.storageService.getDatasetNameOptions().pipe(untilDestroyed(this)).subscribe(
       (options) => {
         if (this.dataset !== undefined && !_.find(options, { label: this.dataset })) {
-          const disabled_dataset = { label: this.dataset, value: this.dataset, disable: true };
+          const disabledDataset = { label: this.dataset, value: this.dataset, disable: true };
           this.dataset_disabled = true;
-          options.push(disabled_dataset);
+          options.push(disabledDataset);
 
           datasetField.warnings = helptext.dataset_warning;
           this.save_button_enabled = false;

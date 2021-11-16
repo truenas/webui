@@ -113,16 +113,16 @@ export class TableService {
     let deleteMsg: string = T('Delete the selected item?');
     if (table.tableConf.deleteMsg) {
       deleteMsg = action + table.tableConf.deleteMsg.title;
-      let msg_content = ' <b>' + item[table.tableConf.deleteMsg.key_props[0]];
+      let message = ' <b>' + item[table.tableConf.deleteMsg.key_props[0]];
       if (table.tableConf.deleteMsg.key_props.length > 1) {
         for (let i = 1; i < table.tableConf.deleteMsg.key_props.length; i++) {
           if (item[table.tableConf.deleteMsg.key_props[i]] != '') {
-            msg_content = msg_content + ' - ' + item[table.tableConf.deleteMsg.key_props[i]];
+            message = message + ' - ' + item[table.tableConf.deleteMsg.key_props[i]];
           }
         }
       }
-      msg_content += '</b>?';
-      deleteMsg += msg_content;
+      message += '</b>?';
+      deleteMsg += message;
     }
 
     return this.translate.instant(deleteMsg);

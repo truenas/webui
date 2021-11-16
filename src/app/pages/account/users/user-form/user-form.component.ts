@@ -483,11 +483,11 @@ export class UserFormComponent implements FormConfiguration {
     value.email = value.email === '' ? null : value.email;
 
     if (this.isNew) {
-      const home_user = value.home.substr(
+      const homeUser = value.home.substr(
         value.home.length - value.username.length,
       );
       if (value.home !== '/nonexistent') {
-        if (value.username.toLowerCase() !== home_user.toLowerCase()) {
+        if (value.username.toLowerCase() !== homeUser.toLowerCase()) {
           value.home = value.home + '/' + value.username;
         }
       }

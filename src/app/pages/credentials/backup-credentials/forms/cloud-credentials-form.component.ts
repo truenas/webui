@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
+import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';

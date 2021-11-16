@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SystemGeneralService, WebSocketService } from 'app/services';
@@ -23,8 +23,8 @@ export class KernelFormComponent {
   });
 
   readonly tooltips = {
-    autotune: helptext_system_advanced.autotune_tooltip,
-    debugkernel: helptext_system_advanced.debugkernel_tooltip,
+    autotune: helptextSystemAdvanced.autotune_tooltip,
+    debugkernel: helptextSystemAdvanced.debugkernel_tooltip,
   };
 
   constructor(
