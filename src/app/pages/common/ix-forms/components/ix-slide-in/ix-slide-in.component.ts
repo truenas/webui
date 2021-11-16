@@ -1,5 +1,14 @@
 import {
-  Component, ComponentFactoryResolver, ElementRef, Input, OnDestroy, OnInit, Type, ViewChild, ViewContainerRef,
+  Component,
+  ComponentFactoryResolver,
+  ElementRef,
+  HostListener,
+  Input,
+  OnDestroy,
+  OnInit,
+  Type,
+  ViewChild,
+  ViewContainerRef,
 } from '@angular/core';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -11,6 +20,12 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 export class IxSlideInComponent implements OnInit, OnDestroy {
   @Input() id: string;
   @ViewChild('body', { static: true, read: ViewContainerRef }) slideInBody: ViewContainerRef;
+
+  @HostListener('document:keydown.escape') onKeydownHandler(): void {
+    if (this.element) {
+      this.close();
+    }
+  }
 
   isSlideInOpen = false;
   private element: HTMLElement;
