@@ -96,11 +96,7 @@ module.exports = {
           {
             selector: ['variable'],
             format: ['camelCase']
-          }
-          // {
-          //   selector: ['parameter'],
-          //   format: ['camelCase'],
-          // },
+          },
         ],
 
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically
