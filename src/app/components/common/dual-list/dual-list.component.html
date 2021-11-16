@@ -1,6 +1,7 @@
 <div class="container-dualListBox">
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight"
     cdkDropList
+    id="user-list"
     #userList="cdkDropList"
     [cdkDropListData]="availableItems.totalItems"
     [cdkDropListConnectedTo]="[memberList]"
@@ -43,6 +44,7 @@
   </div>
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight"
     cdkDropList
+    id="member-list"
     #memberList="cdkDropList"
     [cdkDropListData]="selectedItems.totalItems"
     [cdkDropListConnectedTo]="[userList]"
