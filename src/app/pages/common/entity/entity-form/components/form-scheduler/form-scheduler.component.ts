@@ -300,7 +300,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     });
 
     if (this.control.value) {
-      this.control.setValue(new EntityUtils().parseDOW(this.control.value));
+      this.control.setValue(new EntityUtils().parseDow(this.control.value));
       this.crontab = this.control.value;
     }
 
@@ -345,7 +345,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
 
     if (this.control.value) {
-      this.control.setValue(new EntityUtils().parseDOW(this.control.value));
+      this.control.setValue(new EntityUtils().parseDow(this.control.value));
     }
   }
 

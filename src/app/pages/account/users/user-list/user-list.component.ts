@@ -161,7 +161,7 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
                   this.loader.close();
                 },
                 (err) => {
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                  new EntityUtils().handleWsError(this, err, this.dialogService);
                   this.loader.close();
                 });
             },

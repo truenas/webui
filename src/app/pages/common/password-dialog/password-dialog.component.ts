@@ -44,7 +44,7 @@ export class PasswordDialogComponent {
         }
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err);
+        new EntityUtils().handleWsError(this, err);
       },
     );
   }

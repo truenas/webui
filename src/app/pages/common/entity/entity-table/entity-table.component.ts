@@ -665,7 +665,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
         for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
           if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
-            res.data.map((row: any) => row[prop] = new EntityUtils().parseDOW(row[prop]));
+            res.data.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
           }
         }
       }
@@ -673,7 +673,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       res = this.conf.resourceTransformIncomingRestData(res);
       for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
         if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
-          res.map((row: any) => row[prop] = new EntityUtils().parseDOW(row[prop]));
+          res.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
         }
       }
     }
@@ -936,7 +936,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         }
       },
       (resinner) => {
-        new EntityUtils().handleWSError(this, resinner, this.dialogService);
+        new EntityUtils().handleWsError(this, resinner, this.dialogService);
         this.loader.close();
       },
     );
@@ -973,7 +973,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
           return this.ws.call(this.conf.wsDelete, params).pipe(
             take(1),
             catchError((error) => {
-              new EntityUtils().handleWSError(this, error, this.dialogService);
+              new EntityUtils().handleWsError(this, error, this.dialogService);
               this.loader.close();
               return of(false);
             }),
@@ -1059,7 +1059,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
                 }
               },
               (res1) => {
-                new EntityUtils().handleWSError(this, res1, this.dialogService);
+                new EntityUtils().handleWsError(this, res1, this.dialogService);
                 this.loader.close();
                 this.loaderOpen = false;
               },

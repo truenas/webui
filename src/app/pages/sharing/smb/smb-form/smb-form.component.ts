@@ -506,7 +506,7 @@ export class SMBFormComponent implements FormConfiguration {
             )
             .subscribe(
               () => {},
-              (error) => new EntityUtils().handleWSError(this, error, this.dialog),
+              (error) => new EntityUtils().handleWsError(this, error, this.dialog),
             );
         }
       },
@@ -535,7 +535,7 @@ export class SMBFormComponent implements FormConfiguration {
         }
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
 

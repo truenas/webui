@@ -231,46 +231,46 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     }
   }
 
-  setTrueNASImage(sys_product: string): void {
+  setTrueNASImage(sysProduct: string): void {
     this.product_enclosure = 'rackmount';
 
-    if (sys_product.includes('X10')) {
+    if (sysProduct.includes('X10')) {
       this.product_image = '/servers/X10.png';
       this.product_model = 'X10';
-    } else if (sys_product.includes('X20')) {
+    } else if (sysProduct.includes('X20')) {
       this.product_image = '/servers/X20.png';
       this.product_model = 'X20';
-    } else if (sys_product.includes('M30')) {
+    } else if (sysProduct.includes('M30')) {
       this.product_image = '/servers/M30.png';
       this.product_model = 'M30';
-    } else if (sys_product.includes('M40')) {
+    } else if (sysProduct.includes('M40')) {
       this.product_image = '/servers/M40.png';
       this.product_model = 'M40';
-    } else if (sys_product.includes('M50')) {
+    } else if (sysProduct.includes('M50')) {
       this.product_image = '/servers/M50.png';
       this.product_model = 'M50';
-    } else if (sys_product.includes('M60')) {
+    } else if (sysProduct.includes('M60')) {
       this.product_image = '/servers/M50.png';
       this.product_model = 'M50';
-    } else if (sys_product.includes('Z20')) {
+    } else if (sysProduct.includes('Z20')) {
       this.product_image = '/servers/Z20.png';
       this.product_model = 'Z20';
-    } else if (sys_product.includes('Z35')) {
+    } else if (sysProduct.includes('Z35')) {
       this.product_image = '/servers/Z35.png';
       this.product_model = 'Z35';
-    } else if (sys_product.includes('Z50')) {
+    } else if (sysProduct.includes('Z50')) {
       this.product_image = '/servers/Z50.png';
       this.product_model = 'Z50';
-    } else if (sys_product.includes('R10')) {
+    } else if (sysProduct.includes('R10')) {
       this.product_image = '/servers/R10.png';
       this.product_model = 'R10';
-    } else if (sys_product.includes('R20')) {
+    } else if (sysProduct.includes('R20')) {
       this.product_image = '/servers/R20.png';
       this.product_model = 'R20';
-    } else if (sys_product.includes('R40')) {
+    } else if (sysProduct.includes('R40')) {
       this.product_image = '/servers/R40.png';
       this.product_model = 'R40';
-    } else if (sys_product.includes('R50')) {
+    } else if (sysProduct.includes('R50')) {
       this.product_image = '/servers/R50.png';
       this.product_model = 'R50';
     } else {
@@ -278,16 +278,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     }
   }
 
-  setMiniImage(sys_product: string): void {
+  setMiniImage(sysProduct: string): void {
     this.product_enclosure = 'tower';
 
-    if (sys_product && sys_product.includes('CERTIFIED')) {
+    if (sysProduct && sysProduct.includes('CERTIFIED')) {
       this.product_image = '';
       this.certified = true;
       return;
     }
 
-    switch (sys_product) {
+    switch (sysProduct) {
       case 'FREENAS-MINI-2.0':
       case 'FREENAS-MINI-3.0-E':
       case 'FREENAS-MINI-3.0-E+':

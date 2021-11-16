@@ -77,7 +77,7 @@ export class EntityUtils {
     }
   }
 
-  handleWSError(
+  handleWsError(
     entity: any,
     res: WebsocketError | Job,
     dialogService?: DialogService,
@@ -186,14 +186,14 @@ export class EntityUtils {
       : !!value;
   }
 
-  array1DToLabelValuePair(arr: (string | number)[]): Option[] {
+  array1dToLabelValuePair(arr: (string | number)[]): Option[] {
     return arr.map((value) => ({ label: value.toString(), value }));
   }
 
   /**
    * make cron time dow consistence
    */
-  parseDOW(cron: string): string {
+  parseDow(cron: string): string {
     const dowOptions = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     const cronArray = cron.replace(/00/g, '0').split(' ');
     if (cronArray[cronArray.length - 1] !== '*') {

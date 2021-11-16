@@ -74,12 +74,12 @@ export class JobService {
                   this.storage.downloadBlob(file, targetJob.id + '.log');
                 },
                 (err) => {
-                  new EntityUtils().handleWSError(this, err);
+                  new EntityUtils().handleWsError(this, err);
                 },
               );
             },
             (error) => {
-              new EntityUtils().handleWSError(this, error);
+              new EntityUtils().handleWsError(this, error);
             },
           );
         });

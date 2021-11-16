@@ -82,7 +82,7 @@ export class PullImageFormComponent {
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.isFormLoading = false;
       dialogRef.close();
-      new EntityUtils().handleWSError(this, error, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
       this.cdr.markForCheck();
     });
   }

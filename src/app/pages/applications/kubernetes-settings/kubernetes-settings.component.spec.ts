@@ -43,7 +43,7 @@ describe('KubernetesSettingsComponent', () => {
         getContainerConfig: jest.fn(() => of({
           enable_image_updates: true,
         } as ContainerConfig)),
-        getBindIPChoices: () => of({
+        getBindIpChoices: () => of({
           '10.123.45.67': '10.123.45.67',
           '10.123.45.11': '10.123.45.11',
         }),

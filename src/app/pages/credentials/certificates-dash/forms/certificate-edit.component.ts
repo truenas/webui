@@ -296,7 +296,7 @@ export class CertificateEditComponent implements FormConfiguration {
           });
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }
@@ -317,7 +317,7 @@ export class CertificateEditComponent implements FormConfiguration {
           });
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }
@@ -376,7 +376,7 @@ export class CertificateEditComponent implements FormConfiguration {
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       this.matDialog.closeAll();
       this.modalService.refreshTable();
-      new EntityUtils().handleWSError(this.entityForm, res);
+      new EntityUtils().handleWsError(this.entityForm, res);
     });
   }
 }

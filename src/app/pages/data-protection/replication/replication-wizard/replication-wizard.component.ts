@@ -1367,7 +1367,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               }
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
               toStop = true;
               this.rollBack(createdItems);
             },
@@ -1424,7 +1424,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             },
             (err) => {
               prerequisite = false;
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         }
@@ -1435,7 +1435,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             },
             (err) => {
               prerequisite = false;
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         }
@@ -1470,7 +1470,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               (err) => {
                 hasError = true;
                 this.rollBack(createdItems);
-                new EntityUtils().handleWSError(this, err, this.dialogService, this.dialogFieldConfig);
+                new EntityUtils().handleWsError(this, err, this.dialogService, this.dialogFieldConfig);
               },
             );
           }
@@ -1551,7 +1551,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         (err) => {
           this.eligibleSnapshots = 0;
           this.snapshotsCountField.paraText = '';
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWsError(this, err);
         },
       );
     } else {

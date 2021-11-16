@@ -323,14 +323,14 @@ export class GeneralSettingsComponent implements OnInit {
           (err: WebsocketError) => {
             entityDialog.loader.close();
             entityDialog.dialogRef.close();
-            new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+            new EntityUtils().handleWsError(entityDialog, err, this.dialog);
           },
         );
     },
     (err: WebsocketError) => {
       entityDialog.loader.close();
       entityDialog.dialogRef.close();
-      new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+      new EntityUtils().handleWsError(entityDialog, err, this.dialog);
     });
   }
 

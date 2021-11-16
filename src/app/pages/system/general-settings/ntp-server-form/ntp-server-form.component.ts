@@ -91,7 +91,7 @@ export class NtpServerFormComponent {
     }, (error) => {
       this.isFormLoading = false;
       this.cdr.markForCheck();
-      new EntityUtils().handleWSError(this, error, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
     });
   }
 }

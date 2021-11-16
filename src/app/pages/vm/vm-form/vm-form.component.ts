@@ -468,7 +468,7 @@ export class VmFormComponent implements FormConfiguration {
       },
       (error) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, error, this.dialogService);
+        new EntityUtils().handleWsError(this, error, this.dialogService);
       },
     );
   }

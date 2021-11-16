@@ -1050,7 +1050,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       );
 
       // Convert color to rgb value
-      const cc = this.hexToRGB(this.theme.cyan);
+      const cc = this.hexToRgb(this.theme.cyan);
       const animation = keyframes({
         values: [
           { borderWidth: 0, borderColor: 'rgb(' + cc.rgb[0] + ', ' + cc.rgb[1] + ', ' + cc.rgb[2] + ')' },
@@ -1064,7 +1064,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
-  hexToRGB(str: string): { hex: string; rgb: number[] } {
+  hexToRgb(str: string): { hex: string; rgb: number[] } {
     const spl = str.split('#');
     let hex = spl[1];
     if (hex.length == 3) {

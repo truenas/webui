@@ -355,7 +355,7 @@ export class LdapComponent implements FormConfiguration {
       this.modalService.refreshTable();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWSError(this, error, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
       this.modalService.refreshTable();
       dialogRef.close();
     });

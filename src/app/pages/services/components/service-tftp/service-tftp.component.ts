@@ -118,7 +118,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
   }
 
   preInit(): void {
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((items) => {
       this.tftp_username = this.fieldSets
         .find((set) => set.name === helptext.tftp_fieldset_conn)
         .config.find((config) => config.name === 'username') as FormComboboxConfig;
@@ -133,7 +133,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       this.tftp_username.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });

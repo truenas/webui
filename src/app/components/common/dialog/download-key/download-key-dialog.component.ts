@@ -57,7 +57,7 @@ export class DownloadKeyDialogComponent {
           });
       }, (e) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, e, this.dialog);
+        new EntityUtils().handleWsError(this, e, this.dialog);
       });
     } else {
       mimetype = 'application/octet-stream';

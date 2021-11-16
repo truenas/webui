@@ -1032,7 +1032,7 @@ export class CertificateAddComponent implements WizardConfiguration {
       this.dialog.closeAll();
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
       if (err.error.includes('[EFAULT')) {
-        new EntityUtils().handleWSError(this.entityForm, err);
+        new EntityUtils().handleWsError(this.entityForm, err);
       } else {
         this.dialogService.errorReport(helptextSystemCertificates.acme.error_dialog.title,
           err.exc_info.type, err.exception);

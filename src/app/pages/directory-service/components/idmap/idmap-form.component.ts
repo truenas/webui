@@ -415,7 +415,7 @@ export class IdmapFormComponent implements FormConfiguration {
       });
       this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
         this.dialog.closeAll();
-        new EntityUtils().handleWSError(this.entityForm, res);
+        new EntityUtils().handleWsError(this.entityForm, res);
       });
     });
   }

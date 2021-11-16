@@ -278,7 +278,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
         });
     }, (e) => {
       this.loader.close();
-      new EntityUtils().handleWSError(this, e, this.dialogService);
+      new EntityUtils().handleWsError(this, e, this.dialogService);
     });
   }
 

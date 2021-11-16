@@ -50,7 +50,7 @@ const tableUtils = {
 
     return units;
   },
-  convertKMGT: (input: number, units: string) => {
+  convertKmgt: (input: number, units: string) => {
     const kilo = 1024;
     const mega = kilo * 1024;
     const giga = mega * 1024;

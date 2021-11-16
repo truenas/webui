@@ -312,7 +312,7 @@ export class CatalogComponent implements OnInit {
       });
 
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       });
     });
   }

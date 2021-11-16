@@ -214,7 +214,7 @@ export class GroupQuotaFormComponent implements FormConfiguration, DoCheck {
   }
 
   updateSearchOptions(value = ''): void {
-    this.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.userService.groupQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
       this.entryField.searchOptions = groups.map((group) => {
         return { label: group.group, value: group.group };
       });

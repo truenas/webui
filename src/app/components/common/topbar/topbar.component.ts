@@ -437,7 +437,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.waitingNetworkCheckin = false;
       }, (err) => {
         this.loader.close();
-        new EntityUtils().handleWSError(null, err, this.dialogService);
+        new EntityUtils().handleWsError(null, err, this.dialogService);
       });
     });
   }
@@ -704,7 +704,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
                 },
                 (err) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                  new EntityUtils().handleWsError(this, err, this.dialogService);
                 },
               );
           });
@@ -740,7 +740,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           },
           (err) => {
             this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.dialogService);
+            new EntityUtils().handleWsError(this, err, this.dialogService);
           },
         );
       },
@@ -790,7 +790,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           },
           (err) => {
             this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.dialogService);
+            new EntityUtils().handleWsError(this, err, this.dialogService);
           },
         );
       }

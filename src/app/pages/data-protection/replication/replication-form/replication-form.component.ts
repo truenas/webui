@@ -1183,7 +1183,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         },
         (err) => {
           this.form_message.content = '';
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWsError(this, err);
         },
       );
   }

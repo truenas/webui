@@ -570,7 +570,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
     this.ws
       .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
-      .pipe(map(new EntityUtils().array1DToLabelValuePair))
+      .pipe(map(new EntityUtils().array1dToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe((options) => {
         const config = this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore') as FormSelectConfig;
         config.options = options;
@@ -668,20 +668,20 @@ export class VMWizardComponent implements WizardConfiguration {
         this.summary[this.translate.instant('Disk Size')] = volsize;
       });
 
-      this.getFormControlFromFieldName('disk_radio').valueChanges.pipe(untilDestroyed(this)).subscribe((disk_radio) => {
+      this.getFormControlFromFieldName('disk_radio').valueChanges.pipe(untilDestroyed(this)).subscribe((createNewDisk) => {
         if (this.summary[this.translate.instant('Disk')] || this.summary[this.translate.instant('Disk Size')]) {
           delete this.summary[this.translate.instant('Disk')];
           delete this.summary[this.translate.instant('Disk Size')];
         }
-        if (disk_radio) {
+        if (createNewDisk) {
           this.summary[this.translate.instant('Disk Size')] = this.getFormControlFromFieldName('volsize').value;
           this.getFormControlFromFieldName('volsize').valueChanges.pipe(untilDestroyed(this)).subscribe((volsize) => {
             this.summary[this.translate.instant('Disk Size')] = volsize;
           });
         } else {
           this.summary[this.translate.instant('Disk')] = this.getFormControlFromFieldName('hdd_path').value;
-          this.getFormControlFromFieldName('hdd_path').valueChanges.pipe(untilDestroyed(this)).subscribe((existing_hdd_path) => {
-            this.summary[this.translate.instant('Disk')] = existing_hdd_path;
+          this.getFormControlFromFieldName('hdd_path').valueChanges.pipe(untilDestroyed(this)).subscribe((existingHddPath) => {
+            this.summary[this.translate.instant('Disk')] = existingHddPath;
           });
         }
       });
@@ -753,9 +753,9 @@ export class VMWizardComponent implements WizardConfiguration {
         this.prefService.preferences.storedValues.vm_zvolLocation = this.getFormControlFromFieldName('datastore').value;
         this.prefService.savePreferences();
       });
-      this.getFormControlFromFieldName('iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((iso_path) => {
-        if (iso_path && iso_path !== undefined) {
-          this.summary[this.translate.instant('Installation Media')] = iso_path;
+      this.getFormControlFromFieldName('iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((isoPath) => {
+        if (isoPath) {
+          this.summary[this.translate.instant('Installation Media')] = isoPath;
         } else {
           delete this.summary[this.translate.instant('Installation Media')];
         }
@@ -826,8 +826,8 @@ export class VMWizardComponent implements WizardConfiguration {
         this.prefService.savePreferences();
       });
 
-      this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((mac_res) => {
-        this.getFormControlFromFieldName('NIC_mac').setValue(mac_res);
+      this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((mac) => {
+        this.getFormControlFromFieldName('NIC_mac').setValue(mac);
       });
     });
     this.nicType = _.find(this.wizardConfig[3].fieldConfig, { name: 'NIC_type' }) as FormSelectConfig;
@@ -1091,7 +1091,7 @@ export class VMWizardComponent implements WizardConfiguration {
       }
       this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).pipe(untilDestroyed(this)).subscribe(
         (res) => res,
-        (err) => new EntityUtils().handleWSError(this.entityWizard, err),
+        (err) => new EntityUtils().handleWsError(this.entityWizard, err),
       );
     }
     if (value.hdd_path) {
@@ -1103,10 +1103,10 @@ export class VMWizardComponent implements WizardConfiguration {
 
       const devices = [...vmPayload['devices']];
       delete vmPayload['devices'];
-      this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((vm_res) => {
+      this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((newVm) => {
         const observables: Observable<unknown>[] = [];
         for (const device of devices) {
-          device.vm = vm_res.id;
+          device.vm = newVm.id;
           observables.push(this.ws.call('vm.device.create', [device]).pipe(
             map((res) => res),
             catchError((err) => {
@@ -1122,7 +1122,7 @@ export class VMWizardComponent implements WizardConfiguration {
           },
           (error) => {
             setTimeout(() => {
-              this.deleteVm(vm_res.id, error);
+              this.deleteVm(newVm.id, error);
             }, 1000);
           },
         );
@@ -1148,10 +1148,10 @@ export class VMWizardComponent implements WizardConfiguration {
 
       const devices = [...vmPayload['devices']];
       delete vmPayload['devices'];
-      this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((vm_res) => {
+      this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((newVm) => {
         const observables: Observable<unknown>[] = [];
         for (const device of devices) {
-          device.vm = vm_res.id;
+          device.vm = newVm.id;
           observables.push(this.ws.call('vm.device.create', [device]).pipe(
             map((res) => res),
             catchError((err) => {
@@ -1167,7 +1167,7 @@ export class VMWizardComponent implements WizardConfiguration {
           },
           (error) => {
             setTimeout(() => {
-              this.deleteVm(vm_res.id, error);
+              this.deleteVm(newVm.id, error);
             }, 1000);
           },
         );
@@ -1201,7 +1201,7 @@ export class VMWizardComponent implements WizardConfiguration {
           ),
           error.trace.formatted,
         );
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       },
     );
   }

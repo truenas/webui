@@ -109,7 +109,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
 
     this.ws
       .call('replication.list_naming_schemas')
-      .pipe(map(new EntityUtils().array1DToLabelValuePair))
+      .pipe(map(new EntityUtils().array1dToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe(
         (options) => {
           const config = this.fieldConfig.find((config) => config.name === 'naming_schema') as FormSelectConfig;
@@ -118,7 +118,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
             ...options,
           ];
         },
-        (error) => new EntityUtils().handleWSError(this, error, this.dialog),
+        (error) => new EntityUtils().handleWsError(this, error, this.dialog),
       );
   }
 

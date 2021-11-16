@@ -35,14 +35,14 @@ export class ConfigResetComponent implements OnInit {
     });
   }
 
-  isWSConnected(): void {
+  isWsConnected(): void {
     if (this.ws.connected) {
       this.loader.close();
       // ws is connected
       this.router.navigate(['/session/signin']);
     } else {
       setTimeout(() => {
-        this.isWSConnected();
+        this.isWsConnected();
       }, 1000);
     }
   }
@@ -64,7 +64,7 @@ export class ConfigResetComponent implements OnInit {
       this.ws.prepareShutdown();
       this.loader.open();
       setTimeout(() => {
-        this.isWSConnected();
+        this.isWsConnected();
       }, 15000);
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {

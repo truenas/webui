@@ -358,7 +358,7 @@ export class EmailComponent implements FormConfiguration {
         },
         (error) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, error, this.dialogservice);
+          new EntityUtils().handleWsError(this, error, this.dialogservice);
         },
         () => this.loader.close(),
       );

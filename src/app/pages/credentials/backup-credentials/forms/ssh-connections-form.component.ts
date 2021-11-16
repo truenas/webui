@@ -352,7 +352,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       },
       (err) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       },
     );
   }
@@ -423,7 +423,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
     this.loader.close();
     this.modalService.refreshTable();
     if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     } else {
       new EntityUtils().handleError(this, err);
     }

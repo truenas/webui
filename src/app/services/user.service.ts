@@ -19,7 +19,7 @@ export class UserService {
 
   constructor(protected ws: WebSocketService) {}
 
-  groupQueryDSCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
+  groupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
     // TODO: Proper type for query API.
     let queryArgs: any[] = [];
     search = search.trim();
@@ -40,7 +40,7 @@ export class UserService {
     return this.ws.call(this.uncachedGroupQuery, [group]);
   }
 
-  userQueryDSCache(search = '', offset = 0): Observable<User[]> {
+  userQueryDsCache(search = '', offset = 0): Observable<User[]> {
     let queryArgs: QueryFilter<User>[] = [];
     search = search.trim();
     if (search.length > 0) {

@@ -279,7 +279,7 @@ export class ChartReleasesComponent implements OnInit {
       this.refreshStatus(chartName);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWSError(this, error, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
     });
   }
 
@@ -325,7 +325,7 @@ export class ChartReleasesComponent implements OnInit {
         });
         this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           this.dialogService.closeAllDialogs();
-          new EntityUtils().handleWSError(this, error, this.dialogService);
+          new EntityUtils().handleWsError(this, error, this.dialogService);
         });
       });
     });
@@ -355,7 +355,7 @@ export class ChartReleasesComponent implements OnInit {
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.dialogService.closeAllDialogs();
-      new EntityUtils().handleWSError(this, error, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
     });
   }
 
@@ -595,9 +595,9 @@ export class ChartReleasesComponent implements OnInit {
   afterShellDialogInit(entityDialog: EntityDialogComponent<this>): void {
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const containers = this.podDetails[value];
-      const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
+      const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
 
-      containerFC.options = containers.map((item) => ({
+      containerFc.options = containers.map((item) => ({
         label: item,
         value: item,
       }));
@@ -608,8 +608,8 @@ export class ChartReleasesComponent implements OnInit {
   afterLogsDialogInit(entityDialog: EntityDialogComponent<this>): void {
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const containers = this.podDetails[value];
-      const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
-      containerFC.options = containers.map((item) => ({
+      const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
+      containerFc.options = containers.map((item) => ({
         label: item,
         value: item,
       }));

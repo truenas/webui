@@ -326,7 +326,7 @@ export class SystemProfiler {
     return capacity;
   }
 
-  getDiskByID(id: string): Disk {
+  getDiskById(id: string): Disk {
     return this.diskData ? this.diskData.find((disk) => disk.identifier == id) : null;
   }
 }

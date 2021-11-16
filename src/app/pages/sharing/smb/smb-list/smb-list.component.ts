@@ -176,7 +176,7 @@ export class SMBListComponent implements EntityTableConfig {
       },
       (err) => {
         row.enabled = !row.enabled;
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }
