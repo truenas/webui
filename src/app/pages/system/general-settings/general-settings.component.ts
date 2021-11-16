@@ -24,7 +24,7 @@ import { LocalizationFormComponent } from 'app/pages/system/general-settings/loc
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import { SystemGeneralService, DialogService, StorageService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { GuiFormComponent } from './gui-form/gui-form.component';
 
@@ -119,7 +119,7 @@ export class GeneralSettingsComponent implements OnInit {
     private router: Router,
     public mdDialog: MatDialog,
     private core: CoreService,
-    private ixModalService: IxModalService,
+    private slideInService: IxSlideInService,
     private storage: StorageService,
     private http: HttpClient,
   ) { }
@@ -130,7 +130,7 @@ export class GeneralSettingsComponent implements OnInit {
       this.getDataCardData();
     });
 
-    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.ntpServersData?.tableConf?.tableComponent.getData();
     });
 
@@ -260,10 +260,10 @@ export class GeneralSettingsComponent implements OnInit {
             { name: helptext_ntp.maxpoll.label, prop: 'maxpoll', width: '60px' },
           ],
           add: () => {
-            this.ixModalService.open(NtpServerFormComponent);
+            this.slideInService.open(NtpServerFormComponent);
           },
           edit: (server: NtpServer) => {
-            const modal = this.ixModalService.open(NtpServerFormComponent);
+            const modal = this.slideInService.open(NtpServerFormComponent);
             modal.setupForm(server);
           },
         },
@@ -274,10 +274,10 @@ export class GeneralSettingsComponent implements OnInit {
   doAdd(name: GeneralCardId): void {
     switch (name) {
       case GeneralCardId.Gui:
-        this.ixModalService.open(GuiFormComponent);
+        this.slideInService.open(GuiFormComponent);
         break;
       default:
-        const localizationFormModal = this.ixModalService.open(LocalizationFormComponent);
+        const localizationFormModal = this.slideInService.open(LocalizationFormComponent);
         localizationFormModal.setupForm(this.localizationSettings);
         break;
     }

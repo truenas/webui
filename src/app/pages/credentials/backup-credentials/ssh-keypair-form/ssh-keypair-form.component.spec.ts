@@ -14,7 +14,7 @@ import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credential
 import {
   AppLoaderService, DialogService, StorageService, WebSocketService,
 } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('SshKeypairFormComponent', () => {
   let spectator: Spectator<SshKeypairFormComponent>;
@@ -35,7 +35,7 @@ describe('SshKeypairFormComponent', () => {
         mockCall('keychaincredential.create'),
         mockCall('keychaincredential.update'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(StorageService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),

@@ -11,7 +11,7 @@ import { Device } from 'app/interfaces/device.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -34,7 +34,7 @@ export class IsolatedGpuPcisFormComponent implements OnInit {
   constructor(
     protected ws: WebSocketService,
     private sysGeneralService: SystemGeneralService,
-    private modal: IxModalService,
+    private modal: IxSlideInService,
     private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,

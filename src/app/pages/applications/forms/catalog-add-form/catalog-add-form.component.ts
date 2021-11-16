@@ -6,7 +6,7 @@ import { chartsTrain } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -35,7 +35,7 @@ export class CatalogAddFormComponent {
 
   constructor(
     private ws: WebSocketService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -54,7 +54,7 @@ export class CatalogAddFormComponent {
         this.dialogService.info(
           helptext.catalogForm.dialog.title, helptext.catalogForm.dialog.message, '500px', 'info', true,
         );
-        this.modalService.close();
+        this.slideInService.close();
       }, (error) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);

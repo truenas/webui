@@ -9,7 +9,7 @@ import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { DialogService, SystemGeneralService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { MockWebsocketService } from '../../../../core/testing/classes/mock-websocket.service';
 import { ServiceName } from '../../../../enums/service-name.enum';
 import { ServiceStatus } from '../../../../enums/service-status.enum';
@@ -42,7 +42,7 @@ describe('SystemDatasetPoolComponent', () => {
         }),
         mockJob('systemdataset.update'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

@@ -11,7 +11,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { IsolatedGpuPcisFormComponent } from 'app/pages/system/advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('IsolatedGpuPcisFormComponent', () => {
   let spectator: Spectator<IsolatedGpuPcisFormComponent>;
@@ -45,7 +45,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
         mockCall('system.advanced.update'),
       ]),
       mockProvider(SystemGeneralService),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
     ],

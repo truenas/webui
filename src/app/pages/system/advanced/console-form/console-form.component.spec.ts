@@ -12,7 +12,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { ConsoleFormComponent } from 'app/pages/system/advanced/console-form/console-form.component';
 import { DialogService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('ConsoleFormComponent', () => {
   let spectator: Spectator<ConsoleFormComponent>;
@@ -39,7 +39,7 @@ describe('ConsoleFormComponent', () => {
         } as AdvancedConfig),
         mockCall('system.advanced.update'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
     ],

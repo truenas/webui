@@ -7,7 +7,7 @@ import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-se
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ValidationService, WebSocketService, DialogService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +38,7 @@ export class NtpServerFormComponent {
   }
 
   constructor(
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private validationService: ValidationService,
     private dialogService: DialogService,
     private fb: FormBuilder,
@@ -87,7 +87,7 @@ export class NtpServerFormComponent {
     request$.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
       this.cdr.markForCheck();
-      this.modalService.close();
+      this.slideInService.close();
     }, (error) => {
       this.isFormLoading = false;
       this.cdr.markForCheck();

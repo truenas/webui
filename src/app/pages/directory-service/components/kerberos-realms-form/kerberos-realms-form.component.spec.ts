@@ -10,7 +10,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 import { WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('KerberosRealmsFormComponent', () => {
   let spectator: Spectator<KerberosRealmsFormComponent>;
@@ -27,7 +27,7 @@ describe('KerberosRealmsFormComponent', () => {
         mockCall('kerberos.realm.create'),
         mockCall('kerberos.realm.update'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
     ],
   });

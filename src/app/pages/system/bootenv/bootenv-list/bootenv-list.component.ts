@@ -19,7 +19,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
 import { BootenvRow } from './bootenv-row.interface';
@@ -59,7 +59,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     protected localeService: LocaleService,
     private sysGeneralService: SystemGeneralService,
     protected translate: TranslateService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
   ) {}
 
   columns = [
@@ -116,7 +116,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -144,7 +144,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: this.translate.instant('Clone'),
       id: 'clone',
       onClick: (row: BootenvRow) => {
-        const modal = this.modalService.open(BootEnvironmentFormComponent);
+        const modal = this.slideInService.open(BootEnvironmentFormComponent);
         modal.setupForm(BootEnvironmentActions.Clone, row.id);
       },
     });
@@ -153,7 +153,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: this.translate.instant('Rename'),
       id: 'rename',
       onClick: (row: BootenvRow) => {
-        const modal = this.modalService.open(BootEnvironmentFormComponent);
+        const modal = this.slideInService.open(BootEnvironmentFormComponent);
         modal.setupForm(BootEnvironmentActions.Rename, row.id);
       },
     });
@@ -323,7 +323,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return [{
       label: this.translate.instant('Add'),
       onClick: () => {
-        const modal = this.modalService.open(BootEnvironmentFormComponent);
+        const modal = this.slideInService.open(BootEnvironmentFormComponent);
         modal.setupForm(BootEnvironmentActions.Create);
       },
     }, {

@@ -9,7 +9,7 @@ import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { DialogService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('PullImageFormComponent', () => {
   let spectator: Spectator<PullImageFormComponent>;
@@ -25,7 +25,7 @@ describe('PullImageFormComponent', () => {
       mockWebsocket([
         mockCall('container.image.pull'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
     ],
