@@ -9,8 +9,10 @@ import { ModalService } from 'app/services/modal.service';
   styleUrls: ['./modal.component.scss'],
 })
 export class ModalComponent implements OnInit, OnDestroy {
-  @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(): void {
-    this.close();
+  @HostListener('document:keydown.escape') onKeydownHandler(): void {
+    if (this.modal) {
+      this.close();
+    }
   }
   @Input() id: string;
   private element: HTMLElement;

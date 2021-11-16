@@ -10,8 +10,10 @@ import { IxModalService } from 'app/services/ix-modal.service';
   styleUrls: ['./ix-modal.component.scss'],
 })
 export class IxModalComponent implements OnInit, OnDestroy {
-  @HostListener('document:keydown.escape', ['$event']) onKeydownHandler(): void {
-    this.close();
+  @HostListener('document:keydown.escape') onKeydownHandler(): void {
+    if (this.element) {
+      this.close();
+    }
   }
   @Input() id: string;
   @ViewChild(IxModalDirective, { static: true }) ixModal: IxModalDirective;
