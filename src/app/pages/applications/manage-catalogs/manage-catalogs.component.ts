@@ -15,7 +15,7 @@ import {
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { ManageCatalogSummaryDialogComponent } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
 
@@ -68,7 +68,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     private dialogService: DialogService,
     private loader: AppLoaderService,
     private ws: WebSocketService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -86,7 +86,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
       }
     });
 
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.refresh();
     });
   }
@@ -143,11 +143,11 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
   }
 
   doAdd(): void {
-    this.modalService.open(CatalogAddFormComponent);
+    this.slideInService.open(CatalogAddFormComponent);
   }
 
   edit(catalog: Catalog): void {
-    const modal = this.modalService.open(CatalogEditFormComponent);
+    const modal = this.slideInService.open(CatalogEditFormComponent);
     modal.setCatalogForEdit(catalog);
   }
 

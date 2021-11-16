@@ -16,7 +16,7 @@ import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
 import { SystemGeneralService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('InitShutdownFormComponent', () => {
   let spectator: Spectator<InitShutdownFormComponent>;
@@ -34,7 +34,7 @@ describe('InitShutdownFormComponent', () => {
         mockCall('initshutdownscript.create'),
         mockCall('initshutdownscript.update'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(SystemGeneralService),
       mockProvider(FilesystemService, {

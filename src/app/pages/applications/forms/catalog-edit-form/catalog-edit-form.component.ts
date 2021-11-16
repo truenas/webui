@@ -10,7 +10,7 @@ import { Catalog } from 'app/interfaces/catalog.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -36,7 +36,7 @@ export class CatalogEditFormComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -67,7 +67,7 @@ export class CatalogEditFormComponent implements OnInit {
       .subscribe(() => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        this.modalService.close();
+        this.slideInService.close();
       }, (error) => {
         this.isFormLoading = false;
         this.errorHandler.handleWsFormError(error, this.form);

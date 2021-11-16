@@ -20,7 +20,7 @@ import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,7 @@ export class GuiFormComponent {
   constructor(
     private fb: FormBuilder,
     private sysGeneralService: SystemGeneralService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private ws: WebSocketService,
     private dialog: DialogService,
@@ -119,7 +119,7 @@ export class GuiFormComponent {
     ).subscribe(() => {
       this.isFormLoading = false;
       this.cdr.markForCheck();
-      this.modalService.close();
+      this.slideInService.close();
       this.handleServiceRestart(body);
     }, (error) => {
       this.isFormLoading = false;

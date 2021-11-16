@@ -5,7 +5,7 @@ import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interfac
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -38,14 +38,14 @@ export class InitshutdownListComponent implements EntityTableConfig {
   };
 
   constructor(
-    public modalService: IxModalService,
+    public slideInService: IxSlideInService,
     protected translate: TranslateService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.loaderOpen = true;
       this.entityList.needRefreshTable = true;
       this.entityList.getData();
@@ -60,7 +60,7 @@ export class InitshutdownListComponent implements EntityTableConfig {
         name: 'edit',
         actionName: 'edit',
         onClick: (row: InitShutdownScript) => {
-          const modal = this.modalService.open(InitShutdownFormComponent);
+          const modal = this.slideInService.open(InitShutdownFormComponent);
           modal.setScriptForEdit(row);
         },
       },
@@ -77,6 +77,6 @@ export class InitshutdownListComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.modalService.open(InitShutdownFormComponent);
+    this.slideInService.open(InitShutdownFormComponent);
   }
 }

@@ -14,7 +14,7 @@ import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credential
 import {
   KeychainCredentialService, ReplicationService, StorageService, CloudCredentialService,
 } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
 import { SshConnectionsFormComponent } from './forms/ssh-connections-form.component';
@@ -34,7 +34,7 @@ export class BackupCredentialsComponent implements OnInit {
     private storage: StorageService,
     private cloudCredentialsService: CloudCredentialService,
     private modalService: ModalService,
-    private ixModalService: IxModalService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
   ) {}
 
@@ -43,7 +43,7 @@ export class BackupCredentialsComponent implements OnInit {
       this.getCards();
     });
 
-    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getCards();
     });
 
@@ -113,10 +113,10 @@ export class BackupCredentialsComponent implements OnInit {
           hideHeader: true,
           parent: this,
           add: () => {
-            this.ixModalService.open(SshKeypairFormComponent);
+            this.slideInService.open(SshKeypairFormComponent);
           },
           edit: (row: KeychainSshKeyPair) => {
-            const modal = this.ixModalService.open(SshKeypairFormComponent);
+            const modal = this.slideInService.open(SshKeypairFormComponent);
             modal.setKeypairForEditing(row);
           },
         },
