@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
-import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
+import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -167,8 +167,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             (success) => {
               if (!success) {
                 this.dialog.errorReport(
-                  helptext_system_bootenv.delete_failure_dialog.title,
-                  helptext_system_bootenv.delete_failure_dialog.message,
+                  helptextSystemBootenv.delete_failure_dialog.title,
+                  helptextSystemBootenv.delete_failure_dialog.message,
                 );
               }
             },
@@ -240,7 +240,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     this.dialog.confirm({
       title: this.translate.instant('Activate'),
       message: this.translate.instant('Activate this Boot Environment?'),
-      buttonMsg: helptext_system_bootenv.list_dialog_activate_action,
+      buttonMsg: helptextSystemBootenv.list_dialog_activate_action,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.loader.open();
       this.loaderOpen = true;
@@ -280,7 +280,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       this.dialog.confirm({
         title: this.translate.instant('Keep'),
         message: this.translate.instant('Keep this Boot Environment?'),
-        buttonMsg: helptext_system_bootenv.list_dialog_keep_action,
+        buttonMsg: helptextSystemBootenv.list_dialog_keep_action,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.loader.open();
         this.loaderOpen = true;
@@ -300,7 +300,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       this.dialog.confirm({
         title: this.translate.instant('Unkeep'),
         message: this.translate.instant('No longer keep this Boot Environment?'),
-        buttonMsg: helptext_system_bootenv.list_dialog_unkeep_action,
+        buttonMsg: helptextSystemBootenv.list_dialog_unkeep_action,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.loader.open();
         this.loaderOpen = true;
@@ -417,7 +417,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     this.dialog.confirm({
       title: this.translate.instant('Scrub'),
       message: this.translate.instant('Start the scrub now?'),
-      buttonMsg: helptext_system_bootenv.list_dialog_scrub_action,
+      buttonMsg: helptextSystemBootenv.list_dialog_scrub_action,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.loader.open();
       this.loaderOpen = true;

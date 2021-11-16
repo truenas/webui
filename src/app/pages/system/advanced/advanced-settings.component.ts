@@ -12,7 +12,7 @@ import {
 } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DeviceType } from 'app/enums/device-type.enum';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
@@ -81,7 +81,7 @@ export class AdvancedSettingsComponent implements OnInit {
   protected dialogRef: MatDialogRef<EntityJobComponent>;
 
   cronTableConf: AppTableConfig = {
-    title: helptext_system_advanced.fieldset_cron,
+    title: helptextSystemAdvanced.fieldset_cron,
     titleHref: '/system/cron',
     queryCall: 'cronjob.query',
     deleteCall: 'cronjob.delete',
@@ -141,7 +141,7 @@ export class AdvancedSettingsComponent implements OnInit {
   };
 
   initShutdownTableConf: AppTableConfig = {
-    title: helptext_system_advanced.fieldset_initshutdown,
+    title: helptextSystemAdvanced.fieldset_initshutdown,
     titleHref: '/system/initshutdown',
     queryCall: 'initshutdownscript.query',
     deleteCall: 'initshutdownscript.delete',
@@ -173,11 +173,11 @@ export class AdvancedSettingsComponent implements OnInit {
   };
 
   sysctlTableConf: AppTableConfig = {
-    title: helptext_system_advanced.fieldset_sysctl,
+    title: helptextSystemAdvanced.fieldset_sysctl,
     queryCall: 'tunable.query',
     deleteCall: 'tunable.delete',
     deleteMsg: {
-      title: helptext_system_advanced.fieldset_sysctl,
+      title: helptextSystemAdvanced.fieldset_sysctl,
       key_props: ['var'],
     },
     parent: this,
@@ -270,7 +270,7 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     return this.dialog
-      .info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
+      .info(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
       .pipe(tap(() => this.isFirstTime = false))
       .toPromise();
   }
@@ -284,7 +284,7 @@ export class AdvancedSettingsComponent implements OnInit {
   }
 
   formatSyslogLevel(level: string): string {
-    return helptext_system_advanced.sysloglevel.options.find((option) => option.value === level).label;
+    return helptextSystemAdvanced.sysloglevel.options.find((option) => option.value === level).label;
   }
 
   getDatasetData(): void {
@@ -306,84 +306,84 @@ export class AdvancedSettingsComponent implements OnInit {
 
       this.dataCards = [
         {
-          title: helptext_system_advanced.fieldset_console,
+          title: helptextSystemAdvanced.fieldset_console,
           id: AdvancedCardId.Console,
           items: [
             {
-              label: helptext_system_advanced.consolemenu_placeholder,
+              label: helptextSystemAdvanced.consolemenu_placeholder,
               value: advancedConfig.consolemenu ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext_system_advanced.serialconsole_placeholder,
+              label: helptextSystemAdvanced.serialconsole_placeholder,
               value: advancedConfig.serialconsole ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext_system_advanced.serialport_placeholder,
+              label: helptextSystemAdvanced.serialport_placeholder,
               value: advancedConfig.serialport ? advancedConfig.serialport : '–',
             },
             {
-              label: helptext_system_advanced.serialspeed_placeholder,
+              label: helptextSystemAdvanced.serialspeed_placeholder,
               value: advancedConfig.serialspeed ? `${advancedConfig.serialspeed} bps` : '–',
             },
             {
-              label: helptext_system_advanced.motd_placeholder,
+              label: helptextSystemAdvanced.motd_placeholder,
               value: advancedConfig.motd ? advancedConfig.motd.toString() : '–',
             },
           ],
         },
         {
-          title: helptext_system_advanced.fieldset_syslog,
+          title: helptextSystemAdvanced.fieldset_syslog,
           id: AdvancedCardId.Syslog,
           items: [
             {
-              label: helptext_system_advanced.fqdn_placeholder,
+              label: helptextSystemAdvanced.fqdn_placeholder,
               value: advancedConfig.fqdn_syslog ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext_system_advanced.sysloglevel.placeholder,
+              label: helptextSystemAdvanced.sysloglevel.placeholder,
               value: this.formatSyslogLevel(advancedConfig.sysloglevel),
             },
             {
-              label: helptext_system_advanced.syslogserver.placeholder,
+              label: helptextSystemAdvanced.syslogserver.placeholder,
               value: advancedConfig.syslogserver ? advancedConfig.syslogserver : '–',
             },
             {
-              label: helptext_system_advanced.syslog_transport.placeholder,
+              label: helptextSystemAdvanced.syslog_transport.placeholder,
               value: advancedConfig.syslog_transport,
             },
             {
-              label: helptext_system_advanced.system_dataset_placeholder,
+              label: helptextSystemAdvanced.system_dataset_placeholder,
               value: this.syslog ? helptext.enabled : helptext.disabled,
             },
           ],
         },
         {
-          title: helptext_system_advanced.fieldset_kernel,
+          title: helptextSystemAdvanced.fieldset_kernel,
           id: AdvancedCardId.Kernel,
           items: [
             {
-              label: helptext_system_advanced.autotune_placeholder,
+              label: helptextSystemAdvanced.autotune_placeholder,
               value: advancedConfig.autotune ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext_system_advanced.debugkernel_placeholder,
+              label: helptextSystemAdvanced.debugkernel_placeholder,
               value: advancedConfig.debugkernel ? helptext.enabled : helptext.disabled,
             },
           ],
         },
         {
           id: AdvancedCardId.Cron,
-          title: helptext_system_advanced.fieldset_cron,
+          title: helptextSystemAdvanced.fieldset_cron,
           tableConf: this.cronTableConf,
         },
         {
           id: AdvancedCardId.InitShutdown,
-          title: helptext_system_advanced.fieldset_initshutdown,
+          title: helptextSystemAdvanced.fieldset_initshutdown,
           tableConf: this.initShutdownTableConf,
         },
         {
           id: AdvancedCardId.Sysctl,
-          title: helptext_system_advanced.fieldset_sysctl,
+          title: helptextSystemAdvanced.fieldset_sysctl,
           tableConf: this.sysctlTableConf,
         },
         {
@@ -495,10 +495,10 @@ export class AdvancedSettingsComponent implements OnInit {
       }
       this.dialog
         .confirm({
-          title: helptext_system_advanced.dialog_generate_debug_title,
-          message: helptext_system_advanced.dialog_generate_debug_message,
+          title: helptextSystemAdvanced.dialog_generate_debug_title,
+          message: helptextSystemAdvanced.dialog_generate_debug_message,
           hideCheckBox: true,
-          buttonMsg: helptext_system_advanced.dialog_button_ok,
+          buttonMsg: helptextSystemAdvanced.dialog_button_ok,
         })
         .pipe(
           filter(Boolean),
@@ -526,14 +526,14 @@ export class AdvancedSettingsComponent implements OnInit {
                       }
                       if (err instanceof HttpErrorResponse) {
                         this.dialog.errorReport(
-                          helptext_system_advanced.debug_download_failed_title,
-                          helptext_system_advanced.debug_download_failed_message,
+                          helptextSystemAdvanced.debug_download_failed_title,
+                          helptextSystemAdvanced.debug_download_failed_message,
                           err.message,
                         );
                       } else {
                         this.dialog.errorReport(
-                          helptext_system_advanced.debug_download_failed_title,
-                          helptext_system_advanced.debug_download_failed_message,
+                          helptextSystemAdvanced.debug_download_failed_title,
+                          helptextSystemAdvanced.debug_download_failed_message,
                           err,
                         );
                       }

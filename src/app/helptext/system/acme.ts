@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_system_acme = {
+export const helptextSystemAcme = {
   edit_title: T('Edit DNS Authenticator'),
   add_title: T('Add DNS Authenticator'),
   select_auth_label: T('Select Authenticator'),

@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
 import { map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
+import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 
@@ -30,8 +30,8 @@ export class BootPoolAttachFormComponent {
 
   dev = {
     fcName: 'dev',
-    label: this.translate.instant(helptext_system_bootenv.dev_placeholder),
-    tooltip: this.translate.instant(helptext_system_bootenv.dev_tooltip),
+    label: this.translate.instant(helptextSystemBootenv.dev_placeholder),
+    tooltip: this.translate.instant(helptextSystemBootenv.dev_tooltip),
     options: this.ws.call('disk.get_unused').pipe(
       map((disks) => {
         const options = disks.map((disk) => ({
@@ -49,8 +49,8 @@ export class BootPoolAttachFormComponent {
 
   expand = {
     fcName: 'expand',
-    label: this.translate.instant(helptext_system_bootenv.expand_placeholder),
-    tooltip: this.translate.instant(helptext_system_bootenv.expand_tooltip),
+    label: this.translate.instant(helptextSystemBootenv.expand_placeholder),
+    tooltip: this.translate.instant(helptextSystemBootenv.expand_tooltip),
   };
 
   constructor(
@@ -70,8 +70,8 @@ export class BootPoolAttachFormComponent {
     this.ws.job('boot.attach', [dev, { expand }]).pipe(untilDestroyed(this)).subscribe((job) => {
       if (job.state === JobState.Success) {
         this.isFormLoading = false;
-        this.dialogService.info(helptext_system_bootenv.attach_dialog.title,
-          `<i>${dev}</i> ${helptext_system_bootenv.attach_dialog.message}`, '300px', 'info', true)
+        this.dialogService.info(helptextSystemBootenv.attach_dialog.title,
+          `<i>${dev}</i> ${helptextSystemBootenv.attach_dialog.message}`, '300px', 'info', true)
           .pipe(untilDestroyed(this)).subscribe(() => {
             this.router.navigate(['system', 'boot']);
           });

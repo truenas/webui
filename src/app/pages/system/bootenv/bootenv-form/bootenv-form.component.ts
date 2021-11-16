@@ -8,7 +8,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
-import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
+import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import {
   BootenvTooltip,
   CreateBootenvParams,
@@ -39,7 +39,7 @@ export class BootEnvironmentFormComponent {
   isFormLoading = false;
 
   tooltips: BootenvTooltip = {
-    name: helptext_system_bootenv.create_name_tooltip,
+    name: helptextSystemBootenv.create_name_tooltip,
   };
 
   constructor(
@@ -64,7 +64,7 @@ export class BootEnvironmentFormComponent {
         });
 
         this.tooltips = {
-          name: helptext_system_bootenv.create_name_tooltip,
+          name: helptextSystemBootenv.create_name_tooltip,
         };
         break;
       case this.Operations.Clone:
@@ -77,14 +77,14 @@ export class BootEnvironmentFormComponent {
         );
 
         this.tooltips = {
-          name: helptext_system_bootenv.clone_name_tooltip,
-          source: helptext_system_bootenv.clone_source_tooltip,
+          name: helptextSystemBootenv.clone_name_tooltip,
+          source: helptextSystemBootenv.clone_source_tooltip,
         };
         break;
       default:
         this.title = this.translate.instant('Create Boot Environment');
         this.tooltips = {
-          name: helptext_system_bootenv.create_name_tooltip,
+          name: helptextSystemBootenv.create_name_tooltip,
         };
         break;
     }

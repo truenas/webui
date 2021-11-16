@@ -3,7 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiAuthAccess, IscsiAuthAccessUpdate } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -29,7 +29,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
 
   fieldSets: FieldSet[] = [
     {
-      name: helptext_sharing_iscsi.fieldset_group,
+      name: helptextSharingIscsi.fieldset_group,
       label: true,
       class: 'group',
       width: '100%',
@@ -37,8 +37,8 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'tag',
-          placeholder: helptext_sharing_iscsi.authaccess_placeholder_tag,
-          tooltip: helptext_sharing_iscsi.authaccess_tooltip_tag,
+          placeholder: helptextSharingIscsi.authaccess_placeholder_tag,
+          tooltip: helptextSharingIscsi.authaccess_tooltip_tag,
           inputType: 'number',
           min: 0,
           required: true,
@@ -47,23 +47,23 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
       ],
     },
     {
-      name: helptext_sharing_iscsi.fieldset_user,
+      name: helptextSharingIscsi.fieldset_user,
       label: true,
       class: 'user',
       width: '49%',
       config: [{
         type: 'input',
         name: 'user',
-        placeholder: helptext_sharing_iscsi.authaccess_placeholder_user,
-        tooltip: helptext_sharing_iscsi.authaccess_tooltip_user,
+        placeholder: helptextSharingIscsi.authaccess_placeholder_user,
+        tooltip: helptextSharingIscsi.authaccess_tooltip_user,
         validation: [Validators.required],
         required: true,
       },
       {
         type: 'input',
         name: 'secret',
-        placeholder: helptext_sharing_iscsi.authaccess_placeholder_secret,
-        tooltip: helptext_sharing_iscsi.authaccess_tooltip_secret,
+        placeholder: helptextSharingIscsi.authaccess_placeholder_secret,
+        tooltip: helptextSharingIscsi.authaccess_tooltip_secret,
         inputType: 'password',
         togglePw: true,
         required: true,
@@ -77,13 +77,13 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
       {
         type: 'input',
         name: 'secret_confirm',
-        placeholder: helptext_sharing_iscsi.authaccess_placeholder_secret_confirm,
+        placeholder: helptextSharingIscsi.authaccess_placeholder_secret_confirm,
         inputType: 'password',
       }],
     },
     { name: 'spacer', label: false, width: '2%' },
     {
-      name: helptext_sharing_iscsi.fieldset_peeruser,
+      name: helptextSharingIscsi.fieldset_peeruser,
       label: true,
       class: 'peeruser',
       width: '49%',
@@ -91,14 +91,14 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'peeruser',
-          placeholder: helptext_sharing_iscsi.authaccess_placeholder_peeruser,
-          tooltip: helptext_sharing_iscsi.authaccess_tooltip_peeruser,
+          placeholder: helptextSharingIscsi.authaccess_placeholder_peeruser,
+          tooltip: helptextSharingIscsi.authaccess_tooltip_peeruser,
         },
         {
           type: 'input',
           name: 'peersecret',
-          placeholder: helptext_sharing_iscsi.authaccess_placeholder_peersecret,
-          tooltip: helptext_sharing_iscsi.authaccess_tooltip_peersecret,
+          placeholder: helptextSharingIscsi.authaccess_placeholder_peersecret,
+          tooltip: helptextSharingIscsi.authaccess_tooltip_peersecret,
           inputType: 'password',
           togglePw: true,
           validation: [
@@ -111,7 +111,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'peersecret_confirm',
-          placeholder: helptext_sharing_iscsi.authaccess_placeholder_peersecret_confirm,
+          placeholder: helptextSharingIscsi.authaccess_placeholder_peersecret_confirm,
           inputType: 'password',
         },
       ],
@@ -166,11 +166,11 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
             if (errors === null) {
               errors = {
                 manualValidateError: true,
-                manualValidateErrorMsg: helptext_sharing_iscsi.authaccess_error_duplicate_secrets,
+                manualValidateErrorMsg: helptextSharingIscsi.authaccess_error_duplicate_secrets,
               };
             } else {
               errors['manualValidateError'] = true;
-              errors['manualValidateErrorMsg'] = helptext_sharing_iscsi.authaccess_error_duplicate_secrets;
+              errors['manualValidateErrorMsg'] = helptextSharingIscsi.authaccess_error_duplicate_secrets;
             }
           }
         } else {
