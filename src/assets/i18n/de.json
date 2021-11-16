@@ -1407,6 +1407,7 @@
   "Optional description. Portals are automatically assigned a numeric group.": "",
   "Optional user-friendly name.": "",
   "Optional.": "",
+  "Optional. Only needed for private images.": "",
   "Optional: Choose installation media image": "",
   "Options for encrypting the LDAP connection:  <ul>  <li><i>OFF:</i> do not encrypt the LDAP connection.</li>  <li><i>ON:</i> encrypt the LDAP connection with <i>SSL</i> on port  <i>636</i>.</li>  <li><i>START_TLS:</i> encrypt the LDAP connection with <i>STARTTLS</i>  on the default LDAP port <i>389</i>.</li>  </ul>": "",
   "Order": "",

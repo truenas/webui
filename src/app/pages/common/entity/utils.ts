@@ -19,6 +19,7 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { DialogService } from 'app/services';
 import { Relation, RelationGroup } from './entity-form/models/field-relation.interface';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const NULL_VALUE = 'null_value';
 
 export class EntityUtils {

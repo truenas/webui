@@ -93,6 +93,10 @@ module.exports = {
             selector: ['classMethod', 'objectLiteralMethod', 'typeMethod'],
             format: ['camelCase'],
           },
+          {
+            selector: ['variable'],
+            format: ['camelCase']
+          }
         ],
 
         // TODO: Aibnb rules that are disabled for now as they cannot be fixed automatically

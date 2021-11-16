@@ -76,6 +76,7 @@ export class TunableFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.slideInService.close();
     }, (error) => {
       this.isFormLoading = false;

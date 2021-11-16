@@ -44,10 +44,12 @@ export class KerberosSettingsComponent implements OnInit {
       (config) => {
         this.form.patchValue(config);
         this.isFormLoading = false;
+        this.cdr.markForCheck();
       },
       (error) => {
         new EntityUtils().handleWSError(null, error, this.dialogService);
         this.isFormLoading = false;
+        this.cdr.markForCheck();
       },
     );
   }
@@ -58,6 +60,7 @@ export class KerberosSettingsComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('kerberos.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.slideInService.close();
     }, (error) => {
       this.isFormLoading = false;
