@@ -193,7 +193,7 @@ def click_on_system_dataser_pool_select_dozer_click_Save(driver, pool_name):
 def Please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     # assert need to be added after the UI get fix.
-    wait_on_element_disappear(driver, 10, '//mat-progress-bar')
+    wait_on_element_disappear(driver, 15, '//mat-progress-bar')
 
 
 @then('navigate to the dashboard')
