@@ -32,9 +32,9 @@ export class EncryptionService {
     encryptKeyPassphrase: string,
     adminPassphrase: string,
     poolName: string,
-    route_success: string[],
+    routeSuccess: string[],
     addRecoveryKey?: boolean,
-    downloadEncrytpKey?: boolean,
+    downloadEncryptKey?: boolean,
     successMessage?: string,
   ): void {
     this.loader.open();
@@ -50,7 +50,7 @@ export class EncryptionService {
         'info',
         true,
       );
-      this.openEncryptDialog(row, route_success, poolName, addRecoveryKey);
+      this.openEncryptDialog(row, routeSuccess, poolName, addRecoveryKey);
     },
     (err) => {
       this.loader.close();
@@ -62,22 +62,22 @@ export class EncryptionService {
     });
   }
 
-  openEncryptDialog(row: string, route_success: string[], poolName: string, addRecoveryKey?: boolean): void {
+  openEncryptDialog(row: string, routeSuccess: string[], poolName: string, addRecoveryKey?: boolean): void {
     const dialogRef = this.mdDialog.open(DownloadKeyDialogComponent, { disableClose: true });
     dialogRef.componentInstance.volumeId = parseInt(row);
     dialogRef.componentInstance.fileName = 'pool_' + poolName + '_encryption.key';
     dialogRef.afterClosed().subscribe(() => {
       if (addRecoveryKey) {
-        this.makeRecoveryKey(row, poolName, route_success);
+        this.makeRecoveryKey(row, poolName, routeSuccess);
       } else {
         this.router.navigate(new Array('/').concat(
-          route_success,
+          routeSuccess,
         ));
       }
     });
   }
 
-  makeRecoveryKey(row: string, poolName: string, route_success: string[]): void {
+  makeRecoveryKey(row: string, poolName: string, routeSuccess: string[]): void {
     this.loader.open();
     const fileName = 'pool_' + poolName + '_recovery.key';
     this.ws.call('core.download', ['pool.recoverykey_add', [parseInt(row)], fileName]).subscribe((res) => {
@@ -94,7 +94,7 @@ export class EncryptionService {
         this.storage.streamDownloadFile(this.http, url, fileName, mimetype).subscribe((file) => {
           this.storage.downloadBlob(file, fileName);
           this.router.navigate(new Array('/').concat(
-            route_success,
+            routeSuccess,
           ));
         }, (err) => {
           this.dialogService.errorReport(
@@ -114,7 +114,7 @@ export class EncryptionService {
     });
   }
 
-  deleteRecoveryKey(row: string, adminPassphrase: string, poolName: string, route_success: string[]): void {
+  deleteRecoveryKey(row: string, adminPassphrase: string, poolName: string, routeSuccess: string[]): void {
     this.dialogService.confirm({
       title: helptext.delete_recovery_key_title,
       message: helptext.delete_recovery_key_message,
@@ -133,7 +133,7 @@ export class EncryptionService {
             'info',
             true,
           );
-          this.router.navigate(new Array('/').concat(route_success));
+          this.router.navigate(new Array('/').concat(routeSuccess));
         },
         (err) => {
           this.loader.close();

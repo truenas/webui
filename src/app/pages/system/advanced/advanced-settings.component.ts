@@ -278,8 +278,8 @@ export class AdvancedSettingsComponent implements OnInit {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
 
-    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-      this.isHA = is_ha;
+    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
+      this.isHA = isHa;
     });
   }
 

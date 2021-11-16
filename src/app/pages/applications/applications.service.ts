@@ -78,8 +78,8 @@ export class ApplicationsService {
     return this.ws.call('container.config');
   }
 
-  updateContainerConfig(enable_image_updates: boolean): Observable<ContainerConfig> {
-    return this.ws.call('container.update', [{ enable_image_updates }]);
+  updateContainerConfig(enableImageUpdates: boolean): Observable<ContainerConfig> {
+    return this.ws.call('container.update', [{ enable_image_updates: enableImageUpdates }]);
   }
 
   getUpgradeSummary(name: string, version?: string): Observable<UpgradeSummary> {

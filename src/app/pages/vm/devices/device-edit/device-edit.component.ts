@@ -526,8 +526,8 @@ export class DeviceEditComponent implements OnInit {
         id: 'generate_mac_address',
         name: this.translate.instant('Generate MAC Address'),
         function: () => {
-          this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((random_mac) => {
-            this.nicFormGroup.controls['mac'].setValue(random_mac);
+          this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((randomMac) => {
+            this.nicFormGroup.controls['mac'].setValue(randomMac);
           });
         },
       },
@@ -557,9 +557,9 @@ export class DeviceEditComponent implements OnInit {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },
-      (e_res) => {
+      (error) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, e_res, this.dialogService);
+        new EntityUtils().handleWSError(this, error, this.dialogService);
       });
     });
   }

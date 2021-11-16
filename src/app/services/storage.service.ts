@@ -35,9 +35,7 @@ export class StorageService {
     return this.ws.call(this.diskResource, []);
   }
 
-  downloadFile(filename: string, contents: string, mime_type: string): void {
-    mime_type = mime_type || 'text/plain';
-
+  downloadFile(filename: string, contents: string, mimeType = 'text/plain'): void {
     const byteCharacters = atob(contents);
 
     const byteNumbers = new Array(byteCharacters.length);
@@ -47,7 +45,7 @@ export class StorageService {
 
     const byteArray = new Uint8Array(byteNumbers);
 
-    const blob = new Blob([byteArray], { type: mime_type });
+    const blob = new Blob([byteArray], { type: mimeType });
 
     this.downloadBlob(blob, filename);
   }
@@ -68,12 +66,12 @@ export class StorageService {
     dlink.remove();
   }
 
-  streamDownloadFile(http: HttpClient, url: string, filename: string, mime_type: string): Observable<Blob> {
+  streamDownloadFile(http: HttpClient, url: string, filename: string, mimeType: string): Observable<Blob> {
     return http.post(url, '',
       { responseType: 'blob' }).pipe(
       map(
         (res) => {
-          const blob = new Blob([res], { type: mime_type });
+          const blob = new Blob([res], { type: mimeType });
           return blob;
         },
       ),

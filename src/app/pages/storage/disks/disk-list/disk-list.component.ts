@@ -137,8 +137,8 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     private core: CoreService,
     protected translate: TranslateService,
   ) {
-    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unused_res) => {
-      this.unused = unused_res;
+    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unused) => {
+      this.unused = unused;
     }, (err) => new EntityUtils().handleWSError(this, err));
     this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
       (res) => {

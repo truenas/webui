@@ -51,7 +51,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   scrub_interval: number;
 
   constructor(
-    private _router: Router,
+    private router: Router,
     public ws: WebSocketService,
     public dialog: DialogService,
     protected loader: AppLoaderService,
@@ -410,7 +410,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   }
 
   goToStatus(): void {
-    this._router.navigate(['/', 'system', 'boot', 'status']);
+    this.router.navigate(['/', 'system', 'boot', 'status']);
   }
 
   scrub(): void {

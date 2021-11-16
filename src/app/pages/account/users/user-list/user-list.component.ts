@@ -124,8 +124,8 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
       icon: 'edit',
       label: helptext.user_list_actions_edit_label,
       name: helptext.user_list_actions_edit_id,
-      onClick: (users_edit) => {
-        this.modalService.openInSlideIn(UserFormComponent, users_edit.id);
+      onClick: (user) => {
+        this.modalService.openInSlideIn(UserFormComponent, user.id);
       },
     });
     if (!row.builtin) {
@@ -134,19 +134,19 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
         icon: 'delete',
         name: 'delete',
         label: helptext.user_list_actions_delete_label,
-        onClick: (users_edit) => {
+        onClick: (user) => {
           const conf: DialogFormConfiguration = {
             title: helptext.deleteDialog.title,
-            message: helptext.deleteDialog.message + `<i>${users_edit.username}</i>?`,
+            message: this.translate.instant('Delete user "{name}"?', { name: user.username }),
             fieldConfig: [],
             confirmCheckbox: true,
             saveButtonText: helptext.deleteDialog.saveButtonText,
             preInit: () => {
-              if (this.ableToDeleteGroup(users_edit.id)) {
+              if (this.ableToDeleteGroup(user.id)) {
                 conf.fieldConfig.push({
                   type: 'checkbox',
                   name: 'delete_group',
-                  placeholder: helptext.deleteDialog.deleteGroup_placeholder + users_edit.group.bsdgrp_group,
+                  placeholder: helptext.deleteDialog.deleteGroup_placeholder + user.group.bsdgrp_group,
                   value: false,
                 });
               }
@@ -154,7 +154,7 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
             customSubmit: (entityDialog: EntityDialogComponent) => {
               entityDialog.dialogRef.close(true);
               this.loader.open();
-              this.ws.call(this.wsDelete, [users_edit.id, entityDialog.formValue])
+              this.ws.call(this.wsDelete, [user.id, entityDialog.formValue])
                 .pipe(untilDestroyed(this))
                 .subscribe(() => {
                   this.entityList.getData();

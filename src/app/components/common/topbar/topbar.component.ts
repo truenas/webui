@@ -138,8 +138,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.checkEULA();
 
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-        this.is_ha = is_ha;
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
+        this.is_ha = isHa;
         if (this.is_ha) {
           window.localStorage.setItem('alias_ips', 'show');
         } else {

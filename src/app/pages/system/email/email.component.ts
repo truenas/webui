@@ -73,8 +73,8 @@ export class EmailComponent implements FormConfiguration {
             this.dialogRef.close(false);
             this.dialogservice.info(this.translate.instant('Email'), this.translate.instant('Test email sent!'), '500px', 'info');
           });
-          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((e_res) => {
-            this.dialogRef.componentInstance.setDescription(e_res.error);
+          this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((job) => {
+            this.dialogRef.componentInstance.setDescription(job.error);
           });
         });
       } else {
