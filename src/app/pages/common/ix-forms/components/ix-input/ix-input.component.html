@@ -35,7 +35,7 @@
     <i class="material-icons" matTooltip="Show" *ngIf="!showPassword">visibility_off</i>
   </button>
 </div>
-<div class="form-error">
+<div class="form-error" *ngIf="controlDirective.control.touched || controlDirective.control.dirty">
   <mat-error *ngFor="let error of controlDirective.control.errors | keyvalue">
     {{ error.value.message }}
   </mat-error>

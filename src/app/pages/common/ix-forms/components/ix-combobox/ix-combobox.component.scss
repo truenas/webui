@@ -75,3 +75,9 @@
 .ix-unselected {
   background: var(--bg2) !important;
 }
+
+.mat-error {
+  display: block;
+  font-size: 12px;
+  margin-top: 3px;
+}

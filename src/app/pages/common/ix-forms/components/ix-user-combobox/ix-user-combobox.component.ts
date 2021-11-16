@@ -1,7 +1,11 @@
 import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component, ElementRef, forwardRef, Input, OnInit, ViewChild,
 } from '@angular/core';
-import { ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR } from '@angular/forms';
+import {
+  ControlValueAccessor, FormControl, NgControl, NG_VALUE_ACCESSOR,
+} from '@angular/forms';
 import { MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,6 +24,7 @@ import { UserService } from 'app/services';
   selector: 'ix-user-combobox',
   templateUrl: './ix-user-combobox.component.html',
   styleUrls: ['./ix-user-combobox.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -38,6 +43,7 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
   @ViewChild(MatAutocompleteTrigger) autocompleteTrigger: MatAutocompleteTrigger;
   placeholder = this.translate.instant('Search');
   getDisplayWith = this.displayWith.bind(this);
+  isDisabled = false;
 
   filter: (options: Option[], filterValue: string) => Observable<Option[]> =
   (options: Option[], value: string): Observable<Option[]> => {
@@ -65,7 +71,14 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
     return { label: user.username, value: user.username };
   });
 
-  constructor(private userService: UserService, private translate: TranslateService) {}
+  constructor(
+    public controlDirective: NgControl,
+    private cdr: ChangeDetectorRef,
+    private userService: UserService,
+    private translate: TranslateService,
+  ) {
+    this.controlDirective.valueAccessor = this;
+  }
 
   writeValue(value: string | number): void {
     this.value = value;
@@ -76,6 +89,8 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
       this.currentOffset = 0;
       this.filterChanged$.next('');
     }
+
+    this.cdr.markForCheck();
   }
 
   ngOnInit(): void {
@@ -87,6 +102,8 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
       this.filterValue = changedValue;
       this.currentOffset = 0;
       this.loadMoreUsers(this.filterValue, this.currentOffset);
+
+      this.cdr.markForCheck();
     });
 
     this.userService.userQueryDSCache().pipe(
@@ -183,5 +200,10 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
 
   hasValue(): boolean {
     return this.inputElementRef?.nativeElement?.value && this.inputElementRef.nativeElement.value.length > 0;
+  }
+
+  setDisabledState?(isDisabled: boolean): void {
+    this.isDisabled = isDisabled;
+    this.cdr.markForCheck();
   }
 }

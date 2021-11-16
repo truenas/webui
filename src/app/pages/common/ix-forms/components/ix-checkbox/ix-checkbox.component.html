@@ -10,4 +10,8 @@
   <span *ngIf="required" class="required">*</span>
 </mat-checkbox>
 <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
-<ix-form-errors [control]="controlDirective.control" [label]="label"></ix-form-errors>
+<div class="form-error" *ngIf="controlDirective.control.touched || controlDirective.control.dirty">
+  <mat-error *ngFor="let error of controlDirective.control.errors | keyvalue">
+    {{ error.value.message }}
+  </mat-error>
+</div>

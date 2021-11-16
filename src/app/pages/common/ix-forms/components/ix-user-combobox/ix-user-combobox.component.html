@@ -27,6 +27,12 @@
       </mat-option>
     </mat-autocomplete>
   </div>
+  <div class="form-error" *ngIf="controlDirective.control.touched || controlDirective.control.dirty">
+    <mat-error *ngFor="let error of controlDirective.control.errors | keyvalue">
+      {{ error.value.message }}
+    </mat-error>
+  </div>
+  
   <mat-hint *ngIf="hint">{{hint}}</mat-hint>
 
 </div>
