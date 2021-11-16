@@ -118,11 +118,13 @@ export class GuiFormComponent {
       untilDestroyed(this),
     ).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.modalService.close();
       this.handleServiceRestart(body);
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.formGroup);
+      this.cdr.markForCheck();
     });
   }
 

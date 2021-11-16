@@ -13,8 +13,8 @@ import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-jo
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
-import { ModalService } from 'app/services/modal.service';
-import { PullImageFormComponent } from '../forms/pull-image-form.component';
+import { IxModalService } from 'app/services/ix-modal.service';
+import { PullImageFormComponent } from '../forms/pull-image-form/pull-image-form.component';
 
 @UntilDestroy()
 @Component({
@@ -49,7 +49,7 @@ export class DockerImagesComponent implements EntityTableConfig {
   filterString = '';
   constructor(
     protected dialogService: DialogService,
-    private modalService: ModalService,
+    private modalService: IxModalService,
     private matDialog: MatDialog,
     private translate: TranslateService,
   ) {}
@@ -74,6 +74,10 @@ export class DockerImagesComponent implements EntityTableConfig {
 
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
+
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.entityList.getData();
+    });
   }
 
   getActions(row: ContainerImage): EntityTableAction[] {
@@ -112,7 +116,7 @@ export class DockerImagesComponent implements EntityTableConfig {
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(PullImageFormComponent);
+    this.modalService.open(PullImageFormComponent);
   }
 
   onToolbarAction(evt: CoreEvent): void {
@@ -153,7 +157,7 @@ export class DockerImagesComponent implements EntityTableConfig {
     dialogRef.componentInstance.submit();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogService.closeAllDialogs();
-      this.modalService.refreshTable();
+      this.refresh();
     });
   }
 }

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -104,6 +104,7 @@ export class LocalizationFormComponent {
     protected langService: LanguageService,
     private modalService: IxModalService,
     private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   setTimeOptions(tz: string): void {
@@ -133,12 +134,14 @@ export class LocalizationFormComponent {
     this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.sysGeneralService.refreshSysGeneral();
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.modalService.close();
       this.setTimeOptions(body.timezone);
       this.langService.setLanguage(body.language);
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.formGroup);
+      this.cdr.markForCheck();
     });
   }
 }

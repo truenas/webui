@@ -724,6 +724,7 @@
   "OpenVPN Server Settings": "",
   "OpenVPN {serviceLabel} service failed to start.": "",
   "OpenVPN {serviceLabel} service failed to stop.": "",
+  "Optional. Only needed for private images.": "",
   "Order": "",
   "Organization: ": "",
   "Organizational Unit: ": "",

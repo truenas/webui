@@ -52,6 +52,7 @@ export class KernelFormComponent {
     this.isFormLoading = true;
     this.ws.call('system.advanced.update', [commonBody]).pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.modalService.close();
       this.sysGeneralService.refreshSysGeneral();
     }, (res) => {

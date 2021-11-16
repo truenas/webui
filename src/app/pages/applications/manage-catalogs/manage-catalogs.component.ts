@@ -6,6 +6,8 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { CatalogAddFormComponent } from 'app/pages/applications/forms/catalog-add-form/catalog-add-form.component';
+import { CatalogEditFormComponent } from 'app/pages/applications/forms/catalog-edit-form/catalog-edit-form.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import {
   EntityTableComponent,
@@ -13,11 +15,9 @@ import {
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { ModalService } from 'app/services/modal.service';
+import { IxModalService } from 'app/services/ix-modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { ManageCatalogSummaryDialogComponent } from '../dialogs/manage-catalog-summary/manage-catalog-summary-dialog.component';
-import { CatalogAddFormComponent } from '../forms/catalog-add-form.component';
-import { CatalogEditFormComponent } from '../forms/catalog-edit-form.component';
 
 @UntilDestroy()
 @Component({
@@ -68,7 +68,7 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     private dialogService: DialogService,
     private loader: AppLoaderService,
     private ws: WebSocketService,
-    private modalService: ModalService,
+    private modalService: IxModalService,
   ) {}
 
   ngOnInit(): void {
@@ -84,6 +84,10 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
           this.catalogSyncJobIds.splice(this.catalogSyncJobIds.indexOf(jobId));
         }
       }
+    });
+
+    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.refresh();
     });
   }
 
@@ -138,17 +142,13 @@ export class ManageCatalogsComponent implements EntityTableConfig<Catalog>, OnIn
     ];
   }
 
-  resourceTransformIncomingRestData(d: Catalog[]): Catalog[] {
-    const data = Object.assign([], d);
-    return data;
-  }
-
   doAdd(): void {
-    this.modalService.openInSlideIn(CatalogAddFormComponent);
+    this.modalService.open(CatalogAddFormComponent);
   }
 
-  edit(row: Catalog): void {
-    this.modalService.openInSlideIn(CatalogEditFormComponent, row.label);
+  edit(catalog: Catalog): void {
+    const modal = this.modalService.open(CatalogEditFormComponent);
+    modal.setCatalogForEdit(catalog);
   }
 
   refreshRow(row: Catalog): void {

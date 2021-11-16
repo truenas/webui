@@ -70,6 +70,7 @@ export class BootPoolAttachFormComponent {
     this.ws.job('boot.attach', [dev, { expand }]).pipe(untilDestroyed(this)).subscribe((job) => {
       if (job.state === JobState.Success) {
         this.isFormLoading = false;
+        this.cdr.markForCheck();
         this.dialogService.info(helptextSystemBootenv.attach_dialog.title,
           `<i>${dev}</i> ${helptextSystemBootenv.attach_dialog.message}`, '300px', 'info', true)
           .pipe(untilDestroyed(this)).subscribe(() => {

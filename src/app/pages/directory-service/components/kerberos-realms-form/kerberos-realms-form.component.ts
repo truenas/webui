@@ -76,6 +76,7 @@ export class KerberosRealmsFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.modalService.close();
     }, (error) => {
       this.isFormLoading = false;
