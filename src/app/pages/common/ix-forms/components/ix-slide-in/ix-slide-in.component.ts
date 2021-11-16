@@ -54,12 +54,11 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
   closeSlideIn(): void {
     this.isSlideInOpen = false;
 
-    // Destroying child component later improves performance a little bit.
     setTimeout(() => {
+      // Destroying child component later improves performance a little bit.
+      // 200ms matches transition duration
       this.slideInBody.clear();
-    }, 0);
-
-    document.body.classList.remove('ix-slide-in-open');
+    }, 200);
   }
 
   openSlideIn<T>(componentType: Type<T>): T {
@@ -69,8 +68,6 @@ export class IxSlideInComponent implements OnInit, OnDestroy {
     this.slideInBody.clear();
 
     const componentRef = this.slideInBody.createComponent<T>(componentFactory);
-
-    document.body.classList.add('ix-slide-in-open');
     return componentRef.instance;
   }
 }
