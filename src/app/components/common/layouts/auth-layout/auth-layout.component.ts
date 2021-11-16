@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { LanguageService } from 'app/services/language.service';
-import { Theme, DefaultTheme } from 'app/services/theme/theme.service';
+import { Theme, defaultTheme } from 'app/services/theme/theme.service';
 
 @Component({
   selector: 'app-auth-layout',
   templateUrl: './auth-layout.component.html',
 })
 export class AuthLayoutComponent implements OnInit {
-  private theme: Theme = DefaultTheme;
+  private theme: Theme = defaultTheme;
 
   constructor(public language: LanguageService) {
     // Translator init

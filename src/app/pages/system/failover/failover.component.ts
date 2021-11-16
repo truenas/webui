@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { helptext_system_failover } from 'app/helptext/system/failover';
+import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FailoverConfig, FailoverUpdate } from 'app/interfaces/failover.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -30,7 +30,7 @@ export class FailoverComponent implements FormConfiguration {
   entityForm: EntityFormComponent;
   alreadyDisabled = false;
   confirmSubmit = false;
-  saveSubmitText = helptext_system_failover.save_button_text;
+  saveSubmitText = helptextSystemFailover.save_button_text;
   confirmSubmitDialog = {
     title: this.translate.instant('Disable Failover'),
     message: '',
@@ -46,11 +46,11 @@ export class FailoverComponent implements FormConfiguration {
       function: () => {
         const params = [{ reboot: false }];
         const ds = this.dialog.confirm({
-          title: helptext_system_failover.dialog_sync_to_peer_title,
-          message: helptext_system_failover.dialog_sync_to_peer_message,
-          buttonMsg: helptext_system_failover.dialog_button_ok,
+          title: helptextSystemFailover.dialog_sync_to_peer_title,
+          message: helptextSystemFailover.dialog_sync_to_peer_message,
+          buttonMsg: helptextSystemFailover.dialog_button_ok,
           secondaryCheckBox: true,
-          secondaryCheckBoxMsg: helptext_system_failover.dialog_sync_to_peer_checkbox,
+          secondaryCheckBoxMsg: helptextSystemFailover.dialog_sync_to_peer_checkbox,
           method: 'failover.sync_to_peer',
           data: params,
         });
@@ -61,8 +61,8 @@ export class FailoverComponent implements FormConfiguration {
               ds.componentInstance.method, ds.componentInstance.data,
             ).pipe(untilDestroyed(this)).subscribe(() => {
               this.load.close();
-              this.dialog.info(helptext_system_failover.confirm_dialogs.sync_title,
-                helptext_system_failover.confirm_dialogs.sync_to_message, '', 'info', true);
+              this.dialog.info(helptextSystemFailover.confirm_dialogs.sync_title,
+                helptextSystemFailover.confirm_dialogs.sync_to_message, '', 'info', true);
             }, (err) => {
               this.load.close();
               new EntityUtils().handleWSError(this.entityForm, err);
@@ -76,15 +76,15 @@ export class FailoverComponent implements FormConfiguration {
       name: this.translate.instant('Sync from Peer'),
       function: () => {
         this.dialog.confirm({
-          title: helptext_system_failover.dialog_sync_from_peer_title,
-          message: helptext_system_failover.dialog_sync_from_peer_message,
-          buttonMsg: helptext_system_failover.dialog_button_ok,
+          title: helptextSystemFailover.dialog_sync_from_peer_title,
+          message: helptextSystemFailover.dialog_sync_from_peer_message,
+          buttonMsg: helptextSystemFailover.dialog_button_ok,
         }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
           this.load.open();
           this.ws.call('failover.sync_from_peer').pipe(untilDestroyed(this)).subscribe(() => {
             this.load.close();
-            this.dialog.info(helptext_system_failover.confirm_dialogs.sync_title,
-              helptext_system_failover.confirm_dialogs.sync_from_message, '', 'info', true);
+            this.dialog.info(helptextSystemFailover.confirm_dialogs.sync_title,
+              helptextSystemFailover.confirm_dialogs.sync_from_message, '', 'info', true);
           }, (err) => {
             this.load.close();
             new EntityUtils().handleWSError(this.entityForm, err);
@@ -97,20 +97,20 @@ export class FailoverComponent implements FormConfiguration {
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
-      name: helptext_system_failover.fieldset_title,
+      name: helptextSystemFailover.fieldset_title,
       width: '100%',
       label: true,
       config: [
         {
           type: 'checkbox',
           name: 'disabled',
-          placeholder: helptext_system_failover.disabled_placeholder,
-          tooltip: helptext_system_failover.disabled_tooltip,
+          placeholder: helptextSystemFailover.disabled_placeholder,
+          tooltip: helptextSystemFailover.disabled_tooltip,
         }, {
           type: 'checkbox',
           name: 'master',
-          placeholder: helptext_system_failover.master_placeholder,
-          tooltip: helptext_system_failover.master_tooltip,
+          placeholder: helptextSystemFailover.master_placeholder,
+          tooltip: helptextSystemFailover.master_tooltip,
           value: true,
           relation: [
             {
@@ -124,8 +124,8 @@ export class FailoverComponent implements FormConfiguration {
         }, {
           type: 'input',
           name: 'timeout',
-          placeholder: helptext_system_failover.timeout_placeholder,
-          tooltip: helptext_system_failover.timeout_tooltip,
+          placeholder: helptextSystemFailover.timeout_placeholder,
+          tooltip: helptextSystemFailover.timeout_tooltip,
         },
       ],
     }];
@@ -149,8 +149,8 @@ export class FailoverComponent implements FormConfiguration {
     this.master_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (!res && !this.warned) {
         this.dialog.confirm({
-          title: helptext_system_failover.master_dialog_title,
-          message: helptext_system_failover.master_dialog_warning,
+          title: helptextSystemFailover.master_dialog_title,
+          message: helptextSystemFailover.master_dialog_warning,
           buttonMsg: this.translate.instant('Continue'),
           cancelMsg: this.translate.instant('Cancel'),
           disableClose: true,
@@ -163,9 +163,9 @@ export class FailoverComponent implements FormConfiguration {
         });
       }
       if (res) {
-        this.entityForm.saveSubmitText = helptext_system_failover.save_button_text;
+        this.entityForm.saveSubmitText = helptextSystemFailover.save_button_text;
       } else {
-        this.entityForm.saveSubmitText = helptext_system_failover.failover_button_text;
+        this.entityForm.saveSubmitText = helptextSystemFailover.failover_button_text;
       }
     });
   }

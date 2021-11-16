@@ -1365,22 +1365,22 @@ export class DatasetFormComponent implements FormConfiguration {
     if (wsResponse.special_small_block_size && wsResponse.special_small_block_size.rawvalue === '0') {
       delete wsResponse.special_small_block_size;
     }
-    const quota_warning = this.getFieldValueOrNone(wsResponse.quota_warning)
+    const quotaWarning = this.getFieldValueOrNone(wsResponse.quota_warning)
       ? this.getFieldValueOrNone(wsResponse.quota_warning)
       : this.warning;
-    const quota_warning_inherit = this.isInherited(wsResponse.quota_warning, quota_warning);
-    const quota_critical = this.getFieldValueOrNone(wsResponse.quota_critical)
+    const quotaWarningInherit = this.isInherited(wsResponse.quota_warning, quotaWarning);
+    const quotaCritical = this.getFieldValueOrNone(wsResponse.quota_critical)
       ? this.getFieldValueOrNone(wsResponse.quota_critical)
       : this.critical;
-    const quota_critical_inherit = this.isInherited(wsResponse.quota_critical, quota_critical);
-    const refquota_warning = this.getFieldValueOrNone(wsResponse.refquota_warning)
+    const quotaCriticalInherit = this.isInherited(wsResponse.quota_critical, quotaCritical);
+    const refquotaWarning = this.getFieldValueOrNone(wsResponse.refquota_warning)
       ? this.getFieldValueOrNone(wsResponse.refquota_warning)
       : this.warning;
-    const refquota_warning_inherit = this.isInherited(wsResponse.refquota_warning, refquota_warning);
-    const refquota_critical = this.getFieldValueOrNone(wsResponse.refquota_critical)
+    const refquotaWarningInherit = this.isInherited(wsResponse.refquota_warning, refquotaWarning);
+    const refquotaCritical = this.getFieldValueOrNone(wsResponse.refquota_critical)
       ? this.getFieldValueOrNone(wsResponse.refquota_critical)
       : this.critical;
-    const refquota_critical_inherit = this.isInherited(wsResponse.refquota_critical, refquota_critical);
+    const refquotaCriticalInherit = this.isInherited(wsResponse.refquota_critical, refquotaCritical);
     const sizeValues: { [field in SizeField]?: any } = {};
     this.size_fields.forEach((field) => {
       if (wsResponse[field] && wsResponse[field].rawvalue) {
@@ -1404,14 +1404,14 @@ export class DatasetFormComponent implements FormConfiguration {
       compression: this.getFieldValueOrRaw(wsResponse.compression),
       copies: this.getFieldValueOrRaw(wsResponse.copies),
       deduplication: this.getFieldValueOrRaw(wsResponse.deduplication),
-      quota_warning,
-      quota_warning_inherit,
-      quota_critical,
-      quota_critical_inherit,
-      refquota_warning,
-      refquota_warning_inherit,
-      refquota_critical,
-      refquota_critical_inherit,
+      quota_warning: quotaWarning,
+      quota_warning_inherit: quotaWarningInherit,
+      quota_critical: quotaCritical,
+      quota_critical_inherit: quotaCriticalInherit,
+      refquota_warning: refquotaWarning,
+      refquota_warning_inherit: refquotaWarningInherit,
+      refquota_critical: refquotaCritical,
+      refquota_critical_inherit: refquotaCriticalInherit,
       quota: this.OrigHuman['quota'],
       readonly: this.getFieldValueOrRaw(wsResponse.readonly),
       exec: this.getFieldValueOrRaw(wsResponse.exec),
@@ -1430,14 +1430,14 @@ export class DatasetFormComponent implements FormConfiguration {
       || sizeValues['refreservation']
       || sizeValues['reservation']
       || sizeValues['special_small_block_size']
-      || !quota_warning_inherit
-      || !quota_critical_inherit
-      || !refquota_warning_inherit
-      || !refquota_critical_inherit
-      || quota_warning !== this.warning
-      || quota_critical !== this.critical
-      || refquota_critical !== this.critical
-      || refquota_warning !== this.warning
+      || !quotaWarningInherit
+      || !quotaCriticalInherit
+      || !refquotaWarningInherit
+      || !refquotaCriticalInherit
+      || quotaWarning !== this.warning
+      || quotaCritical !== this.critical
+      || refquotaCritical !== this.critical
+      || refquotaWarning !== this.warning
     ) {
       this.isBasicMode = false;
     }

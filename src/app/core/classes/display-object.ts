@@ -26,7 +26,7 @@ const transformMap = transform.transformMap;
  * */
 
 // For testing
-export const ResizeHandles = {
+export const resizeHandles = {
   template: `
       <div class="resize-handle-top"></div>
       <div class="resize-handle-right"></div>
@@ -191,7 +191,7 @@ export class DisplayObject {
     const parent = this.rawElement.parentNode;
     const wrapper = document.createElement('div');
     // let handles = document.createElement(ResizeHandles.template);
-    wrapper.innerHTML = ResizeHandles.template;
+    wrapper.innerHTML = resizeHandles.template;
     wrapper.classList.add('shadow');
     parent.insertBefore(wrapper, this.rawElement);
     wrapper.appendChild(this.rawElement);

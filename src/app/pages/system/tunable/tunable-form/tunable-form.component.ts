@@ -5,7 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { TunableType } from 'app/enums/tunable-type.enum';
-import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
+import { helptextSystemTunable as helptext } from 'app/helptext/system/tunable';
 import { Tunable, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
@@ -76,6 +76,7 @@ export class TunableFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.modalService.close();
     }, (error) => {
       this.isFormLoading = false;

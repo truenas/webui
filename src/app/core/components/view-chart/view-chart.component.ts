@@ -22,7 +22,7 @@ export interface Legend {
   visible: boolean;
 }
 
-export const ViewChartMetadata = {
+export const viewChartMetadata = {
   template: `
     <div class="viewchart-wrapper {{chartClass}}-wrapper">
       <div *ngIf="chartLoaded" class="legend-wrapper">
@@ -47,7 +47,7 @@ export const ViewChartMetadata = {
 
 @Component({
   selector: 'viewchart',
-  template: ViewChartMetadata.template,
+  template: viewChartMetadata.template,
   styleUrls: ['./view-chart.component.scss'],
 })
 export class ViewChartComponent extends ViewComponent implements OnChanges, AfterViewInit {

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SupportConfig, SupportConfigUpdate } from 'app/interfaces/support.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';

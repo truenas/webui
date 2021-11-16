@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
-import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
@@ -118,11 +118,13 @@ export class GuiFormComponent {
       untilDestroyed(this),
     ).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.modalService.close();
       this.handleServiceRestart(body);
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.formGroup);
+      this.cdr.markForCheck();
     });
   }
 

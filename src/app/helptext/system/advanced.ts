@@ -2,7 +2,7 @@ import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 
-export const helptext_system_advanced = {
+export const helptextSystemAdvanced = {
   fieldset_console: T('Console'),
   fieldset_storage: T('Storage'),
   fieldset_ui: T('GUI'),

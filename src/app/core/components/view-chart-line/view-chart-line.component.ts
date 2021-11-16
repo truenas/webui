@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ViewChartComponent, ViewChartMetadata } from 'app/core/components/view-chart/view-chart.component';
+import { ViewChartComponent, viewChartMetadata } from 'app/core/components/view-chart/view-chart.component';
 import { ChartConfiguration } from 'app/core/components/view-chart/view-chart.component.types';
 
 interface TimeData {
@@ -11,7 +11,7 @@ interface TimeData {
 
 @Component({
   selector: 'viewchartline',
-  template: ViewChartMetadata.template,
+  template: viewChartMetadata.template,
 })
 export class ViewChartLineComponent extends ViewChartComponent {
   // public chartType: string;

@@ -218,6 +218,7 @@
   "OpenVPN": "",
   "OpenVPN {serviceLabel} service failed to start.": "",
   "OpenVPN {serviceLabel} service failed to stop.": "",
+  "Optional. Only needed for private images.": "",
   "Order": "",
   "Other TrueNAS controller cannot be reached.": "",
   "Other TrueNAS controller has no license.": "",

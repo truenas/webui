@@ -118,9 +118,11 @@ export class GroupFormComponent {
     request$.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
       this.modalService.close();
+      this.cdr.markForCheck();
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
     });
   }
 }

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { helptext_system_kmip } from 'app/helptext/system/kmip';
+import { helptextSystemKmip } from 'app/helptext/system/kmip';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { KmipConfigUpdate } from 'app/interfaces/kmip-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -28,7 +28,7 @@ export class KmipComponent implements FormConfiguration {
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
     {
-      name: helptext_system_kmip.fieldset_server,
+      name: helptextSystemKmip.fieldset_server,
       class: 'server',
       label: true,
       width: '100%',
@@ -36,8 +36,8 @@ export class KmipComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'server',
-          placeholder: helptext_system_kmip.server.placeholder,
-          tooltip: helptext_system_kmip.server.tooltip,
+          placeholder: helptextSystemKmip.server.placeholder,
+          tooltip: helptextSystemKmip.server.tooltip,
           class: 'inline',
           width: '50%',
         },
@@ -45,15 +45,15 @@ export class KmipComponent implements FormConfiguration {
           type: 'input',
           inputType: 'number',
           name: 'port',
-          placeholder: helptext_system_kmip.port.placeholder,
-          tooltip: helptext_system_kmip.port.tooltip,
+          placeholder: helptextSystemKmip.port.placeholder,
+          tooltip: helptextSystemKmip.port.tooltip,
           class: 'inline',
           width: '50%',
         },
       ],
     },
     {
-      name: helptext_system_kmip.fieldset_certificate,
+      name: helptextSystemKmip.fieldset_certificate,
       class: 'certificate',
       label: true,
       width: '100%',
@@ -61,8 +61,8 @@ export class KmipComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'certificate',
-          placeholder: helptext_system_kmip.certificate.placeholder,
-          tooltip: helptext_system_kmip.certificate.tooltip,
+          placeholder: helptextSystemKmip.certificate.placeholder,
+          tooltip: helptextSystemKmip.certificate.tooltip,
           options: [
             { label: '---', value: null },
           ],
@@ -72,8 +72,8 @@ export class KmipComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'certificate_authority',
-          placeholder: helptext_system_kmip.certificate_authority.placeholder,
-          tooltip: helptext_system_kmip.certificate_authority.tooltip,
+          placeholder: helptextSystemKmip.certificate_authority.placeholder,
+          tooltip: helptextSystemKmip.certificate_authority.tooltip,
           options: [
             { label: '---', value: null },
           ],
@@ -83,7 +83,7 @@ export class KmipComponent implements FormConfiguration {
       ],
     },
     {
-      name: helptext_system_kmip.fieldset_management,
+      name: helptextSystemKmip.fieldset_management,
       class: 'management',
       label: true,
       width: '100%',
@@ -91,38 +91,38 @@ export class KmipComponent implements FormConfiguration {
         {
           type: 'checkbox',
           name: 'manage_sed_disks',
-          placeholder: helptext_system_kmip.manage_sed_disks.placeholder,
-          tooltip: helptext_system_kmip.manage_sed_disks.tooltip,
+          placeholder: helptextSystemKmip.manage_sed_disks.placeholder,
+          tooltip: helptextSystemKmip.manage_sed_disks.tooltip,
         },
         {
           type: 'checkbox',
           name: 'manage_zfs_keys',
-          placeholder: helptext_system_kmip.manage_zfs_keys.placeholder,
-          tooltip: helptext_system_kmip.manage_zfs_keys.tooltip,
+          placeholder: helptextSystemKmip.manage_zfs_keys.placeholder,
+          tooltip: helptextSystemKmip.manage_zfs_keys.tooltip,
         },
         {
           type: 'checkbox',
           name: 'enabled',
-          placeholder: helptext_system_kmip.enabled.placeholder,
-          tooltip: helptext_system_kmip.enabled.tooltip,
+          placeholder: helptextSystemKmip.enabled.placeholder,
+          tooltip: helptextSystemKmip.enabled.tooltip,
         },
         {
           type: 'checkbox',
           name: 'change_server',
-          placeholder: helptext_system_kmip.change_server.placeholder,
-          tooltip: helptext_system_kmip.change_server.tooltip,
+          placeholder: helptextSystemKmip.change_server.placeholder,
+          tooltip: helptextSystemKmip.change_server.tooltip,
         },
         {
           type: 'checkbox',
           name: 'validate',
-          placeholder: helptext_system_kmip.validate.placeholder,
-          tooltip: helptext_system_kmip.validate.tooltip,
+          placeholder: helptextSystemKmip.validate.placeholder,
+          tooltip: helptextSystemKmip.validate.tooltip,
         },
         {
           type: 'checkbox',
           name: 'force_clear',
-          placeholder: helptext_system_kmip.force_clear.placeholder,
-          tooltip: helptext_system_kmip.force_clear.tooltip,
+          placeholder: helptextSystemKmip.force_clear.placeholder,
+          tooltip: helptextSystemKmip.force_clear.tooltip,
         },
       ],
     },
@@ -188,7 +188,7 @@ export class KmipComponent implements FormConfiguration {
       data['server'] = '';
     }
     const dialogRef = this.dialog.open(EntityJobComponent, {
-      data: { title: helptext_system_kmip.jobDialog.title },
+      data: { title: helptextSystemKmip.jobDialog.title },
       disableClose: true,
     });
     dialogRef.componentInstance.setCall(this.editCall, [data]);
@@ -210,7 +210,7 @@ export class KmipComponent implements FormConfiguration {
   syncKeys(): void {
     this.ws.call('kmip.sync_keys').pipe(untilDestroyed(this)).subscribe(
       () => {
-        this.dialogService.info(helptext_system_kmip.syncInfoDialog.title, helptext_system_kmip.syncInfoDialog.info, '500px', 'info', true);
+        this.dialogService.info(helptextSystemKmip.syncInfoDialog.title, helptextSystemKmip.syncInfoDialog.info, '500px', 'info', true);
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialogService);
@@ -221,7 +221,7 @@ export class KmipComponent implements FormConfiguration {
   clearSyncKeys(): void {
     this.ws.call('kmip.clear_sync_pending_keys').pipe(untilDestroyed(this)).subscribe(
       () => {
-        this.dialogService.info(helptext_system_kmip.clearSyncKeyInfoDialog.title, helptext_system_kmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);
+        this.dialogService.info(helptextSystemKmip.clearSyncKeyInfoDialog.title, helptextSystemKmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);
       },
       (err) => {
         new EntityUtils().handleWSError(this, err, this.dialogService);

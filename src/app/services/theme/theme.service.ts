@@ -10,7 +10,7 @@ import {
 } from 'app/interfaces/events/user-preferences-event.interface';
 import { WebSocketService } from 'app/services';
 
-export const DefaultTheme: Theme = {
+export const defaultTheme: Theme = {
   name: 'ix-dark',
   label: 'iX Dark',
   labelSwatch: 'blue',
@@ -98,7 +98,7 @@ export class ThemeService {
   private _customThemes: Theme[];
 
   freenasThemes: Theme[] = [
-    DefaultTheme,
+    defaultTheme,
     {
       name: 'ix-blue',
       label: 'iX Blue',

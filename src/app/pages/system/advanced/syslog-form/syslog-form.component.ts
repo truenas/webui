@@ -7,7 +7,7 @@ import { forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
-import { helptext_system_advanced, helptext_system_advanced as helptext } from 'app/helptext/system/advanced';
+import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
@@ -42,8 +42,8 @@ export class SyslogFormComponent implements OnInit {
     syslog: helptext.system_dataset_tooltip,
   };
 
-  readonly levelOptions = of(helptext_system_advanced.sysloglevel.options);
-  readonly transportOptions = of(helptext_system_advanced.syslog_transport.options);
+  readonly levelOptions = of(helptextSystemAdvanced.sysloglevel.options);
+  readonly transportOptions = of(helptextSystemAdvanced.syslog_transport.options);
   readonly certificateOptions = this.ws.call('system.advanced.syslog_certificate_choices').pipe(
     choicesToOptions(),
     map((options) => [{ label: '---', value: null }, ...options]),
@@ -89,6 +89,7 @@ export class SyslogFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.modalService.close();
       this.sysGeneralService.refreshSysGeneral();
     }, (res) => {
@@ -108,6 +109,7 @@ export class SyslogFormComponent implements OnInit {
       .subscribe(
         ([advancedConfig, { syslog }]) => {
           this.isFormLoading = false;
+          this.cdr.markForCheck();
           this.form.patchValue({
             ...advancedConfig,
             syslog_tls_certificate: String(advancedConfig.syslog_tls_certificate),

@@ -305,9 +305,9 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       .valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
         const pool = _.find(this.guid.options, { value: res });
         this.summary[this.translate.instant('Pool to import')] = pool['label'];
-        const pool_label = pool.label.split(' ');
+        const poolLabel = pool.label.split(' ');
         if (pool.label.length > 0) {
-          this.pool = pool_label[0];
+          this.pool = poolLabel[0];
         }
       });
 

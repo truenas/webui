@@ -1,7 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy } from '@ngneat/until-destroy';
-import { helptext_system_failover } from 'app/helptext/system/failover';
+import { helptextSystemFailover } from 'app/helptext/system/failover';
 
 interface DialogData {
   agreed: boolean;
@@ -25,11 +25,11 @@ export class SimpleFailoverBtnDialogComponent {
   }
 
   isDisabled = true;
-  title = helptext_system_failover.dialog_initiate_failover_title;
-  msg1 = helptext_system_failover.dialog_initiate_failover_message;
-  checkbox = helptext_system_failover.dialog_initiate_failover_checkbox;
-  cancel = helptext_system_failover.dialog_initiate_cancel;
-  action = helptext_system_failover.dialog_initiate_action;
+  title = helptextSystemFailover.dialog_initiate_failover_title;
+  msg1 = helptextSystemFailover.dialog_initiate_failover_message;
+  checkbox = helptextSystemFailover.dialog_initiate_failover_checkbox;
+  cancel = helptextSystemFailover.dialog_initiate_cancel;
+  action = helptextSystemFailover.dialog_initiate_action;
 
   constructor(
     public dialogRef: MatDialogRef<SimpleFailoverBtnDialogComponent>,

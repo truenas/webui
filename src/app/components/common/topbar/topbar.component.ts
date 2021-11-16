@@ -527,22 +527,22 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   showHAStatus(): void {
     let reasons = '<ul>\n';
-    let ha_icon = 'info';
-    let ha_status: string;
+    let haIcon = 'info';
+    let haStatus: string;
     if (this.ha_disabled_reasons.length > 0) {
-      ha_status = helptext.ha_status_text_disabled;
-      ha_icon = 'warning';
+      haStatus = helptext.ha_status_text_disabled;
+      haIcon = 'warning';
       this.ha_disabled_reasons.forEach((reason) => {
-        const reason_text = helptext.ha_disabled_reasons[reason];
-        reasons = reasons + '<li>' + this.translate.instant(reason_text) + '</li>\n';
+        const reasonText = helptext.ha_disabled_reasons[reason];
+        reasons = reasons + '<li>' + this.translate.instant(reasonText) + '</li>\n';
       });
     } else {
-      ha_status = helptext.ha_status_text_enabled;
+      haStatus = helptext.ha_status_text_enabled;
       reasons = reasons + '<li>' + this.translate.instant(helptext.ha_is_enabled) + '</li>\n';
     }
     reasons = reasons + '</ul>';
 
-    this.dialogService.info(ha_status, reasons, '500px', ha_icon, true);
+    this.dialogService.info(haStatus, reasons, '500px', haIcon, true);
   }
 
   checkUpgradePending(): void {

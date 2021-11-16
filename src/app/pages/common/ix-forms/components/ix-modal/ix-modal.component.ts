@@ -1,5 +1,5 @@
 import {
-  Component, ComponentFactoryResolver, ElementRef, Input, OnDestroy, OnInit, Type, ViewChild,
+  Component, ComponentFactoryResolver, ElementRef, HostListener, Input, OnDestroy, OnInit, Type, ViewChild,
 } from '@angular/core';
 import { IxModalDirective } from 'app/pages/common/ix-forms/components/ix-modal/ix-modal.directive';
 import { IxModalService } from 'app/services/ix-modal.service';
@@ -10,6 +10,11 @@ import { IxModalService } from 'app/services/ix-modal.service';
   styleUrls: ['./ix-modal.component.scss'],
 })
 export class IxModalComponent implements OnInit, OnDestroy {
+  @HostListener('document:keydown.escape') onKeydownHandler(): void {
+    if (this.element) {
+      this.close();
+    }
+  }
   @Input() id: string;
   @ViewChild(IxModalDirective, { static: true }) ixModal: IxModalDirective;
   private element: HTMLElement;

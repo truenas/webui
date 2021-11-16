@@ -3,7 +3,7 @@ import { Validators, FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { helptext_system_ntpservers as helptext } from 'app/helptext/system/ntp-servers';
+import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-servers';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ValidationService, WebSocketService, DialogService } from 'app/services';

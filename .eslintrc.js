@@ -93,6 +93,10 @@ module.exports = {
             selector: ['classMethod', 'objectLiteralMethod', 'typeMethod'],
             format: ['camelCase'],
           },
+          {
+            selector: ['variable'],
+            format: ['camelCase']
+          }
           // {
           //   selector: ['parameter'],
           //   format: ['camelCase'],

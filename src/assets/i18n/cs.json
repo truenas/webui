@@ -1977,6 +1977,7 @@
   "OpenVPN {serviceLabel} service failed to start.": "",
   "OpenVPN {serviceLabel} service failed to stop.": "",
   "Optional description. Portals are automatically assigned a numeric group.": "",
+  "Optional. Only needed for private images.": "",
   "Optional: Add passphrase and recovery key": "",
   "Options for encrypting the LDAP connection:  <ul>  <li><i>OFF:</i> do not encrypt the LDAP connection.</li>  <li><i>ON:</i> encrypt the LDAP connection with <i>SSL</i> on port  <i>636</i>.</li>  <li><i>START_TLS:</i> encrypt the LDAP connection with <i>STARTTLS</i>  on the default LDAP port <i>389</i>.</li>  </ul>": "",
   "Order": "",

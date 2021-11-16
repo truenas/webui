@@ -3,7 +3,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 
-export const helptext_system_email = {
+export const helptextSystemEmail = {
   fieldsets: {
     general: T('General Options'),
     access: T('Access'),

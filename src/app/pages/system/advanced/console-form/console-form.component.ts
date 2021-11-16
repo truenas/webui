@@ -5,7 +5,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/options.helper';
-import { helptext_system_advanced as helptext } from 'app/helptext/system/advanced';
+import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import {
@@ -68,10 +68,12 @@ export class ConsoleFormComponent implements OnInit {
           this.form.patchValue(config);
           this.isFormLoading = false;
           this.cdr.markForCheck();
+          this.cdr.markForCheck();
         },
         (error) => {
           this.isFormLoading = false;
           new EntityUtils().handleWSError(null, error, this.dialogService);
+          this.cdr.markForCheck();
         },
       );
 
@@ -86,10 +88,12 @@ export class ConsoleFormComponent implements OnInit {
     this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
       this.sysGeneralService.refreshSysGeneral();
+      this.cdr.markForCheck();
       this.modalService.close();
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
     });
   }
 }

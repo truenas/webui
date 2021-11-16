@@ -3,7 +3,7 @@ import { FormGroup, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
@@ -31,8 +31,8 @@ export class FibreChannelPortComponent implements OnInit {
         {
           type: 'radio',
           name: 'mode',
-          placeholder: helptext_sharing_iscsi.fc_mode_placeholder,
-          tooltip: helptext_sharing_iscsi.fc_mode_tooltip,
+          placeholder: helptextSharingIscsi.fc_mode_placeholder,
+          tooltip: helptextSharingIscsi.fc_mode_tooltip,
           options: [
             {
               label: 'Initiator',
@@ -59,8 +59,8 @@ export class FibreChannelPortComponent implements OnInit {
         {
           type: 'select',
           name: 'target',
-          placeholder: helptext_sharing_iscsi.fc_target_placeholder,
-          tooltip: helptext_sharing_iscsi.fc_target_tooltip,
+          placeholder: helptextSharingIscsi.fc_target_placeholder,
+          tooltip: helptextSharingIscsi.fc_target_tooltip,
           options: [{
             label: '---------',
             value: null,
@@ -70,8 +70,8 @@ export class FibreChannelPortComponent implements OnInit {
         {
           type: 'textarea',
           name: 'initiators',
-          placeholder: helptext_sharing_iscsi.fc_initiators_placeholder,
-          tooltip: helptext_sharing_iscsi.fc_initiators_tooltip,
+          placeholder: helptextSharingIscsi.fc_initiators_placeholder,
+          tooltip: helptextSharingIscsi.fc_initiators_tooltip,
         },
       ],
     },
