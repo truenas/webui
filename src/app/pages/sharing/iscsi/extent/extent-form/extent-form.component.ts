@@ -5,9 +5,10 @@ import {
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import globalHelptext from 'app/helptext/global-helptext';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -39,7 +40,7 @@ export class ExtentFormComponent implements FormConfiguration {
 
   fieldSets: FieldSet[] = [
     {
-      name: helptext_sharing_iscsi.fieldset_extent_basic,
+      name: helptextSharingIscsi.fieldset_extent_basic,
       label: true,
       class: 'basic',
       width: '100%',
@@ -47,28 +48,28 @@ export class ExtentFormComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'name',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_name,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_name,
+          placeholder: helptextSharingIscsi.extent_placeholder_name,
+          tooltip: helptextSharingIscsi.extent_tooltip_name,
           required: true,
-          validation: helptext_sharing_iscsi.extent_validators_name,
+          validation: helptextSharingIscsi.extent_validators_name,
         },
         {
           type: 'input',
           name: 'comment',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_comment,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_comment,
+          placeholder: helptextSharingIscsi.extent_placeholder_comment,
+          tooltip: helptextSharingIscsi.extent_tooltip_comment,
         },
         {
           type: 'checkbox',
           name: 'enabled',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_enabled,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_enabled,
+          placeholder: helptextSharingIscsi.extent_placeholder_enabled,
+          tooltip: helptextSharingIscsi.extent_tooltip_enabled,
           value: true,
         },
       ],
     },
     {
-      name: helptext_sharing_iscsi.fieldset_extent_type,
+      name: helptextSharingIscsi.fieldset_extent_type,
       label: true,
       class: 'type',
       width: '100%',
@@ -76,8 +77,8 @@ export class ExtentFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'type',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_type,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_type,
+          placeholder: helptextSharingIscsi.extent_placeholder_type,
+          tooltip: helptextSharingIscsi.extent_tooltip_type,
           options: [
             {
               label: 'Device',
@@ -92,31 +93,31 @@ export class ExtentFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'disk',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_disk,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_disk,
+          placeholder: helptextSharingIscsi.extent_placeholder_disk,
+          tooltip: helptextSharingIscsi.extent_tooltip_disk,
           options: [],
           isHidden: false,
           disabled: false,
           required: true,
-          validation: helptext_sharing_iscsi.extent_validators_disk,
+          validation: helptextSharingIscsi.extent_validators_disk,
         },
         {
           type: 'explorer',
-          explorerType: 'file',
+          explorerType: ExplorerType.File,
           initial: '/mnt',
           name: 'path',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_path,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_path,
+          placeholder: helptextSharingIscsi.extent_placeholder_path,
+          tooltip: helptextSharingIscsi.extent_tooltip_path,
           isHidden: false,
           disabled: false,
           required: true,
-          validation: helptext_sharing_iscsi.extent_validators_path,
+          validation: helptextSharingIscsi.extent_validators_path,
         },
         {
           type: 'input',
           name: 'filesize',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_filesize,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_filesize,
+          placeholder: helptextSharingIscsi.extent_placeholder_filesize,
+          tooltip: helptextSharingIscsi.extent_tooltip_filesize,
           isHidden: false,
           disabled: false,
           required: true,
@@ -145,14 +146,14 @@ export class ExtentFormComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'serial',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_serial,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_serial,
+          placeholder: helptextSharingIscsi.extent_placeholder_serial,
+          tooltip: helptextSharingIscsi.extent_tooltip_serial,
         },
         {
           type: 'select',
           name: 'blocksize',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_blocksize,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_blocksize,
+          placeholder: helptextSharingIscsi.extent_placeholder_blocksize,
+          tooltip: helptextSharingIscsi.extent_tooltip_blocksize,
           options: [
             {
               label: '512',
@@ -176,20 +177,20 @@ export class ExtentFormComponent implements FormConfiguration {
         {
           type: 'checkbox',
           name: 'pblocksize',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_pblocksize,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_pblocksize,
+          placeholder: helptextSharingIscsi.extent_placeholder_pblocksize,
+          tooltip: helptextSharingIscsi.extent_tooltip_pblocksize,
         },
         {
           type: 'input',
           name: 'avail_threshold',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_avail_threshold,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_avail_threshold,
+          placeholder: helptextSharingIscsi.extent_placeholder_avail_threshold,
+          tooltip: helptextSharingIscsi.extent_tooltip_avail_threshold,
           isHidden: false,
         },
       ],
     },
     {
-      name: helptext_sharing_iscsi.fieldset_extent_options,
+      name: helptextSharingIscsi.fieldset_extent_options,
       label: true,
       class: 'options',
       width: '100%',
@@ -197,21 +198,21 @@ export class ExtentFormComponent implements FormConfiguration {
         {
           type: 'checkbox',
           name: 'insecure_tpc',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_insecure_tpc,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_insecure_tpc,
+          placeholder: helptextSharingIscsi.extent_placeholder_insecure_tpc,
+          tooltip: helptextSharingIscsi.extent_tooltip_insecure_tpc,
           value: true,
         },
         {
           type: 'checkbox',
           name: 'xen',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_xen,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_xen,
+          placeholder: helptextSharingIscsi.extent_placeholder_xen,
+          tooltip: helptextSharingIscsi.extent_tooltip_xen,
         },
         {
           type: 'select',
           name: 'rpm',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_rpm,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_rpm,
+          placeholder: helptextSharingIscsi.extent_placeholder_rpm,
+          tooltip: helptextSharingIscsi.extent_tooltip_rpm,
           options: [
             {
               label: 'UNKNOWN',
@@ -243,8 +244,8 @@ export class ExtentFormComponent implements FormConfiguration {
         {
           type: 'checkbox',
           name: 'ro',
-          placeholder: helptext_sharing_iscsi.extent_placeholder_ro,
-          tooltip: helptext_sharing_iscsi.extent_tooltip_ro,
+          placeholder: helptextSharingIscsi.extent_placeholder_ro,
+          tooltip: helptextSharingIscsi.extent_tooltip_ro,
         },
       ],
     },
@@ -290,14 +291,14 @@ export class ExtentFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
-    const extent_disk_field = _.find(this.fieldConfig, { name: 'disk' }) as FormSelectConfig;
+    const extentDiskField = _.find(this.fieldConfig, { name: 'disk' }) as FormSelectConfig;
     // get device options
     this.iscsiService.getExtentDevices().pipe(untilDestroyed(this)).subscribe((res) => {
       const options = [];
       for (const i in res) {
         options.push({ label: res[i], value: i });
       }
-      extent_disk_field.options = _.sortBy(options, ['label']);
+      extentDiskField.options = _.sortBy(options, ['label']);
     });
 
     this.extent_type_control = entityForm.formGroup.controls['type'];
@@ -313,8 +314,8 @@ export class ExtentFormComponent implements FormConfiguration {
         this.avail_threshold_field.isHidden = false;
       } else {
         this.avail_threshold_field.isHidden = true;
-        if (this.pk && value != undefined && _.find(extent_disk_field.options, { value }) === undefined) {
-          extent_disk_field.options.push({ label: value, value });
+        if (this.pk && value != undefined && _.find(extentDiskField.options, { value }) === undefined) {
+          extentDiskField.options.push({ label: value, value });
         }
       }
     });

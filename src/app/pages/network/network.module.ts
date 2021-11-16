@@ -7,6 +7,7 @@ import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from 'app/app-material.module';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
 import { NetworkService } from 'app/services';
@@ -34,6 +35,7 @@ import { routing } from './network.routing';
     TranslateModule,
     CommonDirectivesModule,
     IxFormsModule,
+    CastModule,
   ],
   declarations: [
     StaticRouteFormComponent,

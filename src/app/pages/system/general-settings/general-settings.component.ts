@@ -3,7 +3,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
@@ -29,16 +28,22 @@ import { IxModalService } from 'app/services/ix-modal.service';
 import { LocaleService } from 'app/services/locale.service';
 import { GuiFormComponent } from './gui-form/gui-form.component';
 
+enum GeneralCardId {
+  Gui = 'gui',
+  Localization = 'localization',
+  Ntp = 'ntp',
+}
+
 @UntilDestroy()
 @Component({
   selector: 'app-general-settings',
   templateUrl: './general-settings.component.html',
 })
 export class GeneralSettingsComponent implements OnInit {
-  dataCards: DataCard[] = [];
+  dataCards: DataCard<GeneralCardId>[] = [];
   supportTitle = helptext.supportTitle;
-  localeData: DataCard;
-  ntpServersData: DataCard;
+  localeData: DataCard<GeneralCardId.Localization>;
+  ntpServersData: DataCard<GeneralCardId.Ntp>;
   configData: SystemGeneralConfig;
   subs: Subs;
   formEvent$: Subject<CoreEvent>;
@@ -117,7 +122,6 @@ export class GeneralSettingsComponent implements OnInit {
     private ixModalService: IxModalService,
     private storage: StorageService,
     private http: HttpClient,
-    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -176,7 +180,7 @@ export class GeneralSettingsComponent implements OnInit {
       this.dataCards = [
         {
           title: helptext.guiTitle,
-          id: 'gui',
+          id: GeneralCardId.Gui,
           items: [
             { label: helptext.ui_certificate.label, value: res.ui_certificate.name },
             { label: helptext.ui_address.label, value: res.ui_address.join(', ') },
@@ -215,7 +219,7 @@ export class GeneralSettingsComponent implements OnInit {
           const dateTime = this.localeService.getDateAndTime(res.timezone);
           this.localeData = {
             title: helptext.localeTitle,
-            id: 'localization',
+            id: GeneralCardId.Localization,
             items: [
               { label: helptext.stg_language.placeholder, value: languages[res.language] },
               { label: helptext.date_format.placeholder, value: dateTime[0] },
@@ -236,7 +240,7 @@ export class GeneralSettingsComponent implements OnInit {
       });
 
       this.ntpServersData = {
-        id: 'ntp',
+        id: GeneralCardId.Ntp,
         title: helptext.ntpTitle,
         tableConf: {
           title: helptext.ntpTitle,
@@ -267,9 +271,9 @@ export class GeneralSettingsComponent implements OnInit {
     });
   }
 
-  doAdd(name: string): void {
+  doAdd(name: GeneralCardId): void {
     switch (name) {
-      case 'gui':
+      case GeneralCardId.Gui:
         this.ixModalService.open(GuiFormComponent);
         break;
       default:

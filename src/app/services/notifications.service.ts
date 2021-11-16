@@ -127,8 +127,8 @@ export class NotificationsService {
     const date: Date = new Date(alert.datetime.$date);
     const dateStr = date.toUTCString();
     const dateStrLocale = date.toLocaleString(this.locale, { timeZone: this.timeZone });
-    const one_shot: boolean = alert.one_shot;
-    let icon_tooltip = alert.level as string;
+    const oneShot = alert.one_shot;
+    let iconTooltip = alert.level as string;
     const routeName = '/dashboard';
     let icon = 'info';
     let color = 'primary';
@@ -144,16 +144,16 @@ export class NotificationsService {
       color = 'warn';
     }
 
-    if (one_shot) {
+    if (oneShot) {
       icon = 'notifications_active';
-      icon_tooltip = 'This is a ONE-SHOT ' + level + " alert, it won't be dismissed automatically";
+      iconTooltip = 'This is a ONE-SHOT ' + level + " alert, it won't be dismissed automatically";
     }
 
     const newNotification: NotificationAlert = {
       id,
       message,
       icon,
-      icon_tooltip,
+      icon_tooltip: iconTooltip,
       time: dateStr,
       time_locale: dateStrLocale,
       timezone: this.timeZone,

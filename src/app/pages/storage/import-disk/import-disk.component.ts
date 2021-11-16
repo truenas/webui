@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { CoreService } from 'app/core/services/core-service/core.service';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import helptext from 'app/helptext/storage/import-disk/import-disk';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -78,7 +79,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
           name: 'dst_path',
           placeholder: helptext.import_disk_dst_path_placeholder,
           tooltip: helptext.import_disk_dst_path_tooltip,
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           initial: '/mnt',
           required: true,
           validation: helptext.import_disk_dst_path_validation,
@@ -177,13 +178,13 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
 
   customSubmit(payload: any): void {
     this.custActions = [];
-    const fs_options: Record<string, unknown> = {};
+    const fsOptions: Record<string, unknown> = {};
     if (payload.fs_type === 'msdosfs' && payload.msdosfs_locale) {
-      fs_options['locale'] = payload.msdosfs_locale;
+      fsOptions['locale'] = payload.msdosfs_locale;
     }
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Importing Disk') } });
     this.dialogRef.componentInstance.setDescription(this.translate.instant('Importing Disk...'));
-    this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options, payload.dst_path]);
+    this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fsOptions, payload.dst_path]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: Job<any>) => {
       this.dialogRef.close();

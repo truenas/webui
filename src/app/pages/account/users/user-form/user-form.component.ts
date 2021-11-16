@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { AbstractControl, Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Observable } from 'rxjs';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import helptext from 'app/helptext/account/user-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -206,7 +207,7 @@ export class UserFormComponent implements FormConfiguration {
           type: 'explorer',
           class: helptext.user_form_dirs_explorer_class,
           initial: '/mnt',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           name: helptext.user_form_dirs_explorer_name,
           placeholder: helptext.user_form_dirs_explorer_placeholder,
           value: helptext.user_form_dirs_explorer_value,
@@ -482,11 +483,11 @@ export class UserFormComponent implements FormConfiguration {
     value.email = value.email === '' ? null : value.email;
 
     if (this.isNew) {
-      const home_user = value.home.substr(
+      const homeUser = value.home.substr(
         value.home.length - value.username.length,
       );
       if (value.home !== '/nonexistent') {
-        if (value.username.toLowerCase() !== home_user.toLowerCase()) {
+        if (value.username.toLowerCase() !== homeUser.toLowerCase()) {
           value.home = value.home + '/' + value.username;
         }
       }

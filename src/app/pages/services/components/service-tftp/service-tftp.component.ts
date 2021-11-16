@@ -1,6 +1,7 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import helptext from 'app/helptext/services/components/service-tftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { TftpConfig } from 'app/interfaces/tftp-config.interface';
@@ -27,7 +28,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
       config: [{
         type: 'explorer',
         initial: '/mnt',
-        explorerType: 'directory',
+        explorerType: ExplorerType.Directory,
         name: 'directory',
         placeholder: helptext.tftp_directory_placeholder,
         tooltip: helptext.tftp_directory_tooltip,

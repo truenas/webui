@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -371,11 +372,12 @@ export class EntityUtils {
         ipConfig['type'] = 'ipwithnetmask';
       }
     } else if (schemaConfig.schema.type == 'hostpath') {
-      const conf = { ...fieldConfig } as FormExplorerConfig;
-      conf['type'] = 'explorer';
-      conf['initial'] = '/mnt';
-      conf['explorerType'] = 'file';
-      fieldConfig = conf;
+      fieldConfig = {
+        ...fieldConfig,
+        type: 'explorer',
+        initial: '/mnt',
+        explorerType: ExplorerType.File,
+      } as FormExplorerConfig;
     } else if (schemaConfig.schema.type == 'path') {
       const inputConfig = fieldConfig as FormInputConfig;
       inputConfig['type'] = 'input';

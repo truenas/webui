@@ -10,7 +10,7 @@ import * as _ from 'lodash';
 import { BehaviorSubject } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { helptext_system_email } from 'app/helptext/system/email';
+import { helptextSystemEmail } from 'app/helptext/system/email';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
@@ -57,10 +57,10 @@ export class EmailComponent implements FormConfiguration {
         delete value.send_mail_method;
         delete value.oauth_applied;
 
-        const product_type = window.localStorage.getItem('product_type') as ProductType;
+        const productType = window.localStorage.getItem('product_type') as ProductType;
         const mailObj = {
           subject: 'TrueNAS Test Message',
-          text: `This is a test message from TrueNAS ${product_type}.`,
+          text: `This is a test message from TrueNAS ${productType}.`,
         };
         this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
           value.pass = value.pass || this.entityEdit.data.pass;
@@ -86,7 +86,7 @@ export class EmailComponent implements FormConfiguration {
 
   fieldSets = new FieldSets([
     {
-      name: helptext_system_email.fieldsets.general,
+      name: helptextSystemEmail.fieldsets.general,
       label: true,
       config: [
         {
@@ -95,18 +95,18 @@ export class EmailComponent implements FormConfiguration {
           onChange: (data: { event: MatRadioChange }) => {
             this.sendMailMethod.setValue(data.event.value);
           },
-          placeholder: helptext_system_email.send_mail_method.placeholder,
+          placeholder: helptextSystemEmail.send_mail_method.placeholder,
           options: [
             {
-              label: helptext_system_email.send_mail_method.smtp.placeholder,
+              label: helptextSystemEmail.send_mail_method.smtp.placeholder,
               name: 'smtp',
-              tooltip: helptext_system_email.send_mail_method.smtp.tooltip,
+              tooltip: helptextSystemEmail.send_mail_method.smtp.tooltip,
               value: true,
             },
             {
-              label: helptext_system_email.send_mail_method.gmail.placeholder,
+              label: helptextSystemEmail.send_mail_method.gmail.placeholder,
               name: 'gmail',
-              tooltip: helptext_system_email.send_mail_method.gmail.tooltip,
+              tooltip: helptextSystemEmail.send_mail_method.gmail.tooltip,
               value: false,
             },
           ],
@@ -115,37 +115,37 @@ export class EmailComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'fromemail',
-          placeholder: helptext_system_email.fromemail.placeholder,
-          tooltip: helptext_system_email.fromemail.tooltip,
-          validation: helptext_system_email.fromemail.validation,
+          placeholder: helptextSystemEmail.fromemail.placeholder,
+          tooltip: helptextSystemEmail.fromemail.tooltip,
+          validation: helptextSystemEmail.fromemail.validation,
           required: true,
         },
         {
           type: 'input',
           name: 'fromname',
-          placeholder: helptext_system_email.fromname.placeholder,
-          tooltip: helptext_system_email.fromname.tooltip,
+          placeholder: helptextSystemEmail.fromname.placeholder,
+          tooltip: helptextSystemEmail.fromname.tooltip,
         },
         {
           type: 'input',
           name: 'outgoingserver',
-          placeholder: helptext_system_email.outgoingserver.placeholder,
-          tooltip: helptext_system_email.outgoingserver.tooltip,
+          placeholder: helptextSystemEmail.outgoingserver.placeholder,
+          tooltip: helptextSystemEmail.outgoingserver.tooltip,
         },
         {
           type: 'input',
           name: 'port',
           inputType: 'number',
-          validation: helptext_system_email.port.validation,
+          validation: helptextSystemEmail.port.validation,
           required: true,
-          placeholder: helptext_system_email.port.placeholder,
-          tooltip: helptext_system_email.port.tooltip,
+          placeholder: helptextSystemEmail.port.placeholder,
+          tooltip: helptextSystemEmail.port.tooltip,
         },
         {
           type: 'select',
           name: 'security',
-          placeholder: helptext_system_email.security.placeholder,
-          tooltip: helptext_system_email.security.tooltip,
+          placeholder: helptextSystemEmail.security.placeholder,
+          tooltip: helptextSystemEmail.security.tooltip,
           options: [
             { label: this.translate.instant('Plain (No Encryption)'), value: MailSecurity.Plain },
             { label: this.translate.instant('SSL (Implicit TLS)'), value: MailSecurity.Ssl },
@@ -158,26 +158,26 @@ export class EmailComponent implements FormConfiguration {
           onChange: (data: { event: MatCheckboxChange }) => {
             this.smtp.setValue(data.event.checked);
           },
-          placeholder: helptext_system_email.auth.smtp.placeholder,
-          tooltip: helptext_system_email.auth.smtp.tooltip,
+          placeholder: helptextSystemEmail.auth.smtp.placeholder,
+          tooltip: helptextSystemEmail.auth.smtp.tooltip,
           value: false,
         },
         {
           type: 'input',
           name: 'user',
-          placeholder: helptext_system_email.user.placeholder,
-          tooltip: helptext_system_email.user.tooltip,
+          placeholder: helptextSystemEmail.user.placeholder,
+          tooltip: helptextSystemEmail.user.tooltip,
           required: true,
-          validation: helptext_system_email.user.validation,
+          validation: helptextSystemEmail.user.validation,
         },
         {
           type: 'input',
           name: 'pass',
-          placeholder: helptext_system_email.pass.placeholder,
-          tooltip: helptext_system_email.pass.tooltip,
+          placeholder: helptextSystemEmail.pass.placeholder,
+          tooltip: helptextSystemEmail.pass.tooltip,
           inputType: 'password',
           togglePw: true,
-          validation: helptext_system_email.pass.validation,
+          validation: helptextSystemEmail.pass.validation,
         },
         {
           type: 'paragraph',
@@ -195,13 +195,13 @@ export class EmailComponent implements FormConfiguration {
           paragraphIcon: 'info',
           paragraphIconSize: '24px',
           isLargeText: true,
-          validation: helptext_system_email.user.validation,
+          validation: helptextSystemEmail.user.validation,
           isHidden: true,
         },
         {
           type: 'button',
           name: 'login-gmail',
-          customEventActionLabel: helptext_system_email.auth.login_button,
+          customEventActionLabel: helptextSystemEmail.auth.login_button,
           customEventMethod: () => {
             const dialogService = this.dialogservice;
 
@@ -309,7 +309,7 @@ export class EmailComponent implements FormConfiguration {
 
   saveConfigSubmit(emailConfig: any): void {
     this.loader.open();
-    const is_smtp_method = this.sendMailMethod.value;
+    const isSmtpMethod = this.sendMailMethod.value;
 
     if (emailConfig.pass && typeof emailConfig.pass === 'string' && emailConfig.pass.trim() === '') {
       delete emailConfig.pass;
@@ -322,7 +322,7 @@ export class EmailComponent implements FormConfiguration {
       };
       emailConfig.oauth = oauth;
 
-      if (!is_smtp_method) {
+      if (!isSmtpMethod) {
         // switches from SMTP to Gmail Oauth method and disable smtp
         emailConfig.smtp = false;
         this.smtp.setValue(false);
@@ -331,7 +331,7 @@ export class EmailComponent implements FormConfiguration {
       emailConfig.oauth = null;
     }
 
-    if (is_smtp_method) {
+    if (isSmtpMethod) {
       // switches from Gmail Oauth to SMTP method and remove oauth data
       emailConfig.oauth = null;
       this.oauthCreds$.next({});

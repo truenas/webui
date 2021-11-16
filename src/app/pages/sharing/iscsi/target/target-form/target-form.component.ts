@@ -4,7 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiTargetUpdate } from 'app/interfaces/iscsi.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -30,7 +30,7 @@ export class TargetFormComponent implements FormConfiguration {
 
   fieldSets: FieldSet[] = [
     {
-      name: helptext_sharing_iscsi.fieldset_target_basic,
+      name: helptextSharingIscsi.fieldset_target_basic,
       label: true,
       class: 'basic',
       width: '100%',
@@ -38,22 +38,22 @@ export class TargetFormComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'name',
-          placeholder: helptext_sharing_iscsi.target_form_placeholder_name,
-          tooltip: helptext_sharing_iscsi.target_form_tooltip_name,
+          placeholder: helptextSharingIscsi.target_form_placeholder_name,
+          tooltip: helptextSharingIscsi.target_form_tooltip_name,
           required: true,
-          validation: helptext_sharing_iscsi.target_form_validators_name,
+          validation: helptextSharingIscsi.target_form_validators_name,
         },
         {
           type: 'input',
           name: 'alias',
-          placeholder: helptext_sharing_iscsi.target_form_placeholder_alias,
-          tooltip: helptext_sharing_iscsi.target_form_tooltip_alias,
+          placeholder: helptextSharingIscsi.target_form_placeholder_alias,
+          tooltip: helptextSharingIscsi.target_form_tooltip_alias,
         },
         {
           type: 'select',
           name: 'mode',
-          placeholder: helptext_sharing_iscsi.target_form_placeholder_mode,
-          tooltip: helptext_sharing_iscsi.target_form_tooltip_mode,
+          placeholder: helptextSharingIscsi.target_form_placeholder_mode,
+          tooltip: helptextSharingIscsi.target_form_tooltip_mode,
           options: [
             {
               label: 'iSCSI',
@@ -74,7 +74,7 @@ export class TargetFormComponent implements FormConfiguration {
       ],
     },
     {
-      name: helptext_sharing_iscsi.fieldset_target_group,
+      name: helptextSharingIscsi.fieldset_target_group,
       label: true,
       class: 'group',
       width: '100%',
@@ -87,19 +87,19 @@ export class TargetFormComponent implements FormConfiguration {
             {
               type: 'select',
               name: 'portal',
-              placeholder: helptext_sharing_iscsi.target_form_placeholder_portal,
-              tooltip: helptext_sharing_iscsi.target_form_tooltip_portal,
+              placeholder: helptextSharingIscsi.target_form_placeholder_portal,
+              tooltip: helptextSharingIscsi.target_form_tooltip_portal,
               value: '',
               options: [],
               required: true,
-              validation: helptext_sharing_iscsi.target_form_validators_portal,
+              validation: helptextSharingIscsi.target_form_validators_portal,
               width: '100%',
             },
             {
               type: 'select',
               name: 'initiator',
-              placeholder: helptext_sharing_iscsi.target_form_placeholder_initiator,
-              tooltip: helptext_sharing_iscsi.target_form_tooltip_initiator,
+              placeholder: helptextSharingIscsi.target_form_placeholder_initiator,
+              tooltip: helptextSharingIscsi.target_form_tooltip_initiator,
               value: null,
               options: [],
               width: '100%',
@@ -107,8 +107,8 @@ export class TargetFormComponent implements FormConfiguration {
             {
               type: 'select',
               name: 'authmethod',
-              placeholder: helptext_sharing_iscsi.target_form_placeholder_authmethod,
-              tooltip: helptext_sharing_iscsi.target_form_tooltip_authmethod,
+              placeholder: helptextSharingIscsi.target_form_placeholder_authmethod,
+              tooltip: helptextSharingIscsi.target_form_tooltip_authmethod,
               width: '100%',
               value: 'NONE',
               options: [
@@ -129,8 +129,8 @@ export class TargetFormComponent implements FormConfiguration {
             {
               type: 'select',
               name: 'auth',
-              placeholder: helptext_sharing_iscsi.target_form_placeholder_auth,
-              tooltip: helptext_sharing_iscsi.target_form_tooltip_auth,
+              placeholder: helptextSharingIscsi.target_form_placeholder_auth,
+              tooltip: helptextSharingIscsi.target_form_tooltip_auth,
               value: null,
               width: '100%',
               options: [],

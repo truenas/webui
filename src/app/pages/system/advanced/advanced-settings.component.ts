@@ -6,22 +6,23 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
-import { Subject } from 'rxjs';
+import { merge, Subject } from 'rxjs';
 import {
   filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DeviceType } from 'app/enums/device-type.enum';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptext_system_general as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
+import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -29,7 +30,7 @@ import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/ta
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
+import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
@@ -49,7 +50,7 @@ import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-p
 import { KernelFormComponent } from './kernel-form/kernel-form.component';
 import { SyslogFormComponent } from './syslog-form/syslog-form.component';
 
-enum CardId {
+enum AdvancedCardId {
   Console = 'console',
   Syslog = 'syslog',
   Kernel = 'kernel',
@@ -67,26 +68,20 @@ enum CardId {
   providers: [DatePipe, UserService],
 })
 export class AdvancedSettingsComponent implements OnInit {
-  dataCards: DataCard[] = [];
+  dataCards: DataCard<AdvancedCardId>[] = [];
   configData: AdvancedConfig;
   syslog: boolean;
   systemDatasetPool: string;
   entityForm: EntityFormComponent;
   isFirstTime = true;
 
-  emptyPageConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: this.translate.instant('No sysctls configured'),
-    large: false,
-    message: this.translate.instant('To configure sysctls, click the "Add" button.'),
-  };
   isHA = false;
   formEvent$: Subject<CoreEvent>;
   actionsConfig: GlobalActionConfig;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
 
   cronTableConf: AppTableConfig = {
-    title: helptext_system_advanced.fieldset_cron,
+    title: helptextSystemAdvanced.fieldset_cron,
     titleHref: '/system/cron',
     queryCall: 'cronjob.query',
     deleteCall: 'cronjob.delete',
@@ -137,16 +132,16 @@ export class AdvancedSettingsComponent implements OnInit {
       { name: this.translate.instant('Enabled'), prop: 'enabled' },
       { name: this.translate.instant('Next Run'), prop: 'next_run' },
     ],
-    add() {
-      this.parent.onSettingsPressed(CardId.Cron);
+    add: async () => {
+      await this.onSettingsPressed(AdvancedCardId.Cron);
     },
-    edit(row) {
-      this.parent.onSettingsPressed(CardId.Cron, row.id);
+    edit: async (row) => {
+      await this.onSettingsPressed(AdvancedCardId.Cron, row.id);
     },
   };
 
   initShutdownTableConf: AppTableConfig = {
-    title: helptext_system_advanced.fieldset_initshutdown,
+    title: helptextSystemAdvanced.fieldset_initshutdown,
     titleHref: '/system/initshutdown',
     queryCall: 'initshutdownscript.query',
     deleteCall: 'initshutdownscript.delete',
@@ -165,20 +160,24 @@ export class AdvancedSettingsComponent implements OnInit {
       { name: this.translate.instant('Enabled'), prop: 'enabled' },
       { name: this.translate.instant('Timeout'), prop: 'timeout' },
     ],
-    add() {
-      this.parent.onSettingsPressed(CardId.InitShutdown);
+    add: async () => {
+      await this.showFirstTimeWarningIfNeeded();
+      this.ixModal.open(InitShutdownFormComponent);
     },
-    edit(row) {
-      this.parent.onSettingsPressed(CardId.InitShutdown, row.id);
+    edit: async (script: InitShutdownScript) => {
+      await this.showFirstTimeWarningIfNeeded();
+
+      const modal = this.ixModal.open(InitShutdownFormComponent);
+      modal.setScriptForEdit(script);
     },
   };
 
   sysctlTableConf: AppTableConfig = {
-    title: helptext_system_advanced.fieldset_sysctl,
+    title: helptextSystemAdvanced.fieldset_sysctl,
     queryCall: 'tunable.query',
     deleteCall: 'tunable.delete',
     deleteMsg: {
-      title: helptext_system_advanced.fieldset_sysctl,
+      title: helptextSystemAdvanced.fieldset_sysctl,
       key_props: ['var'],
     },
     parent: this,
@@ -200,7 +199,7 @@ export class AdvancedSettingsComponent implements OnInit {
     },
   };
 
-  readonly CardId = CardId;
+  readonly CardId = AdvancedCardId;
 
   constructor(
     private ws: WebSocketService,
@@ -228,15 +227,11 @@ export class AdvancedSettingsComponent implements OnInit {
       this.getDataCardData();
     });
 
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshTables();
-    });
-
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshTables();
-    });
-
-    this.ixModal.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    merge(
+      this.modalService.refreshTable$,
+      this.modalService.onClose$,
+      this.ixModal.onClose$,
+    ).pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
@@ -275,7 +270,7 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     return this.dialog
-      .info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
+      .info(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
       .pipe(tap(() => this.isFirstTime = false))
       .toPromise();
   }
@@ -289,7 +284,7 @@ export class AdvancedSettingsComponent implements OnInit {
   }
 
   formatSyslogLevel(level: string): string {
-    return helptext_system_advanced.sysloglevel.options.find((option) => option.value === level).label;
+    return helptextSystemAdvanced.sysloglevel.options.find((option) => option.value === level).label;
   }
 
   getDatasetData(): void {
@@ -311,88 +306,88 @@ export class AdvancedSettingsComponent implements OnInit {
 
       this.dataCards = [
         {
-          title: helptext_system_advanced.fieldset_console,
-          id: CardId.Console,
+          title: helptextSystemAdvanced.fieldset_console,
+          id: AdvancedCardId.Console,
           items: [
             {
-              label: helptext_system_advanced.consolemenu_placeholder,
+              label: helptextSystemAdvanced.consolemenu_placeholder,
               value: advancedConfig.consolemenu ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext_system_advanced.serialconsole_placeholder,
+              label: helptextSystemAdvanced.serialconsole_placeholder,
               value: advancedConfig.serialconsole ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext_system_advanced.serialport_placeholder,
+              label: helptextSystemAdvanced.serialport_placeholder,
               value: advancedConfig.serialport ? advancedConfig.serialport : '–',
             },
             {
-              label: helptext_system_advanced.serialspeed_placeholder,
+              label: helptextSystemAdvanced.serialspeed_placeholder,
               value: advancedConfig.serialspeed ? `${advancedConfig.serialspeed} bps` : '–',
             },
             {
-              label: helptext_system_advanced.motd_placeholder,
+              label: helptextSystemAdvanced.motd_placeholder,
               value: advancedConfig.motd ? advancedConfig.motd.toString() : '–',
             },
           ],
         },
         {
-          title: helptext_system_advanced.fieldset_syslog,
-          id: CardId.Syslog,
+          title: helptextSystemAdvanced.fieldset_syslog,
+          id: AdvancedCardId.Syslog,
           items: [
             {
-              label: helptext_system_advanced.fqdn_placeholder,
+              label: helptextSystemAdvanced.fqdn_placeholder,
               value: advancedConfig.fqdn_syslog ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext_system_advanced.sysloglevel.placeholder,
+              label: helptextSystemAdvanced.sysloglevel.placeholder,
               value: this.formatSyslogLevel(advancedConfig.sysloglevel),
             },
             {
-              label: helptext_system_advanced.syslogserver.placeholder,
+              label: helptextSystemAdvanced.syslogserver.placeholder,
               value: advancedConfig.syslogserver ? advancedConfig.syslogserver : '–',
             },
             {
-              label: helptext_system_advanced.syslog_transport.placeholder,
+              label: helptextSystemAdvanced.syslog_transport.placeholder,
               value: advancedConfig.syslog_transport,
             },
             {
-              label: helptext_system_advanced.system_dataset_placeholder,
+              label: helptextSystemAdvanced.system_dataset_placeholder,
               value: this.syslog ? helptext.enabled : helptext.disabled,
             },
           ],
         },
         {
-          title: helptext_system_advanced.fieldset_kernel,
-          id: CardId.Kernel,
+          title: helptextSystemAdvanced.fieldset_kernel,
+          id: AdvancedCardId.Kernel,
           items: [
             {
-              label: helptext_system_advanced.autotune_placeholder,
+              label: helptextSystemAdvanced.autotune_placeholder,
               value: advancedConfig.autotune ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext_system_advanced.debugkernel_placeholder,
+              label: helptextSystemAdvanced.debugkernel_placeholder,
               value: advancedConfig.debugkernel ? helptext.enabled : helptext.disabled,
             },
           ],
         },
         {
-          id: CardId.Cron,
-          title: helptext_system_advanced.fieldset_cron,
+          id: AdvancedCardId.Cron,
+          title: helptextSystemAdvanced.fieldset_cron,
           tableConf: this.cronTableConf,
         },
         {
-          id: CardId.InitShutdown,
-          title: helptext_system_advanced.fieldset_initshutdown,
+          id: AdvancedCardId.InitShutdown,
+          title: helptextSystemAdvanced.fieldset_initshutdown,
           tableConf: this.initShutdownTableConf,
         },
         {
-          id: CardId.Sysctl,
-          title: helptext_system_advanced.fieldset_sysctl,
+          id: AdvancedCardId.Sysctl,
+          title: helptextSystemAdvanced.fieldset_sysctl,
           tableConf: this.sysctlTableConf,
         },
         {
-          id: CardId.SystemDatasetPool,
+          id: AdvancedCardId.SystemDatasetPool,
           title: this.translate.instant('System Dataset Pool'),
           items: [
             {
@@ -409,9 +404,9 @@ export class AdvancedSettingsComponent implements OnInit {
         ) > -1).map((gpu: Device) => gpu.description).join(', ');
         const gpuCard = {
           title: this.translate.instant('Isolated GPU Device(s)'),
-          id: CardId.Gpus,
+          id: AdvancedCardId.Gpus,
           items: [{ label: this.translate.instant('Isolated GPU Device(s)'), value: isolatedGpus }],
-        } as DataCard;
+        } as DataCard<AdvancedCardId>;
 
         if (isolatedGpus.length == 0) {
           gpuCard.emptyConf = {
@@ -426,40 +421,36 @@ export class AdvancedSettingsComponent implements OnInit {
     });
   }
 
-  async onSettingsPressed(name: CardId, id?: number): Promise<void> {
+  async onSettingsPressed(name: AdvancedCardId, id?: number): Promise<void> {
     let addComponent: Type<ConsoleFormComponent
     | KernelFormComponent
     | SyslogFormComponent
     | TunableFormComponent
     | CronFormComponent
-    | InitshutdownFormComponent
     | SystemDatasetPoolComponent
     | IsolatedGpuPcisFormComponent
     >;
 
     switch (name) {
-      case CardId.Console:
+      case AdvancedCardId.Console:
         addComponent = ConsoleFormComponent;
         break;
-      case CardId.Kernel:
+      case AdvancedCardId.Kernel:
         addComponent = KernelFormComponent;
         break;
-      case CardId.Syslog:
+      case AdvancedCardId.Syslog:
         addComponent = SyslogFormComponent;
         break;
-      case CardId.Sysctl:
+      case AdvancedCardId.Sysctl:
         addComponent = TunableFormComponent;
         break;
-      case CardId.Cron:
+      case AdvancedCardId.Cron:
         addComponent = CronFormComponent;
         break;
-      case CardId.InitShutdown:
-        addComponent = InitshutdownFormComponent;
-        break;
-      case CardId.SystemDatasetPool:
+      case AdvancedCardId.SystemDatasetPool:
         addComponent = SystemDatasetPoolComponent;
         break;
-      case CardId.Gpus:
+      case AdvancedCardId.Gpus:
         addComponent = IsolatedGpuPcisFormComponent;
         break;
       default:
@@ -467,14 +458,21 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     await this.showFirstTimeWarningIfNeeded();
-    if ([CardId.Console, CardId.Kernel].includes(name)) {
+    if ([AdvancedCardId.Console, AdvancedCardId.Kernel].includes(name)) {
       this.sysGeneralService.sendConfigData(this.configData as any);
     }
 
-    if ([CardId.Kernel].includes(name)) {
+    if ([AdvancedCardId.Kernel].includes(name)) {
       const modal = this.ixModal.open(KernelFormComponent);
       modal.setupForm(this.configData);
-    } else if ([CardId.Console, CardId.Syslog, CardId.Gpus, CardId.SystemDatasetPool].includes(name)) {
+    } else if (
+      [
+        AdvancedCardId.Console,
+        AdvancedCardId.Syslog,
+        AdvancedCardId.Gpus,
+        AdvancedCardId.SystemDatasetPool,
+      ].includes(name)
+    ) {
       this.ixModal.open(addComponent);
     } else {
       this.modalService.openInSlideIn(addComponent, id);
@@ -497,10 +495,10 @@ export class AdvancedSettingsComponent implements OnInit {
       }
       this.dialog
         .confirm({
-          title: helptext_system_advanced.dialog_generate_debug_title,
-          message: helptext_system_advanced.dialog_generate_debug_message,
+          title: helptextSystemAdvanced.dialog_generate_debug_title,
+          message: helptextSystemAdvanced.dialog_generate_debug_message,
           hideCheckBox: true,
-          buttonMsg: helptext_system_advanced.dialog_button_ok,
+          buttonMsg: helptextSystemAdvanced.dialog_button_ok,
         })
         .pipe(
           filter(Boolean),
@@ -528,14 +526,14 @@ export class AdvancedSettingsComponent implements OnInit {
                       }
                       if (err instanceof HttpErrorResponse) {
                         this.dialog.errorReport(
-                          helptext_system_advanced.debug_download_failed_title,
-                          helptext_system_advanced.debug_download_failed_message,
+                          helptextSystemAdvanced.debug_download_failed_title,
+                          helptextSystemAdvanced.debug_download_failed_message,
                           err.message,
                         );
                       } else {
                         this.dialog.errorReport(
-                          helptext_system_advanced.debug_download_failed_title,
-                          helptext_system_advanced.debug_download_failed_message,
+                          helptextSystemAdvanced.debug_download_failed_title,
+                          helptextSystemAdvanced.debug_download_failed_message,
                           err,
                         );
                       }

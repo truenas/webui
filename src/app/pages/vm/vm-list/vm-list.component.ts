@@ -505,8 +505,8 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
               });
             } else {
               this.loader.close();
-              const display_device = _.find(display_devices_res, { id: display_devices_res[0].id });
-              this.showPasswordDialog(display_vm, display_device);
+              const displayDevice = _.find(display_devices_res, { id: display_devices_res[0].id });
+              this.showPasswordDialog(display_vm, displayDevice);
             }
           } else {
             this.loader.close();
@@ -522,9 +522,9 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
               saveButtonText: this.translate.instant('Open'),
               parent: this,
               customSubmit: (entityDialog: EntityDialogComponent) => {
-                const display_device = _.find(display_devices_res, { id: entityDialog.formValue.display_device });
-                if (display_device.attributes.password_configured) {
-                  this.showPasswordDialog(display_vm, display_device);
+                const displayDevice = _.find(display_devices_res, { id: entityDialog.formValue.display_device });
+                if (displayDevice.attributes.password_configured) {
+                  this.showPasswordDialog(display_vm, displayDevice);
                 } else {
                   this.loader.open();
                   this.ws.call(
@@ -535,10 +535,10 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
                     ],
                   ).pipe(untilDestroyed(this)).subscribe((web_uris_res) => {
                     this.loader.close();
-                    if (web_uris_res[display_device.id].error) {
-                      return this.dialogService.info('Error', web_uris_res[display_device.id].error);
+                    if (web_uris_res[displayDevice.id].error) {
+                      return this.dialogService.info('Error', web_uris_res[displayDevice.id].error);
                     }
-                    window.open(web_uris_res[display_device.id].uri, '_blank');
+                    window.open(web_uris_res[displayDevice.id].uri, '_blank');
                   }, (err) => {
                     this.loader.close();
                     new EntityUtils().handleError(this, err);
@@ -591,7 +591,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   showPasswordDialog(display_vm: VirtualMachineRow, display_device: VmDisplayDevice): void {
-    const pass_conf: DialogFormConfiguration = {
+    const passwordConfiguration: DialogFormConfiguration = {
       title: this.translate.instant('Enter password'),
       message: this.translate.instant('Enter password to unlock this display device'),
       fieldConfig: [{
@@ -624,7 +624,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           this.loader.close();
           if (pass_res[display_device.id].error) {
             passDialog.formGroup.controls['password'].reset();
-            return pass_conf.fieldConfig[0].warnings = pass_res[display_device.id].error;
+            return passwordConfiguration.fieldConfig[0].warnings = pass_res[display_device.id].error;
           }
           passDialog.dialogRef.close();
           window.open(pass_res[display_device.id].uri, '_blank');
@@ -635,7 +635,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
         });
       },
     };
-    this.dialogService.dialogForm(pass_conf);
+    this.dialogService.dialogForm(passwordConfiguration);
   }
 
   isActionVisible(actionId: string, row: VirtualMachineRow): boolean {

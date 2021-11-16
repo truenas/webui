@@ -15,7 +15,7 @@ import {
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { UserPreferences } from 'app/pages/preferences/page/preferences.types';
-import { DefaultTheme, ThemeService } from 'app/services/theme/theme.service';
+import { defaultTheme, ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
@@ -131,7 +131,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
         name: 'userTheme',
         placeholder: this.translate.instant('Choose Theme'),
         options: this.themeOptions,
-        value: prefs.userTheme == 'default' ? DefaultTheme.name : prefs.userTheme,
+        value: prefs.userTheme == 'default' ? defaultTheme.name : prefs.userTheme,
         tooltip: this.translate.instant('Choose a preferred theme.'),
         class: 'inline',
       },
@@ -206,7 +206,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
     keys.forEach((key) => {
       if (key !== 'reset') {
         if (key == 'userTheme' && prefs[key] == 'default') {
-          this.embeddedForm.formGroup.controls[key].setValue(DefaultTheme.name);
+          this.embeddedForm.formGroup.controls[key].setValue(defaultTheme.name);
         } else {
           this.embeddedForm.formGroup.controls[key].setValue(prefs[key]);
         }

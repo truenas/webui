@@ -13,7 +13,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { ConfigResetComponent } from './config-reset/config-reset.component';
 import { FailoverComponent } from './failover/failover.component';
-import { OthersRoutes } from './others.routing';
+import { othersRoutes } from './others.routing';
 import { RebootComponent } from './reboot/reboot.component';
 import { ShutdownComponent } from './shutdown/shutdown.component';
 
@@ -30,7 +30,7 @@ import { ShutdownComponent } from './shutdown/shutdown.component';
     MatGridListModule,
     FlexLayoutModule,
     TranslateModule,
-    RouterModule.forChild(OthersRoutes),
+    RouterModule.forChild(othersRoutes),
   ],
   declarations: [RebootComponent, FailoverComponent, ShutdownComponent, ConfigResetComponent],
 })

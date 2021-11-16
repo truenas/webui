@@ -144,7 +144,7 @@ export class WebSocketService {
       this.onconnect();
     } else if (data.msg == 'nosub') {
       console.warn(data);
-    } else if (data.msg == ApiEventMessage.Added || data.collection == 'disk.query') {
+    } else if (data.collection == 'disk.query') {
       const nom = data.collection.replace('.', '_');
       if (this.pendingSubs[nom] && this.pendingSubs[nom].observers) {
         for (const uuid in this.pendingSubs[nom].observers) {
@@ -160,7 +160,7 @@ export class WebSocketService {
           }
         }
       }
-    } else if (data.msg == ApiEventMessage.Changed) {
+    } else if (data.msg == ApiEventMessage.Changed || data.msg == ApiEventMessage.Added) {
       this.subscriptions.forEach((v, k) => {
         if (k == '*' || k == data.collection) {
           v.forEach((item) => { item.next(data); });
@@ -240,8 +240,7 @@ export class WebSocketService {
 
       // cleanup routine
       observer.complete = () => {
-        const unsub_payload = { id: uuid, msg: 'unsub' };
-        this.send(unsub_payload);
+        this.send({ id: uuid, msg: 'unsub' });
         this.pendingSubs[nom].observers[uuid].unsubscribe();
         delete this.pendingSubs[nom].observers[uuid];
         if (!this.pendingSubs[nom].observers) { delete this.pendingSubs[nom]; }

@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
+import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -1243,7 +1243,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         const attributes: any = {};
         const value = _.cloneDeep(this.entityForm.formGroup.value);
         this.beforeSubmit(value);
-        let attr_name: string;
+        let attrName: string;
 
         for (const item in value) {
           if (item != 'name' && item != 'provider') {
@@ -1251,9 +1251,9 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               this.entityForm.formGroup.controls[item].markAsTouched();
             }
             if (item !== 'preview-GOOGLE_CLOUD_STORAGE' && item !== 'advanced-S3' && item !== 'drives-ONEDRIVE') {
-              attr_name = item.split('-')[0];
+              attrName = item.split('-')[0];
               if (value[item] != '' && value[item] != undefined) {
-                attributes[attr_name] = value[item];
+                attributes[attrName] = value[item];
               }
             }
             delete value[item];
@@ -1523,12 +1523,12 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   finishSubmit(value: any): void {
     this.entityForm.loader.open();
     const attributes: any = {};
-    let attr_name: string;
+    let attrName: string;
     for (const item in value) {
       if (item != 'name' && item != 'provider') {
         if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && item !== 'drives-ONEDRIVE' && value[item] != '') {
-          attr_name = item.split('-')[0];
-          attributes[attr_name] = attr_name === 'auth_version' ? parseInt(value[item], 10) : value[item];
+          attrName = item.split('-')[0];
+          attributes[attrName] = attrName === 'auth_version' ? parseInt(value[item], 10) : value[item];
         }
         delete value[item];
       }
@@ -1577,12 +1577,12 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     }
 
     for (const i in entityForm.wsResponseIdx) {
-      let field_name = i;
-      if (field_name != 'client_id' && field_name != 'client_secret') {
-        field_name += '-' + provider;
+      let fieldName = i;
+      if (fieldName != 'client_id' && fieldName != 'client_secret') {
+        fieldName += '-' + provider;
       }
-      if (entityForm.formGroup.controls[field_name]) {
-        entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
+      if (entityForm.formGroup.controls[fieldName]) {
+        entityForm.formGroup.controls[fieldName].setValue(entityForm.wsResponseIdx[i]);
       }
     }
   }

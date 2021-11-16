@@ -42,7 +42,7 @@ export class JobService {
   }
 
   showLogs(job: Job, title?: string, cancelMsg?: string): void {
-    const dialog_title = title || T('Logs');
+    const dialogTitle = title || T('Logs');
     const cancelButtonMsg = cancelMsg || T('Close');
 
     if (job.error) {
@@ -57,22 +57,22 @@ export class JobService {
       if (!log) {
         this.dialog.info(globalHelptext.noLogDilaog.title, globalHelptext.noLogDilaog.message);
       } else {
-        const target_job = job;
+        const targetJob = job;
         this.dialog.confirm({
-          title: dialog_title,
+          title: dialogTitle,
           message: `<pre>${log}</pre>`,
           hideCheckBox: true,
           buttonMsg: T('Download Logs'),
           cancelMsg: cancelButtonMsg,
           disableClose: true,
         }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-          this.ws.call('core.download', ['filesystem.get', [target_job.logs_path], target_job.id + '.log']).pipe(untilDestroyed(this)).subscribe(
+          this.ws.call('core.download', ['filesystem.get', [targetJob.logs_path], targetJob.id + '.log']).pipe(untilDestroyed(this)).subscribe(
             (snack_res) => {
               const url = snack_res[1];
               const mimetype = 'text/plain';
-              this.storage.streamDownloadFile(this.http, url, target_job.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe(
+              this.storage.streamDownloadFile(this.http, url, targetJob.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe(
                 (file) => {
-                  this.storage.downloadBlob(file, target_job.id + '.log');
+                  this.storage.downloadBlob(file, targetJob.id + '.log');
                 },
                 (err) => {
                   new EntityUtils().handleWSError(this, err);

@@ -4,6 +4,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptext_sharing_webdav, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -58,7 +59,7 @@ export class WebdavFormComponent implements FormConfiguration {
           type: 'explorer',
           initial: '/mnt',
           name: 'path',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           placeholder: helptext_sharing_webdav.placeholder_path,
           tooltip: helptext_sharing_webdav.tooltip_path,
           required: true,

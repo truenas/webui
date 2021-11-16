@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_sharing_nfs = {
+export const helptextSharingNfs = {
   // NFSListComponent
   column_name: T('Name'),
   column_path: T('Path'),
