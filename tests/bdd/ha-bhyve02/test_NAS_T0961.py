@@ -251,6 +251,7 @@ def wait_for_the_login_and_the_HA_enabled_status_and_login(driver):
         driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     # Make sure HA is enable before going forward
     assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
+    time.sleep(5)
 
 
 @then('verify the system dataset is dozer on the active node after failover')
