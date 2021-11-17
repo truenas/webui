@@ -132,6 +132,7 @@ export class CatalogComponent implements OnInit {
 
     this.appService.getAllCatalogItems().pipe(untilDestroyed(this)).subscribe((catalogs) => {
       this.noAvailableCatalog = true;
+      this.catalogApps = [];
       catalogs.forEach((catalog) => {
         if (!catalog.cached) {
           if (catalog.caching_job) {

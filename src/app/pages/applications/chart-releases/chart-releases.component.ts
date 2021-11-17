@@ -212,11 +212,9 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshChartReleases(): void {
     this.chartItems = {};
-    this.filerChartItems();
+    this.filteredChartItems = this.getChartItems();
     this.showLoadStatus(EmptyType.Loading);
-    setTimeout(() => {
-      this.updateChartReleases();
-    }, 1000);
+    this.updateChartReleases();
   }
 
   updateChartReleases(): void {
@@ -320,8 +318,8 @@ export class ChartReleasesComponent implements OnInit {
         this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          this.refreshChartReleases();
           this.dialogService.closeAllDialogs();
+          this.refreshChartReleases();
         });
         this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           this.dialogService.closeAllDialogs();
@@ -350,8 +348,8 @@ export class ChartReleasesComponent implements OnInit {
     this.dialogRef.componentInstance.setCall('chart.release.rollback', [this.rollbackChartName, payload]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshChartReleases();
       this.dialogService.closeAllDialogs();
+      this.refreshChartReleases();
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.dialogService.closeAllDialogs();
