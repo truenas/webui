@@ -15,8 +15,8 @@ import { helptext_system_general as helptext } from 'app/helptext/system/general
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-import IxValidators from 'app/pages/common/ix-forms/ix-validators.class';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import IxValidatorsService from 'app/pages/common/ix-forms/services/ix-validators.service';
 import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
@@ -40,15 +40,15 @@ export class GuiFormComponent {
     ui_port: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsport: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
-    ui_httpsredirect: [false],
+    ui_httpsredirect: [false, [Validators.requiredTrue]],
     crash_reporting: [false, [Validators.required]],
     usage_collection: [false, [Validators.required]],
     ui_consolemsg: [false, [Validators.required]],
     cidr_port: [
       '',
       [
-        IxValidators.ipCidrV4orCidrV6('Invalid Cidr notation IP'),
-        IxValidators.required('CIDR Port is required.'),
+        this.IxValidatorsService.ipCidrV4orCidrV6(),
+        this.IxValidatorsService.required(),
       ],
     ],
   });
@@ -72,6 +72,7 @@ export class GuiFormComponent {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
+    private IxValidatorsService: IxValidatorsService,
   ) {
     this.sysGeneralService.getGeneralConfig$.pipe(
       untilDestroyed(this),

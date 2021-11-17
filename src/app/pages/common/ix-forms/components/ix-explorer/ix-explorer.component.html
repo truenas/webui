@@ -42,10 +42,6 @@
 <mat-error *ngIf="loadingError" class="loading-error">
   {{loadingError}}
 </mat-error>
-<div class="form-error" *ngIf="controlDirective.control.touched || controlDirective.control.dirty">
-  <mat-error *ngFor="let error of controlDirective.control.errors | keyvalue">
-    {{ error.value.message }}
-  </mat-error>
-</div>
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
 
 <mat-hint *ngIf="hint">{{hint}}</mat-hint>

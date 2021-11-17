@@ -1,9 +1,14 @@
+import { Injectable } from '@angular/core';
 import {
   AbstractControl, AsyncValidatorFn, ValidationErrors, ValidatorFn, Validators,
 } from '@angular/forms';
+import { TranslateService } from '@ngx-translate/core';
 import isCidr from 'is-cidr';
 
-export default class IxValidators {
+@Injectable()
+export default class IxValidatorsService {
+  constructor(protected translate: TranslateService) {}
+
   /**
    * This method applies the Validators.min validator to the input
    * but applies errMessage as the custom error message.
@@ -12,11 +17,11 @@ export default class IxValidators {
    * @returns A validator function that applies Validators.min and if failed,
    * applies errMessage as the custom error message.
    */
-  static min(min: number, errMessage: string): ValidatorFn {
+  min(min: number, errMessage?: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.min(min)(control);
       if (errors?.min) {
-        errors.min.message = errMessage;
+        errors.min.message = errMessage || this.translate.instant('Must be greater than {min}', { min });
       }
       return errors;
     };
@@ -30,11 +35,11 @@ export default class IxValidators {
    * @returns A validator function that applies Validators.max and if failed,
    * applies errMessage as the custom error message.
    */
-  static max(max: number, errMessage: string): ValidatorFn {
+  max(max: number, errMessage?: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.max(max)(control);
       if (errors?.max) {
-        errors.max.message = errMessage;
+        errors.max.message = errMessage || this.translate.instant('Must be less than {max}', { max });
       }
       return errors;
     };
@@ -47,11 +52,13 @@ export default class IxValidators {
    * @returns A validator function that applies Validators.required on the control
    * and if failed, applies errMessage as the custom error message.
    */
-  static required(errMessage: string): ValidatorFn {
+  required(errMessage?: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.required(control);
       if (errors?.required) {
-        errors.required = { message: errMessage };
+        errors.required = errMessage
+          ? { message: errMessage }
+          : { message: this.translate.instant('Required') };
       }
       return errors;
     };
@@ -64,11 +71,13 @@ export default class IxValidators {
    * @returns A validator function that applies Validators.requiredTrue on the control
    * and if failed, applies errMessage as the custom error message.
    */
-  static requiredTrue(errMessage: string): ValidatorFn {
+  requiredTrue(errMessage?: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.requiredTrue(control);
       if (errors?.required) {
-        errors.required = { message: errMessage };
+        errors.required = errMessage
+          ? { message: errMessage }
+          : { message: this.translate.instant('Must be true') };
       }
       return errors;
     };
@@ -81,11 +90,13 @@ export default class IxValidators {
    * @returns A validator function that applies Validators.email on the control
    * and if failed, applies errMessage as the custom error message.
    */
-  static email(errMessage: string): ValidatorFn {
+  email(errMessage?: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.email(control);
       if (errors?.email) {
-        errors.email = { message: errMessage };
+        errors.email = errMessage
+          ? { message: errMessage }
+          : { message: this.translate.instant('Must be a valid email address') };
       }
       return errors;
     };
@@ -99,11 +110,11 @@ export default class IxValidators {
    * @returns A validator function that applies Validators.minLength and if failed,
    * applies errMessage as the custom error message.
    */
-  static minLength(minLength: number, errMessage: string): ValidatorFn {
+  minLength(minLength: number, errMessage?: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.minLength(minLength)(control);
       if (errors?.minlength) {
-        errors.minlength.message = errMessage;
+        errors.minlength.message = errMessage || this.translate.instant('Must be of length greater than {minLength}', { minLength });
       }
       return errors;
     };
@@ -117,11 +128,11 @@ export default class IxValidators {
    * @returns A validator function that applies Validators.maxLength and if failed,
    * applies errMessage as the custom error message.
    */
-  static maxLength(maxLength: number, errMessage: string): ValidatorFn {
+  maxLength(maxLength: number, errMessage?: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.maxLength(maxLength)(control);
       if (errors?.maxlength) {
-        errors.maxlength.message = errMessage;
+        errors.maxlength.message = errMessage || this.translate.instant('Must be of length less than {maxLength}', { maxLength });
       }
       return errors;
     };
@@ -135,11 +146,11 @@ export default class IxValidators {
    * @returns A validator function that applies Validators.pattern and if failed,
    * applies errMessage as the custom error message.
    */
-  static pattern(pattern: string | RegExp, errMessage: string): ValidatorFn {
+  pattern(pattern: string | RegExp, errMessage?: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.pattern(pattern)(control);
       if (errors?.pattern) {
-        errors.pattern.message = errMessage;
+        errors.pattern.message = errMessage || this.translate.instant('Invalid format or character');
       }
       return errors;
     };
@@ -149,7 +160,7 @@ export default class IxValidators {
    * For inclusion or Validators.nullValidator
    * @returns Validators.nullValidator
    */
-  static nullValidator(): ValidatorFn {
+  nullValidator(): ValidatorFn {
     return Validators.nullValidator;
   }
 
@@ -157,7 +168,7 @@ export default class IxValidators {
    * For inclusion or Validators.compose
    * @returns the result of Validators.compose called on the passed validator functions array
    */
-  static compose(validators: ValidatorFn[]): ValidatorFn | null {
+  compose(validators: ValidatorFn[]): ValidatorFn | null {
     return Validators.compose(validators);
   }
 
@@ -165,7 +176,7 @@ export default class IxValidators {
    * For inclusion or Validators.composeAsync
    * @returns the result of Validators.composeAsync called on the passed validator functions array
    */
-  static composeAsync(validators: AsyncValidatorFn[]): AsyncValidatorFn | null {
+  composeAsync(validators: AsyncValidatorFn[]): AsyncValidatorFn | null {
     return Validators.composeAsync(validators);
   }
 
@@ -175,7 +186,7 @@ export default class IxValidators {
    * @returns a validator function that checks if the control value
    * is valid Cidr notation ip v4 or v6
    */
-  static ipCidrV4orCidrV6(errMessage: string): ValidatorFn {
+  ipCidrV4orCidrV6(errMessage?: string): ValidatorFn {
     return (control: AbstractControl) => {
       if (!control.parent) {
         return null;
@@ -186,7 +197,11 @@ export default class IxValidators {
       }
 
       if (!isCidr.v4(control.value) && !isCidr.v6(control.value)) {
-        return { ip: { message: errMessage } };
+        return {
+          ip: {
+            message: errMessage || this.translate.instant('IP not in valid v4 or v6 CIDR notation'),
+          },
+        };
       }
 
       return null;
