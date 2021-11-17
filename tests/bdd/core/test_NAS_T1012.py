@@ -118,9 +118,9 @@ def the_edit_permissions_page_should_open(driver):
 @then(parsers.parse('select {ldap_user} for User, click on the Apply User checkbox'))
 def select_ldap_user_for_user_click_on_the_apply_user_checkbox(driver, ldap_user):
     """select ldap_user for User, click on the Apply User checkbox."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]', 'clickable')
-    driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys(ldap_user)
+    assert wait_on_element(driver, 7, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input').send_keys(ldap_user)
     assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__{ldap_user}"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div', 'clickable')
@@ -130,9 +130,9 @@ def select_ldap_user_for_user_click_on_the_apply_user_checkbox(driver, ldap_user
 @then(parsers.parse('select {ldap_user} for Group name, click on the Apply Group checkbox'))
 def select_ldap_user_for_group_name_click_on_the_apply_group_checkbox(driver, ldap_user):
     """select ldap_user for Group name, click on the Apply Group checkbox."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="Group"]', 'clickable')
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys(ldap_user)
+    assert wait_on_element(driver, 7, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys(ldap_user)
     assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__{ldap_user}"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div', 'clickable')
@@ -154,6 +154,6 @@ def verify_that_user_and_group_name_is_ldap_user(driver, ldap_user):
     """verify that user and group name is ldap_user."""
     assert wait_on_element(driver, 7, '//h4[contains(.,"Dataset Path")]')
     time.sleep(0.5)
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]', 'clickable')
-    assert attribute_value_exist(driver, '//input[@placeholder="User"]', 'value', ldap_user)
-    assert attribute_value_exist(driver, '//input[@placeholder="Group"]', 'value', ldap_user)
+    assert wait_on_element(driver, 7, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
+    assert attribute_value_exist(driver, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input', 'value', ldap_user)
+    assert attribute_value_exist(driver, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'value', ldap_user)
