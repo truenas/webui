@@ -7,7 +7,7 @@ import {
 } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { filter } from 'rxjs/operators';
+import { filter, tap } from 'rxjs/operators';
 import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -17,7 +17,7 @@ import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interf
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { WebSocketService, DialogService } from 'app/services';
+import { WebSocketService, DialogService, AppLoaderService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()
@@ -57,6 +57,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
   constructor(
     private router: Router,
     protected ws: WebSocketService,
+    private loader: AppLoaderService,
     protected dialog: MatDialog,
     protected dialogService: DialogService,
     public modalService: ModalService,
@@ -122,27 +123,40 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       dialogRef.close(false);
 
-      if (this.pool) {
-        this.modalService.closeSlideIn();
-        this.modalService.refreshTable();
-        this.ws.call('pool.dataset.query', [[['pool', '=', this.pool]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
+      this.loader.open();
+      this.ws.call('pool.dataset.query', [[['pool', '=', this.pool]]])
+        .pipe(
+          tap(() => {
+            this.loader.close();
+          }),
+          untilDestroyed(this),
+        ).subscribe((datasets) => {
           const hasLockedDataset = datasets.some((dataset) => dataset.encrypted && dataset.locked);
-          if (hasLockedDataset) {
-            this.dialogService.confirm({
-              title: helptext.unlock_dataset_dialog_title,
-              message: helptext.unlock_dataset_dialog_message,
-              hideCheckBox: true,
-              buttonMsg: helptext.unlock_dataset_dialog_button,
-            }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-              this.router.navigate(['/storage', 'id', this.pool, 'dataset', 'unlock', this.pool]);
-            });
+          if (!hasLockedDataset) {
+            this.modalService.closeSlideIn();
+            this.modalService.refreshTable();
+            return;
           }
+          this.dialogService.confirm({
+            title: helptext.unlock_dataset_dialog_title,
+            message: helptext.unlock_dataset_dialog_message,
+            hideCheckBox: true,
+            buttonMsg: helptext.unlock_dataset_dialog_button,
+          }).pipe(
+            tap(() => {
+              this.modalService.closeSlideIn();
+              this.modalService.refreshTable();
+            }),
+            filter(Boolean),
+            untilDestroyed(this),
+          ).subscribe(() => {
+            this.router.navigate(['/storage', 'id', this.pool, 'dataset', 'unlock', this.pool]);
+          });
         }, (err) => {
+          this.modalService.closeSlideIn();
+          this.modalService.refreshTable();
           new EntityUtils().handleWSError(this, err, this.dialogService);
         });
-      } else {
-        console.error('Something went wrong. No pool found!');
-      }
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       dialogRef.close(false);
