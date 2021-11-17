@@ -32,6 +32,11 @@
           formControlName="configure_gpus"
           [label]="'Enable GPU support' | translate"
         ></ix-checkbox>
+		
+        <ix-checkbox
+          formControlName="servicelb"
+          [label]="'Enable Integrated Loadbalancer' | translate"
+        ></ix-checkbox>
       </ix-fieldset>
       <ix-fieldset [title]="'Settings Requiring Re-Initialization' | translate">
         <p class="help-text">
