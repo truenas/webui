@@ -396,7 +396,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
 
     this.nicType = _.find(this.nicFieldConfig, { name: 'type' }) as FormSelectConfig;
-    this.vmService.getNICTypes().forEach((item) => {
+    this.vmService.getNicTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 

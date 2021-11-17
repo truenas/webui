@@ -227,11 +227,11 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     } else if (data.system_product.includes('CERTIFIED')) {
       this.certified = true;
     } else {
-      this.setTrueNASImage(data.system_product);
+      this.setTrueNasImage(data.system_product);
     }
   }
 
-  setTrueNASImage(sysProduct: string): void {
+  setTrueNasImage(sysProduct: string): void {
     this.product_enclosure = 'rackmount';
 
     if (sysProduct.includes('X10')) {

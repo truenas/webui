@@ -361,10 +361,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         color = this.stripVar(this.currentTheme[cssVar]);
       }
 
-      const bgRGB = this.utils.convertToRGB((this.currentTheme[color as keyof Theme]) as string).rgb;
+      const bgRgb = this.utils.convertToRgb((this.currentTheme[color as keyof Theme]) as string).rgb;
 
-      ds.backgroundColor = this.rgbToString(bgRGB as any, 0.85);
-      ds.borderColor = this.rgbToString(bgRGB as any);
+      ds.backgroundColor = this.rgbToString(bgRgb as any, 0.85);
+      ds.borderColor = this.rgbToString(bgRgb as any);
       datasets.push(ds);
     });
 
@@ -391,7 +391,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     const valueType = this.utils.getValueType(txtColor);
 
     // convert to rgb
-    const rgb = valueType == 'hex' ? this.utils.hexToRGB(txtColor).rgb : this.utils.rgbToArray(txtColor);
+    const rgb = valueType == 'hex' ? this.utils.hexToRgb(txtColor).rgb : this.utils.rgbToArray(txtColor);
 
     // return rgba
     const rgba = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + opacity + ')';

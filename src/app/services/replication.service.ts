@@ -18,7 +18,7 @@ export class ReplicationService {
     return this.ws.call('pool.snapshottask.query');
   }
 
-  genSSHKeypair(): Promise<SshKeyPair> {
+  genSshKeypair(): Promise<SshKeyPair> {
     return this.ws.call('keychaincredential.generate_ssh_key_pair').toPromise();
   }
 

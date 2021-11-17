@@ -1110,7 +1110,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       this.queryCallOption = [['id', '=', id]];
     });
     const sshCredentialsField = this.fieldSets.config('ssh_credentials') as FormSelectConfig;
-    this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
+    this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
       sshCredentialsField.options = connections.map((connection) => ({
         label: connection.name,
         value: connection.id,

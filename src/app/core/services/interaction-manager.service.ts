@@ -30,11 +30,9 @@ export class InteractionManagerService {
 
     messageBus.register({ observerClass: this, eventName: 'RegisterLayout' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
       // Expects LayoutObject and array of CSS selectors
-      // let collection: DisplayObject[] = [];
       const collection: { [id: string]: DisplayObject } = {};
       evt.data.selectors.forEach((item: any) => {
         const displayObject = this.registerElement(item, evt.data.layout);
-        // collection.push(displayObject);
         collection[displayObject.id] = displayObject;
       });
       evt.data.layout.collection = collection;
@@ -90,7 +88,6 @@ export class InteractionManagerService {
         // this.displayObjectWithFocus.hasFocus = false;
         // this.displayObjectWithFocus = null;
       }
-      // evt.sender.hasFocus = false;
     });
 
     this.displayList = [];
@@ -135,7 +132,6 @@ export class InteractionManagerService {
 
   // Find the related Layout object for the displayObject if one exists
   getLayoutParent(displayObject: DisplayObject): LayoutObject {
-    // let index = this.displayList.indexOf(displayObject);
     const registration = this.displayList.filter((item) => item.displayObject == displayObject);
     if (registration.length == 0) {
       console.warn('DEBUG: The DisplayObject has not been registered');

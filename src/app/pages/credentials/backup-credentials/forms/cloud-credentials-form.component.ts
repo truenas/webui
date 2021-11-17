@@ -1486,7 +1486,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   }
 
   async makeNewKeyPair(value: any, submitting?: boolean): Promise<void> {
-    await this.replicationService.genSSHKeypair().then(
+    await this.replicationService.genSshKeypair().then(
       async (keyPair) => {
         const payload = {
           name: value['name'] + ' Key',

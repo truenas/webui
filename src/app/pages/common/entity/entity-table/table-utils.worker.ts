@@ -107,11 +107,11 @@ const tableUtils = {
     let converted;
     switch (units.toLowerCase()) {
       case 'bits':
-        converted = convertKMGT(value, units);
+        converted = convertKmgt(value, units);
         output = maxDecimals(converted.value).toString() + converted.shortName;
         break;
       case 'bytes':
-        converted = convertKMGT(value, units);
+        converted = convertKmgt(value, units);
         output = maxDecimals(converted.value).toString() + converted.shortName;
         break;
       case '%':

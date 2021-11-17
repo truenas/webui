@@ -557,7 +557,7 @@ export class VMWizardComponent implements WizardConfiguration {
       const cpuModel = _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_model' }) as FormSelectConfig;
       cpuModel.isHidden = false;
 
-      this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
+      this.vmService.getCpuModels().pipe(untilDestroyed(this)).subscribe((models) => {
         for (const model in models) {
           cpuModel.options.push(
             {
@@ -831,7 +831,7 @@ export class VMWizardComponent implements WizardConfiguration {
       });
     });
     this.nicType = _.find(this.wizardConfig[3].fieldConfig, { name: 'NIC_type' }) as FormSelectConfig;
-    this.vmService.getNICTypes().forEach((item) => {
+    this.vmService.getNicTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 

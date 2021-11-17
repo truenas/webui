@@ -27,7 +27,7 @@ export class TruecommandComponent {
     private dialogService: DialogService,
   ) {}
 
-  gotoTC(): void {
+  goToTrueCommand(): void {
     this.dialogService.generalDialog({
       title: helptext.tcDialog.title,
       message: helptext.tcDialog.message,

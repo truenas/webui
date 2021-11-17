@@ -83,7 +83,6 @@ export class DisplayObject {
       this.moveHandle = moveHandle;
     }
 
-    // this.id = UUID.UUID();
     this.updateStream$ = new Subject();
     this.inputStream$ = new Subject();
     this.messageBus = messageBus;
@@ -117,10 +116,8 @@ export class DisplayObject {
   }
 
   set x(v: number) {
-    const updatedXY = value({ x: v, y: this.y }, this.target.set);
-    this.anchorXY = updatedXY;
+    this.anchorXY = value({ x: v, y: this.y }, this.target.set);
     this._x = v;
-    // this.target.set({'x': value});
   }
 
   get y(): number {
@@ -128,10 +125,8 @@ export class DisplayObject {
   }
 
   set y(v: number) {
-    const updatedXY = value({ x: this.x, y: v }, this.target.set);
-    this.anchorXY = updatedXY;
+    this.anchorXY = value({ x: this.x, y: v }, this.target.set);
     this._y = v;
-    // this.target.set({'y': value});
   }
 
   get width(): number {
@@ -139,8 +134,6 @@ export class DisplayObject {
   }
 
   set width(value: number) {
-    // let element = styler(this.rawElement, {});
-    // element.set({'width': value})
     this.target.set({ width: value });
     this._width = value;
   }
@@ -150,8 +143,6 @@ export class DisplayObject {
   }
 
   set height(value: number) {
-    // let element = styler(this.rawElement, {});
-    // element.set({'height': value})
     this.target.set({ height: value });
     this._height = value;
   }
@@ -179,7 +170,6 @@ export class DisplayObject {
   }
 
   set interactive(value: boolean) {
-    // listen(document, 'mouseup touchend').while((v) => this._interactive).start(this.stop.bind(this));
     if (value) {
       this.createTarget();
     } else if (!value) {
@@ -190,17 +180,13 @@ export class DisplayObject {
   private createTarget(): void {
     const parent = this.rawElement.parentNode;
     const wrapper = document.createElement('div');
-    // let handles = document.createElement(ResizeHandles.template);
     wrapper.innerHTML = resizeHandles.template;
     wrapper.classList.add('shadow');
     parent.insertBefore(wrapper, this.rawElement);
     wrapper.appendChild(this.rawElement);
     this.rawTarget = wrapper;
     this.target = styler(wrapper, {});
-    // this.container = wrapper;
     // Create Resize Handles
-    // fragment.appendChild(handles);
-    // parent.(fragment);
     this.id = this.rawElement.id;
   }
 
@@ -217,7 +203,6 @@ export class DisplayObject {
 
   set moveable(value: boolean) {
     if (value) {
-      // if(!this._interactive){this._interactive = true;}
       if (!this.moveHandle) {
         this.moveHandle = this.rawElement.parentNode as Element;
       }
@@ -234,7 +219,6 @@ export class DisplayObject {
   set resizeable(value: boolean) {
     if (value) {
       this.rawTarget.classList.add('resizeable');
-      // if(!this._interactive){this._interactive = true;}
       this.resizeHandleTop = this.rawElement.parentNode.querySelector('.resize-handle-top');
       this.resizeHandleBottom = this.rawElement.parentNode.querySelector('.resize-handle-bottom');
       this.resizeHandleLeft = this.rawElement.parentNode.querySelector('.resize-handle-left');
@@ -273,7 +257,6 @@ export class DisplayObject {
       this.boundary = (topBounds - this.reservedTop) * -1;
     }
 
-    // this.pointerTracker = pointer(this.anchorXY.get()).start(this.anchorXY);
     const stream = (v: PointerProps): PointerProps => {
       this.inputStream$.next(v);
       return v;
@@ -281,8 +264,6 @@ export class DisplayObject {
     this.pointerTracker = pointer(this.anchorXY.get() as PointerProps).pipe(stream, transformMap({
       y: (v: number) => this.limit(this.constrainY ? startY : v, '<', this.boundary),
       x: (v: number) => {
-        // this.messageBus.emit({name:"Drag", sender:this}) // <-- this was too slow for high frequency stream
-
         this.updateStream$.next({ x: this.target.get('x'), y: this.target.get('y') });
         return this.constrainX ? startX : v;
       },
@@ -303,13 +284,9 @@ export class DisplayObject {
     if (this.hasFocus && this.isDragging) {
       if (eventType == 'drag' || eventType == 'exit') {
         this.rawTarget.classList.remove(eventType);
-        // eventType = "drag";
-        // if(this.hasFocus){
         this.messageBus.emit({ name: 'DisplayObjectReleased', sender: this });
         this.elevate(false);
-        // }
         this.broadcastInputPosition = false;
-        // this._hasFocus = false;
 
         this.isDragging = false;
       }
@@ -319,24 +296,6 @@ export class DisplayObject {
     if (this.anchorXY) {
       this.anchorXY.stop();
     }
-
-    /* if(this.anchored){
-      spring({
-        from: this.anchorXY.get(),
-        velocity: this.anchorXY.getVelocity(),
-        stiffness: 300,
-        damping: 10
-      }).start(this.anchorXY);
-    } else {
-      if(this.anchorXY){
-        this.anchorXY.stop();
-      }
-    }
-
-    if(this.focus && this.anchored){
-      this.focus.stop();
-      this.unfocus({x:0, y:0})
-    } */
   }
 
   mouseExit(): void {
@@ -362,7 +321,6 @@ export class DisplayObject {
   }
 
   elevate(set: boolean): void {
-    // let zIndex: number = this.hasFocus ? 50 : 1;
     const elevatedProps: ValueMap = {
       'z-index': 50,
     };
@@ -430,7 +388,6 @@ export class DisplayObject {
       y: (v: number) => {
         const diff = v - startY;
         element.set({ height: startH + diff });
-        // this.target.set({y: startY});
         return startY;
       },
       x: () => startX,
@@ -449,9 +406,7 @@ export class DisplayObject {
       x: (v: number) => {
         // setting transform-origin left has no effect
         // width changes anchoring element to center
-        // element.set({ width: resizedW * 1.1});
         element.set({ width: startW + startX - v });
-        // this.target.set({x: v });
         return v; // - (diff / 2);
       },
       y: () => startY,
@@ -471,8 +426,7 @@ export class DisplayObject {
         const diff = v - startX;
         // setting transform-origin left has no effect
         // width changes anchoring element to center
-        // element.set({ width: startW + (diff * 2)}); // Like center anchor point in AS3
-        // this.target.set({x: v - (startX + diff)});
+        // Like center anchor point in AS3
         element.set({ width: startW + diff /* , originX: '100% 0' */ });
         return startX; // + (diff / 2);
       },
@@ -481,7 +435,6 @@ export class DisplayObject {
   }
 
   stopResize(): void {
-    // this.anchorXY.stop();
     this.stop('resize');
     this.messageBus.emit({ name: 'ResizeStopped' + this.id });
   }

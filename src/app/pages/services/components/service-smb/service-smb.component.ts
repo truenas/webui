@@ -288,7 +288,7 @@ export class ServiceSMBComponent implements FormConfiguration {
       });
     });
 
-    this.servicesService.getSmbBindIPChoices().pipe(untilDestroyed(this)).subscribe((res) => {
+    this.servicesService.getSmbBindIpChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.validBindIps = res;
       this.cifs_srv_bindip = otherColTwoSet.config.find((config) => config.name === 'bindip') as FormSelectConfig;
       for (const key in res) {

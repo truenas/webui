@@ -428,12 +428,12 @@ export class SMBFormComponent implements FormConfiguration {
            * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
            * nav to SMB shares list view.
            */
-          const promptUserACLEdit = (): Observable<[boolean, Record<string, unknown>] | [boolean]> => {
+          const promptUserAclEdit = (): Observable<[boolean, Record<string, unknown>] | [boolean]> => {
             return this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
-              switchMap((isTrivialACL) => {
+              switchMap((isTrivialAcl) => {
                 let nextStep;
                 // If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations
-                if (!isTrivialACL || !datasetId.includes('/') || this.productType.includes(ProductType.Scale)) {
+                if (!isTrivialAcl || !datasetId.includes('/') || this.productType.includes(ProductType.Scale)) {
                   nextStep = combineLatest([of(false), of({})]);
                 } else {
                   nextStep = combineLatest([
@@ -449,8 +449,8 @@ export class SMBFormComponent implements FormConfiguration {
 
                 return nextStep;
               }),
-              tap(([doConfigureACL]) => {
-                if (doConfigureACL) {
+              tap(([doConfigureAcl]) => {
+                if (doConfigureAcl) {
                   this.router.navigate(['/'].concat(aclRoute));
                 } else {
                   this.dialog.closeAllDialogs();
@@ -465,7 +465,7 @@ export class SMBFormComponent implements FormConfiguration {
               map((response) => _.find(response, { service: ServiceName.Cifs })),
               switchMap((cifsService) => {
                 if (cifsService.enable) {
-                  return promptUserACLEdit();
+                  return promptUserAclEdit();
                 }
 
                 /**
@@ -499,7 +499,7 @@ export class SMBFormComponent implements FormConfiguration {
                       }
                       return of(true);
                     }),
-                    switchMap(promptUserACLEdit),
+                    switchMap(promptUserAclEdit),
                   );
               }),
               untilDestroyed(this),
@@ -572,7 +572,7 @@ export class SMBFormComponent implements FormConfiguration {
         this.ws.call('filesystem.acl_is_trivial', [path]).pipe(untilDestroyed(this)).subscribe((res) => {
           if (!res && !entityForm.formGroup.controls['acl'].value) {
             this.stripACLWarningSent = true;
-            this.showStripACLWarning();
+            this.showStripAclWarning();
           }
         });
       }
@@ -584,7 +584,7 @@ export class SMBFormComponent implements FormConfiguration {
         this.ws.call('filesystem.acl_is_trivial', [pathControl.value]).pipe(untilDestroyed(this)).subscribe((res) => {
           if (!res) {
             this.stripACLWarningSent = true;
-            this.showStripACLWarning();
+            this.showStripAclWarning();
           }
         });
       }
@@ -630,7 +630,7 @@ export class SMBFormComponent implements FormConfiguration {
     });
   }
 
-  showStripACLWarning(): void {
+  showStripAclWarning(): void {
     this.dialog.confirm({
       title: helptextSharingSmb.stripACLDialog.title,
       message: helptextSharingSmb.stripACLDialog.message,

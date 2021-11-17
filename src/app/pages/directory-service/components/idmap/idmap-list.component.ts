@@ -110,7 +110,7 @@ export class IdmapListComponent implements EntityTableConfig {
     return [{
       label: this.translate.instant('Add'),
       onClick: () => {
-        this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
+        this.idmapService.getActiveDirectoryStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
           if (adConfig.enable) {
             this.doAdd();
           } else {

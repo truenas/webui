@@ -52,7 +52,7 @@ function inferUnits(label: string): string {
   return units;
 }
 
-function convertKMGT(input: number, units: string): { value: number; prefix: string; shortName: string } {
+function convertKmgt(input: number, units: string): { value: number; prefix: string; shortName: string } {
   const kilo = 1024;
   const mega = kilo * 1024;
   const giga = mega * 1024;
@@ -85,12 +85,6 @@ function convertKMGT(input: number, units: string): { value: number; prefix: str
     shortName = ` ${shortName.charAt(0).toUpperCase()}${shortName.substr(1).toLowerCase()}`;
   }
 
-  // if(fixed && fixed !== -1){
-  //  return [output.toFixed(fixed), prefix];
-  // } else {
-  //  return [output.toString(), prefix];
-  // }
-
   return { value: output, prefix, shortName };
 }
 
@@ -117,22 +111,21 @@ function formatValue(value: number, units: string): string | number {
   let converted;
   switch (units.toLowerCase()) {
     case 'bits':
-      converted = convertKMGT(value, units);
+      converted = convertKmgt(value, units);
       output = maxDecimals(converted.value).toString() + converted.shortName;
       break;
     case 'bytes':
-      converted = convertKMGT(value, units);
+      converted = convertKmgt(value, units);
       output = maxDecimals(converted.value).toString() + converted.shortName;
       break;
     case '%':
     case '°':
     default:
       converted = convertByKilo(output);
-      return typeof output == 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value;// [this.limitDecimals(value), ''];
-      // break;
+      return typeof output == 'number' ? maxDecimals(converted.value).toString() + converted.suffix : value;
   }
 
-  return output; // ? output : value;
+  return output;
 }
 
 function convertAggregations(input: any, labelY?: string): any {
@@ -141,7 +134,6 @@ function convertAggregations(input: any, labelY?: string): any {
   const keys = Object.keys(output.aggregations);
 
   keys.forEach((key) => {
-    // output.aggregations[key].map((v) => formatValue(v , units) )
     (output.aggregations[key] as any[]).forEach((v, index) => {
       output.aggregations[key][index] = formatValue(v, units);
     });

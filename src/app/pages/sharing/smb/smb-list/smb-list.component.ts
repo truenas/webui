@@ -164,9 +164,10 @@ export class SMBListComponent implements EntityTableConfig {
   }
 
   lockedPathDialog(path: string): void {
-    const thePath = this.translate.instant(helptextSharingSmb.action_edit_acl_dialog.message1);
-    const isInALockedDataset = this.translate.instant(helptextSharingSmb.action_edit_acl_dialog.message2);
-    this.dialog.errorReport(helptextSharingSmb.action_edit_acl_dialog.title, `${thePath} <i>${path}</i> ${isInALockedDataset}`);
+    this.dialog.errorReport(
+      helptextSharingSmb.action_edit_acl_dialog.title,
+      this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
+    );
   }
 
   onCheckboxChange(row: SmbShare): void {

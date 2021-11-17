@@ -83,21 +83,21 @@ module.exports = {
           },
           {
             selector: 'function',
-            format: ['camelCase'],
+            format: ['strictCamelCase'],
           },
           {
             selector: ['classMethod', 'objectLiteralMethod', 'typeMethod'],
-            format: ['camelCase'],
+            format: ['strictCamelCase'],
           },
           {
             selector: ['variable', 'parameter'],
             modifiers: ['unused'],
-            format: ['camelCase'],
+            format: ['strictCamelCase'],
             leadingUnderscore: 'allow',
           },
           {
             selector: ['variable', 'parameter'],
-            format: ['camelCase']
+            format: ['strictCamelCase']
           },
         ],
 

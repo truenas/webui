@@ -846,7 +846,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     );
 
     const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' }) as FormSelectConfig;
-    this.keychainCredentialService.getSSHKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
+    this.keychainCredentialService.getSshKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
       const keypairOptions = keyPairs.map((keypair) => ({
         label: keypair.name,
         value: String(keypair.id),
@@ -856,7 +856,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
 
     const sshCredentialsSourceField = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
     const sshCredentialsTargetField = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
-    this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
+    this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
       connections.forEach((connection) => {
         sshCredentialsSourceField.options.push({ label: connection.name, value: connection.id });
         sshCredentialsTargetField.options.push({ label: connection.name, value: connection.id });
@@ -912,7 +912,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         .pipe(untilDestroyed(this))
         .subscribe((value: string) => {
           if (value === 'NEW' && this.entityWizard.formArray.get([0]).get(datasetFrom).value === DatasetSource.Remote) {
-            this.createSSHConnection(credentialName);
+            this.createSshConnection(credentialName);
             this.setDisable(datasetName, false, false, 0);
           } else {
             const fieldConfig = i === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
@@ -1407,7 +1407,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
-  createSSHConnection(activedField: string): void {
+  createSshConnection(activatedField: string): void {
     const conf: DialogFormConfiguration = {
       title: this.translate.instant('Create SSH Connection'),
       fieldConfig: this.dialogFieldConfig,
@@ -1418,7 +1418,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         this.entityWizard.loader.open();
 
         if (value['private_key'] == 'NEW') {
-          await this.replicationService.genSSHKeypair().then(
+          await this.replicationService.genSshKeypair().then(
             (keyPair) => {
               value['sshkeypair'] = keyPair;
             },
@@ -1464,7 +1464,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   const sshCredentialsTargetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
                   sshCredentialsSourceField.options.push({ label: res.name + ' (New Created)', value: res.id });
                   sshCredentialsTargetField.options.push({ label: res.name + ' (New Created)', value: res.id });
-                  this.entityWizard.formArray.get([0]).get([activedField]).setValue(res.id);
+                  this.entityWizard.formArray.get([0]).get([activatedField]).setValue(res.id);
                 }
               },
               (err) => {

@@ -294,13 +294,13 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   }
 
   afterLogsDialogInit(entityDialog: EntityDialogComponent): void {
-    const podFC = _.find(entityDialog.fieldConfig, { name: 'pods' }) as FormSelectConfig;
-    const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
+    const podFc = _.find(entityDialog.fieldConfig, { name: 'pods' }) as FormSelectConfig;
+    const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
 
     // when app selection changed
     entityDialog.formGroup.controls['apps'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      podFC.options = [];
-      containerFC.options = [];
+      podFc.options = [];
+      containerFc.options = [];
 
       this.loader.open();
       this.ws.call('chart.release.pod_logs_choices', [value]).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -313,7 +313,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
           podName = null;
         }
 
-        podFC.options = Object.keys(this.tempPodDetails).map((item) => ({
+        podFc.options = Object.keys(this.tempPodDetails).map((item) => ({
           label: item,
           value: item,
         }));
@@ -326,7 +326,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
       if (value) {
         const containers = this.tempPodDetails[value];
 
-        containerFC.options = containers.map((item) => ({
+        containerFc.options = containers.map((item) => ({
           label: item,
           value: item,
         }));

@@ -32,7 +32,7 @@ export class UserService {
     return this.ws.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset }]);
   }
 
-  getGroupByGID(gid: string): Observable<Group[]> {
+  getGroupByGid(gid: string): Observable<Group[]> {
     return this.ws.call(this.groupQuery, [[['gid', '=', gid]], this.queryOptions]);
   }
 
@@ -49,7 +49,7 @@ export class UserService {
     return this.ws.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset }]);
   }
 
-  getUserByUID(uid: string): Observable<User[]> {
+  getUserByUid(uid: string): Observable<User[]> {
     return this.ws.call(this.userQuery, [[['uid', '=', uid]], this.queryOptions]);
   }
 

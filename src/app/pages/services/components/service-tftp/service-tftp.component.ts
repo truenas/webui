@@ -110,11 +110,11 @@ export class ServiceTFTPComponent implements FormConfiguration {
   ) {}
 
   resourceTransformIncomingRestData(data: TftpConfig): { umask: string } {
-    return invertUMask(data);
+    return invertUmask(data);
   }
 
   beforeSubmit(data: any): { umask: string } {
-    return invertUMask(data);
+    return invertUmask(data);
   }
 
   preInit(): void {
@@ -145,7 +145,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
  * Need to invert the umask prop on the way in/out.
  * The 'permissions' FieldConfig and the MW expect opposite values.
  */
-function invertUMask(data: { umask: string }): { umask: string } {
+function invertUmask(data: { umask: string }): { umask: string } {
   const perm = parseInt(data['umask'], 8);
   let mask = (~perm & 0o666).toString(8);
   while (mask.length < 3) {

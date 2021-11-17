@@ -253,7 +253,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
         value: 'NEW',
       });
     }
-    this.keychainCredentialService.getSSHConnections().toPromise().then((connections) => {
+    this.keychainCredentialService.getSshConnections().toPromise().then((connections) => {
       const sshConnections = connections
         .filter((connection) => connection.id != this.rowNum)
         .map((connection) => connection.name);
@@ -261,7 +261,7 @@ export class SshConnectionsFormComponent implements FormConfiguration {
       this.namesInUseConnection.push(...sshConnections);
     });
     const privateKeyField = _.find(this.fieldSets[1].config, { name: 'private_key' }) as FormSelectConfig;
-    this.keychainCredentialService.getSSHKeys().toPromise().then((keyPairs) => {
+    this.keychainCredentialService.getSshKeys().toPromise().then((keyPairs) => {
       const namesInUse = keyPairs
         .filter((sshKey) => sshKey.name.endsWith(' Key'))
         .map((sshKey) => sshKey.name.substring(0, sshKey.name.length - 4));

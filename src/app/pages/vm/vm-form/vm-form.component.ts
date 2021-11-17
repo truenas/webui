@@ -273,7 +273,7 @@ export class VmFormComponent implements FormConfiguration {
       const cpuModel = _.find(this.fieldConfig, { name: 'cpu_model' }) as FormSelectConfig;
       cpuModel.isHidden = false;
 
-      this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
+      this.vmService.getCpuModels().pipe(untilDestroyed(this)).subscribe((models) => {
         for (const model in models) {
           cpuModel.options.push(
             {

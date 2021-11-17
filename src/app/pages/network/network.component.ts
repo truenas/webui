@@ -535,7 +535,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
   }
 
-  goToHA(): void {
+  goToHa(): void {
     this.router.navigate(['/', 'system', 'failover']);
   }
 

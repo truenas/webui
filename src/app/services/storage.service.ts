@@ -273,10 +273,10 @@ export class StorageService {
     const shortUnitsStr = this.IECUnits.map((unit) => unit.charAt(0) + unit.charAt(2)).join('|');
     const humanUnitsStr = this.IECUnits.map((unit) => unit.charAt(0)).join('|');
     const allUnitsStr = (iecUnitsStr + '|' + shortUnitsStr + '|' + humanUnitsStr).toUpperCase();
-    const unitsRE = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
+    const unitsRe = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
 
     unitStr = unitStr.toUpperCase();
-    if (unitStr.match(unitsRE)) {
+    if (unitStr.match(unitsRe)) {
       // always return IEC units
       // could take a parameter to return short or human units
       return unitStr.charAt(0).toUpperCase() + 'iB';
