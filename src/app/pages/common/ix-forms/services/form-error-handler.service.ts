@@ -39,6 +39,7 @@ export class FormErrorHandlerService {
       control.setErrors({
         manualValidateError: true,
         manualValidateErrorMsg: errorMessage,
+        ixManualValidateError: { message: errorMessage },
       });
       control.markAsTouched();
     }

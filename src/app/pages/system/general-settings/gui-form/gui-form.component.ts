@@ -46,10 +46,7 @@ export class GuiFormComponent {
     ui_consolemsg: [false, [Validators.required]],
     cidr_port: [
       '',
-      [
-        this.IxValidatorsService.ipCidrV4orCidrV6(),
-        this.IxValidatorsService.required(),
-      ],
+      [this.IxValidatorsService.min(10)],
     ],
   });
 
