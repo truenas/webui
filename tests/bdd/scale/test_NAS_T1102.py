@@ -146,13 +146,13 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
     assert wait_on_element(driver, 5, f'//mat-option[@role="option"]//span[contains(.,"system")]')
     driver.find_element_by_xpath(f'//mat-option[@role="option"]//span[contains(.,"system")]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 30, '//div[@class="ix-modal-body"]//button[contains(.,"Save")]', 'clickable')
-    driver.find_element_by_xpath('//div[@class="ix-modal-body"]//button[contains(.,"Save")]').click()
+    assert wait_on_element(driver, 30, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]').click()
 
 
 
 @then('Please wait should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 10, '//div[@class="ix-modal-body"]//button[contains(.,"Save")]')
+    assert wait_on_element_disappear(driver, 10, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]')
     
