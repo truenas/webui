@@ -47,7 +47,7 @@ export class FormChipComponent implements Field, OnInit {
     const input = event.input;
     const value = event.value;
 
-    if ((value || '').trim()) {
+    if ((value || '').trim() && !this.config.selectOnly) {
       this.chipLists.push(value.trim());
       this.group.controls[this.config.name].setValue(this.chipLists);
     }
@@ -67,7 +67,13 @@ export class FormChipComponent implements Field, OnInit {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.chipLists.push(event.option.viewValue);
+    if (this.config.selectOnly) {
+      this.chipLists = [...new Set([...this.chipLists, event.option.viewValue])];
+      this.group.controls[this.config.name].setValue(this.chipLists);
+    } else {
+      this.chipLists.push(event.option.viewValue);
+      this.group.controls[this.config.name].setValue(this.chipLists);
+    }
     this.chipInput.nativeElement.value = '';
     this.chipCtrl.setValue(null);
   }

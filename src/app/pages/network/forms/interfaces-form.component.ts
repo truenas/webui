@@ -13,11 +13,11 @@ import {
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { LinkAggregationNetworkInterface, NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
+import { NetworkInterface, NetworkInterfaceAlias } from 'app/interfaces/network-interface.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
-  FieldConfig, FormListConfig, FormSelectConfig, FormInputConfig,
+  FieldConfig, FormListConfig, FormSelectConfig, FormInputConfig, FormChipConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
@@ -41,6 +41,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   saveSubmitText = helptext.int_save_button;
   protected offload_warned = false;
   protected isOneColumnForm = true;
+  private lagPortsOption: Option[] = [];
 
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -139,16 +140,19 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           disabled: true,
         },
         {
-          type: 'select',
+          type: 'chip',
           name: 'lag_ports',
           placeholder: helptext.lagg_interfaces_placeholder,
           tooltip: helptext.lagg_interfaces_tooltip,
-          options: [],
-          multiple: true,
           required: true,
           isHidden: true,
           disabled: true,
           validation: helptext.lagg_interfaces_validation,
+          autocomplete: true,
+          selectOnly: true,
+          searchOptions: [],
+          parent: this,
+          updater: (value: string) => this.updateSearchOptions(value),
         },
       ],
       colspan: 2,
@@ -306,7 +310,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   private bridge_fieldset: FieldSet;
   private failover_fieldset: FieldSet;
   private vlan_pint: FormSelectConfig | FormInputConfig;
-  private lag_ports: FormSelectConfig;
+  private lag_ports: FormChipConfig;
   private lag_protocol: FormSelectConfig;
   private bridge_members: FormSelectConfig;
   private type: FieldConfig;
@@ -351,6 +355,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       this.entityForm.setDisabled(field, !isLagg, !isLagg);
     });
     const lagProtocol = this.entityForm.formGroup.get('lag_protocol')?.value;
+    this.lag_ports.tooltip = helptext.lagg_interfaces_tooltip;
     if (lagProtocol) {
       if (lagProtocol === LinkAggregationProtocol.Lacp) {
         this.entityForm.setDisabled('xmit_hash_policy', !isLagg, !isLagg);
@@ -361,6 +366,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       } else {
         this.entityForm.setDisabled('lacpdu_rate', true, true);
         this.entityForm.setDisabled('xmit_hash_policy', true, true);
+      }
+      if (lagProtocol === LinkAggregationProtocol.Failover) {
+        this.lag_ports.tooltip = helptext.lagg_interfaces_tooltip + ' ' + helptext.lagg_interfaces_failover_tooltip;
       }
     } else {
       this.entityForm.setDisabled('lacpdu_rate', true, true);
@@ -415,7 +423,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
 
     this.bridge_members = _.find(this.fieldConfig, { name: 'bridge_members' }) as FormSelectConfig;
-    this.lag_ports = _.find(this.fieldConfig, { name: 'lag_ports' }) as FormSelectConfig;
+    this.lag_ports = _.find(this.fieldConfig, { name: 'lag_ports' }) as FormChipConfig;
     this.lag_protocol = _.find(this.fieldConfig, { name: 'lag_protocol' }) as FormSelectConfig;
     this.type = _.find(this.fieldConfig, { name: 'type' });
     this.ipListControl = _.find(this.fieldConfig, { name: 'aliases' }) as FormListConfig;
@@ -534,8 +542,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
       this.networkService.getLaggPortsChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
         for (const key in choices) {
-          this.lag_ports.options.push({ label: choices[key], value: key });
+          this.lagPortsOption.push({ label: choices[key], value: key });
         }
+        this.lag_ports.searchOptions = this.lagPortsOption;
       });
       this.networkService.getLaggProtocolChoices().pipe(untilDestroyed(this)).subscribe((res) => {
         res.forEach((protocol) => {
@@ -563,16 +572,19 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         this.entityForm.setDisabled('lacpdu_rate', true, true);
         this.entityForm.setDisabled('xmit_hash_policy', true, true);
       }
+      if (value === LinkAggregationProtocol.Failover) {
+        this.lag_ports.tooltip = helptext.lagg_interfaces_tooltip + ' ' + helptext.lagg_interfaces_failover_tooltip;
+      } else {
+        this.lag_ports.tooltip = helptext.lagg_interfaces_tooltip;
+      }
     });
+  }
 
-    this.entityForm.formGroup.get('lag_ports').valueChanges.pipe(untilDestroyed(this)).subscribe((value: string[]) => {
-      this.lag_ports.options.sort((a: Option, b: Option) => {
-        if (!value) return 0;
-        if (!value.includes(a.value.toString())) return 1;
-        if (!value.includes(b.value.toString())) return -1;
-        return value.indexOf(a.value.toString()) - value.indexOf(b.value.toString());
-      });
-    });
+  updateSearchOptions(value = ''): void {
+    this.lag_ports.searchOptions = this.lagPortsOption.filter((option) => (
+      !value
+        || (value && (option.value as string).toLowerCase().includes(value.toLowerCase()))
+    ));
   }
 
   clean(data: any): any {
@@ -641,17 +653,10 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     const id = data.id;
     this.setType(type);
     if (type === NetworkInterfaceType.LinkAggregation) {
-      const lag_ports = (data as LinkAggregationNetworkInterface).lag_ports;
       this.networkService.getLaggPortsChoices(id).pipe(untilDestroyed(this)).subscribe((choices) => {
         for (const key in choices) {
-          this.lag_ports.options.push({ label: choices[key], value: key });
+          this.lag_ports.searchOptions.push({ label: choices[key], value: key });
         }
-        this.lag_ports.options.sort((a: Option, b: Option) => {
-          if (!lag_ports) return 0;
-          if (!lag_ports.includes(a.value.toString())) return 1;
-          if (!lag_ports.includes(b.value.toString())) return -1;
-          return lag_ports.indexOf(a.value.toString()) - lag_ports.indexOf(b.value.toString());
-        });
       });
 
       this.networkService.getLaggProtocolChoices().pipe(untilDestroyed(this)).subscribe((res) => {
