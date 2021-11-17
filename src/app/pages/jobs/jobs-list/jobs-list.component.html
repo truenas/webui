@@ -59,7 +59,7 @@
                     <ng-container *ngSwitchCase="JobState.Running">
                       <mat-spinner class="state-running" [diameter]="22" [matTooltip]="element.progress.description"></mat-spinner>
                     </ng-container>
-                    <mat-icon *ngSwitchCase="JobState.Pending" class="state-waiting">schedule</mat-icon>
+                    <mat-icon *ngSwitchCase="JobState.Waiting" class="state-waiting">schedule</mat-icon>
                     <mat-icon *ngSwitchCase="JobState.Aborted" class="state-aborted">report</mat-icon>
                   </div>
 

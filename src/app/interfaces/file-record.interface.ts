@@ -15,6 +15,6 @@ export interface FileRecord {
 
 export type ListdirQueryParams = [
   path: string,
-  filter: [QueryFilter<FileRecord>],
+  filter: [QueryFilter<FileRecord>?],
   options: QueryOptions<FileRecord>,
 ];

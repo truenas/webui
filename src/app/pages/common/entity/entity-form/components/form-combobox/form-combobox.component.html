@@ -19,16 +19,20 @@
     <mat-form-field *ngIf="config.inputType != 'file'">
       <div class="input-container">
         <span *ngIf="config.searchable" class="searchable"><mat-icon>search</mat-icon></span>
-        <input [ngStyle]="{'padding-left': config.searchable ? '2rem' : '','padding-right': hasValue() ? '2rem': ''}" matInput [type]="config.inputType ? config.inputType : 'text'"
-        list="options"
-		  	[placeholder]="config.placeholder | translate"
-		  	[attr.value]="config.value"
-		  	[formControlName]="config.name"
-		  	[readonly]="config.readonly"
-        [required]="config.required"
-        (keyup)="search($event.target.value)"
-        [matAutocomplete]="autoComplete"
-      >
+        <input
+          #input
+          [ngStyle]="{'padding-left': config.searchable ? '2rem' : '','padding-right': hasValue() ? '2rem': ''}"
+          matInput
+          [type]="config.inputType ? config.inputType : 'text'"
+          list="options"
+          [placeholder]="config.placeholder | translate"
+          [attr.value]="config.value"
+          [formControlName]="config.name"
+          [readonly]="config.readonly"
+          [required]="config.required"
+          (keyup)="search(input.value)"
+          [matAutocomplete]="autoComplete"
+        >
         <span *ngIf="hasValue() && !config.readonly" class="reset-input">
           <mat-icon (click)="resetInput()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
         </span>

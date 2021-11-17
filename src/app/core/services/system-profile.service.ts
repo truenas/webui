@@ -133,12 +133,12 @@ export class SystemProfileService extends BaseService {
   }
 
   updateHA(res: FailoverDisabledReason[]): void {
-    const ha_enabled = res.length == 0;
+    const haEnabled = res.length == 0;
 
-    const enabled_txt = res.length == 0 ? 'HA Enabled' : 'HA Disabled';
+    const enabledText = res.length == 0 ? 'HA Enabled' : 'HA Disabled';
 
-    window.sessionStorage.setItem('ha_status', ha_enabled.toString());
-    this.ha_status = { status: enabled_txt, reasons: res };
+    window.sessionStorage.setItem('ha_status', haEnabled.toString());
+    this.ha_status = { status: enabledText, reasons: res };
     this.core.emit({ name: 'HA_Status', data: this.ha_status, sender: this });
   }
 }

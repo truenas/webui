@@ -8,7 +8,7 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
-import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
+import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
 
@@ -29,7 +29,7 @@ export class BootPoolReplaceFormComponent implements OnInit {
 
   dev = {
     fcName: 'dev',
-    label: this.translate.instant(helptext_system_bootenv.replace_name_placeholder),
+    label: this.translate.instant(helptextSystemBootenv.replace_name_placeholder),
     options: this.ws.call('disk.get_unused').pipe(
       map((disks) => {
         const options = disks.map((disk) => ({
@@ -68,6 +68,7 @@ export class BootPoolReplaceFormComponent implements OnInit {
     const { dev } = this.form.value;
     this.ws.call('boot.replace', [payload, dev]).pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
+      this.cdr.markForCheck();
       this.router.navigate(this.routeSuccess);
     }, (error) => {
       this.isFormLoading = false;

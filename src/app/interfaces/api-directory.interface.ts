@@ -325,7 +325,7 @@ export type ApiDirectory = {
   // Catalog
   'catalog.query': { params: CatalogQueryParams; response: Catalog[] };
   'catalog.update': { params: [id: string, update: CatalogUpdate]; response: Catalog };
-  'catalog.create': { params: CatalogCreate; response: Catalog };
+  'catalog.create': { params: [CatalogCreate]; response: Catalog };
   'catalog.delete': { params: [name: string]; response: boolean };
   'catalog.items': { params: [label: string, params: CatalogItemsQueryParams]; response: CatalogItems };
   'catalog.sync': { params: [label: string]; response: void };
@@ -964,7 +964,7 @@ export type ApiDirectory = {
 
   // InitShutdownScript
   'initshutdownscript.query': { params: QueryParams<InitShutdownScript>; response: InitShutdownScript[] };
-  'initshutdownscript.create': { params: CreateInitShutdownScript; response: InitShutdownScript };
+  'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
   'initshutdownscript.update': { params: UpdateInitShutdownScriptParams; response: InitShutdownScript };
   'initshutdownscript.delete': { params: [id: number]; response: boolean };
 };

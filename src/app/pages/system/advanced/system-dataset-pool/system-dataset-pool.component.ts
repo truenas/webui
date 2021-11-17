@@ -10,7 +10,7 @@ import { Observable, of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ServiceName } from '../../../../enums/service-name.enum';
 import { ServiceStatus } from '../../../../enums/service-status.enum';
 import { choicesToOptions } from '../../../../helpers/options.helper';
@@ -33,7 +33,7 @@ export class SystemDatasetPoolComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -51,10 +51,12 @@ export class SystemDatasetPoolComponent implements OnInit {
         (config) => {
           this.isFormLoading = false;
           this.form.patchValue(config);
+          this.cdr.markForCheck();
         },
         (error) => {
           this.isFormLoading = false;
           new EntityUtils().handleWSError(null, error, this.dialogService);
+          this.cdr.markForCheck();
         },
       );
   }
@@ -71,7 +73,8 @@ export class SystemDatasetPoolComponent implements OnInit {
       () => {
         this.isFormLoading = false;
         this.sysGeneralService.refreshSysGeneral();
-        this.modalService.close();
+        this.cdr.markForCheck();
+        this.slideInService.close();
       },
       (error) => {
         this.isFormLoading = false;

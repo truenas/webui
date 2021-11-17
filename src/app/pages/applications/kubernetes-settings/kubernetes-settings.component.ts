@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -17,7 +19,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import {
   AppLoaderService, DialogService, WebSocketService,
 } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -34,6 +36,7 @@ export class KubernetesSettingsComponent implements OnInit {
     route_v4_gateway: [''],
     enable_container_image_update: [true],
     configure_gpus: [true],
+    servicelb: [true],
     cluster_cidr: ['', Validators.required],
     service_cidr: ['', Validators.required],
     cluster_dns_ip: ['', Validators.required],
@@ -73,10 +76,11 @@ export class KubernetesSettingsComponent implements OnInit {
     protected ws: WebSocketService,
     private loader: AppLoaderService,
     private dialogService: DialogService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private appService: ApplicationsService,
     private fb: FormBuilder,
     private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   ngOnInit(): void {
@@ -93,16 +97,18 @@ export class KubernetesSettingsComponent implements OnInit {
 
         this.oldConfig = kubernetesConfig;
         this.isFormLoading = false;
+        this.cdr.markForCheck();
       },
       (error) => {
         this.isFormLoading = false;
+        this.cdr.markForCheck();
         new EntityUtils().handleWSError(null, error, this.dialogService);
       },
     );
   }
 
   onSubmit(): void {
-    const { enable_container_image_update, ...values } = this.form.value;
+    const { enable_container_image_update: enableContainerImageUpdate, ...values } = this.form.value;
 
     (
       this.wereReInitFieldsChanged(values)
@@ -117,11 +123,11 @@ export class KubernetesSettingsComponent implements OnInit {
         this.loader.open();
         return forkJoin([
           this.ws.job('kubernetes.update', [values]),
-          this.appService.updateContainerConfig(enable_container_image_update),
+          this.appService.updateContainerConfig(enableContainerImageUpdate),
         ]).pipe(
           tap(() => {
             this.loader.close();
-            this.modalService.close();
+            this.slideInService.close();
           }),
           catchError((error) => {
             this.loader.close();

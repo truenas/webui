@@ -1,14 +1,15 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormArray, FormGroup, Validators } from '@angular/forms';
+import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ITreeOptions, TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset-source.enum';
 import { Direction } from 'app/enums/direction.enum';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
@@ -145,7 +146,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.source_datasets_placeholder,
               tooltip: helptext.source_datasets_tooltip,
               initial: '',
-              explorerType: 'directory',
+              explorerType: ExplorerType.Directory,
               multiple: true,
               customTemplateStringOptions: {
                 displayField: 'Path',
@@ -299,7 +300,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.target_dataset_placeholder,
               tooltip: helptext.target_dataset_tooltip,
               initial: '',
-              explorerType: 'directory',
+              explorerType: ExplorerType.Directory,
               customTemplateStringOptions: {
                 displayField: 'Path',
                 isExpandedField: 'expanded',
@@ -825,7 +826,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
+    const existReplicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
     this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
       (res: ReplicationTask[]) => {
         for (const task of res) {
@@ -835,7 +836,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy')
               : 'never ran')
             + ')';
-            exist_replicationField.options.push({ label, value: task });
+            existReplicationField.options.push({ label, value: task });
             if (this.pk === task.id) {
               this.loadOrClearReplicationTask(task);
             }
@@ -853,15 +854,15 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       privateKeyField.options = privateKeyField.options.concat(keypairOptions);
     });
 
-    const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
-    const ssh_credentials_target_field = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
+    const sshCredentialsSourceField = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+    const sshCredentialsTargetField = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
     this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
       connections.forEach((connection) => {
-        ssh_credentials_source_field.options.push({ label: connection.name, value: connection.id });
-        ssh_credentials_target_field.options.push({ label: connection.name, value: connection.id });
+        sshCredentialsSourceField.options.push({ label: connection.name, value: connection.id });
+        sshCredentialsTargetField.options.push({ label: connection.name, value: connection.id });
       });
-      ssh_credentials_source_field.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
-      ssh_credentials_target_field.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
+      sshCredentialsSourceField.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
+      sshCredentialsTargetField.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
     });
 
     this.entityWizard.formArray.get([0]).get('exist_replication').valueChanges.pipe(untilDestroyed(this)).subscribe((value: ReplicationTask) => {
@@ -1459,10 +1460,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   privateKeyField.options.push({ label: res.name + ' (New Created)', value: res.id });
                 }
                 if (item === 'ssh_credentials') {
-                  const ssh_credentials_source_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
-                  const ssh_credentials_target_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
-                  ssh_credentials_source_field.options.push({ label: res.name + ' (New Created)', value: res.id });
-                  ssh_credentials_target_field.options.push({ label: res.name + ' (New Created)', value: res.id });
+                  const sshCredentialsSourceField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+                  const sshCredentialsTargetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
+                  sshCredentialsSourceField.options.push({ label: res.name + ' (New Created)', value: res.id });
+                  sshCredentialsTargetField.options.push({ label: res.name + ' (New Created)', value: res.id });
                   this.entityWizard.formArray.get([0]).get([activedField]).setValue(res.id);
                 }
               },

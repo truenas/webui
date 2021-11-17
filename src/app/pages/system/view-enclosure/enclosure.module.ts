@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { DiskComponent } from 'app/pages/system/view-enclosure/enclosure-disks/components/disk-component/disk.component';
@@ -14,7 +15,7 @@ import { ViewEnclosureComponent } from './view-enclosure.component';
 
 @NgModule({
   imports: [
-    CommonModule, MaterialModule, TranslateModule, FlexLayoutModule, EntityModule, TooltipModule,
+    CommonModule, MaterialModule, TranslateModule, FlexLayoutModule, EntityModule, TooltipModule, CastModule,
   ],
   declarations: [
     ViewEnclosureComponent,

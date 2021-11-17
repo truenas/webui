@@ -128,15 +128,15 @@ export class DiskBulkEditComponent implements FormConfiguration {
         (res) => {
           if (res.state === JobState.Success) {
             this.loader.close();
-            let success_state = true;
+            let isSuccessful = true;
             for (const result of res.result) {
               if (result.error != null) {
                 this.dialogService.errorReport(helptext.dialog_error, result.error);
-                success_state = false;
+                isSuccessful = false;
                 break;
               }
             }
-            if (success_state) {
+            if (isSuccessful) {
               this._router.navigate(this.route_success);
             }
           }

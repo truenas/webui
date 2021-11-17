@@ -7,7 +7,7 @@ import helptext from 'app/helptext/directory-service/kerberos-settings';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +30,7 @@ export class KerberosSettingsComponent implements OnInit {
 
   constructor(
     private ws: WebSocketService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
@@ -44,10 +44,12 @@ export class KerberosSettingsComponent implements OnInit {
       (config) => {
         this.form.patchValue(config);
         this.isFormLoading = false;
+        this.cdr.markForCheck();
       },
       (error) => {
         new EntityUtils().handleWSError(null, error, this.dialogService);
         this.isFormLoading = false;
+        this.cdr.markForCheck();
       },
     );
   }
@@ -58,7 +60,8 @@ export class KerberosSettingsComponent implements OnInit {
     this.isFormLoading = true;
     this.ws.call('kerberos.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
-      this.modalService.close();
+      this.cdr.markForCheck();
+      this.slideInService.close();
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);

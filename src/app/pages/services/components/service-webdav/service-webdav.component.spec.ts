@@ -37,6 +37,7 @@ describe('ServiceWebdavComponent', () => {
           id: 1,
         } as WebdavConfig),
         mockCall('kerberos.update'),
+        mockCall('webdav.update'),
       ]),
       mockProvider(FormErrorHandlerService),
       mockProvider(SystemGeneralService, {

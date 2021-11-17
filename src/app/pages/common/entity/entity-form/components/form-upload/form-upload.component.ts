@@ -65,8 +65,7 @@ export class FormUploadComponent {
       this.http.request(req).pipe(untilDestroyed(this)).subscribe((event) => {
         if (event.type === HttpEventType.UploadProgress) {
           const percentDone = Math.round(100 * event.loaded / event.total);
-          const upload_msg = `${percentDone}% Uploaded`;
-          this.loader.dialogRef.componentInstance.title = upload_msg;
+          this.loader.dialogRef.componentInstance.title = `${percentDone}% Uploaded`;
         } else if (event instanceof HttpResponse) {
           if (event.statusText === 'OK') {
             this.newMessage(location + '/' + fileBrowser.files[0].name);

@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_system_update = {
+export const helptextSystemUpdate = {
   version: {
     paraText: T('<b>Current Version:</b> '),
   },

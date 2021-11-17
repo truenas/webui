@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { helptext_system_acme as helptext, helptext_system_acme } from 'app/helptext/system/acme';
+import { helptextSystemAcme as helptext, helptextSystemAcme } from 'app/helptext/system/acme';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -119,7 +119,7 @@ export class AcmednsFormComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.entityForm.makeFormGroup();
-    this.title = this.rowNum ? helptext_system_acme.edit_title : helptext_system_acme.add_title;
+    this.title = this.rowNum ? helptextSystemAcme.edit_title : helptextSystemAcme.add_title;
   }
 
   /**

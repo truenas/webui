@@ -4,7 +4,7 @@ import { FailoverComponent } from './failover/failover.component';
 import { RebootComponent } from './reboot/reboot.component';
 import { ShutdownComponent } from './shutdown/shutdown.component';
 
-export const OthersRoutes: Routes = [
+export const othersRoutes: Routes = [
   {
     path: '',
     children: [{

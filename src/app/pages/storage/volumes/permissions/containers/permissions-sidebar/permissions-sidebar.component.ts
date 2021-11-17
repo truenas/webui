@@ -16,7 +16,7 @@ import { PermissionsSidebarStore } from 'app/pages/storage/volumes/permissions/s
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PermissionsSidebarComponent implements OnInit, OnChanges {
-  @Input() dataset: Dataset;
+  @Input() dataset: Pick<Dataset, 'id' | 'pool' | 'mountpoint'>;
 
   @Output() closed = new EventEmitter<void>();
 

@@ -8,7 +8,7 @@ import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { WebSocketService, DialogService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NtpServerFormComponent } from './ntp-server-form.component';
 
 describe('NtpServerFormComponent', () => {
@@ -28,7 +28,7 @@ describe('NtpServerFormComponent', () => {
         mockCall('system.ntpserver.create'),
         mockCall('system.ntpserver.update'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
     ],
   });
 

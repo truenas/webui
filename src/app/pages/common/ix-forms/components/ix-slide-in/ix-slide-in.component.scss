@@ -3,25 +3,6 @@
 /* MODAL STYLES
 -------------------------------*/
 
-.ix-modal {
-  bottom: 0;
-  left: 0;
-
-  /* enables scrolling for tall modals */
-  overflow: auto;
-  /* modal container fixed across whole screen */
-  position: fixed;
-  right: 0;
-  top: 0;
-
-  /* z-index must be higher than .ix-modal-background */
-  z-index: -10;
-}
-
-.ix-modal.open {
-  z-index: 1000;
-}
-
 .ix-slide-in-form {
   bottom: 0;
   min-width: 480px;
@@ -34,7 +15,7 @@
   transition: 200ms;
   width: 480px;
 
-  /* z-index must be higher than .ix-modal-background */
+  /* z-index must be higher than .ix-slide-in-background */
   /* ...but less than 1000 otherwise you cover select */
   z-index: 999;
 }
@@ -50,7 +31,7 @@
   width: 800px;
 }
 
-.ix-modal-body {
+.ix-slide-in-body {
   background: #fff;
 
   /* margin exposes part of the modal background */
@@ -58,13 +39,13 @@
   padding: 0 20px 20px;
 }
 
-.ix-slide-in-form .ix-modal-body {
+.ix-slide-in-form .ix-slide-in-body {
   background-color: var(--bg2);
   margin: 0;
   min-height: 100%;
 }
 
-.ix-modal-background {
+.ix-slide-in-background {
 
   /* semi-transparent black  */
   background-color: #000;
@@ -77,18 +58,13 @@
   top: 48px;
   transition: 100ms;
 
-  /* z-index must be below .ix-modal and above everything else  */
+  /* z-index must be below .ix-slide-in and above everything else  */
   z-index: -10;
 }
 
-.ix-modal-background.open {
+.ix-slide-in-background.open {
   transition: 200ms;
   z-index: 900;
-}
-
-body.ix-modal-open .ix-slide-in-form .ix-modal-body {
-  /* body overflow is hidden to hide main scrollbar when modal window is open */
-  overflow: hidden;
 }
 
 @media #{$media-lt-sm} {

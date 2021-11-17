@@ -13,7 +13,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import globalHelptext from 'app/helptext/global-helptext';
-import { helptext_system_update as helptext } from 'app/helptext/system/update';
+import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
@@ -124,23 +124,23 @@ export class UpdateComponent implements OnInit {
 
   parseTrainName(name: string): string[] {
     const version = [];
-    let sw_version = '';
+    let swVersion = '';
     let branch = '';
     let split: string[] = [];
     let sdk = '';
     if (name.match(/-SDK$/)) {
       split = name.split('-');
-      sw_version = split[1];
+      swVersion = split[1];
       branch = split[2];
       sdk = split[3];
-      version.push(sw_version);
+      version.push(swVersion);
       version.push(branch);
       version.push(sdk);
     } else {
       split = name.split('-');
-      sw_version = split[1];
+      swVersion = split[1];
       branch = split[2];
-      version.push(sw_version);
+      version.push(swVersion);
       version.push(branch);
     }
     return version;

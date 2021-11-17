@@ -12,7 +12,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 
 describe('LocalizationFormComponent', () => {
@@ -66,7 +66,7 @@ describe('LocalizationFormComponent', () => {
           { label: '04:22:14 PM', value: 'hh:mm:ss aa' },
         ],
       }),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(LanguageService),
       mockProvider(FormErrorHandlerService),
     ],
@@ -116,7 +116,7 @@ describe('LocalizationFormComponent', () => {
 
       expect(spectator.inject(LocaleService).saveDateTimeFormat).toHaveBeenCalledWith('yyyy-MM-dd', 'HH:mm:ss');
       expect(ws.call).toHaveBeenCalledWith('system.general.update', [{ language: 'en', kbdmap: 'us', timezone: 'America/Los_Angeles' }]);
-      expect(spectator.inject(IxModalService).close).toHaveBeenCalled();
+      expect(spectator.inject(IxSlideInService).close).toHaveBeenCalled();
       expect(spectator.inject(LanguageService).setLanguage).toHaveBeenCalledWith('en');
     });
   });

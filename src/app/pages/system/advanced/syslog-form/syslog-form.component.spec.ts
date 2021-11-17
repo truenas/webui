@@ -11,7 +11,7 @@ import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('SyslogFormComponent', () => {
   let spectator: Spectator<SyslogFormComponent>;
@@ -46,7 +46,7 @@ describe('SyslogFormComponent', () => {
         mockCall('system.advanced.update'),
         mockJob('systemdataset.update'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(SystemGeneralService),
       mockProvider(DialogService),
     ],

@@ -4,7 +4,7 @@ import { MatStepper } from '@angular/material/stepper';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { helptext_system_ca } from 'app/helptext/system/ca';
+import { helptextSystemCa } from 'app/helptext/system/ca';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -34,23 +34,23 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   wizardConfig: Wizard[] = [
     {
-      label: helptext_system_ca.add.fieldset_basic,
+      label: helptextSystemCa.add.fieldset_basic,
       fieldConfig: [
         {
           type: 'input',
           name: 'name',
-          placeholder: helptext_system_ca.add.name.placeholder,
-          tooltip: helptext_system_ca.add.name.tooltip,
+          placeholder: helptextSystemCa.add.name.placeholder,
+          tooltip: helptextSystemCa.add.name.tooltip,
           required: true,
-          validation: helptext_system_ca.add.name.validation,
+          validation: helptextSystemCa.add.name.validation,
           hasErrors: false,
-          errors: helptext_system_ca.add.name.errors,
+          errors: helptextSystemCa.add.name.errors,
         },
         {
           type: 'select',
           name: 'create_type',
-          tooltip: helptext_system_ca.add.create_type.tooltip,
-          placeholder: helptext_system_ca.add.create_type.placeholder,
+          tooltip: helptextSystemCa.add.create_type.tooltip,
+          placeholder: helptextSystemCa.add.create_type.placeholder,
           options: [
             { label: 'Internal CA', value: 'CA_CREATE_INTERNAL' },
             { label: 'Intermediate CA', value: 'CA_CREATE_INTERMEDIATE' },
@@ -61,8 +61,8 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         {
           type: 'select',
           name: 'profiles',
-          placeholder: helptext_system_ca.add.profiles.placeholder,
-          tooltip: helptext_system_ca.add.profiles.tooltip,
+          placeholder: helptextSystemCa.add.profiles.placeholder,
+          tooltip: helptextSystemCa.add.profiles.tooltip,
           options: [
             {
               label: '---------',
@@ -82,26 +82,26 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       ],
     },
     {
-      label: helptext_system_ca.add.fieldset_type,
+      label: helptextSystemCa.add.fieldset_type,
       fieldConfig: [
         {
           type: 'select',
           name: 'signedby',
-          placeholder: helptext_system_ca.add.signedby.placeholder,
-          tooltip: helptext_system_ca.add.signedby.tooltip,
+          placeholder: helptextSystemCa.add.signedby.placeholder,
+          tooltip: helptextSystemCa.add.signedby.tooltip,
           options: [
             { label: '---', value: null },
           ],
           isHidden: true,
           disabled: true,
           required: true,
-          validation: helptext_system_ca.add.signedby.validation,
+          validation: helptextSystemCa.add.signedby.validation,
         },
         {
           type: 'select',
           name: 'key_type',
-          placeholder: helptext_system_ca.add.key_type.placeholder,
-          tooltip: helptext_system_ca.add.key_type.tooltip,
+          placeholder: helptextSystemCa.add.key_type.placeholder,
+          tooltip: helptextSystemCa.add.key_type.tooltip,
           options: [
             { label: 'RSA', value: 'RSA' },
             { label: 'EC', value: 'EC' },
@@ -110,13 +110,13 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           isHidden: false,
           disabled: true,
           required: true,
-          validation: helptext_system_ca.add.key_type.validation,
+          validation: helptextSystemCa.add.key_type.validation,
         },
         {
           type: 'select',
           name: 'ec_curve',
-          placeholder: helptext_system_ca.add.ec_curve.placeholder,
-          tooltip: helptext_system_ca.add.ec_curve.tooltip,
+          placeholder: helptextSystemCa.add.ec_curve.placeholder,
+          tooltip: helptextSystemCa.add.ec_curve.tooltip,
           options: [],
           value: 'BrainpoolP512R1',
           isHidden: false,
@@ -134,8 +134,8 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         {
           type: 'select',
           name: 'key_length',
-          placeholder: helptext_system_ca.add.key_length.placeholder,
-          tooltip: helptext_system_ca.add.key_length.tooltip,
+          placeholder: helptextSystemCa.add.key_length.placeholder,
+          tooltip: helptextSystemCa.add.key_length.tooltip,
           options: [
             { label: '1024', value: 1024 },
             { label: '2048', value: 2048 },
@@ -143,7 +143,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           ],
           value: 2048,
           required: true,
-          validation: helptext_system_ca.add.key_length.validation,
+          validation: helptextSystemCa.add.key_length.validation,
           isHidden: false,
           relation: [
             {
@@ -158,8 +158,8 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         {
           type: 'select',
           name: 'digest_algorithm',
-          placeholder: helptext_system_ca.add.digest_algorithm.placeholder,
-          tooltip: helptext_system_ca.add.digest_algorithm.tooltip,
+          placeholder: helptextSystemCa.add.digest_algorithm.placeholder,
+          tooltip: helptextSystemCa.add.digest_algorithm.tooltip,
           options: [
             { label: 'SHA1', value: 'SHA1' },
             { label: 'SHA224', value: 'SHA224' },
@@ -169,114 +169,114 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           ],
           value: 'SHA256',
           required: true,
-          validation: helptext_system_ca.add.digest_algorithm.validation,
+          validation: helptextSystemCa.add.digest_algorithm.validation,
           isHidden: false,
         },
         {
           type: 'input',
           name: 'lifetime',
-          placeholder: helptext_system_ca.add.lifetime.placeholder,
-          tooltip: helptext_system_ca.add.lifetime.tooltip,
+          placeholder: helptextSystemCa.add.lifetime.placeholder,
+          tooltip: helptextSystemCa.add.lifetime.tooltip,
           inputType: 'number',
           required: true,
           value: 3650,
-          validation: helptext_system_ca.add.lifetime.validation,
+          validation: helptextSystemCa.add.lifetime.validation,
           isHidden: false,
         },
       ],
     },
     {
-      label: helptext_system_ca.add.fieldset_certificate,
+      label: helptextSystemCa.add.fieldset_certificate,
       fieldConfig: [
         {
           type: 'select',
           name: 'country',
-          placeholder: helptext_system_ca.add.country.placeholder,
-          tooltip: helptext_system_ca.add.country.tooltip,
+          placeholder: helptextSystemCa.add.country.placeholder,
+          tooltip: helptextSystemCa.add.country.tooltip,
           options: [
           ],
           value: 'US',
           required: true,
-          validation: helptext_system_ca.add.country.validation,
+          validation: helptextSystemCa.add.country.validation,
           isHidden: false,
         },
         {
           type: 'input',
           name: 'state',
-          placeholder: helptext_system_ca.add.state.placeholder,
-          tooltip: helptext_system_ca.add.state.tooltip,
+          placeholder: helptextSystemCa.add.state.placeholder,
+          tooltip: helptextSystemCa.add.state.tooltip,
           required: true,
-          validation: helptext_system_ca.add.state.validation,
+          validation: helptextSystemCa.add.state.validation,
           isHidden: false,
         },
         {
           type: 'input',
           name: 'city',
-          placeholder: helptext_system_ca.add.city.placeholder,
-          tooltip: helptext_system_ca.add.city.tooltip,
+          placeholder: helptextSystemCa.add.city.placeholder,
+          tooltip: helptextSystemCa.add.city.tooltip,
           required: true,
-          validation: helptext_system_ca.add.city.validation,
+          validation: helptextSystemCa.add.city.validation,
           isHidden: false,
         },
         {
           type: 'input',
           name: 'organization',
-          placeholder: helptext_system_ca.add.organization.placeholder,
-          tooltip: helptext_system_ca.add.organization.tooltip,
+          placeholder: helptextSystemCa.add.organization.placeholder,
+          tooltip: helptextSystemCa.add.organization.tooltip,
           required: true,
-          validation: helptext_system_ca.add.organization.validation,
+          validation: helptextSystemCa.add.organization.validation,
           isHidden: false,
         },
         {
           type: 'input',
           name: 'organizational_unit',
-          placeholder: helptext_system_ca.add.organizational_unit.placeholder,
-          tooltip: helptext_system_ca.add.organizational_unit.tooltip,
+          placeholder: helptextSystemCa.add.organizational_unit.placeholder,
+          tooltip: helptextSystemCa.add.organizational_unit.tooltip,
           required: false,
           isHidden: false,
         },
         {
           type: 'input',
           name: 'email',
-          placeholder: helptext_system_ca.add.email.placeholder,
-          tooltip: helptext_system_ca.add.email.tooltip,
+          placeholder: helptextSystemCa.add.email.placeholder,
+          tooltip: helptextSystemCa.add.email.tooltip,
           required: true,
-          validation: helptext_system_ca.add.email.validation,
+          validation: helptextSystemCa.add.email.validation,
           isHidden: false,
         },
         {
           type: 'input',
           name: 'common',
-          placeholder: helptext_system_ca.add.common.placeholder,
-          tooltip: helptext_system_ca.add.common.tooltip,
+          placeholder: helptextSystemCa.add.common.placeholder,
+          tooltip: helptextSystemCa.add.common.tooltip,
           isHidden: false,
         },
         {
           type: 'chip',
           name: 'san',
-          placeholder: helptext_system_ca.add.san.placeholder,
-          tooltip: helptext_system_ca.add.san.tooltip,
+          placeholder: helptextSystemCa.add.san.placeholder,
+          tooltip: helptextSystemCa.add.san.tooltip,
           required: true,
-          validation: helptext_system_ca.add.san.validation,
+          validation: helptextSystemCa.add.san.validation,
           isHidden: false,
         },
       ],
     },
     {
-      label: helptext_system_ca.add.fieldset_extra,
+      label: helptextSystemCa.add.fieldset_extra,
       fieldConfig: [
         {
           type: 'checkbox',
           name: 'BasicConstraints-enabled',
-          placeholder: helptext_system_ca.add.basic_constraints.enabled.placeholder,
-          tooltip: helptext_system_ca.add.basic_constraints.enabled.tooltip,
+          placeholder: helptextSystemCa.add.basic_constraints.enabled.placeholder,
+          tooltip: helptextSystemCa.add.basic_constraints.enabled.tooltip,
         },
         {
           type: 'input',
           inputType: 'number',
           name: 'BasicConstraints-path_length',
-          placeholder: helptext_system_ca.add.basic_constraints.path_length.placeholder,
-          tooltip: helptext_system_ca.add.basic_constraints.path_length.tooltip,
+          placeholder: helptextSystemCa.add.basic_constraints.path_length.placeholder,
+          tooltip: helptextSystemCa.add.basic_constraints.path_length.tooltip,
           relation: [
             {
               action: RelationAction.Show,
@@ -291,18 +291,18 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           type: 'select',
           multiple: true,
           name: 'BasicConstraints',
-          placeholder: helptext_system_ca.add.basic_constraints.config.placeholder,
-          tooltip: helptext_system_ca.add.basic_constraints.config.tooltip,
+          placeholder: helptextSystemCa.add.basic_constraints.config.placeholder,
+          tooltip: helptextSystemCa.add.basic_constraints.config.tooltip,
           options: [
             {
               value: 'ca',
-              label: helptext_system_ca.add.basic_constraints.ca.placeholder,
-              tooltip: helptext_system_ca.add.basic_constraints.ca.tooltip,
+              label: helptextSystemCa.add.basic_constraints.ca.placeholder,
+              tooltip: helptextSystemCa.add.basic_constraints.ca.tooltip,
             },
             {
               value: 'extension_critical',
-              label: helptext_system_ca.add.basic_constraints.extension_critical.placeholder,
-              tooltip: helptext_system_ca.add.basic_constraints.extension_critical.tooltip,
+              label: helptextSystemCa.add.basic_constraints.extension_critical.placeholder,
+              tooltip: helptextSystemCa.add.basic_constraints.extension_critical.tooltip,
             },
           ],
           relation: [
@@ -318,25 +318,25 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         {
           type: 'checkbox',
           name: 'AuthorityKeyIdentifier-enabled',
-          placeholder: helptext_system_ca.add.authority_key_identifier.enabled.placeholder,
-          tooltip: helptext_system_ca.add.authority_key_identifier.enabled.tooltip,
+          placeholder: helptextSystemCa.add.authority_key_identifier.enabled.placeholder,
+          tooltip: helptextSystemCa.add.authority_key_identifier.enabled.tooltip,
         },
         {
           type: 'select',
           multiple: true,
           name: 'AuthorityKeyIdentifier',
-          placeholder: helptext_system_ca.add.authority_key_identifier.config.placeholder,
-          tooltip: helptext_system_ca.add.authority_key_identifier.config.tooltip,
+          placeholder: helptextSystemCa.add.authority_key_identifier.config.placeholder,
+          tooltip: helptextSystemCa.add.authority_key_identifier.config.tooltip,
           options: [
             {
               value: 'authority_cert_issuer',
-              label: helptext_system_ca.add.authority_key_identifier.authority_cert_issuer.placeholder,
-              tooltip: helptext_system_ca.add.authority_key_identifier.authority_cert_issuer.tooltip,
+              label: helptextSystemCa.add.authority_key_identifier.authority_cert_issuer.placeholder,
+              tooltip: helptextSystemCa.add.authority_key_identifier.authority_cert_issuer.tooltip,
             },
             {
               value: 'extension_critical',
-              label: helptext_system_ca.add.authority_key_identifier.extension_critical.placeholder,
-              tooltip: helptext_system_ca.add.authority_key_identifier.extension_critical.tooltip,
+              label: helptextSystemCa.add.authority_key_identifier.extension_critical.placeholder,
+              tooltip: helptextSystemCa.add.authority_key_identifier.extension_critical.tooltip,
             },
           ],
           relation: [
@@ -352,15 +352,15 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         {
           type: 'checkbox',
           name: 'ExtendedKeyUsage-enabled',
-          placeholder: helptext_system_ca.add.extended_key_usage.enabled.placeholder,
-          tooltip: helptext_system_ca.add.extended_key_usage.enabled.tooltip,
+          placeholder: helptextSystemCa.add.extended_key_usage.enabled.placeholder,
+          tooltip: helptextSystemCa.add.extended_key_usage.enabled.tooltip,
         },
         {
           type: 'select',
           multiple: true,
           name: 'ExtendedKeyUsage-usages',
-          placeholder: helptext_system_ca.add.extended_key_usage.usages.placeholder,
-          tooltip: helptext_system_ca.add.extended_key_usage.usages.tooltip,
+          placeholder: helptextSystemCa.add.extended_key_usage.usages.placeholder,
+          tooltip: helptextSystemCa.add.extended_key_usage.usages.tooltip,
           options: [],
           required: false,
           relation: [
@@ -376,8 +376,8 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         {
           type: 'checkbox',
           name: 'ExtendedKeyUsage-extension_critical',
-          placeholder: helptext_system_ca.add.extended_key_usage.extension_critical.placeholder,
-          tooltip: helptext_system_ca.add.extended_key_usage.extension_critical.tooltip,
+          placeholder: helptextSystemCa.add.extended_key_usage.extension_critical.placeholder,
+          tooltip: helptextSystemCa.add.extended_key_usage.extension_critical.tooltip,
           relation: [
             {
               action: RelationAction.Show,
@@ -391,65 +391,65 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         {
           type: 'checkbox',
           name: 'KeyUsage-enabled',
-          placeholder: helptext_system_ca.add.key_usage.enabled.placeholder,
-          tooltip: helptext_system_ca.add.key_usage.enabled.tooltip,
+          placeholder: helptextSystemCa.add.key_usage.enabled.placeholder,
+          tooltip: helptextSystemCa.add.key_usage.enabled.tooltip,
         },
         {
           type: 'select',
           multiple: true,
           name: 'KeyUsage',
-          placeholder: helptext_system_ca.add.key_usage.config.placeholder,
-          tooltip: helptext_system_ca.add.key_usage.config.tooltip,
+          placeholder: helptextSystemCa.add.key_usage.config.placeholder,
+          tooltip: helptextSystemCa.add.key_usage.config.tooltip,
           options: [
             {
               value: 'digital_signature',
-              label: helptext_system_ca.add.key_usage.digital_signature.placeholder,
-              tooltip: helptext_system_ca.add.key_usage.digital_signature.tooltip,
+              label: helptextSystemCa.add.key_usage.digital_signature.placeholder,
+              tooltip: helptextSystemCa.add.key_usage.digital_signature.tooltip,
             },
             {
               value: 'content_commitment',
-              label: helptext_system_ca.add.key_usage.content_commitment.placeholder,
-              tooltip: helptext_system_ca.add.key_usage.content_commitment.tooltip,
+              label: helptextSystemCa.add.key_usage.content_commitment.placeholder,
+              tooltip: helptextSystemCa.add.key_usage.content_commitment.tooltip,
             },
             {
               value: 'key_encipherment',
-              label: helptext_system_ca.add.key_usage.key_encipherment.placeholder,
-              tooltip: helptext_system_ca.add.key_usage.key_encipherment.tooltip,
+              label: helptextSystemCa.add.key_usage.key_encipherment.placeholder,
+              tooltip: helptextSystemCa.add.key_usage.key_encipherment.tooltip,
             },
             {
               value: 'data_encipherment',
-              label: helptext_system_ca.add.key_usage.data_encipherment.placeholder,
-              tooltip: helptext_system_ca.add.key_usage.data_encipherment.tooltip,
+              label: helptextSystemCa.add.key_usage.data_encipherment.placeholder,
+              tooltip: helptextSystemCa.add.key_usage.data_encipherment.tooltip,
             },
             {
               value: 'key_agreement',
-              label: helptext_system_ca.add.key_usage.key_agreement.placeholder,
-              tooltip: helptext_system_ca.add.key_usage.key_agreement.tooltip,
+              label: helptextSystemCa.add.key_usage.key_agreement.placeholder,
+              tooltip: helptextSystemCa.add.key_usage.key_agreement.tooltip,
             },
             {
               value: 'key_cert_sign',
-              label: helptext_system_ca.add.key_usage.key_cert_sign.placeholder,
-              tooltip: helptext_system_ca.add.key_usage.key_cert_sign.tooltip,
+              label: helptextSystemCa.add.key_usage.key_cert_sign.placeholder,
+              tooltip: helptextSystemCa.add.key_usage.key_cert_sign.tooltip,
             },
             {
               value: 'crl_sign',
-              label: helptext_system_ca.add.key_usage.crl_sign.placeholder,
-              tooltip: helptext_system_ca.add.key_usage.crl_sign.tooltip,
+              label: helptextSystemCa.add.key_usage.crl_sign.placeholder,
+              tooltip: helptextSystemCa.add.key_usage.crl_sign.tooltip,
             },
             {
               value: 'encipher_only',
-              label: helptext_system_ca.add.key_usage.encipher_only.placeholder,
-              tooltip: helptext_system_ca.add.key_usage.encipher_only.tooltip,
+              label: helptextSystemCa.add.key_usage.encipher_only.placeholder,
+              tooltip: helptextSystemCa.add.key_usage.encipher_only.tooltip,
             },
             {
               value: 'decipher_only',
-              label: helptext_system_ca.add.key_usage.decipher_only.placeholder,
-              tooltip: helptext_system_ca.add.key_usage.decipher_only.tooltip,
+              label: helptextSystemCa.add.key_usage.decipher_only.placeholder,
+              tooltip: helptextSystemCa.add.key_usage.decipher_only.tooltip,
             },
             {
               value: 'extension_critical',
-              label: helptext_system_ca.add.key_usage.extension_critical.placeholder,
-              tooltip: helptext_system_ca.add.key_usage.extension_critical.tooltip,
+              label: helptextSystemCa.add.key_usage.extension_critical.placeholder,
+              tooltip: helptextSystemCa.add.key_usage.extension_critical.tooltip,
             },
           ],
           relation: [
@@ -465,26 +465,26 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         {
           type: 'textarea',
           name: 'certificate',
-          placeholder: helptext_system_ca.add.certificate.placeholder,
-          tooltip: helptext_system_ca.add.certificate.tooltip,
+          placeholder: helptextSystemCa.add.certificate.placeholder,
+          tooltip: helptextSystemCa.add.certificate.tooltip,
           required: true,
-          validation: helptext_system_ca.add.certificate.validation,
+          validation: helptextSystemCa.add.certificate.validation,
           isHidden: true,
         },
         {
           type: 'textarea',
           name: 'privatekey',
-          placeholder: helptext_system_ca.add.privatekey.placeholder,
-          tooltip: helptext_system_ca.add.privatekey.tooltip,
+          placeholder: helptextSystemCa.add.privatekey.placeholder,
+          tooltip: helptextSystemCa.add.privatekey.tooltip,
           isHidden: true,
         },
         {
           type: 'input',
           name: 'passphrase',
-          placeholder: helptext_system_ca.add.passphrase.placeholder,
-          tooltip: helptext_system_ca.add.passphrase.tooltip,
+          placeholder: helptextSystemCa.add.passphrase.placeholder,
+          tooltip: helptextSystemCa.add.passphrase.tooltip,
           inputType: 'password',
-          validation: helptext_system_ca.add.passphrase.validation,
+          validation: helptextSystemCa.add.passphrase.validation,
           isHidden: true,
           togglePw: true,
         },
@@ -492,7 +492,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
           type: 'input',
           name: 'passphrase2',
           inputType: 'password',
-          placeholder: helptext_system_ca.add.passphrase2.placeholder,
+          placeholder: helptextSystemCa.add.passphrase2.placeholder,
           isHidden: true,
         },
       ],
@@ -586,9 +586,9 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
     });
 
     this.ws.call('certificate.ec_curve_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      const ec_curves_field = this.getTarget('ec_curve') as FormSelectConfig;
+      const ecCurvesConfig = this.getTarget('ec_curve') as FormSelectConfig;
       for (const key in res) {
-        ec_curves_field.options.push({ label: res[key], value: key });
+        ecCurvesConfig.options.push({ label: res[key], value: key });
       }
     });
 
@@ -662,7 +662,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   afterInit(entity: EntityWizardComponent): void {
     this.entityForm = entity;
-    this.title = helptext_system_ca.add.title;
+    this.title = helptextSystemCa.add.title;
 
     this.intermediatecaFields.forEach((field) => this.hideField(field, true));
     this.importcaFields.forEach((field) => this.hideField(field, true));
@@ -843,7 +843,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       delete data.passphrase2;
     }
     if (data.create_type === 'CA_CREATE_INTERNAL' || data.create_type === 'CA_CREATE_INTERMEDIATE') {
-      const cert_extensions = {
+      const certExtensions = {
         BasicConstraints: {},
         AuthorityKeyIdentifier: {},
         ExtendedKeyUsage: {},
@@ -851,23 +851,23 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       };
       Object.keys(data).forEach((key) => {
         if (key.startsWith('BasicConstraints') || key.startsWith('AuthorityKeyIdentifier') || key.startsWith('ExtendedKeyUsage') || key.startsWith('KeyUsage')) {
-          const type_prop = key.split('-');
+          const typeProp = key.split('-');
           if (data[key] === '') {
             data[key] = null;
           }
           if (data[key]) {
-            if (type_prop.length === 1) {
+            if (typeProp.length === 1) {
               for (const item of data[key]) {
-                (cert_extensions as any)[type_prop[0]][item] = true;
+                (certExtensions as any)[typeProp[0]][item] = true;
               }
             } else {
-              (cert_extensions as any)[type_prop[0]][type_prop[1]] = data[key];
+              (certExtensions as any)[typeProp[0]][typeProp[1]] = data[key];
             }
           }
           delete data[key];
         }
       });
-      data['cert_extensions'] = cert_extensions;
+      data['cert_extensions'] = certExtensions;
 
       delete data['profiles'];
     }

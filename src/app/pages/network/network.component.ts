@@ -33,7 +33,7 @@ import {
   WebSocketService,
 } from 'app/services';
 import { IpmiService } from 'app/services/ipmi.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../common/entity/utils';
 import { CardWidgetConf } from './card-widget/card-widget.component';
@@ -132,10 +132,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     ],
     parent: this,
     add: () => {
-      this.ixModalService.open(StaticRouteFormComponent);
+      this.slideInService.open(StaticRouteFormComponent);
     },
     edit: (route: StaticRoute) => {
-      const modal = this.ixModalService.open(StaticRouteFormComponent);
+      const modal = this.slideInService.open(StaticRouteFormComponent);
       modal.setEditingStaticRoute(route);
     },
     deleteMsg: {
@@ -216,7 +216,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private translate: TranslateService,
     private tableService: TableService,
     private ipmiService: IpmiService,
-    private ixModalService: IxModalService,
+    private slideInService: IxSlideInService,
   ) {
     super();
     this.getGlobalSettings();
@@ -299,7 +299,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         this.hasConsoleFooter = advancedConfig.consolemsg;
       });
 
-    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.staticRoutesTableConf.tableComponent.getData();
     });
 

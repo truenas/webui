@@ -32,10 +32,10 @@ export class FormToggleButtonComponent implements Field, OnInit {
     this.control.valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
       if (this.init && this.config.options && res) {
         this.init = false;
-        let all_selected = false;
+        let allSelected = false;
         const values = _.split(this.control.value, ',');
         if (this.control.value == '*') {
-          all_selected = true;
+          allSelected = true;
         }
         this.config.options.forEach((option) => {
           if (_.indexOf(values, option.value) > -1) {
@@ -43,7 +43,7 @@ export class FormToggleButtonComponent implements Field, OnInit {
             this.check(option);
           }
 
-          if (all_selected) {
+          if (allSelected) {
             option.checked = false;
             this.check(option);
           }

@@ -9,7 +9,7 @@ import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -42,7 +42,7 @@ export class StaticRouteFormComponent {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
@@ -69,7 +69,8 @@ export class StaticRouteFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
-      this.modalService.close();
+      this.cdr.markForCheck();
+      this.slideInService.close();
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);

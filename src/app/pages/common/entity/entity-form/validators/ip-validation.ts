@@ -133,8 +133,8 @@ export function ipv6Validator(): ValidatorFn {
 
 // Used only on sharing/iscsi/portal/portal-form
 export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all'): ValidatorFn {
-  const ipv4_regex = ipRegex.v4();
-  const ipv6_regex = ipRegex.v6();
+  const ipv4Regex = ipRegex.v4();
+  const ipv6Regex = ipRegex.v6();
   let thisControl: FormControl;
 
   return function isValidIp(control: FormControl) {
@@ -151,7 +151,7 @@ export function ipValidator(type: string = 'ipv4' || 'ipv6' || 'all'): Validator
     }
 
     function checkIp(ipType = 'ipv4' || 'ipv6'): boolean {
-      const regex = ipType === 'ipv4' ? ipv4_regex : ipv6_regex;
+      const regex = ipType === 'ipv4' ? ipv4Regex : ipv6Regex;
       const wildcard = ipType === 'ipv4' ? '0.0.0.0' : '::';
       if (_.indexOf(thisControl.value, wildcard) !== -1) {
         for (const ip of thisControl.value) {

@@ -4,6 +4,7 @@ import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -159,7 +160,7 @@ export class ReplicationListComponent implements EntityTableConfig {
               },
               {
                 type: 'explorer',
-                explorerType: 'dataset',
+                explorerType: ExplorerType.Dataset,
                 initial: '',
                 name: 'target_dataset',
                 placeholder: helptext.target_dataset_placeholder,
