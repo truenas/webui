@@ -272,8 +272,8 @@ export class ServiceSMBComponent implements FormConfiguration {
   preInit(entityForm: EntityFormComponent): void {
     this.entityEdit = entityForm;
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-        entityForm.setDisabled('netbiosname_b', !is_ha, !is_ha);
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
+        entityForm.setDisabled('netbiosname_b', !isHa, !isHa);
       });
     }
 

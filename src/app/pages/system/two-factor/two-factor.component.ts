@@ -213,11 +213,11 @@ export class TwoFactorComponent implements FormConfiguration {
     return true;
   }
 
-  isCustActionDisabled(action_id: string): boolean {
+  isCustActionDisabled(actionId: string): boolean {
     // Disables the 'Enable 2F' & 'Show QR' buttons if there is no secret
-    if (action_id === 'renew_secret') {
+    if (actionId === 'renew_secret') {
       return !this.TwoFactorEnabled;
-    } if (action_id === 'show_qr') {
+    } if (actionId === 'show_qr') {
       return !(this.secret && this.secret !== '');
     }
   }

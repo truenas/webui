@@ -269,8 +269,8 @@ export class UpdateComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Switch Train'),
       message: warning + this.translate.instant('Switch update trains?'),
-    }).pipe(untilDestroyed(this)).subscribe((train_res: boolean) => {
-      if (train_res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmSwitch: boolean) => {
+      if (confirmSwitch) {
         this.train = event;
         this.setTrainDescription();
         this.setTrainAndCheck();

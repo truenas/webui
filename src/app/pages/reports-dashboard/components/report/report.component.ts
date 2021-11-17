@@ -117,16 +117,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   // Loader
   loader = false;
-  private _dataRcvd = false;
-  get dataRcvd(): boolean {
-    return this._dataRcvd;
-  }
-  set dataRcvd(val) {
-    this._dataRcvd = val;
-    if (val) {
-      this.loader = false;
-    }
-  }
 
   // Chart Options
   showLegendValues = false;

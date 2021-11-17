@@ -322,13 +322,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.ws
         .call('failover.licensed')
         .pipe(untilDestroyed(this))
-        .subscribe((is_ha) => {
-          if (is_ha) {
+        .subscribe((isHa) => {
+          if (isHa) {
             this.ws
               .call('failover.disabled_reasons')
               .pipe(untilDestroyed(this))
-              .subscribe((failover_disabled) => {
-                if (failover_disabled.length === 0) {
+              .subscribe((reasons) => {
+                if (reasons.length === 0) {
                   this.ha_enabled = true;
                 }
               });

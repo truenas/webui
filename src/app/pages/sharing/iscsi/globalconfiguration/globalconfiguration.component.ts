@@ -86,35 +86,37 @@ export class GlobalconfigurationComponent implements FormConfiguration {
   }
 
   afterSubmit(): void {
-    this.ws.call('service.query', [[]]).pipe(untilDestroyed(this)).subscribe((service_res) => {
-      const service = _.find(service_res, { service: ServiceName.Iscsi });
-      if (!service.enable) {
-        this.dialogService.confirm({
-          title: shared.dialog_title,
-          message: shared.dialog_message,
-          hideCheckBox: true,
-          buttonMsg: shared.dialog_button,
-        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-          this.loader.open();
-          this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
-            this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
-              this.loader.close();
-              this.dialogService.info(
-                this.translate.instant('{service} Service', { service: 'iSCSI' }),
-                this.translate.instant('The {service} service has been enabled.', { service: 'iSCSI' }),
-                '250px',
-                'info',
-              );
-            }, (err) => {
-              this.loader.close();
-              this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
-            });
+    this.ws.call('service.query', [[]]).pipe(untilDestroyed(this)).subscribe((services) => {
+      const service = _.find(services, { service: ServiceName.Iscsi });
+      if (service.enable) {
+        return;
+      }
+
+      this.dialogService.confirm({
+        title: shared.dialog_title,
+        message: shared.dialog_message,
+        hideCheckBox: true,
+        buttonMsg: shared.dialog_button,
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.loader.open();
+        this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
+          this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.loader.close();
+            this.dialogService.info(
+              this.translate.instant('{service} Service', { service: 'iSCSI' }),
+              this.translate.instant('The {service} service has been enabled.', { service: 'iSCSI' }),
+              '250px',
+              'info',
+            );
           }, (err) => {
             this.loader.close();
             this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
           });
+        }, (err) => {
+          this.loader.close();
+          this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
         });
-      }
+      });
     });
   }
 }

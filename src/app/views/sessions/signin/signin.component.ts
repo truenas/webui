@@ -96,7 +96,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: FormBuilder,
     private core: CoreService,
     private api: ApiService,
-    private _autofill: AutofillMonitor,
+    private autofill: AutofillMonitor,
     private http: HttpClient,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
@@ -142,7 +142,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this._autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
+    this.autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
       if (!this.didSetFocus) {
         this.didSetFocus = true;
         this.usernameInput.nativeElement.focus();

@@ -105,8 +105,8 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
 
   preInit(): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-        if (is_ha) {
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
+        if (isHa) {
           this.isHA = true;
           this.updateMethod = 'failover.upgrade';
         } else {
@@ -136,8 +136,8 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = false;
       }
       entityForm.formGroup.controls['rebootAfterManualUpdate'].setValue(ures[0].attributes.preferences['rebootAfterManualUpdate']);
-      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.pipe(untilDestroyed(this)).subscribe((form_res: boolean) => {
-        ures[0].attributes.preferences['rebootAfterManualUpdate'] = form_res;
+      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.pipe(untilDestroyed(this)).subscribe((rebootAfterManualUpdate: boolean) => {
+        ures[0].attributes.preferences['rebootAfterManualUpdate'] = rebootAfterManualUpdate;
         this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).pipe(untilDestroyed(this)).subscribe(() => {
         });
       });

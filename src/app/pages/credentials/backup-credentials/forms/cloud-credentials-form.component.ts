@@ -1507,9 +1507,9 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               this.verifyCredentials(value);
             }
           },
-          (sshKey_err) => {
+          (error) => {
             this.entityForm.loader.close();
-            new EntityUtils().handleWSError(this, sshKey_err, this.dialog);
+            new EntityUtils().handleWSError(this, error, this.dialog);
           },
         );
       },

@@ -361,9 +361,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     });
   }
 
-  addVdev(group: string, initial_values = {}): void {
+  addVdev(group: string, initialValues = {}): void {
     this.dirty = true;
-    this.vdevs[group].push(initial_values);
+    this.vdevs[group].push(initialValues);
     setTimeout(() => { // there appears to be a slight race condition with adding/removing
       this.getCurrentLayout();
     }, 100);

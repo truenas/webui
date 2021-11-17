@@ -48,7 +48,7 @@ export class WebSocketService {
 
   subscriptions = new Map<string, Observer<unknown>[]>();
 
-  constructor(private _router: Router) {
+  constructor(protected router: Router) {
     this.authStatus$ = new Subject<boolean>();
     this.onOpenSubject$ = new Subject();
     this.onCloseSubject$ = new Subject();
@@ -106,7 +106,7 @@ export class WebSocketService {
     this.onCloseSubject$.next(true);
     setTimeout(() => this.connect(), 5000);
     if (!this.shuttingdown) {
-      this._router.navigate(['/sessions/signin']);
+      this.router.navigate(['/sessions/signin']);
     }
   }
 
@@ -253,9 +253,9 @@ export class WebSocketService {
 
   job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {
     const source = Observable.create((observer: Subscriber<Job<ApiDirectory[K]['response']>>) => {
-      this.call(method, params).pipe(untilDestroyed(this)).subscribe((job_id) => {
+      this.call(method, params).pipe(untilDestroyed(this)).subscribe((jobId) => {
         this.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-          if (event.id == job_id) {
+          if (event.id == jobId) {
             observer.next(event.fields);
             if (event.fields.state === JobState.Success) observer.complete();
             if (event.fields.state === JobState.Failed) observer.error(event.fields);
@@ -266,9 +266,9 @@ export class WebSocketService {
     return source;
   }
 
-  login(username: string, password: string, otp_token?: string): Observable<boolean> {
-    const params: LoginParams = otp_token
-      ? [username, password, otp_token]
+  login(username: string, password: string, otpToken?: string): Observable<boolean> {
+    const params: LoginParams = otpToken
+      ? [username, password, otpToken]
       : [username, password];
     return Observable.create((observer: Subscriber<boolean>) => {
       this.call('auth.login', params).pipe(untilDestroyed(this)).subscribe((wasLoggedIn) => {
@@ -323,7 +323,7 @@ export class WebSocketService {
     this.call('auth.logout').pipe(untilDestroyed(this)).subscribe(() => {
       this.clearCredentials();
       this.socket.close();
-      this._router.navigate(['/sessions/signin']);
+      this.router.navigate(['/sessions/signin']);
       window.location.reload();
     });
   }

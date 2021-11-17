@@ -359,11 +359,11 @@ export class SnapshotListComponent implements EntityTableConfig {
 
     dialogRef.componentInstance.success
       .pipe(untilDestroyed(this))
-      .subscribe((job_res: Job<CoreBulkResponse<boolean>[]>) => {
+      .subscribe((job: Job<CoreBulkResponse<boolean>[]>) => {
         const jobErrors: string[] = [];
         const jobSuccess: boolean[] = [];
 
-        job_res.result.forEach((item) => {
+        job.result.forEach((item) => {
           if (item.error) {
             jobErrors.push(item.error);
           } else {
