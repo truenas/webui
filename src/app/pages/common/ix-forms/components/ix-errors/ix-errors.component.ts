@@ -22,17 +22,16 @@ export class IxErrorsComponent implements OnChanges {
   messages: string[] = [];
 
   readonly defaultErrMessages = {
-    min: (min: number) => this.translate.instant('Minimum value is {min}.', { min }),
-    max: (max: number) => this.translate.instant('Maximum value is {max}.', { max }),
+    min: (min: number) => this.translate.instant('Minimum value is {min}', { min }),
+    max: (max: number) => this.translate.instant('Maximum value is {max}', { max }),
     required: () => this.translate.instant('{field} is required', { field: this.label }),
-    email: () => this.translate.instant('Value must be a valid email address.'),
-    minlength: (minLength: number) => this.translate.instant('The length of {field} should be at least {minLength}.', { field: this.label, minLength }),
+    email: () => this.translate.instant('Value must be a valid email address'),
+    minlength: (minLength: number) => this.translate.instant('The length of {field} should be at least {minLength}', { field: this.label, minLength }),
     maxlength: (maxLength: number) => this.translate.instant(
-      'The length of {field} should be no more than {maxLength}.',
+      'The length of {field} should be no more than {maxLength}',
       { field: this.label, maxLength },
     ),
-    pattern: () => this.translate.instant('Invalid format or character.'),
-
+    pattern: () => this.translate.instant('Invalid format or character'),
   };
 
   constructor(
