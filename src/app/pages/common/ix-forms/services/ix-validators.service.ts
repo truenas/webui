@@ -21,7 +21,7 @@ export default class IxValidatorsService {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.min(min)(control);
       if (errors?.min) {
-        errors.min.message = errMessage || this.translate.instant('Must be greater than {min}', { min });
+        errors.min.message = errMessage;
       }
       return errors;
     };
@@ -39,7 +39,7 @@ export default class IxValidatorsService {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.max(max)(control);
       if (errors?.max) {
-        errors.max.message = errMessage || this.translate.instant('Must be less than {max}', { max });
+        errors.max.message = errMessage;
       }
       return errors;
     };
@@ -56,9 +56,7 @@ export default class IxValidatorsService {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.required(control);
       if (errors?.required) {
-        errors.required = errMessage
-          ? { message: errMessage }
-          : { message: this.translate.instant('Required') };
+        errors.required = errMessage;
       }
       return errors;
     };
@@ -75,9 +73,7 @@ export default class IxValidatorsService {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.requiredTrue(control);
       if (errors?.required) {
-        errors.required = errMessage
-          ? { message: errMessage }
-          : { message: this.translate.instant('Must be true') };
+        errors.required = errMessage;
       }
       return errors;
     };
@@ -94,9 +90,7 @@ export default class IxValidatorsService {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.email(control);
       if (errors?.email) {
-        errors.email = errMessage
-          ? { message: errMessage }
-          : { message: this.translate.instant('Must be a valid email address') };
+        errors.email = errMessage;
       }
       return errors;
     };
@@ -114,7 +108,7 @@ export default class IxValidatorsService {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.minLength(minLength)(control);
       if (errors?.minlength) {
-        errors.minlength.message = errMessage || this.translate.instant('Must be of length greater than {minLength}', { minLength });
+        errors.minlength.message = errMessage;
       }
       return errors;
     };
@@ -132,7 +126,7 @@ export default class IxValidatorsService {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.maxLength(maxLength)(control);
       if (errors?.maxlength) {
-        errors.maxlength.message = errMessage || this.translate.instant('Must be of length less than {maxLength}', { maxLength });
+        errors.maxlength.message = errMessage;
       }
       return errors;
     };
@@ -150,7 +144,7 @@ export default class IxValidatorsService {
     return (control: AbstractControl): ValidationErrors | null => {
       const errors = Validators.pattern(pattern)(control);
       if (errors?.pattern) {
-        errors.pattern.message = errMessage || this.translate.instant('Invalid format or character');
+        errors.pattern.message = errMessage;
       }
       return errors;
     };
