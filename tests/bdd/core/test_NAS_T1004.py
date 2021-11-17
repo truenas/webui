@@ -138,10 +138,11 @@ def select_open_for_default_acl_option_select_group_name_for_group_name(driver, 
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Default ACL Options_OPEN"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 7, '//div[contains(.,"Group")]/input[contains(@class,"ng-touched")]')
-    driver.find_element_by_xpath('//div[contains(.,"Group")]/input[contains(@class,"ng-touched")]').clear()
-    driver.find_element_by_xpath('//div[contains(.,"Group")]/input[contains(@class,"ng-touched")]').send_keys(group_name)
-    assert wait_on_element(driver, 7, f'//button[@ix-auto="option__{group_name}"]')
+    time.sleep(0.5)
+    assert wait_on_element(driver, 7, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys(group_name)
+    assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__{group_name}"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
 
 
@@ -164,5 +165,5 @@ def you_should_return_to_the_pool_page(driver):
 @then(parsers.parse('Verify that the group name is "{group_name}"'))
 def verify_that_the_group_name_is_ad01administrator(driver, group_name):
     """Verify that the group name is "group_name"."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"Group")]/input[contains(@class,"ng-touched")]')
-    assert wait_for_attribute_value(driver, 5, '//div[contains(.,"Group")]/input[contains(@class,"ng-touched")]', 'value', group_name)
+    assert wait_on_element(driver, 7, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input')
+    assert wait_for_attribute_value(driver, 5, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'value', group_name)
