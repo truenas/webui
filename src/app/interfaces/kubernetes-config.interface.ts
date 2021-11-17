@@ -11,6 +11,7 @@ export interface KubernetesConfig {
   route_v6_gateway: string;
   route_v6_interface: string;
   service_cidr: string;
+  servicelb: boolean;
 }
 
 export interface KubernetesConfigUpdate {
