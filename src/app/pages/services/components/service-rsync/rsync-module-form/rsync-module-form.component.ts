@@ -16,11 +16,11 @@ import { UserService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-rsync-configuration-form',
+  selector: 'app-rsync-module-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
 
-export class RYSNCConfigurationFormComponent implements FormConfiguration {
+export class RsyncModuleFormComponent implements FormConfiguration {
   queryCall = 'rsyncmod.query' as const;
   route_success: string[] = ['services', 'rsync', 'rsync-module'];
   isEntity = true;

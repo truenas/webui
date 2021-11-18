@@ -7,7 +7,7 @@ import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-t
   selector: 'app-rsync-module-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class RsyncConfigurationListComponent implements EntityTableConfig {
+export class RsyncModuleListComponent implements EntityTableConfig {
   title = this.translate.instant('RSYNC Modules');
   queryCall = 'rsyncmod.query' as const;
   hasDetails = true;

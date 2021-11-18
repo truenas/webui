@@ -14,14 +14,14 @@ import { WebSocketService, DialogService, AppLoaderService } from 'app/services'
 
 @UntilDestroy()
 @Component({
-  selector: 'app-configure-rsync',
-  templateUrl: './configure-rsync.component.html',
-  styleUrls: ['./configure-rsync.component.scss'],
+  selector: 'app-rsync-configure',
+  templateUrl: './rsync-configure.component.html',
+  styleUrls: ['./rsync-configure.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class CconfigureRYSNCComponent implements OnInit {
+export class RsyncConfigureComponent implements OnInit {
   form = this.fb.group({
-    port: [Number(helptext.rsyncd_port_value), Validators.pattern('^[0-9]*$')],
+    port: [873, Validators.pattern('^[0-9]*$')],
     auxiliary: [''],
   });
 

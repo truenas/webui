@@ -9,15 +9,15 @@ import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
-import { CconfigureRYSNCComponent } from './configure-rsync.component';
+import { RsyncConfigureComponent } from './rsync-configure.component';
 
 describe('ConfigureRsyncComponent', () => {
-  let spectator: Spectator<CconfigureRYSNCComponent>;
+  let spectator: Spectator<RsyncConfigureComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
 
   const createComponent = createComponentFactory({
-    component: CconfigureRYSNCComponent,
+    component: RsyncConfigureComponent,
     imports: [
       IxFormsModule,
       ReactiveFormsModule,
