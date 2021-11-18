@@ -110,7 +110,7 @@ export class InitiatorFormComponent implements OnInit {
         this.connectedInitiators = _.unionBy(res, (item) => item['initiator'] && item['initiator_addr']);
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err);
+        new EntityUtils().handleWsError(this, err);
       },
     );
   }
@@ -155,7 +155,7 @@ export class InitiatorFormComponent implements OnInit {
           }
         },
         (err) => {
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWsError(this, err);
         },
       );
     }
@@ -186,7 +186,7 @@ export class InitiatorFormComponent implements OnInit {
       },
       (err) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, err);
+        new EntityUtils().handleWsError(this, err);
       },
     );
   }

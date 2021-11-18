@@ -120,7 +120,7 @@ export class ExtentListComponent implements EntityTableConfig {
           },
           (err: WebsocketError) => {
             entityTable.loader.close();
-            new EntityUtils().handleWSError(entityTable, err, entityTable.dialogService);
+            new EntityUtils().handleWsError(entityTable, err, entityTable.dialogService);
           },
         );
       },

@@ -28,37 +28,37 @@ describe('ThemeUtils', () => {
     const green = '#00ff00';
     const blue = '#0000ff';
 
-    const whiteRGB = utils.hexToRGB(white);
-    expect(whiteRGB.rgb).toStrictEqual([255, 255, 255]);
+    const whiteRgb = utils.hexToRgb(white);
+    expect(whiteRgb.rgb).toStrictEqual([255, 255, 255]);
 
-    const redRGB = utils.hexToRGB(red);
-    expect(redRGB.rgb).toStrictEqual([255, 0, 0]);
+    const redRgb = utils.hexToRgb(red);
+    expect(redRgb.rgb).toStrictEqual([255, 0, 0]);
 
-    const greenRGB = utils.hexToRGB(green);
-    expect(greenRGB.rgb).toStrictEqual([0, 255, 0]);
+    const greenRgb = utils.hexToRgb(green);
+    expect(greenRgb.rgb).toStrictEqual([0, 255, 0]);
 
-    const blueRGB = utils.hexToRGB(blue);
-    expect(blueRGB.rgb).toStrictEqual([0, 0, 255]);
+    const blueRgb = utils.hexToRgb(blue);
+    expect(blueRgb.rgb).toStrictEqual([0, 0, 255]);
   });
 
   // Convert RGB to Hex
   it('should convert RGB color strings to hex strings', () => {
     expect(utils).toBeTruthy();
-    const whiteRGB = 'rgb(255,255,255)';
-    const redRGB = 'rgb(255,0,0)';
-    const greenRGB = 'rgb(0,255,0)';
-    const blueRGB = 'rgb(0,0,255)';
+    const whiteRgb = 'rgb(255,255,255)';
+    const redRgb = 'rgb(255,0,0)';
+    const greenRgb = 'rgb(0,255,0)';
+    const blueRgb = 'rgb(0,0,255)';
 
-    const white = utils.rgbToHex(whiteRGB);
+    const white = utils.rgbToHex(whiteRgb);
     expect(white).toBe('#ffffff');
 
-    const red = utils.rgbToHex(redRGB);
+    const red = utils.rgbToHex(redRgb);
     expect(red).toBe('#ff0000');
 
-    const green = utils.rgbToHex(greenRGB);
+    const green = utils.rgbToHex(greenRgb);
     expect(green).toBe('#00ff00');
 
-    const blue = utils.rgbToHex(blueRGB);
+    const blue = utils.rgbToHex(blueRgb);
     expect(blue).toBe('#0000ff');
   });
 
@@ -69,16 +69,16 @@ describe('ThemeUtils', () => {
      * Values are Degrees, percent, percent
      * */
 
-    const redRGB = 'rgb(255,0,0)';
-    const red = utils.rgbToHSL(redRGB);
+    const redRgb = 'rgb(255,0,0)';
+    const red = utils.rgbToHsl(redRgb);
     expect(red).toBe('hsl(0, 100%, 50%)');
 
-    const greenRGB = 'rgb(0,255,0)';
-    const green = utils.rgbToHSL(greenRGB);
+    const greenRgb = 'rgb(0,255,0)';
+    const green = utils.rgbToHsl(greenRgb);
     expect(green).toBe('hsl(120, 100%, 50%)');
 
-    const blueRGB = 'rgb(0,0,255)';
-    const blue = utils.rgbToHSL(blueRGB);
+    const blueRgb = 'rgb(0,0,255)';
+    const blue = utils.rgbToHsl(blueRgb);
     expect(blue).toBe('hsl(240, 100%, 50%)');
   });
 });

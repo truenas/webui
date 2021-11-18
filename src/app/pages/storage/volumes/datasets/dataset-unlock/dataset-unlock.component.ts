@@ -249,14 +249,14 @@ export class DatasetUnlockComponent implements FormConfiguration {
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       if (err) {
         dialogRef.close();
-        new EntityUtils().handleWSError(entityEdit, err, this.dialogService);
+        new EntityUtils().handleWsError(entityEdit, err, this.dialogService);
       }
     });
 
     this.key_file_fg = entityEdit.formGroup.controls['key_file'] as FormControl;
     this.unlock_children_fg = entityEdit.formGroup.controls['unlock_children'] as FormControl;
 
-    this.key_file_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((hide_key_datasets: boolean) => {
+    this.key_file_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((hideKeyDatasets: boolean) => {
       for (let i = 0; i < this.datasets.controls.length; i++) {
         const datasetControls = (this.datasets.controls[i] as FormGroup).controls;
         const controls = listFields[i];
@@ -267,18 +267,18 @@ export class DatasetUnlockComponent implements FormConfiguration {
         const unlockChildren = this.unlock_children_fg.value;
         if (datasetControls['name'].value === this.pk) {
           if (!isPassphrase) {
-            nameTextConfig.isHidden = hide_key_datasets;
-            this.setDisabled(keyConfig, datasetControls['key'], hide_key_datasets, hide_key_datasets);
+            nameTextConfig.isHidden = hideKeyDatasets;
+            this.setDisabled(keyConfig, datasetControls['key'], hideKeyDatasets, hideKeyDatasets);
           }
         } else if (unlockChildren && !isPassphrase) {
-          nameTextConfig.isHidden = hide_key_datasets;
-          this.setDisabled(keyConfig, datasetControls['key'], hide_key_datasets, hide_key_datasets);
+          nameTextConfig.isHidden = hideKeyDatasets;
+          this.setDisabled(keyConfig, datasetControls['key'], hideKeyDatasets, hideKeyDatasets);
         }
       }
     });
     this.unlock_children_fg.valueChanges
       .pipe(untilDestroyed(this))
-      .subscribe((unlock_children: boolean) => {
+      .subscribe((unlockChildren: boolean) => {
         for (let i = 0; i < this.datasets.controls.length; i++) {
           const controls = listFields[i];
           const datasetControls = (this.datasets.controls[i] as FormGroup).controls;
@@ -289,14 +289,14 @@ export class DatasetUnlockComponent implements FormConfiguration {
             const isPassphrase = datasetControls['is_passphrase'].value;
             const hideKeyDatasets = this.key_file_fg.value;
             if (isPassphrase) {
-              nameTextConfig.isHidden = !unlock_children;
-              this.setDisabled(passphraseConfig, datasetControls['passphrase'], !unlock_children, !unlock_children);
+              nameTextConfig.isHidden = !unlockChildren;
+              this.setDisabled(passphraseConfig, datasetControls['passphrase'], !unlockChildren, !unlockChildren);
             } else if (hideKeyDatasets) {
               nameTextConfig.isHidden = true;
               this.setDisabled(keyConfig, datasetControls['key'], true, true);
             } else {
-              nameTextConfig.isHidden = !unlock_children;
-              this.setDisabled(keyConfig, datasetControls['key'], !unlock_children, !unlock_children);
+              nameTextConfig.isHidden = !unlockChildren;
+              this.setDisabled(keyConfig, datasetControls['key'], !unlockChildren, !unlockChildren);
             }
           }
         }
@@ -382,7 +382,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       dialogRef.close();
-      new EntityUtils().handleWSError(this.entityForm, err, this.dialogService);
+      new EntityUtils().handleWsError(this.entityForm, err, this.dialogService);
     });
   }
 
@@ -441,7 +441,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       dialogRef.close();
-      new EntityUtils().handleWSError(this.entityForm, err, this.dialogService);
+      new EntityUtils().handleWsError(this.entityForm, err, this.dialogService);
     });
   }
 

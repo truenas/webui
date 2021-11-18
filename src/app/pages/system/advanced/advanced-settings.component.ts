@@ -278,8 +278,8 @@ export class AdvancedSettingsComponent implements OnInit {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
 
-    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-      this.isHA = is_ha;
+    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
+      this.isHA = isHa;
     });
   }
 
@@ -542,11 +542,11 @@ export class AdvancedSettingsComponent implements OnInit {
               });
               this.dialogRef.componentInstance.failure.pipe(take(1), untilDestroyed(this)).subscribe((saveDebugErr) => {
                 this.dialogRef.close();
-                new EntityUtils().handleWSError(this, saveDebugErr, this.dialog);
+                new EntityUtils().handleWsError(this, saveDebugErr, this.dialog);
               });
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialog);
+              new EntityUtils().handleWsError(this, err, this.dialog);
             },
           );
         });

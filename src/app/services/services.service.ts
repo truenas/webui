@@ -11,27 +11,27 @@ import { WebSocketService } from './ws.service';
 export class ServicesService {
   constructor(protected ws: WebSocketService) {}
 
-  getSmbBindIPChoices(): Observable<Choices> {
+  getSmbBindIpChoices(): Observable<Choices> {
     return this.ws.call('smb.bindip_choices');
   }
 
   // OpenVPN Service
-  getOpenVPNClientAuthAlgorithmChoices(): Observable<Choices> {
+  getOpenVpnClientAuthAlgorithmChoices(): Observable<Choices> {
     return this.ws.call('openvpn.client.authentication_algorithm_choices');
   }
 
-  getOpenVPNClientCipherChoices(): Observable<Choices> {
+  getOpenVpnClientCipherChoices(): Observable<Choices> {
     return this.ws.call('openvpn.client.cipher_choices');
   }
   getCerts(): Observable<Certificate[]> {
     return this.ws.call('certificate.query');
   }
 
-  getCAs(): Observable<CertificateAuthority[]> {
+  getCertificateAuthorities(): Observable<CertificateAuthority[]> {
     return this.ws.call('certificateauthority.query');
   }
 
-  getOpenVPNServerAuthAlgorithmChoices(): Observable<Choices> {
+  getOpenVpnServerAuthAlgorithmChoices(): Observable<Choices> {
     return this.ws.call('openvpn.server.authentication_algorithm_choices');
   }
 
@@ -45,7 +45,7 @@ export class ServicesService {
   renewStaticKey(): Observable<OpenvpnServerConfig> {
     return this.ws.call('openvpn.server.renew_static_key');
   }
-  updateOpenVPN(
+  updateOpenVpn(
     call: 'openvpn.client.update' | 'openvpn.server.update',
     body: OpenvpnClientConfigUpdate | OpenvpnServerConfigUpdate,
   ): Observable<OpenvpnClientConfig | OpenvpnServerConfig> {
@@ -56,7 +56,7 @@ export class ServicesService {
   }
 
   // -- end of OpenVPN Service
-  getLLDPCountries(): Observable<Choices> {
+  getLldpCountries(): Observable<Choices> {
     return this.ws.call('lldp.country_choices');
   }
 }

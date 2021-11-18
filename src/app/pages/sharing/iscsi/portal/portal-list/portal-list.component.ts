@@ -77,8 +77,8 @@ export class PortalListComponent implements EntityTableConfig {
   dataHandler(entityTable: EntityTableComponent): void {
     entityTable.rows.forEach((row) => {
       for (const ip in row.listen) {
-        const listenIP = this.ipChoices[row.listen[ip].ip] || row.listen[ip].ip;
-        row.listen[ip] = listenIP + ':' + row.listen[ip].port;
+        const listenIp = this.ipChoices[row.listen[ip].ip] || row.listen[ip].ip;
+        row.listen[ip] = listenIp + ':' + row.listen[ip].port;
       }
     });
   }

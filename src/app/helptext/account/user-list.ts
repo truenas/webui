@@ -16,7 +16,6 @@ export default {
   deleteDialog: {
     title: T('Delete User '),
     deleteGroup_placeholder: T('Delete user primary group '),
-    message: T('Delete User '),
     saveButtonText: T('Delete'),
   },
 };

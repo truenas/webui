@@ -155,7 +155,7 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
         this.treeTableService.buildTree(res);
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       },
     );
   }

@@ -148,7 +148,7 @@ export class KmipComponent implements FormConfiguration {
               this.sync_pending = isPending;
             },
             (penddingCallErr) => {
-              new EntityUtils().handleWSError(this, penddingCallErr, this.dialogService);
+              new EntityUtils().handleWsError(this, penddingCallErr, this.dialogService);
             },
           );
         } else {
@@ -156,7 +156,7 @@ export class KmipComponent implements FormConfiguration {
         }
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       },
     );
   }
@@ -166,7 +166,7 @@ export class KmipComponent implements FormConfiguration {
     const certificateField = _.find(certificateFieldset.config, { name: 'certificate' }) as FormSelectConfig;
     const certificateAuthorityField = _.find(certificateFieldset.config, { name: 'certificate_authority' }) as FormSelectConfig;
 
-    this.systemGeneralService.getCA().pipe(untilDestroyed(this)).subscribe((res) => {
+    this.systemGeneralService.getCertificateAuthorities().pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((authority) => {
         certificateAuthorityField.options.push({ label: authority.name, value: authority.id });
       });
@@ -203,7 +203,7 @@ export class KmipComponent implements FormConfiguration {
       if (err.exc_info && err.exc_info.extra) {
         (err as any).extra = err.exc_info.extra;
       }
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
   }
 
@@ -213,7 +213,7 @@ export class KmipComponent implements FormConfiguration {
         this.dialogService.info(helptextSystemKmip.syncInfoDialog.title, helptextSystemKmip.syncInfoDialog.info, '500px', 'info', true);
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       },
     );
   }
@@ -224,7 +224,7 @@ export class KmipComponent implements FormConfiguration {
         this.dialogService.info(helptextSystemKmip.clearSyncKeyInfoDialog.title, helptextSystemKmip.clearSyncKeyInfoDialog.info, '500px', 'info', true);
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       },
     );
   }

@@ -69,7 +69,7 @@ export class ManageCatalogSummaryDialogComponent implements OnInit {
       }
     }, (err) => {
       this.loader.close();
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
   }
 

@@ -204,7 +204,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
       },
       (res) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, res);
+        new EntityUtils().handleWsError(this, res);
       },
     );
   }

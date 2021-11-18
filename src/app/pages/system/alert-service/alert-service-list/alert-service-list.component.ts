@@ -74,7 +74,7 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
         },
         (err) => {
           row.enabled = !row.enabled;
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         },
       );
   }

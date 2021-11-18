@@ -8,7 +8,7 @@ import { WebSocketService } from './ws.service';
 export class VmService {
   constructor(protected ws: WebSocketService) {}
 
-  getVM(vm: string): Observable<VirtualMachine[]> {
+  getVm(vm: string): Observable<VirtualMachine[]> {
     return this.ws.call('vm.query', [[['name', '=', vm]], { get: true }]);
   }
 
@@ -16,14 +16,14 @@ export class VmService {
     return this.ws.call('vm.bootloader_options');
   }
 
-  getNICTypes(): string[][] {
+  getNicTypes(): string[][] {
     return [
       ['E1000', 'Intel e82585 (e1000)'],
       ['VIRTIO', 'VirtIO'],
     ];
   }
 
-  getCPUModels(): Observable<Choices> {
+  getCpuModels(): Observable<Choices> {
     return this.ws.call('vm.cpu_model_choices');
   }
 

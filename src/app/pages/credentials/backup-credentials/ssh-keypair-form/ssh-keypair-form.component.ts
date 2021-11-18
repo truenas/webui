@@ -77,7 +77,7 @@ export class SshKeypairFormComponent {
     },
     (err) => {
       this.loader.close();
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
   }
 

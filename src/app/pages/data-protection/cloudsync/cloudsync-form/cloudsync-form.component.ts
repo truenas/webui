@@ -451,7 +451,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
           this.matDialog.closeAll();
-          new EntityUtils().handleWSError(this.entityForm, err);
+          new EntityUtils().handleWsError(this.entityForm, err);
         });
       },
     },
@@ -545,7 +545,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         if (err.extra && err.extra[0] && err.extra[0][0].split('.').pop() == 'bucket') {
           this.setBucketError(err.extra[0][1]);
         } else {
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         }
         node.collapse();
         return [];
@@ -1055,7 +1055,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         this.modalService.closeSlideIn();
       }, (err) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, err);
+        new EntityUtils().handleWsError(this, err);
       });
     } else {
       this.loader.open();
@@ -1066,7 +1066,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWsError(this, err);
         },
       );
     }

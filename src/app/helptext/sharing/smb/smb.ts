@@ -173,8 +173,6 @@ export const helptextSharingSmb = {
   action_edit_acl: T('Edit Filesystem ACL'),
   action_edit_acl_dialog: {
     title: T('Error'),
-    message1: T('The path'),
-    message2: T('is in a locked dataset.'),
   },
 
   dialog_warning: T('Warning'),

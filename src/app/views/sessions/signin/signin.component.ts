@@ -96,7 +96,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: FormBuilder,
     private core: CoreService,
     private api: ApiService,
-    private _autofill: AutofillMonitor,
+    private autofill: AutofillMonitor,
     private http: HttpClient,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
@@ -128,9 +128,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           if (this.HAInterval) {
             clearInterval(this.HAInterval);
           }
-          this.getHAStatus();
+          this.getHaStatus();
           this.HAInterval = setInterval(() => {
-            this.getHAStatus();
+            this.getHaStatus();
           }, 6000);
         } else if (this.canLogin()) {
           this.checkBuildtime();
@@ -142,7 +142,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this._autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
+    this.autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
       if (!this.didSetFocus) {
         this.didSetFocus = true;
         this.usernameInput.nativeElement.focus();
@@ -261,7 +261,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.product_type?.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale;
   }
 
-  getHAStatus(): void {
+  getHaStatus(): void {
     if (this.productSupportsHa && !this.checking_status) {
       this.checking_status = true;
       this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe((failoverStatus) => {
@@ -406,11 +406,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     this.snackBar.open(this.translate.instant(message), this.translate.instant('close'), { duration: 4000 });
   }
 
-  openIX(): void {
+  openIx(): void {
     window.open('https://www.ixsystems.com/', '_blank');
   }
 
-  gotoTC(): void {
+  goToTrueCommand(): void {
     this.dialogService.generalDialog({
       title: helptext.tcDialog.title,
       message: helptext.tcDialog.message,

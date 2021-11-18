@@ -136,25 +136,27 @@ export class VolumesListTableConfig implements EntityTableConfig {
         onClick: (row1: VolumesListPool) => {
           const message = helptext.export_keys_message + row1.name;
           const fileName = 'dataset_' + row1.name + '_keys.json';
-          this.dialogService.passwordConfirm(message).pipe(untilDestroyed(this, 'destroy')).subscribe((export_keys) => {
-            if (export_keys) {
-              this.loader.open();
-              const mimetype = 'application/json';
-              this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-                this.loader.close();
-                const url = res[1];
-                this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
-                  .pipe(untilDestroyed(this, 'destroy'))
-                  .subscribe((file) => {
-                    if (res !== null && (res as any) !== '') {
-                      this.storageService.downloadBlob(file, fileName);
-                    }
-                  });
-              }, (e) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(this, e, this.dialogService);
-              });
+          this.dialogService.passwordConfirm(message).pipe(untilDestroyed(this, 'destroy')).subscribe((exportKeys) => {
+            if (!exportKeys) {
+              return;
             }
+
+            this.loader.open();
+            const mimetype = 'application/json';
+            this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
+              this.loader.close();
+              const url = res[1];
+              this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
+                .pipe(untilDestroyed(this, 'destroy'))
+                .subscribe((file) => {
+                  if (res !== null && (res as any) !== '') {
+                    this.storageService.downloadBlob(file, fileName);
+                  }
+                });
+            }, (e) => {
+              this.loader.close();
+              new EntityUtils().handleWsError(this, e, this.dialogService);
+            });
           });
         },
       });
@@ -273,7 +275,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           });
           dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
             dialogRef.close(false);
-            new EntityUtils().handleWSError(this, res, this.dialogService);
+            new EntityUtils().handleWsError(this, res, this.dialogService);
           });
         },
       } as DialogFormConfiguration)),
@@ -343,7 +345,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((err) => {
                   if (err) {
                     dialogRef.close();
-                    new EntityUtils().handleWSError(entityDialog, err, this.dialogService);
+                    new EntityUtils().handleWsError(entityDialog, err, this.dialogService);
                   }
                 });
               },
@@ -563,7 +565,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               },
               (err) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialogService);
+                new EntityUtils().handleWsError(this, err, this.dialogService);
               });
             },
             (err) => {
@@ -614,7 +616,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     },
                     (err) => {
                       this.loader.close();
-                      new EntityUtils().handleWSError(this, err, this.dialogService);
+                      new EntityUtils().handleWsError(this, err, this.dialogService);
                     },
                   );
                 });
@@ -710,7 +712,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     if (res.exc_info && res.exc_info.extra) {
                       (res as any).extra = res.exc_info.extra;
                     }
-                    new EntityUtils().handleWSError(this, res, this.dialogService, conf.fieldConfig);
+                    new EntityUtils().handleWsError(this, res, this.dialogService, conf.fieldConfig);
                   }
                   if (res.state === JobState.Success) {
                     if (entityDialog) {
@@ -727,7 +729,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 },
                 (err) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                  new EntityUtils().handleWsError(this, err, this.dialogService);
                 },
               );
             };
@@ -903,7 +905,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               },
               (err) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialogService);
+                new EntityUtils().handleWsError(this, err, this.dialogService);
               },
             );
 
@@ -928,9 +930,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     this.loader.close();
                     this.parentVolumesListComponent.repaintMe();
                   },
-                  (e_res) => {
+                  (error) => {
                     this.loader.close();
-                    if (e_res.reason.indexOf('Device busy') > -1) {
+                    if (error.reason.indexOf('Device busy') > -1) {
                       this.dialogService.confirm({
                         title: this.translate.instant('Device Busy'),
                         message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName }),
@@ -965,8 +967,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                         this.translate.instant(
                           'Error deleting dataset {datasetName}.', { datasetName },
                         ),
-                        e_res.reason,
-                        e_res.stack,
+                        error.reason,
+                        error.stack,
                       );
                     }
                   },
@@ -1027,8 +1029,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
         name: T('Create Snapshot'),
         label: T('Create Snapshot'),
         onClick: (row: VolumesListDataset) => {
-          this.ws.call('vmware.dataset_has_vms', [row.id, false]).pipe(untilDestroyed(this, 'destroy')).subscribe((vmware_res) => {
-            this.vmware_res_status = vmware_res;
+          this.ws.call('vmware.dataset_has_vms', [row.id, false]).pipe(untilDestroyed(this, 'destroy')).subscribe((datasetHasVms) => {
+            this.vmware_res_status = datasetHasVms;
           });
           this.dialogConf = {
             title: 'One time snapshot of ' + rowData.id,
@@ -1058,8 +1060,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 parent: this,
                 updater: (parent: VolumesListTableConfig) => {
                   parent.recursiveIsChecked = !parent.recursiveIsChecked;
-                  parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(parent, 'destroy')).subscribe((vmware_res) => {
-                    parent.vmware_res_status = vmware_res;
+                  parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(parent, 'destroy')).subscribe((datasetHasVms) => {
+                    parent.vmware_res_status = datasetHasVms;
                     _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' })['isHidden'] = !parent.vmware_res_status;
                   });
                 },
@@ -1284,8 +1286,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   }
                 });
 
-                encryptionTypeControl.valueChanges.pipe(untilDestroyed(this, 'destroy')).subscribe((enc_type) => {
-                  const key = (enc_type === 'key');
+                encryptionTypeControl.valueChanges.pipe(untilDestroyed(this, 'destroy')).subscribe((encType) => {
+                  const key = (encType === 'key');
                   entityDialog.setDisabled('generate_key', !key, !key);
                   if (key) {
                     const genKey = generateKeyControl.value;
@@ -1298,9 +1300,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   entityDialog.setDisabled('pbkdf2iters', key, key);
                 });
 
-                generateKeyControl.valueChanges.pipe(untilDestroyed(this, 'destroy')).subscribe((gen_key) => {
+                generateKeyControl.valueChanges.pipe(untilDestroyed(this, 'destroy')).subscribe((genKey) => {
                   if (!inheritEncryptionControl.value && encryptionTypeControl.value === 'key') {
-                    entityDialog.setDisabled('key', gen_key, gen_key);
+                    entityDialog.setDisabled('key', genKey, genKey);
                   }
                 });
               },
@@ -1323,7 +1325,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       this.parentVolumesListComponent.repaintMe();
                     }, (err: WebsocketError) => {
                       entityDialog.loader.close();
-                      new EntityUtils().handleWSError(entityDialog, err, this.dialogService);
+                      new EntityUtils().handleWsError(entityDialog, err, this.dialogService);
                     });
                   } else { // just close the dialog if the inherit checkbox is checked but we are already inheriting
                     entityDialog.dialogRef.close();
@@ -1364,7 +1366,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((err) => {
                     if (err) {
                       dialogRef.close();
-                      new EntityUtils().handleWSError(entityDialog, err, this.dialogService);
+                      new EntityUtils().handleWsError(entityDialog, err, this.dialogService);
                     }
                   });
                 }
@@ -1420,7 +1422,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
                 dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
                   dialogRef.close(false);
-                  new EntityUtils().handleWSError(this, res, this.dialogService);
+                  new EntityUtils().handleWsError(this, res, this.dialogService);
                 });
               });
             },
@@ -1475,7 +1477,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                         });
                     }, (e) => {
                       this.loader.close();
-                      new EntityUtils().handleWSError(this, e, this.dialogService);
+                      new EntityUtils().handleWsError(this, e, this.dialogService);
                     });
                   });
                 });

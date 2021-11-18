@@ -151,14 +151,14 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
     const accessSet = _.find(this.fieldSets, { name: helptext.rsyncd_fieldset_access });
 
     this.rsyncmod_user = accessSet.config.find((config) => config.name === 'user') as FormComboboxConfig;
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
+    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((users) => {
       users.forEach((user) => {
         this.rsyncmod_user.options.push({ label: user.username, value: user.username });
       });
     });
 
     this.rsyncmod_group = accessSet.config.find((config) => config.name === 'group') as FormComboboxConfig;
-    this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.userService.groupQueryDsCache().pipe(untilDestroyed(this)).subscribe((groups) => {
       groups.forEach((group) => {
         this.rsyncmod_group.options.push({ label: group.group, value: group.group });
       });
@@ -191,7 +191,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = ''): void {
-    this.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.userService.groupQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
       this.rsyncmod_group.searchOptions = groups.map((group) => {
         return { label: group.group, value: group.group };
       });
@@ -199,7 +199,7 @@ export class RYSNCConfigurationFormComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       this.rsyncmod_user.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });

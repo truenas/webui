@@ -561,7 +561,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this, err);
+                    new EntityUtils().handleWsError(this, err);
                   },
                 );
             });
@@ -608,7 +608,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                   },
                   (err) => {
                     this.loader.close();
-                    new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+                    new EntityUtils().handleWsError(entityDialog, err, this.dialog);
                   },
                 );
             },
@@ -656,7 +656,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this, err);
+                    new EntityUtils().handleWsError(this, err);
                   },
                 );
             });
@@ -689,7 +689,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                     );
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this, err);
+                    new EntityUtils().handleWsError(this, err);
                   },
                 );
             });
@@ -729,7 +729,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this, err);
+                    new EntityUtils().handleWsError(this, err);
                   },
                 );
             });
@@ -812,7 +812,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                   },
                   (err) => {
                     this.loader.close();
-                    new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+                    new EntityUtils().handleWsError(entityDialog, err, this.dialog);
                   },
                 );
             },
@@ -860,7 +860,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this, err);
+                    new EntityUtils().handleWsError(this, err);
                   },
                 );
             });
@@ -947,7 +947,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         },
         (err) => {
           row[param] = !row[param];
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         },
       );
   }

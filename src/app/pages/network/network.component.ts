@@ -322,13 +322,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.ws
         .call('failover.licensed')
         .pipe(untilDestroyed(this))
-        .subscribe((is_ha) => {
-          if (is_ha) {
+        .subscribe((isHa) => {
+          if (isHa) {
             this.ws
               .call('failover.disabled_reasons')
               .pipe(untilDestroyed(this))
-              .subscribe((failover_disabled) => {
-                if (failover_disabled.length === 0) {
+              .subscribe((reasons) => {
+                if (reasons.length === 0) {
                   this.ha_enabled = true;
                 }
               });
@@ -436,7 +436,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
                   },
                   (err) => {
                     this.loader.close();
-                    new EntityUtils().handleWSError(this, err, this.dialog);
+                    new EntityUtils().handleWsError(this, err, this.dialog);
                   },
                 );
             }
@@ -492,7 +492,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         },
       );
   }
@@ -523,7 +523,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               },
               (err) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialog);
+                new EntityUtils().handleWsError(this, err, this.dialog);
               },
             );
         }
@@ -535,7 +535,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
   }
 
-  goToHA(): void {
+  goToHa(): void {
     this.router.navigate(['/', 'system', 'failover']);
   }
 

@@ -85,7 +85,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
   ];
 
   constructor(
-    private _router: Router,
+    private router: Router,
     private dialogService: DialogService,
     protected ws: WebSocketService,
     protected aroute: ActivatedRoute,
@@ -101,7 +101,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
 
   afterInit(): void {
     if (!this.diskBucket.ids) {
-      this._router.navigate(this.route_success);
+      this.router.navigate(this.route_success);
     }
   }
 
@@ -137,7 +137,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
               }
             }
             if (isSuccessful) {
-              this._router.navigate(this.route_success);
+              this.router.navigate(this.route_success);
             }
           }
         },

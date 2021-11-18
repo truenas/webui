@@ -214,7 +214,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   }
 
   updateSearchOptions(value = ''): void {
-    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       this.entryField.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });

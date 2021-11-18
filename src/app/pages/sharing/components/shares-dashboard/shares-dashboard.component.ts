@@ -376,7 +376,7 @@ export class SharesDashboardComponent implements AfterViewInit {
         tableComponent.getData();
       }
     }, (err) => {
-      new EntityUtils().handleWSError(this, err, this.dialog);
+      new EntityUtils().handleWsError(this, err, this.dialog);
     });
   }
 
@@ -504,7 +504,7 @@ export class SharesDashboardComponent implements AfterViewInit {
       },
       (err: WebsocketError) => {
         row[param] = !row[param];
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }

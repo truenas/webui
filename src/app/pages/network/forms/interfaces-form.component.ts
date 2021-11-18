@@ -471,15 +471,15 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     });
 
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-        this.failover_fieldset.label = is_ha;
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
+        this.failover_fieldset.label = isHa;
         if (window.localStorage.getItem('product_type').includes(ProductType.Scale)) {
           _.remove(this.failover_fields, (el) => el === 'failover_vhid');
         }
         this.failover_fields.forEach((field) => {
-          entityForm.setDisabled(field, !is_ha, !is_ha);
+          entityForm.setDisabled(field, !isHa, !isHa);
         });
-        if (is_ha) {
+        if (isHa) {
           this.entityForm.formGroup.controls['aliases'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any[]) => {
             let v6Found = false;
             let mismatchFound = false;
