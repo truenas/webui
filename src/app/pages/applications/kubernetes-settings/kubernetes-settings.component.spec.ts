@@ -136,6 +136,7 @@ describe('KubernetesSettingsComponent', () => {
       cluster_cidr: '172.16.1.0/16',
       service_cidr: '172.17.1.0/16',
       cluster_dns_ip: '172.17.1.1',
+      servicelb: true,
     }]);
   });
 });
