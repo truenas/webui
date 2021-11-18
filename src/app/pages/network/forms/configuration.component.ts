@@ -239,10 +239,10 @@ export class ConfigurationComponent implements FormConfiguration {
     protected ws: WebSocketService) { }
 
   preInit(): void {
-    const outbound_network_value_field = this.fieldSets.config('outbound_network_value') as FormSelectConfig;
+    const outboundNetworkValueField = this.fieldSets.config('outbound_network_value') as FormSelectConfig;
     this.ws.call('network.configuration.activity_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
       for (const [value, label] of choices) {
-        outbound_network_value_field.options.push({ label, value });
+        outboundNetworkValueField.options.push({ label, value });
       }
     });
   }
@@ -250,9 +250,9 @@ export class ConfigurationComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     if ([ProductType.Enterprise, ProductType.ScaleEnterprise].includes(window.localStorage.getItem('product_type') as ProductType)) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => { // fixme, stupid race condition makes me need to call this again
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => { // fixme, stupid race condition makes me need to call this again
         this.failover_fields.forEach((field) => {
-          entityEdit.setDisabled(field, !is_ha, !is_ha);
+          entityEdit.setDisabled(field, !isHa, !isHa);
         });
       });
     }

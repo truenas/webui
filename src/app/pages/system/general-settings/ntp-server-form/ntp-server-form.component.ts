@@ -3,11 +3,11 @@ import { Validators, FormBuilder } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
-import { helptext_system_ntpservers as helptext } from 'app/helptext/system/ntp-servers';
+import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-servers';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { ValidationService, WebSocketService, DialogService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +38,7 @@ export class NtpServerFormComponent {
   }
 
   constructor(
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private validationService: ValidationService,
     private dialogService: DialogService,
     private fb: FormBuilder,
@@ -87,11 +87,11 @@ export class NtpServerFormComponent {
     request$.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
       this.cdr.markForCheck();
-      this.modalService.close();
+      this.slideInService.close();
     }, (error) => {
       this.isFormLoading = false;
       this.cdr.markForCheck();
-      new EntityUtils().handleWSError(this, error, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
     });
   }
 }

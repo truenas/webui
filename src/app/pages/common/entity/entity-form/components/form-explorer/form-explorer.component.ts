@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
 import {
   TREE_ACTIONS, KEYS, IActionMapping, TreeNode, ITreeOptions,
-} from 'angular-tree-component';
+} from '@circlon/angular-tree-component';
+import { TranslateService } from '@ngx-translate/core';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { FormExplorerConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
@@ -21,10 +22,8 @@ export class FormExplorerComponent implements Field, OnInit {
   config: FormExplorerConfig;
   group: FormGroup;
   fieldShow: string;
-  nodes: any[];
+  nodes: any; // TODO: Likely ListdirChild[]
 
-  treeVisible = true;
-  private displayFieldName: string;
   private rootSelectable: boolean;
 
   private actionMapping: IActionMapping = {
@@ -70,6 +69,8 @@ export class FormExplorerComponent implements Field, OnInit {
     useTriState: true,
   };
 
+  readonly ExplorerType = ExplorerType;
+
   constructor(private entityFormService: EntityFormService,
     public translate: TranslateService) {}
 
@@ -89,63 +90,30 @@ export class FormExplorerComponent implements Field, OnInit {
       this.customTemplateStringOptions = this.config.customTemplateStringOptions;
       this.config.customTemplateStringOptions.explorer = this;
     }
-    if (this.config.explorerType === 'zvol') {
-      this.displayFieldName = 'name';
-      this.nodes = [{
-        mountpoint: this.config.initial,
-        name: this.config.initial,
-        hasChildren: true,
-        expanded: !this.rootSelectable,
-      }];
-    } else {
-      this.displayFieldName = 'subTitle';
-      this.nodes = [{
-        name: this.config.initial,
-        subTitle: this.config.initial,
-        hasChildren: true,
-        expanded: !this.rootSelectable,
-      }];
-    }
 
-    this.customTemplateStringOptions.displayField = this.displayFieldName;
+    this.nodes = [{
+      name: this.config.initial,
+      subTitle: this.config.initial,
+      hasChildren: true,
+      expanded: !this.rootSelectable,
+    }];
+
+    this.customTemplateStringOptions.displayField = 'subTitle';
   }
 
   getChildren(node: TreeNode): Promise<ListdirChild[]> {
-    return new Promise((resolve) => {
-      switch (this.config.explorerType) {
-        case 'zvol':
-          resolve(this.entityFormService.getDatasetsAndZvolsListChildren() as any);
-          break;
-        case 'directory':
-          resolve(
-            this.entityFormService.getFilesystemListdirChildren(node, this.config.explorerType, this.config.hideDirs),
-          );
-          break;
-        case 'file':
-          resolve(this.entityFormService.getFilesystemListdirChildren(node));
-          break;
-        case 'dataset':
-          resolve(this.entityFormService.getPoolDatasets(this.config.explorerParam ? this.config.explorerParam : []));
-          break;
-        default:
-          resolve(this.entityFormService.getFilesystemListdirChildren(node));
-      }
-    });
-  }
-
-  toggleTree(): void {
-    this.treeVisible = !this.treeVisible;
+    switch (this.config.explorerType) {
+      case ExplorerType.Directory:
+        return this.entityFormService.getFilesystemListdirChildren(node, ExplorerType.Directory);
+      case ExplorerType.Dataset:
+        return this.entityFormService.getPoolDatasets(this.config.explorerParam ? this.config.explorerParam : []);
+      default:
+        return this.entityFormService.getFilesystemListdirChildren(node);
+    }
   }
 
   setPath(node: TreeNode): void {
-    if (this.config.explorerType === 'zvol') {
-      if (!node.data.mountpoint) {
-        node.data.mountpoint = this.config.initial + '/' + node.data.path;
-      }
-      this.group.controls[this.config.name].setValue(node.data.mountpoint);
-    } else {
-      this.group.controls[this.config.name].setValue(node.data.name);
-    }
+    this.group.controls[this.config.name].setValue(node.data.name);
   }
 
   onClick(event: any): void {

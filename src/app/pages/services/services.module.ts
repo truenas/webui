@@ -15,7 +15,6 @@ import { RsyncConfigurationListComponent } from 'app/pages/services/components/s
 import { RYSNCConfigurationFormComponent } from 'app/pages/services/components/service-rsync/rsync-configuration/rsyncmodule/rsync-configuration-form.component';
 import { ServiceRSYNCComponent } from 'app/pages/services/components/service-rsync/service-rsync.component';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
-import { ServiceSMARTComponent } from 'app/pages/services/components/service-smart/service-smart.component';
 import { ServiceSMBComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceSNMPComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
 import { ServiceSSHComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
@@ -25,6 +24,7 @@ import { ServiceWebdavComponent } from 'app/pages/services/components/service-we
 import { AppConfirmModule } from 'app/services/app-confirm/app-confirm.module';
 import { UserService } from 'app/services/user.service';
 import { EntityModule } from '../common/entity/entity.module';
+import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServicesComponent } from './services.component';
 import { routing } from './services.routing';
 
@@ -51,7 +51,7 @@ import { routing } from './services.routing';
     CconfigureRYSNCComponent,
     RsyncConfigurationListComponent,
     RYSNCConfigurationFormComponent,
-    ServiceSMARTComponent,
+    ServiceSmartComponent,
     ServiceNFSComponent,
     ServiceTFTPComponent,
     ServiceUPSComponent,

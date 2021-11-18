@@ -14,7 +14,7 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { LockScreenComponent } from 'app/views/sessions/lock-screen/lock-screen.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
-import { SessionsRoutes } from './sessions.routing';
+import { sessionsRoutes } from './sessions.routing';
 import { SigninComponent } from './signin/signin.component';
 import { SignupComponent } from './signup/signup.component';
 
@@ -33,7 +33,7 @@ import { SignupComponent } from './signup/signup.component';
     MatTooltipModule,
     FlexLayoutModule,
     TranslateModule,
-    RouterModule.forChild(SessionsRoutes),
+    RouterModule.forChild(sessionsRoutes),
   ],
   declarations: [ForgotPasswordComponent, LockScreenComponent, SigninComponent, SignupComponent],
 })

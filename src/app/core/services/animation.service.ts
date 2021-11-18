@@ -128,7 +128,7 @@ export class AnimationService {
   }
 
   private fade(animationTarget: DisplayObject, finishState: string): void {
-    let startOpacity; // animationTarget.target.get('opacity');
+    let startOpacity;
     let finishOpacity;
     if (finishState == 'In') {
       startOpacity = 0;
@@ -246,7 +246,6 @@ export class AnimationService {
       { borderColor: '', borderWidth: 0 },
       ({ borderColor, borderWidth }: { borderColor: string; borderWidth: number }) => animationTarget.element.set({
         boxShadow: `0 0 0 ${borderWidth}px ${borderColor}`,
-        // border: `solid ${borderWidth} ${borderColor}px`
       }),
     );
 

@@ -87,7 +87,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
       });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
-      new EntityUtils().handleWSError(this.entityWizard, res, this.dialogService);
+      new EntityUtils().handleWsError(this.entityWizard, res, this.dialogService);
       dialogRef.close(false);
     });
   }

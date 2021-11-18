@@ -8,10 +8,11 @@ import { combineLatest, Observable, of } from 'rxjs';
 import {
   catchError, debounceTime, map, switchMap, take, tap,
 } from 'rxjs/operators';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import globalHelptext from 'app/helptext/global-helptext';
-import { helptext_sharing_smb, shared } from 'app/helptext/sharing';
+import { helptextSharingSmb, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SmbPresets, SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -50,7 +51,7 @@ export class SMBFormComponent implements FormConfiguration {
 
   fieldSets: FieldSet[] = [
     {
-      name: helptext_sharing_smb.fieldset_basic,
+      name: helptextSharingSmb.fieldset_basic,
       class: 'basic',
       label: true,
       width: '100%',
@@ -58,21 +59,21 @@ export class SMBFormComponent implements FormConfiguration {
         {
           type: 'explorer',
           initial: '/mnt',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           name: 'path',
-          placeholder: helptext_sharing_smb.placeholder_path,
-          tooltip: helptext_sharing_smb.tooltip_path,
+          placeholder: helptextSharingSmb.placeholder_path,
+          tooltip: helptextSharingSmb.tooltip_path,
           required: true,
-          validation: helptext_sharing_smb.validators_path,
+          validation: helptextSharingSmb.validators_path,
         },
         {
           type: 'input',
           name: 'name',
-          placeholder: helptext_sharing_smb.placeholder_name,
-          tooltip: helptext_sharing_smb.tooltip_name,
+          placeholder: helptextSharingSmb.placeholder_name,
+          tooltip: helptextSharingSmb.tooltip_name,
           validation: [forbiddenValues(this.namesInUse), Validators.required],
           hasErrors: false,
-          errors: helptext_sharing_smb.errormsg_name,
+          errors: helptextSharingSmb.errormsg_name,
           blurStatus: true,
           blurEvent: () => this.blurEventName(),
           parent: this,
@@ -80,29 +81,29 @@ export class SMBFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'purpose',
-          placeholder: helptext_sharing_smb.placeholder_purpose,
-          tooltip: helptext_sharing_smb.tooltip_purpose,
+          placeholder: helptextSharingSmb.placeholder_purpose,
+          tooltip: helptextSharingSmb.tooltip_purpose,
           options: [],
           width: '100%',
         },
         {
           type: 'input',
           name: 'comment',
-          placeholder: helptext_sharing_smb.placeholder_comment,
-          tooltip: helptext_sharing_smb.tooltip_comment,
+          placeholder: helptextSharingSmb.placeholder_comment,
+          tooltip: helptextSharingSmb.tooltip_comment,
           width: '100%',
         },
         {
           type: 'checkbox',
           name: 'enabled',
-          placeholder: helptext_sharing_smb.placeholder_enabled,
-          tooltip: helptext_sharing_smb.tooltip_enabled,
+          placeholder: helptextSharingSmb.placeholder_enabled,
+          tooltip: helptextSharingSmb.tooltip_enabled,
           value: true,
         },
       ],
     },
     {
-      name: helptext_sharing_smb.fieldset_access,
+      name: helptextSharingSmb.fieldset_access,
       class: 'access',
       label: true,
       width: '100%',
@@ -110,56 +111,56 @@ export class SMBFormComponent implements FormConfiguration {
         {
           type: 'checkbox',
           name: 'acl',
-          placeholder: helptext_sharing_smb.placeholder_acl,
-          tooltip: helptext_sharing_smb.tooltip_acl,
+          placeholder: helptextSharingSmb.placeholder_acl,
+          tooltip: helptextSharingSmb.tooltip_acl,
           isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'ro',
-          placeholder: helptext_sharing_smb.placeholder_ro,
-          tooltip: helptext_sharing_smb.tooltip_ro,
+          placeholder: helptextSharingSmb.placeholder_ro,
+          tooltip: helptextSharingSmb.tooltip_ro,
           isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'browsable',
-          placeholder: helptext_sharing_smb.placeholder_browsable,
-          tooltip: helptext_sharing_smb.tooltip_browsable,
+          placeholder: helptextSharingSmb.placeholder_browsable,
+          tooltip: helptextSharingSmb.tooltip_browsable,
           isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'guestok',
-          placeholder: helptext_sharing_smb.placeholder_guestok,
-          tooltip: helptext_sharing_smb.tooltip_guestok,
+          placeholder: helptextSharingSmb.placeholder_guestok,
+          tooltip: helptextSharingSmb.tooltip_guestok,
           isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'abe',
-          placeholder: helptext_sharing_smb.placeholder_abe,
-          tooltip: helptext_sharing_smb.tooltip_abe,
+          placeholder: helptextSharingSmb.placeholder_abe,
+          tooltip: helptextSharingSmb.tooltip_abe,
           isHidden: true,
         },
         {
           type: 'chip',
           name: 'hostsallow',
-          placeholder: helptext_sharing_smb.placeholder_hostsallow,
-          tooltip: helptext_sharing_smb.tooltip_hostsallow,
+          placeholder: helptextSharingSmb.placeholder_hostsallow,
+          tooltip: helptextSharingSmb.tooltip_hostsallow,
           isHidden: true,
         },
         {
           type: 'chip',
           name: 'hostsdeny',
-          placeholder: helptext_sharing_smb.placeholder_hostsdeny,
-          tooltip: helptext_sharing_smb.tooltip_hostsdeny,
+          placeholder: helptextSharingSmb.placeholder_hostsdeny,
+          tooltip: helptextSharingSmb.tooltip_hostsdeny,
           isHidden: true,
         },
       ],
     },
     {
-      name: helptext_sharing_smb.fieldset_other,
+      name: helptextSharingSmb.fieldset_other,
       class: 'other',
       label: true,
       width: '100%',
@@ -167,79 +168,79 @@ export class SMBFormComponent implements FormConfiguration {
         {
           type: 'checkbox',
           name: 'home',
-          placeholder: helptext_sharing_smb.placeholder_home,
-          tooltip: helptext_sharing_smb.tooltip_home,
+          placeholder: helptextSharingSmb.placeholder_home,
+          tooltip: helptextSharingSmb.tooltip_home,
           isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'timemachine',
-          placeholder: helptext_sharing_smb.placeholder_timemachine,
-          tooltip: helptext_sharing_smb.tooltip_timemachine,
+          placeholder: helptextSharingSmb.placeholder_timemachine,
+          tooltip: helptextSharingSmb.tooltip_timemachine,
           isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'afp',
-          placeholder: helptext_sharing_smb.placeholder_afp,
-          tooltip: helptext_sharing_smb.tooltip_afp,
+          placeholder: helptextSharingSmb.placeholder_afp,
+          tooltip: helptextSharingSmb.tooltip_afp,
           isHidden: true,
           customEventMethod: () => this.afpConfirm(),
         },
         {
           type: 'checkbox',
           name: 'shadowcopy',
-          placeholder: helptext_sharing_smb.placeholder_shadowcopy,
-          tooltip: helptext_sharing_smb.tooltip_shadowcopy,
+          placeholder: helptextSharingSmb.placeholder_shadowcopy,
+          tooltip: helptextSharingSmb.tooltip_shadowcopy,
           isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'recyclebin',
-          placeholder: helptext_sharing_smb.placeholder_recyclebin,
-          tooltip: helptext_sharing_smb.tooltip_recyclebin,
+          placeholder: helptextSharingSmb.placeholder_recyclebin,
+          tooltip: helptextSharingSmb.tooltip_recyclebin,
           isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'aapl_name_mangling',
-          placeholder: helptext_sharing_smb.placeholder_aapl_name_mangling,
-          tooltip: helptext_sharing_smb.tooltip_aapl_name_mangling,
+          placeholder: helptextSharingSmb.placeholder_aapl_name_mangling,
+          tooltip: helptextSharingSmb.tooltip_aapl_name_mangling,
           isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'streams',
-          placeholder: helptext_sharing_smb.placeholder_streams,
-          tooltip: helptext_sharing_smb.tooltip_streams,
+          placeholder: helptextSharingSmb.placeholder_streams,
+          tooltip: helptextSharingSmb.tooltip_streams,
           isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'durablehandle',
-          placeholder: helptext_sharing_smb.placeholder_durablehandle,
-          tooltip: helptext_sharing_smb.tooltip_durablehandle,
+          placeholder: helptextSharingSmb.placeholder_durablehandle,
+          tooltip: helptextSharingSmb.tooltip_durablehandle,
           isHidden: true,
         },
         {
           type: 'checkbox',
           name: 'fsrvp',
-          placeholder: helptext_sharing_smb.placeholder_fsrvp,
-          tooltip: helptext_sharing_smb.tooltip_fsrvp,
+          placeholder: helptextSharingSmb.placeholder_fsrvp,
+          tooltip: helptextSharingSmb.tooltip_fsrvp,
           isHidden: true,
         },
         {
           type: 'input',
           name: 'path_suffix',
-          placeholder: helptext_sharing_smb.placeholder_path_suffix,
-          tooltip: helptext_sharing_smb.tooltip_path_suffix,
+          placeholder: helptextSharingSmb.placeholder_path_suffix,
+          tooltip: helptextSharingSmb.tooltip_path_suffix,
           isHidden: true,
         },
         {
           type: 'textarea',
           name: 'auxsmbconf',
-          placeholder: helptext_sharing_smb.placeholder_auxsmbconf,
-          tooltip: helptext_sharing_smb.tooltip_auxsmbconf,
+          placeholder: helptextSharingSmb.placeholder_auxsmbconf,
+          tooltip: helptextSharingSmb.tooltip_auxsmbconf,
           isHidden: true,
         },
       ],
@@ -367,14 +368,14 @@ export class SMBFormComponent implements FormConfiguration {
 
   restartService(entityForm: EntityFormComponent, source: string): void {
     const confirmOptions = {
-      title: helptext_sharing_smb.restart_smb_dialog.title,
+      title: helptextSharingSmb.restart_smb_dialog.title,
       message:
         source === 'timemachine'
-          ? helptext_sharing_smb.restart_smb_dialog.message_time_machine
-          : helptext_sharing_smb.restart_smb_dialog.message_allow_deny,
+          ? helptextSharingSmb.restart_smb_dialog.message_time_machine
+          : helptextSharingSmb.restart_smb_dialog.message_allow_deny,
       hideCheckBox: true,
-      buttonMsg: helptext_sharing_smb.restart_smb_dialog.title,
-      cancelMsg: helptext_sharing_smb.restart_smb_dialog.cancel_btn,
+      buttonMsg: helptextSharingSmb.restart_smb_dialog.title,
+      cancelMsg: helptextSharingSmb.restart_smb_dialog.cancel_btn,
     };
     this.dialog.confirm(confirmOptions).pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res) {
@@ -384,8 +385,8 @@ export class SMBFormComponent implements FormConfiguration {
             this.loader.close();
             this.dialog
               .info(
-                helptext_sharing_smb.restarted_smb_dialog.title,
-                helptext_sharing_smb.restarted_smb_dialog.message,
+                helptextSharingSmb.restarted_smb_dialog.title,
+                helptextSharingSmb.restarted_smb_dialog.message,
                 '250px',
               )
               .pipe(untilDestroyed(this)).subscribe(() => {
@@ -427,29 +428,29 @@ export class SMBFormComponent implements FormConfiguration {
            * If share does have trivial ACL, check if user wants to edit dataset permissions. If not,
            * nav to SMB shares list view.
            */
-          const promptUserACLEdit = (): Observable<[boolean, Record<string, unknown>] | [boolean]> => {
+          const promptUserAclEdit = (): Observable<[boolean, Record<string, unknown>] | [boolean]> => {
             return this.ws.call('filesystem.acl_is_trivial', [sharePath]).pipe(
-              switchMap((isTrivialACL) => {
+              switchMap((isTrivialAcl) => {
                 let nextStep;
                 // If share does not have trivial ACL, move on. Otherwise, perform some async data-gathering operations
-                if (!isTrivialACL || !datasetId.includes('/') || this.productType.includes(ProductType.Scale)) {
+                if (!isTrivialAcl || !datasetId.includes('/') || this.productType.includes(ProductType.Scale)) {
                   nextStep = combineLatest([of(false), of({})]);
                 } else {
                   nextStep = combineLatest([
                     /* Check if user wants to edit the share's ACL */
                     this.dialog.confirm({
-                      title: helptext_sharing_smb.dialog_edit_acl_title,
-                      message: helptext_sharing_smb.dialog_edit_acl_message,
+                      title: helptextSharingSmb.dialog_edit_acl_title,
+                      message: helptextSharingSmb.dialog_edit_acl_message,
                       hideCheckBox: true,
-                      buttonMsg: helptext_sharing_smb.dialog_edit_acl_button,
+                      buttonMsg: helptextSharingSmb.dialog_edit_acl_button,
                     }),
                   ]);
                 }
 
                 return nextStep;
               }),
-              tap(([doConfigureACL]) => {
-                if (doConfigureACL) {
+              tap(([doConfigureAcl]) => {
+                if (doConfigureAcl) {
                   this.router.navigate(['/'].concat(aclRoute));
                 } else {
                   this.dialog.closeAllDialogs();
@@ -464,7 +465,7 @@ export class SMBFormComponent implements FormConfiguration {
               map((response) => _.find(response, { service: ServiceName.Cifs })),
               switchMap((cifsService) => {
                 if (cifsService.enable) {
-                  return promptUserACLEdit();
+                  return promptUserAclEdit();
                 }
 
                 /**
@@ -498,14 +499,14 @@ export class SMBFormComponent implements FormConfiguration {
                       }
                       return of(true);
                     }),
-                    switchMap(promptUserACLEdit),
+                    switchMap(promptUserAclEdit),
                   );
               }),
               untilDestroyed(this),
             )
             .subscribe(
               () => {},
-              (error) => new EntityUtils().handleWSError(this, error, this.dialog),
+              (error) => new EntityUtils().handleWsError(this, error, this.dialog),
             );
         }
       },
@@ -514,7 +515,7 @@ export class SMBFormComponent implements FormConfiguration {
           this.dialog.closeAllDialogs();
         } else {
           // If some other err comes back from filesystem.path_is_encrypted
-          this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, err.reason, err.trace.formatted);
+          this.dialog.errorReport(helptextSharingSmb.action_edit_acl_dialog.title, err.reason, err.trace.formatted);
         }
       },
     );
@@ -534,12 +535,12 @@ export class SMBFormComponent implements FormConfiguration {
         }
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
 
     this.entityForm = entityForm;
-    this.title = entityForm.isNew ? helptext_sharing_smb.formTitleAdd : helptext_sharing_smb.formTitleEdit;
+    this.title = entityForm.isNew ? helptextSharingSmb.formTitleAdd : helptextSharingSmb.formTitleEdit;
     if (entityForm.isNew) {
       entityForm.formGroup.controls['browsable'].setValue(true);
     } else {
@@ -548,10 +549,10 @@ export class SMBFormComponent implements FormConfiguration {
           if (value !== this.mangle && !this.mangleWarningSent) {
             this.mangleWarningSent = true;
             this.dialog.confirm({
-              title: helptext_sharing_smb.manglingDialog.title,
-              message: helptext_sharing_smb.manglingDialog.message,
+              title: helptextSharingSmb.manglingDialog.title,
+              message: helptextSharingSmb.manglingDialog.message,
               hideCheckBox: true,
-              buttonMsg: helptext_sharing_smb.manglingDialog.action,
+              buttonMsg: helptextSharingSmb.manglingDialog.action,
               hideCancel: true,
             });
           }
@@ -571,19 +572,19 @@ export class SMBFormComponent implements FormConfiguration {
         this.ws.call('filesystem.acl_is_trivial', [path]).pipe(untilDestroyed(this)).subscribe((res) => {
           if (!res && !entityForm.formGroup.controls['acl'].value) {
             this.stripACLWarningSent = true;
-            this.showStripACLWarning();
+            this.showStripAclWarning();
           }
         });
       }
     });
 
-    const path_fc = entityForm.formGroup.controls['path'];
+    const pathControl = entityForm.formGroup.controls['path'];
     entityForm.formGroup.controls['acl'].valueChanges.pipe(debounceTime(100)).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res && path_fc.value && !this.stripACLWarningSent) {
-        this.ws.call('filesystem.acl_is_trivial', [path_fc.value]).pipe(untilDestroyed(this)).subscribe((res) => {
+      if (!res && pathControl.value && !this.stripACLWarningSent) {
+        this.ws.call('filesystem.acl_is_trivial', [pathControl.value]).pipe(untilDestroyed(this)).subscribe((res) => {
           if (!res) {
             this.stripACLWarningSent = true;
-            this.showStripACLWarning();
+            this.showStripAclWarning();
           }
         });
       }
@@ -617,10 +618,10 @@ export class SMBFormComponent implements FormConfiguration {
     const afpControl = this.entityForm.formGroup.controls['afp'];
 
     this.dialog.confirm({
-      title: helptext_sharing_smb.afpDialog_title,
-      message: helptext_sharing_smb.afpDialog_message,
+      title: helptextSharingSmb.afpDialog_title,
+      message: helptextSharingSmb.afpDialog_message,
       hideCheckBox: false,
-      buttonMsg: helptext_sharing_smb.afpDialog_button,
+      buttonMsg: helptextSharingSmb.afpDialog_button,
       hideCancel: false,
     }).pipe(untilDestroyed(this)).subscribe((dialogResult: boolean) => {
       if (dialogResult) {
@@ -629,12 +630,12 @@ export class SMBFormComponent implements FormConfiguration {
     });
   }
 
-  showStripACLWarning(): void {
+  showStripAclWarning(): void {
     this.dialog.confirm({
-      title: helptext_sharing_smb.stripACLDialog.title,
-      message: helptext_sharing_smb.stripACLDialog.message,
+      title: helptextSharingSmb.stripACLDialog.title,
+      message: helptextSharingSmb.stripACLDialog.message,
       hideCheckBox: true,
-      buttonMsg: helptext_sharing_smb.stripACLDialog.button,
+      buttonMsg: helptextSharingSmb.stripACLDialog.button,
       hideCancel: true,
     });
   }

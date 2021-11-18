@@ -3,11 +3,11 @@ import {
 } from '@angular/core';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
+import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -23,15 +23,15 @@ export class KernelFormComponent {
   });
 
   readonly tooltips = {
-    autotune: helptext_system_advanced.autotune_tooltip,
-    debugkernel: helptext_system_advanced.debugkernel_tooltip,
+    autotune: helptextSystemAdvanced.autotune_tooltip,
+    debugkernel: helptextSystemAdvanced.debugkernel_tooltip,
   };
 
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -52,11 +52,12 @@ export class KernelFormComponent {
     this.isFormLoading = true;
     this.ws.call('system.advanced.update', [commonBody]).pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
-      this.modalService.close();
+      this.cdr.markForCheck();
+      this.slideInService.close();
       this.sysGeneralService.refreshSysGeneral();
     }, (res) => {
       this.isFormLoading = false;
-      new EntityUtils().handleWSError(this, res);
+      new EntityUtils().handleWsError(this, res);
       this.cdr.markForCheck();
     });
   }

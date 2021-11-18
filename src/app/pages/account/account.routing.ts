@@ -7,7 +7,6 @@ import { BackupCredentialsComponent } from '../credentials/backup-credentials/ba
 import { CertificatesDashComponent } from '../credentials/certificates-dash/certificates-dash.component';
 import { TwoFactorComponent } from '../system/two-factor/two-factor.component';
 import { MembersComponent } from './groups/members/members.component';
-import { ChangePasswordComponent } from './users/change-password/change-password.component';
 import { UserFormComponent } from './users/user-form/user-form.component';
 import { UserListComponent } from './users/user-list/user-list.component';
 
@@ -31,12 +30,7 @@ export const routes: Routes = [{
         path: 'edit/:pk',
         component: UserFormComponent,
         data: { title: 'Edit', breadcrumb: 'Edit' },
-      }, {
-        path: 'change-password',
-        component: ChangePasswordComponent,
-        data: { title: 'Change Password', breadcrumb: 'Change Password' },
-      },
-      ],
+      }],
     }, {
       path: 'groups',
       data: { title: 'Groups', breadcrumb: 'Groups', icon: 'group_work' },

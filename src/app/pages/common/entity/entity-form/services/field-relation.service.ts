@@ -76,14 +76,14 @@ export class FieldRelationService {
           controlValue = control.value;
         }
 
-        let disable_action = RelationAction.Disable;
-        let enable_action = RelationAction.Enable;
+        let disableAction = RelationAction.Disable;
+        let enableAction = RelationAction.Enable;
         if (!isDisable) {
-          disable_action = RelationAction.Hide;
-          enable_action = RelationAction.Show;
+          disableAction = RelationAction.Hide;
+          enableAction = RelationAction.Show;
         }
 
-        if (hasControlValue && relGroup.action === disable_action) {
+        if (hasControlValue && relGroup.action === disableAction) {
           if (index > 0 && relGroup.connective === RelationConnection.And && !toBeDisabled) {
             return false;
           }
@@ -94,7 +94,7 @@ export class FieldRelationService {
             || this.checkStatusConditionIsTrue(rel, control);
         }
 
-        if (hasControlValue && relGroup.action === enable_action) {
+        if (hasControlValue && relGroup.action === enableAction) {
           if (index > 0 && relGroup.connective === RelationConnection.And && toBeDisabled) {
             return true;
           }

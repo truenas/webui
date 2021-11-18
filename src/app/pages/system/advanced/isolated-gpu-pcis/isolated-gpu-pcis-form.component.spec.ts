@@ -11,7 +11,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { IsolatedGpuPcisFormComponent } from 'app/pages/system/advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('IsolatedGpuPcisFormComponent', () => {
   let spectator: Spectator<IsolatedGpuPcisFormComponent>;
@@ -40,12 +40,12 @@ describe('IsolatedGpuPcisFormComponent', () => {
       mockWebsocket([
         mockCall('device.get_info', [mockDeviceFirst, mockDeviceSecond]),
         mockCall('system.advanced.config', {
-          isolated_gpu_pci_ids: [],
+          isolated_gpu_pci_ids: ['0000:00:02.0'],
         } as AdvancedConfig),
         mockCall('system.advanced.update'),
       ]),
       mockProvider(SystemGeneralService),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
     ],
@@ -62,7 +62,7 @@ describe('IsolatedGpuPcisFormComponent', () => {
     const values = await form.getValues();
 
     expect(values).toEqual({
-      "GPU's": [],
+      "GPU's": ['Intel Corporation HD Graphics 510'],
     });
   });
 

@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { shared, helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { shared, helptextSharingIscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -24,7 +24,7 @@ export class GlobalconfigurationComponent implements FormConfiguration {
 
   fieldSets: FieldSet[] = [
     {
-      name: helptext_sharing_iscsi.fieldset_globalconf,
+      name: helptextSharingIscsi.fieldset_globalconf,
       label: true,
       class: 'globalconf',
       width: '100%',
@@ -32,29 +32,29 @@ export class GlobalconfigurationComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'basename',
-          placeholder: helptext_sharing_iscsi.globalconf_placeholder_basename,
-          tooltip: helptext_sharing_iscsi.globalconf_tooltip_basename,
+          placeholder: helptextSharingIscsi.globalconf_placeholder_basename,
+          tooltip: helptextSharingIscsi.globalconf_tooltip_basename,
           required: true,
-          validation: helptext_sharing_iscsi.globalconf_validators_basename,
+          validation: helptextSharingIscsi.globalconf_validators_basename,
         },
         {
           type: 'chip',
           name: 'isns_servers',
-          placeholder: helptext_sharing_iscsi.globalconf_placeholder_isns_servers,
-          tooltip: helptext_sharing_iscsi.globalconf_tooltip_isns_servers,
+          placeholder: helptextSharingIscsi.globalconf_placeholder_isns_servers,
+          tooltip: helptextSharingIscsi.globalconf_tooltip_isns_servers,
         },
         {
           type: 'input',
           name: 'pool_avail_threshold',
-          placeholder: helptext_sharing_iscsi.globalconf_placeholder_pool_avail_threshold,
-          tooltip: helptext_sharing_iscsi.globalconf_tooltip_pool_avail_threshold,
+          placeholder: helptextSharingIscsi.globalconf_placeholder_pool_avail_threshold,
+          tooltip: helptextSharingIscsi.globalconf_tooltip_pool_avail_threshold,
           inputType: 'number',
         },
         {
           type: 'checkbox',
           name: 'alua',
-          placeholder: helptext_sharing_iscsi.globalconf_placeholder_alua,
-          tooltip: helptext_sharing_iscsi.globalconf_tooltip_alua,
+          placeholder: helptextSharingIscsi.globalconf_placeholder_alua,
+          tooltip: helptextSharingIscsi.globalconf_tooltip_alua,
           isHidden: true,
           disabled: true,
         },
@@ -86,35 +86,37 @@ export class GlobalconfigurationComponent implements FormConfiguration {
   }
 
   afterSubmit(): void {
-    this.ws.call('service.query', [[]]).pipe(untilDestroyed(this)).subscribe((service_res) => {
-      const service = _.find(service_res, { service: ServiceName.Iscsi });
-      if (!service.enable) {
-        this.dialogService.confirm({
-          title: shared.dialog_title,
-          message: shared.dialog_message,
-          hideCheckBox: true,
-          buttonMsg: shared.dialog_button,
-        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-          this.loader.open();
-          this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
-            this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
-              this.loader.close();
-              this.dialogService.info(
-                this.translate.instant('{service} Service', { service: 'iSCSI' }),
-                this.translate.instant('The {service} service has been enabled.', { service: 'iSCSI' }),
-                '250px',
-                'info',
-              );
-            }, (err) => {
-              this.loader.close();
-              this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
-            });
+    this.ws.call('service.query', [[]]).pipe(untilDestroyed(this)).subscribe((services) => {
+      const service = _.find(services, { service: ServiceName.Iscsi });
+      if (service.enable) {
+        return;
+      }
+
+      this.dialogService.confirm({
+        title: shared.dialog_title,
+        message: shared.dialog_message,
+        hideCheckBox: true,
+        buttonMsg: shared.dialog_button,
+      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        this.loader.open();
+        this.ws.call('service.update', [service.id, { enable: true }]).pipe(untilDestroyed(this)).subscribe(() => {
+          this.ws.call('service.start', [service.service]).pipe(untilDestroyed(this)).subscribe(() => {
+            this.loader.close();
+            this.dialogService.info(
+              this.translate.instant('{service} Service', { service: 'iSCSI' }),
+              this.translate.instant('The {service} service has been enabled.', { service: 'iSCSI' }),
+              '250px',
+              'info',
+            );
           }, (err) => {
             this.loader.close();
             this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
           });
+        }, (err) => {
+          this.loader.close();
+          this.dialogService.errorReport(err.error, err.reason, err.trace.formatted);
         });
-      }
+      });
     });
   }
 }

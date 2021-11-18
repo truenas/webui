@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Subs } from 'app/interfaces/subs.interface';

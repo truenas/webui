@@ -18,7 +18,7 @@ export class SysInfoComponent {
 
   // Additional fields for licensed customers
   @Input() customer_name: string;
-  @Input() features: string;
+  @Input() features: string[];
   @Input() contract_type: string;
   @Input() expiration_date: string;
   @Input() add_hardware: string;

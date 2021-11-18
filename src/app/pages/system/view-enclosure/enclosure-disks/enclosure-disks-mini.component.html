@@ -21,8 +21,8 @@
   </mat-toolbar>
 
   <mat-card-content #cardcontent
-    fxLayout="row">
-    <div id="chassis" fxFlex="60%">
+    fxLayout="row wrap">
+    <div id="chassis" fxFlex="640px" fxFlex.lt-lg="100%">
       <!-- LEGEND -->
       <div class="header-container" id="legend">
         <h3 class="header">{{ 'Pools' | translate }}</h3>
@@ -41,13 +41,12 @@
 
 
       <!-- VISUALIZER -->
-      <div #disksoverview id="disks-overview" [class]="currentView">
-        <div #visualizer class="visualizer dom-overlay" id="visualizer"></div>
+      <div fxLayout="row" #disksoverview id="disks-overview" [class]="currentView">
 
         <!-- DISK NAMES -->
-        <div class="disks-overlay names" *ngIf="enclosure && enclosure.driveTrayObjects">
+        <div fxFlex class="disks-overlay names" *ngIf="enclosure && enclosure.driveTrayObjects">
           <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
-            <div class="slot-label-wrapper" style.top="calc({{stackPositions()[i].y}}px + 6px)">
+            <div class="slot-label-wrapper" [style.top]="'calc(' + stackPositions()[i].y + 'px + 6px)'">
               <div>
                 <div class="slot-label fn-theme-primary">
                   <strong>{{i + 1}}</strong>
@@ -62,10 +61,12 @@
           </ng-container>
         </div>
 
+        <div #visualizer class="visualizer dom-overlay" id="visualizer"></div>
+
         <!-- DISK STATUS -->
-        <div *ngIf="enclosure" class="disks-overlay status">
+        <div fxFlex *ngIf="enclosure" class="disks-overlay status">
           <ng-container *ngFor="let dt of enclosure.driveTrayObjects; let i=index">
-            <div *ngIf="findDiskBySlotNumber(i + 1)" style.top="calc({{stackPositions()[i].y}}px + 8px);">
+            <div *ngIf="findDiskBySlotNumber(i + 1)" [style.top]="'calc(' + stackPositions()[i].y + 'px + 8px)'">
               <div class="status-icon">
                 <mat-icon
                   [ngClass]="{'online': findDiskBySlotNumber(i + 1).status == 'ONLINE', 'alert':findDiskBySlotNumber(i + 1).status !== 'ONLINE' && findDiskBySlotNumber(i + 1).status !== 'AVAILABLE'}"
@@ -100,8 +101,14 @@
                 <span *ngIf="selectedVdev.topology"> {{ $any(selectedVdev.topology) == 'None' ? '' : '(' + selectedVdev.topology.toUpperCase() + ')'}}</span>
               </li>
 
+              <li><strong>{{ 'Model' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.model}}</li>
               <li><strong>{{ 'Serial' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.serial}}</li>
               <li><strong>{{ 'Status' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.status}}</li>
+              <li>
+                <strong>{{ 'Rotation Rate' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;
+                <ng-container *ngIf="selectedDisk.rotationrate; else flash">{{selectedDisk.rotationrate}}{{'RPM' | translate}}</ng-container>
+                <ng-template #flash>{{'Not Available' | translate}}</ng-template>
+              </li>
               <li><strong>{{ 'Advanced Power Management' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.advpowermgmt}}</li>
               <li><strong>{{ 'S.M.A.R.T. Enabled' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.togglesmart ? 'Yes' : 'No'}}</li>
               <li><strong>{{ 'S.M.A.R.T. Options' | translate }}:</strong>  &nbsp;&nbsp;&nbsp;{{selectedDisk.smartoptions ? selectedDisk.smartoptions : 'None'}}</li>

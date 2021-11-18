@@ -137,14 +137,14 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     private core: CoreService,
     protected translate: TranslateService,
   ) {
-    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unused_res) => {
-      this.unused = unused_res;
-    }, (err) => new EntityUtils().handleWSError(this, err));
+    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unused) => {
+      this.unused = unused;
+    }, (err) => new EntityUtils().handleWsError(this, err));
     this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.SMARTdiskChoices = res;
       },
-      (err) => new EntityUtils().handleWSError(this, err),
+      (err) => new EntityUtils().handleWsError(this, err),
     );
   }
 
@@ -349,7 +349,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
             this.generateManualTestSummary(res);
           },
           (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialogService, conf.fieldConfig);
+            new EntityUtils().handleWsError(this, err, this.dialogService, conf.fieldConfig);
           },
         );
       },
@@ -358,23 +358,23 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
   }
 
   generateManualTestSummary(res: ManualSmartTest[]): void {
-    let success_note = '<h4>Expected Finished Time:</h4>';
+    let successNote = '<h4>Expected Finished Time:</h4>';
     let hasSuccessNote = false;
-    let fail_note = '<h4>Errors:</h4>';
+    let failNote = '<h4>Errors:</h4>';
     let hasFailNote = false;
 
     res.forEach((test) => {
       if (test.expected_result_time) {
         hasSuccessNote = true;
-        success_note += `<b>${test.disk}</b>: ${this.localeService.formatDateTime(test.expected_result_time.$date)}<br>`;
+        successNote += `<b>${test.disk}</b>: ${this.localeService.formatDateTime(test.expected_result_time.$date)}<br>`;
       } else if (test.error) {
         hasFailNote = true;
-        fail_note += `<b>${test.disk}</b><br>${test.error}<br>`;
+        failNote += `<b>${test.disk}</b><br>${test.error}<br>`;
       }
     });
     this.dialogService.info(
       this.translate.instant('Manual Test Summary'),
-      (hasSuccessNote ? success_note + '<br>' : '') + (hasFailNote ? fail_note : ''),
+      (hasSuccessNote ? successNote + '<br>' : '') + (hasFailNote ? failNote : ''),
       '600px',
       'info',
       true,

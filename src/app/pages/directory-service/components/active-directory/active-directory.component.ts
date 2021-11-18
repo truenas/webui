@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -45,14 +46,14 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       id: helptext.activedirectory_custactions_basic_id,
       name: global_helptext.basic_options,
       function: () => {
-        this.setBasicMode(true);
+        this.isBasicMode = true;
       },
     },
     {
       id: helptext.activedirectory_custactions_advanced_id,
       name: global_helptext.advanced_options,
       function: () => {
-        this.setBasicMode(false);
+        this.isBasicMode = false;
       },
     },
     {
@@ -116,7 +117,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
                 },
                 (err: WebsocketError) => {
                   entityDialog.loader.close();
-                  new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, this.dialogservice);
+                  new EntityUtils().handleWsError(helptext.ad_leave_domain_dialog.error, err, this.dialogservice);
                 });
             },
           },
@@ -324,14 +325,16 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   preInit(entityForm: EntityFormComponent): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-        if (is_ha) {
-          this.ws.call('smb.get_smb_ha_mode').pipe(untilDestroyed(this)).subscribe((ha_mode) => {
-            if (ha_mode === 'LEGACY') {
-              entityForm.setDisabled('netbiosname_b', false, false);
-            }
-          });
+      this.ws.call('failover.licensed').pipe(
+        filter(Boolean),
+        switchMap(() => this.ws.call('smb.get_smb_ha_mode')),
+        untilDestroyed(this),
+      ).subscribe((haMode) => {
+        if (haMode !== 'LEGACY') {
+          return;
         }
+
+        entityForm.setDisabled('netbiosname_b', false, false);
       });
     }
     this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
@@ -387,10 +390,6 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
 
     entityEdit.submitFunction = this.submitFunction;
-  }
-
-  setBasicMode(basic_mode: boolean): void {
-    this.isBasicMode = basic_mode;
   }
 
   beforeSubmit(data: any): void {
@@ -464,7 +463,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       this.modalService.refreshTable();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWSError(this, error, this.dialogservice);
+      new EntityUtils().handleWsError(this, error, this.dialogservice);
       this.modalService.refreshTable();
       dialogRef.close();
     });

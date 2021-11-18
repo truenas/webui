@@ -1,204 +1,132 @@
 import {
-  ApplicationRef, Component, Injector,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { AbstractControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import * as _ from 'lodash';
-import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-s3';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { S3Config, S3ConfigUpdate } from 'app/interfaces/s3-config.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import {
-  DialogService, SystemGeneralService, WebSocketService,
-} from 'app/services';
+import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { FilesystemService } from 'app/services/filesystem.service';
 
 @UntilDestroy()
 @Component({
-  selector: 's3-edit',
-  template: '<entity-form [conf]="this"></entity-form>',
-  providers: [SystemGeneralService],
+  templateUrl: './service-s3.component.html',
+  styleUrls: ['./service-s3.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
+export class ServiceS3Component implements OnInit {
+  isFormLoading = false;
 
-export class ServiceS3Component implements FormConfiguration {
-  queryCall = 's3.config' as const;
-  updateCall = 's3.update' as const;
-  route_success: string[] = ['services'];
-  private certificate: FormSelectConfig;
-  private initial_path: string;
+  form = this.fb.group({
+    bindip: [''],
+    bindport: [
+      null as number,
+      [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)],
+    ],
+    access_key: [
+      '',
+      [Validators.minLength(5), Validators.maxLength(20), Validators.required, regexValidator(/^\w+$/)],
+    ],
+    secret_key: [
+      '',
+      [Validators.minLength(8), Validators.maxLength(40), regexValidator(/^\w+$/)],
+    ],
+    storage_path: ['', Validators.required],
+    browser: [false],
+    certificate: [null as number],
+  });
+
+  readonly tooltips = {
+    bindip: helptext.bindip_tooltip,
+    bindport: helptext.bindport_tooltip,
+    access_key: helptext.access_key_tooltip,
+    secret_key: helptext.secret_key_tooltip,
+    storage_path: helptext.storage_path_tooltip,
+    browser: helptext.browser_tooltip,
+    certificate: helptext.certificate_tooltip,
+  };
+
+  readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
+  readonly bindIpOptions$ = this.ws.call('s3.bindip_choices').pipe(choicesToOptions());
+  readonly certificateOptions$ = this.systemGeneralService.getCertificates().pipe(
+    map((certificates) => {
+      return [
+        { label: '---', value: null },
+        ...certificates.map((certificate) => ({
+          label: certificate.name,
+          value: certificate.id,
+        })),
+      ];
+    }),
+  );
+
+  private initialPath: string;
   private warned = false;
-  private validBindIps: string[] = [];
-  title = helptext.formTitle;
-
-  fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.fieldset_title,
-      class: 'group-configuration-form',
-      label: true,
-      config: [
-        {
-          type: 'select',
-          name: 'bindip',
-          placeholder: helptext.bindip_placeholder,
-          tooltip: helptext.bindip_tooltip,
-          options: helptext.bindip_options,
-        },
-        {
-          type: 'input',
-          name: 'bindport',
-          placeholder: helptext.bindport_placeholder,
-          tooltip: helptext.bindport_tooltip,
-          value: '9000',
-          required: true,
-          validation: helptext.bindport_validation,
-        },
-        {
-          type: 'input',
-          name: 'access_key',
-          placeholder: helptext.access_key_placeholder,
-          tooltip: helptext.access_key_tooltip,
-          required: true,
-          validation: helptext.access_key_validation,
-        },
-        {
-          type: 'input',
-          name: 'secret_key',
-          placeholder: helptext.secret_key_placeholder,
-          togglePw: true,
-          tooltip: helptext.secret_key_tooltip,
-          inputType: 'password',
-          validation: helptext.secret_key_validation,
-        },
-        {
-          type: 'explorer',
-          initial: '/mnt',
-          explorerType: 'directory',
-          name: 'storage_path',
-          placeholder: helptext.storage_path_placeholder,
-          tooltip: helptext.storage_path_tooltip,
-          required: true,
-          validation: helptext.storage_path_validation,
-        },
-        {
-          type: 'checkbox',
-          name: 'browser',
-          placeholder: helptext.browser_placeholder,
-          tooltip: helptext.browser_tooltip,
-        },
-        /*  This is to be enabled when the mode feature is finished and fully implemented for S3
-      {
-        type : 'select',
-        name : 'mode',
-        placeholder : helptext.mode_placeholder,
-        options : helptext.mode_options
-      },
-  */
-        {
-          type: 'select',
-          name: 'certificate',
-          placeholder: helptext.certificate_placeholder,
-          tooltip: helptext.certificate_tooltip,
-          options: [{ label: '---', value: null }],
-        },
-      ],
-    }, {
-      name: 'divider',
-      divider: true,
-    }];
-  protected storage_path: AbstractControl;
 
   constructor(
-    protected router: Router,
-    protected route: ActivatedRoute,
-    protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
-    protected systemGeneralService: SystemGeneralService,
+    private ws: WebSocketService,
+    private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder,
+    private systemGeneralService: SystemGeneralService,
     private dialog: DialogService,
+    private router: Router,
+    private filesystemService: FilesystemService,
   ) {}
 
-  afterInit(entityForm: EntityFormComponent): void {
-    this.storage_path = entityForm.formGroup.controls['storage_path'];
-    this.storage_path.valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      if (res && res != this.initial_path && !this.warned) {
-        this.dialog
-          .confirm({
-            title: helptext.path_warning_title,
-            message: helptext.path_warning_msg,
-          })
-          .pipe(untilDestroyed(this))
-          .subscribe(() => {
-            if (!window.confirm) {
-              this.storage_path.setValue(this.initial_path);
-            } else {
-              this.warned = true;
-            }
-          });
-      }
+  ngOnInit(): void {
+    this.ws.call('s3.config').pipe(untilDestroyed(this)).subscribe((config) => {
+      this.form.patchValue(config, { emitEvent: false });
+      this.initialPath = config.storage_path;
     });
-    this.systemGeneralService.getCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.certificate = _.find(this.fieldConfig, { name: 'certificate' }) as FormSelectConfig;
-      if (res.length > 0) {
-        res.forEach((item) => {
-          this.certificate.options.push({ label: item.name, value: item.id });
-        });
-      }
-    });
-    this.ws
-      .call('s3.bindip_choices')
-      .pipe(
-        map((response) => {
-          return Object.keys(response || {}).map((key) => ({
-            label: response[key],
-            value: key,
-          }));
-        }),
-      )
-      .pipe(untilDestroyed(this)).subscribe((choices) => {
-        choices.forEach((ip) => {
-          this.validBindIps.push(ip.value);
-        });
 
-        const config = _.find(this.fieldConfig, { name: 'bindip' }) as FormSelectConfig;
-        config.options = choices;
+    this.form.controls['storage_path'].valueChanges.pipe(untilDestroyed(this)).subscribe((newPath) => {
+      if (!newPath || newPath === this.initialPath || this.warned) {
+        return;
+      }
+
+      this.dialog
+        .confirm({
+          title: helptext.path_warning_title,
+          message: helptext.path_warning_msg,
+        })
+        .pipe(untilDestroyed(this))
+        .subscribe((confirmed) => {
+          if (!confirmed) {
+            this.form.patchValue({ storage_path: this.initialPath });
+          }
+
+          this.warned = true;
+        });
+    });
+  }
+
+  onSubmit(): void {
+    const values = {
+      ...this.form.value,
+      bindport: Number(this.form.value.bindport),
+    };
+
+    this.isFormLoading = true;
+    this.ws.call('s3.update', [values])
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.isFormLoading = false;
+        this.router.navigate(['/services']);
+        this.cdr.markForCheck();
+      }, (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
       });
-    entityForm.submitFunction = this.submitFunction;
   }
 
-  resourceTransformIncomingRestData(data: any): any {
-    if (data.certificate && data.certificate.id) {
-      data['certificate'] = data.certificate.id;
-    }
-    if (data.storage_path) {
-      this.initial_path = data.storage_path;
-    }
-
-    // If validIps is slow to load, skip check on load (It's still done on save)
-    if (this.validBindIps.length > 0) {
-      return this.compareBindIps(data);
-    }
-    return data;
-  }
-
-  compareBindIps(data: any): any {
-    if (data.bindip && this.validBindIps.length > 0) {
-      if (!this.validBindIps.includes(data.bindip)) {
-        data.bindip = '';
-      }
-    }
-    return data;
-  }
-
-  submitFunction(configUpdate: S3ConfigUpdate): Observable<S3Config> {
-    return this.ws.call('s3.update', [configUpdate]);
-  }
-
-  beforeSubmit(data: any): void {
-    this.compareBindIps(data);
+  onCancel(): void {
+    this.router.navigate(['/services']);
   }
 }

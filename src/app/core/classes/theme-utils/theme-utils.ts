@@ -3,7 +3,7 @@ export class ThemeUtils {
     let txtColor = '';
     // Convert hex value to RGB
     const cssVarType = this.getValueType(cssVar);
-    const props = cssVarType == 'hex' ? this.hexToRGB(cssVar) : { rgb: this.rgbToArray(cssVar) };
+    const props = cssVarType == 'hex' ? this.hexToRgb(cssVar) : { rgb: this.rgbToArray(cssVar) };
 
     // Find the average value to determine brightness
     const brightest = (props.rgb[0] + props.rgb[1] + props.rgb[2]) / 3;
@@ -16,7 +16,7 @@ export class ThemeUtils {
       // RGB averages between 144-197 are to be
       // matched to bg2 css variable.
       const bgPropType = this.getValueType(bgVar);
-      const bgProp = bgPropType == 'hex' ? this.hexToRGB(bgVar) : { rgb: this.rgbToArray(bgVar) };
+      const bgProp = bgPropType == 'hex' ? this.hexToRgb(bgVar) : { rgb: this.rgbToArray(bgVar) };
       const bgAvg = (bgProp.rgb[0] + bgProp.rgb[1] + bgProp.rgb[2]) / 3;
       if (bgAvg < 127) {
         txtColor = '#333333';
@@ -45,20 +45,20 @@ export class ThemeUtils {
     return valueType;
   }
 
-  convertToRGB(value: string): { hex: string; rgb: number[] } {
+  convertToRgb(value: string): { hex: string; rgb: number[] } {
     const valueType = this.getValueType(value);
     switch (valueType) {
       case 'hex':
-        return this.hexToRGB(value);
+        return this.hexToRgb(value);
       case 'rgba':
         const hex = this.rgbToHex(value);
-        return this.hexToRGB(hex);
+        return this.hexToRgb(hex);
       default:
         throw new Error('Conversion from color format ' + valueType + ' is not currently supported.');
     }
   }
 
-  hexToRGB(str: string): { hex: string; rgb: number[] } {
+  hexToRgb(str: string): { hex: string; rgb: number[] } {
     const valueType = this.getValueType(str); // cssVar || hex || rgb || rgba
     if (valueType != 'hex') console.error('This method takes a hex value as a parameter but was given a value of type ' + valueType);
 
@@ -111,7 +111,7 @@ export class ThemeUtils {
     return trimmed;
   }
 
-  forceRGB(value: string): number[] {
+  forceRgb(value: string): number[] {
     const valueType = this.getValueType(value);
     let rgb: number[];
     if (valueType == 'cssVar') {
@@ -119,7 +119,7 @@ export class ThemeUtils {
     } else if (valueType == 'hsl') {
       console.error('Cannot convert hsl. Please provide hex or rgb value');
     } else {
-      rgb = valueType == 'hex' ? this.hexToRGB(value).rgb : this.rgbToArray(value);
+      rgb = valueType == 'hex' ? this.hexToRgb(value).rgb : this.rgbToArray(value);
       return rgb;
     }
   }
@@ -133,8 +133,8 @@ export class ThemeUtils {
   }
 
   adjustLightness(value: string, pc: number, method = 'darken'): string {
-    const rgb: number[] = this.forceRGB(value);
-    const hsl = this.rgbToHSL(rgb, false, false) as number[];
+    const rgb: number[] = this.forceRgb(value);
+    const hsl = this.rgbToHsl(rgb, false, false) as number[];
     let lightness: number = method == 'lighten' ? hsl[2] + pc : hsl[2] - pc;
     lightness = lightness > 100 ? 100 : lightness;
 
@@ -143,8 +143,8 @@ export class ThemeUtils {
     return 'hsl(' + adjusted[0] + ', ' + adjusted[1] + '%, ' + adjusted[2] + '%)';
   }
 
-  rgbToHSL(param: string | number[], inputString = true, outputString = true): number[] | string {
-    const value: number[] = inputString ? this.forceRGB(param as string) : param as number[];
+  rgbToHsl(param: string | number[], inputString = true, outputString = true): number[] | string {
+    const value: number[] = inputString ? this.forceRgb(param as string) : param as number[];
 
     const r = value[0] / 255;
     const g = value[1] / 255;

@@ -9,10 +9,9 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { LanguageService } from './language.service';
 import { WebSocketService } from './ws.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class TaskService {
-  protected volumeResource = 'storage/volume/';
-  protected time_options: Option[] = [
+  protected timeOptions: Option[] = [
     { label: '00:00:00', value: '00:00' },
     { label: '00:15:00', value: '00:15' },
     { label: '00:30:00', value: '00:30' },
@@ -119,7 +118,7 @@ export class TaskService {
   constructor(protected ws: WebSocketService, protected language: LanguageService) {}
 
   getTimeOptions(): Option[] {
-    return this.time_options;
+    return this.timeOptions;
   }
 
   getVolumeList(): Observable<Pool[]> {

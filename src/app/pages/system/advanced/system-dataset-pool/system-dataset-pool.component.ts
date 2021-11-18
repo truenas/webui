@@ -1,116 +1,93 @@
-import { Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
+import { Validators } from '@angular/forms';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
-import { of, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
-import { ServiceName } from 'app/enums/service-name.enum';
-import { ServiceStatus } from 'app/enums/service-status.enum';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import {
-  DialogService, WebSocketService, AppLoaderService, SystemGeneralService,
-} from 'app/services';
-import { ModalService } from 'app/services/modal.service';
-
-const poolFieldName = 'pool';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { ServiceName } from '../../../../enums/service-name.enum';
+import { ServiceStatus } from '../../../../enums/service-status.enum';
+import { choicesToOptions } from '../../../../helpers/options.helper';
+import { EntityUtils } from '../../../common/entity/utils';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-system-dataset-pool',
-  template: '<entity-form [conf]="this"></entity-form>',
-  providers: [],
+  templateUrl: './system-dataset-pool.component.html',
+  styleUrls: ['./system-dataset-pool.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SystemDatasetPoolComponent implements FormConfiguration {
-  isOneColumnForm = true;
+export class SystemDatasetPoolComponent implements OnInit {
+  isFormLoading = false;
 
-  fieldSets = new FieldSets([
-    {
-      name: this.translate.instant('System Dataset Pool'),
-      label: false,
-      config: [
-        {
-          type: 'select',
-          placeholder: this.translate.instant('Select Pool'),
-          name: poolFieldName,
-          options: [],
-          required: true,
-        },
-      ],
-    },
-  ]);
+  form = this.fb.group({
+    pool: ['', Validators.required],
+  });
 
-  title = this.translate.instant('System Dataset Pool');
-
-  private entityForm: EntityFormComponent;
+  readonly poolOptions$ = this.ws.call('systemdataset.pool_choices').pipe(choicesToOptions());
 
   constructor(
     private ws: WebSocketService,
-    private loader: AppLoaderService,
+    private slideInService: IxSlideInService,
+    private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder,
     private dialogService: DialogService,
     private translate: TranslateService,
-    private modalService: ModalService,
     private sysGeneralService: SystemGeneralService,
-  ) { }
+  ) {}
 
-  afterInit(entityForm: EntityFormComponent): void {
-    this.entityForm = entityForm;
-    this.loadChoices();
-    this.loadCurrentDatasetPool();
-  }
+  ngOnInit(): void {
+    this.isFormLoading = true;
 
-  private loadChoices(): void {
-    this.ws
-      .call('systemdataset.pool_choices')
+    this.ws.call('systemdataset.config')
       .pipe(untilDestroyed(this))
-      .subscribe((poolChoices) => {
-        const poolField = this.fieldSets.config(poolFieldName) as FormSelectConfig;
-        poolField.options = Object.entries(poolChoices)
-          .map(([label, value]) => ({ label, value }));
-      });
+      .subscribe(
+        (config) => {
+          this.isFormLoading = false;
+          this.form.patchValue(config);
+          this.cdr.markForCheck();
+        },
+        (error) => {
+          this.isFormLoading = false;
+          new EntityUtils().handleWsError(null, error, this.dialogService);
+          this.cdr.markForCheck();
+        },
+      );
   }
 
-  private loadCurrentDatasetPool(): void {
-    this.ws.call('systemdataset.config').pipe(untilDestroyed(this)).subscribe((config) => {
-      if (!config) {
-        return;
-      }
+  onSubmit(): void {
+    this.isFormLoading = true;
+    const values = this.form.value;
 
-      const poolFormControl = this.entityForm.formGroup.controls[poolFieldName];
-      poolFormControl.setValue(config.pool);
-    });
-  }
-
-  customSubmit(formValues: { pool: string }): void {
-    this.loader.open();
-
-    of(formValues).pipe(
-      switchMap(() => this.confirmSmbRestartIfNeeded()),
+    this.confirmSmbRestartIfNeeded().pipe(
       filter(Boolean),
-      switchMap(() => this.ws.job('systemdataset.update', [formValues])),
+      switchMap(() => this.ws.job('systemdataset.update', [values])),
       untilDestroyed(this),
-    ).subscribe({
-      complete: () => {
-        this.loader.close();
-        this.entityForm.success = true;
-        this.entityForm.formGroup.markAsPristine();
-        this.modalService.closeSlideIn();
+    ).subscribe(
+      () => {
+        this.isFormLoading = false;
         this.sysGeneralService.refreshSysGeneral();
+        this.cdr.markForCheck();
+        this.slideInService.close();
       },
-      error: (error) => {
-        this.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, error);
+      (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
       },
-    });
+    );
   }
 
   /**
    * @return boolean True when saving can continue.
    */
-  confirmSmbRestartIfNeeded(): Observable<boolean> {
+  private confirmSmbRestartIfNeeded(): Observable<boolean> {
     return this.ws.call('service.query').pipe(
       switchMap((services) => {
         const smbService = _.find(services, { service: ServiceName.Cifs });

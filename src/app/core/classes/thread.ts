@@ -17,8 +17,6 @@ export class Thread extends IxAbstractObject {
   protected cancelled = false;
   protected finished = false;
 
-  // public messages: Subject<CoreEvent>
-
   // The functions that can be executed by thread.
   // For more info: https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Functions_and_classes_available_to_workers
   operations: () => void;

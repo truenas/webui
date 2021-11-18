@@ -1,7 +1,7 @@
 import { Component, OnInit, Type } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -93,10 +93,10 @@ export class SupportComponent implements OnInit {
     return Math.round((then.getTime() - now.getTime()) / (oneDay));
   }
 
-  getServerImage(sys_product: string): void {
+  getServerImage(sysProduct: string): void {
     let imagePath = '';
     this.serverList.forEach((model) => {
-      if (sys_product.includes(model)) {
+      if (sysProduct.includes(model)) {
         imagePath = `/servers/${model}.png`;
       }
     });
@@ -110,8 +110,8 @@ export class SupportComponent implements OnInit {
     }
   }
 
-  getMiniImage(sys_product: string): void {
-    switch (sys_product) {
+  getMiniImage(sysProduct: string): void {
+    switch (sysProduct) {
       case 'FREENAS-MINI-2.0':
       case 'FREENAS-MINI-3.0-E':
       case 'FREENAS-MINI-3.0-E+':

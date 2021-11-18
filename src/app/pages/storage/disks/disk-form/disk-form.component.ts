@@ -164,7 +164,7 @@ export class DiskFormComponent implements FormConfiguration {
   rowid: string;
 
   constructor(
-    private _router: Router,
+    private router: Router,
     protected ws: WebSocketService,
     protected aroute: ActivatedRoute,
   ) {
@@ -182,7 +182,7 @@ export class DiskFormComponent implements FormConfiguration {
        * Make sure the route is "storage/disks" before
        * using the pk value
        * */
-      if (params['pk'] && this._router.url.startsWith('/storage/disks')) {
+      if (params['pk'] && this.router.url.startsWith('/storage/disks')) {
         this.customFilter[0][0].push(params['pk']);
       }
     });

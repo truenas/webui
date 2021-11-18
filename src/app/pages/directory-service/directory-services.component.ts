@@ -23,7 +23,7 @@ import {
   DialogService, IdmapService, WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { IdmapFormComponent } from './components/idmap/idmap-form.component';
 import { KerberosRealmsFormComponent } from './components/kerberos-realms-form/kerberos-realms-form.component';
@@ -132,10 +132,10 @@ export class DirectoryServicesComponent implements OnInit {
       { name: this.translate.instant('Password Server'), prop: 'kpasswd_server' },
     ],
     add: () => {
-      this.ixModalService.open(KerberosRealmsFormComponent);
+      this.slideInService.open(KerberosRealmsFormComponent);
     },
     edit: (realm: KerberosRealm) => {
-      const modal = this.ixModalService.open(KerberosRealmsFormComponent);
+      const modal = this.slideInService.open(KerberosRealmsFormComponent);
       modal.setRealmForEdit(realm);
     },
   };
@@ -175,7 +175,7 @@ export class DirectoryServicesComponent implements OnInit {
     private ws: WebSocketService,
     private idmapService: IdmapService,
     private modalService: ModalService,
-    private ixModalService: IxModalService,
+    private slideInService: IxSlideInService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -186,7 +186,7 @@ export class DirectoryServicesComponent implements OnInit {
     this.refreshCards();
     merge(
       this.modalService.onClose$,
-      this.ixModalService.onClose$,
+      this.slideInService.onClose$,
       this.modalService.refreshTable$,
     )
       .pipe(untilDestroyed(this))
@@ -323,7 +323,7 @@ export class DirectoryServicesComponent implements OnInit {
     of(true).pipe(
       switchMap(() => {
         if (name == DirectoryServicesCardId.Idmap && !id) {
-          return this.idmapService.getADStatus().pipe(
+          return this.idmapService.getActiveDirectoryStatus().pipe(
             switchMap((adConfig) => {
               if (!adConfig.enable) {
                 component = ActiveDirectoryComponent;
@@ -346,7 +346,7 @@ export class DirectoryServicesComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       if (component === KerberosSettingsComponent) {
-        this.ixModalService.open(component);
+        this.slideInService.open(component);
       } else {
         this.modalService.openInSlideIn(component, id);
       }
