@@ -654,7 +654,7 @@ export class CertificateAddComponent implements WizardConfiguration {
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
-    this.systemGeneralService.getUnsignedCAs().pipe(untilDestroyed(this)).subscribe((res) => {
+    this.systemGeneralService.getUnsignedCas().pipe(untilDestroyed(this)).subscribe((res) => {
       this.signedby = this.getTarget('signedby') as FormSelectConfig;
       res.forEach((item) => {
         this.signedby.options.push(
@@ -1032,7 +1032,7 @@ export class CertificateAddComponent implements WizardConfiguration {
       this.dialog.closeAll();
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
       if (err.error.includes('[EFAULT')) {
-        new EntityUtils().handleWSError(this.entityForm, err);
+        new EntityUtils().handleWsError(this.entityForm, err);
       } else {
         this.dialogService.errorReport(helptextSystemCertificates.acme.error_dialog.title,
           err.exc_info.type, err.exception);

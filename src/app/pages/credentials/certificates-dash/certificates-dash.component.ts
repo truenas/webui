@@ -271,7 +271,7 @@ export class CertificatesDashComponent implements OnInit {
                 });
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
           const keyName = rowinner.name + '.key';
@@ -289,7 +289,7 @@ export class CertificatesDashComponent implements OnInit {
                 });
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         },
@@ -317,7 +317,7 @@ export class CertificatesDashComponent implements OnInit {
             });
             this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWSError(null, res, this.dialogService);
+              new EntityUtils().handleWsError(null, res, this.dialogService);
             });
           });
       },
@@ -374,7 +374,7 @@ export class CertificatesDashComponent implements OnInit {
             });
             this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWSError(null, res, this.dialogService);
+              new EntityUtils().handleWsError(null, res, this.dialogService);
             });
           });
       },
@@ -411,11 +411,11 @@ export class CertificatesDashComponent implements OnInit {
     fieldConfig: this.signCSRFieldConf,
     method_ws: 'certificateauthority.ca_sign_csr',
     saveButtonText: helptextSystemCa.sign.sign,
-    customSubmit: (entityDialog) => this.doSignCSR(entityDialog),
+    customSubmit: (entityDialog) => this.doSignCsr(entityDialog),
     parent: this,
   };
 
-  doSignCSR(entityDialog: EntityDialogComponent<this>): void {
+  doSignCsr(entityDialog: EntityDialogComponent<this>): void {
     const payload = {
       ca_id: this.caId,
       csr_cert_id: entityDialog.formGroup.controls.csr_cert_id.value,

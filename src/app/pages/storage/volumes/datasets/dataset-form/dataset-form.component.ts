@@ -1614,7 +1614,7 @@ export class DatasetFormComponent implements FormConfiguration {
       });
     }, (res) => {
       this.loader.close();
-      new EntityUtils().handleWSError(this.entityForm, res);
+      new EntityUtils().handleWsError(this.entityForm, res);
     });
   }
 

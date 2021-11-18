@@ -436,7 +436,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
                   },
                   (err) => {
                     this.loader.close();
-                    new EntityUtils().handleWSError(this, err, this.dialog);
+                    new EntityUtils().handleWsError(this, err, this.dialog);
                   },
                 );
             }
@@ -492,7 +492,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         },
       );
   }
@@ -523,7 +523,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               },
               (err) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialog);
+                new EntityUtils().handleWsError(this, err, this.dialog);
               },
             );
         }
@@ -535,7 +535,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
   }
 
-  goToHA(): void {
+  goToHa(): void {
     this.router.navigate(['/', 'system', 'failover']);
   }
 

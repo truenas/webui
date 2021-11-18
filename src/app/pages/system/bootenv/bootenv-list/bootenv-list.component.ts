@@ -251,7 +251,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
           this.entityList.selection.clear();
         },
         (res: WebsocketError) => {
-          new EntityUtils().handleWSError(this, res, this.dialog);
+          new EntityUtils().handleWsError(this, res, this.dialog);
           this.loader.close();
         },
       );
@@ -291,7 +291,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             this.entityList.selection.clear();
           },
           (res: WebsocketError) => {
-            new EntityUtils().handleWSError(this, res, this.dialog);
+            new EntityUtils().handleWsError(this, res, this.dialog);
             this.loader.close();
           },
         );
@@ -311,7 +311,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             this.entityList.selection.clear();
           },
           (res: WebsocketError) => {
-            new EntityUtils().handleWSError(this, res, this.dialog);
+            new EntityUtils().handleWsError(this, res, this.dialog);
             this.loader.close();
           },
         );
@@ -331,7 +331,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       onClick: () => {
         this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
           this.scrub_interval = res.boot_scrub;
-          const localWS = this.ws;
+          const localWs = this.ws;
           const localDialog = this.dialog;
           const statusConfigFieldConf: FieldConfig[] = [
             {
@@ -373,7 +373,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             customSubmit: (entityDialog: EntityDialogComponent) => {
               const scrubIntervalValue = parseInt(entityDialog.formValue.new_scrub_interval);
               if (scrubIntervalValue > 0) {
-                localWS.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(this)).subscribe(() => {
+                localWs.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(this)).subscribe(() => {
                   localDialog.closeAllDialogs();
                   localDialog.info(
                     this.translate.instant('Scrub Interval Set'),
@@ -426,7 +426,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
         this.dialog.info(this.translate.instant('Scrub Started'), '', '300px', 'info', true);
       },
       (res: WebsocketError) => {
-        new EntityUtils().handleWSError(this, res, this.dialog);
+        new EntityUtils().handleWsError(this, res, this.dialog);
         this.loader.close();
       });
     });

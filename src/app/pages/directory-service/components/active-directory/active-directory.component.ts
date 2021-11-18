@@ -117,7 +117,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
                 },
                 (err: WebsocketError) => {
                   entityDialog.loader.close();
-                  new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, this.dialogservice);
+                  new EntityUtils().handleWsError(helptext.ad_leave_domain_dialog.error, err, this.dialogservice);
                 });
             },
           },
@@ -463,7 +463,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       this.modalService.refreshTable();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWSError(this, error, this.dialogservice);
+      new EntityUtils().handleWsError(this, error, this.dialogservice);
       this.modalService.refreshTable();
       dialogRef.close();
     });

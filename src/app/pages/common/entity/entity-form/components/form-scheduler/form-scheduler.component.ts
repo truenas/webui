@@ -300,7 +300,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     });
 
     if (this.control.value) {
-      this.control.setValue(new EntityUtils().parseDOW(this.control.value));
+      this.control.setValue(new EntityUtils().parseDow(this.control.value));
       this.crontab = this.control.value;
     }
 
@@ -345,7 +345,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
 
     if (this.control.value) {
-      this.control.setValue(new EntityUtils().parseDOW(this.control.value));
+      this.control.setValue(new EntityUtils().parseDow(this.control.value));
     }
   }
 
@@ -357,13 +357,13 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
       setTimeout(() => {
-        this.convertPreset(this.crontab); // <-- Test
+        this.convertPreset(this.crontab);
         this.generateSchedule();
-        const popup = this.schedulePreview.nativeElement;// .querySelector('ul.schedule-preview');
+        const popup = this.schedulePreview.nativeElement;
         popup.addEventListener('scroll', this.onScroll.bind(this));
       }, 200);
     } else {
-      const popup = this.schedulePreview.nativeElement;// .querySelector('ul.schedule-preview');
+      const popup = this.schedulePreview.nativeElement;
       popup.removeEventListener('scroll', this.onScroll);
     }
   }

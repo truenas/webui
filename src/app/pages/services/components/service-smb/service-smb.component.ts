@@ -288,7 +288,7 @@ export class ServiceSMBComponent implements FormConfiguration {
       });
     });
 
-    this.servicesService.getSmbBindIPChoices().pipe(untilDestroyed(this)).subscribe((res) => {
+    this.servicesService.getSmbBindIpChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.validBindIps = res;
       this.cifs_srv_bindip = otherColTwoSet.config.find((config) => config.name === 'bindip') as FormSelectConfig;
       for (const key in res) {
@@ -305,7 +305,7 @@ export class ServiceSMBComponent implements FormConfiguration {
       });
     });
 
-    this.userService.groupQueryDSCache('', true).pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.userService.groupQueryDsCache('', true).pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions: Option[] = [];
       groups.forEach((item) => {
         groupOptions.push({ label: item.group, value: item.group });
@@ -358,7 +358,7 @@ export class ServiceSMBComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = ''): void {
-    this.userService.groupQueryDSCache(value, true).pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.groupQueryDsCache(value, true).pipe(untilDestroyed(this)).subscribe((items) => {
       this.cifs_srv_admin_group.searchOptions = items.map((group) => {
         return { label: group.group, value: group.group };
       });

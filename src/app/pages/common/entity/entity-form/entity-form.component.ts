@@ -503,7 +503,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
             if ((this.conf.isEditJob || this.conf.isCreateJob) && res.error) {
               if (res.exc_info && res.exc_info.extra) {
-                new EntityUtils().handleWSError(this, res);
+                new EntityUtils().handleWsError(this, res);
               } else {
                 this.dialog.errorReport('Error', res.error, res.exception);
               }
@@ -540,7 +540,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             if (this.conf.errorReport) {
               this.conf.errorReport(res);
             } else if (res.hasOwnProperty('reason') && (res.hasOwnProperty('trace'))) {
-              new EntityUtils().handleWSError(this, res);
+              new EntityUtils().handleWsError(this, res);
             } else {
               new EntityUtils().handleError(this, res);
             }

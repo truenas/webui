@@ -102,7 +102,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
         (e) => {
           this.loader.close();
           this.dialogRef.close(false);
-          new EntityUtils().handleWSError(this, e);
+          new EntityUtils().handleWsError(this, e);
         },
         () => {
           this.loader.close();
@@ -125,7 +125,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
     });
   }
 
-  togglePW(): void {
+  togglePassword(): void {
     const inputs = document.getElementsByTagName('input');
     for (const input of inputs) {
       if (!input.placeholder.toLowerCase().includes('current')

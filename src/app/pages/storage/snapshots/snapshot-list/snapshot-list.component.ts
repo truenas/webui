@@ -253,7 +253,7 @@ export class SnapshotListComponent implements EntityTableConfig {
           entityList.handleData(snapshot, true);
         },
         (error) => {
-          new EntityUtils().handleWSError(this, error, entityList.dialogService);
+          new EntityUtils().handleWsError(this, error, entityList.dialogService);
         });
     });
   }
@@ -282,7 +282,7 @@ export class SnapshotListComponent implements EntityTableConfig {
             this.entityList.getData();
           },
           (res: WebsocketError) => {
-            new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
+            new EntityUtils().handleWsError(this, res, this.entityList.dialogService);
             this.entityList.loaderOpen = false;
             this.entityList.loader.close();
           },
@@ -395,7 +395,7 @@ export class SnapshotListComponent implements EntityTableConfig {
       });
 
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
+      new EntityUtils().handleWsError(this.entityList, err, this.dialogService);
       dialogRef.close();
     });
   }
@@ -421,7 +421,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     }, (err) => {
       this.entityList.loader.close();
       this.entityList.loaderOpen = false;
-      new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
+      new EntityUtils().handleWsError(this.entityList, err, this.entityList.dialogService);
     });
   }
 
@@ -446,7 +446,7 @@ export class SnapshotListComponent implements EntityTableConfig {
           this.entityList.loaderOpen = false;
           this.entityList.loader.close();
           entityDialog.dialogRef.close();
-          new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
+          new EntityUtils().handleWsError(this.entityList, err, this.entityList.dialogService);
         },
       );
   }

@@ -374,7 +374,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         );
       }
     }, (err) => {
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
 
     this.core.register({ observerClass: this, eventName: 'zvolCreated' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -396,7 +396,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
 
     this.nicType = _.find(this.nicFieldConfig, { name: 'type' }) as FormSelectConfig;
-    this.vmService.getNICTypes().forEach((item) => {
+    this.vmService.getNicTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 
@@ -582,7 +582,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       (error) => {
         this.loader.close();
         console.error(error);
-        new EntityUtils().handleWSError(this, error, this.dialogService);
+        new EntityUtils().handleWsError(this, error, this.dialogService);
       });
     });
   }

@@ -854,7 +854,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
               createdItems[item] = res.id;
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
               toStop = true;
               this.rollBack(createdItems);
             },

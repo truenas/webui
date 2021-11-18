@@ -95,7 +95,7 @@ export class FibreChannelPortComponent implements OnInit {
       });
     },
     (err) => {
-      new EntityUtils().handleWSError(this, err, this.parent.dialogService);
+      new EntityUtils().handleWsError(this, err, this.parent.dialogService);
     });
   }
 

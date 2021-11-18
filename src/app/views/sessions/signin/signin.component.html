@@ -121,14 +121,14 @@
               </div>
             </span>
 
-            <div class="truecommand" *ngIf="tc_ip" (click)="gotoTC()">
+            <div class="truecommand" *ngIf="tc_ip" (click)="goToTrueCommand()">
               <img id="truecommand-logo" src="assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg">
               <span class="truecommand-txt">{{ 'TrueCommand IP' | translate }}: {{tc_ip}}</span>
             </div>
 
             <div class="copyright-line">
               <span  class="copyright-txt">TrueNAS {{productTypeReadableText}} ® © {{copyrightYear}} </span>
-              <img id="full-logo" (click)="openIX()" src="assets/images/ix_logo_full.png">
+              <img id="full-logo" (click)="openIx()" src="assets/images/ix_logo_full.png">
             </div>
           </div>
         </div>

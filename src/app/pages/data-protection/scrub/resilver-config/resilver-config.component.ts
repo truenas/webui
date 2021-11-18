@@ -74,7 +74,7 @@ export class ResilverConfigComponent implements OnInit {
         (error) => {
           this.isFormLoading = false;
           this.cdr.markForCheck();
-          new EntityUtils().handleWSError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(null, error, this.dialogService);
         },
       );
   }

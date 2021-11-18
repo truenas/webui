@@ -694,7 +694,7 @@ export class AlertServiceComponent implements FormConfiguration {
           },
           (err: WebsocketError) => {
             this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.dialogService);
+            new EntityUtils().handleWsError(this, err, this.dialogService);
           },
         );
       },
@@ -789,7 +789,7 @@ export class AlertServiceComponent implements FormConfiguration {
         },
         (err: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         },
       );
     } else {
@@ -800,7 +800,7 @@ export class AlertServiceComponent implements FormConfiguration {
         },
         (err: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         },
       );
     }

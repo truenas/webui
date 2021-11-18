@@ -139,12 +139,12 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
   ) {
     this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unused) => {
       this.unused = unused;
-    }, (err) => new EntityUtils().handleWSError(this, err));
+    }, (err) => new EntityUtils().handleWsError(this, err));
     this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
       (res) => {
         this.SMARTdiskChoices = res;
       },
-      (err) => new EntityUtils().handleWSError(this, err),
+      (err) => new EntityUtils().handleWsError(this, err),
     );
   }
 
@@ -349,7 +349,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
             this.generateManualTestSummary(res);
           },
           (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialogService, conf.fieldConfig);
+            new EntityUtils().handleWsError(this, err, this.dialogService, conf.fieldConfig);
           },
         );
       },

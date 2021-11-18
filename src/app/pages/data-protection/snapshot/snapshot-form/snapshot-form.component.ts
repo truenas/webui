@@ -166,7 +166,7 @@ export class SnapshotFormComponent implements FormConfiguration {
         }
         datasetField.options = _.sortBy(options, [(o) => o.label]);
       },
-      (error) => new EntityUtils().handleWSError(this, error, this.dialog),
+      (error) => new EntityUtils().handleWsError(this, error, this.dialog),
     );
 
     this.datasetFg = entityForm.formGroup.controls['dataset'];

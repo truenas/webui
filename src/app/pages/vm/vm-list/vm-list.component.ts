@@ -299,7 +299,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
         this.checkMemory();
       });
       this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       });
     } else {
       this.loader.open();
@@ -323,7 +323,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           } if (method === this.wsMethods.update) {
             row.autostart = !row.autostart;
           }
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         },
       );
     }
@@ -337,7 +337,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           resolve(rows);
         },
         (err) => {
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
           reject(err);
         },
       );
@@ -484,28 +484,28 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
       label: this.translate.instant('Display'),
       onClick: (vm: VirtualMachineRow) => {
         this.loader.open();
-        this.ws.call('vm.get_display_devices', [vm.id]).pipe(untilDestroyed(this)).subscribe((display_devices_res) => {
-          if (display_devices_res.length === 1) {
-            if (!display_devices_res[0].attributes.password_configured) {
+        this.ws.call('vm.get_display_devices', [vm.id]).pipe(untilDestroyed(this)).subscribe((displayDevices) => {
+          if (displayDevices.length === 1) {
+            if (!displayDevices[0].attributes.password_configured) {
               this.ws.call(
                 'vm.get_display_web_uri',
                 [
                   vm.id,
                   this.extractHostname(window.origin),
                 ],
-              ).pipe(untilDestroyed(this)).subscribe((web_uri_res) => {
+              ).pipe(untilDestroyed(this)).subscribe((webUris) => {
                 this.loader.close();
-                if (web_uri_res[display_devices_res[0].id].error) {
-                  return this.dialogService.info('Error', web_uri_res[display_devices_res[0].id].error);
+                if (webUris[displayDevices[0].id].error) {
+                  return this.dialogService.info('Error', webUris[displayDevices[0].id].error);
                 }
-                window.open(web_uri_res[display_devices_res[0].id].uri, '_blank');
+                window.open(webUris[displayDevices[0].id].uri, '_blank');
               }, (err) => {
                 this.loader.close();
                 new EntityUtils().handleError(this, err);
               });
             } else {
               this.loader.close();
-              const displayDevice = _.find(display_devices_res, { id: display_devices_res[0].id });
+              const displayDevice = _.find(displayDevices, { id: displayDevices[0].id });
               this.showPasswordDialog(vm, displayDevice);
             }
           } else {
@@ -516,13 +516,13 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
               fieldConfig: [{
                 type: 'radio',
                 name: 'display_device',
-                options: display_devices_res.map((d) => ({ label: d.attributes.type, value: d.id })),
+                options: displayDevices.map((d) => ({ label: d.attributes.type, value: d.id })),
                 validation: [Validators.required],
               }],
               saveButtonText: this.translate.instant('Open'),
               parent: this,
               customSubmit: (entityDialog: EntityDialogComponent) => {
-                const displayDevice = _.find(display_devices_res, { id: entityDialog.formValue.display_device });
+                const displayDevice = _.find(displayDevices, { id: entityDialog.formValue.display_device });
                 if (displayDevice.attributes.password_configured) {
                   this.showPasswordDialog(vm, displayDevice);
                 } else {
@@ -533,12 +533,12 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
                       vm.id,
                       this.extractHostname(window.origin),
                     ],
-                  ).pipe(untilDestroyed(this)).subscribe((web_uris_res) => {
+                  ).pipe(untilDestroyed(this)).subscribe((webUris) => {
                     this.loader.close();
-                    if (web_uris_res[displayDevice.id].error) {
-                      return this.dialogService.info('Error', web_uris_res[displayDevice.id].error);
+                    if (webUris[displayDevice.id].error) {
+                      return this.dialogService.info('Error', webUris[displayDevice.id].error);
                     }
-                    window.open(web_uris_res[displayDevice.id].uri, '_blank');
+                    window.open(webUris[displayDevice.id].uri, '_blank');
                   }, (err) => {
                     this.loader.close();
                     new EntityUtils().handleError(this, err);
@@ -571,26 +571,25 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
         const path = `/var/log/libvirt/bhyve/${vm.id}_${vm.name}.log`;
         const filename = `${vm.id}_${vm.name}.log`;
         this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(untilDestroyed(this)).subscribe(
-          (download_res) => {
-            const url = download_res[1];
+          ([_, url]) => {
             const mimetype = 'text/plain';
             this.storageService.streamDownloadFile(this.http, url, filename, mimetype)
               .pipe(untilDestroyed(this))
               .subscribe((file) => {
                 this.storageService.downloadBlob(file, filename);
               }, (err) => {
-                new EntityUtils().handleWSError(this, err, this.dialogService);
+                new EntityUtils().handleWsError(this, err, this.dialogService);
               });
           },
           (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialogService);
+            new EntityUtils().handleWsError(this, err, this.dialogService);
           },
         );
       },
     }] as EntityTableAction[];
   }
 
-  showPasswordDialog(display_vm: VirtualMachineRow, display_device: VmDisplayDevice): void {
+  showPasswordDialog(vm: VirtualMachineRow, displayDevice: VmDisplayDevice): void {
     const passwordConfiguration: DialogFormConfiguration = {
       title: this.translate.instant('Enter password'),
       message: this.translate.instant('Enter password to unlock this display device'),
@@ -609,25 +608,25 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
         this.ws.call(
           'vm.get_display_web_uri',
           [
-            display_vm.id,
+            vm.id,
             this.extractHostname(window.origin),
             {
               devices_passwords: [
                 {
-                  device_id: display_device.id,
+                  device_id: displayDevice.id,
                   password: passDialog.formValue.password,
                 },
               ],
             },
           ],
-        ).pipe(untilDestroyed(this)).subscribe((pass_res) => {
+        ).pipe(untilDestroyed(this)).subscribe((webUris) => {
           this.loader.close();
-          if (pass_res[display_device.id].error) {
+          if (webUris[displayDevice.id].error) {
             passDialog.formGroup.controls['password'].reset();
-            return passwordConfiguration.fieldConfig[0].warnings = pass_res[display_device.id].error;
+            return passwordConfiguration.fieldConfig[0].warnings = webUris[displayDevice.id].error;
           }
           passDialog.dialogRef.close();
-          window.open(pass_res[display_device.id].uri, '_blank');
+          window.open(webUris[displayDevice.id].uri, '_blank');
         }, (err) => {
           passDialog.dialogRef.close();
           this.loader.close();

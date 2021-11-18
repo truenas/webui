@@ -300,7 +300,7 @@ export class NFSFormComponent implements FormConfiguration {
     this.title = entityForm.isNew ? helptextSharingNfs.title : helptextSharingNfs.editTitle;
 
     this.userService
-      .userQueryDSCache()
+      .userQueryDsCache()
       .pipe(untilDestroyed(this))
       .subscribe((items) => {
         const users = [
@@ -319,7 +319,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
 
     this.userService
-      .groupQueryDSCache()
+      .groupQueryDsCache()
       .pipe(untilDestroyed(this))
       .subscribe((groups) => {
         const groupOptions: Option[] = [
@@ -446,7 +446,7 @@ export class NFSFormComponent implements FormConfiguration {
 
   updateGroupSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
     parent.userService
-      .groupQueryDSCache(value)
+      .groupQueryDsCache(value)
       .pipe(untilDestroyed(parent))
       .subscribe((groups) => {
         const config = parent.fieldSets.config(field) as FormComboboxConfig;
@@ -464,7 +464,7 @@ export class NFSFormComponent implements FormConfiguration {
 
   updateUserSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
     parent.userService
-      .userQueryDSCache(value)
+      .userQueryDsCache(value)
       .pipe(untilDestroyed(parent))
       .subscribe((users) => {
         const config = parent.fieldSets.config(field) as FormComboboxConfig;
@@ -474,7 +474,7 @@ export class NFSFormComponent implements FormConfiguration {
 
   loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, fieldConfig: FieldConfig): void {
     parent.userService
-      .userQueryDSCache(searchText, length)
+      .userQueryDsCache(searchText, length)
       .pipe(untilDestroyed(parent))
       .subscribe((items) => {
         const users = items.map((user) => ({ label: user.username, value: user.username }));
@@ -491,7 +491,7 @@ export class NFSFormComponent implements FormConfiguration {
 
   loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, fieldConfig: FieldConfig): void {
     parent.userService
-      .groupQueryDSCache(searchText, false, length)
+      .groupQueryDsCache(searchText, false, length)
       .pipe(untilDestroyed(parent))
       .subscribe((items: Group[]) => {
         const groups = items.map((group) => ({ label: group.group, value: group.group }));

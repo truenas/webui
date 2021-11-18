@@ -110,7 +110,7 @@ export class IdmapListComponent implements EntityTableConfig {
     return [{
       label: this.translate.instant('Add'),
       onClick: () => {
-        this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
+        this.idmapService.getActiveDirectoryStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
           if (adConfig.enable) {
             this.doAdd();
           } else {
@@ -121,7 +121,7 @@ export class IdmapListComponent implements EntityTableConfig {
               buttonMsg: helptext.idmap.enable_ad_dialog.button,
             })
               .pipe(filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.showADForm());
+              .subscribe(() => this.showActiveDirectoryForm());
           }
         });
       },
@@ -150,7 +150,7 @@ export class IdmapListComponent implements EntityTableConfig {
           this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe(
             () => {},
             (err: WebsocketError) => {
-              new EntityUtils().handleWSError(this.entityList, err);
+              new EntityUtils().handleWsError(this.entityList, err);
             },
             () => {
               this.entityList.getData();
@@ -166,7 +166,7 @@ export class IdmapListComponent implements EntityTableConfig {
     this.modalService.openInSlideIn(IdmapFormComponent, id);
   }
 
-  showADForm(): void {
+  showActiveDirectoryForm(): void {
     this.modalService.openInSlideIn(ActiveDirectoryComponent);
   }
 }

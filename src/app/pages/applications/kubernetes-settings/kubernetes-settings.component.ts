@@ -54,7 +54,7 @@ export class KubernetesSettingsComponent implements OnInit {
 
   readonly reInitHelpText = helptext.kubForm.reInit.formWarning;
 
-  readonly nodeIpOptions$ = this.appService.getBindIPChoices().pipe(choicesToOptions());
+  readonly nodeIpOptions$ = this.appService.getBindIpChoices().pipe(choicesToOptions());
 
   readonly routeInterfaceOptions$ = this.appService.getInterfaces().pipe(
     map((interfaces) => {
@@ -102,7 +102,7 @@ export class KubernetesSettingsComponent implements OnInit {
       (error) => {
         this.isFormLoading = false;
         this.cdr.markForCheck();
-        new EntityUtils().handleWSError(null, error, this.dialogService);
+        new EntityUtils().handleWsError(null, error, this.dialogService);
       },
     );
   }

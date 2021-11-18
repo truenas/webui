@@ -172,7 +172,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
                       this.loader.close();
                     },
                     (err) => {
-                      new EntityUtils().handleWSError(this, err, this.dialogService);
+                      new EntityUtils().handleWsError(this, err, this.dialogService);
                       this.loader.close();
                     });
                 },
@@ -180,7 +180,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
               this.dialogService.dialogForm(conf);
             }, (err) => {
               this.loader.close();
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         },

@@ -370,7 +370,7 @@ export class DeviceEditComponent implements OnInit {
     });
 
     this.nicType = _.find(this.nicFieldConfig, { name: 'type' }) as FormSelectConfig;
-    this.vmService.getNICTypes().forEach((item) => {
+    this.vmService.getNicTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 
@@ -487,7 +487,7 @@ export class DeviceEditComponent implements OnInit {
                 _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
               }
             }, (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             });
             break;
         }
@@ -559,7 +559,7 @@ export class DeviceEditComponent implements OnInit {
       },
       (error) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, error, this.dialogService);
+        new EntityUtils().handleWsError(this, error, this.dialogService);
       });
     });
   }

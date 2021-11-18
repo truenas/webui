@@ -17,17 +17,17 @@ interface FormUserGroupLoaders {
 export function getFormUserGroupLoaders(userService: UserService): FormUserGroupLoaders {
   return {
     updateGroupSearchOptions(value = '', parent: Parent, config: FormComboboxConfig): void {
-      userService.groupQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((groups) => {
+      userService.groupQueryDsCache(value).pipe(untilDestroyed(parent)).subscribe((groups) => {
         config.searchOptions = groups.map((group) => ({ label: group.group, value: group.group }));
       });
     },
     updateUserSearchOptions(value = '', parent: Parent, config: FormComboboxConfig): void {
-      userService.userQueryDSCache(value).pipe(untilDestroyed(parent)).subscribe((users) => {
+      userService.userQueryDsCache(value).pipe(untilDestroyed(parent)).subscribe((users) => {
         config.searchOptions = users.map((user) => ({ label: user.username, value: user.username }));
       });
     },
     loadMoreUserOptions(length: number, parent: Parent, searchText: string, config: FormComboboxConfig): void {
-      userService.userQueryDSCache(searchText, length)
+      userService.userQueryDsCache(searchText, length)
         .pipe(untilDestroyed(parent))
         .subscribe((users) => {
           const userOptions = users.map((user) => ({ label: user.username, value: user.username }));
@@ -40,7 +40,7 @@ export function getFormUserGroupLoaders(userService: UserService): FormUserGroup
         });
     },
     loadMoreGroupOptions(length: number, parent: Parent, searchText: string, config: FormComboboxConfig): void {
-      userService.groupQueryDSCache(searchText, false, length)
+      userService.groupQueryDsCache(searchText, false, length)
         .pipe(untilDestroyed(parent))
         .subscribe((groups: Group[]) => {
           const groupOptions = groups.map((group) => ({ label: group.group, value: group.group }));

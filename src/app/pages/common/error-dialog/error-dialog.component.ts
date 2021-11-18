@@ -72,11 +72,11 @@ export class ErrorDialogComponent {
           if (this.dialogRef) {
             this.dialogRef.close();
           }
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWsError(this, err);
         });
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err);
+        new EntityUtils().handleWsError(this, err);
       },
     );
   }

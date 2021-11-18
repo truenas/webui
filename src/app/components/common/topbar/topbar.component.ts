@@ -136,7 +136,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   ngOnInit(): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.checkEULA();
+      this.checkEula();
 
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         this.is_ha = isHa;
@@ -145,7 +145,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         } else {
           window.localStorage.setItem('alias_ips', '0');
         }
-        this.getHAStatus();
+        this.getHaStatus();
       });
       this.sysName = 'TrueNAS ENTERPRISE';
     } else {
@@ -357,7 +357,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
   }
 
-  checkEULA(): void {
+  checkEula(): void {
     this.ws.call('truenas.is_eula_accepted').pipe(untilDestroyed(this)).subscribe((isEulaAccepted) => {
       if (!isEulaAccepted || window.localStorage.getItem('upgrading_status') === 'upgrading') {
         this.ws.call('truenas.get_eula').pipe(untilDestroyed(this)).subscribe((eula) => {
@@ -437,7 +437,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         this.waitingNetworkCheckin = false;
       }, (err) => {
         this.loader.close();
-        new EntityUtils().handleWSError(null, err, this.dialogService);
+        new EntityUtils().handleWsError(null, err, this.dialogService);
       });
     });
   }
@@ -507,7 +507,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     );
   }
 
-  updateHAInfo(info: HaStatus): void {
+  updateHaInfo(info: HaStatus): void {
     this.ha_disabled_reasons = info.reasons;
     if (info.status == 'HA Enabled') {
       this.ha_status_text = helptext.ha_status_text_enabled;
@@ -519,13 +519,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     }
   }
 
-  getHAStatus(): void {
+  getHaStatus(): void {
     this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
-      this.updateHAInfo(evt.data);
+      this.updateHaInfo(evt.data);
     });
   }
 
-  showHAStatus(): void {
+  showHaStatus(): void {
     let reasons = '<ul>\n';
     let haIcon = 'info';
     let haStatus: string;
@@ -579,15 +579,15 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   getDirServicesStatus(): void {
     this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
       this.dirServicesStatus = Object.values(res);
-      this.showDSIcon();
+      this.showDirectoryServicesIcon();
     });
     this.ws.subscribe('directoryservices.status').pipe(untilDestroyed(this)).subscribe((res) => {
       this.dirServicesStatus = Object.values(res);
-      this.showDSIcon();
+      this.showDirectoryServicesIcon();
     });
   }
 
-  showDSIcon(): void {
+  showDirectoryServicesIcon(): void {
     this.showDirServicesIcon = false;
     this.dirServicesStatus.forEach((item) => {
       if (item !== DirectoryServiceState.Disabled) {
@@ -618,11 +618,11 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
   }
 
-  openIX(): void {
+  openIx(): void {
     window.open('https://www.ixsystems.com/', '_blank');
   }
 
-  showTCStatus(): void {
+  showTrueCommandStatus(): void {
     if (this.tcConnected) {
       this.openStatusDialog();
     } else {
@@ -649,13 +649,13 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       parent: this,
       customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close();
-        this.updateTC();
+        this.updateTrueCommand();
       },
     };
     this.dialogService.dialogForm(conf);
   }
 
-  updateTC(): void {
+  updateTrueCommand(): void {
     let updateDialog: EntityDialogComponent;
     const conf: DialogFormConfiguration = {
       title: this.tcConnected ? helptext.updateDialog.title_update : helptext.updateDialog.title_connect,
@@ -704,7 +704,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
                 },
                 (err) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                  new EntityUtils().handleWsError(this, err, this.dialogService);
                 },
               );
           });
@@ -740,7 +740,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           },
           (err) => {
             this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.dialogService);
+            new EntityUtils().handleWsError(this, err, this.dialogService);
           },
         );
       },
@@ -775,7 +775,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     );
   }
 
-  stopTCConnecting(): void {
+  stopTrueCommandConnecting(): void {
     this.dialogService.generalDialog({
       title: helptext.stopTCConnectingDialog.title,
       icon: helptext.stopTCConnectingDialog.icon,
@@ -790,7 +790,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           },
           (err) => {
             this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.dialogService);
+            new EntityUtils().handleWsError(this, err, this.dialogService);
           },
         );
       }

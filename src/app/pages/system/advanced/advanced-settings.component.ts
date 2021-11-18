@@ -542,11 +542,11 @@ export class AdvancedSettingsComponent implements OnInit {
               });
               this.dialogRef.componentInstance.failure.pipe(take(1), untilDestroyed(this)).subscribe((saveDebugErr) => {
                 this.dialogRef.close();
-                new EntityUtils().handleWSError(this, saveDebugErr, this.dialog);
+                new EntityUtils().handleWsError(this, saveDebugErr, this.dialog);
               });
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialog);
+              new EntityUtils().handleWsError(this, err, this.dialog);
             },
           );
         });
