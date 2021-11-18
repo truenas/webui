@@ -646,6 +646,7 @@
   "Enable Display": "",
   "Enable GMail OAuth authentication.": "",
   "Enable GPU support": "",
+  "Enable Integrated Loadbalancer": "",
   "Enable Network Performance Statistics": "",
   "Enable SMTP configuration": "",
   "Enable a Display (Virtual Network Computing) remote connection. Requires <i>UEFI</i> booting.": "",
