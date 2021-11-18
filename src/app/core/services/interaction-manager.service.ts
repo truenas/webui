@@ -84,10 +84,6 @@ export class InteractionManagerService {
       if (layout) {
         layout.endInteractiveMovement(evt.sender);
       }
-      if (this.displayObjectWithFocus && this.displayObjectWithFocus == evt.sender) {
-        // this.displayObjectWithFocus.hasFocus = false;
-        // this.displayObjectWithFocus = null;
-      }
     });
 
     this.displayList = [];
