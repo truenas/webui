@@ -154,7 +154,7 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
 @then('Please wait should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    wait_on_element_disappear(driver, 20, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]')
+    assert wait_on_element_disappear(driver, 20, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]')
     # return to dashboard so 1104 can start properly
     assert wait_on_element(driver, 20, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
