@@ -117,9 +117,9 @@ def the_edit_permissions_page_should_open(driver):
 @then(parsers.parse('select {user} for User, click on the Apply User checkbox'))
 def select_root_for_user_click_on_the_apply_user_checkbox(driver, user):
     """select root for User, click on the Apply User checkbox."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]')
-    driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys(user)
+    assert wait_on_element(driver, 7, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input')
+    driver.find_element_by_xpath('//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input').send_keys(user)
     assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__{user}"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div')
@@ -129,9 +129,9 @@ def select_root_for_user_click_on_the_apply_user_checkbox(driver, user):
 @then(parsers.parse('select {group} for Group name, click on the Apply Group checkbox'))
 def select_wheel_for_group_name_click_on_the_apply_group_checkbox(driver, group):
     """select wheel for Group name, click on the Apply Group checkbox."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="Group"]')
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys(group)
+    assert wait_on_element(driver, 7, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys(group)
     assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__{group}"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div')
@@ -158,6 +158,6 @@ def click_the_save_button_should_be_returned_to_the_pool_list_page(driver):
 def verify_that_the_user_and_group_are_set_to_ericbsd(driver, user):
     """verify that the user and group are set to ericbsd."""
     """verify that the user is root and the group is wheel."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]')
-    assert attribute_value_exist(driver, '//input[@placeholder="User"]', 'value', user)
-    assert attribute_value_exist(driver, '//input[@placeholder="Group"]', 'value', user)
+    assert wait_on_element(driver, 7, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input')
+    assert attribute_value_exist(driver, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input', 'value', user)
+    assert attribute_value_exist(driver, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'value', user)

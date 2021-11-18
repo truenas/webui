@@ -119,14 +119,14 @@ def select_user_check_the_apply_user_then_select_group_name_check_the_apply_grou
     """Select "ldap_user" for User, check the Apply User then select "ldap_group" for Group name, check the Apply Group."""
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div').click()
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]', 'clickable')
-    driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys(ldap_user)
+    assert wait_on_element(driver, 7, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input').send_keys(ldap_user)
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div').click()
-    assert wait_on_element(driver, 7, '//input[@placeholder="Group"]', 'clickable')
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys(ldap_group)
+    assert wait_on_element(driver, 7, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys(ldap_group)
 
 
 @then('Click the Save button, should be return to pool page')
@@ -142,6 +142,6 @@ def click_the_save_button_should_be_return_to_pool_page(driver):
 @then(parsers.parse('Verify that user and group name is "{ldap_user}"'))
 def verify_that_user_and_group_name(driver, ldap_user):
     """Verify that user and group name is "ldap_user"."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]')
-    assert attribute_value_exist(driver, '//input[@placeholder="User"]', 'value', ldap_user)
-    assert attribute_value_exist(driver, '//input[@placeholder="Group"]', 'value', ldap_user)
+    assert wait_on_element(driver, 7, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input')
+    assert attribute_value_exist(driver, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input', 'value', ldap_user)
+    assert attribute_value_exist(driver, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'value', ldap_user)

@@ -172,9 +172,9 @@ def on_the_edit_acl_page_click_on_select_an_acl_preset(driver):
 @then('select HOME, click continue, set Group to builtin_users')
 def select_home_click_continue_set_group_to_builtin_users(driver):
     """select HOME, click continue, set Group to builtin_users."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="Group"]')
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys('wheel')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys('wheel')
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__wheel"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div')

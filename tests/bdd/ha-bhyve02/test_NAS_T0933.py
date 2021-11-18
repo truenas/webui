@@ -381,9 +381,9 @@ def setting_permissions_set_user_to_root_and_then_select_AD01_administrator_for_
 
     assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div').click()
-    assert wait_on_element(driver, 5, '//input[@placeholder="Group"]')
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys('AD01\\administrator')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys('AD01\\administrator')
 
 
 @then('Click the Save button, should be return to pool page')
@@ -400,5 +400,5 @@ def click_the_save_button(driver):
 def verify_that_group_name_is_AD01_administrator(driver):
     """Verify that group name is "AD01\administrator"."""
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//input[@placeholder="Group"]', 'clickable')
-    assert attribute_value_exist(driver, '//input[@placeholder="Group"]', 'value', "AD01\\administrator")
+    assert wait_on_element(driver, 5, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
+    assert attribute_value_exist(driver, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'value', "AD01\\administrator")
