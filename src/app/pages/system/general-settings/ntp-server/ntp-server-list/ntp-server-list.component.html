@@ -1,0 +1,61 @@
+<mat-card>
+  <mat-toolbar-row>
+    <h3>{{ 'NTP Servers' | translate }}</h3>
+    <div class="actions action-icon">
+      <button mat-button color="default" (click)="doAdd()">
+        {{ 'Add' | translate }}
+      </button>
+    </div>
+  </mat-toolbar-row>
+  <mat-card-content>
+    <table ix-table [dataSource]="dataSource" class="mat-elevation-z0">
+      <ng-container matColumnDef="address">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Address' | translate }}</th>
+        <td mat-cell *matCellDef="let server; dataSource: dataSource">{{ server.address }}</td>
+      </ng-container>
+      <ng-container matColumnDef="burst" width="40px">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Burst' | translate }}</th>
+        <td mat-cell *matCellDef="let server; dataSource: dataSource">{{ server.burst }}</td>
+      </ng-container>
+      <ng-container matColumnDef="iburst" width="40px">
+        <th mat-header-cell *matHeaderCellDef>{{ 'IBurst' | translate }}</th>
+        <td mat-cell *matCellDef="let server; dataSource: dataSource">{{ server.iburst }}</td>
+      </ng-container>
+      <ng-container matColumnDef="prefer" width="40px">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Prefer' | translate }}</th>
+        <td mat-cell *matCellDef="let server; dataSource: dataSource">{{ server.prefer }}</td>
+      </ng-container>
+      <ng-container matColumnDef="minpoll" width="60px">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Min Poll' | translate }}</th>
+        <td mat-cell *matCellDef="let server; dataSource: dataSource">{{ server.minpoll }}</td>
+      </ng-container>
+      <ng-container matColumnDef="maxpoll" width="60px">
+        <th mat-header-cell *matHeaderCellDef>{{ 'Max Poll' | translate }}</th>
+        <td mat-cell *matCellDef="let server; dataSource: dataSource">{{ server.maxpoll }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let server; dataSource: dataSource">
+          <button type="button" mat-icon-button (click)="$event.stopPropagation(); doDelete(server)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row
+        *matRowDef="let server; columns: displayedColumns; dataSource: dataSource"
+        (click)="doEdit(server)"
+        class="row-clickable"
+      ></tr>
+
+      <tr class="mat-row no-data-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          <entity-empty [conf]="currentEmptyConf"></entity-empty>
+        </td>
+      </tr>
+    </table>
+  </mat-card-content>
+</mat-card>
+
