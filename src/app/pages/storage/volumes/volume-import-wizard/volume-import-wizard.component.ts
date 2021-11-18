@@ -155,7 +155,7 @@ export class VolumeImportWizardComponent implements WizardConfiguration {
         }, (err) => {
           this.modalService.closeSlideIn();
           this.modalService.refreshTable();
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         });
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
