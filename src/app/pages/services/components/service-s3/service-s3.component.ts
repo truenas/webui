@@ -127,6 +127,6 @@ export class ServiceS3Component implements OnInit {
   }
 
   onCancel(): void {
-    this.router.navigate(['/storage']);
+    this.router.navigate(['/services']);
   }
 }
