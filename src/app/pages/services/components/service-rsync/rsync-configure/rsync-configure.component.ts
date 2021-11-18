@@ -21,7 +21,7 @@ import { WebSocketService, DialogService, AppLoaderService } from 'app/services'
 })
 export class RsyncConfigureComponent implements OnInit {
   form = this.fb.group({
-    port: [873, Validators.pattern('^[0-9]*$')],
+    port: [873, [Validators.required, Validators.min(1), Validators.max(65535)]],
     auxiliary: [''],
   });
 
