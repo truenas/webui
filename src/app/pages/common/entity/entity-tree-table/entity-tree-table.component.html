@@ -32,19 +32,19 @@
                   fontSet="mdi-set"
                   fontIcon="mdi-lock-open-variant" 
                   *ngIf="element.data.is_encrypted_root && !element.data.locked"
-                  [matTooltip]="'Encrypted dataset is unlocked' | translate"
+                  [matTooltip]="'This dataset is an encryption root which is unlocked. Data from this dataset or it\'s children datasets which inherit it\'s encryption properties is accessible.' | translate"
                 ></mat-icon>
                 <mat-icon 
                   role="img" 
                   fontSet="mdi-set" 
-                  [matTooltip]="'Encrypted dataset is locked' | translate"
+                  [matTooltip]="'This dataset is an encryption root which is locked. Data from this dataset or it\'s children datasets which inherit it\'s encryption properties is not accessible.' | translate"
                   fontIcon="mdi-lock" 
                   *ngIf="element.data.is_encrypted_root && element.data.locked"
                 ></mat-icon>
                 <mat-icon 
                   svgIcon="anti-lock" 
                   *ngIf="element.data.non_encrypted_on_encrypted || (!element.data.encrypted && element.data.has_encrypted_children)"
-                  [matTooltip]="'Pool has encrypted children' | translate"
+                  [matTooltip]="'This root dataset is not encrypted itself, but has encrypted children.' | translate"
                 ></mat-icon>
               </span>
             </span>
