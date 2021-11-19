@@ -46,7 +46,15 @@ export class GuiFormComponent {
     ui_consolemsg: [false, [Validators.required]],
     cidr_port: [
       '',
-      [this.IxValidatorsService.min(10)],
+      [
+        this.IxValidatorsService.withMessage(
+          this.IxValidatorsService.ipCidrV4orCidrV6.validatorFn(),
+          {
+            message: 'Invalid CIDR notation IP',
+            forProperty: this.IxValidatorsService.ipCidrV4orCidrV6.forProperty,
+          },
+        ),
+      ],
     ],
   });
 

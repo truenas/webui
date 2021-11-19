@@ -1648,7 +1648,6 @@
   "IP Addresses": "",
   "IP address of the remote system with <i>UPS Mode</i> set as <i>Master</i>. Enter a valid IP address in the format <i>192.168.0.1</i>.": "",
   "IP address on which the connection <b>Active Side</b> listens. Defaults to <i>0.0.0.0</i>.": "",
-  "IP not in valid v4 or v6 CIDR notation": "",
   "IPMI": "",
   "IPMI Configuration": "",
   "IPMI Identify": "",
