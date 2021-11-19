@@ -22,9 +22,7 @@ import { ServiceSSHComponent } from 'app/pages/services/components/service-ssh/s
 import { ServiceTFTPComponent } from 'app/pages/services/components/service-tftp/service-tftp.component';
 import { ServiceUPSComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServiceWebdavComponent } from 'app/pages/services/components/service-webdav/service-webdav.component';
-import { ServicesService } from 'app/pages/services/services.service';
 import { AppConfirmModule } from 'app/services/app-confirm/app-confirm.module';
-import { UserService } from 'app/services/user.service';
 import { EntityModule } from '../common/entity/entity.module';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServicesComponent } from './services.component';
@@ -64,7 +62,6 @@ import { routing } from './services.routing';
     ServiceWebdavComponent,
     ServiceS3Component,
   ],
-  providers: [UserService, ServicesService],
 })
 export class ServicesModule {
 }

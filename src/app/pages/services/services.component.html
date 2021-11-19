@@ -1,15 +1,20 @@
-<mat-card [style.overflow]="'hidden'">
+<mat-card>
   <mat-card-content>
     <table ix-table [dataSource]="dataSource">
       <ng-container matColumnDef="name">
         <th *matHeaderCellDef>{{ 'Name' | translate }}</th>
-        <td *matCellDef="let element; dataSource: dataSource">{{ element.name }}</td>
+        <td *matCellDef="let service; dataSource: dataSource">{{ serviceNames.get(service.service) }}</td>
       </ng-container>
 
       <ng-container matColumnDef="state">
         <th *matHeaderCellDef>{{ 'Running' | translate }}</th>
         <td *matCellDef="let service; dataSource: dataSource">
-          <mat-spinner [diameter]="40" *ngIf="service['onChanging']; else slider"></mat-spinner>
+          <mat-spinner
+            *ngIf="serviceLoadingMap.get(service.service); else slider"
+            [diameter]="40"
+            [matTooltip]="(service.state === ServiceStatus.Running ? 'Stopping' : 'Starting') | uppercase | translate"
+            matTooltipPosition="right"
+          ></mat-spinner>
           <ng-template #slider>
             <div
               class="clickable"

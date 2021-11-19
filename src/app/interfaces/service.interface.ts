@@ -8,8 +8,3 @@ export interface Service {
   service: ServiceName;
   state: ServiceStatus;
 }
-
-export interface ServiceRow extends Service {
-  onChanging: boolean;
-  name: string;
-}

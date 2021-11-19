@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
-import { Service, ServiceRow } from 'app/interfaces/service.interface';
+import { Service } from 'app/interfaces/service.interface';
 import { WebSocketService } from 'app/services/index';
 
 @Injectable({
@@ -13,21 +13,19 @@ export class ServicesService {
 
   constructor(private ws: WebSocketService) { }
 
-  getAll(): Observable<ServiceRow[]> {
+  getAll(): Observable<Service[]> {
     return this.ws.call('service.query', [[], { order_by: ['service'] }]).pipe(
       map((services) => {
         return services
-          .filter((service) => !this.hiddenServices.includes(service.service))
-          .map((service) => this.transform(service));
+          .filter((service) => !this.hiddenServices.includes(service.service));
       }),
     );
   }
 
-  getUpdates(): Observable<ServiceRow> {
+  getUpdates(): Observable<Service> {
     return this.ws.subscribe('service.query').pipe(
       map((event) => event.fields),
       filter((service) => !this.hiddenServices.includes(service.service)),
-      map((service) => this.transform(service)),
     );
   }
 
@@ -41,13 +39,5 @@ export class ServicesService {
 
   enableDisableAction(id: number, enable: boolean): Observable<number> {
     return this.ws.call('service.update', [id, { enable }]);
-  }
-
-  transform(service: Service): ServiceRow {
-    return {
-      ...service,
-      name: this.getServiceName(service),
-      onChanging: false,
-    };
   }
 }
