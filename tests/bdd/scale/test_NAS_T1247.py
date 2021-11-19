@@ -52,7 +52,7 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
 
 
-@when('on the service page, press on configure SMB')
+@then('on the service page, press on configure SMB')
 def on_the_service_page_press_on_configure_smb(driver):
     """on the service page, press on configure SMB."""
     assert wait_on_element(driver, 5, '//button[@ix-auto="action__Configure_CIFS"]')
@@ -63,7 +63,7 @@ def on_the_service_page_press_on_configure_smb(driver):
     driver.find_element_by_xpath('//button[@ix-auto="action__Configure_CIFS"]').click()
 
 
-@when('the SMB page loads click advanced')
+@then('the SMB page loads click advanced')
 def the_smb_page_loads_click_advanced(driver):
     """the SMB page loads click advanced."""
     assert wait_on_element(driver, 5, '//h1[contains(text(),"SMB")]')
@@ -71,7 +71,7 @@ def the_smb_page_loads_click_advanced(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__ADVANCED OPTIONS"]').click()
 
 
-@when('Enter parameters and click save')
+@then('Enter parameters and click save')
 def enter_parameters_and_click_save(driver):
     """Enter parameters and click save."""
     element = driver.find_element_by_xpath('//button[@ix-auto="button__CANCEL"]')
@@ -85,7 +85,7 @@ def enter_parameters_and_click_save(driver):
 
 
 
-@when('The Service page should load and there should be no traceback')
+@then('The Service page should load and there should be no traceback')
 def the_service_page_should_load_and_there_should_be_no_traceback(driver):
     """The Service page should load and there should be no traceback."""
     assert wait_on_element(driver, 10, '//h1[contains(text(),"Services")]')
