@@ -178,7 +178,7 @@ export class DeviceEditComponent implements OnInit {
       inputType: 'number',
     },
   ];
-  protected nic_attach: FormSelectConfig;
+  protected nicAttachField: FormSelectConfig;
   protected nicType: FormSelectConfig;
 
   // rawfile
@@ -362,8 +362,8 @@ export class DeviceEditComponent implements OnInit {
 
     // nic
     this.networkService.getVmNicChoices().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.nic_attach = _.find(this.nicFieldConfig, { name: 'nic_attach' }) as FormSelectConfig;
-      this.nic_attach.options = Object.keys(res || {}).map((nicId) => ({
+      this.nicAttachField = _.find(this.nicFieldConfig, { name: 'nic_attach' }) as FormSelectConfig;
+      this.nicAttachField.options = Object.keys(res || {}).map((nicId) => ({
         label: nicId,
         value: nicId,
       }));

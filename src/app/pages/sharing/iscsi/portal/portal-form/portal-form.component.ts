@@ -140,15 +140,17 @@ export class PortalFormComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
   pk: number;
-  protected authgroup_field: FormSelectConfig;
+  protected authgroupField: FormSelectConfig;
   protected entityForm: EntityFormComponent;
   protected ip: PortalAddress[];
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected iscsiService: IscsiService,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
-    protected ws: WebSocketService) { }
+    protected ws: WebSocketService,
+  ) { }
 
   prerequisite(): Promise<boolean> {
     return new Promise(async (resolve) => {
@@ -178,11 +180,11 @@ export class PortalFormComponent implements FormConfiguration {
       }
     });
     const authgroupFieldset = _.find(this.fieldSets, { class: 'authgroup' });
-    this.authgroup_field = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' }) as FormSelectConfig;
+    this.authgroupField = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' }) as FormSelectConfig;
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       accessRecords.forEach((record) => {
-        if (_.find(this.authgroup_field.options, { value: record.tag }) == undefined) {
-          this.authgroup_field.options.push({ label: String(record.tag), value: record.tag });
+        if (_.find(this.authgroupField.options, { value: record.tag }) == undefined) {
+          this.authgroupField.options.push({ label: String(record.tag), value: record.tag });
         }
       });
     });

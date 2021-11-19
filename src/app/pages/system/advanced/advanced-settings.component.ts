@@ -75,7 +75,7 @@ export class AdvancedSettingsComponent implements OnInit {
   entityForm: EntityFormComponent;
   isFirstTime = true;
 
-  isHA = false;
+  isHa = false;
   formEvent$: Subject<CoreEvent>;
   actionsConfig: GlobalActionConfig;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
@@ -279,7 +279,7 @@ export class AdvancedSettingsComponent implements OnInit {
     this.entityForm = entityForm;
 
     this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
-      this.isHA = isHa;
+      this.isHa = isHa;
     });
   }
 
@@ -486,7 +486,7 @@ export class AdvancedSettingsComponent implements OnInit {
       if (systemInfo) {
         const hostname = systemInfo.hostname.split('.')[0];
         const date = this.datePipe.transform(new Date(), 'yyyyMMddHHmmss');
-        if (this.isHA) {
+        if (this.isHa) {
           mimeType = 'application/x-tar';
           fileName = `debug-${hostname}-${date}.tar`;
         } else {

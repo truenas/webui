@@ -22,7 +22,7 @@ import { RoutePart, RoutePartsService } from 'app/services/route-parts/route-par
 export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('viewcontroller', { static: false }) viewcontroller: ViewControllerComponent;
   @Input() breadcrumbs: boolean;
-  @Input() product_type: ProductType;
+  @Input() productType: ProductType;
   title$ = this.pageTitleService.title$;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   hasInitialized = false;

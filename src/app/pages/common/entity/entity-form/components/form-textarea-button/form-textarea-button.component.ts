@@ -16,14 +16,14 @@ export class FormTextareaButtonComponent implements Field {
   group: FormGroup;
   fieldShow: string;
 
-  @ViewChild('textAreaSSH', { static: true })
-  textAreaSSH: ElementRef;
+  @ViewChild('textAreaSsh', { static: true })
+  textAreaSsh: ElementRef;
 
   constructor(public translate: TranslateService) {}
 
   customEventMethod($event: MouseEvent): void {
     if (this.config.customEventMethod !== undefined && this.config.customEventMethod != null) {
-      this.config.customEventMethod({ event: $event, textAreaSSH: this.textAreaSSH });
+      this.config.customEventMethod({ event: $event, textAreaSSH: this.textAreaSsh });
     }
 
     $event.preventDefault();

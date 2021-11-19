@@ -26,7 +26,7 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
 
   tabFormGroup: FormGroup;
   protected control: AbstractControl;
-  protected active_tab: FieldConfig;
+  protected activeTabField: FieldConfig;
   protected value: any;
   protected init: boolean;
   @ViewChild('tabGroup', { static: true }) tabGroup: MatTabGroup;
@@ -35,7 +35,7 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
     public translate: TranslateService) {}
 
   ngAfterViewInit(): void {
-    this.active_tab = this.config.tabs[this.tabGroup.selectedIndex];
+    this.activeTabField = this.config.tabs[this.tabGroup.selectedIndex];
     this.setControlValue();
   }
 
@@ -55,29 +55,29 @@ export class FormTaskComponent implements Field, AfterViewInit, OnInit {
         this.init = false;
         if (_.startsWith(this.control.value, '*/')) {
           this.tabGroup.selectedIndex = 0;
-          this.active_tab = this.config.tabs[0];
+          this.activeTabField = this.config.tabs[0];
           this.value = Number(_.trim(this.control.value, '*/'));
-          this.tabFormGroup.controls[this.active_tab.name].setValue(this.value);
+          this.tabFormGroup.controls[this.activeTabField.name].setValue(this.value);
         } else {
           this.tabGroup.selectedIndex = 1;
-          this.active_tab = this.config.tabs[1];
-          this.tabFormGroup.controls[this.active_tab.name].setValue(this.control.value.split(','));
+          this.activeTabField = this.config.tabs[1];
+          this.tabFormGroup.controls[this.activeTabField.name].setValue(this.control.value.split(','));
         }
       }
     });
   }
 
   onSelectChange(): void {
-    this.active_tab = this.config.tabs[this.tabGroup.selectedIndex];
+    this.activeTabField = this.config.tabs[this.tabGroup.selectedIndex];
     this.setControlValue();
   }
 
   setControlValue(): void {
-    this.value = this.tabFormGroup.controls[this.active_tab.name].value;
-    if (this.active_tab.type == 'slider' && this.value) {
+    this.value = this.tabFormGroup.controls[this.activeTabField.name].value;
+    if (this.activeTabField.type == 'slider' && this.value) {
       this.value = '*/' + this.value;
     }
-    if (this.active_tab.type == 'togglebutton' && this.value) {
+    if (this.activeTabField.type == 'togglebutton' && this.value) {
       this.value = this.value.join();
     }
     this.control.setValue(this.value);

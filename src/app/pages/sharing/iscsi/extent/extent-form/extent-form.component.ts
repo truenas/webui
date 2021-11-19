@@ -258,10 +258,10 @@ export class ExtentFormComponent implements FormConfiguration {
     'path',
     'filesize',
   ];
-  protected extent_type_control: AbstractControl;
-  protected extent_disk_control: AbstractControl;
+  protected extentTypeControl: AbstractControl;
+  protected extentDiskControl: AbstractControl;
   pk: string;
-  protected avail_threshold_field: FieldConfig;
+  protected availableThresholdField: FieldConfig;
   fieldConfig: FieldConfig[];
 
   constructor(
@@ -301,19 +301,19 @@ export class ExtentFormComponent implements FormConfiguration {
       extentDiskField.options = _.sortBy(options, ['label']);
     });
 
-    this.extent_type_control = entityForm.formGroup.controls['type'];
-    this.extent_type_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
+    this.extentTypeControl = entityForm.formGroup.controls['type'];
+    this.extentTypeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       this.formUpdate(value);
     });
 
-    this.avail_threshold_field = _.find(this.fieldConfig, { name: 'avail_threshold' });
-    this.extent_disk_control = entityForm.formGroup.controls['disk'];
-    this.extent_disk_control.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
+    this.availableThresholdField = _.find(this.fieldConfig, { name: 'avail_threshold' });
+    this.extentDiskControl = entityForm.formGroup.controls['disk'];
+    this.extentDiskControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       // zvol
       if (_.startsWith(value, 'zvol')) {
-        this.avail_threshold_field.isHidden = false;
+        this.availableThresholdField.isHidden = false;
       } else {
-        this.avail_threshold_field.isHidden = true;
+        this.availableThresholdField.isHidden = true;
         if (this.pk && value != undefined && _.find(extentDiskField.options, { value }) === undefined) {
           extentDiskField.options.push({ label: value, value });
         }
@@ -321,7 +321,7 @@ export class ExtentFormComponent implements FormConfiguration {
     });
 
     if (this.isNew) {
-      this.extent_type_control.setValue('DISK');
+      this.extentTypeControl.setValue('DISK');
     }
   }
 

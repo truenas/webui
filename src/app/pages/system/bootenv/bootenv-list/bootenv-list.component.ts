@@ -42,13 +42,13 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   protected wsActivate = 'bootenv.activate' as const;
   protected wsKeep = 'bootenv.set_attribute' as const;
   protected loaderOpen = false;
-  size_consumed: string;
+  sizeConsumed: string;
   condition: string;
-  size_boot: string;
+  sizeBoot: string;
   percentange: string;
   header: string;
-  scrub_msg: string;
-  scrub_interval: number;
+  scrubMessage: string;
+  scrubInterval: number;
 
   constructor(
     private router: Router,
@@ -81,7 +81,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
 
   preInit(): void {
     this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.scrub_interval = res.boot_scrub;
+      this.scrubInterval = res.boot_scrub;
       this.updateBootState();
     });
   }
@@ -261,16 +261,16 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   updateBootState(): void {
     this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
       if (state.scan.end_time) {
-        this.scrub_msg = this.localeService.formatDateTime(state.scan.end_time.$date);
+        this.scrubMessage = this.localeService.formatDateTime(state.scan.end_time.$date);
       } else {
-        this.scrub_msg = this.translate.instant('Never');
+        this.scrubMessage = this.translate.instant('Never');
       }
-      this.size_consumed = this.storage.convertBytestoHumanReadable(state.properties.allocated.parsed);
+      this.sizeConsumed = this.storage.convertBytestoHumanReadable(state.properties.allocated.parsed);
       this.condition = state.properties.health.value;
       if (this.condition === 'DEGRADED') {
         this.condition = this.condition + this.translate.instant(' Check Notifications for more details.');
       }
-      this.size_boot = this.storage.convertBytestoHumanReadable(state.properties.size.parsed);
+      this.sizeBoot = this.storage.convertBytestoHumanReadable(state.properties.size.parsed);
       this.percentange = state.properties.capacity.value;
     });
   }
@@ -330,7 +330,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: this.translate.instant('Stats/Settings'),
       onClick: () => {
         this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-          this.scrub_interval = res.boot_scrub;
+          this.scrubInterval = res.boot_scrub;
           const localWs = this.ws;
           const localDialog = this.dialog;
           const statusConfigFieldConf: FieldConfig[] = [
@@ -342,24 +342,24 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             {
               type: 'paragraph',
               name: 'size_boot',
-              paraText: this.translate.instant('<b>Size:</b> {size_boot}', { size_boot: this.size_boot }),
+              paraText: this.translate.instant('<b>Size:</b> {sizeBoot}', { sizeBoot: this.sizeBoot }),
             },
             {
               type: 'paragraph',
               name: 'size_consumed',
-              paraText: this.translate.instant('<b>Used:</b> {size_consumed}', { size_consumed: this.size_consumed }),
+              paraText: this.translate.instant('<b>Used:</b> {sizeConsumed}', { sizeConsumed: this.sizeConsumed }),
             },
             {
               type: 'paragraph',
               name: 'scrub_msg',
-              paraText: this.translate.instant('<b>Last Scrub Run:</b> {scrub_msg}<br /><br />', { scrub_msg: this.scrub_msg }),
+              paraText: this.translate.instant('<b>Last Scrub Run:</b> {scrubMessage}<br /><br />', { scrubMessage: this.scrubMessage }),
             },
             {
               type: 'input',
               name: 'new_scrub_interval',
               placeholder: this.translate.instant('Scrub interval (in days)'),
               inputType: 'number',
-              value: this.scrub_interval,
+              value: this.scrubInterval,
               required: true,
             },
           ];

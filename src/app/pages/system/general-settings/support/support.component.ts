@@ -23,7 +23,7 @@ import { SupportFormUnlicensedComponent } from './support-unlicensed/support-for
 })
 export class SupportComponent implements OnInit {
   isProduction: boolean;
-  product_image = '';
+  productImage = '';
   isProductImageRack = false;
   extraMargin = true;
   serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];
@@ -102,9 +102,9 @@ export class SupportComponent implements OnInit {
     });
     if (imagePath) {
       this.isProductImageRack = true;
-      this.product_image = imagePath;
+      this.productImage = imagePath;
     } else {
-      this.product_image = 'ix-original-cropped.png';
+      this.productImage = 'ix-original-cropped.png';
       this.isProductImageRack = false;
       this.extraMargin = false;
     }
@@ -117,22 +117,22 @@ export class SupportComponent implements OnInit {
       case 'FREENAS-MINI-3.0-E+':
       case 'TRUENAS-MINI-3.0-E':
       case 'TRUENAS-MINI-3.0-E+':
-        this.product_image = 'freenas_mini_cropped.png';
+        this.productImage = 'freenas_mini_cropped.png';
         break;
       case 'FREENAS-MINI-3.0-X':
       case 'FREENAS-MINI-3.0-X+':
       case 'TRUENAS-MINI-3.0-X':
       case 'TRUENAS-MINI-3.0-X+':
-        this.product_image = 'freenas_mini_x_cropped.png';
+        this.productImage = 'freenas_mini_x_cropped.png';
         break;
       case 'FREENAS-MINI-XL':
       case 'FREENAS-MINI-3.0-XL+':
       case 'TRUENAS-MINI-3.0-XL+':
-        this.product_image = 'freenas_mini_xl_cropped.png';
+        this.productImage = 'freenas_mini_xl_cropped.png';
         break;
       default:
         // this.product_image = 'ix-original-cropped.png';
-        this.product_image = 'freenas_mini_xl_cropped.png';
+        this.productImage = 'freenas_mini_xl_cropped.png';
         break;
     }
     this.isProductImageRack = false;

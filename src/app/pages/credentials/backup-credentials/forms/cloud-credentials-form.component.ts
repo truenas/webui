@@ -38,14 +38,14 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   queryCallOption: QueryFilter<CloudsyncCredential>[];
   protected formGroup: FormGroup;
   protected id: number;
-  protected keyID: number;
+  protected keyId: number;
   protected isOneColumnForm = true;
   private rowNum: number;
   title = helptext.formTitle;
 
   protected selectedProvider = 'S3';
   protected credentialsOauth = false;
-  protected oauthURL: string;
+  protected oauthUrl: string;
   hideSaveBtn = true;
 
   fieldSets: FieldSet[] = [
@@ -1364,8 +1364,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
       this.selectedProvider = res;
 
-      this.oauthURL = _.find(this.providers, { name: res }).credentials_oauth;
-      this.credentialsOauth = this.oauthURL != null;
+      this.oauthUrl = _.find(this.providers, { name: res }).credentials_oauth;
+      this.credentialsOauth = this.oauthUrl != null;
       entityForm.setDisabled('client_id', !this.credentialsOauth, !this.credentialsOauth);
       entityForm.setDisabled('client_secret', !this.credentialsOauth, !this.credentialsOauth);
       entityForm.setDisabled('oauth_signin_button', !this.credentialsOauth, !this.credentialsOauth);
@@ -1451,7 +1451,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   }
 
   logInToProvider(): void {
-    window.open(this.oauthURL + '?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
+    window.open(this.oauthUrl + '?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
     const controls = this.entityForm.formGroup.controls;
     const dialogService = this.dialog;
     const translate = this.translate;
@@ -1495,15 +1495,15 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         };
         await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
           (sshKey) => {
-            this.keyID = sshKey.id;
+            this.keyId = sshKey.id;
             const privateKeySftpField = _.find(this.fieldConfig, { name: 'private_key-SFTP' }) as FormSelectConfig;
-            privateKeySftpField.options.push({ label: payload.name, value: this.keyID });
-            this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
+            privateKeySftpField.options.push({ label: payload.name, value: this.keyId });
+            this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyId);
             if (submitting) {
               value['private_key-SFTP'] = sshKey.id;
               this.finishSubmit(value);
             } else {
-              value.attributes.private_key = this.keyID;
+              value.attributes.private_key = this.keyId;
               this.verifyCredentials(value);
             }
           },
