@@ -1,14 +1,6 @@
-import {
-  Component,
-  ElementRef,
-  Input,
-  ViewChild,
-  AfterViewInit,
-  OnDestroy,
-} from '@angular/core';
-import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Component, Input } from '@angular/core';
+import { FormBuilder } from '@ngneat/reactive-forms';
+import { UntilDestroy } from '@ngneat/until-destroy';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { GlobalAction } from 'app/interfaces/global-action.interface';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
@@ -21,47 +13,30 @@ import { ModalService } from 'app/services/modal.service';
 @Component({
   selector: 'app-volumes-list-controls',
   templateUrl: './volumes-list-controls.component.html',
+  styleUrls: ['./volumes-list-controls.component.scss'],
   providers: [MessageService],
 })
-export class VolumesListControlsComponent implements GlobalAction, AfterViewInit, OnDestroy {
-  @ViewChild('filter', { static: false }) filter: ElementRef;
+export class VolumesListControlsComponent implements GlobalAction {
   @Input() entity: VolumesListComponent;
 
   conf: EntityTableConfig;
   filterValue = '';
   actions: EntityTableAction[];
 
-  private filterSubscription: Subscription;
-
   get totalActions(): number {
     const addAction = this.entity.conf.route_add ? 1 : 0;
     return this.actions.length + addAction;
   }
 
+  form = this.fb.group({
+    keyword: [''],
+  });
+
   constructor(
+    private fb: FormBuilder,
     private core: CoreService,
     private modalService: ModalService,
   ) {}
-
-  ngOnDestroy(): void {
-    this.filterSubscription?.unsubscribe();
-  }
-
-  ngAfterViewInit(): void {
-    if (!this.filter) {
-      return;
-    }
-
-    this.filterSubscription = observableFromEvent(
-      this.filter.nativeElement,
-      'keyup',
-    )
-      .pipe(debounceTime(250), distinctUntilChanged())
-      .pipe(untilDestroyed(this)).subscribe(() => {
-        this.filterValue = this.filter.nativeElement.value || '';
-        this.filterDatasets(this.filterValue);
-      });
-  }
 
   applyConfig(config: VolumesListComponent): void {
     if (config) {
@@ -73,10 +48,8 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
     }
   }
 
-  resetDatasetFilter(): void {
-    this.filterValue = '';
-    this.filter.nativeElement.value = '';
-    this.filterDatasets('');
+  onChange(value: string): void {
+    this.filterDatasets(value);
   }
 
   filterDatasets(value: string): void {
