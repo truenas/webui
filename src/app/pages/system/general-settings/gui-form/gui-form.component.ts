@@ -50,10 +50,15 @@ export class GuiFormComponent {
         this.IxValidatorsService.withMessage(
           this.IxValidatorsService.ipCidrV4orCidrV6.validatorFn(),
           {
-            message: 'Invalid CIDR notation IP',
+            message: this.translate.instant('Invalid CIDR notation IP'),
             forProperty: this.IxValidatorsService.ipCidrV4orCidrV6.forProperty,
           },
         ),
+        this.IxValidatorsService.withMessage(
+          Validators.minLength(10),
+          { message: this.translate.instant('Minimum length allowed is 10-ish'), forProperty: 'minlength' },
+        ),
+        Validators.required,
       ],
     ],
   });
