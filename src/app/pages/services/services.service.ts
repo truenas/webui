@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { WebSocketService } from 'app/services/index';
 
@@ -27,10 +27,6 @@ export class ServicesService {
       map((event) => event.fields),
       filter((service) => !this.hiddenServices.includes(service.service)),
     );
-  }
-
-  getServiceName(service: Service): ServiceName {
-    return serviceNames.get(service.service) as ServiceName || service.service;
   }
 
   startStopAction(rpc: 'service.start' | 'service.stop', service: ServiceName): Observable<boolean> {
