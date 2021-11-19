@@ -15,7 +15,7 @@ import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { VolumeDataEvent } from 'app/interfaces/events/volume-data-event.interface';
-import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
+import { EntityToolbarActionConfig } from 'app/interfaces/global-action.interface';
 import {
   NetworkInterface,
   NetworkInterfaceState,
@@ -51,7 +51,7 @@ export type DashboardNicState = NetworkInterfaceState & {
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   formEvents$: Subject<CoreEvent> = new Subject();
-  actionsConfig: GlobalActionConfig;
+  actionsConfig: EntityToolbarActionConfig;
 
   screenType = 'Desktop'; // Desktop || Mobile
   optimalDesktopWidth = '100%';
@@ -359,13 +359,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     data.forEach((dataset) => {
       if (typeof dataset == undefined || !dataset) { return; }
-      const used_pct = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
+      const usedPercent = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
       const zvol = {
         avail: dataset.available.parsed,
         id: dataset.id,
         name: dataset.name,
         used: dataset.used.parsed,
-        used_pct: (used_pct * 100).toFixed(0) + '%',
+        used_pct: (usedPercent * 100).toFixed(0) + '%',
       };
 
       vd[zvol.id] = zvol;

@@ -22,7 +22,7 @@
         <div *ngIf="!field.isHidden" fxFlex="calc(100% - 100px)"
           [ngClass]="{'form-inline': field.class == 'inline', 'form-line': field.class !== 'inline'}"
           fxFlex.gt-xs="calc({{field.width}} - 100px - 32px)">
-          <div dynamicField [config]="field" [group]="listsFromArray.controls[i]"></div>
+          <div dynamicField [config]="field" [group]="listsFromArray.controls[i] | cast"></div>
         </div>
       </ng-container>
       <div *ngIf="!config.hideButton" class="list-action list-action-inline"

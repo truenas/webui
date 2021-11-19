@@ -34,7 +34,10 @@
 
   <div *ngIf="!description">
     <span *ngIf="altMessage" [innerHTML]="altMessage"></span>
-    <span *ngIf="!altMessage">{{ 'Fetching data...' | translate }}</span>
+    <div *ngIf="!altMessage">
+      <span *ngIf="job?.state === JobState.Waiting">{{ 'Waiting' | translate }}</span>
+      <span *ngIf="job?.state !== JobState.Waiting">{{ 'Fetching data...' | translate }}</span>
+    </div>
   </div>
 
   <div *ngIf="showRealtimeLogs && realtimeLogs">

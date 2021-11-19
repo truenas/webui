@@ -121,7 +121,8 @@
           <div class="content" (mouseenter)="toggleHighlightMode('on')" (mouseleave)="toggleHighlightMode('off')">
 
             <div *ngIf="selectedVdevDisks; else noVdevDisks;" class="legend">
-              <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.yellow : theme.cyan"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span>
+              <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}" (mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)">
+                <div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.yellow : theme.cyan"></div>{{disk}}
                 <span *ngIf="!selectedVdev.slots[disk]">({{ selectedVdev.diskEnclosures[disk] == system.rearIndex ? 'Rear' : selectedVdev.diskEnclosures[disk] }})</span>
               </div>
             </div>
@@ -152,7 +153,7 @@
         <!-- EXPANDERS OVERLAY -->
         <div *ngIf="currentView == 'expanders' || exitingView == 'expanders'" class="expanders full-stage dom-overlay">
           <div *ngIf="expanders" class="content" >
-            <div *ngFor="let expander of expanders" [style.width]="(100 / expanders.length).toString() + '%'" class="expander-item">
+            <div *ngFor="let expander of expanders | cast" [style.width]="(100 / expanders.length).toString() + '%'" class="expander-item">
               <div class="primary-number" >{{ expander.status }}</div>
               <div class="title">{{expander.descriptor}}</div>
               <div class="subtitle">{{ 'Expander Status' | translate }}</div>
@@ -185,7 +186,6 @@
           <div *ngIf="system && system.pools && enclosurePools; else loading" fxFlex class="tiles" [class.active]="currentView == 'pools' " fxLayout="column" fxLayoutAlign="center center">
             <div class="primary-number" >{{ enclosurePools.length }}</div>
             <div class="title"> {{ 'Pools in Enclosure' | translate }}</div>
-            <!--<div class="subtitle">{{system.profile.length > 1 ? system.profile.length - 1 : 'No' }} other enclosures detected</div>-->
             <div *ngIf="unhealthyPools && unhealthyPools.length == 1" class="subtitle">Pool "{{unhealthyPools[0].name}}" is {{unhealthyPools[0].status}}.</div>
             <div *ngIf="unhealthyPools && unhealthyPools.length > 1" class="subtitle">{{unhealthyPools[0]}} and {{unhealthyPools.length - 1}} other pools are not healthy.</div>
             <div *ngIf="unhealthyPools && unhealthyPools.length < 1" class="subtitle">{{ 'All pools are online.' | translate }}</div>
@@ -219,7 +219,7 @@
 
     <!-- DETAILS/DISK -->
     <ng-template #details>
-      <div  #diskdetails id="disks-details">
+      <div  #diskdetails id="disks-details" [class]="{ 'disk-selected': selectedVdev }">
         <div class="details-wrapper" fxFill fxLayout="row" fxLayoutAlign="space-around stretch">
 
           <div fxFlex="25" class="disk-basic-details" fxLayout="column" fxLayoutAlign="center center">
@@ -238,6 +238,13 @@
                 <div>
                   <div class="label">{{ 'Pool' | translate }}</div>
                   <div class="value">{{selectedDisk.vdev ? selectedDisk.vdev.pool : 'Disk not attached to any pools.'}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">{{ 'Model' | translate }}</div>
+                  <div class="value">{{selectedDisk.model}}</div>
                 </div>
               </div>
 
@@ -290,10 +297,20 @@
                 </div>
               </div>
 
-              <div fxFlex="calc(75% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+              <div fxFlex="calc(25% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
                 <div>
                   <div class="label">{{ 'Description' | translate }}</div>
                   <div class="value">{{selectedDisk.description ? selectedDisk.description : 'None'}}</div>
+                </div>
+              </div>
+
+              <div fxFlex="calc(50% - 16px)" class="detail" fxLayout="column" fxLayoutAlign="start start">
+                <div>
+                  <div class="label">{{ 'Rotation Rate' | translate }}</div>
+                  <div class="value">
+                    <ng-container *ngIf="selectedDisk.rotationrate; else flash">{{selectedDisk.rotationrate}}{{'RPM' | translate}}</ng-container>
+                    <ng-template #flash>{{'Not Available' | translate}}</ng-template>
+                  </div>
                 </div>
               </div>
 

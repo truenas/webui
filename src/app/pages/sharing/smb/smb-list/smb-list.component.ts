@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ProductType } from 'app/enums/product-type.enum';
-import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
+import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -41,10 +41,10 @@ export class SMBListComponent implements EntityTableConfig {
   };
 
   columns = [
-    { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
-    { name: helptext_sharing_smb.column_path, prop: 'path', showLockedStatus: true },
-    { name: helptext_sharing_smb.column_comment, prop: 'comment' },
-    { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
+    { name: helptextSharingSmb.column_name, prop: 'name', always_display: true },
+    { name: helptextSharingSmb.column_path, prop: 'path', showLockedStatus: true },
+    { name: helptextSharingSmb.column_comment, prop: 'comment' },
+    { name: helptextSharingSmb.column_enabled, prop: 'enabled', checkbox: true },
   ];
   rowIdentifier = 'cifs_name';
   config = {
@@ -103,7 +103,7 @@ export class SMBListComponent implements EntityTableConfig {
         id: row.name,
         icon: 'security',
         name: 'share_acl',
-        label: helptext_sharing_smb.action_share_acl,
+        label: helptextSharingSmb.action_share_acl,
         onClick: (row: SmbShare) => {
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
@@ -130,7 +130,7 @@ export class SMBListComponent implements EntityTableConfig {
         name: 'edit_acl',
         disabled: optionDisabled,
         matTooltip: vol_helptext.acl_edit_msg,
-        label: helptext_sharing_smb.action_edit_acl,
+        label: helptextSharingSmb.action_edit_acl,
         onClick: (row: SmbShare) => {
           const datasetId = rowName;
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
@@ -147,7 +147,7 @@ export class SMBListComponent implements EntityTableConfig {
                 );
               }
             }, (err) => {
-              this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
+              this.dialog.errorReport(helptextSharingSmb.action_edit_acl_dialog.title,
                 err.reason, err.trace.formatted);
             },
           );
@@ -164,9 +164,10 @@ export class SMBListComponent implements EntityTableConfig {
   }
 
   lockedPathDialog(path: string): void {
-    const thePath = this.translate.instant(helptext_sharing_smb.action_edit_acl_dialog.message1);
-    const isInALockedDataset = this.translate.instant(helptext_sharing_smb.action_edit_acl_dialog.message2);
-    this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, `${thePath} <i>${path}</i> ${isInALockedDataset}`);
+    this.dialog.errorReport(
+      helptextSharingSmb.action_edit_acl_dialog.title,
+      this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
+    );
   }
 
   onCheckboxChange(row: SmbShare): void {
@@ -176,7 +177,7 @@ export class SMBListComponent implements EntityTableConfig {
       },
       (err) => {
         row.enabled = !row.enabled;
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }

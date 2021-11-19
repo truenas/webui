@@ -4,7 +4,7 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
 import { SigninComponent } from './signin/signin.component';
 import { SignupComponent } from './signup/signup.component';
 
-export const SessionsRoutes: Routes = [
+export const sessionsRoutes: Routes = [
   {
     path: '',
     children: [{

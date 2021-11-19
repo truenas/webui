@@ -164,7 +164,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       if (res.exc_info && res.exc_info.extra) {
-        new EntityUtils().handleWSError(this, res);
+        new EntityUtils().handleWsError(this, res);
       } else {
         this.dialogService.errorReport('Error', res.error, res.exception);
       }

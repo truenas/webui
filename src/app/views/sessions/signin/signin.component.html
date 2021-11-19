@@ -61,7 +61,14 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <button name="signin_button" mat-button color="primary" class="fn-theme-primary full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
+                <button
+                  name="signin_button"
+                  mat-button
+                  color="primary"
+                  class="fn-theme-primary full-width mb-1"
+                  id="signin_button"
+                  [disabled]="username.invalid || password.invalid"
+                >{{"Log in" | translate}}</button>
               </form>
               <div [hidden]="has_root_password">
                 <form (ngSubmit)="setpassword()" [formGroup]="setPasswordFormGroup" #setPasswordForm="ngForm">
@@ -114,14 +121,14 @@
               </div>
             </span>
 
-            <div class="truecommand" *ngIf="tc_ip" (click)="gotoTC()">
+            <div class="truecommand" *ngIf="tc_ip" (click)="goToTrueCommand()">
               <img id="truecommand-logo" src="assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg">
               <span class="truecommand-txt">{{ 'TrueCommand IP' | translate }}: {{tc_ip}}</span>
             </div>
 
             <div class="copyright-line">
               <span  class="copyright-txt">TrueNAS {{productTypeReadableText}} ® © {{copyrightYear}} </span>
-              <img id="full-logo" (click)="openIX()" src="assets/images/ix_logo_full.png">
+              <img id="full-logo" (click)="openIx()" src="assets/images/ix_logo_full.png">
             </div>
           </div>
         </div>

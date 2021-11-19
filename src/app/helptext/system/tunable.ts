@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_system_tunable = {
+export const helptextSystemTunable = {
   metadata: {
     fieldsets: [T('Tunable')],
     fieldsets_scale: [T('Sysctl')],

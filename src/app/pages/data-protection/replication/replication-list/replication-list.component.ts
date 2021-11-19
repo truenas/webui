@@ -4,6 +4,7 @@ import { Validators } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/data-protection/replication/replication';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -133,7 +134,7 @@ export class ReplicationListComponent implements EntityTableConfig {
                 });
               },
               (err) => {
-                new EntityUtils().handleWSError(this.entityList, err);
+                new EntityUtils().handleWsError(this.entityList, err);
               },
             );
           });
@@ -159,7 +160,7 @@ export class ReplicationListComponent implements EntityTableConfig {
               },
               {
                 type: 'explorer',
-                explorerType: 'dataset',
+                explorerType: ExplorerType.Dataset,
                 initial: '',
                 name: 'target_dataset',
                 placeholder: helptext.target_dataset_placeholder,
@@ -178,7 +179,7 @@ export class ReplicationListComponent implements EntityTableConfig {
                 },
                 (err) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+                  new EntityUtils().handleWsError(entityDialog, err, this.dialog);
                 },
               );
             },
@@ -241,7 +242,7 @@ export class ReplicationListComponent implements EntityTableConfig {
       },
       (err) => {
         row.enabled = !row.enabled;
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }

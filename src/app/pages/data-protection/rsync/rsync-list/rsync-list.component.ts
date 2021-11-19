@@ -113,7 +113,7 @@ export class RsyncListComponent implements EntityTableConfig {
                 });
               },
               (err) => {
-                new EntityUtils().handleWSError(this, err);
+                new EntityUtils().handleWsError(this, err);
               },
             );
           }

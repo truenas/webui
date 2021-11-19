@@ -46,14 +46,14 @@ export class EditPosixAceComponent implements FormConfiguration, OnChanges {
   }
 
   preInit(): void {
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
+    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((users) => {
       const userOptions = users.map((user) => ({ label: user.username, value: user.username }));
 
       const userControl = this.fieldConfig.find((config) => config.name === 'user') as FormComboboxConfig;
       userControl.options = userOptions;
     });
 
-    this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.userService.groupQueryDsCache().pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions = groups.map((group) => ({ label: group.group, value: group.group }));
 
       const groupControl = this.fieldConfig.find((config) => config.name === 'group') as FormComboboxConfig;

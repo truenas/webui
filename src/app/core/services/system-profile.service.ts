@@ -49,7 +49,7 @@ export class SystemProfileService extends BaseService {
 
     // HA Status change events
     this.websocket.subscribe('failover.disabled_reasons').subscribe((res) => {
-      this.updateHA(res.fields.disabled_reasons);
+      this.updateHa(res.fields.disabled_reasons);
     });
   }
 
@@ -125,20 +125,20 @@ export class SystemProfileService extends BaseService {
 
       // HA Status Change Call
       this.websocket.call('failover.disabled_reasons').subscribe((res) => {
-        this.updateHA(res);
+        this.updateHa(res);
       });
     }
 
     return this.features;
   }
 
-  updateHA(res: FailoverDisabledReason[]): void {
-    const ha_enabled = res.length == 0;
+  updateHa(res: FailoverDisabledReason[]): void {
+    const haEnabled = res.length == 0;
 
-    const enabled_txt = res.length == 0 ? 'HA Enabled' : 'HA Disabled';
+    const enabledText = res.length == 0 ? 'HA Enabled' : 'HA Disabled';
 
-    window.sessionStorage.setItem('ha_status', ha_enabled.toString());
-    this.ha_status = { status: enabled_txt, reasons: res };
+    window.sessionStorage.setItem('ha_status', haEnabled.toString());
+    this.ha_status = { status: enabledText, reasons: res };
     this.core.emit({ name: 'HA_Status', data: this.ha_status, sender: this });
   }
 }

@@ -11,15 +11,16 @@
     <mat-icon>{{prefixIcon}}</mat-icon>
   </span>
   <input
+    #ixInput
     matInput
     [class.prefix-padding]="prefixIcon"
     [class.password-field]="isPasswordField()"
     [required]="required"
     [disabled]="isDisabled"
     [type]="getType()"
-    [(ngModel)]="value"
-    (ngModelChange)="onChange($event)"
-    (blur)="onTouch()"
+    [value]="formatted"
+    (input)="input(ixInput.value)"
+    (blur)="blur()"
     [autocomplete]="autocomplete"
     [autocapitalize]="autocapitalize"
   >

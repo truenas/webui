@@ -151,19 +151,19 @@ export class VolumeChangekeyFormComponent implements FormConfiguration {
   }
 
   customSubmit(value: VolumeChangekeyFormValues): void {
-    let success_msg: string;
+    let successMessage: string;
     if (value.remove_passphrase) {
       value.passphrase = null;
       (value as any).passphrase2 = null;
-      success_msg = 'removed from';
+      successMessage = 'removed from';
     } else {
-      success_msg = 'changed for';
+      successMessage = 'changed for';
     }
 
     this.ws.call('auth.check_user', ['root', value.adminpw]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,
-          value.name, this.route_return, false, true, success_msg);
+          value.name, this.route_return, false, true, successMessage);
       } else {
         this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');
       }

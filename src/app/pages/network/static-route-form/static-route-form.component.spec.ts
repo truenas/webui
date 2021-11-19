@@ -10,7 +10,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { StaticRouteFormComponent } from 'app/pages/network/static-route-form/static-route-form.component';
 import { WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('StaticRouteFormComponent', () => {
   let spectator: Spectator<StaticRouteFormComponent>;
@@ -27,7 +27,7 @@ describe('StaticRouteFormComponent', () => {
         mockCall('staticroute.create'),
         mockCall('staticroute.update'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
     ],
   });

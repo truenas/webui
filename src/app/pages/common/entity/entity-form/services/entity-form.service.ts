@@ -1,25 +1,24 @@
 import { Inject, Injectable } from '@angular/core';
 import {
-  AbstractControl,
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
+  AbstractControl, FormArray, FormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
-import { TreeNode } from 'angular-tree-component';
+import { TreeNode } from '@circlon/angular-tree-component';
 import * as _ from 'lodash';
 import { DatasetType } from 'app/enums/dataset-type.enum';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { FileType } from 'app/enums/file-type.enum';
+import { FileRecord } from 'app/interfaces/file-record.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { WebSocketService } from 'app/services/ws.service';
 import {
   FieldConfig,
-  UnitType,
-  InputUnitConfig,
   FormArrayConfig,
-  FormListConfig,
   FormDictConfig,
+  FormListConfig,
+  InputUnitConfig,
+  UnitType,
 } from '../models/field-config.interface';
 
 @Injectable()
@@ -116,71 +115,45 @@ export class EntityFormService {
     formArray.removeAt(index);
   }
 
+  /**
+   * @deprecated Use FilesystemService.getFilesystemNodeProvider for all new code.
+   */
   getFilesystemListdirChildren(
     node: TreeNode,
-    explorerType?: string,
-    hideDirs?: string,
+    explorerType?: ExplorerType,
     showHiddenFiles = false,
   ): Promise<ListdirChild[]> {
-    const children: ListdirChild[] = [];
-    let typeFilter: any;
-    if (explorerType && explorerType === 'directory') {
+    let typeFilter: [QueryFilter<FileRecord>?] = [];
+    if (explorerType === ExplorerType.Directory) {
       typeFilter = [['type', '=', FileType.Directory]];
-    } else {
-      typeFilter = [];
     }
 
     return this.ws.call('filesystem.listdir', [node.data.name, typeFilter,
       { order_by: ['name'], limit: 1000 }]).toPromise().then((res) => {
       res = _.sortBy(res, (o) => o.name.toLowerCase());
 
+      const children: ListdirChild[] = [];
       res.forEach((file) => {
-        const child = {} as ListdirChild;
-        if (!showHiddenFiles) {
-          if (file.hasOwnProperty('name') && !file.name.startsWith('.')) {
-            if (file.type === FileType.Symlink) {
-              return;
-            }
-            if (file.name !== hideDirs) {
-              child['name'] = file.path;
-              child['acl'] = file.acl;
-              if (file.type === FileType.Directory) {
-                child['hasChildren'] = true;
-              }
-              child['subTitle'] = file.name;
-              children.push(child);
-            }
-          }
-        } else if (file.hasOwnProperty('name')) {
-          if (file.type === FileType.Symlink) {
-            return;
-          }
-          if (file.name !== hideDirs) {
-            child['name'] = file.path;
-            if (file.type === FileType.Directory) {
-              child['hasChildren'] = true;
-            }
-            child['subTitle'] = file.name;
-            children.push(child);
-          }
+        if (file.type === FileType.Symlink || !file.hasOwnProperty('name')) {
+          return;
         }
+
+        if (!showHiddenFiles && file.name.startsWith('.')) {
+          return;
+        }
+
+        children.push({
+          name: file.path,
+          acl: file.acl,
+          hasChildren: file.type === FileType.Directory,
+          subTitle: file.name,
+        });
       });
       if (children.length === 0) {
         node.data.hasChildren = false;
       }
       return children;
     });
-  }
-
-  getDatasetsAndZvolsListChildren(): void {
-
-    // if we ever need this we should convert to websocket
-    /* return this.rest.get('storage/volume/', {}).toPromise().then(res => {
-      res.data.forEach((vol) => {
-        children.push(vol.children[0]);
-      });
-      return children;
-    }); */
   }
 
   getPoolDatasets(param: [DatasetType[]?] = []): Promise<ListdirChild[]> {

@@ -17,7 +17,7 @@ import { ApiService } from 'app/core/services/api.service';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { ProductType, ProductTypeReadableText } from 'app/enums/product-type.enum';
+import { ProductType, productTypeReadableText } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
@@ -96,14 +96,14 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: FormBuilder,
     private core: CoreService,
     private api: ApiService,
-    private _autofill: AutofillMonitor,
+    private autofill: AutofillMonitor,
     private http: HttpClient,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
   ) {
     this.ws = ws;
-    const ha_status = window.sessionStorage.getItem('ha_status');
-    if (ha_status && ha_status === 'true') {
+    const haStatus = window.sessionStorage.getItem('ha_status');
+    if (haStatus && haStatus === 'true') {
       this.ha_status = true;
     }
     this.checkSystemType();
@@ -120,7 +120,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
         this.logo_ready = true;
         this.product_type = res as ProductType;
-        this.productTypeReadableText = ProductTypeReadableText.get(this.product_type);
+        this.productTypeReadableText = productTypeReadableText.get(this.product_type);
         if (this.interval) {
           clearInterval(this.interval);
         }
@@ -128,9 +128,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           if (this.HAInterval) {
             clearInterval(this.HAInterval);
           }
-          this.getHAStatus();
+          this.getHaStatus();
           this.HAInterval = setInterval(() => {
-            this.getHAStatus();
+            this.getHaStatus();
           }, 6000);
         } else if (this.canLogin()) {
           this.checkBuildtime();
@@ -142,7 +142,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this._autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
+    this.autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
       if (!this.didSetFocus) {
         this.didSetFocus = true;
         this.usernameInput.nativeElement.focus();
@@ -199,14 +199,14 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   loginToken(): void {
-    let middleware_token;
+    let middlewareToken;
     if (window.localStorage.getItem('middleware_token')) {
-      middleware_token = window.localStorage.getItem('middleware_token');
+      middlewareToken = window.localStorage.getItem('middleware_token');
       window.localStorage.removeItem('middleware_token');
     }
 
-    if (middleware_token) {
-      this.ws.loginToken(middleware_token)
+    if (middlewareToken) {
+      this.ws.loginToken(middlewareToken)
         .pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result);
         });
@@ -231,8 +231,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   checkBuildtime(): void {
     this.ws.call('system.build_time').pipe(untilDestroyed(this)).subscribe((buildTime) => {
       const buildtime = String(buildTime.$date);
-      const previous_buildtime = window.localStorage.getItem('buildtime');
-      if (buildtime !== previous_buildtime) {
+      const previousBuildtime = window.localStorage.getItem('buildtime');
+      if (buildtime !== previousBuildtime) {
         window.localStorage.setItem('buildtime', buildtime);
         this._copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
       }
@@ -261,7 +261,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.product_type?.includes(ProductType.Enterprise) || this.product_type === ProductType.Scale;
   }
 
-  getHAStatus(): void {
+  getHaStatus(): void {
     if (this.productSupportsHa && !this.checking_status) {
       this.checking_status = true;
       this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe((failoverStatus) => {
@@ -406,11 +406,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     this.snackBar.open(this.translate.instant(message), this.translate.instant('close'), { duration: 4000 });
   }
 
-  openIX(): void {
+  openIx(): void {
     window.open('https://www.ixsystems.com/', '_blank');
   }
 
-  gotoTC(): void {
+  goToTrueCommand(): void {
     this.dialogService.generalDialog({
       title: helptext.tcDialog.title,
       message: helptext.tcDialog.message,

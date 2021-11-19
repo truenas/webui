@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext_cloudsync from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -560,7 +561,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this, err);
+                    new EntityUtils().handleWsError(this, err);
                   },
                 );
             });
@@ -584,7 +585,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               },
               {
                 type: 'explorer',
-                explorerType: 'dataset',
+                explorerType: ExplorerType.Dataset,
                 initial: '',
                 name: 'target_dataset',
                 placeholder: helptext_replication.target_dataset_placeholder,
@@ -607,7 +608,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                   },
                   (err) => {
                     this.loader.close();
-                    new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+                    new EntityUtils().handleWsError(entityDialog, err, this.dialog);
                   },
                 );
             },
@@ -655,7 +656,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this, err);
+                    new EntityUtils().handleWsError(this, err);
                   },
                 );
             });
@@ -688,7 +689,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                     );
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this, err);
+                    new EntityUtils().handleWsError(this, err);
                   },
                 );
             });
@@ -728,7 +729,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this, err);
+                    new EntityUtils().handleWsError(this, err);
                   },
                 );
             });
@@ -771,7 +772,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               },
               {
                 type: 'explorer',
-                explorerType: 'directory',
+                explorerType: ExplorerType.Directory,
                 name: 'path',
                 placeholder: helptext_cloudsync.path_placeholder,
                 tooltip: helptext_cloudsync.path_tooltip,
@@ -811,7 +812,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                   },
                   (err) => {
                     this.loader.close();
-                    new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+                    new EntityUtils().handleWsError(entityDialog, err, this.dialog);
                   },
                 );
             },
@@ -859,7 +860,7 @@ export class DataProtectionDashboardComponent implements OnInit {
                       });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this, err);
+                    new EntityUtils().handleWsError(this, err);
                   },
                 );
             });
@@ -946,7 +947,7 @@ export class DataProtectionDashboardComponent implements OnInit {
         },
         (err) => {
           row[param] = !row[param];
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         },
       );
   }

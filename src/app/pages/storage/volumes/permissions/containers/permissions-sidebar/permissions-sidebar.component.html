@@ -45,8 +45,8 @@
 
       <ng-template #nonTrivial>
         <ng-container [ngSwitch]="acl.acltype">
-          <app-posix-permissions *ngSwitchCase="AclType.Posix1e" [acl]="acl"></app-posix-permissions>
-          <app-nfs-permissions *ngSwitchCase="AclType.Nfs4" [acl]="acl"></app-nfs-permissions>
+          <app-posix-permissions *ngSwitchCase="AclType.Posix1e" [acl]="acl | cast"></app-posix-permissions>
+          <app-nfs-permissions *ngSwitchCase="AclType.Nfs4" [acl]="acl | cast"></app-nfs-permissions>
         </ng-container>
       </ng-template>
     </div>

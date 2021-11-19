@@ -2,7 +2,7 @@ import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 
-export const helptext_system_cloudcredentials = {
+export const helptextSystemCloudcredentials = {
   fieldset_basic: T('Name and Provider'),
   fieldset_authentication: T('Authentication'),
   fieldset_authentication_advanced: T('Authentication Advanced Options'),

@@ -300,7 +300,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     });
 
     if (this.control.value) {
-      this.control.setValue(new EntityUtils().parseDOW(this.control.value));
+      this.control.setValue(new EntityUtils().parseDow(this.control.value));
       this.crontab = this.control.value;
     }
 
@@ -345,7 +345,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
 
     if (this.control.value) {
-      this.control.setValue(new EntityUtils().parseDOW(this.control.value));
+      this.control.setValue(new EntityUtils().parseDow(this.control.value));
     }
   }
 
@@ -357,13 +357,13 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
       setTimeout(() => {
-        this.convertPreset(this.crontab); // <-- Test
+        this.convertPreset(this.crontab);
         this.generateSchedule();
-        const popup = this.schedulePreview.nativeElement;// .querySelector('ul.schedule-preview');
+        const popup = this.schedulePreview.nativeElement;
         popup.addEventListener('scroll', this.onScroll.bind(this));
       }, 200);
     } else {
-      const popup = this.schedulePreview.nativeElement;// .querySelector('ul.schedule-preview');
+      const popup = this.schedulePreview.nativeElement;
       popup.removeEventListener('scroll', this.onScroll);
     }
   }
@@ -620,12 +620,12 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
       this._jul, this._aug, this._sep,
       this._oct, this._nov, this._dec,
     ];
-    const months_str = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    const monthStrings = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
     let rule = '';
     for (let i = 0; i < months.length; i++) {
       if (months[i]) {
         if (rule.length > 0 && i > 0) { rule += ','; }
-        rule += months_str[i];
+        rule += monthStrings[i];
       }
     }
     if (rule.length == 0) {
@@ -637,12 +637,12 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   formatDaysOfWeek(): void {
     const dow = [this._sun, this._mon, this._tue, this._wed, this._thu, this._fri, this._sat];
-    const dow_str = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const dowStrings = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     let rule = '';
     for (let i = 0; i < dow.length; i++) {
       if (dow[i]) {
         if (rule.length > 0 && i > 0) { rule += ','; }
-        rule += dow_str[i];
+        rule += dowStrings[i];
       }
     }
     if (rule.length == 0) {

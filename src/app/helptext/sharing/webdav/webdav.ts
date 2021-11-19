@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_sharing_webdav = {
+export const helptextSharingWebdav = {
   placeholder_name: T('Name'),
   tooltip_name: T('Enter a name for the share.'),
   validator_name: [Validators.required],

@@ -8,11 +8,11 @@ import { WebSocketService } from './ws.service';
 export class KeychainCredentialService {
   constructor(protected ws: WebSocketService) { }
 
-  getSSHKeys(): Observable<KeychainSshKeyPair[]> {
+  getSshKeys(): Observable<KeychainSshKeyPair[]> {
     return this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]) as Observable<KeychainSshKeyPair[]>;
   }
 
-  getSSHConnections(): Observable<KeychainCredential[]> {
+  getSshConnections(): Observable<KeychainCredential[]> {
     return this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshCredentials]]]);
   }
 }

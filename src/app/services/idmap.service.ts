@@ -17,7 +17,7 @@ export class IdmapService {
     return this.ws.call('idmap.backend_options');
   }
 
-  getADStatus(): Observable<ActiveDirectoryConfig> {
+  getActiveDirectoryStatus(): Observable<ActiveDirectoryConfig> {
     return this.ws.call('activedirectory.config');
   }
 }

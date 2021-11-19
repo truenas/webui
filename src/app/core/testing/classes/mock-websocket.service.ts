@@ -23,7 +23,7 @@ export class MockWebsocketService extends WebSocketService {
   private jobIdCounter = 1;
 
   constructor(
-    private router: Router,
+    protected router: Router,
   ) {
     super(router);
 

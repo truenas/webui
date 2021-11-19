@@ -11,7 +11,7 @@ import { filter, take } from 'rxjs/operators';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { helptext_system_update as helptext } from 'app/helptext/system/update';
+import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
@@ -105,8 +105,8 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
 
   preInit(): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-        if (is_ha) {
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
+        if (isHa) {
           this.isHA = true;
           this.updateMethod = 'failover.upgrade';
         } else {
@@ -136,8 +136,8 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = false;
       }
       entityForm.formGroup.controls['rebootAfterManualUpdate'].setValue(ures[0].attributes.preferences['rebootAfterManualUpdate']);
-      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.pipe(untilDestroyed(this)).subscribe((form_res: boolean) => {
-        ures[0].attributes.preferences['rebootAfterManualUpdate'] = form_res;
+      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.pipe(untilDestroyed(this)).subscribe((rebootAfterManualUpdate: boolean) => {
+        ures[0].attributes.preferences['rebootAfterManualUpdate'] = rebootAfterManualUpdate;
         this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).pipe(untilDestroyed(this)).subscribe(() => {
         });
       });
@@ -252,7 +252,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       this.router.navigate(['/others/reboot']);
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
   }
 
