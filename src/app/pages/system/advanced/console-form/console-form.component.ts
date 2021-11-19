@@ -72,7 +72,7 @@ export class ConsoleFormComponent implements OnInit {
         },
         (error) => {
           this.isFormLoading = false;
-          new EntityUtils().handleWSError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(null, error, this.dialogService);
           this.cdr.markForCheck();
         },
       );

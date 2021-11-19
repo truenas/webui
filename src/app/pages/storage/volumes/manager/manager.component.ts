@@ -275,7 +275,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       }
     },
     (err) => {
-      new EntityUtils().handleWSError(this, err, this.dialog);
+      new EntityUtils().handleWsError(this, err, this.dialog);
     });
   }
 
@@ -357,13 +357,13 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.getDuplicableDisks();
     }, (err) => {
       this.loader.close();
-      new EntityUtils().handleWSError(this, err, this.dialog);
+      new EntityUtils().handleWsError(this, err, this.dialog);
     });
   }
 
-  addVdev(group: string, initial_values = {}): void {
+  addVdev(group: string, initialValues = {}): void {
     this.dirty = true;
-    this.vdevs[group].push(initial_values);
+    this.vdevs[group].push(initialValues);
     setTimeout(() => { // there appears to be a slight race condition with adding/removing
       this.getCurrentLayout();
     }, 100);
@@ -630,7 +630,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           )
           .pipe(untilDestroyed(this)).subscribe(
             () => {},
-            (e) => new EntityUtils().handleWSError(this, e, this.dialog),
+            (e) => new EntityUtils().handleWsError(this, e, this.dialog),
             () => {
               dialogRef.close(false);
               this.goBack();
@@ -638,7 +638,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           );
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           dialogRef.close(false);
-          new EntityUtils().handleWSError(this, error, this.dialog);
+          new EntityUtils().handleWsError(this, error, this.dialog);
         });
         dialogRef.componentInstance.submit();
       });

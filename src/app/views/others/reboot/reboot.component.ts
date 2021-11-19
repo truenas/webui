@@ -38,14 +38,14 @@ export class RebootComponent implements OnInit {
     });
   }
 
-  isWSConnected(): void {
+  isWsConnected(): void {
     if (this.ws.connected) {
       this.loader.close();
       // ws is connected
       this.router.navigate(['/session/signin']);
     } else {
       setTimeout(() => {
-        this.isWSConnected();
+        this.isWsConnected();
       }, 5000);
     }
   }
@@ -71,7 +71,7 @@ export class RebootComponent implements OnInit {
         this.ws.prepareShutdown();
         this.loader.open();
         setTimeout(() => {
-          this.isWSConnected();
+          this.isWsConnected();
         }, 3000);
       },
     );

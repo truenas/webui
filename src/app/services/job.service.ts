@@ -67,20 +67,19 @@ export class JobService {
           disableClose: true,
         }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
           this.ws.call('core.download', ['filesystem.get', [targetJob.logs_path], targetJob.id + '.log']).pipe(untilDestroyed(this)).subscribe(
-            (snack_res) => {
-              const url = snack_res[1];
+            ([_, url]) => {
               const mimetype = 'text/plain';
               this.storage.streamDownloadFile(this.http, url, targetJob.id + '.log', mimetype).pipe(untilDestroyed(this)).subscribe(
                 (file) => {
                   this.storage.downloadBlob(file, targetJob.id + '.log');
                 },
                 (err) => {
-                  new EntityUtils().handleWSError(this, err);
+                  new EntityUtils().handleWsError(this, err);
                 },
               );
             },
-            (snack_res) => {
-              new EntityUtils().handleWSError(this, snack_res);
+            (error) => {
+              new EntityUtils().handleWsError(this, error);
             },
           );
         });

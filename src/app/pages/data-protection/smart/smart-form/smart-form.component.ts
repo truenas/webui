@@ -116,7 +116,7 @@ export class SmartFormComponent implements FormConfiguration {
         for (const key in choices) {
           this.disk_field.options.push({ label: choices[key], value: key });
         }
-      }, (err) => new EntityUtils().handleWSError(this, err),
+      }, (err) => new EntityUtils().handleWsError(this, err),
     );
     this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: string) => {
       this.customFilter = [[['id', '=', id]]];

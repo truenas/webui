@@ -94,7 +94,7 @@ export class SyslogFormComponent implements OnInit {
       this.sysGeneralService.refreshSysGeneral();
     }, (res) => {
       this.isFormLoading = false;
-      new EntityUtils().handleWSError(this, res);
+      new EntityUtils().handleWsError(this, res);
       this.cdr.markForCheck();
     });
   }
@@ -119,7 +119,7 @@ export class SyslogFormComponent implements OnInit {
         },
         (error) => {
           this.isFormLoading = false;
-          new EntityUtils().handleWSError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(null, error, this.dialogService);
         },
       );
   }

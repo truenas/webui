@@ -110,7 +110,7 @@ export class CronFormComponent implements FormConfiguration {
   constructor(protected userService: UserService, protected modalService: ModalService) {}
 
   updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((users) => {
+    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((users) => {
       this.user_field.searchOptions = users.map((user) => {
         return { label: user.username, value: user.username };
       });
@@ -125,7 +125,7 @@ export class CronFormComponent implements FormConfiguration {
 
     // Setup user field options
     this.user_field = _.find(this.fieldSets[0].config, { name: 'user' }) as FormComboboxConfig;
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
+    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((users) => {
       for (const user of users) {
         this.user_field.options.push({
           label: user.username,

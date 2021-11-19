@@ -57,7 +57,7 @@ export class KernelFormComponent {
       this.sysGeneralService.refreshSysGeneral();
     }, (res) => {
       this.isFormLoading = false;
-      new EntityUtils().handleWSError(this, res);
+      new EntityUtils().handleWsError(this, res);
       this.cdr.markForCheck();
     });
   }

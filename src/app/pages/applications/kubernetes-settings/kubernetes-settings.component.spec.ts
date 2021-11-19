@@ -44,7 +44,7 @@ describe('KubernetesSettingsComponent', () => {
         getContainerConfig: jest.fn(() => of({
           enable_image_updates: true,
         } as ContainerConfig)),
-        getBindIPChoices: () => of({
+        getBindIpChoices: () => of({
           '10.123.45.67': '10.123.45.67',
           '10.123.45.11': '10.123.45.11',
         }),
@@ -136,6 +136,7 @@ describe('KubernetesSettingsComponent', () => {
       cluster_cidr: '172.16.1.0/16',
       service_cidr: '172.17.1.0/16',
       cluster_dns_ip: '172.17.1.1',
+      servicelb: true,
     }]);
   });
 });

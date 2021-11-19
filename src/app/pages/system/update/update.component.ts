@@ -269,8 +269,8 @@ export class UpdateComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Switch Train'),
       message: warning + this.translate.instant('Switch update trains?'),
-    }).pipe(untilDestroyed(this)).subscribe((train_res: boolean) => {
-      if (train_res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmSwitch: boolean) => {
+      if (confirmSwitch) {
         this.train = event;
         this.setTrainDescription();
         this.setTrainAndCheck();
@@ -310,7 +310,7 @@ export class UpdateComponent implements OnInit {
     this.ws.call('update.set_train', [this.train]).pipe(untilDestroyed(this)).subscribe(() => {
       this.check();
     }, (err) => {
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
       this.showSpinner = false;
     },
     () => {
@@ -409,7 +409,7 @@ export class UpdateComponent implements OnInit {
       this.router.navigate(['/others/reboot']);
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
   }
 
@@ -426,7 +426,7 @@ export class UpdateComponent implements OnInit {
         }
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       },
     );
   }
@@ -509,7 +509,7 @@ export class UpdateComponent implements OnInit {
       },
       (err) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
         this.dialogService.errorReport(this.translate.instant('Error checking for updates.'), err.reason, err.trace.formatted);
       },
       () => {
@@ -555,7 +555,7 @@ export class UpdateComponent implements OnInit {
             this.pendingupdates();
           });
           this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-            new EntityUtils().handleWSError(this, err, this.dialogService);
+            new EntityUtils().handleWsError(this, err, this.dialogService);
           });
         } else {
           this.update();
@@ -593,7 +593,7 @@ export class UpdateComponent implements OnInit {
           }).pipe(untilDestroyed(this)).subscribe();
         });
         this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         });
       });
     }

@@ -1307,11 +1307,11 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       },
     );
     const authenticationFieldset = _.find(this.fieldSets, { class: 'authentication' });
-    const privateKeySFTPField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' }) as FormSelectConfig;
+    const privateKeySftpField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' }) as FormSelectConfig;
     this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]).pipe(untilDestroyed(this)).subscribe(
       (credentials) => {
         credentials.forEach((credential) => {
-          privateKeySFTPField.options.push({ label: credential.name, value: credential.id });
+          privateKeySftpField.options.push({ label: credential.name, value: credential.id });
         });
       },
     );
@@ -1445,7 +1445,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       },
       (err) => {
         this.entityForm.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
+        new EntityUtils().handleWsError(this.entityForm, err, this.dialog);
       },
     );
   }
@@ -1486,7 +1486,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   }
 
   async makeNewKeyPair(value: any, submitting?: boolean): Promise<void> {
-    await this.replicationService.genSSHKeypair().then(
+    await this.replicationService.genSshKeypair().then(
       async (keyPair) => {
         const payload = {
           name: value['name'] + ' Key',
@@ -1496,8 +1496,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
           (sshKey) => {
             this.keyID = sshKey.id;
-            const privateKeySFTPField = _.find(this.fieldConfig, { name: 'private_key-SFTP' }) as FormSelectConfig;
-            privateKeySFTPField.options.push({ label: payload.name, value: this.keyID });
+            const privateKeySftpField = _.find(this.fieldConfig, { name: 'private_key-SFTP' }) as FormSelectConfig;
+            privateKeySftpField.options.push({ label: payload.name, value: this.keyID });
             this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
             if (submitting) {
               value['private_key-SFTP'] = sshKey.id;
@@ -1507,15 +1507,15 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               this.verifyCredentials(value);
             }
           },
-          (sshKey_err) => {
+          (error) => {
             this.entityForm.loader.close();
-            new EntityUtils().handleWSError(this, sshKey_err, this.dialog);
+            new EntityUtils().handleWsError(this, error, this.dialog);
           },
         );
       },
       (err) => {
         this.entityForm.loader.close();
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }
@@ -1545,7 +1545,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         this.entityForm.loader.close();
         this.modalService.refreshTable();
         if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         } else {
           new EntityUtils().handleError(this, err);
         }
@@ -1606,7 +1606,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         });
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }

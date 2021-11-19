@@ -186,16 +186,16 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
     this.dialogRef.componentInstance.setDescription(this.translate.instant('Importing Disk...'));
     this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fsOptions, payload.dst_path]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: Job<any>) => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job: Job<any>) => {
       this.dialogRef.close();
       this.entityForm.success = true;
-      this.job.showLogs(job_res, this.translate.instant('Disk Imported: Log Summary'), this.translate.instant('Close'));
+      this.job.showLogs(job, this.translate.instant('Disk Imported: Log Summary'), this.translate.instant('Close'));
       this.custActions = [
         {
           id: 'view_import_log',
           name: 'View Import Log',
           function: () => {
-            this.job.showLogs(job_res, this.translate.instant('Logs'), this.translate.instant('Close'));
+            this.job.showLogs(job, this.translate.instant('Logs'), this.translate.instant('Close'));
           },
         },
       ];
@@ -215,7 +215,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
       ];
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      new EntityUtils().handleWSError(this.entityForm, err);
+      new EntityUtils().handleWsError(this.entityForm, err);
     });
   }
 

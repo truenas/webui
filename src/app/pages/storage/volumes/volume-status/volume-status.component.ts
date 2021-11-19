@@ -263,7 +263,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     this.loader.close();
   }
 
-  getAction(data: VDev, category: PoolTopologyCategory, vdev_type: VDevType): any {
+  getAction(data: VDev, category: PoolTopologyCategory, vdevType: VDevType): any {
     const actions = [{
       id: 'edit',
       label: helptext.actions_label.edit,
@@ -303,7 +303,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
             },
             (err) => {
               this.loader.close();
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         });
@@ -333,7 +333,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
             },
             (err) => {
               this.loader.close();
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         });
@@ -439,7 +439,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
             },
             (err) => {
               this.loader.close();
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         });
@@ -458,11 +458,11 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       _.find(actions, { id: 'offline' }).isHidden = true;
     }
 
-    if (vdev_type === VDevType.Mirror || vdev_type === VDevType.Replacing || vdev_type === VDevType.Spare) {
+    if (vdevType === VDevType.Mirror || vdevType === VDevType.Replacing || vdevType === VDevType.Spare) {
       _.find(actions, { id: 'detach' }).isHidden = false;
     }
 
-    if (vdev_type === VDevType.Mirror) {
+    if (vdevType === VDevType.Mirror) {
       _.find(actions, { id: 'remove' }).isHidden = true;
     }
 
@@ -542,7 +542,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }];
   }
 
-  parseData(data: Pool | VDev, category?: PoolTopologyCategory, vdev_type?: VDevType): PoolDiskInfo {
+  parseData(data: Pool | VDev, category?: PoolTopologyCategory, vdevType?: VDevType): PoolDiskInfo {
     let stats = {
       read_errors: 0,
       write_errors: 0,
@@ -573,7 +573,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     // add actions
     if (category && 'type' in data) {
       if (data.type == VDevType.Disk) {
-        item.actions = [{ title: 'Disk Actions', actions: this.getAction(data, category, vdev_type) }];
+        item.actions = [{ title: 'Disk Actions', actions: this.getAction(data, category, vdevType) }];
       } else if (data.type === VDevType.Mirror) {
         item.actions = [{ title: 'Mirror Actions', actions: this.extendAction() }];
       }
@@ -581,20 +581,20 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     return item;
   }
 
-  parseTopolgy(data: VDev, category: PoolTopologyCategory, vdev_type?: VDevType): TreeNode {
+  parseTopolgy(data: VDev, category: PoolTopologyCategory, vdevType?: VDevType): TreeNode {
     const node: TreeNode = {};
-    node.data = this.parseData(data, category, vdev_type);
+    node.data = this.parseData(data, category, vdevType);
     node.expanded = true;
     node.children = [];
 
     if (data.children) {
-      if (data.children.length === 0 && vdev_type === undefined) {
+      if (data.children.length === 0 && vdevType === undefined) {
         const extendAction = this.extendAction();
         node.data.actions[0].actions.push(extendAction[0]);
       }
-      vdev_type = (data as any).name;
+      vdevType = (data as any).name;
       data.children.forEach((child) => {
-        node.children.push(this.parseTopolgy(child, category, vdev_type));
+        node.children.push(this.parseTopolgy(child, category, vdevType));
       });
     }
     delete node.data.children;
@@ -651,7 +651,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
       this.getData();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWSError(this, error, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
     });
   }
 }

@@ -110,15 +110,15 @@ export class ServiceTFTPComponent implements FormConfiguration {
   ) {}
 
   resourceTransformIncomingRestData(data: TftpConfig): { umask: string } {
-    return invertUMask(data);
+    return invertUmask(data);
   }
 
   beforeSubmit(data: any): { umask: string } {
-    return invertUMask(data);
+    return invertUmask(data);
   }
 
   preInit(): void {
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((items) => {
       this.tftp_username = this.fieldSets
         .find((set) => set.name === helptext.tftp_fieldset_conn)
         .config.find((config) => config.name === 'username') as FormComboboxConfig;
@@ -133,7 +133,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       this.tftp_username.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });
@@ -145,7 +145,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
  * Need to invert the umask prop on the way in/out.
  * The 'permissions' FieldConfig and the MW expect opposite values.
  */
-function invertUMask(data: { umask: string }): { umask: string } {
+function invertUmask(data: { umask: string }): { umask: string } {
   const perm = parseInt(data['umask'], 8);
   let mask = (~perm & 0o666).toString(8);
   while (mask.length < 3) {

@@ -333,16 +333,16 @@ export class UserFormComponent implements FormConfiguration {
         .showConfig('password_conf_edit');
       entityForm.setDisabled('password', true, true);
       entityForm.setDisabled('password_conf', true, true);
-      this.password_disabled.valueChanges.pipe(untilDestroyed(this)).subscribe((password_disabled: boolean) => {
-        if (!password_disabled) {
+      this.password_disabled.valueChanges.pipe(untilDestroyed(this)).subscribe((passwordDisabled: boolean) => {
+        if (!passwordDisabled) {
           entityForm.formGroup.controls['sudo'].setValue(false);
           entityForm.formGroup.controls['locked'].setValue(false);
         }
         this.fieldSets
-          .toggleConfigVisibility('locked', password_disabled)
-          .toggleConfigVisibility('sudo', password_disabled);
-        entityForm.setDisabled('password_edit', password_disabled);
-        entityForm.setDisabled('password_conf_edit', password_disabled);
+          .toggleConfigVisibility('locked', passwordDisabled)
+          .toggleConfigVisibility('sudo', passwordDisabled);
+        entityForm.setDisabled('password_edit', passwordDisabled);
+        entityForm.setDisabled('password_conf_edit', passwordDisabled);
       });
     } else {
       entityForm.setDisabled('password_edit', true, true);
@@ -350,16 +350,16 @@ export class UserFormComponent implements FormConfiguration {
       this.fieldSets
         .showConfig('password')
         .showConfig('password_conf');
-      this.password_disabled.valueChanges.pipe(untilDestroyed(this)).subscribe((password_disabled: boolean) => {
-        if (!password_disabled) {
+      this.password_disabled.valueChanges.pipe(untilDestroyed(this)).subscribe((passwordDisabled: boolean) => {
+        if (!passwordDisabled) {
           entityForm.formGroup.controls['sudo'].setValue(false);
           entityForm.formGroup.controls['locked'].setValue(false);
         }
         this.fieldSets
-          .toggleConfigVisibility('locked', password_disabled)
-          .toggleConfigVisibility('sudo', password_disabled);
-        entityForm.setDisabled('password', password_disabled);
-        entityForm.setDisabled('password_conf', password_disabled);
+          .toggleConfigVisibility('locked', passwordDisabled)
+          .toggleConfigVisibility('sudo', passwordDisabled);
+        entityForm.setDisabled('password', passwordDisabled);
+        entityForm.setDisabled('password_conf', passwordDisabled);
       });
 
       this.ws.call('sharing.smb.query', [[['enabled', '=', true], ['home', '=', true]]])
@@ -452,8 +452,8 @@ export class UserFormComponent implements FormConfiguration {
           entityForm.formGroup.controls['shell'].setValue(res[0].shell);
         }
       } else {
-        this.ws.call('user.get_next_uid').pipe(untilDestroyed(this)).subscribe((next_uid) => {
-          entityForm.formGroup.controls['uid'].setValue(next_uid);
+        this.ws.call('user.get_next_uid').pipe(untilDestroyed(this)).subscribe((nextUid) => {
+          entityForm.formGroup.controls['uid'].setValue(nextUid);
         });
       }
       this.userService.shellChoices(this.pk).then((choices) => {

@@ -152,7 +152,7 @@ export class TableService {
           }
         },
         (error: WebsocketError) => {
-          new EntityUtils().handleWSError(this, error, this.dialog);
+          new EntityUtils().handleWsError(this, error, this.dialog);
           this.loader.close();
           table.loaderOpen = false;
         },
@@ -171,7 +171,7 @@ export class TableService {
       this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
         this.loader.close();
         table.loaderOpen = false;
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       });
     }
   }

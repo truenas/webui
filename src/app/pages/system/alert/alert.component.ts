@@ -81,7 +81,7 @@ export class AlertConfigComponent implements OnInit {
       },
       (error) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, error, this.dialog);
+        new EntityUtils().handleWsError(this, error, this.dialog);
       },
     );
 
@@ -163,13 +163,13 @@ export class AlertConfigComponent implements OnInit {
           },
           (err) => {
             this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.dialog);
+            new EntityUtils().handleWsError(this, err, this.dialog);
           },
         );
       })
       .catch((error) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, error, this.dialog);
+        new EntityUtils().handleWsError(this, error, this.dialog);
       });
   }
 
@@ -235,7 +235,7 @@ export class AlertConfigComponent implements OnInit {
       .call(this.editCall, [payload])
       .pipe(untilDestroyed(this)).subscribe(
         () => this.dialog.info(this.translate.instant('Settings saved'), '', '300px', 'info', true),
-        (error) => new EntityUtils().handleWSError(this, error, this.dialog),
+        (error) => new EntityUtils().handleWsError(this, error, this.dialog),
       )
       .add(() => this.loader.close());
   }

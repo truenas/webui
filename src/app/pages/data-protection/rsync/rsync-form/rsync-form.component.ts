@@ -258,7 +258,7 @@ export class RsyncFormComponent implements FormConfiguration {
     this.title = entityForm.isNew ? helptext.rsync_task_add : helptext.rsync_task_edit;
 
     this.user_field = this.fieldSets.config('user') as FormComboboxConfig;
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((items) => {
       items.forEach((user) => {
         this.user_field.options.push({
           label: user.username,
@@ -293,7 +293,7 @@ export class RsyncFormComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       this.user_field.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });

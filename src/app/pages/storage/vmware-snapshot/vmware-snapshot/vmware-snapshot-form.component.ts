@@ -198,9 +198,9 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
-        (e_res) => {
+        (error) => {
           this.loader.close();
-          this.dialogService.errorReport(this.translate.instant('Error'), e_res);
+          this.dialogService.errorReport(this.translate.instant('Error'), error);
         });
       });
     } else {
@@ -209,9 +209,9 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },
-      (e_res) => {
+      (error) => {
         this.loader.close();
-        this.dialogService.errorReport(this.translate.instant('Error'), e_res);
+        this.dialogService.errorReport(this.translate.instant('Error'), error);
       });
     }
   }
@@ -250,11 +250,11 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
       if (payload['password'] !== '' && typeof (payload['password']) !== 'undefined') {
         this.loader.open();
         this.ws.call('vmware.match_datastores_with_datasets', [payload]).pipe(untilDestroyed(this)).subscribe((res) => {
-          res.filesystems.forEach((filesystem_item) => {
+          res.filesystems.forEach((vmFilesystem) => {
             const config = _.find(this.fieldConfig, { name: 'filesystem' }) as FormSelectConfig;
             config.options.push(
               {
-                label: filesystem_item.name, value: filesystem_item.name,
+                label: vmFilesystem.name, value: vmFilesystem.name,
               },
             );
           });
@@ -281,7 +281,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
             this.dialogService.errorReport(helptext.connect_err_dialog.title, helptext.connect_err_dialog.msg, '');
           } else {
-            new EntityUtils().handleWSError(this, error, this.dialogService);
+            new EntityUtils().handleWsError(this, error, this.dialogService);
           }
         });
       }

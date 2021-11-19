@@ -56,7 +56,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
   };
 
   constructor(
-    private _router: Router,
+    private router: Router,
     protected dialogService: DialogService,
     protected loader: AppLoaderService,
     protected ws: WebSocketService,
@@ -107,7 +107,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
       label: helptext.group_list_actions_label_member,
       icon: 'people',
       onClick: (members: Group) => {
-        this._router.navigate(['/', 'credentials', 'groups', 'members', String(members.id)]);
+        this.router.navigate(['/', 'credentials', 'groups', 'members', String(members.id)]);
       },
     });
     if (row.builtin === !true) {
@@ -126,15 +126,15 @@ export class GroupListComponent implements EntityTableConfig<Group> {
         icon: 'delete',
         name: 'delete',
         label: helptext.group_list_actions_label_delete,
-        onClick: (members_delete: Group) => {
+        onClick: (group: Group) => {
           this.loader.open();
-          this.ws.call('user.query', [[['group.id', '=', members_delete.id]]]).pipe(untilDestroyed(this)).subscribe(
+          this.ws.call('user.query', [[['group.id', '=', group.id]]]).pipe(untilDestroyed(this)).subscribe(
             (usersInGroup) => {
               this.loader.close();
 
               const conf: DialogFormConfiguration = {
                 title: helptext.deleteDialog.title,
-                message: helptext.deleteDialog.message + `<i>${members_delete.group}</i>?`,
+                message: this.translate.instant('Delete group "{name}"?', { name: group.group }),
                 fieldConfig: [],
                 confirmCheckbox: true,
                 saveButtonText: helptext.deleteDialog.saveButtonText,
@@ -165,14 +165,14 @@ export class GroupListComponent implements EntityTableConfig<Group> {
                 customSubmit: (entityDialog: EntityDialogComponent) => {
                   entityDialog.dialogRef.close(true);
                   this.loader.open();
-                  this.ws.call(this.wsDelete, [members_delete.id, entityDialog.formValue])
+                  this.ws.call(this.wsDelete, [group.id, entityDialog.formValue])
                     .pipe(untilDestroyed(this))
                     .subscribe(() => {
                       this.entityList.getData();
                       this.loader.close();
                     },
                     (err) => {
-                      new EntityUtils().handleWSError(this, err, this.dialogService);
+                      new EntityUtils().handleWsError(this, err, this.dialogService);
                       this.loader.close();
                     });
                 },
@@ -180,7 +180,7 @@ export class GroupListComponent implements EntityTableConfig<Group> {
               this.dialogService.dialogForm(conf);
             }, (err) => {
               this.loader.close();
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         },
