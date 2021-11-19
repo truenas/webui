@@ -8,8 +8,9 @@ import { of } from 'rxjs';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ssh';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { WebSocketService } from 'app/services';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -60,12 +61,23 @@ export class ServiceSshComponent implements OnInit {
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     private router: Router,
+    private dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
-    this.ws.call('ssh.config').pipe(untilDestroyed(this)).subscribe((config) => {
-      this.form.patchValue(config);
-    });
+    this.isFormLoading = true;
+    this.ws.call('ssh.config').pipe(untilDestroyed(this)).subscribe(
+      (config) => {
+        this.form.patchValue(config);
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+      },
+      (error) => {
+        this.isFormLoading = false;
+        new EntityUtils().handleWsError(null, error, this.dialogService);
+        this.cdr.markForCheck();
+      },
+    );
   }
 
   onAdvancedSettingsToggled(): void {
