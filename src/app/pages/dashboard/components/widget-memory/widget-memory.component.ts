@@ -48,7 +48,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   isReady = false;
   title: string = this.translate.instant('Memory');
   subtitle: string = this.translate.instant('% of all cores');
-  widgetColorCssVar = 'var(--accent)';
   configurable = false;
   chartId = UUID.UUID();
   memTotal: number;

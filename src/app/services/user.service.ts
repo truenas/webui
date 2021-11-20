@@ -20,8 +20,7 @@ export class UserService {
   constructor(protected ws: WebSocketService) {}
 
   groupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
-    // TODO: Proper type for query API.
-    let queryArgs: any[] = [];
+    let queryArgs: QueryFilter<Group>[] = [];
     search = search.trim();
     if (search.length > 0) {
       queryArgs = [['group', '^', search]];

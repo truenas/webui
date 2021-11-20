@@ -5,7 +5,7 @@ export interface LdapConfig {
   binddn: string;
   bindpw: string;
   cert_name: string;
-  certificate: any;
+  certificate: number;
   disable_freenas_cache: boolean;
   dns_timeout: number;
   enable: boolean;

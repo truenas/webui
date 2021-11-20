@@ -267,7 +267,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     const actions = [{
       id: 'edit',
       label: helptext.actions_label.edit,
-      onClick: (row: any) => {
+      onClick: (row: Pool) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
@@ -279,7 +279,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }, {
       id: 'offline',
       label: helptext.actions_label.offline,
-      onClick: (row: any) => {
+      onClick: (row: Pool) => {
         let name = row.name;
         // if use path as name, show the full path
         if (!_.startsWith(name, '/')) {
@@ -312,7 +312,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }, {
       id: 'online',
       label: helptext.actions_label.online,
-      onClick: (row: any) => {
+      onClick: (row: Pool) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
@@ -342,7 +342,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }, {
       id: 'replace',
       label: helptext.actions_label.replace,
-      onClick: (row: any) => {
+      onClick: (row: Pool) => {
         let name = row.name;
         if (!_.startsWith(name, '/')) {
           const pIndex = name.lastIndexOf('p');
@@ -396,7 +396,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }, {
       id: 'remove',
       label: helptext.actions_label.remove,
-      onClick: (row: any) => {
+      onClick: (row: Pool) => {
         let diskName = row.name;
         if (!_.startsWith(row.name, '/')) {
           const pIndex = row.name.lastIndexOf('p');
@@ -418,7 +418,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }, {
       id: 'detach',
       label: helptext.actions_label.detach,
-      onClick: (row: any) => {
+      onClick: (row: Pool) => {
         const pIndex = row.name.lastIndexOf('p');
         const diskName = pIndex > -1 ? row.name.substring(0, pIndex) : row.name;
 
@@ -473,7 +473,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     return [{
       id: 'extend',
       label: helptext.actions_label.extend,
-      onClick: (row: any) => {
+      onClick: (row: Pool) => {
         const pk = this.pk;
         _.find(this.extendVdevFormFields, { name: 'target_vdev' }).value = row.guid;
         const conf: DialogFormConfiguration = {
@@ -521,7 +521,7 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
     }, {
       id: 'Remove',
       label: helptext.actions_label.remove,
-      onClick: (row: any) => {
+      onClick: (row: Pool) => {
         let diskName = row.name;
         if (!_.startsWith(row.name, '/')) {
           const pIndex = row.name.lastIndexOf('p');

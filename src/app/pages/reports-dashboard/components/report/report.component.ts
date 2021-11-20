@@ -86,8 +86,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   legendData: any = {};
   subtitle: string = this.translate.instant('% of all cores');
   altTitle = '';
-  altSubtitle = '';
-  widgetColorCssVar = 'var(--primary)';
   isActive = true;
 
   currentStartDate: number;// as seconds from Unix Epoch

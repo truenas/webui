@@ -60,7 +60,6 @@ export interface EntityTableConfig<Row = any> {
   getAddActions?: () => any[];
   rowValue?: (row: unknown, attr: string) => unknown;
   wsMultiDeleteParams?: (selected: Row[]) => any;
-  updateMultiAction?: (selected: Row[]) => any;
   doAdd?: (id?: string | number, tableComponent?: EntityTableComponent) => void;
   doEdit?: (id?: string | number, tableComponent?: EntityTableComponent) => void;
   onCheckboxChange?: (row: Row) => void;

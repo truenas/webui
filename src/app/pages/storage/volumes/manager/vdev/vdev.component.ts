@@ -180,7 +180,7 @@ export class VdevComponent implements OnInit {
     this.size = filesize(estimate, { standard: 'iec' });
   }
 
-  onSelect({ selected }: any): void {
+  onSelect({ selected }: { selected: ManagerDisk[] }): void {
     this.selected.splice(0, this.selected.length);
     this.selected.push(...selected);
   }

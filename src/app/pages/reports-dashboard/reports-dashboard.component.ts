@@ -294,9 +294,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     }
   }
 
-  flattenReports(list: Report[]): any[] {
+  flattenReports(list: Report[]): Report[] {
     // Based on identifiers, create a single dimensional array of reports to render
-    const result: any[] = [];
+    const result: Report[] = [];
     list.forEach((report) => {
       // Without identifiers
 
