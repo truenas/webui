@@ -1,12 +1,12 @@
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import {
-  NgModule, Injector, ErrorHandler, APP_INITIALIZER,
+  NgModule, Injector, ErrorHandler,
 } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
@@ -132,16 +132,6 @@ import { WebSocketService } from './services/ws.service';
       useValue: Sentry.createErrorHandler({
         showDialog: false,
       }),
-    },
-    {
-      provide: Sentry.TraceService,
-      deps: [Router],
-    },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: () => () => {},
-      deps: [Sentry.TraceService],
-      multi: true,
     },
   ],
   bootstrap: [

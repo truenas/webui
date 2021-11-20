@@ -385,7 +385,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   successLogin(): void {
     this.snackBar.dismiss();
 
-    if (!environment.production) {
+    if (environment.production) {
       this.sysGeneralService.getSysInfo().pipe(untilDestroyed(this)).subscribe((info) => {
         Sentry.init({
           dsn: 'https://7ac3e76fe2a94f77a58e1c38ea6b42d9@sentry.ixsystems.com/4',
