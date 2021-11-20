@@ -9,6 +9,7 @@ import { map } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-s3';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -80,10 +81,19 @@ export class ServiceS3Component implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.ws.call('s3.config').pipe(untilDestroyed(this)).subscribe((config) => {
-      this.form.patchValue(config, { emitEvent: false });
-      this.initialPath = config.storage_path;
-    });
+    this.ws.call('s3.config').pipe(untilDestroyed(this)).subscribe(
+      (config) => {
+        this.form.patchValue(config, { emitEvent: false });
+        this.initialPath = config.storage_path;
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+      },
+      (error) => {
+        this.isFormLoading = false;
+        new EntityUtils().handleWsError(null, error, this.dialog);
+        this.cdr.markForCheck();
+      },
+    );
 
     this.form.controls['storage_path'].valueChanges.pipe(untilDestroyed(this)).subscribe((newPath) => {
       if (!newPath || newPath === this.initialPath || this.warned) {
