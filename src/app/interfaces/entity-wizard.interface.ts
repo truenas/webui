@@ -15,8 +15,8 @@ export interface WizardConfiguration {
   isBasicMode?: boolean;
   showSpinner?: boolean;
   isAutoSummary?: boolean;
-  route_cancel?: string[];
-  route_success?: string[];
+  routeCancel?: string[];
+  routeSuccess?: string[];
   custActions?: EntityWizardAction[];
 
   customNext?: (stepper: MatStepper) => void;

@@ -31,8 +31,7 @@ export class ExtentFormComponent implements FormConfiguration {
   queryCall = 'iscsi.extent.query' as const;
   editCall = 'iscsi.extent.update' as const;
   customFilter: any[] = [[['id', '=']]];
-  // protected resource_name: string = 'services/iscsi/extent';
-  route_success: string[] = ['sharing', 'iscsi', 'extent'];
+  routeSuccess: string[] = ['sharing', 'iscsi', 'extent'];
   isEntity = true;
   protected entityForm: EntityFormComponent;
   isNew = false;
@@ -374,7 +373,7 @@ export class ExtentFormComponent implements FormConfiguration {
     this.ws.call(this.editCall, [parseInt(this.pk, 10), value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
       (res) => {
         this.loader.close();

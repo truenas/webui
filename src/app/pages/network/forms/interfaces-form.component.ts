@@ -315,7 +315,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   protected failoverGroupField: FormSelectConfig;
   protected failoverVhidField: FormSelectConfig;
 
-  save_button_enabled: boolean;
+  saveButtonEnabled: boolean;
 
   confirmSubmit = false;
   confirmSubmitDialog = {
@@ -501,15 +501,15 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
             if (v6Found) {
               this.aliasesField.hasErrors = true;
               this.aliasesField.errors = helptext.failover_alias_v6_error;
-              this.save_button_enabled = false;
+              this.saveButtonEnabled = false;
             } else if (mismatchFound) {
               this.aliasesField.hasErrors = true;
               this.aliasesField.errors = helptext.failover_alias_set_error;
-              this.save_button_enabled = false;
+              this.saveButtonEnabled = false;
             } else {
               this.aliasesField.hasErrors = false;
               this.aliasesField.errors = '';
-              this.save_button_enabled = true;
+              this.saveButtonEnabled = true;
             }
           });
         }

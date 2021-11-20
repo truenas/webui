@@ -15,7 +15,7 @@ export class CconfigureRYSNCComponent implements FormConfiguration {
   queryCall = 'rsyncd.config' as const;
   title = helptext.configureFormTitle;
 
-  route_success: string[] = ['services'];
+  routeSuccess: string[] = ['services'];
 
   fieldConfig: FieldConfig[] = [
     {

@@ -48,7 +48,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   protected podDetails: Record<string, string[]>;
   protected tempPodDetails: Record<string, string[]>;
   protected apps: string[] = [];
-  protected route_success: string[] = ['apps'];
+  protected routeSuccess: string[] = ['apps'];
 
   choosePod: DialogFormConfiguration;
   private podLogsChangedListener: Subscription;

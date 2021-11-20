@@ -12,7 +12,7 @@ export interface FormConfiguration {
   fieldSetDisplay?: string;
   saveSubmitText?: string;
   target?: Subject<CoreEvent>;
-  resource_name?: string;
+  resourceName?: string;
   isEntity?: boolean;
   addCall?: ApiMethod;
   editCall?: ApiMethod;
@@ -24,15 +24,11 @@ export interface FormConfiguration {
   isNew?: boolean;
   pk?: number | string;
   rowid?: number | string;
-  custom_get_query?: string;
   fieldConfig?: FieldConfig[];
-  route_usebaseUrl?: boolean;
-  route_cancel?: string[];
-  route_success?: string[];
+  routeCancel?: string[];
+  routeSuccess?: string[];
   // TODO: Broken
-  route_delete?: string[];
-  custom_edit_query?: string;
-  custom_add_query?: string;
+  routeDelete?: string[];
   custActions?: FormCustomAction[];
   compactCustomActions?: FormCompactCustomAction[];
   customFilter?: any[];
@@ -43,13 +39,12 @@ export interface FormConfiguration {
     hideCheckbox?: boolean;
     button?: string;
   };
-  save_button_enabled?: boolean;
+  saveButtonEnabled?: boolean;
   hideSaveBtn?: boolean;
   form_message?: {
     type: string; // info || warning
     content: string;
   };
-  hide_fileds?: string[];
   isBasicMode?: boolean;
   advanced_field?: string[];
   basic_field?: string[];

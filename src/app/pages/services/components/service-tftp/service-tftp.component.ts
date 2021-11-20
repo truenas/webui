@@ -17,7 +17,7 @@ import { UserService, WebSocketService } from 'app/services';
 })
 export class ServiceTFTPComponent implements FormConfiguration {
   queryCall = 'tftp.config' as const;
-  route_success: string[] = ['services'];
+  routeSuccess: string[] = ['services'];
   title = helptext.formTitle;
 
   fieldSets: FieldSet[] = [

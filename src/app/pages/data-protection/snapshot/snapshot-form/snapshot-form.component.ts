@@ -28,7 +28,7 @@ export class SnapshotFormComponent implements FormConfiguration {
   protected dataset: string;
   protected dataset_disabled = false;
   protected datasetFg: AbstractControl;
-  save_button_enabled = true;
+  saveButtonEnabled = true;
   protected entityForm: EntityFormComponent;
   title: string;
   isNew = false;
@@ -162,7 +162,7 @@ export class SnapshotFormComponent implements FormConfiguration {
           options.push(disabledDataset);
 
           datasetField.warnings = helptext.dataset_warning;
-          this.save_button_enabled = false;
+          this.saveButtonEnabled = false;
         }
         datasetField.options = _.sortBy(options, [(o) => o.label]);
       },
@@ -173,7 +173,7 @@ export class SnapshotFormComponent implements FormConfiguration {
 
     this.datasetFg.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       if (this.dataset_disabled && this.dataset !== value) {
-        this.save_button_enabled = true;
+        this.saveButtonEnabled = true;
         datasetField.warnings = '';
       }
     });

@@ -30,7 +30,7 @@ export class InitiatorFormComponent implements OnInit {
   protected queryCall = 'iscsi.initiator.query' as const;
   protected editCall = 'iscsi.initiator.update' as const;
   protected customFilter: any[] = [[['id', '=']]];
-  route_success: string[] = ['sharing', 'iscsi', 'initiator'];
+  routeSuccess: string[] = ['sharing', 'iscsi', 'initiator'];
   protected pk: number;
 
   fieldConfig: FieldConfig[] = [
@@ -182,7 +182,7 @@ export class InitiatorFormComponent implements OnInit {
     submitFunction.pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
       (err) => {
         this.loader.close();
@@ -192,7 +192,7 @@ export class InitiatorFormComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(new Array('/').concat(this.route_success));
+    this.router.navigate(new Array('/').concat(this.routeSuccess));
   }
 
   setRelation(config: FieldConfig): void {

@@ -28,7 +28,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 export class ServiceSMBComponent implements FormConfiguration {
   queryCall = 'smb.config' as const;
-  route_success: string[] = ['services'];
+  routeSuccess: string[] = ['services'];
   error: string;
   protected targetDS = '5';
   isBasicMode = true;

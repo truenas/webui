@@ -207,8 +207,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
     });
 
-    if (this.conf.save_button_enabled == undefined) {
-      this.conf.save_button_enabled = true;
+    if (this.conf.saveButtonEnabled == undefined) {
+      this.conf.saveButtonEnabled = true;
     }
     if (this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
@@ -224,7 +224,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.conf.preInit(this);
     }
     this.sub = this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.resourceName = this.conf.resource_name;
+      this.resourceName = this.conf.resourceName;
       if (this.resourceName && !this.resourceName.endsWith('/')) {
         this.resourceName = this.resourceName + '/';
       }
@@ -405,9 +405,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   goBack(): void {
-    let route = this.conf.route_cancel;
+    let route = this.conf.routeCancel;
     if (!route) {
-      route = this.conf.route_success;
+      route = this.conf.routeSuccess;
     }
     this.router.navigate(new Array('/').concat(route));
   }
@@ -511,9 +511,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               if (this.conf.afterSave) {
                 this.conf.afterSave(this);
               } else {
-                if (this.conf.route_success) {
+                if (this.conf.routeSuccess) {
                   this.router.navigate(new Array('/').concat(
-                    this.conf.route_success,
+                    this.conf.routeSuccess,
                   ));
                 } else {
                   this.success = true;
@@ -572,18 +572,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       return false;
     }
 
-    if (this.conf.hide_fileds !== undefined) {
-      if (this.conf.hide_fileds.includes(id)) {
-        return false;
-      }
-    }
     return true;
   }
 
   goConf(): void {
     let route = this.conf.route_conf;
     if (!route) {
-      route = this.conf.route_success;
+      route = this.conf.routeSuccess;
     }
     this.router.navigate(new Array('/').concat(route));
   }

@@ -20,7 +20,7 @@ export class SMBAclComponent implements FormConfiguration {
   queryCall = 'smb.sharesec.query' as const;
   editCall = 'smb.sharesec.update' as const;
 
-  route_success: string[] = ['sharing', 'smb'];
+  routeSuccess: string[] = ['sharing', 'smb'];
   isEntity = true;
   customFilter: QueryParams<SmbSharesec>;
 

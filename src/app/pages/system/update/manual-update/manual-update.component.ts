@@ -31,7 +31,7 @@ import { DialogService } from 'app/services/dialog.service';
 })
 export class ManualUpdateComponent extends ViewControllerComponent implements FormConfiguration {
   formGroup: FormGroup;
-  route_success: string[] = ['system', 'update'];
+  routeSuccess: string[] = ['system', 'update'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   fileLocation: string;
   subs: { formData: FormData; apiEndPoint: string };
@@ -76,7 +76,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     },
   ];
 
-  save_button_enabled = false;
+  saveButtonEnabled = false;
 
   constructor(
     protected router: Router,
@@ -160,7 +160,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   }
 
   customSubmit(): void {
-    this.save_button_enabled = false;
+    this.saveButtonEnabled = false;
     this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((ures) => {
       this.dialogRef = this.dialog.open(EntityJobComponent, {
@@ -207,14 +207,14 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
             helptext.manual_update_error_dialog.message,
             `${prefailure.status.toString()} ${prefailure.statusText}`,
           );
-          this.save_button_enabled = true;
+          this.saveButtonEnabled = true;
         });
       this.dialogRef.componentInstance.failure
         .pipe(take(1))
         .pipe(untilDestroyed(this)).subscribe((failure) => {
           this.dialogRef.close(false);
           this.dialogService.errorReport(failure.error, failure.state, failure.exception);
-          this.save_button_enabled = true;
+          this.saveButtonEnabled = true;
         });
     });
   }
@@ -222,7 +222,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   updater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      this.save_button_enabled = true;
+      this.saveButtonEnabled = true;
       const formData: FormData = new FormData();
       if (this.isHA) {
         formData.append('data', JSON.stringify({
@@ -237,7 +237,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       formData.append('file', fileBrowser.files[0]);
       this.subs = { apiEndPoint: file.apiEndPoint, formData };
     } else {
-      this.save_button_enabled = false;
+      this.saveButtonEnabled = false;
     }
   }
 

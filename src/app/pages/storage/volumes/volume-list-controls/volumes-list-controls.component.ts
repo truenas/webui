@@ -34,7 +34,7 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
   private filterSubscription: Subscription;
 
   get totalActions(): number {
-    const addAction = this.entity.conf.route_add ? 1 : 0;
+    const addAction = this.entity.conf.routeAdd ? 1 : 0;
     return this.actions.length + addAction;
   }
 

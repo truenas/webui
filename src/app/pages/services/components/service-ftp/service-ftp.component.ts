@@ -30,7 +30,7 @@ import {
 export class ServiceFTPComponent implements FormConfiguration, OnInit {
   editCall = 'ftp.update' as const;
   queryCall = 'ftp.config' as const;
-  route_success: string[] = ['services'];
+  routeSuccess: string[] = ['services'];
 
   isBasicMode = true;
   protected entityForm: EntityFormComponent;

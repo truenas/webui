@@ -23,7 +23,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
   addCall = 'iscsi.auth.create' as const;
   queryCall = 'iscsi.auth.query' as const;
   editCall = 'iscsi.auth.update' as const;
-  route_success: string[] = ['sharing', 'iscsi', 'auth'];
+  routeSuccess: string[] = ['sharing', 'iscsi', 'auth'];
   isEntity = true;
   customFilter: [[Partial<QueryFilter<IscsiAuthAccess>>]] = [[['id', '=']]];
 
@@ -200,7 +200,7 @@ export class AuthorizedAccessFormComponent implements FormConfiguration {
     this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
       (res) => {
         this.loader.close();

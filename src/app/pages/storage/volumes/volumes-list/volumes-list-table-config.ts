@@ -77,8 +77,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
   };
 
   protected dialogRef: MatDialogRef<EntityJobComponent>;
-  route_add = ['storage', 'import'];
-  route_add_tooltip = T('Create or Import Pool');
+  routeAdd = ['storage', 'import'];
+  routeAddTooltip = T('Create or Import Pool');
   showDefaults = false;
   showSpinner: boolean;
   // TODO: Unused?
