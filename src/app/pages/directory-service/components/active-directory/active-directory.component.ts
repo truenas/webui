@@ -285,7 +285,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     },
   ];
 
-  advanced_field = helptext.activedirectory_advanced_fields;
+  advancedFields = helptext.activedirectory_advanced_fields;
 
   isCustActionVisible(actionname: string): boolean {
     if (actionname === 'advanced_mode' && !this.isBasicMode) {

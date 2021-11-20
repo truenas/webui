@@ -98,7 +98,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  protected tftp_username: FormComboboxConfig;
+  protected tftpUsernameField: FormComboboxConfig;
 
   constructor(
     protected router: Router,
@@ -119,10 +119,10 @@ export class ServiceTFTPComponent implements FormConfiguration {
 
   preInit(): void {
     this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((items) => {
-      this.tftp_username = this.fieldSets
+      this.tftpUsernameField = this.fieldSets
         .find((set) => set.name === helptext.tftp_fieldset_conn)
         .config.find((config) => config.name === 'username') as FormComboboxConfig;
-      this.tftp_username.options = items.map((user) => {
+      this.tftpUsernameField.options = items.map((user) => {
         return { label: user.username, value: user.username };
       });
     });
@@ -134,7 +134,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
 
   updateUserSearchOptions(value = ''): void {
     this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      this.tftp_username.searchOptions = items.map((user) => {
+      this.tftpUsernameField.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });
     });

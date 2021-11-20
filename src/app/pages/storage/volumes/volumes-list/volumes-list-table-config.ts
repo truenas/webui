@@ -83,7 +83,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
   showSpinner: boolean;
   // TODO: Unused?
   encryptedStatus: number;
-  private vmware_res_status: boolean;
+  private datasetHasVms: boolean;
   dialogConf: DialogFormConfiguration;
   restartServices = false;
   subs: Subs;
@@ -129,8 +129,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
   getEncryptedActions(rowData: VolumesListPool): EntityTableAction[] {
     const actions = [];
 
-    if (this.parentVolumesListComponent.has_encrypted_root[rowData.name]
-      && this.parentVolumesListComponent.has_key_dataset[rowData.name]) {
+    if (this.parentVolumesListComponent.hasEncryptedRoot[rowData.name]
+      && this.parentVolumesListComponent.hasKeyDataset[rowData.name]) {
       actions.push({
         label: T('Export Dataset Keys'),
         onClick: (row1: VolumesListPool) => {
@@ -1030,7 +1030,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
         label: T('Create Snapshot'),
         onClick: (row: VolumesListDataset) => {
           this.ws.call('vmware.dataset_has_vms', [row.id, false]).pipe(untilDestroyed(this, 'destroy')).subscribe((datasetHasVms) => {
-            this.vmware_res_status = datasetHasVms;
+            this.datasetHasVms = datasetHasVms;
           });
           this.dialogConf = {
             title: 'One time snapshot of ' + rowData.id,
@@ -1061,8 +1061,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 updater: (parent: VolumesListTableConfig) => {
                   parent.recursiveIsChecked = !parent.recursiveIsChecked;
                   parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(parent, 'destroy')).subscribe((datasetHasVms) => {
-                    parent.vmware_res_status = datasetHasVms;
-                    _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' })['isHidden'] = !parent.vmware_res_status;
+                    parent.datasetHasVms = datasetHasVms;
+                    _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' })['isHidden'] = !parent.datasetHasVms;
                   });
                 },
               },
@@ -1071,7 +1071,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 name: 'vmware_sync',
                 placeholder: helptext.vmware_sync_placeholder,
                 tooltip: helptext.vmware_sync_tooltip,
-                isHidden: !this.vmware_res_status,
+                isHidden: !this.datasetHasVms,
               },
             ],
             method_ws: 'zfs.snapshot.create',
@@ -1574,7 +1574,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
       dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
       dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
       if (dataObj.is_encrypted_root) {
-        this.parentVolumesListComponent.has_encrypted_root[(parent as VolumesListDataset).pool] = true;
+        this.parentVolumesListComponent.hasEncryptedRoot[(parent as VolumesListDataset).pool] = true;
       }
       dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && (parent as VolumesListDataset).encrypted);
     });

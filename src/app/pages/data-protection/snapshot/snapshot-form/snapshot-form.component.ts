@@ -26,7 +26,7 @@ export class SnapshotFormComponent implements FormConfiguration {
   isEntity = true;
   pk: number;
   protected dataset: string;
-  protected dataset_disabled = false;
+  protected isDatasetDisabled = false;
   protected datasetFg: AbstractControl;
   saveButtonEnabled = true;
   protected entityForm: EntityFormComponent;
@@ -158,7 +158,7 @@ export class SnapshotFormComponent implements FormConfiguration {
       (options) => {
         if (this.dataset !== undefined && !_.find(options, { label: this.dataset })) {
           const disabledDataset = { label: this.dataset, value: this.dataset, disable: true };
-          this.dataset_disabled = true;
+          this.isDatasetDisabled = true;
           options.push(disabledDataset);
 
           datasetField.warnings = helptext.dataset_warning;
@@ -172,7 +172,7 @@ export class SnapshotFormComponent implements FormConfiguration {
     this.datasetFg = entityForm.formGroup.controls['dataset'];
 
     this.datasetFg.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
-      if (this.dataset_disabled && this.dataset !== value) {
+      if (this.isDatasetDisabled && this.dataset !== value) {
         this.saveButtonEnabled = true;
         datasetField.warnings = '';
       }

@@ -104,7 +104,7 @@
       </div>
       <!-- <div class="btn-group btn-group-justified"> -->
     </form>
-    <span *ngIf="conf.form_message" id="form_message" class="form-message" [ngClass]="conf.form_message.type" [innerHTML]="conf.form_message.content | translate"></span>
+    <span *ngIf="conf.formMessage" id="form_message" class="form-message" [ngClass]="conf.formMessage.type" [innerHTML]="conf.formMessage.content | translate"></span>
     <mat-error *ngIf="error" type="danger" id="error_message"><div [innerHTML]="error"></div></mat-error>
   </div>
 </mat-card>

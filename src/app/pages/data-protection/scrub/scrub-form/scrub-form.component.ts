@@ -83,12 +83,7 @@ export class ScrubFormComponent implements FormConfiguration {
     },
   ]);
 
-  protected volume_field: FormSelectConfig;
-  protected month_field: FieldConfig;
-  protected day_field: FieldConfig;
-  protected minute_field: FieldConfig;
-  protected hour_field: FieldConfig;
-  protected daymonth_field: FieldConfig;
+  protected volumeField: FormSelectConfig;
 
   constructor(protected taskService: TaskService, protected modalService: ModalService) {}
 
@@ -98,10 +93,10 @@ export class ScrubFormComponent implements FormConfiguration {
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.scrub_task_add : helptext.scrub_task_edit;
 
-    this.volume_field = this.fieldSets.config('pool') as FormSelectConfig;
+    this.volumeField = this.fieldSets.config('pool') as FormSelectConfig;
     this.taskService.getVolumeList().pipe(untilDestroyed(this)).subscribe((pools) => {
       pools.forEach((pool) => {
-        this.volume_field.options.push({ label: pool.name, value: pool.id });
+        this.volumeField.options.push({ label: pool.name, value: pool.id });
       });
     });
 

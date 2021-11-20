@@ -30,18 +30,17 @@ export class ServiceSMBComponent implements FormConfiguration {
   queryCall = 'smb.config' as const;
   routeSuccess: string[] = ['services'];
   error: string;
-  protected targetDS = '5';
   isBasicMode = true;
 
-  private cifs_srv_bindip: FormSelectConfig;
-  private cifs_srv_guest: FormSelectConfig;
-  private cifs_srv_unixcharset: FormSelectConfig;
-  private cifs_srv_admin_group: FormComboboxConfig;
+  private cifsSrvBindipField: FormSelectConfig;
+  private cifsSrvGuestField: FormSelectConfig;
+  private cifsSrvUnixcharsetField: FormSelectConfig;
+  private cifsSrvAdminGroupField: FormComboboxConfig;
   entityEdit: EntityFormComponent;
   private validBindIps: Choices;
   title = helptext.formTitle;
 
-  advanced_field = [
+  advancedFields = [
     'unixcharset',
     'loglevel',
     'syslog',
@@ -280,28 +279,28 @@ export class ServiceSMBComponent implements FormConfiguration {
     const otherSet = _.find(this.fieldSets, { name: helptext.cifs_srv_fieldset_other });
     const otherColTwoSet = _.find(this.fieldSets, { name: 'otherColTwo' });
 
-    this.cifs_srv_unixcharset = otherSet.config.find((config) => config.name === 'unixcharset') as FormSelectConfig;
+    this.cifsSrvUnixcharsetField = otherSet.config.find((config) => config.name === 'unixcharset') as FormSelectConfig;
     this.ws.call('smb.unixcharset_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       const values = Object.values(res);
       values.forEach((charset) => {
-        this.cifs_srv_unixcharset.options.push({ label: charset, value: charset });
+        this.cifsSrvUnixcharsetField.options.push({ label: charset, value: charset });
       });
     });
 
     this.servicesService.getSmbBindIpChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       this.validBindIps = res;
-      this.cifs_srv_bindip = otherColTwoSet.config.find((config) => config.name === 'bindip') as FormSelectConfig;
+      this.cifsSrvBindipField = otherColTwoSet.config.find((config) => config.name === 'bindip') as FormSelectConfig;
       for (const key in res) {
         if (res.hasOwnProperty(key)) {
-          this.cifs_srv_bindip.options.push({ label: res[key], value: res[key] });
+          this.cifsSrvBindipField.options.push({ label: res[key], value: res[key] });
         }
       }
     });
 
     this.ws.call('user.query').pipe(untilDestroyed(this)).subscribe((users) => {
-      this.cifs_srv_guest = otherColTwoSet.config.find((config) => config.name === 'guest') as FormSelectConfig;
+      this.cifsSrvGuestField = otherColTwoSet.config.find((config) => config.name === 'guest') as FormSelectConfig;
       users.forEach((user) => {
-        this.cifs_srv_guest.options.push({ label: user.username, value: user.username });
+        this.cifsSrvGuestField.options.push({ label: user.username, value: user.username });
       });
     });
 
@@ -310,9 +309,9 @@ export class ServiceSMBComponent implements FormConfiguration {
       groups.forEach((item) => {
         groupOptions.push({ label: item.group, value: item.group });
       });
-      this.cifs_srv_admin_group = otherSet.config.find((config) => config.name === 'admin_group') as FormComboboxConfig;
+      this.cifsSrvAdminGroupField = otherSet.config.find((config) => config.name === 'admin_group') as FormComboboxConfig;
       groupOptions.forEach((group) => {
-        this.cifs_srv_admin_group.options.push({ label: group.label, value: group.value });
+        this.cifsSrvAdminGroupField.options.push({ label: group.label, value: group.value });
       });
     });
   }
@@ -359,7 +358,7 @@ export class ServiceSMBComponent implements FormConfiguration {
 
   updateGroupSearchOptions(value = ''): void {
     this.userService.groupQueryDsCache(value, true).pipe(untilDestroyed(this)).subscribe((items) => {
-      this.cifs_srv_admin_group.searchOptions = items.map((group) => {
+      this.cifsSrvAdminGroupField.searchOptions = items.map((group) => {
         return { label: group.group, value: group.group };
       });
     });

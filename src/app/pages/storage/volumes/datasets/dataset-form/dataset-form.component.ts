@@ -716,7 +716,7 @@ export class DatasetFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ];
 
-  advanced_field = [
+  advancedFields = [
     'refquota',
     'quota',
     'quota_unit',
