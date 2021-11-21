@@ -2976,7 +2976,7 @@
   "Rsync Module": "同步模块",
   "Rsync Task": "同步任务",
   "Rsync Tasks": "同步任务",
-  "Run As User": "以用户身份运行",
+  "Run As User": "以哪个用户身份运行",
   "Run Automatically": "自动运行",
   "Run Now": "立即运行",
   "Run On a Schedule": "按计划运行",
