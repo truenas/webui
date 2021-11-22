@@ -3,22 +3,11 @@
   text-align: left;
 
   .menu-toggle {
-    height: 36px;
+    height: 37px;
+    margin-top: -1px;
   }
 }
 
 .spinner {
   margin-left: 8px;
-}
-
-.ix-form-container {
-  ix-input {
-    height: 36px;
-    margin: 0;
-    padding: 0;
-
-    ::ng-deep ix-form-errors {
-      display: none;
-    }
-  }
 }
