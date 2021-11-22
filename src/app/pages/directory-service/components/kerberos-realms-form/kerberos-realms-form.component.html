@@ -1,0 +1,42 @@
+<ix-modal-header [title]="title" [loading]="isFormLoading"></ix-modal-header>
+<mat-card>
+  <mat-card-content>
+    <form [formGroup]="form" class="ix-form-container" (submit)="onSubmit()">
+      <ix-fieldset>
+        <ix-input
+          formControlName="realm"
+          [label]="'Realm' | translate"
+          [required]="true"
+          [tooltip]="tooltips.realm"
+        ></ix-input>
+        <ix-chips
+          formControlName="kdc"
+          [label]="'KDC' | translate"
+          [placeholder]="'KDC' | translate"
+          [tooltip]="tooltips.kdc"
+        ></ix-chips>
+        <ix-chips
+          formControlName="admin_server"
+          [label]="'Admin Servers' | translate"
+          [placeholder]="'Admin Servers' | translate"
+          [tooltip]="tooltips.admin_server"
+        ></ix-chips>
+        <ix-chips
+          formControlName="kpasswd_server"
+          [label]="'Password Servers' | translate"
+          [placeholder]="'Password Servers' | translate"
+          [tooltip]="tooltips.kpasswd_server"
+        ></ix-chips>
+      </ix-fieldset>
+
+      <div class="form-actions">
+        <button
+          mat-button
+          type="submit"
+          [disabled]="form.invalid || isFormLoading"
+          color="primary"
+        >{{ 'Save' | translate }}</button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

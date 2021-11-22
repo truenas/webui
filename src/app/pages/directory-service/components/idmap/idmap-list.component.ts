@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { filter, map, tap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IdmapName } from 'app/enums/idmap-name.enum';
@@ -28,7 +28,7 @@ import { IdmapFormComponent } from './idmap-form.component';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class IdmapListComponent implements EntityTableConfig {
-  title = 'Idmap';
+  title = this.translate.instant('Idmap');
   queryCall = 'idmap.query' as const;
   queryCallOption: QueryParams<Idmap>;
   wsDelete = 'idmap.delete' as const;
@@ -37,13 +37,13 @@ export class IdmapListComponent implements EntityTableConfig {
 
   columns = [
     {
-      name: T('Name'), prop: 'label', always_display: true, minWidth: 250,
+      name: this.translate.instant('Name'), prop: 'label', always_display: true, minWidth: 250,
     },
-    { name: T('Backend'), prop: 'idmap_backend', maxWidth: 100 },
-    { name: T('DNS Domain Name'), prop: 'dns_domain_name' },
-    { name: T('Range Low'), prop: 'range_low' },
-    { name: T('Range High'), prop: 'range_high' },
-    { name: T('Certificate'), prop: 'cert_name' },
+    { name: this.translate.instant('Backend'), prop: 'idmap_backend', maxWidth: 100 },
+    { name: this.translate.instant('DNS Domain Name'), prop: 'dns_domain_name' },
+    { name: this.translate.instant('Range Low'), prop: 'range_low' },
+    { name: this.translate.instant('Range High'), prop: 'range_high' },
+    { name: this.translate.instant('Certificate'), prop: 'cert_name' },
   ];
 
   rowIdentifier = 'name';
@@ -51,7 +51,7 @@ export class IdmapListComponent implements EntityTableConfig {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('Idmap'),
+      title: this.translate.instant('Idmap'),
       key_props: ['name'],
     },
   };
@@ -62,6 +62,7 @@ export class IdmapListComponent implements EntityTableConfig {
     private modalService: ModalService,
     public mdDialog: MatDialog,
     protected dialogService: DialogService,
+    protected translate: TranslateService,
   ) { }
 
   resourceTransformIncomingRestData(data: Idmap[]): IdmapRow[] {
@@ -107,9 +108,9 @@ export class IdmapListComponent implements EntityTableConfig {
 
   getAddActions(): EntityTableAction[] {
     return [{
-      label: T('Add'),
+      label: this.translate.instant('Add'),
       onClick: () => {
-        this.idmapService.getADStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
+        this.idmapService.getActiveDirectoryStatus().pipe(untilDestroyed(this)).subscribe((adConfig) => {
           if (adConfig.enable) {
             this.doAdd();
           } else {
@@ -120,7 +121,7 @@ export class IdmapListComponent implements EntityTableConfig {
               buttonMsg: helptext.idmap.enable_ad_dialog.button,
             })
               .pipe(filter(Boolean), untilDestroyed(this))
-              .subscribe(() => this.showADForm());
+              .subscribe(() => this.showActiveDirectoryForm());
           }
         });
       },
@@ -133,7 +134,7 @@ export class IdmapListComponent implements EntityTableConfig {
       id: 'edit',
       name: 'edit',
       icon: 'edit',
-      label: T('Edit'),
+      label: this.translate.instant('Edit'),
       disabled: row.disableEdit,
       onClick: (row: IdmapRow) => {
         this.doAdd(row.id);
@@ -142,14 +143,14 @@ export class IdmapListComponent implements EntityTableConfig {
     if (!requiredIdmapDomains.includes(row.name)) {
       actions.push({
         id: 'delete',
-        label: T('Delete'),
+        label: this.translate.instant('Delete'),
         name: 'delete',
         icon: 'delete',
         onClick: (row: IdmapRow) => {
           this.entityList.doDeleteJob(row).pipe(untilDestroyed(this)).subscribe(
             () => {},
             (err: WebsocketError) => {
-              new EntityUtils().handleWSError(this.entityList, err);
+              new EntityUtils().handleWsError(this.entityList, err);
             },
             () => {
               this.entityList.getData();
@@ -165,7 +166,7 @@ export class IdmapListComponent implements EntityTableConfig {
     this.modalService.openInSlideIn(IdmapFormComponent, id);
   }
 
-  showADForm(): void {
+  showActiveDirectoryForm(): void {
     this.modalService.openInSlideIn(ActiveDirectoryComponent);
   }
 }

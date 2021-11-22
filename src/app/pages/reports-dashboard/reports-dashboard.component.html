@@ -14,7 +14,6 @@
         *ngIf="retroLogo && activeReports[key] && activeReports[key].identifiers.length > 0"
         [retroLogo]="retroLogo"
         [report]="activeReports[key]"
-        [multipathTitle]="multipathTitles[activeReports[key].identifiers[0]]"
         [identifier]="activeReports[key].identifiers[0]"
       ></report>
       <report *ngIf="activeReports[key].identifiers.length == 0" [report]="activeReports[key]"></report>

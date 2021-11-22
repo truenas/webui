@@ -16,6 +16,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
 @Component({
   selector: 'navigation',
   templateUrl: './navigation.component.html',
+  styleUrls: ['./navigation.component.scss'],
 })
 export class NavigationComponent extends ViewControllerComponent implements OnInit {
   hasIconTypeMenuItem: boolean;

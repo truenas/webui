@@ -1,40 +1,71 @@
-import { Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
+} from '@angular/core';
+import { FormBuilder } from '@ngneat/reactive-forms';
+import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/directory-service/kerberos-settings';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { DialogService, WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
+@UntilDestroy()
 @Component({
-  selector: 'directoryservice-kerberossettings',
-  template: '<entity-form [conf]="this"></entity-form>',
+  templateUrl: './kerberos-settings.component.html',
+  styleUrls: ['./kerberos-settings.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
+export class KerberosSettingsComponent implements OnInit {
+  isFormLoading = false;
 
-export class KerberosSettingsComponent implements FormConfiguration {
-  title = helptext.ks_label;
-  queryCall = 'kerberos.config' as const;
-  addCall = 'kerberos.update' as const;
-  editCall = 'kerberos.update' as const;
-  protected isOneColumnForm = true;
-  fieldConfig: FieldConfig[] = [];
-  fieldSets: FieldSet[] = [
-    {
-      name: helptext.ks_label,
-      class: 'heading',
-      label: false,
-      config: [
-        {
-          type: 'textarea',
-          name: helptext.ks_appdefaults_name,
-          placeholder: helptext.ks_appdefaults_placeholder,
-          tooltip: helptext.ks_appdefaults_tooltip,
-        },
-        {
-          type: 'textarea',
-          name: helptext.ks_libdefaults_name,
-          placeholder: helptext.ks_libdefaults_placeholder,
-          tooltip: helptext.ks_libdefaults_tooltip,
-        },
-      ],
-    },
-  ];
+  form = this.fb.group({
+    appdefaults_aux: [''],
+    libdefaults_aux: [''],
+  });
+
+  readonly tooltips = {
+    appdefaults_aux: helptext.ks_appdefaults_tooltip,
+    libdefaults_aux: helptext.ks_libdefaults_tooltip,
+  };
+
+  constructor(
+    private ws: WebSocketService,
+    private slideInService: IxSlideInService,
+    private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder,
+    private dialogService: DialogService,
+  ) {}
+
+  ngOnInit(): void {
+    this.isFormLoading = true;
+
+    this.ws.call('kerberos.config').pipe(untilDestroyed(this)).subscribe(
+      (config) => {
+        this.form.patchValue(config);
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+      },
+      (error) => {
+        new EntityUtils().handleWsError(null, error, this.dialogService);
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+      },
+    );
+  }
+
+  onSubmit(): void {
+    const values = this.form.value;
+
+    this.isFormLoading = true;
+    this.ws.call('kerberos.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.isFormLoading = false;
+      this.cdr.markForCheck();
+      this.slideInService.close();
+    }, (error) => {
+      this.isFormLoading = false;
+      this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
+    });
+  }
 }

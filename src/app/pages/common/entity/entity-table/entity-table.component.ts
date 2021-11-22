@@ -20,7 +20,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { NavigationStart, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -341,9 +340,11 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         // If preferred columns have been set for THIS table...
         if (column.title === this.title) {
           this.firstUse = false;
-          this.conf.columns = column.cols.filter((col) =>
-          // Remove columns if they are already present in always displayed columns
-            !this.alwaysDisplayedCols.find((item) => item.prop === col.prop));
+          this.conf.columns = column.cols.filter((col) => {
+            // Remove columns if they are already present in always displayed columns
+            return !this.alwaysDisplayedCols.find((item) => item.prop === col.prop);
+          });
+
           // Remove columns from display and preferred cols if they don't exist in the table
           const notFound: EntityTableColumnProp[] = [];
           this.conf.columns.forEach((col) => {
@@ -460,8 +461,8 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         break;
 
       case EmptyType.NoSearchResults:
-        title = T('No Search Results.');
-        message = T('Your query didn\'t return any results. Please try again.');
+        title = this.translate.instant('No Search Results.');
+        message = this.translate.instant('Your query didn\'t return any results. Please try again.');
         if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.no_search_results) {
           title = this.conf.emptyTableConfigMessages.no_search_results.title;
           message = this.conf.emptyTableConfigMessages.no_search_results.message;
@@ -475,10 +476,10 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         break;
 
       case EmptyType.Errors:
-        title = T('Something went wrong');
+        title = this.translate.instant('Something went wrong');
 
         if (error) {
-          message = T('The system returned the following error - ');
+          message = this.translate.instant('The system returned the following error - ');
         }
 
         if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.errors) {
@@ -514,7 +515,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
               item: this.title,
             });
           }
-          let buttonText = T('Add ') + this.title;
+          let buttonText = this.translate.instant('Add ') + this.title;
           if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
             buttonText = this.conf.emptyTableConfigMessages.buttonText;
           }
@@ -547,7 +548,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
               item: this.title,
             });
           }
-          let buttonText = T('Add ') + this.title;
+          let buttonText = this.translate.instant('Add ') + this.title;
           if (this.conf.emptyTableConfigMessages && this.conf.emptyTableConfigMessages.buttonText) {
             buttonText = this.conf.emptyTableConfigMessages.buttonText;
           }
@@ -664,7 +665,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         res.data = this.conf.resourceTransformIncomingRestData(res.data);
         for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
           if (res.data.length > 0 && res.data[0].hasOwnProperty(prop) && typeof res.data[0][prop] === 'string') {
-            res.data.map((row: any) => row[prop] = new EntityUtils().parseDOW(row[prop]));
+            res.data.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
           }
         }
       }
@@ -672,7 +673,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       res = this.conf.resourceTransformIncomingRestData(res);
       for (const prop of ['schedule', 'cron_schedule', 'cron', 'scrub_schedule']) {
         if (res.length > 0 && res[0].hasOwnProperty(prop) && typeof res[0][prop] === 'string') {
-          res.map((row: any) => row[prop] = new EntityUtils().parseDOW(row[prop]));
+          res.map((row: any) => row[prop] = new EntityUtils().parseDow(row[prop]));
         }
       }
     }
@@ -805,13 +806,13 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       name: 'edit',
       id: 'edit',
       icon: 'edit',
-      label: T('Edit'),
+      label: this.translate.instant('Edit'),
       onClick: (rowinner: any) => { this.doEdit(rowinner.id); },
     }, {
       name: 'delete',
       id: 'delete',
       icon: 'delete',
-      label: T('Delete'),
+      label: this.translate.instant('Delete'),
       onClick: (rowinner: any) => { this.doDelete(rowinner); },
     }] as EntityTableAction[];
   }
@@ -854,20 +855,20 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
   }
 
   // generate delete msg
-  getDeleteMessage(item: any, action: string = T('Delete ')): string {
-    let deleteMsg: string = T('Delete the selected item?');
+  getDeleteMessage(item: any, action: string = this.translate.instant('Delete ')): string {
+    let deleteMsg: string = this.translate.instant('Delete the selected item?');
     if (this.conf.config.deleteMsg) {
       deleteMsg = action + this.conf.config.deleteMsg.title;
-      let msg_content = ' <b>' + item[this.conf.config.deleteMsg.key_props[0]];
+      let message = ' <b>' + item[this.conf.config.deleteMsg.key_props[0]];
       if (this.conf.config.deleteMsg.key_props.length > 1) {
         for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
           if (item[this.conf.config.deleteMsg.key_props[i]] !== '') {
-            msg_content = msg_content + ' - ' + item[this.conf.config.deleteMsg.key_props[i]];
+            message = message + ' - ' + item[this.conf.config.deleteMsg.key_props[i]];
           }
         }
       }
-      msg_content += '</b>?';
-      deleteMsg += msg_content;
+      message += '</b>?';
+      deleteMsg += message;
     }
 
     deleteMsg = this.translate.instant(deleteMsg);
@@ -907,10 +908,10 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         });
     } else {
       this.dialogService.confirm({
-        title: dialog.hasOwnProperty('title') ? dialog['title'] : T('Delete'),
+        title: dialog.hasOwnProperty('title') ? dialog['title'] : this.translate.instant('Delete'),
         message: dialog.hasOwnProperty('message') ? dialog['message'] + deleteMsg : deleteMsg,
         hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : false,
-        buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : T('Delete'),
+        buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : this.translate.instant('Delete'),
       }).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res) {
           this.toDeleteRow = item;
@@ -935,7 +936,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
         }
       },
       (resinner) => {
-        new EntityUtils().handleWSError(this, resinner, this.dialogService);
+        new EntityUtils().handleWsError(this, resinner, this.dialogService);
         this.loader.close();
       },
     );
@@ -956,10 +957,10 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
 
     return this.dialogService
       .confirm({
-        title: dialog.hasOwnProperty('title') ? dialog['title'] : T('Delete'),
+        title: dialog.hasOwnProperty('title') ? dialog['title'] : this.translate.instant('Delete'),
         message: dialog.hasOwnProperty('message') ? dialog['message'] + deleteMsg : deleteMsg,
         hideCheckBox: dialog.hasOwnProperty('hideCheckbox') ? dialog['hideCheckbox'] : false,
-        buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : T('Delete'),
+        buttonMsg: dialog.hasOwnProperty('button') ? dialog['button'] : this.translate.instant('Delete'),
       })
       .pipe(
         filter(Boolean),
@@ -972,7 +973,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
           return this.ws.call(this.conf.wsDelete, params).pipe(
             take(1),
             catchError((error) => {
-              new EntityUtils().handleWSError(this, error, this.dialogService);
+              new EntityUtils().handleWsError(this, error, this.dialogService);
               this.loader.close();
               return of(false);
             }),
@@ -986,28 +987,28 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     let deleteMsg = 'Delete the selected items?';
     if (this.conf.config.deleteMsg) {
       deleteMsg = 'Delete selected ' + this.conf.config.deleteMsg.title + '(s)?';
-      let msg_content = '<ul>';
+      let message = '<ul>';
       items.forEach((item) => {
-        let sub_msg_content;
+        let subMessage;
         if (this.conf.config.deleteMsg.key_props.length > 1) {
-          sub_msg_content = '<li><strong>' + item[this.conf.config.deleteMsg.key_props[0]] + '</strong>';
-          sub_msg_content += '<ul class="nested-list">';
+          subMessage = '<li><strong>' + item[this.conf.config.deleteMsg.key_props[0]] + '</strong>';
+          subMessage += '<ul class="nested-list">';
 
           for (let i = 1; i < this.conf.config.deleteMsg.key_props.length; i++) {
             if (item[this.conf.config.deleteMsg.key_props[i]] != '') {
-              sub_msg_content += '<li>' + item[this.conf.config.deleteMsg.key_props[i]] + '</li>';
+              subMessage += '<li>' + item[this.conf.config.deleteMsg.key_props[i]] + '</li>';
             }
           }
-          sub_msg_content += '</ul>';
+          subMessage += '</ul>';
         } else {
-          sub_msg_content = '<li>' + item[this.conf.config.deleteMsg.key_props[0]];
+          subMessage = '<li>' + item[this.conf.config.deleteMsg.key_props[0]];
         }
 
-        sub_msg_content += '</li>';
-        msg_content += sub_msg_content;
+        subMessage += '</li>';
+        message += subMessage;
       });
-      msg_content += '</ul>';
-      deleteMsg += msg_content;
+      message += '</ul>';
+      deleteMsg += message;
     }
     deleteMsg = this.translate.instant(deleteMsg);
 
@@ -1020,7 +1021,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       title: 'Delete',
       message: multiDeleteMsg,
       hideCheckBox: false,
-      buttonMsg: T('Delete'),
+      buttonMsg: this.translate.instant('Delete'),
     }).pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res) {
         return;
@@ -1050,15 +1051,15 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
                     }
                   }
                   if (message === '') {
-                    this.dialogService.info(T('Items deleted'), '', '300px', 'info', true);
+                    this.dialogService.info(this.translate.instant('Items deleted'), '', '300px', 'info', true);
                   } else {
                     message = '<ul>' + message + '</ul>';
-                    this.dialogService.errorReport(T('Items Delete Failed'), message);
+                    this.dialogService.errorReport(this.translate.instant('Items Delete Failed'), message);
                   }
                 }
               },
               (res1) => {
-                new EntityUtils().handleWSError(this, res1, this.dialogService);
+                new EntityUtils().handleWsError(this, res1, this.dialogService);
                 this.loader.close();
                 this.loaderOpen = false;
               },
@@ -1169,7 +1170,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
   }
 
   runningStateButton(jobid: number): void {
-    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: T('Task is running') } });
+    const dialogRef = this.matDialog.open(EntityJobComponent, { data: { title: this.translate.instant('Task is running') } });
     dialogRef.componentInstance.jobId = jobid;
     dialogRef.componentInstance.wsshow();
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {

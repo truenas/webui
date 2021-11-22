@@ -6,7 +6,6 @@ import {
 } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -40,15 +39,16 @@ export class JobsManagerComponent implements OnInit {
   isLoading: boolean;
   jobs: Job[] = [];
   numberOfRunningJobs$ = this.store.numberOfRunningJobs$;
+  numberOfWaitingJobs$ = this.store.numberOfWaitingJobs$;
   numberOfFailedJobs$ = this.store.numberOfFailedJobs$;
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: false,
-    title: T('No jobs are available.'),
+    title: this.translate.instant('No jobs are available.'),
     icon: 'assignment',
-    message: T('Click the button below to see all jobs.'),
+    message: this.translate.instant('Click the button below to see all jobs.'),
     button: {
-      label: T('History'),
+      label: this.translate.instant('History'),
       action: this.goToJobs.bind(this),
     },
   };
@@ -93,7 +93,7 @@ export class JobsManagerComponent implements OnInit {
     this.dialogRef.close();
     let title = job.description ? job.description : job.method;
     if (job.state === JobState.Running) {
-      title = this.translate.instant(T('Updating'));
+      title = this.translate.instant('Updating');
     }
     const dialogRef = this.matDialog.open(EntityJobComponent, {
       data: { title },

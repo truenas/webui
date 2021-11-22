@@ -2,7 +2,6 @@ import { Component, Type } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -254,7 +253,7 @@ export class SnapshotListComponent implements EntityTableConfig {
           entityList.handleData(snapshot, true);
         },
         (error) => {
-          new EntityUtils().handleWSError(this, error, entityList.dialogService);
+          new EntityUtils().handleWsError(this, error, entityList.dialogService);
         });
     });
   }
@@ -270,9 +269,9 @@ export class SnapshotListComponent implements EntityTableConfig {
 
   doDelete(item: SnapshotListRow): void {
     this.entityList.dialogService.confirm({
-      title: T('Delete'),
+      title: this.translate.instant('Delete'),
       message: this.translate.instant('Delete snapshot {name}?', { name: item.name }),
-      buttonMsg: T('Delete'),
+      buttonMsg: this.translate.instant('Delete'),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => {
@@ -283,7 +282,7 @@ export class SnapshotListComponent implements EntityTableConfig {
             this.entityList.getData();
           },
           (res: WebsocketError) => {
-            new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
+            new EntityUtils().handleWsError(this, res, this.entityList.dialogService);
             this.entityList.loaderOpen = false;
             this.entityList.loader.close();
           },
@@ -346,7 +345,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     this.dialogService.confirm({
       title: 'Delete',
       message: multiDeleteMsg,
-      buttonMsg: T('Delete'),
+      buttonMsg: this.translate.instant('Delete'),
     })
       .pipe(filter(Boolean), untilDestroyed(this))
       .subscribe(() => this.startMultiDeleteProgress(selected));
@@ -354,17 +353,17 @@ export class SnapshotListComponent implements EntityTableConfig {
 
   startMultiDeleteProgress(selected: SnapshotListRow[]): void {
     const params = this.wsMultiDeleteParams(selected);
-    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Deleting Snapshots') }, disableClose: true });
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Deleting Snapshots') }, disableClose: true });
     dialogRef.componentInstance.setCall(this.wsMultiDelete, params as CoreBulkQuery);
     dialogRef.componentInstance.submit();
 
     dialogRef.componentInstance.success
       .pipe(untilDestroyed(this))
-      .subscribe((job_res: Job<CoreBulkResponse<boolean>[]>) => {
+      .subscribe((job: Job<CoreBulkResponse<boolean>[]>) => {
         const jobErrors: string[] = [];
         const jobSuccess: boolean[] = [];
 
-        job_res.result.forEach((item) => {
+        job.result.forEach((item) => {
           if (item.error) {
             jobErrors.push(item.error);
           } else {
@@ -396,7 +395,7 @@ export class SnapshotListComponent implements EntityTableConfig {
       });
 
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
+      new EntityUtils().handleWsError(this.entityList, err, this.dialogService);
       dialogRef.close();
     });
   }
@@ -422,7 +421,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     }, (err) => {
       this.entityList.loader.close();
       this.entityList.loaderOpen = false;
-      new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
+      new EntityUtils().handleWsError(this.entityList, err, this.entityList.dialogService);
     });
   }
 
@@ -447,7 +446,7 @@ export class SnapshotListComponent implements EntityTableConfig {
           this.entityList.loaderOpen = false;
           this.entityList.loader.close();
           entityDialog.dialogRef.close();
-          new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
+          new EntityUtils().handleWsError(this.entityList, err, this.entityList.dialogService);
         },
       );
   }

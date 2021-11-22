@@ -1,29 +1,32 @@
 import { CdkAccordionItem } from '@angular/cdk/accordion';
 import { Component, OnInit, Type } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { forkJoin, of, combineLatest } from 'rxjs';
+import {
+  forkJoin, of, merge,
+} from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/dashboard';
 import idmapHelptext from 'app/helptext/directory-service/idmap';
 import { Idmap } from 'app/interfaces/idmap.interface';
+import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { AppTableConfig } from 'app/pages/common/entity/table/table.component';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form.component';
-import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-form.component';
 import { KerberosSettingsComponent } from 'app/pages/directory-service/components/kerberos-settings/kerberos-settings.component';
 import { requiredIdmapDomains } from 'app/pages/directory-service/utils/required-idmap-domains.utils';
 import {
   DialogService, IdmapService, WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { IdmapFormComponent } from './components/idmap/idmap-form.component';
+import { KerberosRealmsFormComponent } from './components/kerberos-realms-form/kerberos-realms-form.component';
 import { LdapComponent } from './components/ldap/ldap.component';
 
 enum DirectoryServicesCardId {
@@ -31,11 +34,14 @@ enum DirectoryServicesCardId {
   Ldap = 'ldap',
   Idmap = 'idmap',
   KerberosSettings = 'kerberos-settings',
-  KerberosRealms = 'kerberos-realms',
   KerberosKeytab = 'kerberos-keytab',
 }
 
-type DataCard = { id: DirectoryServicesCardId; title: string; items: Option[] };
+interface DataCard {
+  id: DirectoryServicesCardId;
+  title: string;
+  items: Option[];
+}
 
 @UntilDestroy()
 @Component({
@@ -58,25 +64,25 @@ export class DirectoryServicesComponent implements OnInit {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      { name: T('Name'), prop: 'name' },
-      { name: T('Backend'), prop: 'idmap_backend' },
-      { name: T('DNS Domain Name'), prop: 'dns_domain_name' },
-      { name: T('Range Low'), prop: 'range_low' },
-      { name: T('Range High'), prop: 'range_high' },
-      { name: T('Certificate'), prop: 'cert_name' },
+      { name: this.translate.instant('Name'), prop: 'name' },
+      { name: this.translate.instant('Backend'), prop: 'idmap_backend' },
+      { name: this.translate.instant('DNS Domain Name'), prop: 'dns_domain_name' },
+      { name: this.translate.instant('Range Low'), prop: 'range_low' },
+      { name: this.translate.instant('Range High'), prop: 'range_high' },
+      { name: this.translate.instant('Certificate'), prop: 'cert_name' },
 
     ],
-    add() {
-      this.parent.onCardButtonPressed(DirectoryServicesCardId.Idmap);
+    add: () => {
+      this.onCardButtonPressed(DirectoryServicesCardId.Idmap);
     },
-    edit(row: Idmap) {
-      this.parent.onCardButtonPressed(DirectoryServicesCardId.Idmap, row.id);
+    edit: (row: Idmap) => {
+      this.onCardButtonPressed(DirectoryServicesCardId.Idmap, row.id);
     },
     getActions: () => {
       return [
         {
           id: 'delete',
-          label: T('Delete'),
+          label: this.translate.instant('Delete'),
           name: 'delete',
           icon: 'delete',
           onClick: (row: Idmap) => {
@@ -120,16 +126,17 @@ export class DirectoryServicesComponent implements OnInit {
     emptyEntityLarge: false,
     parent: this,
     columns: [
-      { name: T('Realm'), prop: 'realm' },
-      { name: T('KDC'), prop: 'kdc' },
-      { name: T('Admin Server'), prop: 'admin_server' },
-      { name: T('Password Server'), prop: 'kpasswd_server' },
+      { name: this.translate.instant('Realm'), prop: 'realm' },
+      { name: this.translate.instant('KDC'), prop: 'kdc' },
+      { name: this.translate.instant('Admin Server'), prop: 'admin_server' },
+      { name: this.translate.instant('Password Server'), prop: 'kpasswd_server' },
     ],
-    add() {
-      this.parent.onCardButtonPressed(DirectoryServicesCardId.KerberosRealms);
+    add: () => {
+      this.slideInService.open(KerberosRealmsFormComponent);
     },
-    edit(row) {
-      this.parent.onCardButtonPressed(DirectoryServicesCardId.KerberosRealms, row.id);
+    edit: (realm: KerberosRealm) => {
+      const modal = this.slideInService.open(KerberosRealmsFormComponent);
+      modal.setRealmForEdit(realm);
     },
   };
 
@@ -147,11 +154,11 @@ export class DirectoryServicesComponent implements OnInit {
     columns: [
       { name: 'Name', prop: 'name' },
     ],
-    add() {
-      this.parent.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab);
+    add: () => {
+      this.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab);
     },
-    edit(row) {
-      this.parent.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab, row.id);
+    edit: (row) => {
+      this.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab, row.id);
     },
   };
 
@@ -168,6 +175,7 @@ export class DirectoryServicesComponent implements OnInit {
     private ws: WebSocketService,
     private idmapService: IdmapService,
     private modalService: ModalService,
+    private slideInService: IxSlideInService,
     private dialog: DialogService,
     private loader: AppLoaderService,
     private translate: TranslateService,
@@ -176,10 +184,11 @@ export class DirectoryServicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshCards();
-    combineLatest([
+    merge(
       this.modalService.onClose$,
+      this.slideInService.onClose$,
       this.modalService.refreshTable$,
-    ])
+    )
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.refreshCards();
@@ -287,7 +296,6 @@ export class DirectoryServicesComponent implements OnInit {
     let component: Type<ActiveDirectoryComponent
     | IdmapFormComponent
     | LdapComponent
-    | KerberosRealmsFormComponent
     | KerberosSettingsComponent
     | KerberosKeytabsFormComponent
     >;
@@ -302,9 +310,6 @@ export class DirectoryServicesComponent implements OnInit {
       case DirectoryServicesCardId.Idmap:
         component = IdmapFormComponent;
         break;
-      case DirectoryServicesCardId.KerberosRealms:
-        component = KerberosRealmsFormComponent;
-        break;
       case DirectoryServicesCardId.KerberosSettings:
         component = KerberosSettingsComponent;
         break;
@@ -318,7 +323,7 @@ export class DirectoryServicesComponent implements OnInit {
     of(true).pipe(
       switchMap(() => {
         if (name == DirectoryServicesCardId.Idmap && !id) {
-          return this.idmapService.getADStatus().pipe(
+          return this.idmapService.getActiveDirectoryStatus().pipe(
             switchMap((adConfig) => {
               if (!adConfig.enable) {
                 component = ActiveDirectoryComponent;
@@ -339,12 +344,18 @@ export class DirectoryServicesComponent implements OnInit {
       }),
       filter(Boolean),
       untilDestroyed(this),
-    ).subscribe(() => this.modalService.openInSlideIn(component, id));
+    ).subscribe(() => {
+      if (component === KerberosSettingsComponent) {
+        this.slideInService.open(component);
+      } else {
+        this.modalService.openInSlideIn(component, id);
+      }
+    });
   }
 
   refreshTables(): void {
     [this.kerberosRealmsTableConf, this.idmapTableConf, this.kerberosKeytabTableConf].forEach((config) => {
-      if (config?.tableComponent) {
+      if (config.tableComponent) {
         config.tableComponent.getData();
       }
     });

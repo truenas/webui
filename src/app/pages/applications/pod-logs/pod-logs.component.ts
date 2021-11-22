@@ -4,7 +4,6 @@ import {
 } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -92,7 +91,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
             title: helptext.podLogs.nopod.title,
             message: helptext.podLogs.nopod.message,
             hideCheckBox: true,
-            buttonMsg: T('Close'),
+            buttonMsg: this.translate.instant('Close'),
             hideCancel: true,
           });
         }
@@ -250,21 +249,21 @@ export class PodLogsComponent implements OnInit, OnDestroy {
 
   // download log
   download(entityDialog: EntityDialogComponent<this>): void {
-    const chart_release_name = entityDialog.formGroup.controls['apps'].value;
-    const pod_name = entityDialog.formGroup.controls['pods'].value;
-    const container_name = entityDialog.formGroup.controls['containers'].value;
-    const tail_lines = entityDialog.formGroup.controls['tail_lines'].value;
+    const chartReleaseName = entityDialog.formGroup.controls['apps'].value;
+    const podName = entityDialog.formGroup.controls['pods'].value;
+    const containerName = entityDialog.formGroup.controls['containers'].value;
+    const tailLines = entityDialog.formGroup.controls['tail_lines'].value;
 
     this.dialogService.closeAllDialogs();
 
     this.loader.open();
-    const fileName = `${chart_release_name}_${pod_name}_${container_name}.log`;
+    const fileName = `${chartReleaseName}_${podName}_${containerName}.log`;
     const mimetype = 'application/octet-stream';
     this.ws.call(
       'core.download',
       [
         'chart.release.pod_logs',
-        [chart_release_name, { pod_name, container_name, tail_lines }],
+        [chartReleaseName, { pod_name: podName, container_name: containerName, tail_lines: tailLines }],
         fileName,
       ],
     ).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -279,7 +278,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
         });
     }, (e) => {
       this.loader.close();
-      new EntityUtils().handleWSError(this, e, this.dialogService);
+      new EntityUtils().handleWsError(this, e, this.dialogService);
     });
   }
 
@@ -295,30 +294,30 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   }
 
   afterLogsDialogInit(entityDialog: EntityDialogComponent): void {
-    const podFC = _.find(entityDialog.fieldConfig, { name: 'pods' }) as FormSelectConfig;
-    const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
+    const podFc = _.find(entityDialog.fieldConfig, { name: 'pods' }) as FormSelectConfig;
+    const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
 
     // when app selection changed
     entityDialog.formGroup.controls['apps'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      podFC.options = [];
-      containerFC.options = [];
+      podFc.options = [];
+      containerFc.options = [];
 
       this.loader.open();
       this.ws.call('chart.release.pod_logs_choices', [value]).pipe(untilDestroyed(this)).subscribe((res) => {
         this.loader.close();
         this.tempPodDetails = res;
-        let pod_name;
+        let podName;
         if (Object.keys(this.tempPodDetails).length > 0) {
-          pod_name = Object.keys(this.tempPodDetails)[0];
+          podName = Object.keys(this.tempPodDetails)[0];
         } else {
-          pod_name = null;
+          podName = null;
         }
 
-        podFC.options = Object.keys(this.tempPodDetails).map((item) => ({
+        podFc.options = Object.keys(this.tempPodDetails).map((item) => ({
           label: item,
           value: item,
         }));
-        entityDialog.formGroup.controls['pods'].setValue(pod_name);
+        entityDialog.formGroup.controls['pods'].setValue(podName);
       });
     });
 
@@ -327,7 +326,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
       if (value) {
         const containers = this.tempPodDetails[value];
 
-        containerFC.options = containers.map((item) => ({
+        containerFc.options = containers.map((item) => ({
           label: item,
           value: item,
         }));

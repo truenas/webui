@@ -3,11 +3,11 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/services/components/service-ftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -126,7 +126,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
         {
           type: 'explorer',
           initial: '/mnt',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           name: 'anonpath',
           placeholder: helptext.anonpath_placeholder,
           tooltip: helptext.anonpath_tooltip,
@@ -446,8 +446,8 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
         this.dialog.confirm({
           title: helptext.rootlogin_dialog_title,
           message: helptext.rootlogin_dialog_message,
-          buttonMsg: T('Continue'),
-          cancelMsg: T('Cancel'),
+          buttonMsg: this.translate.instant('Continue'),
+          cancelMsg: this.translate.instant('Cancel'),
           disableClose: true,
         }).pipe(untilDestroyed(this)).subscribe((confirm) => {
           if (!confirm) {
@@ -462,7 +462,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
       }
     });
 
-    this.bwFields.forEach((field) =>
+    this.bwFields.forEach((field) => {
       entityEdit.formGroup.controls[field].valueChanges.pipe(untilDestroyed(this)).subscribe((value: any) => {
         const formField = _.find(this.fieldConfig, { name: field });
         const filteredValue = value ? this.storageService.convertHumanStringToNum(value, false, 'kmgtp') : undefined;
@@ -472,7 +472,8 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           formField['hasErrors'] = true;
           formField['errors'] = helptext.bandwidth_err;
         }
-      }));
+      });
+    });
 
     // 'Erase' humanReadable after load to keep from accidentaly resetting values
     setTimeout(() => {
@@ -481,8 +482,10 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   }
 
   resourceTransformIncomingRestData(data: any): any {
-    this.bwFields.forEach((field) =>
-      data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0, 'KiB'));
+    this.bwFields.forEach((field) => {
+      data[field] = this.storageService.convertBytestoHumanReadable(data[field] * 1024, 0, 'KiB');
+    });
+
     this.rootlogin = data['rootlogin'];
     const certificate = data['ssltls_certificate'];
     if (certificate && certificate.id) {
@@ -507,8 +510,9 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   }
 
   beforeSubmit(data: any): void {
-    this.bwFields.forEach((field) =>
-      data[field] = this.storageService.convertHumanStringToNum(data[field]) / 1024);
+    this.bwFields.forEach((field) => {
+      data[field] = this.storageService.convertHumanStringToNum(data[field]) / 1024;
+    });
 
     const fileperm = parseInt(data['filemask'], 8);
     let filemask = (~fileperm & 0o777).toString(8);

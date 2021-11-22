@@ -10,7 +10,6 @@ import { MatButton } from '@angular/material/button';
 import { MatProgressBar } from '@angular/material/progress-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -18,7 +17,7 @@ import { ApiService } from 'app/core/services/api.service';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
@@ -97,14 +96,14 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: FormBuilder,
     private core: CoreService,
     private api: ApiService,
-    private _autofill: AutofillMonitor,
+    private autofill: AutofillMonitor,
     private http: HttpClient,
     private sysGeneralService: SystemGeneralService,
     private localeService: LocaleService,
   ) {
     this.ws = ws;
-    const ha_status = window.sessionStorage.getItem('ha_status');
-    if (ha_status && ha_status === 'true') {
+    const haStatus = window.sessionStorage.getItem('ha_status');
+    if (haStatus && haStatus === 'true') {
       this.ha_status = true;
     }
     this.checkSystemType();
@@ -128,9 +127,9 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
           if (this.haInterval) {
             clearInterval(this.haInterval);
           }
-          this.getHAStatus();
+          this.getHaStatus();
           this.haInterval = setInterval(() => {
-            this.getHAStatus();
+            this.getHaStatus();
           }, 6000);
         } else if (this.canLogin()) {
           this.checkBuildtime();
@@ -142,7 +141,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    this._autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
+    this.autofill.monitor(this.usernameInput).pipe(untilDestroyed(this)).subscribe(() => {
       if (!this.didSetFocus) {
         this.didSetFocus = true;
         this.usernameInput.nativeElement.focus();
@@ -199,14 +198,14 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   loginToken(): void {
-    let middleware_token;
+    let middlewareToken;
     if (window.localStorage.getItem('middleware_token')) {
-      middleware_token = window.localStorage.getItem('middleware_token');
+      middlewareToken = window.localStorage.getItem('middleware_token');
       window.localStorage.removeItem('middleware_token');
     }
 
-    if (middleware_token) {
-      this.ws.loginToken(middleware_token)
+    if (middlewareToken) {
+      this.ws.loginToken(middlewareToken)
         .pipe(untilDestroyed(this)).subscribe((result) => {
           this.loginCallback(result);
         });
@@ -231,8 +230,8 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
   checkBuildtime(): void {
     this.ws.call('system.build_time').pipe(untilDestroyed(this)).subscribe((buildTime) => {
       const buildtime = String(buildTime.$date);
-      const previous_buildtime = window.localStorage.getItem('buildtime');
-      if (buildtime !== previous_buildtime) {
+      const previousBuildtime = window.localStorage.getItem('buildtime');
+      if (buildtime !== previousBuildtime) {
         window.localStorage.setItem('buildtime', buildtime);
         this._copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
       }
@@ -261,7 +260,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.productType?.includes(ProductType.Enterprise) || this.productType === ProductType.Scale;
   }
 
-  getHAStatus(): void {
+  getHaStatus(): void {
     if (this.productSupportsHa && !this.checking_status) {
       this.checking_status = true;
       this.ws.call('failover.status').pipe(untilDestroyed(this)).subscribe((failoverStatus) => {
@@ -278,17 +277,17 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
             this.ha_disabled_reasons = reasons;
             this.show_reasons = false;
             if (reasons.length === 0) {
-              this.ha_status_text = T('HA is enabled.');
+              this.ha_status_text = this.translate.instant('HA is enabled.');
               this.ha_status = true;
             } else if (reasons.length === 1) {
               if (reasons[0] === FailoverDisabledReason.NoSystemReady) {
-                this.ha_status_text = T('HA is reconnecting.');
+                this.ha_status_text = this.translate.instant('HA is reconnecting.');
               } else if (reasons[0] === FailoverDisabledReason.NoFailover) {
-                this.ha_status_text = T('HA is administratively disabled.');
+                this.ha_status_text = this.translate.instant('HA is administratively disabled.');
               }
               this.ha_status = false;
             } else {
-              this.ha_status_text = T('HA is in a faulted state');
+              this.ha_status_text = this.translate.instant('HA is in a faulted state');
               this.show_reasons = true;
               this.ha_status = false;
             }
@@ -395,22 +394,22 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     let message = '';
     if (this.ws.token === null) {
       if (this.isTwoFactor) {
-        message = T('Username, Password, or 2FA Code is incorrect.');
+        message = this.translate.instant('Username, Password, or 2FA Code is incorrect.');
       } else {
-        message = T('Username or Password is incorrect.');
+        message = this.translate.instant('Username or Password is incorrect.');
       }
     } else {
-      message = T('Token expired, please log back in.');
+      message = this.translate.instant('Token expired, please log back in.');
       this.ws.token = null;
     }
     this.snackBar.open(this.translate.instant(message), this.translate.instant('close'), { duration: 4000 });
   }
 
-  openIX(): void {
+  openIx(): void {
     window.open('https://www.ixsystems.com/', '_blank');
   }
 
-  gotoTC(): void {
+  goToTrueCommand(): void {
     this.dialogService.generalDialog({
       title: helptext.tcDialog.title,
       message: helptext.tcDialog.message,

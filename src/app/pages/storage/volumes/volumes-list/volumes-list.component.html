@@ -12,12 +12,11 @@
     >
       <mat-expansion-panel-header class="{{row.status.toLowerCase()}}">
         <mat-panel-title>
-          {{row.name}} <span *ngIf="row.name === systemdatasetPool" class="ml-1">
-            {{ '(System Dataset Pool)' | translate}}</span>
+          {{row.name}} <span *ngIf="row.name === systemdatasetPool" class="ml-1">{{ '(System Dataset Pool)' | translate}}</span>
         </mat-panel-title>
         <mat-panel-description>
           {{row.status}}&nbsp;
-          <span *ngIf="!row.healthy && row.status == PoolStatus.Online">(Unhealthy)</span>
+          <span *ngIf="!row.healthy && row.status == PoolStatus.Online">({{ 'Unhealthy' | translate }})</span>
 
           &nbsp;
           <span [style.margin-right.px]="5">
@@ -31,16 +30,22 @@
             </ng-template>
           </span>
           <span *ngIf="row.usedStr && row.availStr">
-            &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
+            &nbsp;<span class="divider">|</span>&nbsp;
             {{row.usedStr}} {{"Used" | translate}}
-            &nbsp;<span style="opacity:0.5;">|</span>&nbsp;
+            &nbsp;<span class="divider">|</span>&nbsp;
             {{row.availStr}} {{"Free" | translate}}
           </span>
         </mat-panel-description>
 
         <div fxLayoutAlign="end start" class="icon-row hidden">
           <div class="global_volume_based_action_menu pool-icon" title="Pool Operations" >
-            <app-entity-table-actions icon_name="mdi-database-cog" [entity]="actionComponent" [row]="row" [action]="'settings'" [groups]="true"></app-entity-table-actions>
+            <app-entity-table-actions
+              icon_name="mdi-database-cog"
+              [entity]="actionComponent"
+              [row]="row"
+              action="settings"
+              [groups]="true"
+            ></app-entity-table-actions>
           </div>
         </div>
       </mat-expansion-panel-header>

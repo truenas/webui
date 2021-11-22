@@ -177,8 +177,22 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 
 input:-webkit-autofill:active {
-  box-shadow: 0 0 0 30px transparent inset !important;
+  box-shadow: 0 0 0 30px var(--bg1) inset !important;
   caret-color: white;
   -webkit-text-fill-color: white !important;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+.icon {
+  color: var(--fg1);
+  position: relative;
+
+  &.account,
+  &.lock {
+    top: 4px;
+  }
+
+  &.phonelink {
+    top: 2px;
+  }
 }

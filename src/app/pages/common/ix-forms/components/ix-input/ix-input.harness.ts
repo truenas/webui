@@ -23,7 +23,7 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
   }
 
   async getErrorText(): Promise<string> {
-    const label = await this.locatorForOptional('ix-form-errors')();
+    const label = await this.locatorForOptional('ix-errors')();
     return label?.text() || '';
   }
 
@@ -31,7 +31,19 @@ export class IxInputHarness extends ComponentHarness implements IxFormControlHar
     return (await this.getMatInputHarness()).getValue();
   }
 
-  async setValue(value: string): Promise<void> {
-    return (await this.getMatInputHarness()).setValue(value);
+  async setValue(value: string | number): Promise<void> {
+    const harness = (await this.getMatInputHarness());
+
+    // MatInputHarness does not properly work with numeric values
+    // (for example for <input type="number">).
+    // https://github.com/angular/components/issues/23894
+    if (typeof value === 'number') {
+      const nativeInput = await harness.host();
+      await nativeInput.setInputValue(value as unknown as string);
+      await nativeInput.dispatchEvent('input');
+      return nativeInput.blur();
+    }
+
+    return harness.setValue(value);
   }
 }

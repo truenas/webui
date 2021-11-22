@@ -2,7 +2,6 @@ import {
   Component, OnInit, AfterViewInit, OnDestroy, ElementRef,
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { tween, styler } from 'popmotion';
@@ -16,7 +15,7 @@ import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { VolumeDataEvent } from 'app/interfaces/events/volume-data-event.interface';
-import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
+import { EntityToolbarActionConfig } from 'app/interfaces/global-action.interface';
 import {
   NetworkInterface,
   NetworkInterfaceState,
@@ -52,7 +51,7 @@ export type DashboardNicState = NetworkInterfaceState & {
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   formEvents$: Subject<CoreEvent> = new Subject();
-  actionsConfig: GlobalActionConfig;
+  actionsConfig: EntityToolbarActionConfig;
 
   screenType = 'Desktop'; // Desktop || Mobile
   optimalDesktopWidth = '100%';
@@ -84,8 +83,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   emptyDashConf: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    title: T('Dashboard is Empty!'),
-    message: T('You have hidden all of your available widgets. Use the dashboard configuration form to add widgets.'),
+    title: this.translate.instant('Dashboard is Empty!'),
+    message: this.translate.instant('You have hidden all of your available widgets. Use the dashboard configuration form to add widgets.'),
     button: {
       label: 'Configure Dashboard',
       action: () => {
@@ -200,7 +199,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       to: { x: endX },
       duration: 250,
     }).start({
-      update: (v: any) => {
+      update: (v: { x: number }) => {
         carousel.set(v);
       },
       complete: () => {
@@ -303,8 +302,9 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
           clone.splice(i, 1);
         } else {
           // Only keep INET addresses
-          clone[i].state.aliases = clone[i].state.aliases.filter((address) =>
-            [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(address.type));
+          clone[i].state.aliases = clone[i].state.aliases.filter((address) => {
+            return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(address.type);
+          });
         }
       }
 
@@ -362,13 +362,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     data.forEach((dataset) => {
       if (typeof dataset == undefined || !dataset) { return; }
-      const used_pct = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
+      const usedPercent = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
       const zvol = {
         avail: dataset.available.parsed,
         id: dataset.id,
         name: dataset.name,
         used: dataset.used.parsed,
-        used_pct: (used_pct * 100).toFixed(0) + '%',
+        used_pct: (usedPercent * 100).toFixed(0) + '%',
       };
 
       vd[zvol.id] = zvol;
@@ -646,7 +646,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  applyState(state: any[]): void {
+  applyState(state: DashConfigItem[]): void {
     // This reconciles current state with saved dashState
 
     if (!this.dashState) {

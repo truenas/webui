@@ -1,6 +1,7 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import helptext from 'app/helptext/services/components/service-tftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { TftpConfig } from 'app/interfaces/tftp-config.interface';
@@ -27,7 +28,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
       config: [{
         type: 'explorer',
         initial: '/mnt',
-        explorerType: 'directory',
+        explorerType: ExplorerType.Directory,
         name: 'directory',
         placeholder: helptext.tftp_directory_placeholder,
         tooltip: helptext.tftp_directory_tooltip,
@@ -109,15 +110,15 @@ export class ServiceTFTPComponent implements FormConfiguration {
   ) {}
 
   resourceTransformIncomingRestData(data: TftpConfig): { umask: string } {
-    return invertUMask(data);
+    return invertUmask(data);
   }
 
   beforeSubmit(data: any): { umask: string } {
-    return invertUMask(data);
+    return invertUmask(data);
   }
 
   preInit(): void {
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((items) => {
       this.tftp_username = this.fieldSets
         .find((set) => set.name === helptext.tftp_fieldset_conn)
         .config.find((config) => config.name === 'username') as FormComboboxConfig;
@@ -132,7 +133,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       this.tftp_username.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });
@@ -144,7 +145,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
  * Need to invert the umask prop on the way in/out.
  * The 'permissions' FieldConfig and the MW expect opposite values.
  */
-function invertUMask(data: { umask: string }): { umask: string } {
+function invertUmask(data: { umask: string }): { umask: string } {
   const perm = parseInt(data['umask'], 8);
   let mask = (~perm & 0o666).toString(8);
   while (mask.length < 3) {

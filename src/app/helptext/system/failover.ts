@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_system_failover = {
+export const helptextSystemFailover = {
   save_button_text: T('SAVE'),
   failover_button_text: T('SAVE AND FAILOVER'),
   dialog_initiate_failover_title: T('Initiate Failover'),

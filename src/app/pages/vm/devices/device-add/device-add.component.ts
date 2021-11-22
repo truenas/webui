@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -63,22 +62,22 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       placeholder: helptext.dtype_placeholder,
       options: [
         {
-          label: T('CD-ROM'),
+          label: this.translate.instant('CD-ROM'),
           value: VmDeviceType.Cdrom,
         }, {
-          label: T('NIC'),
+          label: this.translate.instant('NIC'),
           value: VmDeviceType.Nic,
         }, {
-          label: T('Disk'),
+          label: this.translate.instant('Disk'),
           value: VmDeviceType.Disk,
         }, {
-          label: T('Raw File'),
+          label: this.translate.instant('Raw File'),
           value: VmDeviceType.Raw,
         }, {
-          label: T('PCI Passthru Device'),
+          label: this.translate.instant('PCI Passthru Device'),
           value: VmDeviceType.Pci,
         }, {
-          label: T('Display'),
+          label: this.translate.instant('Display'),
           value: VmDeviceType.Display,
         },
       ],
@@ -375,7 +374,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
         );
       }
     }, (err) => {
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
 
     this.core.register({ observerClass: this, eventName: 'zvolCreated' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
@@ -397,7 +396,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
 
     this.nicType = _.find(this.nicFieldConfig, { name: 'type' }) as FormSelectConfig;
-    this.vmService.getNICTypes().forEach((item) => {
+    this.vmService.getNicTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 
@@ -545,7 +544,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.custActions = [
       {
         id: 'generate_mac_address',
-        name: T('Generate MAC Address'),
+        name: this.translate.instant('Generate MAC Address'),
         function: () => this.generateRandomMac(),
       },
     ];
@@ -583,7 +582,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       (error) => {
         this.loader.close();
         console.error(error);
-        new EntityUtils().handleWSError(this, error, this.dialogService);
+        new EntityUtils().handleWsError(this, error, this.dialogService);
       });
     });
   }

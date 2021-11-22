@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
-import { helptext_system_ca } from 'app/helptext/system/ca';
-import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { helptextSystemCa } from 'app/helptext/system/ca';
+import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -52,6 +52,7 @@ export class CertificatesDashComponent implements OnInit {
     private storage: StorageService,
     private http: HttpClient,
     private tableService: TableService,
+    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -78,7 +79,7 @@ export class CertificatesDashComponent implements OnInit {
       {
         name: 'certificates',
         tableConf: {
-          title: T('Certificates'),
+          title: this.translate.instant('Certificates'),
           queryCall: 'certificate.query',
           deleteCall: 'certificate.delete',
           deleteCallIsJob: true,
@@ -93,19 +94,19 @@ export class CertificatesDashComponent implements OnInit {
           },
           columns: [
             {
-              name: T('Name'), prop1: 'name', name2: T('Issuer'), prop2: 'issuer',
+              name: this.translate.instant('Name'), prop1: 'name', name2: this.translate.instant('Issuer'), prop2: 'issuer',
             },
             {
-              name: T('From'), prop1: 'from', name2: T('Until'), prop2: 'until',
+              name: this.translate.instant('From'), prop1: 'from', name2: this.translate.instant('Until'), prop2: 'until',
             },
             {
-              name: T('CN'), prop1: 'common', name2: T('SAN'), prop2: 'san',
+              name: this.translate.instant('CN'), prop1: 'common', name2: this.translate.instant('SAN'), prop2: 'san',
             },
             {
-              name: T('Status'),
+              name: this.translate.instant('Status'),
               prop1: 'revoked',
-              iconTooltip: T('Revoked'),
-              getIcon: (element: any, prop: string): string => {
+              iconTooltip: this.translate.instant('Revoked'),
+              getIcon: (element: Certificate, prop: keyof Certificate): string => {
                 if (element[prop]) {
                   return 'block';
                 }
@@ -125,7 +126,7 @@ export class CertificatesDashComponent implements OnInit {
       {
         name: 'CSRs',
         tableConf: {
-          title: T('Certificate Signing Requests'),
+          title: this.translate.instant('Certificate Signing Requests'),
           queryCall: 'certificate.query',
           deleteCall: 'certificate.delete',
           deleteCallIsJob: true,
@@ -134,10 +135,10 @@ export class CertificatesDashComponent implements OnInit {
           getActions: this.csrActions.bind(this),
           columns: [
             {
-              name: T('Name'), prop1: 'name', name2: T('Issuer'), prop2: 'issuer',
+              name: this.translate.instant('Name'), prop1: 'name', name2: this.translate.instant('Issuer'), prop2: 'issuer',
             },
             {
-              name: T('CN'), prop1: 'common', name2: T('SAN'), prop2: 'san',
+              name: this.translate.instant('CN'), prop1: 'common', name2: this.translate.instant('SAN'), prop2: 'san',
             },
           ],
           parent: this,
@@ -152,7 +153,7 @@ export class CertificatesDashComponent implements OnInit {
       {
         name: 'certificate-authorities',
         tableConf: {
-          title: T('Certificate Authorities'),
+          title: this.translate.instant('Certificate Authorities'),
           queryCall: 'certificateauthority.query',
           deleteCall: 'certificateauthority.delete',
           complex: true,
@@ -160,19 +161,19 @@ export class CertificatesDashComponent implements OnInit {
           getActions: this.caActions.bind(this),
           columns: [
             {
-              name: T('Name'), prop1: 'name', name2: T('Issuer'), prop2: 'issuer',
+              name: this.translate.instant('Name'), prop1: 'name', name2: this.translate.instant('Issuer'), prop2: 'issuer',
             },
             {
-              name: T('From'), prop1: 'from', name2: T('Until'), prop2: 'until',
+              name: this.translate.instant('From'), prop1: 'from', name2: this.translate.instant('Until'), prop2: 'until',
             },
             {
-              name: T('CN'), prop1: 'common', name2: T('SAN'), prop2: 'san',
+              name: this.translate.instant('CN'), prop1: 'common', name2: this.translate.instant('SAN'), prop2: 'san',
             },
             {
-              name: T('Status'),
+              name: this.translate.instant('Status'),
               prop1: 'revoked',
-              iconTooltip: T('Revoked'),
-              getIcon: (element: any, prop: string): string => {
+              iconTooltip: this.translate.instant('Revoked'),
+              getIcon: (element: Certificate, prop: keyof Certificate): string => {
                 if (element[prop]) {
                   return 'block';
                 }
@@ -190,10 +191,10 @@ export class CertificatesDashComponent implements OnInit {
           delete(row: CertificateAuthority, table: TableComponent) {
             if (row.signed_certificates > 0) {
               this.parent.dialogService.confirm({
-                title: helptext_system_ca.delete_error.title,
-                message: helptext_system_ca.delete_error.message,
+                title: helptextSystemCa.delete_error.title,
+                message: helptextSystemCa.delete_error.message,
                 hideCheckBox: true,
-                buttonMsg: helptext_system_ca.delete_error.button,
+                buttonMsg: helptextSystemCa.delete_error.button,
                 hideCancel: true,
               });
             } else {
@@ -205,13 +206,13 @@ export class CertificatesDashComponent implements OnInit {
       {
         name: 'acme-dns',
         tableConf: {
-          title: T('ACME DNS-Authenticators'),
+          title: this.translate.instant('ACME DNS-Authenticators'),
           queryCall: 'acme.dns.authenticator.query',
           deleteCall: 'acme.dns.authenticator.delete',
           complex: false,
           columns: [
-            { name: T('Name'), prop: 'name' },
-            { name: T('Authenticator'), prop: 'authenticator' },
+            { name: this.translate.instant('Name'), prop: 'name' },
+            { name: this.translate.instant('Authenticator'), prop: 'authenticator' },
           ],
           parent: this,
           add() {
@@ -251,7 +252,7 @@ export class CertificatesDashComponent implements OnInit {
     this.downloadActions = [
       {
         icon: 'save_alt',
-        matTooltip: T('Download'),
+        matTooltip: this.translate.instant('Download'),
         name: 'download',
         onClick: (rowinner: Certificate) => {
           const path = rowinner.CSR ? rowinner.csr_path : rowinner.certificate_path;
@@ -265,12 +266,12 @@ export class CertificatesDashComponent implements OnInit {
                 .subscribe((file) => {
                   this.storage.downloadBlob(file, fileName);
                 }, (err) => {
-                  this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-                    helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+                  this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
+                    helptextSystemCertificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
                 });
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
           const keyName = rowinner.name + '.key';
@@ -283,12 +284,12 @@ export class CertificatesDashComponent implements OnInit {
                 .subscribe((file) => {
                   this.storage.downloadBlob(file, keyName);
                 }, (err) => {
-                  this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-                    helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+                  this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
+                    helptextSystemCertificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
                 });
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         },
@@ -297,18 +298,18 @@ export class CertificatesDashComponent implements OnInit {
     const revokeAction = {
       icon: 'undo',
       name: 'revoke',
-      matTooltip: T('Revoke'),
+      matTooltip: this.translate.instant('Revoke'),
       onClick: (rowInner: Certificate) => {
         this.dialogService.confirm({
-          title: T('Revoke Certificate'),
-          message: T('This is a one way action and cannot be reversed. Are you sure you want to revoke this Certificate?'),
-          buttonMsg: T('Revoke'),
-          cancelMsg: T('Cancel'),
+          title: this.translate.instant('Revoke Certificate'),
+          message: this.translate.instant('This is a one way action and cannot be reversed. Are you sure you want to revoke this Certificate?'),
+          buttonMsg: this.translate.instant('Revoke'),
+          cancelMsg: this.translate.instant('Cancel'),
           hideCheckBox: true,
         })
           .pipe(filter(Boolean), untilDestroyed(this))
           .subscribe(() => {
-            this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Revoking Certificate') } });
+            this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Revoking Certificate') } });
             this.dialogRef.componentInstance.setCall('certificate.update', [rowInner.id, { revoked: true }]);
             this.dialogRef.componentInstance.submit();
             this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
@@ -316,7 +317,7 @@ export class CertificatesDashComponent implements OnInit {
             });
             this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWSError(null, res, this.dialogService);
+              new EntityUtils().handleWsError(null, res, this.dialogService);
             });
           });
       },
@@ -329,7 +330,7 @@ export class CertificatesDashComponent implements OnInit {
     const acmeAction = {
       icon: 'build',
       name: 'create_ACME',
-      matTooltip: T('Create ACME Certificate'),
+      matTooltip: this.translate.instant('Create ACME Certificate'),
       onClick: (rowinner: Certificate) => {
         this.modalService.openInSlideIn(CertificateAcmeAddComponent, rowinner.id);
       },
@@ -344,7 +345,7 @@ export class CertificatesDashComponent implements OnInit {
     const acmeAction = {
       icon: 'beenhere',
       name: 'sign_CSR',
-      matTooltip: helptext_system_ca.list.action_sign,
+      matTooltip: helptextSystemCa.list.action_sign,
       onClick: (rowinner: CertificateAuthority) => {
         this.dialogService.dialogForm(this.signCSRFormConf);
         this.caId = rowinner.id;
@@ -357,15 +358,15 @@ export class CertificatesDashComponent implements OnInit {
       matTooltip: 'Revoke',
       onClick: (rowInner: CertificateAuthority) => {
         this.dialogService.confirm({
-          title: T('Revoke Certificate Authority'),
-          message: T('Revoking this CA will revoke the complete CA chain. This is a one way action and cannot be reversed. Are you sure you want to revoke this CA?'),
-          buttonMsg: T('Revoke'),
-          cancelMsg: T('Cancel'),
+          title: this.translate.instant('Revoke Certificate Authority'),
+          message: this.translate.instant('Revoking this CA will revoke the complete CA chain. This is a one way action and cannot be reversed. Are you sure you want to revoke this CA?'),
+          buttonMsg: this.translate.instant('Revoke'),
+          cancelMsg: this.translate.instant('Cancel'),
           hideCheckBox: true,
         })
           .pipe(filter(Boolean), untilDestroyed(this))
           .subscribe(() => {
-            this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Revoking Certificate') } });
+            this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Revoking Certificate') } });
             this.dialogRef.componentInstance.setCall('certificateauthority.update', [rowInner.id, { revoked: true }]);
             this.dialogRef.componentInstance.submit();
             this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
@@ -373,7 +374,7 @@ export class CertificatesDashComponent implements OnInit {
             });
             this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWSError(null, res, this.dialogService);
+              new EntityUtils().handleWsError(null, res, this.dialogService);
             });
           });
       },
@@ -392,29 +393,29 @@ export class CertificatesDashComponent implements OnInit {
     {
       type: 'select',
       name: 'csr_cert_id',
-      placeholder: helptext_system_ca.sign.csr_cert_id.placeholder,
-      tooltip: helptext_system_ca.sign.csr_cert_id.tooltip,
+      placeholder: helptextSystemCa.sign.csr_cert_id.placeholder,
+      tooltip: helptextSystemCa.sign.csr_cert_id.tooltip,
       required: true,
       options: this.unsignedCAs,
     },
     {
       type: 'input',
       name: 'name',
-      placeholder: helptext_system_ca.edit.name.placeholder,
-      tooltip: helptext_system_ca.sign.name.tooltip,
+      placeholder: helptextSystemCa.edit.name.placeholder,
+      tooltip: helptextSystemCa.sign.name.tooltip,
     },
   ];
 
   signCSRFormConf: DialogFormConfiguration = {
-    title: helptext_system_ca.sign.fieldset_certificate,
+    title: helptextSystemCa.sign.fieldset_certificate,
     fieldConfig: this.signCSRFieldConf,
     method_ws: 'certificateauthority.ca_sign_csr',
-    saveButtonText: helptext_system_ca.sign.sign,
-    customSubmit: (entityDialog) => this.doSignCSR(entityDialog),
+    saveButtonText: helptextSystemCa.sign.sign,
+    customSubmit: (entityDialog) => this.doSignCsr(entityDialog),
     parent: this,
   };
 
-  doSignCSR(entityDialog: EntityDialogComponent<this>): void {
+  doSignCsr(entityDialog: EntityDialogComponent<this>): void {
     const payload = {
       ca_id: this.caId,
       csr_cert_id: entityDialog.formGroup.controls.csr_cert_id.value,
@@ -427,7 +428,7 @@ export class CertificatesDashComponent implements OnInit {
       this.getCards();
     }, (err: WebsocketError) => {
       entityDialog.loader.close();
-      this.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
+      this.dialogService.errorReport(helptextSystemCa.error, err.reason, err.trace.formatted);
     });
   }
 }

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -18,6 +19,7 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { DialogService } from 'app/services';
 import { Relation, RelationGroup } from './entity-form/models/field-relation.interface';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const NULL_VALUE = 'null_value';
 
 export class EntityUtils {
@@ -63,19 +65,19 @@ export class EntityUtils {
             }
           }
           let errors = '';
-          field.forEach((item: any) => { errors += item + ' '; });
+          field.forEach((item: string) => { errors += item + ' '; });
           fc['hasErrors'] = true;
           fc['errors'] = errors;
         } else if (typeof field === 'string') {
           entity.error = field;
         } else {
-          field.forEach((item: any) => { entity.error += item + '<br />'; });
+          field.forEach((item: string) => { entity.error += item + '<br />'; });
         }
       }
     }
   }
 
-  handleWSError(
+  handleWsError(
     entity: any,
     res: WebsocketError | Job,
     dialogService?: DialogService,
@@ -184,14 +186,14 @@ export class EntityUtils {
       : !!value;
   }
 
-  array1DToLabelValuePair(arr: (string | number)[]): Option[] {
+  array1dToLabelValuePair(arr: (string | number)[]): Option[] {
     return arr.map((value) => ({ label: value.toString(), value }));
   }
 
   /**
    * make cron time dow consistence
    */
-  parseDOW(cron: string): string {
+  parseDow(cron: string): string {
     const dowOptions = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     const cronArray = cron.replace(/00/g, '0').split(' ');
     if (cronArray[cronArray.length - 1] !== '*') {
@@ -371,11 +373,12 @@ export class EntityUtils {
         ipConfig['type'] = 'ipwithnetmask';
       }
     } else if (schemaConfig.schema.type == 'hostpath') {
-      const conf = { ...fieldConfig } as FormExplorerConfig;
-      conf['type'] = 'explorer';
-      conf['initial'] = '/mnt';
-      conf['explorerType'] = 'file';
-      fieldConfig = conf;
+      fieldConfig = {
+        ...fieldConfig,
+        type: 'explorer',
+        initial: '/mnt',
+        explorerType: ExplorerType.File,
+      } as FormExplorerConfig;
     } else if (schemaConfig.schema.type == 'path') {
       const inputConfig = fieldConfig as FormInputConfig;
       inputConfig['type'] = 'input';

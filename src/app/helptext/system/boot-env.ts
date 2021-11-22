@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_system_bootenv = {
+export const helptextSystemBootenv = {
   dev_placeholder: T('Member Disk'),
   dev_tooltip: T('Select the device to attach.'),
 

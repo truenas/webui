@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ProductType } from 'app/enums/product-type.enum';
-import { shared, helptext_sharing_smb } from 'app/helptext/sharing';
+import { shared, helptextSharingSmb } from 'app/helptext/sharing';
 import vol_helptext from 'app/helptext/storage/volumes/volume-list';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
@@ -31,21 +30,21 @@ export class SMBListComponent implements EntityTableConfig {
   productType = window.localStorage.getItem('product_type') as ProductType;
   emptyTableConfigMessages = {
     first_use: {
-      title: T('No SMB Shares'),
-      message: T('It seems you haven\'t setup any SMB Shares yet. Please click the button below to add an SMB Share.'),
+      title: this.translate.instant('No SMB Shares'),
+      message: this.translate.instant('It seems you haven\'t setup any SMB Shares yet. Please click the button below to add an SMB Share.'),
     },
     no_page_data: {
-      title: T('No SMB Shares'),
-      message: T('The system could not retrieve any SMB Shares from the database. Please click the button below to add an SMB Share.'),
+      title: this.translate.instant('No SMB Shares'),
+      message: this.translate.instant('The system could not retrieve any SMB Shares from the database. Please click the button below to add an SMB Share.'),
     },
-    buttonText: T('Add SMB Share'),
+    buttonText: this.translate.instant('Add SMB Share'),
   };
 
   columns = [
-    { name: helptext_sharing_smb.column_name, prop: 'name', always_display: true },
-    { name: helptext_sharing_smb.column_path, prop: 'path', showLockedStatus: true },
-    { name: helptext_sharing_smb.column_comment, prop: 'comment' },
-    { name: helptext_sharing_smb.column_enabled, prop: 'enabled', checkbox: true },
+    { name: helptextSharingSmb.column_name, prop: 'name', always_display: true },
+    { name: helptextSharingSmb.column_path, prop: 'path', showLockedStatus: true },
+    { name: helptextSharingSmb.column_comment, prop: 'comment' },
+    { name: helptextSharingSmb.column_enabled, prop: 'enabled', checkbox: true },
   ];
   rowIdentifier = 'cifs_name';
   config = {
@@ -60,8 +59,8 @@ export class SMBListComponent implements EntityTableConfig {
   confirmDeleteDialog = {
     message: shared.delete_share_message,
     isMessageComplete: true,
-    button: T('Unshare'),
-    buildTitle: (share: SmbShare) => `${T('Unshare')} ${share.name}`,
+    button: this.translate.instant('Unshare'),
+    buildTitle: (share: SmbShare) => `${this.translate.instant('Unshare')} ${share.name}`,
   };
 
   constructor(
@@ -97,14 +96,14 @@ export class SMBListComponent implements EntityTableConfig {
         id: row.name,
         icon: 'edit',
         name: 'edit',
-        label: T('Edit'),
+        label: this.translate.instant('Edit'),
         onClick: (row: SmbShare) => this.entityList.doEdit(row.id),
       },
       {
         id: row.name,
         icon: 'security',
         name: 'share_acl',
-        label: helptext_sharing_smb.action_share_acl,
+        label: helptextSharingSmb.action_share_acl,
         onClick: (row: SmbShare) => {
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
@@ -131,7 +130,7 @@ export class SMBListComponent implements EntityTableConfig {
         name: 'edit_acl',
         disabled: optionDisabled,
         matTooltip: vol_helptext.acl_edit_msg,
-        label: helptext_sharing_smb.action_edit_acl,
+        label: helptextSharingSmb.action_edit_acl,
         onClick: (row: SmbShare) => {
           const datasetId = rowName;
           this.ws.call('pool.dataset.path_in_locked_datasets', [row.path]).pipe(untilDestroyed(this)).subscribe(
@@ -148,7 +147,7 @@ export class SMBListComponent implements EntityTableConfig {
                 );
               }
             }, (err) => {
-              this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title,
+              this.dialog.errorReport(helptextSharingSmb.action_edit_acl_dialog.title,
                 err.reason, err.trace.formatted);
             },
           );
@@ -158,16 +157,17 @@ export class SMBListComponent implements EntityTableConfig {
         id: row.name,
         icon: 'delete',
         name: 'delete',
-        label: T('Delete'),
+        label: this.translate.instant('Delete'),
         onClick: (row: SmbShare) => this.entityList.doDelete(row),
       },
     ] as EntityTableAction[];
   }
 
   lockedPathDialog(path: string): void {
-    const thePath = this.translate.instant(helptext_sharing_smb.action_edit_acl_dialog.message1);
-    const isInALockedDataset = this.translate.instant(helptext_sharing_smb.action_edit_acl_dialog.message2);
-    this.dialog.errorReport(helptext_sharing_smb.action_edit_acl_dialog.title, `${thePath} <i>${path}</i> ${isInALockedDataset}`);
+    this.dialog.errorReport(
+      helptextSharingSmb.action_edit_acl_dialog.title,
+      this.translate.instant('The path <i>{path}</i> is in a locked dataset.', { path }),
+    );
   }
 
   onCheckboxChange(row: SmbShare): void {
@@ -177,7 +177,7 @@ export class SMBListComponent implements EntityTableConfig {
       },
       (err) => {
         row.enabled = !row.enabled;
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }

@@ -4,7 +4,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -213,11 +212,9 @@ export class ChartReleasesComponent implements OnInit {
 
   refreshChartReleases(): void {
     this.chartItems = {};
-    this.filerChartItems();
+    this.filteredChartItems = this.getChartItems();
     this.showLoadStatus(EmptyType.Loading);
-    setTimeout(() => {
-      this.updateChartReleases();
-    }, 1000);
+    this.updateChartReleases();
   }
 
   updateChartReleases(): void {
@@ -280,7 +277,7 @@ export class ChartReleasesComponent implements OnInit {
       this.refreshStatus(chartName);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWSError(this, error, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
     });
   }
 
@@ -321,12 +318,12 @@ export class ChartReleasesComponent implements OnInit {
         this.dialogRef.componentInstance.setCall('chart.release.upgrade', [name, { item_version: version }]);
         this.dialogRef.componentInstance.submit();
         this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-          this.refreshChartReleases();
           this.dialogService.closeAllDialogs();
+          this.refreshChartReleases();
         });
         this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           this.dialogService.closeAllDialogs();
-          new EntityUtils().handleWSError(this, error, this.dialogService);
+          new EntityUtils().handleWsError(this, error, this.dialogService);
         });
       });
     });
@@ -351,12 +348,12 @@ export class ChartReleasesComponent implements OnInit {
     this.dialogRef.componentInstance.setCall('chart.release.rollback', [this.rollbackChartName, payload]);
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshChartReleases();
       this.dialogService.closeAllDialogs();
+      this.refreshChartReleases();
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
       this.dialogService.closeAllDialogs();
-      new EntityUtils().handleWSError(this, error, this.dialogService);
+      new EntityUtils().handleWsError(this, error, this.dialogService);
     });
   }
 
@@ -514,7 +511,7 @@ export class ChartReleasesComponent implements OnInit {
           title: helptext.podConsole.nopod.title,
           message: helptext.podConsole.nopod.message,
           hideCheckBox: true,
-          buttonMsg: T('Close'),
+          buttonMsg: this.translate.instant('Close'),
           hideCancel: true,
         });
       } else {
@@ -553,7 +550,7 @@ export class ChartReleasesComponent implements OnInit {
           title: helptext.podConsole.nopod.title,
           message: helptext.podConsole.nopod.message,
           hideCheckBox: true,
-          buttonMsg: T('Close'),
+          buttonMsg: this.translate.instant('Close'),
           hideCancel: true,
         });
       } else {
@@ -596,9 +593,9 @@ export class ChartReleasesComponent implements OnInit {
   afterShellDialogInit(entityDialog: EntityDialogComponent<this>): void {
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const containers = this.podDetails[value];
-      const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
+      const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
 
-      containerFC.options = containers.map((item) => ({
+      containerFc.options = containers.map((item) => ({
         label: item,
         value: item,
       }));
@@ -609,8 +606,8 @@ export class ChartReleasesComponent implements OnInit {
   afterLogsDialogInit(entityDialog: EntityDialogComponent<this>): void {
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const containers = this.podDetails[value];
-      const containerFC = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
-      containerFC.options = containers.map((item) => ({
+      const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
+      containerFc.options = containers.map((item) => ({
         label: item,
         value: item,
       }));

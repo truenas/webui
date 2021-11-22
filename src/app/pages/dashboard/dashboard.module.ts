@@ -6,6 +6,7 @@ import { MaterialModule } from 'app/app-material.module';
 import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetControllerComponent } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WidgetCpuComponent } from 'app/pages/dashboard/components/widget-cpu/widget-cpu.component';
@@ -33,6 +34,7 @@ import { routing } from './dashboard.routing';
     AppCommonModule,
     EntityModule,
     TranslateModule,
+    CastModule,
   ],
   declarations: [
     DashboardComponent,

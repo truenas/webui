@@ -17,7 +17,6 @@ import {
   FormBuilder, FormControl, FormGroup, NgForm,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -94,7 +93,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   fieldSets: FieldSet[];
   fieldConfig: FieldConfig[];
   hasConf = true;
-  saveSubmitText: string = T('Save');
+  saveSubmitText: string = this.translate.instant('Save');
   saveSubmitStatus = '';
   actionButtonsAlign = 'center';
 
@@ -203,8 +202,8 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
       for (const i in this.data) {
         const fg = this.formGroup.controls[i];
         if (fg) {
-          const current_field = this.fieldConfig.find((control) => control.name === i);
-          if (current_field.type === 'array') {
+          const fieldConfig = this.fieldConfig.find((control) => control.name === i);
+          if (fieldConfig.type === 'array') {
             this.setArrayValue(this.data[i], fg as FormArray, i);
           } else {
             fg.setValue(this.data[i]);
@@ -356,11 +355,11 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   setArrayValue(data: any[], formArray: FormArray, name: string): void {
-    let array_controls: FieldConfig[];
+    let arrayFieldConfigs: FieldConfig[];
     this.fieldConfig.forEach((config) => {
       if (config.name === name) {
         const arrayConfig: FormArrayConfig = config as FormArrayConfig;
-        array_controls = arrayConfig.formarray;
+        arrayFieldConfigs = arrayConfig.formarray;
       }
     });
 
@@ -372,7 +371,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
       this.conf.initialCount += 1;
       this.conf.initialCount_default += 1;
 
-      const formGroup = this.entityFormService.createFormGroup(array_controls);
+      const formGroup = this.entityFormService.createFormGroup(arrayFieldConfigs);
       for (const i in value) {
         const formControl = formGroup.controls[i];
         formControl.setValue(value[i]);

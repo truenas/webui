@@ -1,8 +1,21 @@
 import { Component, Input } from '@angular/core';
+import { Option } from 'app/interfaces/option.interface';
 
 export interface CardWidgetConf<P> {
   title: string;
-  data: any;
+  data: {
+    nameserver?: Option[];
+    ipv4?: (string | { ip: string; dhcp: boolean })[];
+    ipv6?: (string | { ip: string; dhcp: boolean })[];
+    hostname?: string;
+    domain?: string;
+    netwait?: string;
+    service_announcement?: string;
+    additional_domains?: string;
+    httpproxy?: string;
+    hostnameDB?: string;
+    outbound?: string;
+  };
   parent: P;
   icon?: string;
   showGroupTitle?: boolean;
@@ -17,4 +30,8 @@ export interface CardWidgetConf<P> {
 })
 export class CardWidgetComponent {
   @Input() conf: CardWidgetConf<unknown>;
+
+  asObject(value: string | { ip: string; dhcp: boolean }): { ip: string; dhcp: boolean } {
+    return value as { ip: string; dhcp: boolean };
+  }
 }

@@ -11,8 +11,10 @@ import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CoreComponents } from 'app/core/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
+import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { DatasetFormComponent } from 'app/pages/storage/volumes/datasets/dataset-form/dataset-form.component';
 import { AclEditorListComponent } from 'app/pages/storage/volumes/permissions/components/acl-editor-list/acl-editor-list.component';
 import { EditNfsAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
@@ -41,7 +43,6 @@ import { DiskFormComponent } from './disks/disk-form/disk-form.component';
 import { DiskListComponent } from './disks/disk-list/disk-list.component';
 import { SmartResultsComponent } from './disks/smart-results/smart-results.component';
 import { ImportDiskComponent } from './import-disk/import-disk.component';
-import { MultipathsComponent } from './multipaths/multipaths.component';
 import { SnapshotAddComponent } from './snapshots/snapshot-add/snapshot-add.component';
 import { SnapshotCloneComponent } from './snapshots/snapshot-clone/snapshot-clone.component';
 import { SnapshotDetailsComponent } from './snapshots/snapshot-list/components/snapshot-details.component';
@@ -69,7 +70,7 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     ReactiveFormsModule, routing, MaterialModule, TreeTableModule,
     NgxDatatableModule, TranslateModule, FlexLayoutModule,
     NgxFilesizeModule, CommonDirectivesModule, CdkAccordionModule,
-    TooltipModule, CoreComponents,
+    TooltipModule, CoreComponents, CastModule, IxFormsModule,
   ],
   declarations: [
     VolumesListComponent,
@@ -96,7 +97,6 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     VmwareSnapshotListComponent,
     DiskListComponent,
     VolumeStatusComponent,
-    MultipathsComponent,
     DiskFormComponent,
     DiskBulkEditComponent,
     SmartResultsComponent,

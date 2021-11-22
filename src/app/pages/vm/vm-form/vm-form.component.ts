@@ -1,7 +1,6 @@
 import { ApplicationRef, Component, Injector } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -179,7 +178,7 @@ export class VmFormComponent implements FormConfiguration {
       config: [],
     },
     {
-      name: T('GPU'),
+      name: this.translate.instant('GPU'),
       class: 'vm_settings',
       label: true,
       width: '49%',
@@ -187,19 +186,19 @@ export class VmFormComponent implements FormConfiguration {
         {
           type: 'checkbox',
           name: 'hide_from_msr',
-          placeholder: T('Hide from MSR'),
+          placeholder: this.translate.instant('Hide from MSR'),
           value: false,
         },
         {
           type: 'checkbox',
           name: 'ensure_display_device',
-          placeholder: T('Ensure Display Device'),
-          tooltip: T('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
+          placeholder: this.translate.instant('Ensure Display Device'),
+          tooltip: this.translate.instant('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
           value: true,
         },
         {
           type: 'select',
-          placeholder: T("GPU's"),
+          placeholder: this.translate.instant("GPU's"),
           name: 'gpus',
           multiple: true,
           options: [],
@@ -274,7 +273,7 @@ export class VmFormComponent implements FormConfiguration {
       const cpuModel = _.find(this.fieldConfig, { name: 'cpu_model' }) as FormSelectConfig;
       cpuModel.isHidden = false;
 
-      this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
+      this.vmService.getCpuModels().pipe(untilDestroyed(this)).subscribe((models) => {
         for (const model in models) {
           cpuModel.options.push(
             {
@@ -469,7 +468,7 @@ export class VmFormComponent implements FormConfiguration {
       },
       (error) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, error, this.dialogService);
+        new EntityUtils().handleWsError(this, error, this.dialogService);
       },
     );
   }

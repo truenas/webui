@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { TunableType } from 'app/enums/tunable-type.enum';
-import { helptext_system_tunable as helptext } from 'app/helptext/system/tunable';
+import { helptextSystemTunable as helptext } from 'app/helptext/system/tunable';
 import { Tunable, TunableUpdate } from 'app/interfaces/tunable.interface';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +22,9 @@ export class TunableFormComponent {
   get isNew(): boolean {
     return !this.editingTunable;
   }
-
+  get title(): string {
+    return this.isNew ? this.translate.instant('Add Sysctl') : this.translate.instant('Edit Sysctl');
+  }
   isFormLoading = false;
 
   form = this.fb.group({
@@ -40,10 +43,11 @@ export class TunableFormComponent {
 
   constructor(
     private ws: WebSocketService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
+    private translate: TranslateService,
   ) {}
 
   setTunableForEdit(tunable: Tunable): void {
@@ -72,7 +76,8 @@ export class TunableFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
-      this.modalService.close();
+      this.cdr.markForCheck();
+      this.slideInService.close();
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);

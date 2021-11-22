@@ -1,5 +1,5 @@
-import { Component, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { TwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormParagraphConfig, FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services/';
 
 @UntilDestroy()
@@ -175,7 +176,7 @@ export class TwoFactorComponent implements FormConfiguration {
       id: 'show_qr',
       name: 'Show QR',
       function: () => {
-        this.openQRDialog();
+        this.openQrDialog();
       },
     },
     {
@@ -212,18 +213,18 @@ export class TwoFactorComponent implements FormConfiguration {
     return true;
   }
 
-  isCustActionDisabled(action_id: string): boolean {
+  isCustActionDisabled(actionId: string): boolean {
     // Disables the 'Enable 2F' & 'Show QR' buttons if there is no secret
-    if (action_id === 'renew_secret') {
+    if (actionId === 'renew_secret') {
       return !this.TwoFactorEnabled;
-    } if (action_id === 'show_qr') {
+    } if (actionId === 'show_qr') {
       return !(this.secret && this.secret !== '');
     }
   }
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    this.getURI();
+    this.getUri();
     const intervalValue: FormInputConfig = _.find(this.fieldConfig, { name: 'interval' }) as FormInputConfig;
     entityEdit.formGroup.controls['interval'].valueChanges.pipe(untilDestroyed(this)).subscribe((val: string) => {
       if (parseInt(val) !== 30) {
@@ -234,7 +235,7 @@ export class TwoFactorComponent implements FormConfiguration {
     });
   }
 
-  getURI(): void {
+  getUri(): void {
     this.ws.call('auth.twofactor.provisioning_uri').pipe(untilDestroyed(this)).subscribe((provisioningUri) => {
       this.entityEdit.formGroup.controls['uri'].setValue(provisioningUri);
       this.qrInfo = provisioningUri;
@@ -270,7 +271,7 @@ export class TwoFactorComponent implements FormConfiguration {
     }
   }
 
-  doSubmit(data: any, openQR = false): void {
+  doSubmit(data: any, openQr = false): void {
     data.enabled = this.TwoFactorEnabled;
     data.services = { ssh: data.ssh };
     const extras = ['instructions', 'enabled_status', 'secret', 'uri', 'ssh'];
@@ -280,8 +281,8 @@ export class TwoFactorComponent implements FormConfiguration {
     this.loader.open();
     this.ws.call('auth.twofactor.update', [data]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
-      if (openQR) {
-        this.openQRDialog();
+      if (openQr) {
+        this.openQrDialog();
       }
     }, (err) => {
       this.loader.close();
@@ -290,7 +291,7 @@ export class TwoFactorComponent implements FormConfiguration {
     });
   }
 
-  openQRDialog(): void {
+  openQrDialog(): void {
     this.mdDialog.open(QrDialogComponent, {
       width: '300px',
       data: { qrInfo: this.qrInfo },
@@ -321,27 +322,11 @@ export class TwoFactorComponent implements FormConfiguration {
     this.ws.call('auth.twofactor.config').pipe(untilDestroyed(this)).subscribe((config) => {
       this.entityEdit.formGroup.controls['secret'].setValue(config.secret);
       this.secret = config.secret;
-      this.getURI();
+      this.getUri();
     }, (err) => {
       this.loader.close();
       this.dialog.errorReport(helptext.two_factor.error,
         err.reason, err.trace.formatted);
     });
-  }
-}
-
-@UntilDestroy()
-@Component({
-  selector: 'qr-dialog',
-  templateUrl: 'qr-dialog.html',
-})
-export class QrDialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<QrDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { qrInfo: string },
-  ) {}
-
-  onNoClick(): void {
-    this.dialogRef.close();
   }
 }

@@ -5,7 +5,6 @@ import {
 } from '@angular/core';
 import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { MatMonthView } from '@angular/material/datepicker';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as parser from 'cron-parser';
@@ -199,33 +198,33 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   }
 
   customOption: CronPreset = {
-    label: T('Custom'),
+    label: this.translate.instant('Custom'),
     value: this.crontab,
-    description: T('Create custom schedule'),
+    description: this.translate.instant('Create custom schedule'),
   };
 
   selectedOption: CronPreset;
 
   presets: CronPreset[] = [
     {
-      label: T('Hourly'),
+      label: this.translate.instant('Hourly'),
       value: '0 * * * *',
-      description: T('at the start of each hour'),
+      description: this.translate.instant('at the start of each hour'),
     },
     {
-      label: T('Daily'),
+      label: this.translate.instant('Daily'),
       value: '0 0 * * *',
-      description: T('at 00:00 (12:00 AM)'),
+      description: this.translate.instant('at 00:00 (12:00 AM)'),
     },
     {
-      label: T('Weekly'),
+      label: this.translate.instant('Weekly'),
       value: '0 0 * * sun',
-      description: T('on Sundays at 00:00 (12:00 AM)'),
+      description: this.translate.instant('on Sundays at 00:00 (12:00 AM)'),
     },
     {
-      label: T('Monthly'),
+      label: this.translate.instant('Monthly'),
       value: '0 0 1 * *',
-      description: T('on the first day of the month at 00:00 (12:00 AM)'),
+      description: this.translate.instant('on the first day of the month at 00:00 (12:00 AM)'),
     },
   ];
 
@@ -255,7 +254,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     if (!p.value) {
       this.crontab = '0 0 * * *';
       this.convertPreset('0 0 * * *');
-      this._preset = this.customOption; // { label: T('Custom'), value: this.crontab };
+      this._preset = this.customOption; // { label: this.translate.instant('Custom'), value: this.crontab };
     } else {
       this.crontab = p.value;
       this.convertPreset(p.value);
@@ -301,7 +300,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     });
 
     if (this.control.value) {
-      this.control.setValue(new EntityUtils().parseDOW(this.control.value));
+      this.control.setValue(new EntityUtils().parseDow(this.control.value));
       this.crontab = this.control.value;
     }
 
@@ -346,7 +345,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
 
     if (this.control.value) {
-      this.control.setValue(new EntityUtils().parseDOW(this.control.value));
+      this.control.setValue(new EntityUtils().parseDow(this.control.value));
     }
   }
 
@@ -358,13 +357,13 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
       setTimeout(() => {
-        this.convertPreset(this.crontab); // <-- Test
+        this.convertPreset(this.crontab);
         this.generateSchedule();
-        const popup = this.schedulePreview.nativeElement;// .querySelector('ul.schedule-preview');
+        const popup = this.schedulePreview.nativeElement;
         popup.addEventListener('scroll', this.onScroll.bind(this));
       }, 200);
     } else {
-      const popup = this.schedulePreview.nativeElement;// .querySelector('ul.schedule-preview');
+      const popup = this.schedulePreview.nativeElement;
       popup.removeEventListener('scroll', this.onScroll);
     }
   }
@@ -621,12 +620,12 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
       this._jul, this._aug, this._sep,
       this._oct, this._nov, this._dec,
     ];
-    const months_str = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+    const monthStrings = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
     let rule = '';
     for (let i = 0; i < months.length; i++) {
       if (months[i]) {
         if (rule.length > 0 && i > 0) { rule += ','; }
-        rule += months_str[i];
+        rule += monthStrings[i];
       }
     }
     if (rule.length == 0) {
@@ -638,12 +637,12 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   formatDaysOfWeek(): void {
     const dow = [this._sun, this._mon, this._tue, this._wed, this._thu, this._fri, this._sat];
-    const dow_str = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+    const dowStrings = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
     let rule = '';
     for (let i = 0; i < dow.length; i++) {
       if (dow[i]) {
         if (rule.length > 0 && i > 0) { rule += ','; }
-        rule += dow_str[i];
+        rule += dowStrings[i];
       }
     }
     if (rule.length == 0) {

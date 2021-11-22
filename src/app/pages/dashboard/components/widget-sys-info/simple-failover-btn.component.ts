@@ -13,6 +13,7 @@ import { DialogService, WebSocketService } from 'app/services';
 @Component({
   selector: 'simple-failover-button',
   templateUrl: './simple-failover-btn.component.html',
+  styleUrls: ['./simple-failover-btn.component.scss'],
 })
 export class SimpleFailoverBtnComponent {
   @Input() color = 'default';

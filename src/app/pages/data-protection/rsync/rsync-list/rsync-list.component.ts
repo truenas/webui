@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
@@ -22,24 +22,24 @@ import { ModalService } from 'app/services/modal.service';
   providers: [TaskService, JobService, UserService, EntityFormService],
 })
 export class RsyncListComponent implements EntityTableConfig {
-  title = T('Rsync Tasks');
+  title = this.translate.instant('Rsync Tasks');
   queryCall = 'rsynctask.query' as const;
   wsDelete = 'rsynctask.delete' as const;
   route_add: string[] = ['tasks', 'rsync', 'add'];
-  route_add_tooltip = T('Add Rsync Task');
+  route_add_tooltip = this.translate.instant('Add Rsync Task');
   route_edit: string[] = ['tasks', 'rsync', 'edit'];
   entityList: EntityTableComponent;
   asyncView = true;
 
   columns = [
-    { name: T('Path'), prop: 'path', always_display: true },
-    { name: T('Remote Host'), prop: 'remotehost' },
-    { name: T('Remote SSH Port'), prop: 'remoteport', hidden: true },
-    { name: T('Remote Module Name'), prop: 'remotemodule' },
-    { name: T('Remote Path'), prop: 'remotepath', hidden: true },
-    { name: T('Direction'), prop: 'direction', hidden: true },
+    { name: this.translate.instant('Path'), prop: 'path', always_display: true },
+    { name: this.translate.instant('Remote Host'), prop: 'remotehost' },
+    { name: this.translate.instant('Remote SSH Port'), prop: 'remoteport', hidden: true },
+    { name: this.translate.instant('Remote Module Name'), prop: 'remotemodule' },
+    { name: this.translate.instant('Remote Path'), prop: 'remotepath', hidden: true },
+    { name: this.translate.instant('Direction'), prop: 'direction', hidden: true },
     {
-      name: T('Schedule'),
+      name: this.translate.instant('Schedule'),
       prop: 'cron_schedule',
       hidden: true,
       widget: {
@@ -47,22 +47,22 @@ export class RsyncListComponent implements EntityTableConfig {
         component: 'TaskScheduleListComponent',
       },
     },
-    { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
-    { name: T('Next Run'), prop: 'next_run', hidden: true },
-    { name: T('Short Description'), prop: 'desc', hidden: true },
-    { name: T('User'), prop: 'user' },
-    { name: T('Delay Updates'), prop: 'delayupdates', hidden: true },
+    { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
+    { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
+    { name: this.translate.instant('Short Description'), prop: 'desc', hidden: true },
+    { name: this.translate.instant('User'), prop: 'user' },
+    { name: this.translate.instant('Delay Updates'), prop: 'delayupdates', hidden: true },
     {
-      name: T('Status'), prop: 'state', state: 'state', button: true,
+      name: this.translate.instant('Status'), prop: 'state', state: 'state', button: true,
     },
-    { name: T('Enabled'), prop: 'enabled', hidden: true },
+    { name: this.translate.instant('Enabled'), prop: 'enabled', hidden: true },
   ];
   rowIdentifier = 'path';
   config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('Rsync Task'),
+      title: this.translate.instant('Rsync Task'),
       key_props: ['remotehost', 'remotemodule'],
     },
   };
@@ -73,6 +73,7 @@ export class RsyncListComponent implements EntityTableConfig {
     protected dialog: DialogService,
     protected job: JobService,
     protected modalService: ModalService,
+    protected translate: TranslateService,
   ) {}
 
   afterInit(entityList: EntityTableComponent): void {
@@ -86,13 +87,13 @@ export class RsyncListComponent implements EntityTableConfig {
     return [{
       id: row.path,
       icon: 'play_arrow',
-      label: T('Run Now'),
+      label: this.translate.instant('Run Now'),
       name: 'run',
       actionName: 'run',
       onClick: () => {
         this.dialog.confirm({
-          title: T('Run Now'),
-          message: T('Run this rsync now?'),
+          title: this.translate.instant('Run Now'),
+          message: this.translate.instant('Run this rsync now?'),
           hideCheckBox: true,
         }).pipe(untilDestroyed(this)).subscribe((run: boolean) => {
           if (run) {
@@ -100,7 +101,7 @@ export class RsyncListComponent implements EntityTableConfig {
             this.ws.call('rsynctask.run', [row.id]).pipe(untilDestroyed(this)).subscribe(
               (jobId: number) => {
                 this.dialog.info(
-                  T('Task Started'),
+                  this.translate.instant('Task Started'),
                   'Rsync task <i>' + row.remotehost + ' - ' + row.remotemodule + '</i> started.',
                   '500px',
                   'info',
@@ -112,7 +113,7 @@ export class RsyncListComponent implements EntityTableConfig {
                 });
               },
               (err) => {
-                new EntityUtils().handleWSError(this, err);
+                new EntityUtils().handleWsError(this, err);
               },
             );
           }
@@ -122,7 +123,7 @@ export class RsyncListComponent implements EntityTableConfig {
     {
       id: row.path,
       icon: 'edit',
-      label: T('Edit'),
+      label: this.translate.instant('Edit'),
       name: 'edit',
       actionName: 'edit',
       onClick: () => {
@@ -134,7 +135,7 @@ export class RsyncListComponent implements EntityTableConfig {
       icon: 'delete',
       name: 'delete',
       actionName: 'delete',
-      label: T('Delete'),
+      label: this.translate.instant('Delete'),
       onClick: () => {
         this.entityList.doDelete(row);
       },

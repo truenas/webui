@@ -102,7 +102,7 @@ export class SystemGeneralService {
 
   constructor(protected ws: WebSocketService) {}
 
-  getCA(): Observable<CertificateAuthority[]> {
+  getCertificateAuthorities(): Observable<CertificateAuthority[]> {
     return this.ws.call(this.caList, []);
   }
 
@@ -114,7 +114,7 @@ export class SystemGeneralService {
     return this.ws.call(this.certificateList, [[['CSR', '!=', null]]]);
   }
 
-  getUnsignedCAs(): Observable<CertificateAuthority[]> {
+  getUnsignedCas(): Observable<CertificateAuthority[]> {
     return this.ws.call(this.caList, [[['privatekey', '!=', null]]]);
   }
 
@@ -136,11 +136,12 @@ export class SystemGeneralService {
 
   kbdMapChoices(): Observable<Option[]> {
     return this.ws.call('system.general.kbdmap_choices').pipe(
-      map((response) =>
-        Object.keys(response || {}).map((key) => ({
+      map((response) => {
+        return Object.keys(response || {}).map((key) => ({
           label: `${response[key]} (${key})`,
           value: key,
-        }))),
+        }));
+      }),
     );
   }
 
@@ -166,11 +167,12 @@ export class SystemGeneralService {
 
   timezoneChoices(): Observable<Option[]> {
     return this.ws.call('system.general.timezone_choices').pipe(
-      map((response) =>
-        Object.keys(response || {}).map((key) => ({
+      map((response) => {
+        return Object.keys(response || {}).map((key) => ({
           label: response[key],
           value: key,
-        }))),
+        }));
+      }),
     );
   }
 
@@ -198,7 +200,7 @@ export class SystemGeneralService {
     this.refreshSysGeneral$.next();
   }
 
-  checkRootPW(password: string): Observable<boolean> {
+  checkRootPassword(password: string): Observable<boolean> {
     return this.ws.call('auth.check_user', ['root', password]);
   }
 

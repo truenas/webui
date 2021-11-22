@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
@@ -36,14 +35,14 @@ export class ConfigResetComponent implements OnInit {
     });
   }
 
-  isWSConnected(): void {
+  isWsConnected(): void {
     if (this.ws.connected) {
       this.loader.close();
       // ws is connected
       this.router.navigate(['/session/signin']);
     } else {
       setTimeout(() => {
-        this.isWSConnected();
+        this.isWsConnected();
       }, 1000);
     }
   }
@@ -56,16 +55,16 @@ export class ConfigResetComponent implements OnInit {
   }
 
   resetConfigSubmit(): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Resetting. Please wait...') }, disableClose: true });
+    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Resetting. Please wait...') }, disableClose: true });
     this.dialogRef.componentInstance.setCall('config.reset', [{ reboot: true }]);
-    this.dialogRef.componentInstance.setDescription(T('Resetting system configuration to default settings. The system will restart.'));
+    this.dialogRef.componentInstance.setDescription(this.translate.instant('Resetting system configuration to default settings. The system will restart.'));
     this.dialogRef.componentInstance.submit();
     this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.dialogRef.close();
       this.ws.prepareShutdown();
       this.loader.open();
       setTimeout(() => {
-        this.isWSConnected();
+        this.isWsConnected();
       }, 15000);
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {

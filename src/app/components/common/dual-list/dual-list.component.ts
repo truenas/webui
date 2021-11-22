@@ -9,7 +9,7 @@ import { difference, ListSelection, ListSelectionImpl } from './models';
   styleUrls: ['./dual-list.component.scss'],
   templateUrl: 'dual-list.component.html',
 })
-export class DualListboxComponent<T extends { id: string | number }> implements OnInit {
+export class DualListboxComponent<T extends { id: string | number; name?: string }> implements OnInit {
   @Input() key: keyof T = 'id';
   @Input() items: T[];
   // eslint-disable-next-line @angular-eslint/no-input-rename
@@ -50,7 +50,7 @@ export class DualListboxComponent<T extends { id: string | number }> implements 
     this.selectedItemsChange.emit(this.selectedItems.totalItems);
   }
 
-  drop(event: CdkDragDrop<string[]>): void {
+  drop(event: CdkDragDrop<T[]>): void {
     if (event.previousContainer === event.container) {
       const chosenItems = document.querySelectorAll('.chosen');
       chosenItems.forEach((item) => {
@@ -61,7 +61,7 @@ export class DualListboxComponent<T extends { id: string | number }> implements 
       if (document.querySelector('#counter')) {
         document.querySelector('#counter').remove();
       }
-    } else if (event.previousContainer.id === 'cdk-drop-list-0') {
+    } else if (event.previousContainer.id === 'user-list') {
       this.select();
     } else {
       this.return();
@@ -74,7 +74,7 @@ export class DualListboxComponent<T extends { id: string | number }> implements 
     this.dragging = true;
     const b = div.querySelector('.draggable:active');
     const chosenItems = div.querySelectorAll('.chosen');
-    if (chosenItems.length > 0) {
+    if (chosenItems.length > 0 && b) {
       b.insertAdjacentHTML('afterbegin',
         `<div id="counter" style="background: red; color: white; border-radius: 50%;
         width:20px; height: 20px; text-align: center; font-weight: 700;

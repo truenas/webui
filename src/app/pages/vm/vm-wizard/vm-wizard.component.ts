@@ -4,7 +4,6 @@ import {
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -13,6 +12,7 @@ import { catchError, map } from 'rxjs/operators';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmTime,
@@ -54,7 +54,7 @@ export class VMWizardComponent implements WizardConfiguration {
   summary: Record<string, unknown> = {};
   isLinear = true;
   firstFormGroup: FormGroup;
-  summaryTitle = T('VM Summary');
+  summaryTitle = this.translate.instant('VM Summary');
   namesInUse: string[] = [];
   statSize: Statfs;
   displayPort: number;
@@ -154,7 +154,7 @@ export class VMWizardComponent implements WizardConfiguration {
         {
           type: 'select',
           name: 'display_type',
-          placeholder: T('Display Type'),
+          placeholder: this.translate.instant('Display Type'),
           options: [{ label: 'VNC', value: 'VNC' }, { label: 'SPICE', value: 'SPICE' }],
           required: true,
           value: 'VNC',
@@ -425,7 +425,7 @@ export class VMWizardComponent implements WizardConfiguration {
           placeholder: helptext.upload_iso_path_placeholder,
           initial: '/mnt',
           tooltip: helptext.upload_iso_path_tooltip,
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           isHidden: true,
         },
         {
@@ -442,24 +442,24 @@ export class VMWizardComponent implements WizardConfiguration {
       ],
     },
     {
-      label: T('GPU'),
+      label: this.translate.instant('GPU'),
       fieldConfig: [
         {
           type: 'checkbox',
           name: 'hide_from_msr',
-          placeholder: T('Hide from MSR'),
+          placeholder: this.translate.instant('Hide from MSR'),
           value: false,
         },
         {
           type: 'checkbox',
           name: 'ensure_display_device',
-          placeholder: T('Ensure Display Device'),
-          tooltip: T('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
+          placeholder: this.translate.instant('Ensure Display Device'),
+          tooltip: this.translate.instant('When checked it will ensure that the guest always has access to a video device. For headless installations like ubuntu server this is required for the guest to operate properly. However for cases where consumer would like to use GPU passthrough and does not want a display device added should uncheck this.'),
           value: true,
         },
         {
           type: 'select',
-          placeholder: T("GPU's"),
+          placeholder: this.translate.instant("GPU's"),
           name: 'gpus',
           multiple: true,
           options: [],
@@ -557,7 +557,7 @@ export class VMWizardComponent implements WizardConfiguration {
       const cpuModel = _.find(this.wizardConfig[1].fieldConfig, { name: 'cpu_model' }) as FormSelectConfig;
       cpuModel.isHidden = false;
 
-      this.vmService.getCPUModels().pipe(untilDestroyed(this)).subscribe((models) => {
+      this.vmService.getCpuModels().pipe(untilDestroyed(this)).subscribe((models) => {
         for (const model in models) {
           cpuModel.options.push(
             {
@@ -570,7 +570,7 @@ export class VMWizardComponent implements WizardConfiguration {
 
     this.ws
       .call('pool.filesystem_choices', [[DatasetType.Filesystem]])
-      .pipe(map(new EntityUtils().array1DToLabelValuePair))
+      .pipe(map(new EntityUtils().array1dToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe((options) => {
         const config = this.wizardConfig[2].fieldConfig.find((config) => config.name === 'datastore') as FormSelectConfig;
         config.options = options;
@@ -626,62 +626,62 @@ export class VMWizardComponent implements WizardConfiguration {
     });
 
     this.getFormControlFromFieldName('os').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.summary[T('Guest Operating System')] = res;
+      this.summary[this.translate.instant('Guest Operating System')] = res;
       this.getFormControlFromFieldName('name').valueChanges.pipe(untilDestroyed(this)).subscribe((name) => {
-        this.summary[T('Name')] = name;
+        this.summary[this.translate.instant('Name')] = name;
       });
       this.getFormControlFromFieldName('vcpus').valueChanges.pipe(untilDestroyed(this)).subscribe((vcpus) => {
         this.vcpus = vcpus;
-        this.summary[T('Number of CPUs')] = vcpus;
+        this.summary[this.translate.instant('Number of CPUs')] = vcpus;
       });
       this.getFormControlFromFieldName('cores').valueChanges.pipe(untilDestroyed(this)).subscribe((cores) => {
         this.cores = cores;
-        this.summary[T('Number of Cores')] = cores;
+        this.summary[this.translate.instant('Number of Cores')] = cores;
       });
       this.getFormControlFromFieldName('threads').valueChanges.pipe(untilDestroyed(this)).subscribe((threads) => {
         this.threads = threads;
-        this.summary[T('Number of Threads')] = threads;
+        this.summary[this.translate.instant('Number of Threads')] = threads;
       });
 
       if (this.productType.includes(ProductType.Scale)) {
         this.getFormControlFromFieldName('cpu_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
           this.mode = mode;
-          this.summary[T('CPU Mode')] = mode;
+          this.summary[this.translate.instant('CPU Mode')] = mode;
 
           if (mode !== VmCpuMode.Custom) {
-            delete this.summary[T('CPU Model')];
+            delete this.summary[this.translate.instant('CPU Model')];
           }
         });
         this.getFormControlFromFieldName('cpu_model').valueChanges.pipe(untilDestroyed(this)).subscribe((model) => {
           this.model = model;
-          this.summary[T('CPU Model')] = model !== '' ? model : 'null';
+          this.summary[this.translate.instant('CPU Model')] = model !== '' ? model : 'null';
         });
       }
 
       this.getFormControlFromFieldName('memory').valueChanges.pipe(untilDestroyed(this)).subscribe((memory) => {
-        this.summary[T('Memory')] = Number.isNaN(this.storageService.convertHumanStringToNum(memory))
+        this.summary[this.translate.instant('Memory')] = Number.isNaN(this.storageService.convertHumanStringToNum(memory))
           ? '0 MiB'
           : this.storageService.humanReadable;
       });
 
       this.getFormControlFromFieldName('volsize').valueChanges.pipe(untilDestroyed(this)).subscribe((volsize) => {
-        this.summary[T('Disk Size')] = volsize;
+        this.summary[this.translate.instant('Disk Size')] = volsize;
       });
 
-      this.getFormControlFromFieldName('disk_radio').valueChanges.pipe(untilDestroyed(this)).subscribe((disk_radio) => {
-        if (this.summary[T('Disk')] || this.summary[T('Disk Size')]) {
-          delete this.summary[T('Disk')];
-          delete this.summary[T('Disk Size')];
+      this.getFormControlFromFieldName('disk_radio').valueChanges.pipe(untilDestroyed(this)).subscribe((createNewDisk) => {
+        if (this.summary[this.translate.instant('Disk')] || this.summary[this.translate.instant('Disk Size')]) {
+          delete this.summary[this.translate.instant('Disk')];
+          delete this.summary[this.translate.instant('Disk Size')];
         }
-        if (disk_radio) {
-          this.summary[T('Disk Size')] = this.getFormControlFromFieldName('volsize').value;
+        if (createNewDisk) {
+          this.summary[this.translate.instant('Disk Size')] = this.getFormControlFromFieldName('volsize').value;
           this.getFormControlFromFieldName('volsize').valueChanges.pipe(untilDestroyed(this)).subscribe((volsize) => {
-            this.summary[T('Disk Size')] = volsize;
+            this.summary[this.translate.instant('Disk Size')] = volsize;
           });
         } else {
-          this.summary[T('Disk')] = this.getFormControlFromFieldName('hdd_path').value;
-          this.getFormControlFromFieldName('hdd_path').valueChanges.pipe(untilDestroyed(this)).subscribe((existing_hdd_path) => {
-            this.summary[T('Disk')] = existing_hdd_path;
+          this.summary[this.translate.instant('Disk')] = this.getFormControlFromFieldName('hdd_path').value;
+          this.getFormControlFromFieldName('hdd_path').valueChanges.pipe(untilDestroyed(this)).subscribe((existingHddPath) => {
+            this.summary[this.translate.instant('Disk')] = existingHddPath;
           });
         }
       });
@@ -753,11 +753,11 @@ export class VMWizardComponent implements WizardConfiguration {
         this.prefService.preferences.storedValues.vm_zvolLocation = this.getFormControlFromFieldName('datastore').value;
         this.prefService.savePreferences();
       });
-      this.getFormControlFromFieldName('iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((iso_path) => {
-        if (iso_path && iso_path !== undefined) {
-          this.summary[T('Installation Media')] = iso_path;
+      this.getFormControlFromFieldName('iso_path').valueChanges.pipe(untilDestroyed(this)).subscribe((isoPath) => {
+        if (isoPath) {
+          this.summary[this.translate.instant('Installation Media')] = isoPath;
         } else {
-          delete this.summary[T('Installation Media')];
+          delete this.summary[this.translate.instant('Installation Media')];
         }
       });
       this.messageService.messageSourceHasNewMessage$.pipe(untilDestroyed(this)).subscribe((message) => {
@@ -826,12 +826,12 @@ export class VMWizardComponent implements WizardConfiguration {
         this.prefService.savePreferences();
       });
 
-      this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((mac_res) => {
-        this.getFormControlFromFieldName('NIC_mac').setValue(mac_res);
+      this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((mac) => {
+        this.getFormControlFromFieldName('NIC_mac').setValue(mac);
       });
     });
     this.nicType = _.find(this.wizardConfig[3].fieldConfig, { name: 'NIC_type' }) as FormSelectConfig;
-    this.vmService.getNICTypes().forEach((item) => {
+    this.vmService.getNicTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 
@@ -941,9 +941,9 @@ export class VMWizardComponent implements WizardConfiguration {
 
   blurEventForMemory(): void {
     const enteredVal = this.entityWizard.formGroup.value.formArray[1].memory;
-    const vm_memory_requested = this.storageService.convertHumanStringToNum(enteredVal);
-    if (Number.isNaN(vm_memory_requested)) {
-      console.error(vm_memory_requested); // leaves form in previous error state
+    const vmMemoryRequested = this.storageService.convertHumanStringToNum(enteredVal);
+    if (Number.isNaN(vmMemoryRequested)) {
+      console.error(vmMemoryRequested); // leaves form in previous error state
     } else if (enteredVal.replace(/\s/g, '').match(/[^0-9]/g) === null) {
       this.entityWizard.formArray.get([1]).get('memory')
         .setValue(this.storageService.convertBytestoHumanReadable(enteredVal.replace(/\s/g, ''), 0));
@@ -1091,7 +1091,7 @@ export class VMWizardComponent implements WizardConfiguration {
       }
       this.ws.call('system.advanced.update', [{ isolated_gpu_pci_ids: finalIsolatedPciIds }]).pipe(untilDestroyed(this)).subscribe(
         (res) => res,
-        (err) => new EntityUtils().handleWSError(this.entityWizard, err),
+        (err) => new EntityUtils().handleWsError(this.entityWizard, err),
       );
     }
     if (value.hdd_path) {
@@ -1103,10 +1103,10 @@ export class VMWizardComponent implements WizardConfiguration {
 
       const devices = [...vmPayload['devices']];
       delete vmPayload['devices'];
-      this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((vm_res) => {
+      this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((newVm) => {
         const observables: Observable<unknown>[] = [];
         for (const device of devices) {
-          device.vm = vm_res.id;
+          device.vm = newVm.id;
           observables.push(this.ws.call('vm.device.create', [device]).pipe(
             map((res) => res),
             catchError((err) => {
@@ -1122,13 +1122,13 @@ export class VMWizardComponent implements WizardConfiguration {
           },
           (error) => {
             setTimeout(() => {
-              this.deleteVm(vm_res.id, error);
+              this.deleteVm(newVm.id, error);
             }, 1000);
           },
         );
       }, (error) => {
         this.loader.close();
-        this.dialogService.errorReport(T('Error creating VM.'), error.reason, error.trace.formatted);
+        this.dialogService.errorReport(this.translate.instant('Error creating VM.'), error.reason, error.trace.formatted);
       });
     } else {
       for (const device of vmPayload['devices']) {
@@ -1148,10 +1148,10 @@ export class VMWizardComponent implements WizardConfiguration {
 
       const devices = [...vmPayload['devices']];
       delete vmPayload['devices'];
-      this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((vm_res) => {
+      this.ws.call('vm.create', [vmPayload]).pipe(untilDestroyed(this)).subscribe((newVm) => {
         const observables: Observable<unknown>[] = [];
         for (const device of devices) {
-          device.vm = vm_res.id;
+          device.vm = newVm.id;
           observables.push(this.ws.call('vm.device.create', [device]).pipe(
             map((res) => res),
             catchError((err) => {
@@ -1167,13 +1167,13 @@ export class VMWizardComponent implements WizardConfiguration {
           },
           (error) => {
             setTimeout(() => {
-              this.deleteVm(vm_res.id, error);
+              this.deleteVm(newVm.id, error);
             }, 1000);
           },
         );
       }, (error) => {
         this.loader.close();
-        this.dialogService.errorReport(T('Error creating VM.'), error.reason, error.trace.formatted);
+        this.dialogService.errorReport(this.translate.instant('Error creating VM.'), error.reason, error.trace.formatted);
       });
     }
   }
@@ -1201,7 +1201,7 @@ export class VMWizardComponent implements WizardConfiguration {
           ),
           error.trace.formatted,
         );
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       },
     );
   }

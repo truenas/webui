@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -15,7 +14,7 @@ import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credential
 import {
   KeychainCredentialService, ReplicationService, StorageService, CloudCredentialService,
 } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { CloudCredentialsFormComponent } from './forms/cloud-credentials-form.component';
 import { SshConnectionsFormComponent } from './forms/ssh-connections-form.component';
@@ -35,7 +34,7 @@ export class BackupCredentialsComponent implements OnInit {
     private storage: StorageService,
     private cloudCredentialsService: CloudCredentialService,
     private modalService: ModalService,
-    private ixModalService: IxModalService,
+    private slideInService: IxSlideInService,
     private translate: TranslateService,
   ) {}
 
@@ -44,7 +43,7 @@ export class BackupCredentialsComponent implements OnInit {
       this.getCards();
     });
 
-    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getCards();
     });
 
@@ -66,8 +65,8 @@ export class BackupCredentialsComponent implements OnInit {
           deleteCall: 'cloudsync.credentials.delete',
           name: 'cloudCreds',
           columns: [
-            { name: T('Name'), prop: 'name' },
-            { name: T('Provider'), prop: 'provider' },
+            { name: this.translate.instant('Name'), prop: 'name' },
+            { name: this.translate.instant('Provider'), prop: 'provider' },
           ],
           hideHeader: false,
           parent: this,
@@ -88,7 +87,7 @@ export class BackupCredentialsComponent implements OnInit {
           name: 'sshConnections',
           dataSourceHelper: this.sshConnectionsDataSourceHelper,
           columns: [
-            { name: T('Name'), prop: 'name' },
+            { name: this.translate.instant('Name'), prop: 'name' },
           ],
           hideHeader: true,
           parent: this,
@@ -109,15 +108,15 @@ export class BackupCredentialsComponent implements OnInit {
           getActions: this.sshKeyPairActions.bind(this),
           dataSourceHelper: this.sshKeyPairsDataSourceHelper,
           columns: [
-            { name: T('Name'), prop: 'name' },
+            { name: this.translate.instant('Name'), prop: 'name' },
           ],
           hideHeader: true,
           parent: this,
           add: () => {
-            this.ixModalService.open(SshKeypairFormComponent, this.translate.instant('SSH Keypairs'));
+            this.slideInService.open(SshKeypairFormComponent);
           },
           edit: (row: KeychainSshKeyPair) => {
-            const modal = this.ixModalService.open(SshKeypairFormComponent, this.translate.instant('SSH Keypairs'));
+            const modal = this.slideInService.open(SshKeypairFormComponent);
             modal.setKeypairForEditing(row);
           },
         },

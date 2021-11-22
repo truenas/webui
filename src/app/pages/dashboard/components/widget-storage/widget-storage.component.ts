@@ -2,7 +2,6 @@ import {
   AfterViewInit, Component, Input, OnChanges, SimpleChanges,
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import filesize from 'filesize';
@@ -40,7 +39,7 @@ interface PoolInfoMap {
 export class WidgetStorageComponent extends WidgetComponent implements AfterViewInit, OnChanges {
   @Input() pools: Pool[];
   @Input() volumeData: VolumesData;
-  title: string = T('Storage');
+  title: string = this.translate.instant('Storage');
 
   poolInfoMap: PoolInfoMap = {};
   paddingTop = 7;
@@ -115,7 +114,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   getStatusItemInfo(pool: Pool): ItemInfo {
     let level = 'safe';
     let icon = 'mdi-check-circle';
-    const value = pool.status == PoolStatus.Online && !pool.healthy ? T('Unhealthy') : pool.status;
+    const value = pool.status == PoolStatus.Online && !pool.healthy ? this.translate.instant('Unhealthy') : pool.status;
 
     switch (pool.status) {
       case PoolStatus.Healthy:
@@ -187,7 +186,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
   getDiskWithErrorsItemInfo(pool: Pool): ItemInfo {
     let level = 'warn';
     let icon = 'mdi-alert-circle';
-    let value: string = T('Unknown');
+    let value: string = this.translate.instant('Unknown');
 
     if (pool && pool.topology) {
       const unhealthy: string[] = []; // Disks with errors
@@ -243,7 +242,7 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
       return total.toString() + ' (data)';
     }
 
-    return T('Unknown');
+    return this.translate.instant('Unknown');
   }
 
   getFreeSpace(pool: Pool): string {
@@ -253,9 +252,9 @@ export class WidgetStorageComponent extends WidgetComponent implements AfterView
         return this.getSizeString(volume.avail);
       }
     } else if (!volume || typeof volume.avail == undefined) {
-      return T('Unknown');
+      return this.translate.instant('Unknown');
     } else {
-      return T('Gathering data...');
+      return this.translate.instant('Gathering data...');
     }
   }
 

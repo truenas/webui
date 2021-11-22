@@ -3,7 +3,7 @@ import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { ComponentStore } from '@ngrx/component-store';
 import { EMPTY, Observable } from 'rxjs';
 import {
-  catchError, map, takeUntil, tap,
+  catchError, map, takeUntil, take,
 } from 'rxjs/operators';
 import { JobsManagerState } from 'app/components/common/dialog/jobs-manager/interfaces/jobs-manager-state.interface';
 import { JobState } from 'app/enums/job-state.enum';
@@ -19,12 +19,24 @@ const initialState: JobsManagerState = {
 @UntilDestroy()
 @Injectable()
 export class JobsManagerStore extends ComponentStore<JobsManagerState> {
+  private jobs: Job[] = [];
+  private jobStates: JobState[] = [JobState.Running, JobState.Failed, JobState.Waiting];
+
   constructor(private ws: WebSocketService, private dialog: DialogService) {
     super(initialState);
 
-    this.initialLoadJobs().subscribe();
-    this.getJobUpdates().subscribe((job) => {
-      this.handleUpdate(job);
+    this.initialLoadJobs().subscribe((jobs) => {
+      this.jobs = jobs;
+      this.patchState({
+        jobs,
+        isLoading: false,
+      });
+    },
+    () => {},
+    () => {
+      this.getJobUpdates().subscribe((job) => {
+        this.handleUpdate(job);
+      });
     });
   }
 
@@ -34,6 +46,9 @@ export class JobsManagerStore extends ComponentStore<JobsManagerState> {
   readonly numberOfFailedJobs$: Observable<number> = this.select(
     (state) => state.jobs.filter((job) => job.state === JobState.Failed).length,
   );
+  readonly numberOfWaitingJobs$: Observable<number> = this.select(
+    (state) => state.jobs.filter((job) => job.state === JobState.Waiting).length,
+  );
 
   initialLoadJobs(): Observable<Job[]> {
     this.setState({
@@ -42,14 +57,8 @@ export class JobsManagerStore extends ComponentStore<JobsManagerState> {
     });
 
     return this.ws
-      .call('core.get_jobs', [[['state', 'in', [JobState.Running, JobState.Failed]]], { order_by: ['-id'] }])
+      .call('core.get_jobs', [[['state', 'in', this.jobStates]], { order_by: ['-id'] }])
       .pipe(
-        tap((jobs: Job[]) => {
-          this.patchState({
-            jobs,
-            isLoading: false,
-          });
-        }),
         catchError((error) => {
           new EntityUtils().errorReport(error, this.dialog);
 
@@ -59,6 +68,7 @@ export class JobsManagerStore extends ComponentStore<JobsManagerState> {
 
           return EMPTY;
         }),
+        take(1),
         untilDestroyed(this),
       );
   }
@@ -70,37 +80,23 @@ export class JobsManagerStore extends ComponentStore<JobsManagerState> {
     );
   }
 
+  handleInternalUpdate(job: Job): void {
+    const jobIndex = this.jobs.findIndex((item) => item.id === job.id);
+
+    if (jobIndex === -1) {
+      this.jobs = [job, ...this.jobs];
+    } else {
+      this.jobs[jobIndex] = job;
+    }
+  }
+
   handleUpdate(job: Job): void {
-    // TODO: Optimize this method
+    this.handleInternalUpdate(job);
+
     this.patchState((state) => {
-      let modifiedJobs = [...state.jobs];
-      const jobExist = modifiedJobs.find((item) => item.id === job.id);
-
-      switch (job.state) {
-        case JobState.Running:
-          if (jobExist) {
-            jobExist.progress = job.progress;
-          } else {
-            modifiedJobs = [job, ...state.jobs];
-          }
-          break;
-        case JobState.Failed:
-          if (jobExist) {
-            jobExist.state = job.state;
-          } else {
-            modifiedJobs = [job, ...state.jobs];
-          }
-          break;
-        default:
-          if (jobExist) {
-            modifiedJobs = modifiedJobs.filter((item) => item.id !== job.id);
-          }
-          break;
-      }
-
       return {
         ...state,
-        jobs: modifiedJobs,
+        jobs: this.jobs.filter((job) => this.jobStates.includes(job.state)),
       };
     });
   }

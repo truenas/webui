@@ -10,12 +10,6 @@
   margin: 0;
 }
 
-.mat-icon.multipath-icon {
-  color: var(--fg2);
-  position: relative;
-  top: 3px;
-}
-
 .card-title-text {
   display: table;
   font-size: 1.42em;
@@ -589,4 +583,8 @@ h3 {
   display: block;
   min-height: 277px;
   width: 100%;
+}
+
+.text-invisible {
+  opacity: 0;
 }

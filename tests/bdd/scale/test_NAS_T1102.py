@@ -141,20 +141,20 @@ def click_on_system_dataset_configure_button_and_close_the_popup(driver):
 def click_on_system_dataset_pool_select_system_click_save(driver):
     """click on System Dataset Pool select system, click Save."""
     assert wait_on_element(driver, 5, '//h3[contains(.,"System Dataset Pool")]')
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Select Pool"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Select Pool"]').click()
-    assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__Select Pool_system"]')
-    driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Select Pool_system"]').click()
-    assert wait_on_element(driver, 30, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//mat-select', 'clickable')
+    driver.find_element_by_xpath('//mat-select').click()
+    assert wait_on_element(driver, 5, f'//mat-option[@role="option"]//span[contains(.,"system")]')
+    driver.find_element_by_xpath(f'//mat-option[@role="option"]//span[contains(.,"system")]').click()
+    time.sleep(1)
+    assert wait_on_element(driver, 30, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]').click()
+
 
 
 @then('Please wait should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
-    assert wait_on_element_disappear(driver, 90, '//h6[contains(.,"Please wait")]')
-    ## return to dashboard
-    time.sleep(1)
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
+    assert wait_on_element_disappear(driver, 20, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]')
+    # return to dashboard so 1104 can start properly
+    assert wait_on_element(driver, 20, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)

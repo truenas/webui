@@ -85,8 +85,8 @@ describe('DatasetAclEditorComponent', () => {
         mockJob('filesystem.setacl', fakeSuccessfulJob()),
       ]),
       mockProvider(UserService, {
-        userQueryDSCache: () => of(),
-        groupQueryDSCache: () => of(),
+        userQueryDsCache: () => of(),
+        groupQueryDsCache: () => of(),
       }),
     ],
     params: {

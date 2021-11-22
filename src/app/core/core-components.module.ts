@@ -9,6 +9,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { ContextMenuComponent } from 'app/core/components/context-menu/context-menu.component';
 import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.component';
+import { HtmlTooltipComponent } from 'app/core/components/directives/html-tooltip/html-tooltip.component';
 import { HtmlTooltipDirective } from 'app/core/components/directives/html-tooltip/html-tooltip.directive';
 import { TextLimiterTooltipComponent } from 'app/core/components/directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 import { TextLimiterDirective } from 'app/core/components/directives/text-limiter/text-limiter.directive';
@@ -67,6 +68,7 @@ import { StorageService } from 'app/services/storage.service';
     ViewChartLineComponent,
     TextLimiterDirective,
     HtmlTooltipDirective,
+    HtmlTooltipComponent,
     TextLimiterTooltipComponent,
     ConvertPipe,
     MapValuePipe,

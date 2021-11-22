@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { helptext_sharing_webdav, shared } from 'app/helptext/sharing';
+import { helptextSharingWebdav, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -25,11 +25,11 @@ export class WebdavFormComponent implements FormConfiguration {
   addCall = 'sharing.webdav.create' as const;
   editCall = 'sharing.webdav.update' as const;
   isEntity = true;
-  title: string = T('Add WebDAV');
+  title: string = this.translate.instant('Add WebDAV');
   confirmSubmit = true;
   confirmSubmitDialog = {
-    title: helptext_sharing_webdav.warning_dialog_title,
-    message: helptext_sharing_webdav.warning_dialog_message,
+    title: helptextSharingWebdav.warning_dialog_title,
+    message: helptextSharingWebdav.warning_dialog_message,
     hideCheckbox: false,
   };
 
@@ -37,53 +37,53 @@ export class WebdavFormComponent implements FormConfiguration {
   fieldSetDisplay = 'default';
   fieldSets: FieldSet[] = [
     {
-      name: helptext_sharing_webdav.fieldset_name,
+      name: helptextSharingWebdav.fieldset_name,
       class: 'webdav-configuration-form',
       label: true,
       config: [
         {
           type: 'input',
           name: 'name',
-          placeholder: helptext_sharing_webdav.placeholder_name,
-          tooltip: helptext_sharing_webdav.tooltip_name,
+          placeholder: helptextSharingWebdav.placeholder_name,
+          tooltip: helptextSharingWebdav.tooltip_name,
           required: true,
-          validation: helptext_sharing_webdav.validator_name,
+          validation: helptextSharingWebdav.validator_name,
         },
         {
           type: 'input',
           name: 'comment',
-          placeholder: helptext_sharing_webdav.placeholder_comment,
-          tooltip: helptext_sharing_webdav.tooltip_comment,
+          placeholder: helptextSharingWebdav.placeholder_comment,
+          tooltip: helptextSharingWebdav.tooltip_comment,
         },
         {
           type: 'explorer',
           initial: '/mnt',
           name: 'path',
-          explorerType: 'directory',
-          placeholder: helptext_sharing_webdav.placeholder_path,
-          tooltip: helptext_sharing_webdav.tooltip_path,
+          explorerType: ExplorerType.Directory,
+          placeholder: helptextSharingWebdav.placeholder_path,
+          tooltip: helptextSharingWebdav.tooltip_path,
           required: true,
-          validation: helptext_sharing_webdav.validator_path,
+          validation: helptextSharingWebdav.validator_path,
         },
         {
           type: 'checkbox',
           name: 'ro',
-          placeholder: helptext_sharing_webdav.placeholder_ro,
-          tooltip: helptext_sharing_webdav.tooltip_ro,
+          placeholder: helptextSharingWebdav.placeholder_ro,
+          tooltip: helptextSharingWebdav.tooltip_ro,
         },
         {
           type: 'checkbox',
           name: 'perm',
           value: true,
-          placeholder: helptext_sharing_webdav.placeholder_perm,
-          tooltip: helptext_sharing_webdav.tooltip_perm,
+          placeholder: helptextSharingWebdav.placeholder_perm,
+          tooltip: helptextSharingWebdav.tooltip_perm,
         },
         {
           type: 'checkbox',
           name: 'enabled',
           value: true,
-          placeholder: helptext_sharing_webdav.placeholder_enabled,
-          tooltip: helptext_sharing_webdav.tooltip_enabled,
+          placeholder: helptextSharingWebdav.placeholder_enabled,
+          tooltip: helptextSharingWebdav.tooltip_enabled,
         },
       ],
     }];
@@ -100,7 +100,7 @@ export class WebdavFormComponent implements FormConfiguration {
     entityForm.formGroup.controls['perm'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: boolean) => {
       this.confirmSubmit = value;
     });
-    this.title = entityForm.isNew ? T('Add WebDAV') : T('Edit WebDAV');
+    this.title = entityForm.isNew ? this.translate.instant('Add WebDAV') : this.translate.instant('Edit WebDAV');
   }
 
   afterSave(): void {

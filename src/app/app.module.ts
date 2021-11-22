@@ -32,7 +32,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import { ErdService } from 'app/services/erd.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NotificationsService } from 'app/services/notifications.service';
 import { RouterEffects } from 'app/store/effects/router.effects';
 import { reducers } from 'app/store/reducers';
@@ -134,7 +134,7 @@ import { WebSocketService } from './services/ws.service';
     NotificationsService,
     ErdService,
     JobsManagerStore,
-    IxModalService,
+    IxSlideInService,
   ],
   bootstrap: [
     AppComponent,

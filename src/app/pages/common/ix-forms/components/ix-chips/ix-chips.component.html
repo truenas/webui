@@ -1,0 +1,35 @@
+<div *ngIf="label" class="label-container">
+  <label class="label">
+    {{label}}
+    <span *ngIf="required" class="required">*</span>
+  </label>
+  <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
+</div>
+
+<div class="input-container" [class.disabled]="isDisabled">
+  <mat-chip-list
+    #chipList class="form-chip"
+    [required]="required"
+  >
+    <mat-chip
+      *ngFor="let item of values"
+      class="chip"
+      [selectable]="true"
+      [removable]="!isDisabled"
+      (removed)="onRemove(item)"
+    >
+      {{item}}
+      <mat-icon matChipRemove *ngIf="!isDisabled">cancel</mat-icon>
+    </mat-chip>
+    <input
+      [placeholder]="placeholder"
+      [matChipInputFor]="chipList"
+      [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+      [matChipInputAddOnBlur]="true"
+      (matChipInputTokenEnd)="onAdd($event)"
+    >
+  </mat-chip-list>
+</div>
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+
+<mat-hint *ngIf="hint">{{hint}}</mat-hint>

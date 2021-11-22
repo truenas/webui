@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -34,7 +34,7 @@ import { ModalService } from 'app/services/modal.service';
   providers: [JobService, TaskService, CloudCredentialService],
 })
 export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi> {
-  title = T('Cloud Sync Tasks');
+  title = this.translate.instant('Cloud Sync Tasks');
   queryCall = 'cloudsync.query' as const;
   route_add: string[] = ['tasks', 'cloudsync', 'add'];
   route_add_tooltip = 'Add Cloud Sync Task';
@@ -44,13 +44,13 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
   asyncView = true;
 
   columns = [
-    { name: T('Description'), prop: 'description', always_display: true },
-    { name: T('Credential'), prop: 'credential', hidden: true },
-    { name: T('Direction'), prop: 'direction', hidden: true },
-    { name: T('Transfer Mode'), prop: 'transfer_mode', hidden: true },
-    { name: T('Path'), prop: 'path', hidden: true },
+    { name: this.translate.instant('Description'), prop: 'description', always_display: true },
+    { name: this.translate.instant('Credential'), prop: 'credential', hidden: true },
+    { name: this.translate.instant('Direction'), prop: 'direction', hidden: true },
+    { name: this.translate.instant('Transfer Mode'), prop: 'transfer_mode', hidden: true },
+    { name: this.translate.instant('Path'), prop: 'path', hidden: true },
     {
-      name: T('Schedule'),
+      name: this.translate.instant('Schedule'),
       prop: 'cron_schedule',
       hidden: true,
       widget: {
@@ -58,22 +58,22 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         component: 'TaskScheduleListComponent',
       },
     },
-    { name: T('Frequency'), prop: 'frequency', enableMatTooltip: true },
-    { name: T('Next Run'), prop: 'next_run', hidden: true },
+    { name: this.translate.instant('Frequency'), prop: 'frequency', enableMatTooltip: true },
+    { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
     {
-      name: T('Status'),
+      name: this.translate.instant('Status'),
       prop: 'state',
       state: 'state',
       button: true,
     },
-    { name: T('Enabled'), prop: 'enabled' },
+    { name: this.translate.instant('Enabled'), prop: 'enabled' },
   ];
   rowIdentifier = 'description';
   config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('Cloud Sync Task'),
+      title: this.translate.instant('Cloud Sync Task'),
       key_props: ['description'],
     },
   };
@@ -100,9 +100,9 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
       const transformed = { ...task } as CloudSyncTaskUi;
       const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       transformed.credential = task.credentials.name;
-      transformed.cron_schedule = task.enabled ? formattedCronSchedule : T('Disabled');
+      transformed.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
       transformed.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
-      transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : T('Disabled');
+      transformed.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
 
       if (task.job === null) {
         transformed.state = { state: transformed.locked ? JobState.Locked : JobState.Pending };
@@ -123,19 +123,19 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
       {
         actionName: parentrow.description,
         id: 'run_now',
-        label: T('Run Now'),
+        label: this.translate.instant('Run Now'),
         icon: 'play_arrow',
         name: 'run',
         onClick: (row: CloudSyncTaskUi) => {
           this.dialog
-            .confirm({ title: T('Run Now'), message: T('Run this cloud sync now?'), hideCheckBox: true })
+            .confirm({ title: this.translate.instant('Run Now'), message: this.translate.instant('Run this cloud sync now?'), hideCheckBox: true })
             .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
               if (res) {
                 row.state = { state: JobState.Running };
                 this.ws.call('cloudsync.sync', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
                     this.dialog.info(
-                      T('Task Started'),
+                      this.translate.instant('Task Started'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
                       '500px',
                       'info',
@@ -147,7 +147,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this.entityList, err);
+                    new EntityUtils().handleWsError(this.entityList, err);
                   },
                 );
               }
@@ -158,13 +158,13 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         actionName: parentrow.description,
         id: 'stop',
         name: 'stop',
-        label: T('Stop'),
+        label: this.translate.instant('Stop'),
         icon: 'stop',
         onClick: (row: CloudSyncTaskUi) => {
           this.dialog
             .confirm({
-              title: T('Stop'),
-              message: T('Stop this cloud sync?'),
+              title: this.translate.instant('Stop'),
+              message: this.translate.instant('Stop this cloud sync?'),
               hideCheckBox: true,
             })
             .pipe(untilDestroyed(this)).subscribe((res: boolean) => {
@@ -172,7 +172,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                 this.ws.call('cloudsync.abort', [row.id]).pipe(untilDestroyed(this)).subscribe(
                   () => {
                     this.dialog.info(
-                      T('Task Stopped'),
+                      this.translate.instant('Task Stopped'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> stopped.', { taskName: row.description }),
                       '500px',
                       'info',
@@ -180,7 +180,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     );
                   },
                   (wsErr) => {
-                    new EntityUtils().handleWSError(this.entityList, wsErr);
+                    new EntityUtils().handleWsError(this.entityList, wsErr);
                   },
                 );
               }
@@ -205,7 +205,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                 this.ws.call('cloudsync.sync', [row.id, { dry_run: true }]).pipe(untilDestroyed(this)).subscribe(
                   (jobId: number) => {
                     this.dialog.info(
-                      T('Task Started'),
+                      this.translate.instant('Task Started'),
                       this.translate.instant('Cloud sync <i>{taskName}</i> has started.', { taskName: row.description }),
                       '500px',
                       'info',
@@ -217,7 +217,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this.entityList, err);
+                    new EntityUtils().handleWsError(this.entityList, err);
                   },
                 );
               }
@@ -228,11 +228,11 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         actionName: parentrow.description,
         id: 'restore',
         name: 'restore',
-        label: T('Restore'),
+        label: this.translate.instant('Restore'),
         icon: 'restore',
         onClick: (row: CloudSyncTaskUi) => {
           const conf: DialogFormConfiguration = {
-            title: T('Restore Cloud Sync Task'),
+            title: this.translate.instant('Restore Cloud Sync Task'),
             fieldConfig: [
               {
                 type: 'input',
@@ -249,8 +249,8 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                 validation: helptext.transfer_mode_validation,
                 required: true,
                 options: [
-                  { label: T('SYNC'), value: TransferMode.Sync },
-                  { label: T('COPY'), value: TransferMode.Copy },
+                  { label: this.translate.instant('SYNC'), value: TransferMode.Sync },
+                  { label: this.translate.instant('COPY'), value: TransferMode.Copy },
                 ],
                 value: TransferMode.Copy,
               },
@@ -263,7 +263,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               },
               {
                 type: 'explorer',
-                explorerType: 'directory',
+                explorerType: ExplorerType.Directory,
                 name: 'path',
                 placeholder: helptext.path_placeholder,
                 tooltip: helptext.path_tooltip,
@@ -272,7 +272,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                 required: true,
               },
             ],
-            saveButtonText: T('Restore'),
+            saveButtonText: this.translate.instant('Restore'),
             afterInit(entityDialog: EntityDialogComponent) {
               entityDialog.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode) => {
                 const paragraph: FormParagraphConfig = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
@@ -296,7 +296,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                 },
                 (err) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+                  new EntityUtils().handleWsError(entityDialog, err, this.dialog);
                 },
               );
             },
@@ -309,7 +309,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         actionName: parentrow.description,
         name: 'edit',
         icon: 'edit',
-        label: T('Edit'),
+        label: this.translate.instant('Edit'),
         onClick: (row: CloudSyncTaskUi) => {
           this.doEdit(row.id);
         },
@@ -318,7 +318,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
         actionName: parentrow.description,
         id: 'delete',
         name: 'delete',
-        label: T('Delete'),
+        label: this.translate.instant('Delete'),
         icon: 'delete',
         onClick: (row: CloudSyncTaskUi) => {
           this.entityList.doDelete(row);

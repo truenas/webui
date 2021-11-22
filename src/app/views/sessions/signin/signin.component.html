@@ -16,7 +16,7 @@
                     <label class="label input-text">{{ 'Username' | translate }}</label>
                   </div>
                   <mat-form-field class="full-width">
-                    <span matPrefix><mat-icon fontSet="mdi-set" fontIcon="mdi-account" style="color:var(--fg1);position:relative;top:4px;"></mat-icon>&nbsp;&nbsp;</span>
+                    <span matPrefix><mat-icon fontSet="mdi-set" fontIcon="mdi-account" class="icon account"></mat-icon>&nbsp;&nbsp;</span>
                     <input autofocus
                       matInput name="username"
                       required
@@ -37,7 +37,7 @@
                     <label class="label input-text">{{ 'Password' | translate }}</label>
                   </div>
                   <mat-form-field class="full-width">
-                    <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:4px;">lock</mat-icon>&nbsp;&nbsp;</span>
+                    <span matPrefix><mat-icon class="icon lock">lock</mat-icon>&nbsp;&nbsp;</span>
                     <input type="password" name="password" required matInput [(ngModel)]="signinData.password" #password="ngModel" [placeholder]="'Password' | translate" value="">
                     <mat-error *ngIf="password.errors && (password.dirty || password.touched) && (password.errors.required)">
                       <span *ngIf="!failed">{{"Please enter your password" | translate}}</span>
@@ -47,7 +47,7 @@
                 </div>
                 <div *ngIf="isTwoFactor" class="form-element">
                   <mat-form-field class="full-width">
-                    <span matPrefix><mat-icon style="color:var(--fg1);position:relative;top:2px;">phonelink</mat-icon>&nbsp;&nbsp;</span>
+                    <span matPrefix><mat-icon class="icon phonelink">phonelink</mat-icon>&nbsp;&nbsp;</span>
                     <input matInput name="otp"
                       [(ngModel)]="signinData.otp"
                       #otp="ngModel"
@@ -61,7 +61,14 @@
                     </mat-error>
                   </mat-form-field>
                 </div>
-                <button name="signin_button" mat-button color="primary" class="fn-theme-primary full-width mb-1" id="signin_button" [disabled]="username.errors || password.errors">{{"Log in" | translate}}</button>
+                <button
+                  name="signin_button"
+                  mat-button
+                  color="primary"
+                  class="fn-theme-primary full-width mb-1"
+                  id="signin_button"
+                  [disabled]="username.invalid || password.invalid"
+                >{{"Log in" | translate}}</button>
               </form>
               <div [hidden]="has_root_password">
                 <form (ngSubmit)="setpassword()" [formGroup]="setPasswordFormGroup" #setPasswordForm="ngForm">
@@ -114,14 +121,14 @@
               </div>
             </span>
 
-            <div class="truecommand" *ngIf="tc_ip" (click)="gotoTC()">
+            <div class="truecommand" *ngIf="tc_ip" (click)="goToTrueCommand()">
               <img id="truecommand-logo" src="assets/images/truecommand/truecommand-logo-mark-full-color-rgb.svg">
               <span class="truecommand-txt">{{ 'TrueCommand IP' | translate }}: {{tc_ip}}</span>
             </div>
 
             <div class="copyright-line">
               <span  class="copyright-txt">TrueNAS {{productType | mapValue: productTypeLabels }} ® © {{copyrightYear}} </span>
-              <img id="full-logo" (click)="openIX()" src="assets/images/ix_logo_full.png">
+              <img id="full-logo" (click)="openIx()" src="assets/images/ix_logo_full.png">
             </div>
           </div>
         </div>

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter, switchMap } from 'rxjs/operators';
@@ -35,23 +34,23 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   entityList: EntityTableComponent;
 
   columns = [
-    { name: T('Users'), prop: 'user', always_display: true },
-    { name: T('Command'), prop: 'command' },
-    { name: T('Description'), prop: 'description' },
+    { name: this.translate.instant('Users'), prop: 'user', always_display: true },
+    { name: this.translate.instant('Command'), prop: 'command' },
+    { name: this.translate.instant('Description'), prop: 'description' },
     {
-      name: T('Schedule'),
+      name: this.translate.instant('Schedule'),
       prop: 'cron_schedule',
       widget: { icon: 'calendar-range', component: 'TaskScheduleListComponent' },
     },
-    { name: T('Enabled'), prop: 'enabled' },
-    { name: T('Next Run'), prop: 'next_run', hidden: true },
-    { name: T('Minute'), prop: 'schedule.minute', hidden: true },
-    { name: T('Hour'), prop: 'schedule.hour', hidden: true },
-    { name: T('Day of Month'), prop: 'schedule.dom', hidden: true },
-    { name: T('Month'), prop: 'schedule.month', hidden: true },
-    { name: T('Day of Week'), prop: 'schedule.dow', hidden: true },
-    { name: T('Hide Stdout'), prop: 'stdout', hidden: true },
-    { name: T('Hide Stderr'), prop: 'stderr', hidden: true },
+    { name: this.translate.instant('Enabled'), prop: 'enabled' },
+    { name: this.translate.instant('Next Run'), prop: 'next_run', hidden: true },
+    { name: this.translate.instant('Minute'), prop: 'schedule.minute', hidden: true },
+    { name: this.translate.instant('Hour'), prop: 'schedule.hour', hidden: true },
+    { name: this.translate.instant('Day of Month'), prop: 'schedule.dom', hidden: true },
+    { name: this.translate.instant('Month'), prop: 'schedule.month', hidden: true },
+    { name: this.translate.instant('Day of Week'), prop: 'schedule.dow', hidden: true },
+    { name: this.translate.instant('Hide Stdout'), prop: 'stdout', hidden: true },
+    { name: this.translate.instant('Hide Stderr'), prop: 'stderr', hidden: true },
   ];
   rowIdentifier = 'user';
   config: EntityTableConfigConfig = {
@@ -95,14 +94,14 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
     return [
       {
         name: this.config.name,
-        label: T('Run Now'),
+        label: this.translate.instant('Run Now'),
         id: 'run',
         icon: 'play_arrow',
-        onClick: (row: CronjobRow) =>
-          this.dialog
+        onClick: (row: CronjobRow) => {
+          return this.dialog
             .confirm({
-              title: T('Run Now'),
-              message: T('Run this job now?'),
+              title: this.translate.instant('Run Now'),
+              message: this.translate.instant('Run this job now?'),
               hideCheckBox: true,
             })
             .pipe(
@@ -112,10 +111,10 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
             .pipe(untilDestroyed(this)).subscribe(
               () => {
                 const message = row.enabled
-                  ? T('This job is scheduled to run again ' + row.next_run + '.')
-                  : T('This job will not run again until it is enabled.');
+                  ? this.translate.instant('This job is scheduled to run again {nextRun}.', { nextRun: row.next_run })
+                  : this.translate.instant('This job will not run again until it is enabled.');
                 this.dialog.info(
-                  T('Job ' + row.description + ' Completed Successfully'),
+                  this.translate.instant('Job {job} Completed Successfully', { job: row.description }),
                   message,
                   '500px',
                   'info',
@@ -123,11 +122,12 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
                 );
               },
               (err: WebsocketError) => new EntityUtils().handleError(this, err),
-            ),
+            );
+        },
       },
       {
         name: this.config.name,
-        label: T('Edit'),
+        label: this.translate.instant('Edit'),
         icon: 'edit',
         id: 'edit',
         onClick: (row: CronjobRow) => this.doEdit(row.id),
@@ -136,7 +136,7 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
         id: tableRow.id,
         name: this.config.name,
         icon: 'delete',
-        label: T('Delete'),
+        label: this.translate.instant('Delete'),
         onClick: (row: CronjobRow) => {
           this.entityList.doDelete(row);
         },
@@ -146,12 +146,12 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
 
   resourceTransformIncomingRestData(data: Cronjob[]): CronjobRow[] {
     return data.map((job) => {
-      const cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
+      const cronSchedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
 
       return {
         ...job,
-        cron_schedule,
-        next_run: this.taskService.getTaskNextRun(cron_schedule),
+        cron_schedule: cronSchedule,
+        next_run: this.taskService.getTaskNextRun(cronSchedule),
       };
     });
   }

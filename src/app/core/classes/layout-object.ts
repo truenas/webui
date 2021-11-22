@@ -68,58 +68,7 @@ export class LayoutObject {
   }
 
   initialize(): void {
-    /*
-       //Test animation service
-       let animationTarget:DisplayObject;
-       //Radiate
-       setTimeout(() => {
-         animationTarget = this.collection[10];
-         this.test("Radiate", "Start", animationTarget);
-
-       },2000);
-
-       setTimeout(() => {
-         this.test("Radiate", "Stop", animationTarget);
-
-       },10000);
-
-       //Bounce
-       setTimeout(() => {
-         animationTarget = this.collection[10];
-         this.test("Bounce", "Start", animationTarget);
-       },10000);
-
-       setTimeout(() => {
-         this.test("Bounce", "Stop", animationTarget);
-         console.log("")
-       },19000);
-
-       //ElasticScale
-       setTimeout(() => {
-         animationTarget = this.collection[10];
-         this.test("ElasticScale", "Out", animationTarget);
-       },20000);
-
-       setTimeout(() => {
-         this.test("ElasticScale", "In", animationTarget);
-         console.log("")
-       },22000);
-
-       //Fade
-       setTimeout(() => {
-         animationTarget = this.collection[10];
-         this.test("Fade", "Out", animationTarget);
-       },24000);
-
-       setTimeout(() => {
-         this.test("Fade", "In", animationTarget);
-         console.log("")
-       },27000);
-        */
-
     this.orderedCollection = Object.keys(this.collection);
-    // const collection = Object.entries(this.collection);
-    // collection.map((value:DisplayObject) => {
     this.orderedCollection.forEach((item) => {
       this.configureCollectionItem(this.collection[item]);
     });
@@ -142,11 +91,6 @@ export class LayoutObject {
   insert(item: DisplayObject): void { // Add new item to collection and regenerate screenPositions
     console.warn(this.reorderedCollection);
     // update collection
-    /* if(this.reorderedCollection && this.reorderedCollection.length > 0){
-        this.reorderedCollection.push(item);
-       } else {
-         this.collection.push(item);
-       } */
 
     this.configureCollectionItem(item);
     // this.collection.push(item);
@@ -208,7 +152,7 @@ export class LayoutObject {
       duration: 250,
       flip: 0,
     }).start({
-      update: (v: any) => {
+      update: (v: { x: number; y: number }) => {
         dragTarget.target.set(v);
       },
       complete: () => {
@@ -252,7 +196,6 @@ export class LayoutObject {
         right: dragTarget.x + (dragTarget.width / 2) + pad,
       };
 
-      // let newCollection = Object.assign(this.collection , []);
       const newCollection = Object.assign(this.orderedCollection, []);
 
       // Run collision detection against the collection
@@ -269,7 +212,6 @@ export class LayoutObject {
 
             latestPosition = index;
 
-            // let dragTargetIndex:number = Number(newCollection.indexOf(dragTarget));
             const dragTargetIndex = Number(newCollection.indexOf(dragTarget.id));
             newCollection.splice(dragTargetIndex, 1);
             newCollection.splice(index, 0, dragTarget.id);
@@ -299,7 +241,6 @@ export class LayoutObject {
     this.moveToScreenPosition(dragTarget, index);
     this.orderedCollection = this.reorderedCollection;
     this.reorderedCollection = [];
-    // this.updateStaticPositions();
   }
 
   private cancelInteractiveMovement(): void { // Reset to original layout
@@ -313,7 +254,6 @@ export class LayoutObject {
   private createGrid(): void {
     this.grid = true; // Should be deprecated in favor of this.arrangement
     this.createScreenPositions(this.orderedCollection.length, this.orderedCollection.length, this.margin, true);
-    // this.updateCollectionPositions(0, this.collection.length - 1);
   }
 
   private createListHorizontal(constrain?: boolean): void {
@@ -323,7 +263,6 @@ export class LayoutObject {
       });
     }
     this.createScreenPositions(this.orderedCollection.length, this.orderedCollection.length, this.margin);
-    // this.updateCollectionPositions(0, this.collection.length - 1);
   }
 
   private createListVertical(constrain?: boolean): void {
@@ -333,7 +272,6 @@ export class LayoutObject {
       });
     }
     this.createScreenPositions(1, this.orderedCollection.length, this.margin);
-    // this.updateCollectionPositions(0, this.collection.length - 1);
   }
 
   private updateCollectionPositions(startIndex: number, endIndex: number): void {
@@ -341,7 +279,6 @@ export class LayoutObject {
       const el = this.collection[this.orderedCollection[i]];
 
       if (el.hasFocus) { continue; }
-      // if(dragTarget && el == dragTarget){ continue; }
       this.moveToScreenPosition(el, i);
     }
   }
@@ -363,8 +300,6 @@ export class LayoutObject {
         el.height = this.itemSize.height;
       }
 
-      // el.x = (i % columns) * (el.width + margin * 2);
-      // el.y = Math.floor(i / columns) * (el.height + margin * 2);
       const positionX = (i % columns) * (el.width + margin * 2);
       const positionY = Math.floor(i / columns) * (el.height + margin * 2);
 
@@ -387,7 +322,6 @@ export class LayoutObject {
 
   private configureCollectionItem(item: DisplayObject): void {
     // misc. element options
-    // item.constrainX = true;
     item.resizeable = false;
     item.moveable = true;
     item.elevateOnSelect = true;

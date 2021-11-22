@@ -11,7 +11,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import { WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('TunableFormComponent', () => {
   let spectator: Spectator<TunableFormComponent>;
@@ -28,7 +28,7 @@ describe('TunableFormComponent', () => {
         mockCall('tunable.create'),
         mockCall('tunable.update'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
     ],
   });

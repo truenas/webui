@@ -1,7 +1,8 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 
-export const helptext_system_advanced = {
+export const helptextSystemAdvanced = {
   fieldset_console: T('Console'),
   fieldset_storage: T('Storage'),
   fieldset_ui: T('GUI'),
@@ -118,15 +119,14 @@ export const helptext_system_advanced = {
  level are sent.',
     ),
     options: [
-      { label: T('Emergency'), value: 'F_EMERG' },
-      { label: T('Alert'), value: 'F_ALERT' },
-      { label: T('Critical'), value: 'F_CRIT' },
-      { label: T('Error'), value: 'F_ERR' },
-      { label: T('Warning'), value: 'F_WARNING' },
-      { label: T('Notice'), value: 'F_NOTICE' },
-      { label: T('Info'), value: 'F_INFO' },
-      { label: T('Debug'), value: 'F_DEBUG' },
-      { label: T('Is Debug'), value: 'F_IS_DEBUG' },
+      { label: T('Emergency'), value: SyslogLevel.Emergency },
+      { label: T('Alert'), value: SyslogLevel.Alert },
+      { label: T('Critical'), value: SyslogLevel.Critical },
+      { label: T('Error'), value: SyslogLevel.Error },
+      { label: T('Warning'), value: SyslogLevel.Warning },
+      { label: T('Notice'), value: SyslogLevel.Notice },
+      { label: T('Info'), value: SyslogLevel.Info },
+      { label: T('Debug'), value: SyslogLevel.Debug },
     ],
   },
 
@@ -148,9 +148,9 @@ export const helptext_system_advanced = {
  for the remote system log server connection. Choosing Transport Layer Security (TLS)\
  also requires selecting a preconfigured system Certificate.'),
     options: [
-      { label: T('UDP'), value: 'UDP' },
-      { label: T('TCP'), value: 'TCP' },
-      { label: T('TLS'), value: 'TLS' },
+      { label: 'UDP', value: SyslogTransport.Udp },
+      { label: 'TCP', value: SyslogTransport.Tcp },
+      { label: 'TLS', value: SyslogTransport.Tls },
     ],
   },
 

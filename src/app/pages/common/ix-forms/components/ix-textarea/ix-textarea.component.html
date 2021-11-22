@@ -8,7 +8,7 @@
     <tooltip *ngIf="tooltip" [header]="label" class="tooltip" [message]="tooltip"></tooltip>
   </div>
 
-  <div class="outlined input-container" [class.disabled]="isDisabled">
+  <div class="input-container" [class.disabled]="isDisabled">
     <textarea
       matInput
       [rows]="rows"
@@ -19,7 +19,8 @@
       (blur)="onTouch()"
     ></textarea>
   </div>
-  <ix-form-errors [control]="controlDirective.control" [label]="label"></ix-form-errors>
+  <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+  
   <mat-hint *ngIf="hint">{{hint}}</mat-hint>
 
 </div>

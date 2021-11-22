@@ -14,6 +14,7 @@ import { EntityTableAction } from 'app/pages/common/entity/entity-table/entity-t
 @Component({
   selector: 'app-entity-table-add-actions',
   templateUrl: './entity-table-add-actions.component.html',
+  styleUrls: ['./entity-table-add-actions.component.scss'],
 })
 export class EntityTableAddActionsComponent implements GlobalAction, OnInit, AfterViewInit {
   @ViewChild('filter', { static: false }) filter: ElementRef;
@@ -23,7 +24,6 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
 
   actions: EntityTableAction[];
   menuTriggerMessage = 'Click for options';
-
   spin = true;
   direction = 'left';
   animationMode = 'fling';

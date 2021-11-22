@@ -1,17 +1,17 @@
 import {
-  ChangeDetectionStrategy, Component,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { LanguageService, SystemGeneralService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 
 @UntilDestroy()
@@ -24,7 +24,7 @@ import { LocaleService } from 'app/services/locale.service';
 export class LocalizationFormComponent {
   fieldsetTitle = helptext.localeTitle;
 
-  formIsLoading = false;
+  isFormLoading = false;
 
   sortLanguagesByName = true;
 
@@ -102,8 +102,9 @@ export class LocalizationFormComponent {
     public localeService: LocaleService,
     protected ws: WebSocketService,
     protected langService: LanguageService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
   ) { }
 
   setTimeOptions(tz: string): void {
@@ -126,19 +127,21 @@ export class LocalizationFormComponent {
 
   submit(): void {
     const body = this.formGroup.value;
-    this.formIsLoading = true;
+    this.isFormLoading = true;
     this.localeService.saveDateTimeFormat(body.date_format, body.time_format);
     delete body.date_format;
     delete body.time_format;
     this.ws.call('system.general.update', [body]).pipe(untilDestroyed(this)).subscribe(() => {
       this.sysGeneralService.refreshSysGeneral();
-      this.formIsLoading = false;
-      this.modalService.close();
+      this.isFormLoading = false;
+      this.cdr.markForCheck();
+      this.slideInService.close();
       this.setTimeOptions(body.timezone);
       this.langService.setLanguage(body.language);
     }, (error) => {
-      this.formIsLoading = false;
+      this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.formGroup);
+      this.cdr.markForCheck();
     });
   }
 }

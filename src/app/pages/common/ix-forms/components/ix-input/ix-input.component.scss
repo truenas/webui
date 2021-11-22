@@ -1,21 +1,18 @@
+@import '~text-security/text-security.css';
+
 :host {
+  color: var(--fg1);
   display: block;
 
   margin-bottom: 12px;
   margin-top: 18px;
-}
-
-.full-width {
-  color: var(--fg1);
-  width: 100%;
-}
-
-.container {
   padding: 8px 0;
 }
 
 .tooltip {
   margin-left: 8px;
+
+  vertical-align: -4px;
 }
 
 .input-container {
@@ -43,7 +40,7 @@
 }
 
 .label-container {
-  margin-bottom: 5px;
+  margin-bottom: 1px;
   margin-left: 1px;
 }
 
@@ -80,4 +77,17 @@
   height: auto;
   max-width: 16px;
   width: auto;
+}
+
+.input-container .mat-icon-button {
+  height: 24px;
+  line-height: 24px;
+  opacity: 0.5;
+  width: 24px;
+}
+
+.password-field {
+  font-family: text-security-disc;
+  /* Use -webkit-text-security if the browser supports it */
+  -webkit-text-security: disc;
 }

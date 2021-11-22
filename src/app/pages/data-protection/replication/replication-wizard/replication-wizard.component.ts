@@ -1,15 +1,15 @@
 import { DatePipe } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormArray, FormGroup, Validators } from '@angular/forms';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { ITreeOptions, TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { ITreeOptions, TreeNode } from 'angular-tree-component';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { CipherType } from 'app/enums/cipher-type.enum';
 import { DatasetSource } from 'app/enums/dataset-source.enum';
 import { Direction } from 'app/enums/direction.enum';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { NetcatMode } from 'app/enums/netcat-mode.enum';
@@ -60,17 +60,17 @@ import { ModalService } from 'app/services/modal.service';
   providers: [KeychainCredentialService, ReplicationService, TaskService, DatePipe, EntityFormService],
 })
 export class ReplicationWizardComponent implements WizardConfiguration {
-  title = T('Replication Task Wizard');
+  title = this.translate.instant('Replication Task Wizard');
   isLinear = true;
-  summaryTitle = T('Replication Summary');
+  summaryTitle = this.translate.instant('Replication Summary');
   pk: number;
-  saveSubmitText = T('START REPLICATION');
+  saveSubmitText = this.translate.instant('START REPLICATION');
   hideCancel = true;
 
   protected entityWizard: EntityWizardComponent;
   custActions = [{
     id: 'advanced_add',
-    name: T('Advanced Replication Creation'),
+    name: this.translate.instant('Advanced Replication Creation'),
     function: () => {
       this.modalService.closeSlideIn();
       const message = { action: 'open', component: 'replicationForm', row: this.pk };
@@ -114,10 +114,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.source_datasets_from_placeholder,
               tooltip: helptext.source_datasets_from_tooltip,
               options: [{
-                label: T('On this System'),
+                label: this.translate.instant('On this System'),
                 value: DatasetSource.Local,
               }, {
-                label: T('On a Different System'),
+                label: this.translate.instant('On a Different System'),
                 value: DatasetSource.Remote,
               }],
               required: true,
@@ -146,7 +146,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.source_datasets_placeholder,
               tooltip: helptext.source_datasets_tooltip,
               initial: '',
-              explorerType: 'directory',
+              explorerType: ExplorerType.Directory,
               multiple: true,
               customTemplateStringOptions: {
                 displayField: 'Path',
@@ -268,10 +268,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.target_dataset_from_placeholder,
               tooltip: helptext.target_dataset_from_tooltip,
               options: [{
-                label: T('On this System'),
+                label: this.translate.instant('On this System'),
                 value: DatasetSource.Local,
               }, {
-                label: T('On a Different System'),
+                label: this.translate.instant('On a Different System'),
                 value: DatasetSource.Remote,
               }],
               required: true,
@@ -300,7 +300,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.target_dataset_placeholder,
               tooltip: helptext.target_dataset_tooltip,
               initial: '',
-              explorerType: 'directory',
+              explorerType: ExplorerType.Directory,
               customTemplateStringOptions: {
                 displayField: 'Path',
                 isExpandedField: 'expanded',
@@ -348,10 +348,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               placeholder: helptext.encryption_key_format_placeholder,
               tooltip: helptext.encryption_key_format_tooltip,
               options: [{
-                label: T('HEX'),
+                label: this.translate.instant('HEX'),
                 value: ReplicationEncryptionKeyFormat.Hex,
               }, {
-                label: T('PASSPHRASE'),
+                label: this.translate.instant('PASSPHRASE'),
                 value: ReplicationEncryptionKeyFormat.Passphrase,
               }],
               relation: [{
@@ -465,11 +465,11 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               tooltip: helptext.transport_tooltip,
               options: [
                 {
-                  label: T('Encryption (more secure, but slower)'),
+                  label: this.translate.instant('Encryption (more secure, but slower)'),
                   value: TransportMode.SSH,
                 },
                 {
-                  label: T('No Encryption (less secure, but faster)'),
+                  label: this.translate.instant('No Encryption (less secure, but faster)'),
                   value: TransportMode.Netcat,
                 },
               ],
@@ -508,10 +508,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           placeholder: helptext.schedule_method_placeholder,
           tooltip: helptext.schedule_method_tooltip,
           options: [{
-            label: T('Run On a Schedule'),
+            label: this.translate.instant('Run On a Schedule'),
             value: ScheduleMethod.Cron,
           }, {
-            label: T('Run Once'),
+            label: this.translate.instant('Run Once'),
             value: ScheduleMethod.Once,
           }],
           value: ScheduleMethod.Cron,
@@ -556,13 +556,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           placeholder: helptext.retention_policy_placeholder,
           tooltip: helptext.retention_policy_tooltip,
           options: [{
-            label: T('Same as Source'),
+            label: this.translate.instant('Same as Source'),
             value: RetentionPolicy.Source,
           }, {
-            label: T('Never Delete'),
+            label: this.translate.instant('Never Delete'),
             value: RetentionPolicy.None,
           }, {
-            label: T('Custom'),
+            label: this.translate.instant('Custom'),
             value: RetentionPolicy.Custom,
           }],
           value: RetentionPolicy.Source,
@@ -593,19 +593,19 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           name: 'lifetime_unit',
           tooltip: helptext.lifetime_unit_tooltip,
           options: [{
-            label: T('Hours'),
+            label: this.translate.instant('Hours'),
             value: LifetimeUnit.Hour,
           }, {
-            label: T('Days'),
+            label: this.translate.instant('Days'),
             value: LifetimeUnit.Day,
           }, {
-            label: T('Weeks'),
+            label: this.translate.instant('Weeks'),
             value: LifetimeUnit.Week,
           }, {
-            label: T('Months'),
+            label: this.translate.instant('Months'),
             value: LifetimeUnit.Month,
           }, {
-            label: T('Years'),
+            label: this.translate.instant('Years'),
             value: LifetimeUnit.Year,
           }],
           value: LifetimeUnit.Week,
@@ -642,10 +642,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       tooltip: sshConnectionsHelptex.setup_method_tooltip,
       options: [
         {
-          label: T('Manual'),
+          label: this.translate.instant('Manual'),
           value: 'manual',
         }, {
-          label: T('Semi-automatic (TrueNAS CORE only)'),
+          label: this.translate.instant('Semi-automatic (TrueNAS CORE only)'),
           value: 'semiautomatic',
         },
       ],
@@ -725,7 +725,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       tooltip: sshConnectionsHelptex.private_key_tooltip,
       options: [
         {
-          label: T('Generate New'),
+          label: this.translate.instant('Generate New'),
           value: 'NEW',
         },
       ],
@@ -742,13 +742,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       tooltip: helptext.cipher_tooltip,
       options: [
         {
-          label: T('Standard (Secure)'),
+          label: this.translate.instant('Standard (Secure)'),
           value: CipherType.Standard,
         }, {
-          label: T('Fast (Less secure)'),
+          label: this.translate.instant('Fast (Less secure)'),
           value: CipherType.Fast,
         }, {
-          label: T('Disabled (Not encrypted)'),
+          label: this.translate.instant('Disabled (Not encrypted)'),
           value: CipherType.Disabled,
         },
       ],
@@ -826,7 +826,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
+    const existReplicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
     this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
       (res: ReplicationTask[]) => {
         for (const task of res) {
@@ -836,7 +836,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy')
               : 'never ran')
             + ')';
-            exist_replicationField.options.push({ label, value: task });
+            existReplicationField.options.push({ label, value: task });
             if (this.pk === task.id) {
               this.loadOrClearReplicationTask(task);
             }
@@ -846,7 +846,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     );
 
     const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' }) as FormSelectConfig;
-    this.keychainCredentialService.getSSHKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
+    this.keychainCredentialService.getSshKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
       const keypairOptions = keyPairs.map((keypair) => ({
         label: keypair.name,
         value: String(keypair.id),
@@ -854,15 +854,15 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       privateKeyField.options = privateKeyField.options.concat(keypairOptions);
     });
 
-    const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
-    const ssh_credentials_target_field = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
-    this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
+    const sshCredentialsSourceField = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+    const sshCredentialsTargetField = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
+    this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
       connections.forEach((connection) => {
-        ssh_credentials_source_field.options.push({ label: connection.name, value: connection.id });
-        ssh_credentials_target_field.options.push({ label: connection.name, value: connection.id });
+        sshCredentialsSourceField.options.push({ label: connection.name, value: connection.id });
+        sshCredentialsTargetField.options.push({ label: connection.name, value: connection.id });
       });
-      ssh_credentials_source_field.options.push({ label: T('Create New'), value: 'NEW' });
-      ssh_credentials_target_field.options.push({ label: T('Create New'), value: 'NEW' });
+      sshCredentialsSourceField.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
+      sshCredentialsTargetField.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
     });
 
     this.entityWizard.formArray.get([0]).get('exist_replication').valueChanges.pipe(untilDestroyed(this)).subscribe((value: ReplicationTask) => {
@@ -912,7 +912,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         .pipe(untilDestroyed(this))
         .subscribe((value: string) => {
           if (value === 'NEW' && this.entityWizard.formArray.get([0]).get(datasetFrom).value === DatasetSource.Remote) {
-            this.createSSHConnection(credentialName);
+            this.createSshConnection(credentialName);
             this.setDisable(datasetName, false, false, 0);
           } else {
             const fieldConfig = i === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
@@ -1028,7 +1028,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             failedToLoadChildren: true,
           });
           const sourceDatasetsFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'source_datasets' });
-          sourceDatasetsFieldConfig.warnings = T('Failed to load datasets');
+          sourceDatasetsFieldConfig.warnings = this.translate.instant('Failed to load datasets');
         },
       );
     });
@@ -1072,7 +1072,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             failedToLoadChildren: true,
           });
           const targetDatasetFieldConfig = _.find(this.wizardConfig[0].fieldConfig, { name: 'target_dataset' });
-          targetDatasetFieldConfig.warnings = T('Failed to load datasets');
+          targetDatasetFieldConfig.warnings = this.translate.instant('Failed to load datasets');
         },
       );
     });
@@ -1329,9 +1329,10 @@ export class ReplicationWizardComponent implements WizardConfiguration {
           }
           return this.ws.call((this.createCalls as any)[item], [payload]).toPromise();
         },
-        () =>
-        // show error ?
-          this.ws.call((this.createCalls as any)[item], [payload]).toPromise(),
+        () => {
+          // show error ?
+          this.ws.call((this.createCalls as any)[item], [payload]).toPromise();
+        },
       );
     }
   }
@@ -1366,7 +1367,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               }
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
               toStop = true;
               this.rollBack(createdItems);
             },
@@ -1379,7 +1380,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       await this.ws.call('replication.run', [createdItems['replication']]).toPromise().then(
         () => {
           this.dialogService.info(
-            T('Task started'),
+            this.translate.instant('Task started'),
             this.translate.instant('Replication <i>{name}</i> has started.', { name: value['name'] }),
             '500px',
             'info',
@@ -1406,24 +1407,24 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
-  createSSHConnection(activedField: string): void {
+  createSshConnection(activatedField: string): void {
     const conf: DialogFormConfiguration = {
-      title: T('Create SSH Connection'),
+      title: this.translate.instant('Create SSH Connection'),
       fieldConfig: this.dialogFieldConfig,
-      saveButtonText: T('Create SSH Connection'),
+      saveButtonText: this.translate.instant('Create SSH Connection'),
       customSubmit: async (entityDialog: EntityDialogComponent) => {
         const value = entityDialog.formValue;
         let prerequisite = true;
         this.entityWizard.loader.open();
 
         if (value['private_key'] == 'NEW') {
-          await this.replicationService.genSSHKeypair().then(
+          await this.replicationService.genSshKeypair().then(
             (keyPair) => {
               value['sshkeypair'] = keyPair;
             },
             (err) => {
               prerequisite = false;
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         }
@@ -1434,7 +1435,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             },
             (err) => {
               prerequisite = false;
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         }
@@ -1459,17 +1460,17 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   privateKeyField.options.push({ label: res.name + ' (New Created)', value: res.id });
                 }
                 if (item === 'ssh_credentials') {
-                  const ssh_credentials_source_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
-                  const ssh_credentials_target_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
-                  ssh_credentials_source_field.options.push({ label: res.name + ' (New Created)', value: res.id });
-                  ssh_credentials_target_field.options.push({ label: res.name + ' (New Created)', value: res.id });
-                  this.entityWizard.formArray.get([0]).get([activedField]).setValue(res.id);
+                  const sshCredentialsSourceField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+                  const sshCredentialsTargetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
+                  sshCredentialsSourceField.options.push({ label: res.name + ' (New Created)', value: res.id });
+                  sshCredentialsTargetField.options.push({ label: res.name + ' (New Created)', value: res.id });
+                  this.entityWizard.formArray.get([0]).get([activatedField]).setValue(res.id);
                 }
               },
               (err) => {
                 hasError = true;
                 this.rollBack(createdItems);
-                new EntityUtils().handleWSError(this, err, this.dialogService, this.dialogFieldConfig);
+                new EntityUtils().handleWsError(this, err, this.dialogService, this.dialogFieldConfig);
               },
             );
           }
@@ -1550,7 +1551,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         (err) => {
           this.eligibleSnapshots = 0;
           this.snapshotsCountField.paraText = '';
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWsError(this, err);
         },
       );
     } else {

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/services/components/service-openvpn';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { OpenvpnServerConfig, OpenvpnServerConfigUpdate } from 'app/interfaces/openvpn-server-config.interface';
@@ -172,7 +172,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
       name: helptext.server.buttons.download,
       function: () => {
         const conf: DialogFormConfiguration = {
-          title: T('Select Client Certificate'),
+          title: this.translate.instant('Select Client Certificate'),
           fieldConfig: [
             {
               type: 'select',
@@ -181,7 +181,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
               options: this.certOptions,
             },
           ],
-          saveButtonText: T('Save'),
+          saveButtonText: this.translate.instant('Save'),
           customSubmit: (entityDialog: EntityDialogComponent) => {
             this.ws.call('interface.websocket_local_ip').pipe(untilDestroyed(this)).subscribe((localip) => {
               const value = entityDialog.formValue;
@@ -211,6 +211,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
     protected loader: AppLoaderService,
     protected ws: WebSocketService,
     protected storageService: StorageService,
+    protected translate: TranslateService,
   ) { }
 
   resourceTransformIncomingRestData(data: OpenvpnServerConfig): OpenvpnServerConfig {
@@ -221,14 +222,14 @@ export class OpenvpnServerComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     entityEdit.submitFunction = (body: OpenvpnServerConfigUpdate) => {
-      return this.services.updateOpenVPN('openvpn.server.update', body);
+      return this.services.updateOpenVpn('openvpn.server.update', body);
     };
 
     this.services.getClientInfo().pipe(untilDestroyed(this)).subscribe((res) => {
       this.certID = res.client_certificate;
     });
 
-    this.services.getOpenVPNServerAuthAlgorithmChoices().pipe(untilDestroyed(this)).subscribe((res) => {
+    this.services.getOpenVpnServerAuthAlgorithmChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       const config = this.fieldConfig.find((c) => c.name === 'authentication_algorithm') as FormSelectConfig;
       for (const item in res) {
         config.options.push(
@@ -251,7 +252,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
       });
       this.certOptions = config.options;
     });
-    this.services.getCAs().pipe(untilDestroyed(this)).subscribe((authorities) => {
+    this.services.getCertificateAuthorities().pipe(untilDestroyed(this)).subscribe((authorities) => {
       const config = this.fieldConfig.find((c) => c.name === 'root_ca') as FormSelectConfig;
       authorities.forEach((item) => {
         config.options.push({ label: item.name, value: item.id });

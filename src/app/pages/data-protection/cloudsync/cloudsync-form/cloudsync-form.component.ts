@@ -1,15 +1,16 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router, ActivatedRoute } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { ActivatedRoute, Router } from '@angular/router';
+import { TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TreeNode } from 'angular-tree-component';
+import { TranslateService } from '@ngx-translate/core';
 import * as filesize from 'filesize';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
 import { filter, take, tap } from 'rxjs/operators';
 import { Direction } from 'app/enums/direction.enum';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
@@ -22,14 +23,18 @@ import { Schedule } from 'app/interfaces/schedule.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
-  FieldConfig, FormExplorerConfig, FormInputConfig, FormParagraphConfig, FormSelectConfig,
+  FieldConfig,
+  FormExplorerConfig,
+  FormInputConfig,
+  FormParagraphConfig,
+  FormSelectConfig,
 } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
 import {
-  WebSocketService, DialogService, CloudCredentialService, AppLoaderService, JobService,
+  AppLoaderService, CloudCredentialService, DialogService, JobService, WebSocketService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -67,8 +72,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.direction_placeholder,
           tooltip: helptext.direction_tooltip,
           options: [
-            { label: T('PUSH'), value: Direction.Push },
-            { label: T('PULL'), value: Direction.Pull },
+            { label: this.translate.instant('PUSH'), value: Direction.Push },
+            { label: this.translate.instant('PULL'), value: Direction.Pull },
           ],
           value: Direction.Pull,
           required: true,
@@ -79,9 +84,9 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.transfer_mode_placeholder,
           tooltip: helptext.transfer_mode_warning_sync + ' ' + helptext.transfer_mode_warning_copy + ' ' + helptext.transfer_mode_warning_move,
           options: [
-            { label: T('SYNC'), value: TransferMode.Sync },
-            { label: T('COPY'), value: TransferMode.Copy },
-            { label: T('MOVE'), value: TransferMode.Move },
+            { label: this.translate.instant('SYNC'), value: TransferMode.Sync },
+            { label: this.translate.instant('COPY'), value: TransferMode.Copy },
+            { label: this.translate.instant('MOVE'), value: TransferMode.Move },
           ],
           value: TransferMode.Copy,
           required: true,
@@ -97,7 +102,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         {
           type: 'explorer',
           initial: '/mnt',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           tristate: false,
           name: 'path_destination',
           placeholder: helptext.path_placeholder,
@@ -109,7 +114,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         {
           type: 'explorer',
           initial: '/mnt',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           name: 'path_source',
           placeholder: helptext.path_placeholder,
           value: '/mnt',
@@ -170,7 +175,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           initial: '/',
           value: '/',
           tristate: false,
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           customTemplateStringOptions: {
             displayField: 'Path',
             isExpandedField: 'expanded',
@@ -192,7 +197,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           tooltip: helptext.folder_tooltip,
           initial: '/',
           value: '/',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           customTemplateStringOptions: {
             displayField: 'Path',
             isExpandedField: 'expanded',
@@ -446,7 +451,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
           this.matDialog.closeAll();
-          new EntityUtils().handleWSError(this.entityForm, err);
+          new EntityUtils().handleWsError(this.entityForm, err);
         });
       },
     },
@@ -460,7 +465,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
     protected ws: WebSocketService,
     protected cloudcredentialService: CloudCredentialService,
     protected job: JobService,
-    protected modalService: ModalService) {
+    protected modalService: ModalService,
+    protected translate: TranslateService) {
     this.cloudcredentialService.getProviders().pipe(untilDestroyed(this)).subscribe((providers) => {
       this.providers = providers;
     });
@@ -539,7 +545,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         if (err.extra && err.extra[0] && err.extra[0][0].split('.').pop() == 'bucket') {
           this.setBucketError(err.extra[0][1]);
         } else {
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         }
         node.collapse();
         return [];
@@ -645,26 +651,26 @@ export class CloudsyncFormComponent implements FormConfiguration {
       });
       const allMatch = parentDirectories.every((v: string) => v === parentDirectories[0]);
 
-      const folder_source_field = this.fieldSets.config('folder_source');
-      const folder_source_fc = this.formGroup.get('folder_source');
-      let prevErrors = folder_source_fc.errors;
+      const folderSourceConfig = this.fieldSets.config('folder_source');
+      const folderSourceControl = this.formGroup.get('folder_source');
+      let prevErrors = folderSourceControl.errors;
       if (prevErrors === null) {
         prevErrors = {};
       }
       if (!allMatch) {
-        folder_source_fc.setErrors({
+        folderSourceControl.setErrors({
           ...prevErrors,
           misMatchDirectories: true,
         });
-        folder_source_field.warnings = T('All selected directories must be at the same level i.e., must have the same parent directory.');
+        folderSourceConfig.warnings = this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.');
       } else {
         delete prevErrors.misMatchDirectories;
         if (Object.keys(prevErrors).length) {
-          folder_source_fc.setErrors({ ...prevErrors });
+          folderSourceControl.setErrors({ ...prevErrors });
         } else {
-          folder_source_fc.setErrors(null);
+          folderSourceControl.setErrors(null);
         }
-        folder_source_field.warnings = null;
+        folderSourceConfig.warnings = null;
       }
     });
 
@@ -687,26 +693,26 @@ export class CloudsyncFormComponent implements FormConfiguration {
       });
       const allMatch = parentDirectories.every((v: string) => v === parentDirectories[0]);
 
-      const path_source_field = this.fieldSets.config('path_source');
-      const path_source_fc = this.formGroup.get('path_source');
-      let prevErrors = path_source_fc.errors;
+      const pathSourceConfig = this.fieldSets.config('path_source');
+      const pathSourceControl = this.formGroup.get('path_source');
+      let prevErrors = pathSourceControl.errors;
       if (prevErrors === null) {
         prevErrors = {};
       }
       if (!allMatch) {
-        path_source_fc.setErrors({
+        pathSourceControl.setErrors({
           ...prevErrors,
           misMatchDirectories: true,
         });
-        path_source_field.warnings = T('All selected directories must be at the same level i.e., must have the same parent directory.');
+        pathSourceConfig.warnings = this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.');
       } else {
         delete prevErrors.misMatchDirectories;
         if (Object.keys(prevErrors).length) {
-          path_source_fc.setErrors({ ...prevErrors });
+          pathSourceControl.setErrors({ ...prevErrors });
         } else {
-          path_source_fc.setErrors(null);
+          pathSourceControl.setErrors(null);
         }
-        path_source_field.warnings = null;
+        pathSourceConfig.warnings = null;
       }
     });
 
@@ -753,15 +759,15 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
               // update bucket fields name and tooltips based on provider
               if (item.provider == 'AZUREBLOB' || item.provider == 'HUBIC') {
-                this.bucket_field.placeholder = T('Container');
-                this.bucket_field.tooltip = T('Select the pre-defined container to use.');
-                this.bucket_input_field.placeholder = T('Container');
-                this.bucket_input_field.tooltip = T('Input the pre-defined container to use.');
+                this.bucket_field.placeholder = this.translate.instant('Container');
+                this.bucket_field.tooltip = this.translate.instant('Select the pre-defined container to use.');
+                this.bucket_input_field.placeholder = this.translate.instant('Container');
+                this.bucket_input_field.tooltip = this.translate.instant('Input the pre-defined container to use.');
               } else {
-                this.bucket_field.placeholder = T('Bucket');
-                this.bucket_field.tooltip = T('Select the pre-defined S3 bucket to use.');
-                this.bucket_input_field.placeholder = T('Bucket');
-                this.bucket_input_field.tooltip = T('Input the pre-defined S3 bucket to use.');
+                this.bucket_field.placeholder = this.translate.instant('Bucket');
+                this.bucket_field.tooltip = this.translate.instant('Select the pre-defined S3 bucket to use.');
+                this.bucket_input_field.placeholder = this.translate.instant('Bucket');
+                this.bucket_input_field.tooltip = this.translate.instant('Input the pre-defined S3 bucket to use.');
               }
 
               this.getBuckets(item).pipe(untilDestroyed(this)).subscribe((res) => {
@@ -792,10 +798,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
                 this.setDisabled('bucket', true, true);
                 this.setDisabled('bucket_input', false, false);
                 this.dialog.confirm({
-                  title: err.extra ? err.extra.excerpt : (T('Error: ') + err.error),
+                  title: err.extra ? err.extra.excerpt : (this.translate.instant('Error: ') + err.error),
                   message: err.reason,
                   hideCheckBox: true,
-                  buttonMsg: T('Fix Credential'),
+                  buttonMsg: this.translate.instant('Fix Credential'),
                 }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
                   this.router.navigate(['/', 'system', 'cloudcredentials', 'edit', String(item.id)]);
                 });
@@ -805,10 +811,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
               this.setDisabled('bucket_input', true, true);
             }
 
-            const task_schema = _.find(this.providers, { name: item.provider }) ? _.find(this.providers, { name: item.provider })['task_schema'] : [];
+            const taskSchema = _.find(this.providers, { name: item.provider }) ? _.find(this.providers, { name: item.provider })['task_schema'] : [];
 
             for (const i of this.taskSchemas) {
-              const tobeDisable = !(_.findIndex(task_schema, { property: i }) > -1);
+              const tobeDisable = !(_.findIndex(taskSchema, { property: i }) > -1);
               this.setDisabled(i === 'encryption' ? 'task_encryption' : i, tobeDisable, tobeDisable);
             }
           }
@@ -906,13 +912,13 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     if (data.bwlimit) {
       transformed.bwlimit = data.bwlimit.map((bwlimit) => {
-        let sub_bwlimit = bwlimit.time + ',off';
+        let subBwLimit = bwlimit.time + ',off';
         if (bwlimit.bandwidth != null) {
           const bandwidth = filesize(bwlimit.bandwidth);
-          sub_bwlimit = `${bwlimit.time}, ${bandwidth}`;
+          subBwLimit = `${bwlimit.time}, ${bandwidth}`;
         }
 
-        return sub_bwlimit;
+        return subBwLimit;
       });
     }
 
@@ -1049,7 +1055,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         this.modalService.closeSlideIn();
       }, (err) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, err);
+        new EntityUtils().handleWsError(this, err);
       });
     } else {
       this.loader.open();
@@ -1060,7 +1066,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWsError(this, err);
         },
       );
     }

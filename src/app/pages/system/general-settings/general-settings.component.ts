@@ -3,11 +3,10 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
-import { helptext_system_general as helptext } from 'app/helptext/system/general';
-import { helptext_system_ntpservers as helptext_ntp } from 'app/helptext/system/ntp-servers';
+import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
+import { helptextSystemNtpservers as helptext_ntp } from 'app/helptext/system/ntp-servers';
 import { CoreEvent } from 'app/interfaces/events';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
@@ -25,9 +24,15 @@ import { LocalizationFormComponent } from 'app/pages/system/general-settings/loc
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import { SystemGeneralService, DialogService, StorageService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { GuiFormComponent } from './gui-form/gui-form.component';
+
+enum GeneralCardId {
+  Gui = 'gui',
+  Localization = 'localization',
+  Ntp = 'ntp',
+}
 
 @UntilDestroy()
 @Component({
@@ -35,10 +40,10 @@ import { GuiFormComponent } from './gui-form/gui-form.component';
   templateUrl: './general-settings.component.html',
 })
 export class GeneralSettingsComponent implements OnInit {
-  dataCards: DataCard[] = [];
+  dataCards: DataCard<GeneralCardId>[] = [];
   supportTitle = helptext.supportTitle;
-  localeData: DataCard;
-  ntpServersData: DataCard;
+  localeData: DataCard<GeneralCardId.Localization>;
+  ntpServersData: DataCard<GeneralCardId.Ntp>;
   configData: SystemGeneralConfig;
   subs: Subs;
   formEvent$: Subject<CoreEvent>;
@@ -114,10 +119,9 @@ export class GeneralSettingsComponent implements OnInit {
     private router: Router,
     public mdDialog: MatDialog,
     private core: CoreService,
-    private ixModalService: IxModalService,
+    private slideInService: IxSlideInService,
     private storage: StorageService,
     private http: HttpClient,
-    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
@@ -126,7 +130,7 @@ export class GeneralSettingsComponent implements OnInit {
       this.getDataCardData();
     });
 
-    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.ntpServersData?.tableConf?.tableComponent.getData();
     });
 
@@ -176,7 +180,7 @@ export class GeneralSettingsComponent implements OnInit {
       this.dataCards = [
         {
           title: helptext.guiTitle,
-          id: 'gui',
+          id: GeneralCardId.Gui,
           items: [
             { label: helptext.ui_certificate.label, value: res.ui_certificate.name },
             { label: helptext.ui_address.label, value: res.ui_address.join(', ') },
@@ -215,7 +219,7 @@ export class GeneralSettingsComponent implements OnInit {
           const dateTime = this.localeService.getDateAndTime(res.timezone);
           this.localeData = {
             title: helptext.localeTitle,
-            id: 'localization',
+            id: GeneralCardId.Localization,
             items: [
               { label: helptext.stg_language.placeholder, value: languages[res.language] },
               { label: helptext.date_format.placeholder, value: dateTime[0] },
@@ -236,7 +240,7 @@ export class GeneralSettingsComponent implements OnInit {
       });
 
       this.ntpServersData = {
-        id: 'ntp',
+        id: GeneralCardId.Ntp,
         title: helptext.ntpTitle,
         tableConf: {
           title: helptext.ntpTitle,
@@ -256,10 +260,10 @@ export class GeneralSettingsComponent implements OnInit {
             { name: helptext_ntp.maxpoll.label, prop: 'maxpoll', width: '60px' },
           ],
           add: () => {
-            this.ixModalService.open(NtpServerFormComponent, this.translate.instant('Add NTP Server'));
+            this.slideInService.open(NtpServerFormComponent);
           },
           edit: (server: NtpServer) => {
-            const modal = this.ixModalService.open(NtpServerFormComponent, this.translate.instant('Edit NTP Server'));
+            const modal = this.slideInService.open(NtpServerFormComponent);
             modal.setupForm(server);
           },
         },
@@ -267,13 +271,13 @@ export class GeneralSettingsComponent implements OnInit {
     });
   }
 
-  doAdd(name: string): void {
+  doAdd(name: GeneralCardId): void {
     switch (name) {
-      case 'gui':
-        this.ixModalService.open(GuiFormComponent, this.translate.instant('GUI'));
+      case GeneralCardId.Gui:
+        this.slideInService.open(GuiFormComponent);
         break;
       default:
-        const localizationFormModal = this.ixModalService.open(LocalizationFormComponent, this.translate.instant('Localization Settings'));
+        const localizationFormModal = this.slideInService.open(LocalizationFormComponent);
         localizationFormModal.setupForm(this.localizationSettings);
         break;
     }
@@ -319,14 +323,14 @@ export class GeneralSettingsComponent implements OnInit {
           (err: WebsocketError) => {
             entityDialog.loader.close();
             entityDialog.dialogRef.close();
-            new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+            new EntityUtils().handleWsError(entityDialog, err, this.dialog);
           },
         );
     },
     (err: WebsocketError) => {
       entityDialog.loader.close();
       entityDialog.dialogRef.close();
-      new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+      new EntityUtils().handleWsError(entityDialog, err, this.dialog);
     });
   }
 

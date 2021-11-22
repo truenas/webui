@@ -2,13 +2,14 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/network/static-routes/static-routes';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
 import { ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -21,7 +22,9 @@ export class StaticRouteFormComponent {
   get isNew(): boolean {
     return !this.editingRoute;
   }
-
+  get title(): string {
+    return this.isNew ? this.translate.instant('Add Static Route') : this.translate.instant('Edit Static Route');
+  }
   isFormLoading = false;
 
   form = this.fb.group({
@@ -39,9 +42,10 @@ export class StaticRouteFormComponent {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
+    private translate: TranslateService,
   ) {}
 
   setEditingStaticRoute(route: StaticRoute): void {
@@ -65,7 +69,8 @@ export class StaticRouteFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
-      this.modalService.close();
+      this.cdr.markForCheck();
+      this.slideInService.close();
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);

@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -17,8 +16,8 @@ export class PasswordDialogComponent {
   title: string = globalHelptext.rootpw.dialog_title;
   message: string;
   placeholder = globalHelptext.rootpw.placeholder;
-  buttonMsg: string = T('Continue');
-  cancelMsg: string = T('Cancel');
+  buttonMsg: string = this.translate.instant('Continue');
+  cancelMsg: string = this.translate.instant('Cancel');
   hideCheckBox = false;
   method: string;
   data: string;
@@ -36,7 +35,7 @@ export class PasswordDialogComponent {
   ) {}
 
   submit(): void {
-    this.sysGeneralService.checkRootPW(this.password).pipe(untilDestroyed(this)).subscribe(
+    this.sysGeneralService.checkRootPassword(this.password).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (res) {
           this.dialogRef.close(true);
@@ -45,12 +44,12 @@ export class PasswordDialogComponent {
         }
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err);
+        new EntityUtils().handleWsError(this, err);
       },
     );
   }
 
-  togglePW(): void {
+  togglePassword(): void {
     this.inputType = this.inputType === 'password' ? '' : 'password';
     this.showPassword = !this.showPassword;
   }

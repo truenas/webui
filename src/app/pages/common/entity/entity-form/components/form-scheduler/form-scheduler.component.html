@@ -39,7 +39,7 @@
                 <mat-icon aria-label="Previous Month">keyboard_arrow_left</mat-icon>
               </button>
               <button mat-icon-button (click)="setCalendar('next')">
-                <mat-icon aria-label="Next Month" >keyboard_arrow_right</mat-icon>
+                <mat-icon aria-label="Next Month">keyboard_arrow_right</mat-icon>
               </button>
             </div>
           </h4>
@@ -60,7 +60,7 @@
 
         <div class="cron-fields">
 
-          <section style="text-align:left;">
+          <section class="text-left">
             <h4 class="preview-label">{{"Presets" | translate}}</h4>
             <div class="form-element">
               <mat-form-field class="cron-presets">
@@ -74,7 +74,7 @@
           </section>
           <mat-divider></mat-divider>
 
-          <section style="text-align:left;" class="m-h-d">
+          <section class="m-h-d text-left">
             <div class="preview-label">
               <h4 class="preview-label"><span *ngIf="!config.noMinutes">
                   Minutes/</span>Hours/Days
@@ -131,12 +131,12 @@
                 </tr>
                 <tr>
                   <!--<td><mat-checkbox class="month"></mat-checkbox></td>-->
-                  <td><mat-checkbox color="primary" [(ngModel)]="jan" [ngModelOptions]="{standalone: true}" [value]="jan" class="month"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="feb" [ngModelOptions]="{standalone: true}" [value]="feb" class="month"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="mar" [ngModelOptions]="{standalone: true}" [value]="mar" class="month"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="apr" [ngModelOptions]="{standalone: true}" [value]="apr" class="month"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="may" [ngModelOptions]="{standalone: true}" [value]="may" class="month"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="jun" [ngModelOptions]="{standalone: true}" [value]="jun" class="month"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="jan" [ngModelOptions]="{standalone: true}" class="month"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="feb" [ngModelOptions]="{standalone: true}" class="month"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="mar" [ngModelOptions]="{standalone: true}" class="month"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="apr" [ngModelOptions]="{standalone: true}" class="month"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="may" [ngModelOptions]="{standalone: true}" class="month"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="jun" [ngModelOptions]="{standalone: true}" class="month"></mat-checkbox></td>
                 </tr>
               </tbody>
             </table>
@@ -153,12 +153,12 @@
                 </tr>
                 <tr>
                   <!--<td><mat-checkbox class="month"></mat-checkbox></td>-->
-                  <td><mat-checkbox color="primary" [(ngModel)]="jul" [ngModelOptions]="{standalone: true}" [value]="jul" class="month"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="aug" [ngModelOptions]="{standalone: true}" [value]="aug" class="month"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="sep" [ngModelOptions]="{standalone: true}" [value]="sep" class="month"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="oct" [ngModelOptions]="{standalone: true}" [value]="oct" class="month"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="nov" [ngModelOptions]="{standalone: true}" [value]="nov" class="month"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="dec" [ngModelOptions]="{standalone: true}" [value]="dec" class="month"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="jul" [ngModelOptions]="{standalone: true}" class="month"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="aug" [ngModelOptions]="{standalone: true}" class="month"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="sep" [ngModelOptions]="{standalone: true}" class="month"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="oct" [ngModelOptions]="{standalone: true}" class="month"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="nov" [ngModelOptions]="{standalone: true}" class="month"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="dec" [ngModelOptions]="{standalone: true}" class="month"></mat-checkbox></td>
                 </tr>
               </tbody>
             </table>
@@ -182,14 +182,13 @@
                   <td>{{"Sat" | translate}}</td>
                 </tr>
                 <tr>
-                  <!--<td><mat-checkbox class="weekday"></mat-checkbox></td>-->
-                  <td><mat-checkbox color="primary" [(ngModel)]="sun" [ngModelOptions]="{standalone: true}" [value]="sun" class="weekday"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="mon" [ngModelOptions]="{standalone: true}" [value]="mon" class="weekday"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="tue" [ngModelOptions]="{standalone: true}" [value]="tue" class="weekday"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="wed" [ngModelOptions]="{standalone: true}" [value]="wed" class="weekday"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="thu" [ngModelOptions]="{standalone: true}" [value]="thu" class="weekday"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="fri" [ngModelOptions]="{standalone: true}" [value]="fri" class="weekday"></mat-checkbox></td>
-                  <td><mat-checkbox color="primary" [(ngModel)]="sat" [ngModelOptions]="{standalone: true}" [value]="sat" class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="sun" [ngModelOptions]="{standalone: true}" class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="mon" [ngModelOptions]="{standalone: true}" class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="tue" [ngModelOptions]="{standalone: true}" class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="wed" [ngModelOptions]="{standalone: true}" class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="thu" [ngModelOptions]="{standalone: true}" class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="fri" [ngModelOptions]="{standalone: true}" class="weekday"></mat-checkbox></td>
+                  <td><mat-checkbox color="primary" [(ngModel)]="sat" [ngModelOptions]="{standalone: true}" class="weekday"></mat-checkbox></td>
                 </tr>
               </tbody>
             </table>
@@ -197,7 +196,7 @@
 
           <mat-divider></mat-divider>
 
-          <button mat-button color="primary" (click)="onPopupSave()" [disabled]="validPopup()" style="margin:9px;">{{"Done" | translate}}</button>
+          <button class="save-button" mat-button color="primary" (click)="onPopupSave()" [disabled]="validPopup()">{{"Done" | translate}}</button>
         </div>
       </mat-card>
     </ng-template>

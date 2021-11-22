@@ -6,7 +6,6 @@ import {
   DomSanitizer, SafeStyle,
 } from '@angular/platform-browser';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
@@ -47,8 +46,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   isReady = false;
-  title: string = T('Memory');
-  subtitle: string = T('% of all cores');
+  title: string = this.translate.instant('Memory');
+  subtitle: string = this.translate.instant('% of all cores');
   widgetColorCssVar = 'var(--accent)';
   configurable = false;
   chartId = UUID.UUID();
@@ -59,7 +58,7 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
   legendColors: string[];
   private legendIndex: number;
-  labels: string[] = [T('Free'), T('ZFS Cache'), T('Services')];
+  labels: string[] = [this.translate.instant('Free'), this.translate.instant('ZFS Cache'), this.translate.instant('Services')];
 
   screenType = 'Desktop';
 
@@ -220,10 +219,10 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       const bgColor = this.colorPattern[index];
       const bgColorType = this.utils.getValueType(bgColor);
 
-      const bgRGB = bgColorType == 'hex' ? this.utils.hexToRGB(bgColor).rgb : this.utils.rgbToArray(bgColor);
+      const bgRgb = bgColorType == 'hex' ? this.utils.hexToRgb(bgColor).rgb : this.utils.rgbToArray(bgColor);
 
-      (ds.backgroundColor as ChartColor[]).push(this.rgbToString(bgRGB, 0.85));
-      (ds.borderColor as ChartColor[]).push(this.rgbToString(bgRGB));
+      (ds.backgroundColor as ChartColor[]).push(this.rgbToString(bgRgb, 0.85));
+      (ds.borderColor as ChartColor[]).push(this.rgbToString(bgRgb));
     });
 
     datasets.push(ds);

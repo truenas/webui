@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { Direction } from 'app/enums/direction.enum';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import helptext from 'app/helptext/data-protection/resync/resync-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -44,7 +45,7 @@ export class RsyncFormComponent implements FormConfiguration {
           type: 'explorer',
           initial: '/mnt',
           name: 'path',
-          explorerType: 'file',
+          explorerType: ExplorerType.File,
           placeholder: helptext.rsync_path_placeholder,
           tooltip: helptext.rsync_path_tooltip,
           required: true,
@@ -68,8 +69,8 @@ export class RsyncFormComponent implements FormConfiguration {
           placeholder: helptext.rsync_direction_placeholder,
           tooltip: helptext.rsync_direction_tooltip,
           options: [
-            { label: T('Push'), value: Direction.Push },
-            { label: T('Pull'), value: Direction.Pull },
+            { label: this.translate.instant('Push'), value: Direction.Push },
+            { label: this.translate.instant('Pull'), value: Direction.Pull },
           ],
           required: true,
           validation: helptext.rsync_direction_validation,
@@ -128,7 +129,7 @@ export class RsyncFormComponent implements FormConfiguration {
           type: 'explorer',
           initial: '/mnt',
           name: 'remotepath',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           placeholder: helptext.rsync_remotepath_placeholder,
           tooltip: helptext.rsync_remotepath_tooltip,
         },
@@ -248,6 +249,7 @@ export class RsyncFormComponent implements FormConfiguration {
     protected taskService: TaskService,
     protected userService: UserService,
     protected modalService: ModalService,
+    protected translate: TranslateService,
   ) {}
 
   afterInit(entityForm: EntityFormComponent): void {
@@ -256,7 +258,7 @@ export class RsyncFormComponent implements FormConfiguration {
     this.title = entityForm.isNew ? helptext.rsync_task_add : helptext.rsync_task_edit;
 
     this.user_field = this.fieldSets.config('user') as FormComboboxConfig;
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((items) => {
       items.forEach((user) => {
         this.user_field.options.push({
           label: user.username,
@@ -291,7 +293,7 @@ export class RsyncFormComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       this.user_field.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });
@@ -299,19 +301,19 @@ export class RsyncFormComponent implements FormConfiguration {
   }
 
   hideFields(mode: RsyncMode): void {
-    let hide_fields;
-    let show_fields;
+    let hideFields;
+    let showFields;
     if (mode === RsyncMode.Ssh) {
-      hide_fields = this.rsync_module_field;
-      show_fields = this.rsync_ssh_field;
+      hideFields = this.rsync_module_field;
+      showFields = this.rsync_ssh_field;
     } else {
-      hide_fields = this.rsync_ssh_field;
-      show_fields = this.rsync_module_field;
+      hideFields = this.rsync_ssh_field;
+      showFields = this.rsync_module_field;
     }
-    hide_fields.forEach((field) => {
+    hideFields.forEach((field) => {
       this.entityForm.setDisabled(field, true, true);
     });
-    show_fields.forEach((field) => {
+    showFields.forEach((field) => {
       this.entityForm.setDisabled(field, false, false);
     });
   }

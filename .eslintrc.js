@@ -41,6 +41,7 @@ module.exports = {
         "no-return-assign": "off",
         "no-empty": ["error", { "allowEmptyCatch": true }],
         "arrow-body-style": "off",
+        "no-bitwise": "off",
         "max-len": ["error", 120, 2, {
           "ignoreUrls": true,
           "ignoreComments": false,
@@ -77,20 +78,26 @@ module.exports = {
         '@typescript-eslint/naming-convention': [
           'error',
           {
-            selector: 'typeLike',
-            format: ['PascalCase'],
-          },
-          {
-            selector: 'enumMember',
+            selector: ['typeLike', 'enumMember'],
             format: ['PascalCase'],
           },
           {
             selector: 'function',
-            format: ['camelCase'],
+            format: ['strictCamelCase'],
           },
           {
             selector: ['classMethod', 'objectLiteralMethod', 'typeMethod'],
-            format: ['camelCase'],
+            format: ['strictCamelCase'],
+          },
+          {
+            selector: ['variable', 'parameter'],
+            modifiers: ['unused'],
+            format: ['strictCamelCase'],
+            leadingUnderscore: 'allow',
+          },
+          {
+            selector: ['variable', 'parameter'],
+            format: ['strictCamelCase']
           },
         ],
 
@@ -105,21 +112,17 @@ module.exports = {
         "radix": "off",
         "@typescript-eslint/no-loop-func": "off",
         "no-await-in-loop": "off",
-        "implicit-arrow-linebreak": "off",
         "@typescript-eslint/no-shadow": "off",
         "no-case-declarations": "off",
         "no-multi-str": "off",
-        "max-classes-per-file": "off",
         "@typescript-eslint/no-use-before-define": "off",
         "no-useless-escape": "off",
         "no-cond-assign": "off",
         "no-mixed-operators": "off",
         "default-case": "off",
         "no-prototype-builtins": "off",
-        "prefer-promise-reject-errors": "off",
         "import/no-cycle": "off",
         "no-async-promise-executor": "off",
-        "no-bitwise": "off",
         "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
         "@typescript-eslint/no-explicit-any": "off",
@@ -135,7 +138,7 @@ module.exports = {
         "@typescript-eslint/no-misused-promises": "off",
 
         // Other temporary disables
-        "@typescript-eslint/dot-notation": "off",
+        "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
 
         // Other overwrites
         "@typescript-eslint/lines-between-class-members": "off",

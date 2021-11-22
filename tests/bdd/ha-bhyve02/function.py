@@ -99,12 +99,13 @@ def ssh_cmd(command, username, password, host):
         f"{username}@{host}",
         command
     ]
-    process = run(cmd, stdout=PIPE, universal_newlines=True)
+    process = run(cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True)
     output = process.stdout
+    stderr = process.stderr
     if process.returncode != 0:
-        return {'result': False, 'output': output}
+        return {'result': False, 'output': output, 'stderr': stderr}
     else:
-        return {'result': True, 'output': output}
+        return {'result': True, 'output': output, 'stderr': stderr}
 
 
 def start_ssh_agent():
@@ -157,12 +158,14 @@ def add_ssh_key(keyPath):
 
 
 def run_cmd(command):
-    process = run(command, shell=True, stdout=PIPE, universal_newlines=True)
+    process = run(command, shell=True, stdout=PIPE, stderr=PIPE,
+                  universal_newlines=True)
     output = process.stdout
+    stderr = process.stderr
     if process.returncode != 0:
-        return {'result': False, 'output': output}
+        return {'result': False, 'output': output, 'stderr': stderr}
     else:
-        return {'result': True, 'output': output}
+        return {'result': True, 'output': output, 'stderr': stderr}
 
 
 def get(url, api_path, auth):

@@ -3,7 +3,6 @@ import {
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -107,7 +106,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
   custActions = [
     {
       id: 'FetchDataStores',
-      name: T('Fetch DataStores'),
+      name: this.translate.instant('Fetch DataStores'),
       function: () => {
         this.datastore = _.find(this.fieldConfig, { name: 'datastore' }) as FormSelectConfig;
         this.datastore.type = 'select';
@@ -116,7 +115,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           this.entityForm.formGroup.controls['hostname'].value === undefined
           || this.entityForm.formGroup.controls['username'].value === undefined
           || this.entityForm.formGroup.controls['password'].value === undefined
-        ) { this.dialogService.info(T('VM Snapshot'), T('Enter valid VMware ESXI/vSphere credentials to fetch datastores.')); } else {
+        ) { this.dialogService.info(this.translate.instant('VM Snapshot'), this.translate.instant('Enter valid VMware ESXI/vSphere credentials to fetch datastores.')); } else {
           this.passwordBlur();
         }
       },
@@ -179,10 +178,10 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
       const firstObj = this.fileSystemList.find((item) => item.name === value.filesystem);
       const secondObj = this.dataListComplete.find((item) => item.name === value.datastore);
       if (secondObj.description === '') {
-        secondObj.description = T('(No description)');
+        secondObj.description = this.translate.instant('(No description)');
       }
       this.dialogService.confirm({
-        title: T('Are you sure?'),
+        title: this.translate.instant('Are you sure?'),
         message: this.translate.instant(
           'The filesystem {filesystemName} is {filesystemDescription}, but datastore {datastoreName} is {datastoreDescription}. Is this correct?',
           {
@@ -199,9 +198,9 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           this.loader.close();
           this.router.navigate(new Array('/').concat(this.route_success));
         },
-        (e_res) => {
+        (error) => {
           this.loader.close();
-          this.dialogService.errorReport(T('Error'), e_res);
+          this.dialogService.errorReport(this.translate.instant('Error'), error);
         });
       });
     } else {
@@ -210,9 +209,9 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },
-      (e_res) => {
+      (error) => {
         this.loader.close();
-        this.dialogService.errorReport(T('Error'), e_res);
+        this.dialogService.errorReport(this.translate.instant('Error'), error);
       });
     }
   }
@@ -251,11 +250,11 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
       if (payload['password'] !== '' && typeof (payload['password']) !== 'undefined') {
         this.loader.open();
         this.ws.call('vmware.match_datastores_with_datasets', [payload]).pipe(untilDestroyed(this)).subscribe((res) => {
-          res.filesystems.forEach((filesystem_item) => {
+          res.filesystems.forEach((vmFilesystem) => {
             const config = _.find(this.fieldConfig, { name: 'filesystem' }) as FormSelectConfig;
             config.options.push(
               {
-                label: filesystem_item.name, value: filesystem_item.name,
+                label: vmFilesystem.name, value: vmFilesystem.name,
               },
             );
           });
@@ -282,7 +281,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
           if (error.reason && error.reason.includes('[ETIMEDOUT]')) {
             this.dialogService.errorReport(helptext.connect_err_dialog.title, helptext.connect_err_dialog.msg, '');
           } else {
-            new EntityUtils().handleWSError(this, error, this.dialogService);
+            new EntityUtils().handleWsError(this, error, this.dialogService);
           }
         });
       }

@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
@@ -23,21 +22,21 @@ import { IscsiService } from 'app/services/iscsi.service';
 export class TargetListComponent implements EntityTableConfig, OnInit {
   @Input() fcEnabled: boolean;
 
-  title = T('Targets');
+  title = this.translate.instant('Targets');
   queryCall = 'iscsi.target.query' as const;
   wsDelete = 'iscsi.target.delete' as const;
   route_add: string[] = ['sharing', 'iscsi', 'target', 'add'];
-  route_add_tooltip = T('Add Target');
+  route_add_tooltip = this.translate.instant('Add Target');
   route_edit: string[] = ['sharing', 'iscsi', 'target', 'edit'];
 
   columns = [
     {
-      name: T('Target Name') as string,
+      name: this.translate.instant('Target Name') as string,
       prop: 'name',
       always_display: true,
     },
     {
-      name: T('Target Alias') as string,
+      name: this.translate.instant('Target Alias') as string,
       prop: 'alias',
     },
   ];
@@ -45,7 +44,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('Target'),
+      title: this.translate.instant('Target'),
       key_props: ['name'],
     },
   };
@@ -60,7 +59,7 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   ngOnInit(): void {
     if (this.fcEnabled) {
       this.columns.push({
-        name: T('Mode'),
+        name: this.translate.instant('Mode'),
         prop: 'mode',
       });
     }
@@ -86,13 +85,13 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
       id: row.name,
       icon: 'edit',
       name: 'edit',
-      label: T('Edit'),
+      label: this.translate.instant('Edit'),
       onClick: (rowinner: IscsiTarget) => { this.entityList.doEdit(rowinner.id); },
     }, {
       id: row.name,
       icon: 'delete',
       name: 'delete',
-      label: T('Delete'),
+      label: this.translate.instant('Delete'),
       onClick: (rowinner: IscsiTarget) => {
         let deleteMsg = this.entityList.getDeleteMessage(rowinner);
         this.iscsiService.getGlobalSessions().pipe(untilDestroyed(this)).subscribe(
@@ -109,16 +108,16 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
             deleteMsg = warningMsg + deleteMsg;
 
             this.entityList.dialogService.confirm({
-              title: T('Delete'),
+              title: this.translate.instant('Delete'),
               message: deleteMsg,
-              buttonMsg: T('Delete'),
+              buttonMsg: this.translate.instant('Delete'),
             }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
               this.entityList.loader.open();
               this.entityList.loaderOpen = true;
               this.entityList.ws.call(this.wsDelete, payload).pipe(untilDestroyed(this)).subscribe(
                 () => { this.entityList.getData(); },
                 (resinner: WebsocketError) => {
-                  new EntityUtils().handleWSError(this, resinner, this.entityList.dialogService);
+                  new EntityUtils().handleWsError(this, resinner, this.entityList.dialogService);
                   this.entityList.loader.close();
                 },
               );

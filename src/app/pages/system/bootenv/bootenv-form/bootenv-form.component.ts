@@ -1,16 +1,23 @@
 import {
-  ChangeDetectionStrategy, Component,
+  ChangeDetectionStrategy,
+  Component,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
-import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
+import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
+import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
+import {
+  BootenvTooltip,
+  CreateBootenvParams,
+  UpdateBootenvParams,
+} from 'app/interfaces/bootenv.interface';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { BootEnvService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -20,8 +27,10 @@ import { IxModalService } from 'app/services/ix-modal.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BootEnvironmentFormComponent {
-  private rename = false;
+  Operations = BootEnvironmentActions;
+  operation: BootEnvironmentActions = BootEnvironmentActions.Create;
   currentName?: string;
+  title: string;
 
   formGroup = this.formBuilder.group({
     name: ['', [Validators.required, regexValidator(this.bootEnvService.bootenv_name_regex)]],
@@ -29,8 +38,8 @@ export class BootEnvironmentFormComponent {
 
   isFormLoading = false;
 
-  readonly tooltips = {
-    name: helptext_system_bootenv.create_name_tooltip,
+  tooltips: BootenvTooltip = {
+    name: helptextSystemBootenv.create_name_tooltip,
   };
 
   constructor(
@@ -38,43 +47,102 @@ export class BootEnvironmentFormComponent {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private bootEnvService: BootEnvService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
+    private changeDetectorRef: ChangeDetectorRef,
   ) {}
 
-  setupForm(name?: string): void {
-    if (name) {
-      this.rename = true;
-      this.currentName = name;
-      this.formGroup.patchValue({
-        name,
-      });
+  setupForm(operation: BootEnvironmentActions, name?: string): void {
+    this.operation = operation;
+
+    switch (this.operation) {
+      case this.Operations.Rename:
+        this.title = this.translate.instant('Rename Boot Environment');
+        this.currentName = name;
+        this.formGroup.patchValue({
+          name,
+        });
+
+        this.tooltips = {
+          name: helptextSystemBootenv.create_name_tooltip,
+        };
+        break;
+      case this.Operations.Clone:
+        this.title = this.translate.instant('Clone Boot Environment');
+        this.currentName = name;
+
+        this.formGroup.addControl(
+          'source',
+          new FormControl({ value: this.currentName, disabled: true }, Validators.required),
+        );
+
+        this.tooltips = {
+          name: helptextSystemBootenv.clone_name_tooltip,
+          source: helptextSystemBootenv.clone_source_tooltip,
+        };
+        break;
+      default:
+        this.title = this.translate.instant('Create Boot Environment');
+        this.tooltips = {
+          name: helptextSystemBootenv.create_name_tooltip,
+        };
+        break;
     }
+
+    this.changeDetectorRef.detectChanges();
   }
 
   onSubmit(): void {
-    const fields = {
-      name: this.formGroup.value.name,
-    };
+    switch (this.operation) {
+      case this.Operations.Create:
+        const createParams: CreateBootenvParams = [{
+          name: this.formGroup.value.name,
+        }];
 
-    let request$: Observable<unknown>;
+        this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe(() => {
+          this.isFormLoading = false;
+          this.slideInService.close();
+        }, (error) => {
+          this.isFormLoading = false;
+          this.slideInService.close();
+          this.errorHandler.handleWsFormError(error, this.formGroup);
+        });
 
-    if (this.rename) {
-      request$ = this.ws.call('bootenv.update', [
-        this.currentName,
-        fields,
-      ]);
-    } else {
-      request$ = this.ws.call('bootenv.create', [fields]);
+        break;
+      case this.Operations.Rename:
+        const renameParams: UpdateBootenvParams = [
+          this.currentName,
+          {
+            name: this.formGroup.value.name,
+          },
+        ];
+
+        this.ws.call('bootenv.update', renameParams).pipe(untilDestroyed(this)).subscribe(() => {
+          this.isFormLoading = false;
+          this.slideInService.close();
+        }, (error) => {
+          this.isFormLoading = false;
+          this.slideInService.close();
+          this.errorHandler.handleWsFormError(error, this.formGroup);
+        });
+
+        break;
+      case this.Operations.Clone:
+        const cloneParams: CreateBootenvParams = [{
+          name: this.formGroup.value.name,
+          source: this.currentName,
+        }];
+
+        this.ws.call('bootenv.create', cloneParams).pipe(untilDestroyed(this)).subscribe(() => {
+          this.isFormLoading = false;
+          this.slideInService.close();
+        }, (error) => {
+          this.isFormLoading = false;
+          this.slideInService.close();
+          this.errorHandler.handleWsFormError(error, this.formGroup);
+        });
+
+        break;
     }
-
-    this.isFormLoading = true;
-    request$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.isFormLoading = false;
-      this.modalService.close();
-    }, (error) => {
-      this.isFormLoading = false;
-      this.errorHandler.handleWsFormError(error, this.formGroup);
-    });
   }
 }

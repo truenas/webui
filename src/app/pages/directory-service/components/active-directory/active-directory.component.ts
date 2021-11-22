@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -30,7 +31,7 @@ import { ModalService } from 'app/services/modal.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ActiveDirectoryComponent implements FormConfiguration {
-  title: string = helptext.title;
+  title = this.translate.instant(helptext.title);
   queryCall = 'activedirectory.config' as const;
   updateCall = 'activedirectory.update' as const;
   isEntity = false;
@@ -40,20 +41,19 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   protected nss_info: FormSelectConfig;
   adStatus = false;
   entityEdit: EntityFormComponent;
-  protected dialogRef: MatDialogRef<EntityJobComponent, void>;
   custActions = [
     {
       id: helptext.activedirectory_custactions_basic_id,
       name: global_helptext.basic_options,
       function: () => {
-        this.setBasicMode(true);
+        this.isBasicMode = true;
       },
     },
     {
       id: helptext.activedirectory_custactions_advanced_id,
       name: global_helptext.advanced_options,
       function: () => {
-        this.setBasicMode(false);
+        this.isBasicMode = false;
       },
     },
     {
@@ -117,7 +117,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
                 },
                 (err: WebsocketError) => {
                   entityDialog.loader.close();
-                  new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, this.dialogservice);
+                  new EntityUtils().handleWsError(helptext.ad_leave_domain_dialog.error, err, this.dialogservice);
                 });
             },
           },
@@ -307,6 +307,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     protected dialog: MatDialog,
     protected systemGeneralService: SystemGeneralService,
     protected dialogservice: DialogService,
+    protected translate: TranslateService,
   ) { }
 
   resourceTransformIncomingRestData(data: ActiveDirectoryConfig): ActiveDirectoryConfigUi {
@@ -324,14 +325,16 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   preInit(entityForm: EntityFormComponent): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-        if (is_ha) {
-          this.ws.call('smb.get_smb_ha_mode').pipe(untilDestroyed(this)).subscribe((ha_mode) => {
-            if (ha_mode === 'LEGACY') {
-              entityForm.setDisabled('netbiosname_b', false, false);
-            }
-          });
+      this.ws.call('failover.licensed').pipe(
+        filter(Boolean),
+        switchMap(() => this.ws.call('smb.get_smb_ha_mode')),
+        untilDestroyed(this),
+      ).subscribe((haMode) => {
+        if (haMode !== 'LEGACY') {
+          return;
         }
+
+        entityForm.setDisabled('netbiosname_b', false, false);
       });
     }
     this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
@@ -387,10 +390,6 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
 
     entityEdit.submitFunction = this.submitFunction;
-  }
-
-  setBasicMode(basic_mode: boolean): void {
-    this.isBasicMode = basic_mode;
   }
 
   beforeSubmit(data: any): void {
@@ -456,17 +455,17 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   // Shows starting progress as a job dialog
   showStartingJob(jobId: number): void {
-    this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: T('Start') }, disableClose: true });
-    this.dialogRef.componentInstance.jobId = jobId;
-    this.dialogRef.componentInstance.wsshow();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
-      this.dialogRef.close();
+    const dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Start') }, disableClose: true });
+    dialogRef.componentInstance.jobId = jobId;
+    dialogRef.componentInstance.wsshow();
+    dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
+      dialogRef.close();
       this.modalService.refreshTable();
     });
-    this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWSError(this, error, this.dialogservice);
+    dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
+      new EntityUtils().handleWsError(this, error, this.dialogservice);
       this.modalService.refreshTable();
-      this.dialogRef.close();
+      dialogRef.close();
     });
   }
 }

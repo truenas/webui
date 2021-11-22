@@ -10,17 +10,17 @@
   <div (click)="togglePicker()" class="color-swatch" [style.background-color]="colorProxy"></div>
   <mat-form-field class="full-width">
     <input
+      #input
       matInput
       [placeholder]="config.placeholder | translate"
-      [(value)]="colorProxy"
-      (input)="colorProxy=$event.target.value"
+      [value]="colorProxy"
+      (input)="colorProxy=input.value"
     >
 
     <input
       matInput
       (cpInputChange)="inputListener('cpInputChange', $event)"
       (colorPickerChange)="cpListener('cpInputChange' , $event)"
-      style="opacity:0; position:absolute;"
       [(colorPicker)]="colorProxy"
       [cpToggle]="picker"
       cpOutputFormat="hex"
@@ -28,6 +28,7 @@
       cpWidth="180px"
       [cpPositionRelativeToArrow]="true"
       [formControlName]="config.name"
+      class="picker-input"
     >
   </mat-form-field>
   <tooltip

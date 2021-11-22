@@ -5,11 +5,11 @@ import { Subject } from 'rxjs';
 import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
 
 export interface ToolbarSliderConfig {
-  value: number;
-  min: number;
-  max: number;
-  step: number;
-  label: string;
+  value?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  label?: string;
   name: string;
 }
 

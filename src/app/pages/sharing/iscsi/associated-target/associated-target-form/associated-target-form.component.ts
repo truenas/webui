@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { Overwrite } from 'utility-types';
+import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiTargetExtent, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -29,7 +30,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
 
   fieldSets: FieldSet[] = [
     {
-      name: helptext_sharing_iscsi.fieldset_associated_target,
+      name: helptextSharingIscsi.fieldset_associated_target,
       label: true,
       class: 'associated_target',
       width: '100%',
@@ -37,31 +38,31 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'target',
-          placeholder: helptext_sharing_iscsi.associated_target_placeholder_target,
-          tooltip: helptext_sharing_iscsi.associated_target_tooltip_target,
+          placeholder: helptextSharingIscsi.associated_target_placeholder_target,
+          tooltip: helptextSharingIscsi.associated_target_tooltip_target,
           options: [],
           value: '',
           required: true,
-          validation: helptext_sharing_iscsi.associated_target_validators_target,
+          validation: helptextSharingIscsi.associated_target_validators_target,
         },
         {
           type: 'input',
           inputType: 'number',
           name: 'lunid',
-          placeholder: helptext_sharing_iscsi.associated_target_placeholder_lunid,
-          tooltip: helptext_sharing_iscsi.associated_target_tooltip_lunid,
+          placeholder: helptextSharingIscsi.associated_target_placeholder_lunid,
+          tooltip: helptextSharingIscsi.associated_target_tooltip_lunid,
           value: '',
-          validation: helptext_sharing_iscsi.associated_target_validators_lunid,
+          validation: helptextSharingIscsi.associated_target_validators_lunid,
         },
         {
           type: 'select',
           name: 'extent',
-          placeholder: helptext_sharing_iscsi.associated_target_placeholder_extent,
-          tooltip: helptext_sharing_iscsi.associated_target_tooltip_extent,
+          placeholder: helptextSharingIscsi.associated_target_placeholder_extent,
+          tooltip: helptextSharingIscsi.associated_target_tooltip_extent,
           options: [],
           value: '',
           required: true,
-          validation: helptext_sharing_iscsi.associated_target_validators_extent,
+          validation: helptextSharingIscsi.associated_target_validators_extent,
         },
       ],
     },
@@ -107,7 +108,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     });
   }
 
-  beforeSubmit(value: any): void {
+  beforeSubmit(value: Overwrite<IscsiTargetExtent, { lunid: string }>): void {
     if (value['lunid'] === '') {
       delete value['lunid'];
     }
@@ -122,7 +123,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
       },
       (res) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, res);
+        new EntityUtils().handleWsError(this.entityForm, res);
       },
     );
   }

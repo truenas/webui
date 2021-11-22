@@ -5,7 +5,6 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
@@ -50,17 +49,17 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
   filterString = '';
+  jobTableIndexes = [JobTab.All, JobTab.Active, JobTab.Failed];
   selectedIndex: JobTab = 0;
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,
     large: true,
-    title: T('No jobs are available.'),
-    message: T('Please be patient...'),
+    title: this.translate.instant('There are no jobs.'),
   };
   loadingConfig: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
-    title: T('Loading...'),
+    title: this.translate.instant('Loading...'),
   };
   readonly JobState = JobState;
   readonly JobViewLogState = JobViewLogState;
@@ -146,21 +145,31 @@ export class JobsListComponent implements OnInit, AfterViewInit {
   }
 
   onTabChange(tab: MatTabChangeEvent): void {
+    this.paginationPageIndex = 0;
+    this.paginationPageSize = 10;
     this.selectedIndex = tab.index;
     switch (this.selectedIndex) {
       case JobTab.Failed:
         this.store.selectFailedJobs();
         this.onLogsSidebarClosed();
+        this.emptyConfig.title = this.translate.instant('There are no failed jobs.');
         break;
       case JobTab.Active:
         this.store.selectRunningJobs();
         this.onLogsSidebarClosed();
+        this.emptyConfig.title = this.translate.instant('There are no active jobs.');
         break;
       case JobTab.All:
       default:
         this.store.selectAllJobs();
         this.onLogsSidebarClosed();
+        this.emptyConfig.title = this.translate.instant('There are no jobs.');
         break;
     }
+  }
+
+  onPageChange(e: { pageIndex: number; pageSize: number }): void {
+    this.paginationPageIndex = e.pageIndex;
+    this.paginationPageSize = e.pageSize;
   }
 }

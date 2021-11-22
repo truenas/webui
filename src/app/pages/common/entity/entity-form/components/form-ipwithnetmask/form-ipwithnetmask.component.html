@@ -11,13 +11,13 @@
   ix-auto ix-auto-type="array"
   ix-auto-identifier="{{config.placeholder}}"
 >
-  <div class="label-container" fxFlex="100" fxLayoutAlign="start center" style="max-height:27px;">
+  <div class="label-container" fxFlex="100" fxLayoutAlign="start center">
     <label class="label input-text">{{config.placeholder | translate}}</label>
     <span *ngIf="config.required">*</span>
     <tooltip fxFlex="48px" *ngIf="config.tooltip" [header]="config.placeholder" [message]="config.tooltip"></tooltip>
   </div>
   <div fxFlex="100" fxLayout="row" fxLayoutGap="3px">
-    <mat-form-field fxFlex="calc(100% - 72px - 16px)" style="display:none">
+    <mat-form-field fxFlex="calc(100% - 72px - 16px)" class="display-none">
       <input
         matInput
         [type]="config.inputType ? config.inputType : 'text'"
@@ -40,7 +40,7 @@
       >
     </mat-form-field>
     <div fxFlex="80px" fxLayout="row" fxLayoutAlign="space-between center">
-      <div fxFlex style="text-align: center; padding: 0 8px;">/</div>
+      <div fxFlex class="divider">/</div>
       <mat-form-field fxFlex="64px" *ngIf="!config.netmaskPreset">
         <mat-select
           disableOptionCentering

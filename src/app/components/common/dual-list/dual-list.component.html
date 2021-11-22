@@ -1,6 +1,7 @@
 <div class="container-dualListBox">
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight"
     cdkDropList
+    id="user-list"
     #userList="cdkDropList"
     [cdkDropListData]="availableItems.totalItems"
     [cdkDropListConnectedTo]="[memberList]"
@@ -13,8 +14,8 @@
       [ngClass]="{ chosen: availableItems.isSelected(item) }"
       (mousedown)="availableItems.mouseDown(item, $event)"
       (mouseup)="availableItems.mouseUp(item, $event)">
-      <mat-list *ngIf="templateItem;else noTemplateItem" >
-        <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item}"></ng-container>
+      <mat-list *ngIf="templateItem;else noTemplateItem">
+        <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"></ng-container>
       </mat-list>
       <ng-template #noTemplateItem>
         {{item.name}}
@@ -22,7 +23,7 @@
     </div>
   </div>
   <div class="container-buttons">
-    <div class="" (click)="select()" [style.margin-bottom.px]="5">
+    <div (click)="select()" [style.margin-bottom.px]="5">
       <div *ngIf="templateArrowRight;else arrowRight">
         <ng-container [ngTemplateOutlet]="templateArrowRight">
         </ng-container>
@@ -31,7 +32,7 @@
         <button mat-flat-button class="dual-list-action-btn"> <mat-icon class="arrow">arrow_forward</mat-icon> </button>
       </ng-template>
     </div>
-    <div class="" (click)="return()">
+    <div (click)="return()">
       <div *ngIf="templateArrowLeft;else arrowLeft">
         <ng-container [ngTemplateOutlet]="templateArrowLeft">
         </ng-container>
@@ -43,6 +44,7 @@
   </div>
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight"
     cdkDropList
+    id="member-list"
     #memberList="cdkDropList"
     [cdkDropListData]="selectedItems.totalItems"
     [cdkDropListConnectedTo]="[userList]"

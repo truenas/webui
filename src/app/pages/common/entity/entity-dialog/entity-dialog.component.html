@@ -1,19 +1,19 @@
 <h1 mat-dialog-title class="entity-dialog-form-title" [innerHTML]="title | translate"></h1>
 
 <div mat-dialog-content ix-auto ix-auto-type="dialog" ix-auto-identifier="title" class="entity-dialog-form-content">
-  <div class="entity-dialog-form-message" >
+  <div class="entity-dialog-form-message">
     <span [innerHTML]="conf.message | translate"></span>
   </div>
   <div *ngIf="conf.confirmInstructions" >
     <div [innerHTML]="instructions" [ngStyle]="{marginTop:'10px', marginBottom: '-1rem'}"></div>
     <div id="double-confirm-mask" [ngStyle]="{opacity: '.38', position: 'relative', top: '35px'}"><pre>{{conf['name']}}</pre></div>
   </div>
-  <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" [fieldShow]="'show'">
+  <ng-container *ngFor="let field of fieldConfig;" dynamicField [config]="field" [group]="formGroup" fieldShow="show">
     <button
-      *ngIf="field.hideButton===false"
+      *ngIf="isButtonVisible(field)"
       mat-icon-button
       type="button"
-      (click)="togglePW()"
+      (click)="togglePassword()"
       ix-auto
       ix-auto-type="button"
       ix-auto-identifier="{{field.placeholder}}_toggle-pw"

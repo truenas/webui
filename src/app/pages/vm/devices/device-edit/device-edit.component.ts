@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
@@ -57,22 +57,22 @@ export class DeviceEditComponent implements OnInit {
       placeholder: helptext.dtype_placeholder,
       options: [
         {
-          label: 'CD-ROM',
+          label: this.translate.instant('CD-ROM'),
           value: VmDeviceType.Cdrom,
         }, {
-          label: 'NIC',
+          label: this.translate.instant('NIC'),
           value: VmDeviceType.Nic,
         }, {
-          label: 'Disk',
+          label: this.translate.instant('Disk'),
           value: VmDeviceType.Disk,
         }, {
-          label: 'Raw File',
+          label: this.translate.instant('Raw File'),
           value: VmDeviceType.Raw,
         }, {
-          label: 'PCI Passthru Device',
+          label: this.translate.instant('PCI Passthru Device'),
           value: VmDeviceType.Pci,
         }, {
-          label: 'Display',
+          label: this.translate.instant('Display'),
           value: VmDeviceType.Display,
         },
       ],
@@ -307,8 +307,8 @@ export class DeviceEditComponent implements OnInit {
       placeholder: helptext.type_placeholder,
       type: 'select',
       options: [
-        { label: T('VNC'), value: 'VNC' },
-        { label: T('SPICE'), value: 'SPICE' },
+        { label: this.translate.instant('VNC'), value: 'VNC' },
+        { label: this.translate.instant('SPICE'), value: 'SPICE' },
       ],
     },
     {
@@ -339,6 +339,7 @@ export class DeviceEditComponent implements OnInit {
     protected dialogService: DialogService,
     private core: CoreService,
     protected vmService: VmService,
+    protected translate: TranslateService,
   ) {}
 
   preInit(): void {
@@ -369,7 +370,7 @@ export class DeviceEditComponent implements OnInit {
     });
 
     this.nicType = _.find(this.nicFieldConfig, { name: 'type' }) as FormSelectConfig;
-    this.vmService.getNICTypes().forEach((item) => {
+    this.vmService.getNicTypes().forEach((item) => {
       this.nicType.options.push({ label: item[1], value: item[0] });
     });
 
@@ -437,12 +438,14 @@ export class DeviceEditComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((device) => {
         if (
-          (device[0] as any).attributes.physical_sectorsize !== undefined
-          && (device[0] as any).attributes.logical_sectorsize !== undefined
+          'physical_sectorsize' in device[0].attributes
+          && device[0].attributes.physical_sectorsize !== undefined
+          && 'logical_sectorsize' in device[0].attributes
+          && device[0].attributes.logical_sectorsize !== undefined
         ) {
-          (device[0] as any).attributes['sectorsize'] = (device[0] as any).attributes.logical_sectorsize === null
+          (device[0] as any).attributes['sectorsize'] = device[0].attributes.logical_sectorsize === null
             ? 0
-            : (device[0] as any).attributes.logical_sectorsize;
+            : device[0].attributes.logical_sectorsize;
         }
         const deviceInformation = { ...device[0].attributes, ...{ order: device[0].order } };
         this.vminfo = device[0];
@@ -484,7 +487,7 @@ export class DeviceEditComponent implements OnInit {
                 _.find(this.displayFieldConfig, { name: 'type' }).isHidden = true;
               }
             }, (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             });
             break;
         }
@@ -521,10 +524,10 @@ export class DeviceEditComponent implements OnInit {
     this.custActions = [
       {
         id: 'generate_mac_address',
-        name: T('Generate MAC Address'),
+        name: this.translate.instant('Generate MAC Address'),
         function: () => {
-          this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((random_mac) => {
-            this.nicFormGroup.controls['mac'].setValue(random_mac);
+          this.ws.call('vm.random_mac').pipe(untilDestroyed(this)).subscribe((randomMac) => {
+            this.nicFormGroup.controls['mac'].setValue(randomMac);
           });
         },
       },
@@ -554,9 +557,9 @@ export class DeviceEditComponent implements OnInit {
         this.loader.close();
         this.router.navigate(new Array('/').concat(this.route_success));
       },
-      (e_res) => {
+      (error) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, e_res, this.dialogService);
+        new EntityUtils().handleWsError(this, error, this.dialogService);
       });
     });
   }

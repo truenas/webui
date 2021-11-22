@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -125,8 +124,8 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
       icon: 'edit',
       label: helptext.user_list_actions_edit_label,
       name: helptext.user_list_actions_edit_id,
-      onClick: (users_edit) => {
-        this.modalService.openInSlideIn(UserFormComponent, users_edit.id);
+      onClick: (user) => {
+        this.modalService.openInSlideIn(UserFormComponent, user.id);
       },
     });
     if (!row.builtin) {
@@ -135,19 +134,19 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
         icon: 'delete',
         name: 'delete',
         label: helptext.user_list_actions_delete_label,
-        onClick: (users_edit) => {
+        onClick: (user) => {
           const conf: DialogFormConfiguration = {
             title: helptext.deleteDialog.title,
-            message: helptext.deleteDialog.message + `<i>${users_edit.username}</i>?`,
+            message: this.translate.instant('Delete user "{name}"?', { name: user.username }),
             fieldConfig: [],
             confirmCheckbox: true,
             saveButtonText: helptext.deleteDialog.saveButtonText,
             preInit: () => {
-              if (this.ableToDeleteGroup(users_edit.id)) {
+              if (this.ableToDeleteGroup(user.id)) {
                 conf.fieldConfig.push({
                   type: 'checkbox',
                   name: 'delete_group',
-                  placeholder: helptext.deleteDialog.deleteGroup_placeholder + users_edit.group.bsdgrp_group,
+                  placeholder: helptext.deleteDialog.deleteGroup_placeholder + user.group.bsdgrp_group,
                   value: false,
                 });
               }
@@ -155,14 +154,14 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
             customSubmit: (entityDialog: EntityDialogComponent) => {
               entityDialog.dialogRef.close(true);
               this.loader.open();
-              this.ws.call(this.wsDelete, [users_edit.id, entityDialog.formValue])
+              this.ws.call(this.wsDelete, [user.id, entityDialog.formValue])
                 .pipe(untilDestroyed(this))
                 .subscribe(() => {
                   this.entityList.getData();
                   this.loader.close();
                 },
                 (err) => {
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                  new EntityUtils().handleWsError(this, err, this.dialogService);
                   this.loader.close();
                 });
             },
@@ -176,12 +175,9 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
 
   ableToDeleteGroup(id: number): boolean {
     const user = _.find(this.usr_lst[0], { id });
-    const group_users = _.find(this.grp_lst[0], { id: user.group.id }).users;
+    const groupUsers = _.find(this.grp_lst[0], { id: user.group.id }).users;
     // Show checkbox if deleting the last member of a group
-    if (group_users.length === 1) {
-      return true;
-    }
-    return false;
+    return groupUsers.length === 1;
   }
 
   resourceTransformIncomingRestData(rawUsers: User[]): UserListRow[] {
@@ -197,10 +193,10 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
       });
       users.forEach((user) => {
         user.details = [];
-        user.details.push({ label: T('GID'), value: user.group['bsdgrp_gid'] },
-          { label: T('Home Directory'), value: user.home },
-          { label: T('Shell'), value: user.shell },
-          { label: T('Email'), value: user.email });
+        user.details.push({ label: this.translate.instant('GID'), value: user.group['bsdgrp_gid'] },
+          { label: this.translate.instant('Home Directory'), value: user.home },
+          { label: this.translate.instant('Shell'), value: user.shell },
+          { label: this.translate.instant('Email'), value: user.email });
       });
     });
     if (this.prefService.preferences.hide_builtin_users) {

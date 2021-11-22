@@ -3,19 +3,19 @@ import {
 } from '@angular/core';
 import { FormControl, ValidatorFn } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { format, utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz';
 import { map } from 'rxjs/operators';
+import helptext from 'app/helptext/storage/snapshots/snapshots';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import helptext from '../../../../helptext/storage/snapshots/snapshots';
+import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityUtils } from 'app/pages/common/entity/utils';
 import {
   DialogService, SystemGeneralService, WebSocketService,
-} from '../../../../services';
-import { EntityFormComponent } from '../../../common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from '../../../common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from '../../../common/entity/entity-form/models/fieldset.interface';
-import { EntityUtils } from '../../../common/entity/utils';
+} from 'app/services';
 
 @UntilDestroy()
 @Component({
@@ -57,7 +57,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
         placeholder: helptext.snapshot_add_name_placeholder,
         tooltip: helptext.snapshot_add_name_tooltip,
         options: [],
-        errors: T('Name or Naming Schema is required. Only one field can be used at a time.'),
+        errors: this.translate.instant('Name or Naming Schema is required. Only one field can be used at a time.'),
         blurStatus: true,
         blurEvent: this.updateNameValidity.bind(this),
       },
@@ -85,6 +85,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
     protected ws: WebSocketService,
     protected dialog: DialogService,
     private sysGeneralService: SystemGeneralService,
+    protected translate: TranslateService,
   ) {
   }
 
@@ -108,7 +109,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
 
     this.ws
       .call('replication.list_naming_schemas')
-      .pipe(map(new EntityUtils().array1DToLabelValuePair))
+      .pipe(map(new EntityUtils().array1dToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe(
         (options) => {
           const config = this.fieldConfig.find((config) => config.name === 'naming_schema') as FormSelectConfig;
@@ -117,7 +118,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
             ...options,
           ];
         },
-        (error) => new EntityUtils().handleWSError(this, error, this.dialog),
+        (error) => new EntityUtils().handleWsError(this, error, this.dialog),
       );
   }
 
@@ -148,14 +149,14 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
       if (!!nc.value && !!namingSchemaControl.value) {
         nameConfig.hasErrors = nc.touched;
         return {
-          duplicateNames: T('Name and Naming Schema cannot be provided at the same time.'),
+          duplicateNames: this.translate.instant('Name and Naming Schema cannot be provided at the same time.'),
         };
       }
 
       if (!nc.value && !namingSchemaControl.value) {
         nameConfig.hasErrors = nc.touched;
         return {
-          nameRequired: T('Name or Naming Schema must be provided.'),
+          nameRequired: this.translate.instant('Name or Naming Schema must be provided.'),
         };
       }
 

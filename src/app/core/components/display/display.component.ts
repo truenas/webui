@@ -1,14 +1,14 @@
 import {
-  Component, ViewChild, Renderer2, ViewContainerRef, ComponentFactoryResolver, HostBinding, Type,
+  Component, ViewChild, ViewContainerRef, ComponentFactoryResolver, HostBinding, Type, ComponentRef,
 } from '@angular/core';
 
 @Component({
   selector: 'display',
   template: '<ng-container #wrapper></ng-container>',
 })
-export class DisplayComponent {
-  displayList: any[] = []; // items in DOM
-  children: any[] = [];
+export class DisplayComponent<T = unknown> {
+  displayList: T[] = []; // items in DOM
+  children: ComponentRef<T>[] = [];
   @ViewChild('wrapper', { static: true }) wrapper: ViewContainerRef;
   @ViewChild('test', { static: true, read: ViewContainerRef }) test: ViewContainerRef;
 
@@ -18,16 +18,15 @@ export class DisplayComponent {
   constructor(
     private resolver: ComponentFactoryResolver,
     private viewContainerRef: ViewContainerRef,
-    private renderer: Renderer2,
   ) {}
 
-  create(component: Type<any>): any {
+  create(component: Type<T>): T {
     const compRef = this.resolver.resolveComponentFactory(component).create(this.viewContainerRef.injector);
     this.children.push(compRef);
     return compRef.instance;
   }
 
-  addChild(instance: any): void {
+  addChild(instance: T): void {
     const compRef = this.getChild(instance);
 
     // Insert into DOM
@@ -38,19 +37,7 @@ export class DisplayComponent {
     this.displayList.push(instance);
   }
 
-  private moveContents(compRef: any, container: any): void {
-    const selector = compRef.hostView.rootNodes['0'];
-    const contents = compRef.hostView.rootNodes['0'].childNodes;
-
-    for (const node of contents) {
-      if (node.tagName == 'MD-CARD') {
-        this.renderer.appendChild(container, node);
-        this.renderer.removeChild(container, selector);
-      }
-    }
-  }
-
-  removeChild(instance: any): void {
+  removeChild(instance: T): void {
     const compRef = this.getChild(instance);
 
     // Remove from children
@@ -65,7 +52,7 @@ export class DisplayComponent {
     compRef.destroy();
   }
 
-  getChild(instance: any): any {
+  getChild(instance: T): ComponentRef<T> {
     for (const item of this.children) {
       if (item.instance == instance) {
         return item;

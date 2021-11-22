@@ -8,20 +8,20 @@
     </button>
     <span fxFlex></span>
     <div>
-      <mat-icon (click)="openIX()" [svgIcon]="screenSize == 'xs' ? 'ix_logomark' : 'ix_full_logo'" alt="iXsystems logo"
-        class="ix-logo {{screenSize}}">
+      <mat-icon (click)="openIx()" [svgIcon]="screenSize == 'xs' ? 'ix_logomark' : 'ix_full_logo'" alt="iXsystems logo"
+                class="ix-logo {{screenSize}}">
       </mat-icon>
     </div>
 
     <!-- truecommand-->
     <button mat-icon-button id="tc-connecting" [matTooltip]="mat_tooltips.tc_connect | translate"
       class="topbar-button-right" ix-auto ix-auto-type="button" ix-auto-identifier="tcConnecting"
-      *ngIf="tcStatus && tcStatus.status === TrueCommandStatus.Connecting" (click)="stopTCConnecting()">
+      *ngIf="tcStatus && tcStatus.status === TrueCommandStatus.Connecting" (click)="stopTrueCommandConnecting()">
       <mat-icon class="movement" svgIcon="truecommand_logo_white"></mat-icon>
     </button>
     <button mat-icon-button id="tc-status" [matTooltip]="mat_tooltips.tc_status | translate" class="topbar-button-right"
-      (click)="showTCStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="tcStatus"
-      *ngIf="tcStatus && tcStatus.status !== TrueCommandStatus.Connecting">
+            (click)="showTrueCommandStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="tcStatus"
+            *ngIf="tcStatus && tcStatus.status !== TrueCommandStatus.Connecting">
       <mat-icon svgIcon="truecommand_logo_white" class="truecommand-icon" matBadgeSize="small"
         [matBadge]="tcStatus.status === TrueCommandStatus.Connected ? 'check' : tcStatus.status === TrueCommandStatus.Failed ? 'priority_high' : ''"
         [class]="tcStatus.status"></mat-icon>
@@ -51,11 +51,11 @@
     <!-- HA Status -->
     <span *ngIf="is_ha && ha_status_text">
       <button *ngIf="ha_disabled_reasons.length === 0" mat-icon-button id="ha" [matTooltip]="ha_status_text | translate"
-        class="topbar-button-right" (click)="showHAStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
+              class="topbar-button-right" (click)="showHaStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
         <mat-icon svgIcon="ha_enabled"></mat-icon>
       </button>
       <button *ngIf="ha_disabled_reasons.length > 0" mat-icon-button id="ha" [matTooltip]="ha_status_text | translate"
-        class="topbar-button-right" (click)="showHAStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
+              class="topbar-button-right" (click)="showHaStatus()" ix-auto ix-auto-type="button" ix-auto-identifier="haStatus">
         <mat-icon *ngIf="ha_disabled_reasons[0] === FailoverDisabledReason.NoSystemReady; else HADisabled" svgIcon="ha_reconnecting">
         </mat-icon>
         <ng-template #HADisabled>
@@ -81,7 +81,7 @@
     </button>
     <!-- Notification toggle button -->
     <button mat-icon-button [matTooltip]="mat_tooltips.alerts | translate" (click)="toggleNotificationPanel()"
-      [style.overflow]="'visible'" class="topbar-button-right" ix-auto ix-auto-type="button"
+      class="topbar-button-right overflow-visible" ix-auto ix-auto-type="button"
       ix-auto-identifier="notifications">
       <mat-icon [matBadge]="notifications.length" matBadgeSize="small" matBadgeColor="warn"
         [matBadgeHidden]="notifications.length == 0">notifications</mat-icon>
@@ -95,7 +95,7 @@
       class="topbar-button-right"
       ix-auto ix-auto-type="button" ix-auto-identifier="settings"
     >
-      <mat-icon role="image" fontSet="mdi-set" fontIcon="mdi-account-circle" style="font-size:180%;"></mat-icon>
+      <mat-icon role="image" fontSet="mdi-set" fontIcon="mdi-account-circle" class="icon account"></mat-icon>
     </button>
     <mat-menu #accountMenu="matMenu">
       <button class="hidden-button" mat-menu-item></button>
@@ -109,10 +109,6 @@
         <mat-icon>settings_applications</mat-icon>
         <span>{{'Preferences' | translate}}</span>
       </button>
-      <!-- button name="settings-disable-alerts" mat-menu-item>
-          <mat-icon>notifications_off</mat-icon>
-          <span>Disable alerts</span>
-        </button -->
       <button name="settings-api" mat-menu-item [routerLink]="['/apikeys']" ix-auto ix-auto-type="option"
         ix-auto-identifier="API">
         <mat-icon>laptop</mat-icon>

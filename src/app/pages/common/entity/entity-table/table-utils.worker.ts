@@ -50,7 +50,7 @@ const tableUtils = {
 
     return units;
   },
-  convertKMGT: (input: number, units: string) => {
+  convertKmgt: (input: number, units: string) => {
     const kilo = 1024;
     const mega = kilo * 1024;
     const giga = mega * 1024;
@@ -107,11 +107,11 @@ const tableUtils = {
     let converted;
     switch (units.toLowerCase()) {
       case 'bits':
-        converted = convertKMGT(value, units);
+        converted = convertKmgt(value, units);
         output = maxDecimals(converted.value).toString() + converted.shortName;
         break;
       case 'bytes':
-        converted = convertKMGT(value, units);
+        converted = convertKmgt(value, units);
         output = maxDecimals(converted.value).toString() + converted.shortName;
         break;
       case '%':
@@ -130,8 +130,7 @@ const tableUtils = {
     const keys = Object.keys(output.aggregations);
 
     keys.forEach((key) => {
-      // output.aggregations[key].map((v) => formatValue(v , units) )
-      output.aggregations[key].forEach((v: any, index: number) => {
+      output.aggregations[key].forEach((v: number, index: number) => {
         output.aggregations[key][index] = formatValue(v, units);
       });
     });

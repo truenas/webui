@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_sharing_iscsi = {
+export const helptextSharingIscsi = {
   fieldset_target_basic: T('Basic Info'),
   fieldset_target_group: T('iSCSI Group'),
 

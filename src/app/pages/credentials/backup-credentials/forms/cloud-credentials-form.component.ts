@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
+import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -86,7 +86,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
           type: 'button',
           name: 'oauth_signin_button',
           isHidden: true,
-          customEventActionLabel: T('Log in to Provider'),
+          customEventActionLabel: this.translate.instant('Log in to Provider'),
           value: '',
           customEventMethod: () => {
             this.logInToProvider();
@@ -955,7 +955,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         {
           type: 'checkbox',
           name: 'advanced-S3',
-          placeholder: T('Advanced Settings'),
+          placeholder: this.translate.instant('Advanced Settings'),
           isHidden: true,
           value: false,
           relation: [
@@ -1235,7 +1235,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   custActions = [
     {
       id: 'validCredential',
-      name: T('Verify Credential'),
+      name: this.translate.instant('Verify Credential'),
       buttonColor: 'default',
       function: () => {
         this.entityForm.loader.open();
@@ -1243,7 +1243,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         const attributes: any = {};
         const value = _.cloneDeep(this.entityForm.formGroup.value);
         this.beforeSubmit(value);
-        let attr_name: string;
+        let attrName: string;
 
         for (const item in value) {
           if (item != 'name' && item != 'provider') {
@@ -1251,9 +1251,9 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               this.entityForm.formGroup.controls[item].markAsTouched();
             }
             if (item !== 'preview-GOOGLE_CLOUD_STORAGE' && item !== 'advanced-S3' && item !== 'drives-ONEDRIVE') {
-              attr_name = item.split('-')[0];
+              attrName = item.split('-')[0];
               if (value[item] != '' && value[item] != undefined) {
-                attributes[attr_name] = value[item];
+                attributes[attrName] = value[item];
               }
             }
             delete value[item];
@@ -1269,7 +1269,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       },
     }, {
       id: 'customSave',
-      name: T('Save'),
+      name: this.translate.instant('Save'),
       buttonType: 'submit',
       buttonColor: 'primary',
     },
@@ -1284,6 +1284,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     protected dialog: DialogService,
     protected replicationService: ReplicationService,
     private modalService: ModalService,
+    protected translate: TranslateService,
   ) {
     this.modalService.getRow$
       .pipe(take(1), untilDestroyed(this))
@@ -1306,11 +1307,11 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       },
     );
     const authenticationFieldset = _.find(this.fieldSets, { class: 'authentication' });
-    const privateKeySFTPField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' }) as FormSelectConfig;
+    const privateKeySftpField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' }) as FormSelectConfig;
     this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]).pipe(untilDestroyed(this)).subscribe(
       (credentials) => {
         credentials.forEach((credential) => {
-          privateKeySFTPField.options.push({ label: credential.name, value: credential.id });
+          privateKeySftpField.options.push({ label: credential.name, value: credential.id });
         });
       },
     );
@@ -1437,14 +1438,14 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       (res) => {
         this.entityForm.loader.close();
         if (res.valid) {
-          this.dialog.info(T('Valid'), T('The Credential is valid.'), '500px', 'info');
+          this.dialog.info(this.translate.instant('Valid'), this.translate.instant('The Credential is valid.'), '500px', 'info');
         } else {
           this.dialog.errorReport('Error', res.excerpt, res.error);
         }
       },
       (err) => {
         this.entityForm.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
+        new EntityUtils().handleWsError(this.entityForm, err, this.dialog);
       },
     );
   }
@@ -1453,6 +1454,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     window.open(this.oauthURL + '?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
     const controls = this.entityForm.formGroup.controls;
     const dialogService = this.dialog;
+    const translate = this.translate;
     const getOnedriveList = this.getOnedriveList.bind(this);
 
     const method = (message: OauthMessage): void => doAuth(message, this.selectedProvider);
@@ -1462,7 +1464,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     function doAuth(message: OauthMessage, selectedProvider: string): void {
       if ('oauth_portal' in message.data) {
         if (message.data.error) {
-          dialogService.errorReport(T('Error'), message.data.error);
+          dialogService.errorReport(translate.instant('Error'), message.data.error);
         } else {
           for (const prop in message.data.result) {
             let targetProp = prop;
@@ -1484,7 +1486,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   }
 
   async makeNewKeyPair(value: any, submitting?: boolean): Promise<void> {
-    await this.replicationService.genSSHKeypair().then(
+    await this.replicationService.genSshKeypair().then(
       async (keyPair) => {
         const payload = {
           name: value['name'] + ' Key',
@@ -1494,8 +1496,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
           (sshKey) => {
             this.keyID = sshKey.id;
-            const privateKeySFTPField = _.find(this.fieldConfig, { name: 'private_key-SFTP' }) as FormSelectConfig;
-            privateKeySFTPField.options.push({ label: payload.name, value: this.keyID });
+            const privateKeySftpField = _.find(this.fieldConfig, { name: 'private_key-SFTP' }) as FormSelectConfig;
+            privateKeySftpField.options.push({ label: payload.name, value: this.keyID });
             this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
             if (submitting) {
               value['private_key-SFTP'] = sshKey.id;
@@ -1505,15 +1507,15 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               this.verifyCredentials(value);
             }
           },
-          (sshKey_err) => {
+          (error) => {
             this.entityForm.loader.close();
-            new EntityUtils().handleWSError(this, sshKey_err, this.dialog);
+            new EntityUtils().handleWsError(this, error, this.dialog);
           },
         );
       },
       (err) => {
         this.entityForm.loader.close();
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }
@@ -1521,12 +1523,12 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   finishSubmit(value: any): void {
     this.entityForm.loader.open();
     const attributes: any = {};
-    let attr_name: string;
+    let attrName: string;
     for (const item in value) {
       if (item != 'name' && item != 'provider') {
         if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && item !== 'drives-ONEDRIVE' && value[item] != '') {
-          attr_name = item.split('-')[0];
-          attributes[attr_name] = attr_name === 'auth_version' ? parseInt(value[item], 10) : value[item];
+          attrName = item.split('-')[0];
+          attributes[attrName] = attrName === 'auth_version' ? parseInt(value[item], 10) : value[item];
         }
         delete value[item];
       }
@@ -1543,7 +1545,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         this.entityForm.loader.close();
         this.modalService.refreshTable();
         if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         } else {
           new EntityUtils().handleError(this, err);
         }
@@ -1575,12 +1577,12 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     }
 
     for (const i in entityForm.wsResponseIdx) {
-      let field_name = i;
-      if (field_name != 'client_id' && field_name != 'client_secret') {
-        field_name += '-' + provider;
+      let fieldName = i;
+      if (fieldName != 'client_id' && fieldName != 'client_secret') {
+        fieldName += '-' + provider;
       }
-      if (entityForm.formGroup.controls[field_name]) {
-        entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
+      if (entityForm.formGroup.controls[fieldName]) {
+        entityForm.formGroup.controls[fieldName].setValue(entityForm.wsResponseIdx[i]);
       }
     }
   }
@@ -1604,7 +1606,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         });
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }

@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
@@ -20,7 +19,7 @@ import { EncryptionService } from 'app/services/encryption.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class VolumeRekeyFormComponent implements FormConfiguration {
-  saveSubmitText = T('Reset Encryption');
+  saveSubmitText = this.translate.instant('Reset Encryption');
 
   queryCall = 'pool.query' as const;
   queryKey = 'id';
@@ -113,7 +112,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
   customSubmit(value: VolumeRekeyFormValues): void {
     this.ws.call('auth.check_user', ['root', value.passphrase]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (!res) {
-        this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');
+        this.dialogService.info(this.translate.instant('Error'), this.translate.instant('The administrator password is incorrect.'), '340px');
       } else {
         this.ws.call('pool.rekey', [parseInt(this.pk), { admin_password: value.passphrase }])
           .pipe(untilDestroyed(this)).subscribe(() => {
@@ -134,7 +133,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
 
               default:
                 this.dialogService.info(
-                  T('Success'),
+                  this.translate.instant('Success'),
                   this.translate.instant('Successfully reset encryption for pool: {pool}', { pool: value.name }),
                   '500px',
                   'info',
@@ -143,7 +142,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
             }
           },
           (err) => {
-            this.dialogService.errorReport(T('Error resetting encryption for pool: ' + value.name), err.reason, err.trace.formatted);
+            this.dialogService.errorReport(this.translate.instant('Error resetting encryption for pool: {name}', { name: value.name }), err.reason, err.trace.formatted);
           });
       }
     });

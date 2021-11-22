@@ -3,26 +3,26 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, Type } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
-import { Subject } from 'rxjs';
+import { merge, Subject } from 'rxjs';
 import {
   filter, switchMap, take, tap,
 } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DeviceType } from 'app/enums/device-type.enum';
-import { helptext_system_advanced } from 'app/helptext/system/advanced';
-import { helptext_system_general as helptext } from 'app/helptext/system/general';
+import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
+import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { Device } from 'app/interfaces/device.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
+import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
@@ -30,7 +30,7 @@ import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/ta
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { CronjobRow } from 'app/pages/system/advanced/cron/cron-list/cronjob-row.interface';
-import { InitshutdownFormComponent } from 'app/pages/system/advanced/initshutdown/initshutdown-form/initshutdown-form.component';
+import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import {
@@ -42,7 +42,7 @@ import {
   WebSocketService,
 } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';
 import { ConsoleFormComponent } from './console-form/console-form.component';
@@ -50,7 +50,7 @@ import { IsolatedGpuPcisFormComponent } from './isolated-gpu-pcis/isolated-gpu-p
 import { KernelFormComponent } from './kernel-form/kernel-form.component';
 import { SyslogFormComponent } from './syslog-form/syslog-form.component';
 
-enum CardId {
+enum AdvancedCardId {
   Console = 'console',
   Syslog = 'syslog',
   Kernel = 'kernel',
@@ -68,31 +68,25 @@ enum CardId {
   providers: [DatePipe, UserService],
 })
 export class AdvancedSettingsComponent implements OnInit {
-  dataCards: DataCard[] = [];
+  dataCards: DataCard<AdvancedCardId>[] = [];
   configData: AdvancedConfig;
   syslog: boolean;
   systemDatasetPool: string;
   entityForm: EntityFormComponent;
   isFirstTime = true;
 
-  emptyPageConf: EmptyConfig = {
-    type: EmptyType.NoPageData,
-    title: T('No sysctls configured'),
-    large: false,
-    message: T('To configure sysctls, click the "Add" button.'),
-  };
   isHA = false;
   formEvent$: Subject<CoreEvent>;
   actionsConfig: GlobalActionConfig;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
 
   cronTableConf: AppTableConfig = {
-    title: helptext_system_advanced.fieldset_cron,
+    title: helptextSystemAdvanced.fieldset_cron,
     titleHref: '/system/cron',
     queryCall: 'cronjob.query',
     deleteCall: 'cronjob.delete',
     deleteMsg: {
-      title: T('Cron Job'),
+      title: this.translate.instant('Cron Job'),
       key_props: ['user', 'command', 'description'],
     },
     getActions: (): AppTableAction<CronjobRow>[] => {
@@ -100,10 +94,10 @@ export class AdvancedSettingsComponent implements OnInit {
         {
           name: 'play',
           icon: 'play_arrow',
-          matTooltip: T('Run job'),
+          matTooltip: this.translate.instant('Run job'),
           onClick: (row: CronjobRow): void => {
             this.dialog
-              .confirm({ title: T('Run Now'), message: T('Run this job now?'), hideCheckBox: true })
+              .confirm({ title: this.translate.instant('Run Now'), message: this.translate.instant('Run this job now?'), hideCheckBox: true })
               .pipe(
                 filter((run) => !!run),
                 switchMap(() => this.ws.call('cronjob.run', [row.id])),
@@ -111,10 +105,10 @@ export class AdvancedSettingsComponent implements OnInit {
               .pipe(untilDestroyed(this)).subscribe(
                 () => {
                   const message = row.enabled
-                    ? T('This job is scheduled to run again ' + row.next_run + '.')
-                    : T('This job will not run again until it is enabled.');
+                    ? this.translate.instant('This job is scheduled to run again {nextRun}.', { nextRun: row.next_run })
+                    : this.translate.instant('This job will not run again until it is enabled.');
                   this.dialog.info(
-                    T('Job ' + row.description + ' Completed Successfully'),
+                    this.translate.instant('Job {job} Completed Successfully', { job: row.description }),
                     message,
                     '500px',
                     'info',
@@ -131,77 +125,81 @@ export class AdvancedSettingsComponent implements OnInit {
     parent: this,
     dataSourceHelper: this.cronDataSourceHelper,
     columns: [
-      { name: T('Users'), prop: 'user' },
-      { name: T('Command'), prop: 'command' },
-      { name: T('Description'), prop: 'description' },
-      { name: T('Schedule'), prop: 'cron_schedule' },
-      { name: T('Enabled'), prop: 'enabled' },
-      { name: T('Next Run'), prop: 'next_run' },
+      { name: this.translate.instant('Users'), prop: 'user' },
+      { name: this.translate.instant('Command'), prop: 'command' },
+      { name: this.translate.instant('Description'), prop: 'description' },
+      { name: this.translate.instant('Schedule'), prop: 'cron_schedule' },
+      { name: this.translate.instant('Enabled'), prop: 'enabled' },
+      { name: this.translate.instant('Next Run'), prop: 'next_run' },
     ],
-    add() {
-      this.parent.onSettingsPressed(CardId.Cron);
+    add: async () => {
+      await this.onSettingsPressed(AdvancedCardId.Cron);
     },
-    edit(row) {
-      this.parent.onSettingsPressed(CardId.Cron, row.id);
+    edit: async (row) => {
+      await this.onSettingsPressed(AdvancedCardId.Cron, row.id);
     },
   };
 
   initShutdownTableConf: AppTableConfig = {
-    title: helptext_system_advanced.fieldset_initshutdown,
+    title: helptextSystemAdvanced.fieldset_initshutdown,
     titleHref: '/system/initshutdown',
     queryCall: 'initshutdownscript.query',
     deleteCall: 'initshutdownscript.delete',
     deleteMsg: {
-      title: T('Init/Shutdown Script'),
+      title: this.translate.instant('Init/Shutdown Script'),
       key_props: ['type', 'command', 'script'],
     },
     parent: this,
     emptyEntityLarge: false,
     columns: [
-      { name: T('Type'), prop: 'type' },
-      { name: T('Command'), prop: 'command' },
-      { name: T('Script'), prop: 'script' },
-      { name: T('Description'), prop: 'comment' },
-      { name: T('When'), prop: 'when' },
-      { name: T('Enabled'), prop: 'enabled' },
-      { name: T('Timeout'), prop: 'timeout' },
+      { name: this.translate.instant('Type'), prop: 'type' },
+      { name: this.translate.instant('Command'), prop: 'command' },
+      { name: this.translate.instant('Script'), prop: 'script' },
+      { name: this.translate.instant('Description'), prop: 'comment' },
+      { name: this.translate.instant('When'), prop: 'when' },
+      { name: this.translate.instant('Enabled'), prop: 'enabled' },
+      { name: this.translate.instant('Timeout'), prop: 'timeout' },
     ],
-    add() {
-      this.parent.onSettingsPressed(CardId.InitShutdown);
+    add: async () => {
+      await this.showFirstTimeWarningIfNeeded();
+      this.ixModal.open(InitShutdownFormComponent);
     },
-    edit(row) {
-      this.parent.onSettingsPressed(CardId.InitShutdown, row.id);
+    edit: async (script: InitShutdownScript) => {
+      await this.showFirstTimeWarningIfNeeded();
+
+      const modal = this.ixModal.open(InitShutdownFormComponent);
+      modal.setScriptForEdit(script);
     },
   };
 
   sysctlTableConf: AppTableConfig = {
-    title: helptext_system_advanced.fieldset_sysctl,
+    title: helptextSystemAdvanced.fieldset_sysctl,
     queryCall: 'tunable.query',
     deleteCall: 'tunable.delete',
     deleteMsg: {
-      title: helptext_system_advanced.fieldset_sysctl,
+      title: helptextSystemAdvanced.fieldset_sysctl,
       key_props: ['var'],
     },
     parent: this,
     emptyEntityLarge: false,
     columns: [
-      { name: T('Var'), prop: 'var' },
-      { name: T('Value'), prop: 'value' },
-      { name: T('Enabled'), prop: 'enabled' },
-      { name: T('Description'), prop: 'comment' },
+      { name: this.translate.instant('Var'), prop: 'var' },
+      { name: this.translate.instant('Value'), prop: 'value' },
+      { name: this.translate.instant('Enabled'), prop: 'enabled' },
+      { name: this.translate.instant('Description'), prop: 'comment' },
     ],
     add: async () => {
       await this.showFirstTimeWarningIfNeeded();
-      this.ixModal.open(TunableFormComponent, this.translate.instant('Add Sysctl'));
+      this.ixModal.open(TunableFormComponent);
     },
     edit: async (tunable: Tunable) => {
       await this.showFirstTimeWarningIfNeeded();
-      const dialog = this.ixModal.open(TunableFormComponent, this.translate.instant('Edit Sysctl'));
+      const dialog = this.ixModal.open(TunableFormComponent);
       dialog.setTunableForEdit(tunable);
     },
   };
 
-  readonly CardId = CardId;
+  readonly CardId = AdvancedCardId;
 
   constructor(
     private ws: WebSocketService,
@@ -218,7 +216,7 @@ export class AdvancedSettingsComponent implements OnInit {
     public datePipe: DatePipe,
     protected userService: UserService,
     private translate: TranslateService,
-    private ixModal: IxModalService,
+    private ixModal: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -229,15 +227,11 @@ export class AdvancedSettingsComponent implements OnInit {
       this.getDataCardData();
     });
 
-    this.modalService.refreshTable$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshTables();
-    });
-
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.refreshTables();
-    });
-
-    this.ixModal.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    merge(
+      this.modalService.refreshTable$,
+      this.modalService.onClose$,
+      this.ixModal.onClose$,
+    ).pipe(untilDestroyed(this)).subscribe(() => {
       this.refreshTables();
     });
 
@@ -256,7 +250,7 @@ export class AdvancedSettingsComponent implements OnInit {
         controls: [
           {
             name: 'save_debug',
-            label: T('Save Debug'),
+            label: this.translate.instant('Save Debug'),
             type: 'button',
             value: 'click',
             color: 'primary',
@@ -276,7 +270,7 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     return this.dialog
-      .info(helptext_system_advanced.first_time.title, helptext_system_advanced.first_time.message)
+      .info(helptextSystemAdvanced.first_time.title, helptextSystemAdvanced.first_time.message)
       .pipe(tap(() => this.isFirstTime = false))
       .toPromise();
   }
@@ -284,13 +278,13 @@ export class AdvancedSettingsComponent implements OnInit {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
 
-    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-      this.isHA = is_ha;
+    this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
+      this.isHA = isHa;
     });
   }
 
   formatSyslogLevel(level: string): string {
-    return helptext_system_advanced.sysloglevel.options.find((option) => option.value === level).label;
+    return helptextSystemAdvanced.sysloglevel.options.find((option) => option.value === level).label;
   }
 
   getDatasetData(): void {
@@ -312,92 +306,92 @@ export class AdvancedSettingsComponent implements OnInit {
 
       this.dataCards = [
         {
-          title: helptext_system_advanced.fieldset_console,
-          id: CardId.Console,
+          title: helptextSystemAdvanced.fieldset_console,
+          id: AdvancedCardId.Console,
           items: [
             {
-              label: helptext_system_advanced.consolemenu_placeholder,
+              label: helptextSystemAdvanced.consolemenu_placeholder,
               value: advancedConfig.consolemenu ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext_system_advanced.serialconsole_placeholder,
+              label: helptextSystemAdvanced.serialconsole_placeholder,
               value: advancedConfig.serialconsole ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext_system_advanced.serialport_placeholder,
+              label: helptextSystemAdvanced.serialport_placeholder,
               value: advancedConfig.serialport ? advancedConfig.serialport : '–',
             },
             {
-              label: helptext_system_advanced.serialspeed_placeholder,
+              label: helptextSystemAdvanced.serialspeed_placeholder,
               value: advancedConfig.serialspeed ? `${advancedConfig.serialspeed} bps` : '–',
             },
             {
-              label: helptext_system_advanced.motd_placeholder,
+              label: helptextSystemAdvanced.motd_placeholder,
               value: advancedConfig.motd ? advancedConfig.motd.toString() : '–',
             },
           ],
         },
         {
-          title: helptext_system_advanced.fieldset_syslog,
-          id: CardId.Syslog,
+          title: helptextSystemAdvanced.fieldset_syslog,
+          id: AdvancedCardId.Syslog,
           items: [
             {
-              label: helptext_system_advanced.fqdn_placeholder,
+              label: helptextSystemAdvanced.fqdn_placeholder,
               value: advancedConfig.fqdn_syslog ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext_system_advanced.sysloglevel.placeholder,
+              label: helptextSystemAdvanced.sysloglevel.placeholder,
               value: this.formatSyslogLevel(advancedConfig.sysloglevel),
             },
             {
-              label: helptext_system_advanced.syslogserver.placeholder,
+              label: helptextSystemAdvanced.syslogserver.placeholder,
               value: advancedConfig.syslogserver ? advancedConfig.syslogserver : '–',
             },
             {
-              label: helptext_system_advanced.syslog_transport.placeholder,
+              label: helptextSystemAdvanced.syslog_transport.placeholder,
               value: advancedConfig.syslog_transport,
             },
             {
-              label: helptext_system_advanced.system_dataset_placeholder,
+              label: helptextSystemAdvanced.system_dataset_placeholder,
               value: this.syslog ? helptext.enabled : helptext.disabled,
             },
           ],
         },
         {
-          title: helptext_system_advanced.fieldset_kernel,
-          id: CardId.Kernel,
+          title: helptextSystemAdvanced.fieldset_kernel,
+          id: AdvancedCardId.Kernel,
           items: [
             {
-              label: helptext_system_advanced.autotune_placeholder,
+              label: helptextSystemAdvanced.autotune_placeholder,
               value: advancedConfig.autotune ? helptext.enabled : helptext.disabled,
             },
             {
-              label: helptext_system_advanced.debugkernel_placeholder,
+              label: helptextSystemAdvanced.debugkernel_placeholder,
               value: advancedConfig.debugkernel ? helptext.enabled : helptext.disabled,
             },
           ],
         },
         {
-          id: CardId.Cron,
-          title: helptext_system_advanced.fieldset_cron,
+          id: AdvancedCardId.Cron,
+          title: helptextSystemAdvanced.fieldset_cron,
           tableConf: this.cronTableConf,
         },
         {
-          id: CardId.InitShutdown,
-          title: helptext_system_advanced.fieldset_initshutdown,
+          id: AdvancedCardId.InitShutdown,
+          title: helptextSystemAdvanced.fieldset_initshutdown,
           tableConf: this.initShutdownTableConf,
         },
         {
-          id: CardId.Sysctl,
-          title: helptext_system_advanced.fieldset_sysctl,
+          id: AdvancedCardId.Sysctl,
+          title: helptextSystemAdvanced.fieldset_sysctl,
           tableConf: this.sysctlTableConf,
         },
         {
-          id: CardId.SystemDatasetPool,
-          title: T('System Dataset Pool'),
+          id: AdvancedCardId.SystemDatasetPool,
+          title: this.translate.instant('System Dataset Pool'),
           items: [
             {
-              label: T('System Dataset Pool'),
+              label: this.translate.instant('System Dataset Pool'),
               value: this.systemDatasetPool,
             },
           ],
@@ -409,17 +403,17 @@ export class AdvancedSettingsComponent implements OnInit {
           (pciId: string) => pciId === gpu.addr.pci_slot,
         ) > -1).map((gpu: Device) => gpu.description).join(', ');
         const gpuCard = {
-          title: T('Isolated GPU Device(s)'),
-          id: CardId.Gpus,
-          items: [{ label: T('Isolated GPU Device(s)'), value: isolatedGpus }],
-        } as DataCard;
+          title: this.translate.instant('Isolated GPU Device(s)'),
+          id: AdvancedCardId.Gpus,
+          items: [{ label: this.translate.instant('Isolated GPU Device(s)'), value: isolatedGpus }],
+        } as DataCard<AdvancedCardId>;
 
         if (isolatedGpus.length == 0) {
           gpuCard.emptyConf = {
             type: EmptyType.NoPageData,
-            title: T('No Isolated GPU Device(s) configured'),
+            title: this.translate.instant('No Isolated GPU Device(s) configured'),
             large: false,
-            message: T('To configure Isolated GPU Device(s), click the "Configure" button.'),
+            message: this.translate.instant('To configure Isolated GPU Device(s), click the "Configure" button.'),
           };
         }
         this.dataCards.push(gpuCard);
@@ -427,40 +421,36 @@ export class AdvancedSettingsComponent implements OnInit {
     });
   }
 
-  async onSettingsPressed(name: CardId, id?: number): Promise<void> {
+  async onSettingsPressed(name: AdvancedCardId, id?: number): Promise<void> {
     let addComponent: Type<ConsoleFormComponent
     | KernelFormComponent
     | SyslogFormComponent
     | TunableFormComponent
     | CronFormComponent
-    | InitshutdownFormComponent
     | SystemDatasetPoolComponent
     | IsolatedGpuPcisFormComponent
     >;
 
     switch (name) {
-      case CardId.Console:
+      case AdvancedCardId.Console:
         addComponent = ConsoleFormComponent;
         break;
-      case CardId.Kernel:
+      case AdvancedCardId.Kernel:
         addComponent = KernelFormComponent;
         break;
-      case CardId.Syslog:
+      case AdvancedCardId.Syslog:
         addComponent = SyslogFormComponent;
         break;
-      case CardId.Sysctl:
+      case AdvancedCardId.Sysctl:
         addComponent = TunableFormComponent;
         break;
-      case CardId.Cron:
+      case AdvancedCardId.Cron:
         addComponent = CronFormComponent;
         break;
-      case CardId.InitShutdown:
-        addComponent = InitshutdownFormComponent;
-        break;
-      case CardId.SystemDatasetPool:
+      case AdvancedCardId.SystemDatasetPool:
         addComponent = SystemDatasetPoolComponent;
         break;
-      case CardId.Gpus:
+      case AdvancedCardId.Gpus:
         addComponent = IsolatedGpuPcisFormComponent;
         break;
       default:
@@ -468,12 +458,22 @@ export class AdvancedSettingsComponent implements OnInit {
     }
 
     await this.showFirstTimeWarningIfNeeded();
-    if ([CardId.Console, CardId.Kernel, CardId.Syslog].includes(name)) {
+    if ([AdvancedCardId.Console, AdvancedCardId.Kernel].includes(name)) {
       this.sysGeneralService.sendConfigData(this.configData as any);
     }
 
-    if (addComponent === ConsoleFormComponent) {
-      this.ixModal.open(ConsoleFormComponent, this.translate.instant('Console'));
+    if ([AdvancedCardId.Kernel].includes(name)) {
+      const modal = this.ixModal.open(KernelFormComponent);
+      modal.setupForm(this.configData);
+    } else if (
+      [
+        AdvancedCardId.Console,
+        AdvancedCardId.Syslog,
+        AdvancedCardId.Gpus,
+        AdvancedCardId.SystemDatasetPool,
+      ].includes(name)
+    ) {
+      this.ixModal.open(addComponent);
     } else {
       this.modalService.openInSlideIn(addComponent, id);
     }
@@ -495,10 +495,10 @@ export class AdvancedSettingsComponent implements OnInit {
       }
       this.dialog
         .confirm({
-          title: helptext_system_advanced.dialog_generate_debug_title,
-          message: helptext_system_advanced.dialog_generate_debug_message,
+          title: helptextSystemAdvanced.dialog_generate_debug_title,
+          message: helptextSystemAdvanced.dialog_generate_debug_message,
           hideCheckBox: true,
-          buttonMsg: helptext_system_advanced.dialog_button_ok,
+          buttonMsg: helptextSystemAdvanced.dialog_button_ok,
         })
         .pipe(
           filter(Boolean),
@@ -508,7 +508,7 @@ export class AdvancedSettingsComponent implements OnInit {
             (res) => {
               const url = res[1];
               this.dialogRef = this.mdDialog.open(EntityJobComponent, {
-                data: { title: T('Saving Debug') },
+                data: { title: this.translate.instant('Saving Debug') },
                 disableClose: true,
               });
               this.dialogRef.componentInstance.jobId = res[0];
@@ -526,14 +526,14 @@ export class AdvancedSettingsComponent implements OnInit {
                       }
                       if (err instanceof HttpErrorResponse) {
                         this.dialog.errorReport(
-                          helptext_system_advanced.debug_download_failed_title,
-                          helptext_system_advanced.debug_download_failed_message,
+                          helptextSystemAdvanced.debug_download_failed_title,
+                          helptextSystemAdvanced.debug_download_failed_message,
                           err.message,
                         );
                       } else {
                         this.dialog.errorReport(
-                          helptext_system_advanced.debug_download_failed_title,
-                          helptext_system_advanced.debug_download_failed_message,
+                          helptextSystemAdvanced.debug_download_failed_title,
+                          helptextSystemAdvanced.debug_download_failed_message,
                           err,
                         );
                       }
@@ -542,11 +542,11 @@ export class AdvancedSettingsComponent implements OnInit {
               });
               this.dialogRef.componentInstance.failure.pipe(take(1), untilDestroyed(this)).subscribe((saveDebugErr) => {
                 this.dialogRef.close();
-                new EntityUtils().handleWSError(this, saveDebugErr, this.dialog);
+                new EntityUtils().handleWsError(this, saveDebugErr, this.dialog);
               });
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialog);
+              new EntityUtils().handleWsError(this, err, this.dialog);
             },
           );
         });

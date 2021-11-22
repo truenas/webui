@@ -4,7 +4,6 @@ import {
 import { MediaObserver } from '@angular/flex-layout';
 import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
@@ -44,8 +43,8 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   cpuAvg: GaugeConfig;
-  title: string = T('CPU');
-  subtitle: string = T('% of all cores');
+  title: string = this.translate.instant('CPU');
+  subtitle: string = this.translate.instant('% of all cores');
   configurable = false;
   chartId = UUID.UUID();
   coreCount: number;
@@ -362,10 +361,10 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
         color = this.stripVar(this.currentTheme[cssVar]);
       }
 
-      const bgRGB = this.utils.convertToRGB((this.currentTheme[color as keyof Theme]) as string).rgb;
+      const bgRgb = this.utils.convertToRgb((this.currentTheme[color as keyof Theme]) as string).rgb;
 
-      ds.backgroundColor = this.rgbToString(bgRGB as any, 0.85);
-      ds.borderColor = this.rgbToString(bgRGB as any);
+      ds.backgroundColor = this.rgbToString(bgRgb as any, 0.85);
+      ds.borderColor = this.rgbToString(bgRgb as any);
       datasets.push(ds);
     });
 
@@ -392,7 +391,7 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
     const valueType = this.utils.getValueType(txtColor);
 
     // convert to rgb
-    const rgb = valueType == 'hex' ? this.utils.hexToRGB(txtColor).rgb : this.utils.rgbToArray(txtColor);
+    const rgb = valueType == 'hex' ? this.utils.hexToRgb(txtColor).rgb : this.utils.rgbToArray(txtColor);
 
     // return rgba
     const rgba = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + opacity + ')';

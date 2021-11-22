@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { TranslateService } from '@ngx-translate/core';
 import { Choices } from 'app/interfaces/choices.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
@@ -13,33 +13,33 @@ import { IscsiService } from 'app/services';
   `,
 })
 export class PortalListComponent implements EntityTableConfig {
-  tableTitle = 'Portals';
+  tableTitle = this.translate.instant('Portals');
   queryCall = 'iscsi.portal.query' as const;
   wsDelete = 'iscsi.portal.delete' as const;
   route_add: string[] = ['sharing', 'iscsi', 'portals', 'add'];
-  route_add_tooltip = 'Add Portal';
+  route_add_tooltip = this.translate.instant('Add Portal');
   route_edit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
 
   columns = [
     {
-      name: T('Portal Group ID'),
+      name: this.translate.instant('Portal Group ID'),
       prop: 'tag',
       always_display: true,
     },
     {
-      name: T('Listen'),
+      name: this.translate.instant('Listen'),
       prop: 'listen',
     },
     {
-      name: T('Description'),
+      name: this.translate.instant('Description'),
       prop: 'comment',
     },
     {
-      name: T('Discovery Auth Method'),
+      name: this.translate.instant('Discovery Auth Method'),
       prop: 'discovery_authmethod',
     },
     {
-      name: T('Discovery Auth Group'),
+      name: this.translate.instant('Discovery Auth Group'),
       prop: 'discovery_authgroup',
     },
   ];
@@ -48,12 +48,17 @@ export class PortalListComponent implements EntityTableConfig {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: 'Portal',
+      title: this.translate.instant('Portal'),
       key_props: ['tag'],
     },
   };
   ipChoices: Choices;
-  constructor(protected router: Router, protected iscsiService: IscsiService) {}
+
+  constructor(
+    protected router: Router,
+    protected iscsiService: IscsiService,
+    protected translate: TranslateService,
+  ) {}
 
   prerequisite(): Promise<boolean> {
     return new Promise(async (resolve) => {
@@ -72,8 +77,8 @@ export class PortalListComponent implements EntityTableConfig {
   dataHandler(entityTable: EntityTableComponent): void {
     entityTable.rows.forEach((row) => {
       for (const ip in row.listen) {
-        const listenIP = this.ipChoices[row.listen[ip].ip] || row.listen[ip].ip;
-        row.listen[ip] = listenIP + ':' + row.listen[ip].port;
+        const listenIp = this.ipChoices[row.listen[ip].ip] || row.listen[ip].ip;
+        row.listen[ip] = listenIp + ':' + row.listen[ip].port;
       }
     });
   }

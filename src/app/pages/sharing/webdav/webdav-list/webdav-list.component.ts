@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { helptext_sharing_webdav } from 'app/helptext/sharing';
+import { TranslateService } from '@ngx-translate/core';
+import { helptextSharingWebdav } from 'app/helptext/sharing';
 import { WebDavShare, WebDavShareUpdate } from 'app/interfaces/web-dav-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
@@ -17,27 +17,27 @@ import { WebSocketService } from 'app/services/ws.service';
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class WebdavListComponent implements EntityTableConfig {
-  title = T('WebDAV');
+  title = this.translate.instant('WebDAV');
   queryCall = 'sharing.webdav.query' as const;
   updateCall = 'sharing.webdav.update' as const;
   wsDelete = 'sharing.webdav.delete' as const;
   route_delete: string[] = ['sharing', 'webdav', 'delete'];
-  rowIdentifier = helptext_sharing_webdav.column_name;
+  rowIdentifier = helptextSharingWebdav.column_name;
 
   columns = [
-    { prop: 'name', name: helptext_sharing_webdav.column_name, always_display: true },
-    { prop: 'comment', name: helptext_sharing_webdav.column_comment },
-    { prop: 'path', name: helptext_sharing_webdav.column_path, showLockedStatus: true },
-    { prop: 'enabled', name: helptext_sharing_webdav.column_enabled, checkbox: true },
-    { prop: 'ro', name: helptext_sharing_webdav.column_ro, hidden: true },
-    { prop: 'perm', name: helptext_sharing_webdav.column_perm, hidden: true },
+    { prop: 'name', name: helptextSharingWebdav.column_name, always_display: true },
+    { prop: 'comment', name: helptextSharingWebdav.column_comment },
+    { prop: 'path', name: helptextSharingWebdav.column_path, showLockedStatus: true },
+    { prop: 'enabled', name: helptextSharingWebdav.column_enabled, checkbox: true },
+    { prop: 'ro', name: helptextSharingWebdav.column_ro, hidden: true },
+    { prop: 'perm', name: helptextSharingWebdav.column_perm, hidden: true },
   ];
 
   config = {
     paging: true,
     sorting: { columns: this.columns },
     deleteMsg: {
-      title: T('Webdav'),
+      title: this.translate.instant('Webdav'),
       key_props: ['name'],
     },
   };
@@ -46,6 +46,7 @@ export class WebdavListComponent implements EntityTableConfig {
     private ws: WebSocketService,
     private modalService: ModalService,
     private dialog: DialogService,
+    private translate: TranslateService,
   ) {}
 
   doAdd(id: string, tableComponent: EntityTableComponent): void {
@@ -71,7 +72,7 @@ export class WebdavListComponent implements EntityTableConfig {
         },
         (err) => {
           row.enabled = !row.enabled;
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         },
       );
   }

@@ -3,8 +3,8 @@ import {
 } from '@angular/core';
 import { MediaObserver } from '@angular/flex-layout';
 import { DomSanitizer } from '@angular/platform-browser';
-import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import {
   Application, Container,
 } from 'pixi.js';
@@ -177,6 +177,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     public mediaObserver: MediaObserver,
     public cdr: ChangeDetectorRef,
     public dialogService: DialogService,
+    protected translate: TranslateService,
   ) {
     this.themeUtils = new ThemeUtils();
 
@@ -202,14 +203,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
     core.register({ observerClass: this, eventName: 'MediaChange' }).pipe(untilDestroyed(this)).subscribe((evt: MediaChangeEvent) => {
       this.mqAlias = evt.data.mqAlias;
-
-      if (evt.data.mqAlias == 'xs' || evt.data.mqAlias == 'sm' || evt.data.mqAlias == 'md') {
-        core.emit({ name: 'ForceSidenav', data: 'close', sender: this });
-        this.resizeView();
-      } else {
-        core.emit({ name: 'ForceSidenav', data: 'open', sender: this });
-      }
-
       this.resizeView();
     });
 
@@ -514,11 +507,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
-  createExtractedEnclosure(profile: any): void {
-    const raw_enclosure = this.system.enclosures[profile.enclosureKey];
+  createExtractedEnclosure(profile: EnclosureMetadata): void {
+    const rawEnclosure = this.system.enclosures[profile.enclosureKey];
     let chassis: Chassis;
 
-    switch (raw_enclosure.model) {
+    switch (rawEnclosure.model) {
       case 'R10':
         this.chassis = new R10();
         break;
@@ -597,7 +590,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
           this.optimizeChassisOpacity(enclosure);
 
-          profile.disks.forEach((disk: any) => {
+          profile.disks.forEach((disk) => {
             this.setDiskHealthState(disk, enclosure);
           });
           this.extractEnclosure(enclosure, profile);
@@ -609,7 +602,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     enclosure.load();
   }
 
-  extractEnclosure(enclosure: ChassisView, profile: any): void {
+  extractEnclosure(enclosure: ChassisView, profile: EnclosureMetadata): void {
     const canvas = this.app.renderer.plugins.extract.canvas(enclosure.container);
     this.controllerEvent$.next({ name: 'EnclosureCanvas', data: { canvas, profile }, sender: this });
     this.container.removeChild(enclosure.container);
@@ -732,7 +725,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       to: { scale: 1, opacity: 1 },
       duration: 360,
     }).start({
-      update: (v: any) => { el.set(v); },
+      update: (v: { scale: number; opacity: number }) => { el.set(v); },
       complete: () => {
         if (this.currentView == 'details') {
           this.labels.events$.next({ name: 'OverlayReady', data: { vdev: this.selectedVdev, overlay: this.domLabels }, sender: this });
@@ -764,7 +757,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       },
       duration,
     }).start({
-      update: (v: any) => { el.set(v); },
+      update: (v: { opacity: number; x: number }) => { el.set(v); },
       complete: () => {
         if (this.exitingView == 'details' && this.currentView !== 'details') {
           this.selectedDisk = null;
@@ -1027,10 +1020,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   toggleSlotStatus(kill?: boolean): void {
     const selectedEnclosure = this.getSelectedEnclosure();
-    const enclosure_id = this.system.enclosures[selectedEnclosure.enclosureKey].id;
+    const enclosureId = this.system.enclosures[selectedEnclosure.enclosureKey].id;
     const slot = this.selectedDisk.enclosure.slot;
     const status = !this.identifyBtnRef && !kill ? EnclosureSlotStatus.Identify : EnclosureSlotStatus.Clear;
-    const args = [enclosure_id, slot, status];
+    const args = [enclosureId, slot, status];
 
     // Arguments are Str("enclosure_id"), Int("slot"), Str("status", enum=["CLEAR", "FAULT", "IDENTIFY"])
     this.core.emit({ name: 'SetEnclosureSlotStatus', data: args, sender: this });
@@ -1057,7 +1050,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       );
 
       // Convert color to rgb value
-      const cc = this.hexToRGB(this.theme.cyan);
+      const cc = this.hexToRgb(this.theme.cyan);
       const animation = keyframes({
         values: [
           { borderWidth: 0, borderColor: 'rgb(' + cc.rgb[0] + ', ' + cc.rgb[1] + ', ' + cc.rgb[2] + ')' },
@@ -1071,7 +1064,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
-  hexToRGB(str: string): { hex: string; rgb: number[] } {
+  hexToRgb(str: string): { hex: string; rgb: number[] } {
     const spl = str.split('#');
     let hex = spl[1];
     if (hex.length == 3) {
@@ -1100,13 +1093,9 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   resizeView(): void {
+    // Layout helper code goes in here...
     const visualizer = this.overview.nativeElement.querySelector('#visualizer');
-    const left = this.cardWidth < 960 ? ((960 - this.cardWidth) / 2 * -1) : 0;
-
-    setTimeout(() => {
-      visualizer.style.left = left.toString() + 'px';
-      this.cdr.detectChanges(); // Force change detection
-    }, 50);
+    visualizer.classList.add('resized');
   }
 
   enclosureOverride(view: string): void {
@@ -1131,7 +1120,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     const obj = this.system.enclosures[this.selectedEnclosure.enclosureKey];
     const currentLabel = obj.label !== obj.name ? obj.label : this.selectedEnclosure.model;
     const conf: DialogFormConfiguration = {
-      title: T('Change Enclosure Label'),
+      title: this.translate.instant('Change Enclosure Label'),
       fieldConfig: [
         {
           type: 'input',
@@ -1157,7 +1146,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
           placeholder: 'Reset to default',
         },
       ],
-      saveButtonText: T('SAVE'),
+      saveButtonText: this.translate.instant('SAVE'),
       customSubmit: (entityDialog: EntityDialogComponent) => {
         this.pendingDialog = entityDialog;
         entityDialog.loader.open();
