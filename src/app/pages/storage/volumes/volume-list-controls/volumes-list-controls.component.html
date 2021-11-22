@@ -1,24 +1,12 @@
 <div *ngIf="entity && conf" fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
 
   <!-- SEARCH -->
-  <!-- TODO: Replace with ix-input when its ready -->
-  <div class="form-element" id="row-filter">
-    <mat-form-field floatPlaceholder="auto">
-      <span matPrefix class="search-icon-wrapper"><mat-icon>search</mat-icon></span>
-      <input matInput #filter placeholder="{{'Filter' | translate}} {{'Dataset Names' | translate}}"
-        class="mat-input-element"
-        ix-auto
-        ix-auto-type="input"
-        ix-auto-identifier="Filter {{entity.title}}">
-      <span
-        class="reset-icon-wrapper"
-        [class.invisible]="!filterValue || filterValue.length == 0"
-        matSuffix
-      >
-        <mat-icon (click)="resetDatasetFilter()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-      </span>
-    </mat-form-field>
-  </div>
+  <form [formGroup]="form" class="ix-form-container">
+    <ix-input
+      formControlName="keyword"
+      prefixIcon="search"
+    ></ix-input>
+  </form>
   <!-- END SEARCH -->
 
   <!-- CREATE & IMPORT BUTTONS -->
