@@ -115,11 +115,11 @@ export class CertificatesDashComponent implements OnInit {
             },
           ],
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(CertificateAddComponent);
+          add: () => {
+            this.modalService.openInSlideIn(CertificateAddComponent);
           },
-          edit(row: Certificate) {
-            this.parent.modalService.openInSlideIn(CertificateEditComponent, row.id);
+          edit: (row: Certificate) => {
+            this.modalService.openInSlideIn(CertificateEditComponent, row.id);
           },
         },
       },
@@ -142,11 +142,11 @@ export class CertificatesDashComponent implements OnInit {
             },
           ],
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(CertificateAddComponent, 'csr');
+          add: () => {
+            this.modalService.openInSlideIn(CertificateAddComponent, 'csr');
           },
-          edit(row: Certificate) {
-            this.parent.modalService.openInSlideIn(CertificateEditComponent, row.id);
+          edit: (row: Certificate) => {
+            this.modalService.openInSlideIn(CertificateEditComponent, row.id);
           },
         },
       },
@@ -182,15 +182,15 @@ export class CertificatesDashComponent implements OnInit {
             },
           ],
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(CertificateAuthorityAddComponent);
+          add: () => {
+            this.modalService.openInSlideIn(CertificateAuthorityAddComponent);
           },
-          edit(row: CertificateAuthority) {
-            this.parent.modalService.openInSlideIn(CertificateAuthorityEditComponent, row.id);
+          edit: (row: CertificateAuthority) => {
+            this.modalService.openInSlideIn(CertificateAuthorityEditComponent, row.id);
           },
-          delete(row: CertificateAuthority, table: TableComponent) {
+          delete: (row: CertificateAuthority, table: TableComponent) => {
             if (row.signed_certificates > 0) {
-              this.parent.dialogService.confirm({
+              this.dialogService.confirm({
                 title: helptextSystemCa.delete_error.title,
                 message: helptextSystemCa.delete_error.message,
                 hideCheckBox: true,
@@ -198,7 +198,7 @@ export class CertificatesDashComponent implements OnInit {
                 hideCancel: true,
               });
             } else {
-              this.parent.tableService.delete(table, row);
+              this.tableService.delete(table, row);
             }
           },
         },
@@ -215,11 +215,11 @@ export class CertificatesDashComponent implements OnInit {
             { name: this.translate.instant('Authenticator'), prop: 'authenticator' },
           ],
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(AcmednsFormComponent);
+          add: () => {
+            this.modalService.openInSlideIn(AcmednsFormComponent);
           },
-          edit(row: CertificateAuthority) {
-            this.parent.modalService.openInSlideIn(AcmednsFormComponent, row.id);
+          edit: (row: CertificateAuthority) => {
+            this.modalService.openInSlideIn(AcmednsFormComponent, row.id);
           },
         },
       },
@@ -412,10 +412,9 @@ export class CertificatesDashComponent implements OnInit {
     method_ws: 'certificateauthority.ca_sign_csr',
     saveButtonText: helptextSystemCa.sign.sign,
     customSubmit: (entityDialog) => this.doSignCsr(entityDialog),
-    parent: this,
   };
 
-  doSignCsr(entityDialog: EntityDialogComponent<this>): void {
+  doSignCsr(entityDialog: EntityDialogComponent): void {
     const payload = {
       ca_id: this.caId,
       csr_cert_id: entityDialog.formGroup.controls.csr_cert_id.value,

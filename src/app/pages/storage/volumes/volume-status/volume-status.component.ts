@@ -355,7 +355,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           title: helptext.replace_disk.form_title + name,
           fieldConfig: this.replaceDiskFormFields,
           saveButtonText: helptext.replace_disk.saveButtonText,
-          parent: this,
           customSubmit: (entityDialog: EntityDialogComponent) => {
             delete entityDialog.formValue['passphrase2'];
 
@@ -480,7 +479,6 @@ export class VolumeStatusComponent implements OnInit, OnDestroy {
           title: helptext.extend_disk.form_title,
           fieldConfig: this.extendVdevFormFields,
           saveButtonText: helptext.extend_disk.saveButtonText,
-          parent: this,
           customSubmit: (entityDialog: EntityDialogComponent) => {
             delete entityDialog.formValue['passphrase2'];
 

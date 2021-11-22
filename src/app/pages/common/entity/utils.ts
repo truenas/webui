@@ -22,6 +22,19 @@ import { Relation, RelationGroup } from './entity-form/models/field-relation.int
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const NULL_VALUE = 'null_value';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type ItemBeforeFlattening = object & {
+  id: string | number;
+  children?: ItemBeforeFlattening[];
+};
+
+type DataBeforeFlattening = ItemBeforeFlattening | ItemBeforeFlattening[];
+
+export interface FlattenedData extends Record<string, unknown> {
+  _level?: number;
+  _parent?: string | number;
+}
+
 export class EntityUtils {
   handleError(entity: any, res: any): void {
     if (res.code === 409) {
@@ -161,15 +174,15 @@ export class EntityUtils {
     return (!!a) && (a.constructor === Object);
   };
 
-  flattenData(data: any | any[], level = 0, parent?: any): any[] {
-    let ndata: any[] = [];
+  flattenData(data: DataBeforeFlattening, level = 0, parent?: { id: string | number }): FlattenedData[] {
+    let ndata: FlattenedData[] = [];
     if (this.isObject(data)) {
       data = [data];
     }
-    (data as any[]).forEach((item) => {
-      item._level = level;
+    data.forEach((item) => {
+      (item as FlattenedData)._level = level;
       if (parent) {
-        item._parent = parent.id;
+        (item as FlattenedData)._parent = parent.id;
       }
       ndata.push(item);
       if (item.children) {

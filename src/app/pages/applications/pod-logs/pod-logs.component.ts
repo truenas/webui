@@ -237,7 +237,6 @@ export class PodLogsComponent implements OnInit, OnDestroy {
         }
       },
       afterInit: (entityDialog) => this.afterLogsDialogInit(entityDialog),
-      parent: this,
     };
   }
 
@@ -248,7 +247,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   }
 
   // download log
-  download(entityDialog: EntityDialogComponent<this>): void {
+  download(entityDialog: EntityDialogComponent): void {
     const chartReleaseName = entityDialog.formGroup.controls['apps'].value;
     const podName = entityDialog.formGroup.controls['pods'].value;
     const containerName = entityDialog.formGroup.controls['containers'].value;
@@ -282,7 +281,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
     });
   }
 
-  onChooseLogs(entityDialog: EntityDialogComponent<this>): void {
+  onChooseLogs(entityDialog: EntityDialogComponent): void {
     this.chart_release_name = entityDialog.formGroup.controls['apps'].value;
     this.pod_name = entityDialog.formGroup.controls['pods'].value;
     this.container_name = entityDialog.formGroup.controls['containers'].value;

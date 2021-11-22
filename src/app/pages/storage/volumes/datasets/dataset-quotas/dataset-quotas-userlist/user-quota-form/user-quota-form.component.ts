@@ -55,10 +55,10 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
           type: 'input',
           name: 'data_quota',
           placeholder: this.translate.instant(helptext.users.data_quota.placeholder)
-          + this.translate.instant(globalHelptext.human_readable.suggestion_label),
+            + this.translate.instant(globalHelptext.human_readable.suggestion_label),
           tooltip: this.translate.instant(helptext.users.data_quota.tooltip)
-          + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
-          + this.translate.instant(' bytes.'),
+            + this.translate.instant(globalHelptext.human_readable.suggestion_tooltip)
+            + this.translate.instant(' bytes.'),
           blurStatus: true,
           blurEvent: () => this.dataQuotaBlur(),
           parent: this,

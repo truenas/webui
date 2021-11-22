@@ -198,7 +198,6 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           this.getCurrentLayout();
         }, 500);
       },
-      parent: this,
       afterInit: (entityDialog: EntityDialogComponent) => {
         const copyDesc: FormParagraphConfig = _.find(entityDialog.fieldConfig, { name: 'copy_desc' });
         const setParatext = (vdevs: number): void => {

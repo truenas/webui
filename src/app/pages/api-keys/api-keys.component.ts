@@ -71,7 +71,6 @@ export class ApiKeysComponent implements EntityTableConfig {
         entityFrom.formGroup.controls['name'].setValue(this.currItem.name);
       }
     },
-    parent: this,
   };
 
   timeZone: string;
@@ -114,7 +113,7 @@ export class ApiKeysComponent implements EntityTableConfig {
     this.dialogService.dialogForm(this.apikeysFormConf);
   }
 
-  doSubmit(entityDialogForm: EntityDialogComponent<ApiKeysComponent>): void {
+  doSubmit(entityDialogForm: EntityDialogComponent): void {
     if (this.currItem) {
       this.ws.call(this.editCall, [this.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
         (res) => {

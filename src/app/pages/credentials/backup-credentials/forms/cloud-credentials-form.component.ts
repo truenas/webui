@@ -7,7 +7,11 @@ import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import {
+  CloudsyncCredential,
+  CloudsyncCredentialVerify,
+  CloudsyncOneDriveDrive,
+} from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
@@ -1390,7 +1394,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
     const driveTypeCtrl = entityForm.formGroup.controls['drive_type-ONEDRIVE'];
     const driveIdCtrl = entityForm.formGroup.controls['drive_id-ONEDRIVE'];
-    entityForm.formGroup.controls['drives-ONEDRIVE'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['drives-ONEDRIVE'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: CloudsyncOneDriveDrive) => {
       if (res) {
         driveTypeCtrl.setValue(res.drive_type);
         driveIdCtrl.setValue(res.drive_id);
@@ -1432,7 +1436,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     );
   }
 
-  verifyCredentials(value: any): void {
+  verifyCredentials(value: CloudsyncCredentialVerify & { name: string }): void {
     delete value['name'];
     this.ws.call('cloudsync.credentials.verify', [value]).pipe(untilDestroyed(this)).subscribe(
       (res) => {

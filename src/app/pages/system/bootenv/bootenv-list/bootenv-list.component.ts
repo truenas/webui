@@ -369,7 +369,6 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             fieldConfig: statusConfigFieldConf,
             saveButtonText: this.translate.instant('Update Interval'),
             cancelButtonText: this.translate.instant('Close'),
-            parent: this,
             customSubmit: (entityDialog: EntityDialogComponent) => {
               const scrubIntervalValue = parseInt(entityDialog.formValue.new_scrub_interval);
               if (scrubIntervalValue > 0) {

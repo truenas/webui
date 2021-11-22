@@ -187,7 +187,7 @@ export class SupportComponent implements OnInit {
     message: helptext.updateProd.message,
   };
 
-  doProdUpdate(entityDialog: EntityDialogComponent<this>): void {
+  doProdUpdate(entityDialog: EntityDialogComponent): void {
     const self = entityDialog;
     self.loader.open();
     const dialogRef = entityDialog.mdDialog.open(EntityJobComponent,

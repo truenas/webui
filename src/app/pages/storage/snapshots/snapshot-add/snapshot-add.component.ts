@@ -94,7 +94,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
       { extra: { flat: false } }]).pipe(untilDestroyed(this)).subscribe((datasets) => {
       const rows = new EntityUtils().flattenData(datasets);
 
-      rows.forEach((dataItem) => {
+      rows.forEach((dataItem: { name: string }) => {
         if (typeof (dataItem.name) !== 'undefined' && dataItem.name.length > 0) {
           const config = this.fieldConfig[0] as FormSelectConfig;
           config.options.push({

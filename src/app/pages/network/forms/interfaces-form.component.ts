@@ -573,8 +573,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     const failoverAliases: { address: string }[] = [];
     const failoverVirtualAliases: { address: string }[] = [];
     data.aliases.forEach((alias: any) => {
-      if (!alias['delete']
-        && !!alias['address']) {
+      if (!alias['delete'] && !!alias['address']) {
         const strings = alias['address'].split('/');
         if (strings[0]) {
           aliases.push({

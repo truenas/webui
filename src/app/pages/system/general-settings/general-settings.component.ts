@@ -66,7 +66,6 @@ export class GeneralSettingsComponent implements OnInit {
     method_ws: 'core.download',
     saveButtonText: helptext.save_config_form.button_text,
     customSubmit: (entityDialog) => this.saveConfigSubmit(entityDialog),
-    parent: this,
     warning: helptext.save_config_form.warning,
   };
 
@@ -79,7 +78,6 @@ export class GeneralSettingsComponent implements OnInit {
       validation: helptext.upload_config_form.validation,
       fileLocation: '',
       updater: (file: FormUploadComponent) => this.updater(file),
-      parent: this,
       hideButton: true,
     },
   ];
@@ -109,7 +107,6 @@ export class GeneralSettingsComponent implements OnInit {
     method_ws: 'config.reset',
     saveButtonText: helptext.reset_config_form.button_text,
     customSubmit: () => this.resetConfigSubmit(),
-    parent: this,
   };
 
   constructor(
