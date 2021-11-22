@@ -16,7 +16,6 @@ import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/s
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import IxValidatorsService from 'app/pages/common/ix-forms/services/ix-validators.service';
 import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
@@ -44,23 +43,6 @@ export class GuiFormComponent {
     crash_reporting: [false, [Validators.required]],
     usage_collection: [false, [Validators.required]],
     ui_consolemsg: [false, [Validators.required]],
-    cidr_port: [
-      '',
-      [
-        this.IxValidatorsService.withMessage(
-          this.IxValidatorsService.ipCidrV4orCidrV6.validatorFn(),
-          {
-            message: this.translate.instant('Invalid CIDR notation IP'),
-            forProperty: this.IxValidatorsService.ipCidrV4orCidrV6.forProperty,
-          },
-        ),
-        this.IxValidatorsService.withMessage(
-          Validators.minLength(10),
-          { message: this.translate.instant('Minimum length allowed is 10-ish'), forProperty: 'minlength' },
-        ),
-        Validators.required,
-      ],
-    ],
   });
 
   options = {
@@ -82,7 +64,6 @@ export class GuiFormComponent {
     private loader: AppLoaderService,
     private translate: TranslateService,
     private errorHandler: FormErrorHandlerService,
-    private IxValidatorsService: IxValidatorsService,
   ) {
     this.sysGeneralService.getGeneralConfig$.pipe(
       untilDestroyed(this),
