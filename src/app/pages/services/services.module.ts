@@ -17,7 +17,7 @@ import { ServiceRSYNCComponent } from 'app/pages/services/components/service-rsy
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { ServiceSMBComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceSNMPComponent } from 'app/pages/services/components/service-snmp/service-snmp.component';
-import { ServiceSSHComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
+import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceTFTPComponent } from 'app/pages/services/components/service-tftp/service-tftp.component';
 import { ServiceUPSComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServiceWebdavComponent } from 'app/pages/services/components/service-webdav/service-webdav.component';
@@ -44,7 +44,7 @@ import { routing } from './services.routing';
   ],
   declarations: [
     ServicesComponent,
-    ServiceSSHComponent,
+    ServiceSshComponent,
     ServiceFTPComponent,
     ServiceLLDPComponent,
     ServiceRSYNCComponent,
