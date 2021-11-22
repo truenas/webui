@@ -1,27 +1,14 @@
 <!-- START OF CONTROLS SECTION -->
 <div *ngIf="entity && conf" fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
 
-  <!-- TODO: Replace with ix-input when its ready -->
-  <div class="form-element search-field" id="row-filter">
-    <mat-form-field floatPlaceholder="never">
-      <span matPrefix class="search-icon-wrapper"><mat-icon>search</mat-icon></span>
-      <input
-        #filter
-        matInput
-        placeholder="{{'Filter' | translate}} {{entity.title | translate}}"
-        ix-auto
-        ix-auto-type="input"
-        ix-auto-identifier="Filter {{entity.conf.title}}">
-
-      <span
-        class="reset-icon-wrapper"
-        [class.invisible]="!filterValue || filterValue.length == 0"
-        matSuffix
-      >
-        <mat-icon (click)="resetFilter()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
-      </span>
-    </mat-form-field>
-  </div>
+  <!-- SEARCH -->
+  <form [formGroup]="form" class="ix-form-container">
+    <ix-input
+      formControlName="search"
+      prefixIcon="search"
+    ></ix-input>
+  </form>
+  <!-- END SEARCH -->
 
   <!-- START COLUMN FILTER -->
   <div *ngIf="entity.columnFilter && entity.allColumns && entity.allColumns.length > 0">
@@ -81,7 +68,6 @@
     </mat-menu>
   </div>
   <!-- END COLUMN FILTER -->
-
 
   <!-- OLD TEMPLATE START -->
   <div class="entity-add-actions-wrapper" *ngIf="this.totalActions> 0">
