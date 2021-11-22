@@ -23,7 +23,7 @@ export class IxSelectHarness extends ComponentHarness implements IxFormControlHa
   }
 
   async getErrorText(): Promise<string> {
-    const label = await this.locatorForOptional('ix-form-errors')();
+    const label = await this.locatorForOptional('ix-errors')();
     return label?.text() || '';
   }
 
