@@ -42,5 +42,6 @@
 <mat-error *ngIf="loadingError" class="loading-error">
   {{loadingError}}
 </mat-error>
-<ix-form-errors [control]="controlDirective.control" [label]="label"></ix-form-errors>
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+
 <mat-hint *ngIf="hint">{{hint}}</mat-hint>

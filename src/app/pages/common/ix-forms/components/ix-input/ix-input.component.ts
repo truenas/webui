@@ -111,6 +111,7 @@ export class IxInputComponent implements ControlValueAccessor {
         this.formatted = this.format(this.value);
       }
     }
+
     this.onChange(this.value);
     this.cdr.markForCheck();
   }
