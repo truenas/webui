@@ -1,48 +1,55 @@
-import { Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef, Component,
+} from '@angular/core';
+import { Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { filter } from 'rxjs/operators';
 import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { DialogService, WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { ModalService } from 'app/services/modal.service';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { WebSocketService, DialogService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-license',
-  template: '<entity-form [conf]="this"></entity-form>',
-  providers: [],
+  templateUrl: './license.component.html',
+  styleUrls: ['./license.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class LicenseComponent implements FormConfiguration {
-  updateCall = 'system.license_update' as const;
-  protected isOneColumnForm = true;
-  fieldSets: FieldSet[] = [
-    {
-      name: 'license',
-      label: false,
-      config: [
-        {
-          type: 'textarea',
-          name: 'license',
-          required: true,
-          placeholder: helptext.update_license.license_placeholder,
-        },
-      ],
-    },
-  ];
+export class LicenseComponent {
+  isFormLoading = false;
+
   title = helptext.update_license.license_placeholder;
+  form = this.fb.group({
+    license: ['', Validators.required],
+  });
 
-  constructor(private ws: WebSocketService, private modalService: ModalService,
-    private loader: AppLoaderService, private dialog: DialogService) { }
+  license = {
+    fcName: 'license',
+    label: helptext.update_license.license_placeholder,
+  };
 
-  customSubmit(form: any): void {
-    this.loader.open();
-    this.ws.call(this.updateCall, [form.license]).pipe(untilDestroyed(this)).subscribe(() => {
-      this.loader.close();
+  constructor(
+    private fb: FormBuilder,
+    protected router: Router,
+    private dialogService: DialogService,
+    private slideInService: IxSlideInService,
+    protected ws: WebSocketService,
+    private cdr: ChangeDetectorRef,
+    private errorHandler: FormErrorHandlerService,
+  ) {}
+
+  onSubmit(): void {
+    this.isFormLoading = true;
+
+    const { license } = this.form.value;
+    this.ws.call('system.license_update', [license]).pipe(untilDestroyed(this)).subscribe(() => {
+      this.isFormLoading = false;
       // To make sure EULA opens on reload; removed from local storage (in topbar) on acceptance of EULA
       window.localStorage.setItem('upgrading_status', 'upgrading');
-      this.dialog.confirm({
+      this.dialogService.confirm({
         title: helptext.update_license.reload_dialog_title,
         message: helptext.update_license.reload_dialog_message,
         hideCheckBox: true,
@@ -50,12 +57,14 @@ export class LicenseComponent implements FormConfiguration {
         hideCancel: true,
         disableClose: true,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-        document.location.reload(true);
+        document.location.reload();
       });
-      this.modalService.closeSlideIn();
-    }, (err) => {
-      this.loader.close();
-      this.dialog.errorReport('Error', err.reason);
+      this.slideInService.close();
+      this.cdr.markForCheck();
+    }, (error) => {
+      this.isFormLoading = false;
+      this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
     });
   }
 }
