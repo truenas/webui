@@ -7,11 +7,13 @@ import { MaterialModule } from 'app/app-material.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { IxTableComponent } from 'app/pages/common/ix-tables/components/ix-table/ix-table.component';
 import { IxCellDefDirective } from 'app/pages/common/ix-tables/directives/ix-cell-def.directive';
+import { IxRowDefDirective } from 'app/pages/common/ix-tables/directives/ix-row-def.directive';
 import { IxTablePaginatorComponent } from './components/ix-table-paginator/ix-table-paginator.component';
 
 @NgModule({
   declarations: [
     IxTableComponent,
+    IxRowDefDirective,
     IxCellDefDirective,
     IxTablePaginatorComponent,
   ],
@@ -25,6 +27,7 @@ import { IxTablePaginatorComponent } from './components/ix-table-paginator/ix-ta
   ],
   exports: [
     IxTableComponent,
+    IxRowDefDirective,
     IxCellDefDirective,
     IxTablePaginatorComponent,
   ],

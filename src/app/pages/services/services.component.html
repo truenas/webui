@@ -56,7 +56,7 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let element; columns: displayedColumns;"></tr>
+      <tr mat-row *matRowDef="let element; columns: displayedColumns; dataSource: dataSource"></tr>
 
       <tr class="mat-row mat-no-data-row" *matNoDataRow>
         <td class="mat-cell" [attr.colspan]="displayedColumns.length">
