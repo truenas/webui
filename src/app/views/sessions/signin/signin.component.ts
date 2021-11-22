@@ -17,7 +17,7 @@ import { ApiService } from 'app/core/services/api.service';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { ProductType } from 'app/enums/product-type.enum';
+import { ProductType, productTypeLabels } from 'app/enums/product-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
@@ -329,13 +329,11 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
     this.submitButton.disabled = true;
     this.progressBar.mode = 'indeterminate';
 
-    if (this.isTwoFactor) {
-      this.ws.login(this.signinData.username, this.signinData.password, this.signinData.otp)
-        .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
-    } else {
-      this.ws.login(this.signinData.username, this.signinData.password)
-        .pipe(untilDestroyed(this)).subscribe((result) => { this.loginCallback(result); });
-    }
+    const request$ = this.isTwoFactor
+      ? this.ws.login(this.signinData.username, this.signinData.password, this.signinData.otp)
+      : this.ws.login(this.signinData.username, this.signinData.password);
+
+    request$.pipe(untilDestroyed(this)).subscribe((result) => this.loginCallback(result));
   }
 
   setpassword(): void {
