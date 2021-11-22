@@ -6,4 +6,5 @@ export enum DefaultValidationErrors {
   MaxLength = 'maxlength',
   MinLength = 'minlength',
   Pattern = 'pattern',
+  Forbidden = 'forbidden',
 }

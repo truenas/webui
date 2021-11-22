@@ -1205,7 +1205,6 @@
   "Maximum number of connections to this module. <i>0</i>  is unlimited.": "",
   "Maximum time a graph is stored in months (allowed values are 1-60).  Changing this value causes the <i>Confirm RRD Destroy</i>  dialog to appear. Changes do not take effect until the existing  reporting database is destroyed.": "",
   "Maximum value is {max}": "",
-  "Maximum value is {value}.": "",
   "Member Disk": "",
   "Member disk": "",
   "Members of this group are local admins and automatically have privileges to take ownership of any file in an SMB share, reset permissions, and administer the SMB server through the Computer Management MMC snap-in.": "",

@@ -183,7 +183,6 @@
   "Make the currently active TrueNAS controller the default when both TrueNAS controllers are online and HA is enabled. To change the default TrueNAS controller, unset this option on the default TrueNAS controller and allow the system to fail over. This briefly interrupts system services.": "",
   "Mask": "",
   "Maximum value is {max}": "",
-  "Maximum value is {value}.": "",
   "MiB": "",
   "Migrate applications to the new pool": "",
   "Minimum value is {min}": "",

@@ -1993,7 +1993,6 @@
   "Maximum swap size is 99 GiB": "",
   "Maximum time a graph is stored in months (allowed values are 1-60).  Changing this value causes the <i>Confirm RRD Destroy</i>  dialog to appear. Changes do not take effect until the existing  reporting database is destroyed.": "",
   "Maximum value is {max}": "",
-  "Maximum value is {value}.": "",
   "May": "",
   "Media Subtype": "",
   "Media Type": "",

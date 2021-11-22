@@ -14,7 +14,6 @@ import { IxComboboxComponent } from 'app/pages/common/ix-forms/components/ix-com
 import { IxErrorsComponent } from 'app/pages/common/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/pages/common/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/pages/common/ix-forms/components/ix-fieldset/ix-fieldset.component';
-import { IxFormErrorsComponent } from 'app/pages/common/ix-forms/components/ix-form-errors/ix-form-errors.component';
 import { IxInputComponent } from 'app/pages/common/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/pages/common/ix-forms/components/ix-select/ix-select.component';
 import { IxSlideInComponent } from 'app/pages/common/ix-forms/components/ix-slide-in/ix-slide-in.component';
@@ -48,7 +47,6 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
     IxSlideInComponent,
     IxModalHeaderComponent,
     IxCheckboxComponent,
-    IxFormErrorsComponent,
     IxUserComboboxComponent,
     IxTextareaComponent,
     IxChipsComponent,
@@ -64,7 +62,6 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
     IxFieldsetComponent,
     IxUserComboboxComponent,
     IxCheckboxComponent,
-    IxFormErrorsComponent,
     IxTextareaComponent,
     IxChipsComponent,
     IxExplorerComponent,

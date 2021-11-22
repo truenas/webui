@@ -32,6 +32,7 @@ export class IxErrorsComponent implements OnChanges {
       { field: this.label, maxLength },
     ),
     pattern: () => this.translate.instant('Invalid format or character'),
+    forbidden: (value: string) => this.translate.instant('The name "{value}" is already in use.', { value }),
   };
 
   constructor(
@@ -82,6 +83,8 @@ export class IxErrorsComponent implements OnChanges {
         return this.defaultErrMessages.maxlength(this.control.errors.maxlength.requiredLength);
       case DefaultValidationErrors.Pattern:
         return this.defaultErrMessages.pattern();
+      case DefaultValidationErrors.Forbidden:
+        return this.defaultErrMessages.forbidden(this.control.value);
     }
   }
 }
