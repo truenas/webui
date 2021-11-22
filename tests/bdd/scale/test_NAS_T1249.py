@@ -84,4 +84,4 @@ def storage_page_should_load_and_the_pool_should_be_gone(driver):
     """storage page should load and the pool should be gone."""
     assert wait_on_element(driver, 20, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    assert wait_on_element(driver, 10, '//div[contains(.,"encrypted_tank")]') is false
+    assert wait_on_element(driver, 10, '//div[contains(.,"encrypted_tank")]') is False
