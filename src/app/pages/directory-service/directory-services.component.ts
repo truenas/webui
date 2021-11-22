@@ -323,7 +323,7 @@ export class DirectoryServicesComponent implements OnInit {
     of(true).pipe(
       switchMap(() => {
         if (name == DirectoryServicesCardId.Idmap && !id) {
-          return this.idmapService.getADStatus().pipe(
+          return this.idmapService.getActiveDirectoryStatus().pipe(
             switchMap((adConfig) => {
               if (!adConfig.enable) {
                 component = ActiveDirectoryComponent;

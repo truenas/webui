@@ -131,10 +131,10 @@ export class OpenvpnClientComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body: OpenvpnClientConfigUpdate) => {
-      return this.services.updateOpenVPN('openvpn.client.update', body);
+      return this.services.updateOpenVpn('openvpn.client.update', body);
     };
 
-    this.services.getOpenVPNClientAuthAlgorithmChoices().pipe(untilDestroyed(this)).subscribe((res) => {
+    this.services.getOpenVpnClientAuthAlgorithmChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       const config = this.fieldConfig.find((c) => c.name === 'authentication_algorithm') as FormSelectConfig;
       for (const item in res) {
         config.options.push(
@@ -142,7 +142,7 @@ export class OpenvpnClientComponent implements FormConfiguration {
         );
       }
     });
-    this.services.getOpenVPNClientCipherChoices().pipe(untilDestroyed(this)).subscribe((res) => {
+    this.services.getOpenVpnClientCipherChoices().pipe(untilDestroyed(this)).subscribe((res) => {
       const config = this.fieldConfig.find((c) => c.name === 'cipher') as FormSelectConfig;
       for (const item in res) {
         config.options.push(
@@ -156,7 +156,7 @@ export class OpenvpnClientComponent implements FormConfiguration {
         config.options.push({ label: certificate.name, value: certificate.id });
       });
     });
-    this.services.getCAs().pipe(untilDestroyed(this)).subscribe((authorities) => {
+    this.services.getCertificateAuthorities().pipe(untilDestroyed(this)).subscribe((authorities) => {
       const config = this.fieldConfig.find((c) => c.name === 'root_ca') as FormSelectConfig;
       authorities.forEach((item) => {
         config.options.push({ label: item.name, value: item.id });

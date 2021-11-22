@@ -174,7 +174,7 @@ export class ServiceNFSComponent implements FormConfiguration {
       id: 'has_nfs_status',
       name: helptext.addSPN.btnTxt,
       function: () => {
-        this.addSPN();
+        this.addSpn();
       },
     },
   ];
@@ -274,11 +274,11 @@ export class ServiceNFSComponent implements FormConfiguration {
   afterSave(entityForm: EntityFormComponent): void {
     this.router.navigate(this.route_success);
     if (entityForm.formGroup.value.v4_krb && !this.v4krbValue) {
-      this.addSPN();
+      this.addSpn();
     }
   }
 
-  addSPN(): void {
+  addSpn(): void {
     if (!this.hasNfsStatus && this.adHealth === DirectoryServiceState.Healthy) {
       this.dialog.confirm({
         title: helptext.add_principal_prompt.title,

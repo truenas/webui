@@ -139,12 +139,12 @@ export class DatasetAclEditorComponent implements OnInit {
     this.ownerGroupFieldConfig.updater = userGroupLoaders.updateGroupSearchOptions;
     this.ownerGroupFieldConfig.loadMoreOptions = userGroupLoaders.loadMoreGroupOptions;
 
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
+    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((users) => {
       const userOptions = users.map((user) => ({ label: user.username, value: user.username }));
       this.ownerFieldConfig.options = userOptions;
     });
 
-    this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.userService.groupQueryDsCache().pipe(untilDestroyed(this)).subscribe((groups) => {
       const groupOptions = groups.map((group) => ({ label: group.group, value: group.group }));
       this.ownerGroupFieldConfig.options = groupOptions;
     });

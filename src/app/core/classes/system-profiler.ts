@@ -218,11 +218,11 @@ export class SystemProfiler {
 
   storeVdevInfo(vdev: VDevMetadata, stats: { [name: string]: VDevStats }): void {
     for (const diskName in vdev.disks) {
-      this.addVDevToDiskInfo(diskName, vdev, stats[diskName]);
+      this.addVdevToDiskInfo(diskName, vdev, stats[diskName]);
     }
   }
 
-  addVDevToDiskInfo(diskName: string, vdev: VDevMetadata, stats?: VDevStats): void {
+  addVdevToDiskInfo(diskName: string, vdev: VDevMetadata, stats?: VDevStats): void {
     const enclosureIndex = this.getEnclosureNumber(diskName);
     const enclosure: EnclosureMetadata = this.profile[enclosureIndex];
     if (!enclosure) {
@@ -326,7 +326,7 @@ export class SystemProfiler {
     return capacity;
   }
 
-  getDiskByID(id: string): Disk {
+  getDiskById(id: string): Disk {
     return this.diskData ? this.diskData.find((disk) => disk.identifier == id) : null;
   }
 }

@@ -47,7 +47,7 @@ export class KerberosSettingsComponent implements OnInit {
         this.cdr.markForCheck();
       },
       (error) => {
-        new EntityUtils().handleWSError(null, error, this.dialogService);
+        new EntityUtils().handleWsError(null, error, this.dialogService);
         this.isFormLoading = false;
         this.cdr.markForCheck();
       },

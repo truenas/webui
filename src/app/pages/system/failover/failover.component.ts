@@ -65,7 +65,7 @@ export class FailoverComponent implements FormConfiguration {
                 helptextSystemFailover.confirm_dialogs.sync_to_message, '', 'info', true);
             }, (err) => {
               this.load.close();
-              new EntityUtils().handleWSError(this.entityForm, err);
+              new EntityUtils().handleWsError(this.entityForm, err);
             });
           }
         });
@@ -87,7 +87,7 @@ export class FailoverComponent implements FormConfiguration {
               helptextSystemFailover.confirm_dialogs.sync_from_message, '', 'info', true);
           }, (err) => {
             this.load.close();
-            new EntityUtils().handleWSError(this.entityForm, err);
+            new EntityUtils().handleWsError(this.entityForm, err);
           });
         });
       },
@@ -182,7 +182,7 @@ export class FailoverComponent implements FormConfiguration {
       });
     }, (res) => {
       this.load.close();
-      new EntityUtils().handleWSError(this.entityForm, res);
+      new EntityUtils().handleWsError(this.entityForm, res);
     });
   }
 

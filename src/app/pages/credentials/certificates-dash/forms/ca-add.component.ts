@@ -576,7 +576,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
-    this.systemGeneralService.getUnsignedCAs().pipe(untilDestroyed(this)).subscribe((res) => {
+    this.systemGeneralService.getUnsignedCas().pipe(untilDestroyed(this)).subscribe((res) => {
       this.signedby = this.getTarget('signedby') as FormSelectConfig;
       res.forEach((item) => {
         this.signedby.options.push(

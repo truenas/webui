@@ -147,7 +147,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this.entityList, err);
+                    new EntityUtils().handleWsError(this.entityList, err);
                   },
                 );
               }
@@ -180,7 +180,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     );
                   },
                   (wsErr) => {
-                    new EntityUtils().handleWSError(this.entityList, wsErr);
+                    new EntityUtils().handleWsError(this.entityList, wsErr);
                   },
                 );
               }
@@ -217,7 +217,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this.entityList, err);
+                    new EntityUtils().handleWsError(this.entityList, err);
                   },
                 );
               }
@@ -296,7 +296,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                 },
                 (err) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+                  new EntityUtils().handleWsError(entityDialog, err, this.dialog);
                 },
               );
             },

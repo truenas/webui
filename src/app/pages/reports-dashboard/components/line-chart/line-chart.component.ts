@@ -111,8 +111,8 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
 
     const fg2 = this.themeService.currentTheme().fg2;
     const fg2Type = this.utils.getValueType(fg2);
-    const fg2RGB = fg2Type == 'hex' ? this.utils.hexToRGB(this.themeService.currentTheme().fg2).rgb : this.utils.rgbToArray(fg2);
-    const gridLineColor = 'rgba(' + fg2RGB[0] + ', ' + fg2RGB[1] + ', ' + fg2RGB[2] + ', 0.25)';
+    const fg2Rgb = fg2Type == 'hex' ? this.utils.hexToRgb(this.themeService.currentTheme().fg2).rgb : this.utils.rgbToArray(fg2);
+    const gridLineColor = 'rgba(' + fg2Rgb[0] + ', ' + fg2Rgb[1] + ', ' + fg2Rgb[2] + ', 0.25)';
     const yLabelSuffix = this.labelY === 'Bits/s' ? this.labelY.toLowerCase() : this.labelY;
 
     // TODO: Try: dygraphs.Options
@@ -303,7 +303,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     switch (units.toLowerCase()) {
       case 'bits':
       case 'bytes':
-        output = this.convertKMGT(value, units.toLowerCase(), fixed, prefixRules);
+        output = this.convertKmgt(value, units.toLowerCase(), fixed, prefixRules);
         break;
       case '%':
       case '°':
@@ -336,7 +336,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     return decimalPlaces > 2 ? numero.toFixed(2) : numero;
   }
 
-  convertKMGT(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion {
+  convertKmgt(value: number, units: string, fixed?: number, prefixRules?: boolean): Conversion {
     const kilo = 1024;
     const mega = kilo * 1024;
     const giga = mega * 1024;

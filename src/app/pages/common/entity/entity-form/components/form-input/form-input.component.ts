@@ -59,7 +59,7 @@ export class FormInputComponent implements Field {
     }
   }
 
-  togglePW(): void {
+  togglePassword(): void {
     this.config.inputType = this.config.inputType === 'password' ? '' : 'password';
     this.showPassword = !this.showPassword;
   }

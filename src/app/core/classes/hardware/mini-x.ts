@@ -38,7 +38,7 @@ export class MINIX extends Chassis {
     const scale = 0.95;
 
     // Scale the 2.5"
-    const scaleDT = (673 / 960) * 1.1;
+    const scaleDt = (673 / 960) * 1.1;
 
     // We must hardcode the coordinates because
     // the parent container's dimensions are not constant
@@ -60,9 +60,9 @@ export class MINIX extends Chassis {
         // SSD
         dt.container.setTransform(
           155,
-          offsetY + dt.container.y + (index * dt.container.height * scaleDT),
-          scaleDT,
-          scaleDT,
+          offsetY + dt.container.y + (index * dt.container.height * scaleDt),
+          scaleDt,
+          scaleDt,
         );
       }
     });

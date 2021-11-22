@@ -150,4 +150,3 @@ def unlock_the_pool(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
 
     assert wait_on_element(driver, 10, '//mat-icon[@fonticon="mdi-lock-open-variant"]')
-

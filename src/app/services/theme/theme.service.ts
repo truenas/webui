@@ -478,8 +478,8 @@ export class ThemeService {
     }
   }
 
-  hexToRGB(str: string): { hex: string; rgb: number[] } {
-    return this.utils.hexToRGB(str);
+  hexToRgb(str: string): { hex: string; rgb: number[] } {
+    return this.utils.hexToRgb(str);
   }
 
   get customThemes(): Theme[] {
@@ -493,8 +493,8 @@ export class ThemeService {
   }
 
   darkTest(css: string): boolean {
-    const rgb = this.utils.forceRGB(css);
-    const hsl = this.utils.rgbToHSL(rgb, false, false);
+    const rgb = this.utils.forceRgb(css);
+    const hsl = this.utils.rgbToHsl(rgb, false, false);
 
     return hsl[2] < 50;
   }
