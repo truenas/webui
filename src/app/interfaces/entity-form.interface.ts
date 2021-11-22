@@ -41,14 +41,14 @@ export interface FormConfiguration {
   };
   saveButtonEnabled?: boolean;
   hideSaveBtn?: boolean;
-  form_message?: {
+  formMessage?: {
     type: string; // info || warning
     content: string;
   };
   isBasicMode?: boolean;
-  advanced_field?: string[];
-  basic_field?: string[];
-  route_conf?: string[];
+  advancedFields?: string[];
+  basicFields?: string[];
+  routeConf?: string[];
   initialCount?: number;
   initialCount_default?: number;
   title?: string;

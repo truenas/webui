@@ -11,7 +11,7 @@ export interface WizardConfiguration {
   summaryTitle?: string;
   wizardConfig: Wizard[];
   saveSubmitText?: string;
-  advanced_field?: string[];
+  advancedFields?: string[];
   isBasicMode?: boolean;
   showSpinner?: boolean;
   isAutoSummary?: boolean;

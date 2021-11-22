@@ -205,7 +205,7 @@ export class LdapComponent implements FormConfiguration {
     },
   ];
 
-  advanced_field = helptext.ldap_advanced_fields;
+  advancedFields = helptext.ldap_advanced_fields;
 
   isCustActionVisible(actionId: string): boolean {
     if (actionId === 'advanced_mode' && !this.isBasicMode) {

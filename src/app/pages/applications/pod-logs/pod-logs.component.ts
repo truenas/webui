@@ -39,12 +39,12 @@ interface PodLogEvent {
 
 export class PodLogsComponent implements OnInit, OnDestroy {
   @ViewChild('logContainer', { static: true }) logContainer: ElementRef;
-  font_size = 14;
+  fontSize = 14;
   formEvent$: Subject<CoreEvent>;
-  chart_release_name: string;
-  pod_name: string;
-  container_name: string;
-  protected tail_lines = 500;
+  chartReleaseName: string;
+  podName: string;
+  containerName: string;
+  protected tailLines = 500;
   protected podDetails: Record<string, string[]>;
   protected tempPodDetails: Record<string, string[]>;
   protected apps: string[] = [];
@@ -69,10 +69,10 @@ export class PodLogsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.chart_release_name = params['rname'];
-      this.pod_name = params['pname'];
-      this.container_name = params['cname'];
-      this.tail_lines = params['tail_lines'];
+      this.chartReleaseName = params['rname'];
+      this.podName = params['pname'];
+      this.containerName = params['cname'];
+      this.tailLines = params['tail_lines'];
 
       // Get app list
       this.appService.getChartReleaseNames().pipe(untilDestroyed(this)).subscribe((charts) => {
@@ -82,10 +82,10 @@ export class PodLogsComponent implements OnInit, OnDestroy {
       });
 
       // Get pod list for the selected app
-      this.ws.call('chart.release.pod_logs_choices', [this.chart_release_name]).pipe(untilDestroyed(this)).subscribe((res) => {
+      this.ws.call('chart.release.pod_logs_choices', [this.chartReleaseName]).pipe(untilDestroyed(this)).subscribe((res) => {
         this.podDetails = res;
 
-        const podDetail = res[this.pod_name];
+        const podDetail = res[this.podName];
         if (!podDetail) {
           this.dialogService.confirm({
             title: helptext.podLogs.nopod.title,
@@ -115,7 +115,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
       this.podLogsChangedListener.unsubscribe();
     }
 
-    const subName = `kubernetes.pod_log_follow:{"release_name":"${this.chart_release_name}", "pod_name":"${this.pod_name}", "container_name":"${this.container_name}", "tail_lines": ${this.tail_lines}}`;
+    const subName = `kubernetes.pod_log_follow:{"release_name":"${this.chartReleaseName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
 
     this.podLogsChangedListener = this.ws.sub(subName).pipe(untilDestroyed(this)).subscribe((res: PodLogEvent) => {
       if (res) {
@@ -142,7 +142,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
       } else if (evt.data.event_control == 'reconnect') {
         this.showChooseLogsDialog(false);
       } else if (evt.data.event_control == 'fontsize') {
-        this.font_size = evt.data.fontsize;
+        this.fontSize = evt.data.fontsize;
       }
     });
 
@@ -155,7 +155,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
         min: 10,
         max: 20,
         step: 1,
-        value: this.font_size,
+        value: this.fontSize,
       },
       {
         name: 'reconnect',
@@ -185,8 +185,8 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   updateChooseLogsDialog(isDownload = false): void {
     let containerOptions: Option[] = [];
 
-    if (this.pod_name && this.podDetails[this.pod_name]) {
-      containerOptions = this.podDetails[this.pod_name].map((item) => ({
+    if (this.podName && this.podDetails[this.podName]) {
+      containerOptions = this.podDetails[this.podName].map((item) => ({
         label: item,
         value: item,
       }));
@@ -199,7 +199,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
         name: 'apps',
         placeholder: helptext.podLogs.chooseApp.placeholder,
         required: true,
-        value: this.chart_release_name,
+        value: this.chartReleaseName,
         options: this.apps.map((item) => ({
           label: item,
           value: item,
@@ -209,7 +209,7 @@ export class PodLogsComponent implements OnInit, OnDestroy {
         name: 'pods',
         placeholder: helptext.podLogs.choosePod.placeholder,
         required: true,
-        value: this.pod_name,
+        value: this.podName,
         options: Object.keys(this.podDetails).map((item) => ({
           label: item,
           value: item,
@@ -219,13 +219,13 @@ export class PodLogsComponent implements OnInit, OnDestroy {
         name: 'containers',
         placeholder: helptext.podLogs.chooseConatiner.placeholder,
         required: true,
-        value: this.container_name,
+        value: this.containerName,
         options: containerOptions,
       }, {
         type: 'input',
         name: 'tail_lines',
         placeholder: helptext.podLogs.tailLines.placeholder,
-        value: this.tail_lines,
+        value: this.tailLines,
         required: true,
       }],
       saveButtonText: isDownload ? helptext.podLogs.downloadBtn : helptext.podLogs.chooseBtn,
@@ -283,10 +283,10 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   }
 
   onChooseLogs(entityDialog: EntityDialogComponent<this>): void {
-    this.chart_release_name = entityDialog.formGroup.controls['apps'].value;
-    this.pod_name = entityDialog.formGroup.controls['pods'].value;
-    this.container_name = entityDialog.formGroup.controls['containers'].value;
-    this.tail_lines = entityDialog.formGroup.controls['tail_lines'].value;
+    this.chartReleaseName = entityDialog.formGroup.controls['apps'].value;
+    this.podName = entityDialog.formGroup.controls['pods'].value;
+    this.containerName = entityDialog.formGroup.controls['containers'].value;
+    this.tailLines = entityDialog.formGroup.controls['tail_lines'].value;
     this.podDetails = this.tempPodDetails;
 
     this.reconnect();

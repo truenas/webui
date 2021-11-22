@@ -234,7 +234,7 @@ export class NFSFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ]);
 
-  advanced_field = [
+  advancedFields = [
     'ro',
     'networks',
     'hosts',

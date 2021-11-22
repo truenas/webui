@@ -565,10 +565,10 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
-      if (this.conf.advanced_field.includes(id)) {
+      if (this.conf.advancedFields.includes(id)) {
         return false;
       }
-    } else if (this.conf.basic_field !== undefined && this.conf.basic_field.includes(id)) {
+    } else if (this.conf.basicFields !== undefined && this.conf.basicFields.includes(id)) {
       return false;
     }
 
@@ -576,7 +576,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   goConf(): void {
-    let route = this.conf.route_conf;
+    let route = this.conf.routeConf;
     if (!route) {
       route = this.conf.routeSuccess;
     }

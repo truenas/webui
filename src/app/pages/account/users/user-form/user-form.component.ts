@@ -66,7 +66,7 @@ export class UserFormComponent implements FormConfiguration {
           required: true,
           validation: [
             Validators.required,
-            Validators.pattern(UserService.VALIDATOR_NAME),
+            Validators.pattern(UserService.namePattern),
             Validators.maxLength(16),
             forbiddenValues(this.namesInUse),
           ],

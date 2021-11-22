@@ -35,7 +35,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   fileLocation: string;
   subs: { formData: FormData; apiEndPoint: string };
-  isHA = false;
+  isHa = false;
   isUpdateRunning = false;
   updateMethod = 'update.update';
   saveSubmitText = this.translate.instant('Apply Update');
@@ -107,7 +107,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
         if (isHa) {
-          this.isHA = true;
+          this.isHa = true;
           this.updateMethod = 'failover.upgrade';
         } else {
           _.find(this.fieldConfig, { name: 'rebootAfterManualUpdate' })['isHidden'] = false;
@@ -166,14 +166,14 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       this.dialogRef = this.dialog.open(EntityJobComponent, {
         data: { title: helptext.manual_update_action },
       });
-      if (this.isHA) {
+      if (this.isHa) {
         this.dialogRef.componentInstance.disableProgressValue(true);
       }
       this.dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
       this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialogRef.close(false);
-        if (!this.isHA) {
+        if (!this.isHa) {
           if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
             this.router.navigate(['/others/reboot']);
           } else {
@@ -224,7 +224,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     if (fileBrowser.files && fileBrowser.files[0]) {
       this.saveButtonEnabled = true;
       const formData: FormData = new FormData();
-      if (this.isHA) {
+      if (this.isHa) {
         formData.append('data', JSON.stringify({
           method: 'failover.upgrade',
         }));
@@ -243,7 +243,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
 
   showRunningUpdate(jobId: number): void {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
-    if (this.isHA) {
+    if (this.isHa) {
       this.dialogRef.componentInstance.disableProgressValue(true);
     }
     this.dialogRef.componentInstance.jobId = jobId;

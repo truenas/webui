@@ -62,9 +62,9 @@ export interface EmbeddedFormConfig {
   clean?: (this: EmbeddedFormConfig, value: any) => void;
   errorReport?: any;
   isBasicMode?: boolean;
-  advanced_field?: string[];
-  basic_field?: string[];
-  route_conf?: string[];
+  advancedFields?: string[];
+  basicFields?: string[];
+  routeConf?: string[];
   preHandler?: (data: any, formArray: FormArray) => any;
   initialCount?: number;
   initialCount_default?: number;
@@ -314,7 +314,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
   isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
-      if (this.conf.advanced_field.includes(id)) {
+      if (this.conf.advancedFields.includes(id)) {
         return false;
       }
     }
@@ -322,7 +322,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   goConf(): void {
-    let route = this.conf.route_conf;
+    let route = this.conf.routeConf;
     if (!route) {
       route = this.conf.routeSuccess;
     }
