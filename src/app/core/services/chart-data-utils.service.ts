@@ -15,7 +15,7 @@ export class ChartDataUtilsService {
   constructor(protected core: CoreService) {
     // Operations are what will run on the thread
     const operations = (): void => {
-      const context: Worker = window.self as unknown as Worker; // Required so Typescript doesn't complain
+      const context = window.self as unknown as Worker; // Required so Typescript doesn't complain
 
       const callback = (data: unknown): void => {
         context.postMessage({ name: 'TEST FROM THREAD CALLBACK', data });
