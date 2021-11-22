@@ -17,6 +17,7 @@ import { NgxUploaderModule } from 'ngx-uploader';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { FormSelectionListComponent } from 'app/pages/common/entity/entity-form/components/form-selection-list/form-selection-list.component';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
@@ -29,8 +30,6 @@ import { TaskScheduleListComponent } from 'app/pages/data-protection/components/
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DocsService } from 'app/services/docs.service';
 import { JobService } from 'app/services/index';
-import { EntityCardActionsComponent } from './entity-card/entity-card-actions.component';
-import { EntityCardComponent } from './entity-card/entity-card.component';
 import { EntityDialogComponent } from './entity-dialog/entity-dialog.component';
 import { EntityEmptyComponent } from './entity-empty/entity-empty.component';
 import { DynamicFieldDirective } from './entity-form/components/dynamic-field/dynamic-field.directive';
@@ -106,6 +105,7 @@ import { TableService } from './table/table.service';
     NgxFilesizeModule,
     CommonDirectivesModule,
     TooltipModule,
+    CastModule,
   ],
   declarations: [
     TaskScheduleListComponent,
@@ -113,8 +113,6 @@ import { TableService } from './table/table.service';
     EntityTableRowDetailsComponent,
     EntityRowDetailsComponent,
     EntityTreeTableComponent,
-    EntityCardComponent,
-    EntityCardActionsComponent,
     EntityTableActionsComponent,
     EntityTableAddActionsComponent,
     EntityTemplateDirective,
@@ -177,8 +175,6 @@ import { TableService } from './table/table.service';
     EntityTableComponent,
     EntityRowDetailsComponent,
     EntityTreeTableComponent,
-    EntityCardComponent,
-    EntityCardActionsComponent,
     EntityTableAddActionsComponent,
     EntityTableActionsComponent,
     DynamicFieldDirective,

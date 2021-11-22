@@ -10,7 +10,7 @@ import { TextLimiterTooltipComponent } from './text-limiter-tooltip/text-limiter
 })
 export class TextLimiterDirective implements AfterViewInit, OnChanges {
   @Input() popup = true;
-  @Input() threshold: number;
+  @Input() threshold: number | string;
   @Input() content = '';
 
   private defaultThreshold = 10;
@@ -73,7 +73,7 @@ export class TextLimiterDirective implements AfterViewInit, OnChanges {
 
   truncate(str: string): string {
     if (str.length > this.threshold) {
-      const truncated = str.substring(0, this.threshold - 3);
+      const truncated = str.substring(0, Number(this.threshold) - 3);
       return truncated + '...';
     }
     return str;

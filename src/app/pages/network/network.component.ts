@@ -33,7 +33,7 @@ import {
   WebSocketService,
 } from 'app/services';
 import { IpmiService } from 'app/services/ipmi.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../common/entity/utils';
 import { CardWidgetConf } from './card-widget/card-widget.component';
@@ -132,10 +132,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     ],
     parent: this,
     add: () => {
-      this.ixModalService.open(StaticRouteFormComponent);
+      this.slideInService.open(StaticRouteFormComponent);
     },
     edit: (route: StaticRoute) => {
-      const modal = this.ixModalService.open(StaticRouteFormComponent);
+      const modal = this.slideInService.open(StaticRouteFormComponent);
       modal.setEditingStaticRoute(route);
     },
     deleteMsg: {
@@ -216,7 +216,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private translate: TranslateService,
     private tableService: TableService,
     private ipmiService: IpmiService,
-    private ixModalService: IxModalService,
+    private slideInService: IxSlideInService,
   ) {
     super();
     this.getGlobalSettings();
@@ -299,7 +299,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         this.hasConsoleFooter = advancedConfig.consolemsg;
       });
 
-    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.staticRoutesTableConf.tableComponent.getData();
     });
 
@@ -322,13 +322,13 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.ws
         .call('failover.licensed')
         .pipe(untilDestroyed(this))
-        .subscribe((is_ha) => {
-          if (is_ha) {
+        .subscribe((isHa) => {
+          if (isHa) {
             this.ws
               .call('failover.disabled_reasons')
               .pipe(untilDestroyed(this))
-              .subscribe((failover_disabled) => {
-                if (failover_disabled.length === 0) {
+              .subscribe((reasons) => {
+                if (reasons.length === 0) {
                   this.ha_enabled = true;
                 }
               });
@@ -436,7 +436,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
                   },
                   (err) => {
                     this.loader.close();
-                    new EntityUtils().handleWSError(this, err, this.dialog);
+                    new EntityUtils().handleWsError(this, err, this.dialog);
                   },
                 );
             }
@@ -492,7 +492,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         },
       );
   }
@@ -523,7 +523,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               },
               (err) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialog);
+                new EntityUtils().handleWsError(this, err, this.dialog);
               },
             );
         }
@@ -535,7 +535,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
   }
 
-  goToHA(): void {
+  goToHa(): void {
     this.router.navigate(['/', 'system', 'failover']);
   }
 

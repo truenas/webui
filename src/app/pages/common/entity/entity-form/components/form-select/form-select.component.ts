@@ -185,8 +185,6 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
       this.selectedValues = this.selectAllValueCache;
       this.allSelected = false;
     }
-
-    // let testOption = this.matSelect.options._results[0];
   }
 
   isDisabled(index: number): boolean {

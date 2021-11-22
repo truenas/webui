@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-const passphrase_msg = T(' a passphrase invalidates an existing pool \
+const passphraseMessage = T(' a passphrase invalidates an existing pool \
  recovery key file. To save a backup of the existing encryption key \
  without making any changes, click <b>DOWNLOAD ENCRYPTION KEY</b>.');
 
@@ -34,13 +34,13 @@ export default {
   changekey_adminpw_validation: [Validators.required],
 
   changekey_headline: T('Encryption Key for Pool '),
-  changekey_instructions: T('Creating') + passphrase_msg,
+  changekey_instructions: T('Creating') + passphraseMessage,
   changekey_passphrase_placeholder: T('Encryption Passphrase'),
   changekey_passphrase_tooltip: T('Enter the new encryption key passphrase.'),
   changekey_passphrase_validation: [Validators.required],
 
   changekey2_headline: T('Encryption Key for Pool '),
-  changekey_instructions2: T('Changing') + passphrase_msg,
+  changekey_instructions2: T('Changing') + passphraseMessage,
   changekey_passphrase2_placeholder: T('Verify passphrase'),
 
   changekey_remove_passphrase_placeholder: T('Remove passphrase'),

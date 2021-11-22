@@ -153,7 +153,7 @@ export class IxFormatterService {
       return '';
     }
 
-    const IecUnitsStr = this.iecUnits.join('|');
+    const iecUnitsStr = this.iecUnits.join('|');
     const shortUnitsStr = this.iecUnits.map((unit) => {
       if (unit.length > 1) {
         return unit.charAt(0) + unit.charAt(2);
@@ -162,11 +162,11 @@ export class IxFormatterService {
     }).join('|');
     const humanUnitsStr = this.iecUnits.map((unit) => unit.charAt(0)).join('|');
 
-    const allUnitsStr = (IecUnitsStr + '|' + shortUnitsStr + '|' + humanUnitsStr).toUpperCase();
-    const unitsRE = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
+    const allUnitsStr = (iecUnitsStr + '|' + shortUnitsStr + '|' + humanUnitsStr).toUpperCase();
+    const unitsRe = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
 
     unitStr = unitStr.toUpperCase();
-    if (unitStr.match(unitsRE)) {
+    if (unitStr.match(unitsRe)) {
       // always return IEC units
       // could take a parameter to return short or human units
       if (unitStr.toLowerCase() === 'b' || unitStr.toLowerCase() === 'bytes') {

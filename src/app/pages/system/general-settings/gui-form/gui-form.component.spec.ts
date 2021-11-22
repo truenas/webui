@@ -14,7 +14,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui-form/gui-form.component';
 import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('GuiFormComponent', () => {
   let spectator: Spectator<GuiFormComponent>;
@@ -56,7 +56,7 @@ describe('GuiFormComponent', () => {
         mockCall('system.general.update', mockSystemGeneralConfig),
         mockCall('service.restart'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(SystemGeneralService, {
         getGeneralConfig$: of(mockSystemGeneralConfig),
         uiCertificateOptions: () => of({ 1: 'freenas_default' }),

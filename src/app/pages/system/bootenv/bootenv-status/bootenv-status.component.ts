@@ -115,7 +115,7 @@ export class BootStatusListComponent implements OnInit {
     );
   }
 
-  parseData(data: VDev | BootPoolState, category?: string, boot_pool_data?: VDev): PoolDiskInfo {
+  parseData(data: VDev | BootPoolState, category?: string, bootPool?: VDev): PoolDiskInfo {
     let stats = {
       read_errors: 0,
       write_errors: 0,
@@ -151,7 +151,7 @@ export class BootStatusListComponent implements OnInit {
       isHidden: boolean;
     }[] = [];
 
-    if ('type' in data && boot_pool_data && boot_pool_data.type === 'mirror' && data.path) {
+    if ('type' in data && bootPool && bootPool.type === 'mirror' && data.path) {
       actions = [{
         id: 'edit',
         label: this.translate.instant('Detach'),
@@ -169,7 +169,7 @@ export class BootStatusListComponent implements OnInit {
       }];
     }
 
-    if ('type' in data && boot_pool_data && boot_pool_data.type === 'disk' && data.path && !this.oneDisk) {
+    if ('type' in data && bootPool && bootPool.type === 'disk' && data.path && !this.oneDisk) {
       actions = [
         {
           label: this.translate.instant('Replace'),
@@ -180,7 +180,7 @@ export class BootStatusListComponent implements OnInit {
         }];
     }
 
-    if ('type' in data && boot_pool_data && boot_pool_data.type === 'disk' && data.path && this.oneDisk) {
+    if ('type' in data && bootPool && bootPool.type === 'disk' && data.path && this.oneDisk) {
       actions = [
         {
           label: this.translate.instant('Attach'),

@@ -121,7 +121,8 @@
           <div class="content" (mouseenter)="toggleHighlightMode('on')" (mouseleave)="toggleHighlightMode('off')">
 
             <div *ngIf="selectedVdevDisks; else noVdevDisks;" class="legend">
-              <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}"(mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)"><div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.yellow : theme.cyan"></div>{{disk}} <span> {{ selectedEnclosure.disks[disk] }}</span>
+              <div *ngFor="let disk of selectedVdevDisks; let i = index" class="vdev-disk {{disk}}" (mouseenter)="highlightPath(disk)" (mouseleave)="unhighlightPath(disk)">
+                <div class="swatch" [style.background]="selectedDisk.devname == disk ? theme.yellow : theme.cyan"></div>{{disk}}
                 <span *ngIf="!selectedVdev.slots[disk]">({{ selectedVdev.diskEnclosures[disk] == system.rearIndex ? 'Rear' : selectedVdev.diskEnclosures[disk] }})</span>
               </div>
             </div>
@@ -152,7 +153,7 @@
         <!-- EXPANDERS OVERLAY -->
         <div *ngIf="currentView == 'expanders' || exitingView == 'expanders'" class="expanders full-stage dom-overlay">
           <div *ngIf="expanders" class="content" >
-            <div *ngFor="let expander of expanders" [style.width]="(100 / expanders.length).toString() + '%'" class="expander-item">
+            <div *ngFor="let expander of expanders | cast" [style.width]="(100 / expanders.length).toString() + '%'" class="expander-item">
               <div class="primary-number" >{{ expander.status }}</div>
               <div class="title">{{expander.descriptor}}</div>
               <div class="subtitle">{{ 'Expander Status' | translate }}</div>

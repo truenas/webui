@@ -18,6 +18,7 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { VolumesListControlsComponent } from 'app/pages/storage/volumes/volume-list-controls/volumes-list-controls.component';
 import {
   VolumesListDataset,
@@ -97,8 +98,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.messageService,
       this.http,
       this.validationService,
-    ),
-  };
+    ) as EntityTableConfig,
+  } as EntityTableComponent;
 
   expanded = false;
   paintMe = true;
@@ -215,7 +216,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
     ]).pipe(untilDestroyed(this)).subscribe(([pools, datasets, upgradedPools]) => {
       this.zfsPoolRows = pools.map((originalPool) => {
         const pool = { ...originalPool } as VolumesListPool;
-        pool.is_upgraded = !!upgradedPools.find((_pool) => _pool.id === pool.id);
+        pool.is_upgraded = !!upgradedPools.find((upgradedPool) => upgradedPool.id === pool.id);
 
         /* Filter out system datasets */
         const pChild = datasets.find((set) => set.name === pool.name);
@@ -271,9 +272,9 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           }
 
           try {
-            const used_pct = pool.children[0].used.parsed
+            const usedPercent = pool.children[0].used.parsed
               / (pool.children[0].used.parsed + pool.children[0].available.parsed);
-            pool.usedStr = '' + filesize(pool.children[0].used.parsed, { standard: 'iec' }) + ' (' + Math.round(used_pct * 100) + '%)';
+            pool.usedStr = '' + filesize(pool.children[0].used.parsed, { standard: 'iec' }) + ' (' + Math.round(usedPercent * 100) + '%)';
           } catch (error: unknown) {
             pool.usedStr = '' + pool.children[0].used.parsed;
           }

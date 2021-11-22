@@ -26,7 +26,7 @@ import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-jo
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService, WebSocketService } from 'app/services/index';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
 import { CatalogSummaryDialogComponent } from '../dialogs/catalog-summary/catalog-summary-dialog.component';
@@ -100,7 +100,7 @@ export class CatalogComponent implements OnInit {
     private core: CoreService,
     private modalService: ModalService,
     private appService: ApplicationsService,
-    private ixModalService: IxModalService,
+    private slideInService: IxSlideInService,
   ) {
     this.utils = new CommonUtils();
   }
@@ -132,6 +132,7 @@ export class CatalogComponent implements OnInit {
 
     this.appService.getAllCatalogItems().pipe(untilDestroyed(this)).subscribe((catalogs) => {
       this.noAvailableCatalog = true;
+      this.catalogApps = [];
       catalogs.forEach((catalog) => {
         if (!catalog.cached) {
           if (catalog.caching_job) {
@@ -205,7 +206,7 @@ export class CatalogComponent implements OnInit {
           this.selectPool();
           return;
         case 'advanced_settings':
-          this.ixModalService.open(KubernetesSettingsComponent);
+          this.slideInService.open(KubernetesSettingsComponent);
           break;
         case 'unset_pool':
           this.doUnsetPool();
@@ -312,7 +313,7 @@ export class CatalogComponent implements OnInit {
       });
 
       dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       });
     });
   }

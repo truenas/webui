@@ -259,11 +259,11 @@
             [rows]="disks"
             [headerHeight]="50"
             [rowHeight]="50"
-            footerHeight="auto"
+            [footerHeight]="$any('auto')"
             [columnMode]="'force'"
             [limit]="10"
             [selected]="selected"
-            selectionType="checkbox"
+            [selectionType]="'checkbox' | cast"
             [externalSorting]="true"
             (sort)='reorderEvent($event)'
             (select)='onSelect($event)'

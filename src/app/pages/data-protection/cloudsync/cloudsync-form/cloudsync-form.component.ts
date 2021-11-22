@@ -451,7 +451,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         });
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
           this.matDialog.closeAll();
-          new EntityUtils().handleWSError(this.entityForm, err);
+          new EntityUtils().handleWsError(this.entityForm, err);
         });
       },
     },
@@ -545,7 +545,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         if (err.extra && err.extra[0] && err.extra[0][0].split('.').pop() == 'bucket') {
           this.setBucketError(err.extra[0][1]);
         } else {
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         }
         node.collapse();
         return [];
@@ -651,26 +651,26 @@ export class CloudsyncFormComponent implements FormConfiguration {
       });
       const allMatch = parentDirectories.every((v: string) => v === parentDirectories[0]);
 
-      const folder_source_field = this.fieldSets.config('folder_source');
-      const folder_source_fc = this.formGroup.get('folder_source');
-      let prevErrors = folder_source_fc.errors;
+      const folderSourceConfig = this.fieldSets.config('folder_source');
+      const folderSourceControl = this.formGroup.get('folder_source');
+      let prevErrors = folderSourceControl.errors;
       if (prevErrors === null) {
         prevErrors = {};
       }
       if (!allMatch) {
-        folder_source_fc.setErrors({
+        folderSourceControl.setErrors({
           ...prevErrors,
           misMatchDirectories: true,
         });
-        folder_source_field.warnings = this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.');
+        folderSourceConfig.warnings = this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.');
       } else {
         delete prevErrors.misMatchDirectories;
         if (Object.keys(prevErrors).length) {
-          folder_source_fc.setErrors({ ...prevErrors });
+          folderSourceControl.setErrors({ ...prevErrors });
         } else {
-          folder_source_fc.setErrors(null);
+          folderSourceControl.setErrors(null);
         }
-        folder_source_field.warnings = null;
+        folderSourceConfig.warnings = null;
       }
     });
 
@@ -693,26 +693,26 @@ export class CloudsyncFormComponent implements FormConfiguration {
       });
       const allMatch = parentDirectories.every((v: string) => v === parentDirectories[0]);
 
-      const path_source_field = this.fieldSets.config('path_source');
-      const path_source_fc = this.formGroup.get('path_source');
-      let prevErrors = path_source_fc.errors;
+      const pathSourceConfig = this.fieldSets.config('path_source');
+      const pathSourceControl = this.formGroup.get('path_source');
+      let prevErrors = pathSourceControl.errors;
       if (prevErrors === null) {
         prevErrors = {};
       }
       if (!allMatch) {
-        path_source_fc.setErrors({
+        pathSourceControl.setErrors({
           ...prevErrors,
           misMatchDirectories: true,
         });
-        path_source_field.warnings = this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.');
+        pathSourceConfig.warnings = this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.');
       } else {
         delete prevErrors.misMatchDirectories;
         if (Object.keys(prevErrors).length) {
-          path_source_fc.setErrors({ ...prevErrors });
+          pathSourceControl.setErrors({ ...prevErrors });
         } else {
-          path_source_fc.setErrors(null);
+          pathSourceControl.setErrors(null);
         }
-        path_source_field.warnings = null;
+        pathSourceConfig.warnings = null;
       }
     });
 
@@ -811,10 +811,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
               this.setDisabled('bucket_input', true, true);
             }
 
-            const task_schema = _.find(this.providers, { name: item.provider }) ? _.find(this.providers, { name: item.provider })['task_schema'] : [];
+            const taskSchema = _.find(this.providers, { name: item.provider }) ? _.find(this.providers, { name: item.provider })['task_schema'] : [];
 
             for (const i of this.taskSchemas) {
-              const tobeDisable = !(_.findIndex(task_schema, { property: i }) > -1);
+              const tobeDisable = !(_.findIndex(taskSchema, { property: i }) > -1);
               this.setDisabled(i === 'encryption' ? 'task_encryption' : i, tobeDisable, tobeDisable);
             }
           }
@@ -912,13 +912,13 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     if (data.bwlimit) {
       transformed.bwlimit = data.bwlimit.map((bwlimit) => {
-        let sub_bwlimit = bwlimit.time + ',off';
+        let subBwLimit = bwlimit.time + ',off';
         if (bwlimit.bandwidth != null) {
           const bandwidth = filesize(bwlimit.bandwidth);
-          sub_bwlimit = `${bwlimit.time}, ${bandwidth}`;
+          subBwLimit = `${bwlimit.time}, ${bandwidth}`;
         }
 
-        return sub_bwlimit;
+        return subBwLimit;
       });
     }
 
@@ -1055,7 +1055,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         this.modalService.closeSlideIn();
       }, (err) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, err);
+        new EntityUtils().handleWsError(this, err);
       });
     } else {
       this.loader.open();
@@ -1066,7 +1066,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWsError(this, err);
         },
       );
     }

@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ViewChartDonutComponent } from 'app/core/components/view-chart-donut/view-chart-donut.component';
-import { ViewChartMetadata } from 'app/core/components/view-chart/view-chart.component';
+import { viewChartMetadata } from 'app/core/components/view-chart/view-chart.component';
 
 @Component({
   selector: 'viewchartpie',
-  template: ViewChartMetadata.template,
-  // templateUrl: './viewchartpie.component.html',
+  template: viewChartMetadata.template,
 })
 export class ViewChartPieComponent extends ViewChartDonutComponent implements OnInit {
   _chartType = 'pie';

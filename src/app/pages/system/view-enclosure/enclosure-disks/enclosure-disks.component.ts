@@ -508,10 +508,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   createExtractedEnclosure(profile: EnclosureMetadata): void {
-    const raw_enclosure = this.system.enclosures[profile.enclosureKey];
+    const rawEnclosure = this.system.enclosures[profile.enclosureKey];
     let chassis: Chassis;
 
-    switch (raw_enclosure.model) {
+    switch (rawEnclosure.model) {
       case 'R10':
         this.chassis = new R10();
         break;
@@ -1020,10 +1020,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   toggleSlotStatus(kill?: boolean): void {
     const selectedEnclosure = this.getSelectedEnclosure();
-    const enclosure_id = this.system.enclosures[selectedEnclosure.enclosureKey].id;
+    const enclosureId = this.system.enclosures[selectedEnclosure.enclosureKey].id;
     const slot = this.selectedDisk.enclosure.slot;
     const status = !this.identifyBtnRef && !kill ? EnclosureSlotStatus.Identify : EnclosureSlotStatus.Clear;
-    const args = [enclosure_id, slot, status];
+    const args = [enclosureId, slot, status];
 
     // Arguments are Str("enclosure_id"), Int("slot"), Str("status", enum=["CLEAR", "FAULT", "IDENTIFY"])
     this.core.emit({ name: 'SetEnclosureSlotStatus', data: args, sender: this });
@@ -1050,7 +1050,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       );
 
       // Convert color to rgb value
-      const cc = this.hexToRGB(this.theme.cyan);
+      const cc = this.hexToRgb(this.theme.cyan);
       const animation = keyframes({
         values: [
           { borderWidth: 0, borderColor: 'rgb(' + cc.rgb[0] + ', ' + cc.rgb[1] + ', ' + cc.rgb[2] + ')' },
@@ -1064,7 +1064,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
   }
 
-  hexToRGB(str: string): { hex: string; rgb: number[] } {
+  hexToRgb(str: string): { hex: string; rgb: number[] } {
     const spl = str.split('#');
     let hex = spl[1];
     if (hex.length == 3) {

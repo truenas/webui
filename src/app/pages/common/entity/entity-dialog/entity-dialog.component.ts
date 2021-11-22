@@ -102,7 +102,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
         (e) => {
           this.loader.close();
           this.dialogRef.close(false);
-          new EntityUtils().handleWSError(this, e);
+          new EntityUtils().handleWsError(this, e);
         },
         () => {
           this.loader.close();
@@ -125,7 +125,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
     });
   }
 
-  togglePW(): void {
+  togglePassword(): void {
     const inputs = document.getElementsByTagName('input');
     for (const input of inputs) {
       if (!input.placeholder.toLowerCase().includes('current')
@@ -168,5 +168,10 @@ export class EntityDialogComponent<P = any> implements OnInit {
 
   toggleSubmit(data: MatCheckboxChange): void {
     this.submitEnabled = data.checked;
+  }
+
+  isButtonVisible(field: FieldConfig): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+    return 'hideButton' in field && field.hideButton === false;
   }
 }

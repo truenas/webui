@@ -106,7 +106,7 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
       this.cdr.markForCheck();
     });
 
-    this.userService.userQueryDSCache().pipe(
+    this.userService.userQueryDsCache().pipe(
       map(this.userQueryResToOptions),
       untilDestroyed(this),
     ).subscribe((options: Option[]) => {
@@ -147,7 +147,7 @@ export class IxUserComboboxComponent implements ControlValueAccessor, OnInit {
   }
 
   loadMoreUsers(filterValue: string, offset: number): void {
-    this.userService.userQueryDSCache(filterValue, offset)
+    this.userService.userQueryDsCache(filterValue, offset)
       .pipe(
         map(this.userQueryResToOptions),
         untilDestroyed(this),

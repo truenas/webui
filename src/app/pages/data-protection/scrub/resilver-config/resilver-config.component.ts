@@ -69,10 +69,12 @@ export class ResilverConfigComponent implements OnInit {
         (config) => {
           this.form.patchValue(config);
           this.isFormLoading = false;
+          this.cdr.markForCheck();
         },
         (error) => {
           this.isFormLoading = false;
-          new EntityUtils().handleWSError(null, error, this.dialogService);
+          this.cdr.markForCheck();
+          new EntityUtils().handleWsError(null, error, this.dialogService);
         },
       );
   }
@@ -85,6 +87,7 @@ export class ResilverConfigComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(() => {
         this.isFormLoading = false;
+        this.cdr.markForCheck();
         this.router.navigate(['/data-protection']);
       }, (error) => {
         this.isFormLoading = false;

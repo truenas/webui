@@ -826,7 +826,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
   }
 
   step0Init(): void {
-    const exist_replicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
+    const existReplicationField = _.find(this.preload_fieldSet.config, { name: 'exist_replication' }) as FormSelectConfig;
     this.replicationService.getReplicationTasks().pipe(untilDestroyed(this)).subscribe(
       (res: ReplicationTask[]) => {
         for (const task of res) {
@@ -836,7 +836,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               ? 'last run ' + this.datePipe.transform(new Date(task.state.datetime.$date), 'MM/dd/yyyy')
               : 'never ran')
             + ')';
-            exist_replicationField.options.push({ label, value: task });
+            existReplicationField.options.push({ label, value: task });
             if (this.pk === task.id) {
               this.loadOrClearReplicationTask(task);
             }
@@ -846,7 +846,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     );
 
     const privateKeyField = _.find(this.dialogFieldConfig, { name: 'private_key' }) as FormSelectConfig;
-    this.keychainCredentialService.getSSHKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
+    this.keychainCredentialService.getSshKeys().pipe(untilDestroyed(this)).subscribe((keyPairs) => {
       const keypairOptions = keyPairs.map((keypair) => ({
         label: keypair.name,
         value: String(keypair.id),
@@ -854,15 +854,15 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       privateKeyField.options = privateKeyField.options.concat(keypairOptions);
     });
 
-    const ssh_credentials_source_field = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
-    const ssh_credentials_target_field = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
-    this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
+    const sshCredentialsSourceField = _.find(this.source_fieldSet.config, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+    const sshCredentialsTargetField = _.find(this.target_fieldSet.config, { name: 'ssh_credentials_target' }) as FormSelectConfig;
+    this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
       connections.forEach((connection) => {
-        ssh_credentials_source_field.options.push({ label: connection.name, value: connection.id });
-        ssh_credentials_target_field.options.push({ label: connection.name, value: connection.id });
+        sshCredentialsSourceField.options.push({ label: connection.name, value: connection.id });
+        sshCredentialsTargetField.options.push({ label: connection.name, value: connection.id });
       });
-      ssh_credentials_source_field.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
-      ssh_credentials_target_field.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
+      sshCredentialsSourceField.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
+      sshCredentialsTargetField.options.push({ label: this.translate.instant('Create New'), value: 'NEW' });
     });
 
     this.entityWizard.formArray.get([0]).get('exist_replication').valueChanges.pipe(untilDestroyed(this)).subscribe((value: ReplicationTask) => {
@@ -912,7 +912,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         .pipe(untilDestroyed(this))
         .subscribe((value: string) => {
           if (value === 'NEW' && this.entityWizard.formArray.get([0]).get(datasetFrom).value === DatasetSource.Remote) {
-            this.createSSHConnection(credentialName);
+            this.createSshConnection(credentialName);
             this.setDisable(datasetName, false, false, 0);
           } else {
             const fieldConfig = i === 'source' ? this.source_fieldSet.config : this.target_fieldSet.config;
@@ -1367,7 +1367,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               }
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
               toStop = true;
               this.rollBack(createdItems);
             },
@@ -1407,7 +1407,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     }
   }
 
-  createSSHConnection(activedField: string): void {
+  createSshConnection(activatedField: string): void {
     const conf: DialogFormConfiguration = {
       title: this.translate.instant('Create SSH Connection'),
       fieldConfig: this.dialogFieldConfig,
@@ -1418,13 +1418,13 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         this.entityWizard.loader.open();
 
         if (value['private_key'] == 'NEW') {
-          await this.replicationService.genSSHKeypair().then(
+          await this.replicationService.genSshKeypair().then(
             (keyPair) => {
               value['sshkeypair'] = keyPair;
             },
             (err) => {
               prerequisite = false;
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         }
@@ -1435,7 +1435,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
             },
             (err) => {
               prerequisite = false;
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         }
@@ -1460,17 +1460,17 @@ export class ReplicationWizardComponent implements WizardConfiguration {
                   privateKeyField.options.push({ label: res.name + ' (New Created)', value: res.id });
                 }
                 if (item === 'ssh_credentials') {
-                  const ssh_credentials_source_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
-                  const ssh_credentials_target_field = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
-                  ssh_credentials_source_field.options.push({ label: res.name + ' (New Created)', value: res.id });
-                  ssh_credentials_target_field.options.push({ label: res.name + ' (New Created)', value: res.id });
-                  this.entityWizard.formArray.get([0]).get([activedField]).setValue(res.id);
+                  const sshCredentialsSourceField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_source' }) as FormSelectConfig;
+                  const sshCredentialsTargetField = _.find(this.wizardConfig[0].fieldConfig, { name: 'ssh_credentials_target' }) as FormSelectConfig;
+                  sshCredentialsSourceField.options.push({ label: res.name + ' (New Created)', value: res.id });
+                  sshCredentialsTargetField.options.push({ label: res.name + ' (New Created)', value: res.id });
+                  this.entityWizard.formArray.get([0]).get([activatedField]).setValue(res.id);
                 }
               },
               (err) => {
                 hasError = true;
                 this.rollBack(createdItems);
-                new EntityUtils().handleWSError(this, err, this.dialogService, this.dialogFieldConfig);
+                new EntityUtils().handleWsError(this, err, this.dialogService, this.dialogFieldConfig);
               },
             );
           }
@@ -1551,7 +1551,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
         (err) => {
           this.eligibleSnapshots = 0;
           this.snapshotsCountField.paraText = '';
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWsError(this, err);
         },
       );
     } else {

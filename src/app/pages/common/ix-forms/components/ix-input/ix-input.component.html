@@ -11,6 +11,7 @@
     <mat-icon>{{prefixIcon}}</mat-icon>
   </span>
   <input
+    #ixInput
     matInput
     [class.prefix-padding]="prefixIcon"
     [class.password-field]="isPasswordField()"
@@ -18,7 +19,7 @@
     [disabled]="isDisabled"
     [type]="getType()"
     [value]="formatted"
-    (input)="input($event.target.value)"
+    (input)="input(ixInput.value)"
     (blur)="blur()"
     [autocomplete]="autocomplete"
     [autocapitalize]="autocapitalize"

@@ -78,8 +78,8 @@ export class DeviceListComponent implements EntityTableConfig {
       name: 'edit',
       icon: 'edit',
       label: this.translate.instant('Edit'),
-      onClick: (edit_row: VmDevice) => {
-        this.router.navigate(['/', 'vm', this.pk, 'devices', this.vm, 'edit', String(edit_row.id), edit_row.dtype]);
+      onClick: (device: VmDevice) => {
+        this.router.navigate(['/', 'vm', this.pk, 'devices', this.vm, 'edit', String(device.id), device.dtype]);
       },
     });
     actions.push({
@@ -87,8 +87,8 @@ export class DeviceListComponent implements EntityTableConfig {
       name: 'delete',
       icon: 'delete',
       label: this.translate.instant('Delete'),
-      onClick: (delete_row: VmDevice) => {
-        this.deviceDelete(delete_row);
+      onClick: (device: VmDevice) => {
+        this.deviceDelete(device);
       },
     });
     actions.push({

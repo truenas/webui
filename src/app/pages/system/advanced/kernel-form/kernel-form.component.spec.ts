@@ -9,7 +9,7 @@ import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { KernelFormComponent } from 'app/pages/system/advanced/kernel-form/kernel-form.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('KernelFormComponent', () => {
   let spectator: Spectator<KernelFormComponent>;
@@ -25,7 +25,7 @@ describe('KernelFormComponent', () => {
       mockWebsocket([
         mockCall('system.advanced.update'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(SystemGeneralService),
     ],
   });

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
+import { shared, helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
@@ -28,10 +28,10 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
 
   columns = [
     {
-      name: this.translate.instant(helptext_sharing_nfs.column_path), prop: 'paths', showLockedStatus: true, always_display: true,
+      name: this.translate.instant(helptextSharingNfs.column_path), prop: 'paths', showLockedStatus: true, always_display: true,
     },
-    { name: this.translate.instant(helptext_sharing_nfs.column_comment), prop: 'comment' },
-    { name: this.translate.instant(helptext_sharing_nfs.column_enabled), prop: 'enabled', checkbox: true },
+    { name: this.translate.instant(helptextSharingNfs.column_comment), prop: 'comment' },
+    { name: this.translate.instant(helptextSharingNfs.column_enabled), prop: 'enabled', checkbox: true },
   ];
   rowIdentifier = 'nfs_paths';
   config = {
@@ -82,7 +82,7 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
         },
         (err) => {
           row.enabled = !row.enabled;
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         },
       );
   }

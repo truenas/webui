@@ -10,7 +10,7 @@ import {
 } from 'app/interfaces/events/user-preferences-event.interface';
 import { WebSocketService } from 'app/services';
 
-export const DefaultTheme: Theme = {
+export const defaultTheme: Theme = {
   name: 'ix-dark',
   label: 'iX Dark',
   labelSwatch: 'blue',
@@ -98,7 +98,7 @@ export class ThemeService {
   private _customThemes: Theme[];
 
   freenasThemes: Theme[] = [
-    DefaultTheme,
+    defaultTheme,
     {
       name: 'ix-blue',
       label: 'iX Blue',
@@ -478,8 +478,8 @@ export class ThemeService {
     }
   }
 
-  hexToRGB(str: string): { hex: string; rgb: number[] } {
-    return this.utils.hexToRGB(str);
+  hexToRgb(str: string): { hex: string; rgb: number[] } {
+    return this.utils.hexToRgb(str);
   }
 
   get customThemes(): Theme[] {
@@ -493,8 +493,8 @@ export class ThemeService {
   }
 
   darkTest(css: string): boolean {
-    const rgb = this.utils.forceRGB(css);
-    const hsl = this.utils.rgbToHSL(rgb, false, false);
+    const rgb = this.utils.forceRgb(css);
+    const hsl = this.utils.rgbToHsl(rgb, false, false);
 
     return hsl[2] < 50;
   }

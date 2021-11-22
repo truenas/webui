@@ -125,7 +125,7 @@ export class ApiKeysComponent implements EntityTableConfig {
           this.entityList.getData();
         },
         (err: WebsocketError) => {
-          new EntityUtils().handleWSError(this, err, this.dialogService, this.apikeysFormConf.fieldConfig);
+          new EntityUtils().handleWsError(this, err, this.dialogService, this.apikeysFormConf.fieldConfig);
         },
       );
     } else {
@@ -136,7 +136,7 @@ export class ApiKeysComponent implements EntityTableConfig {
           this.entityList.getData();
         },
         (err: WebsocketError) => {
-          new EntityUtils().handleWSError(this, err, this.dialogService, this.apikeysFormConf.fieldConfig);
+          new EntityUtils().handleWsError(this, err, this.dialogService, this.apikeysFormConf.fieldConfig);
         },
       );
     }

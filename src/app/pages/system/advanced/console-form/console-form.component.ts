@@ -5,13 +5,13 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { of } from 'rxjs';
 import { choicesToOptions } from 'app/helpers/options.helper';
-import { helptext_system_advanced as helptext } from 'app/helptext/system/advanced';
+import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import {
   DialogService, SystemGeneralService, WebSocketService,
 } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -51,7 +51,7 @@ export class ConsoleFormComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private sysGeneralService: SystemGeneralService,
@@ -68,10 +68,12 @@ export class ConsoleFormComponent implements OnInit {
           this.form.patchValue(config);
           this.isFormLoading = false;
           this.cdr.markForCheck();
+          this.cdr.markForCheck();
         },
         (error) => {
           this.isFormLoading = false;
-          new EntityUtils().handleWSError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(null, error, this.dialogService);
+          this.cdr.markForCheck();
         },
       );
 
@@ -86,10 +88,12 @@ export class ConsoleFormComponent implements OnInit {
     this.ws.call('system.advanced.update', [values]).pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
       this.sysGeneralService.refreshSysGeneral();
-      this.modalService.close();
+      this.cdr.markForCheck();
+      this.slideInService.close();
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
     });
   }
 }

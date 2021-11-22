@@ -1110,7 +1110,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       this.queryCallOption = [['id', '=', id]];
     });
     const sshCredentialsField = this.fieldSets.config('ssh_credentials') as FormSelectConfig;
-    this.keychainCredentialService.getSSHConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
+    this.keychainCredentialService.getSshConnections().pipe(untilDestroyed(this)).subscribe((connections) => {
       sshCredentialsField.options = connections.map((connection) => ({
         label: connection.name,
         value: connection.id,
@@ -1133,9 +1133,9 @@ export class ReplicationFormComponent implements FormConfiguration {
     const restrictScheduleBeginField = this.fieldSets.config('restrict_schedule_begin') as FormSelectConfig;
     const scheduleEndField = this.fieldSets.config('schedule_end') as FormSelectConfig;
     const restrictScheduleEndField = this.fieldSets.config('restrict_schedule_end') as FormSelectConfig;
-    const time_options = this.taskService.getTimeOptions();
+    const timeOptions = this.taskService.getTimeOptions();
 
-    time_options.forEach((timeOption) => {
+    timeOptions.forEach((timeOption) => {
       const option = {
         label: timeOption.label,
         value: timeOption.value,
@@ -1183,7 +1183,7 @@ export class ReplicationFormComponent implements FormConfiguration {
         },
         (err) => {
           this.form_message.content = '';
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWsError(this, err);
         },
       );
   }
@@ -1369,11 +1369,11 @@ export class ReplicationFormComponent implements FormConfiguration {
     }
 
     if (wsResponse.properties_override) {
-      const properties_exclude_list = [];
+      const propertiesExcludeList = [];
       for (const [key, value] of Object.entries(wsResponse['properties_override'])) {
-        properties_exclude_list.push(`${key}=${value}`);
+        propertiesExcludeList.push(`${key}=${value}`);
       }
-      wsResponse['properties_override'] = properties_exclude_list;
+      wsResponse['properties_override'] = propertiesExcludeList;
     }
 
     wsResponse.encryption_key_location_truenasdb = wsResponse.encryption_key_location === '$TrueNAS';
@@ -1428,12 +1428,12 @@ export class ReplicationFormComponent implements FormConfiguration {
       data['exclude'] = [];
     }
     if (data['properties_override']) {
-      const properties_exclude_obj: any = {};
+      const propertiesExcludeObj: any = {};
       for (let item of data['properties_override']) {
         item = item.split('=');
-        properties_exclude_obj[item[0]] = item[1];
+        propertiesExcludeObj[item[0]] = item[1];
       }
-      data['properties_override'] = properties_exclude_obj;
+      data['properties_override'] = propertiesExcludeObj;
     }
 
     if (data['speed_limit'] !== undefined && data['speed_limit'] !== null) {

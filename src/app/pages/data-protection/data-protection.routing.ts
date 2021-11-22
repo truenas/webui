@@ -15,7 +15,7 @@ import { SmartListComponent } from './smart/smart-list/smart-list.component';
 import { SnapshotFormComponent } from './snapshot/snapshot-form/snapshot-form.component';
 import { SnapshotListComponent } from './snapshot/snapshot-list/snapshot-list.component';
 
-export const DataProtectionRoutes: Routes = [{
+export const dataProtectionRoutes: Routes = [{
   path: '',
   data: { title: 'Data Protection' },
   children: [

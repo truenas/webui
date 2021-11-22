@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_sharing_smb = {
+export const helptextSharingSmb = {
   fieldset_basic: T('Basic'),
   fieldset_advanced: T('Advanced'),
   fieldset_access: T('Access'),
@@ -173,8 +173,6 @@ export const helptext_sharing_smb = {
   action_edit_acl: T('Edit Filesystem ACL'),
   action_edit_acl_dialog: {
     title: T('Error'),
-    message1: T('The path'),
-    message2: T('is in a locked dataset.'),
   },
 
   dialog_warning: T('Warning'),

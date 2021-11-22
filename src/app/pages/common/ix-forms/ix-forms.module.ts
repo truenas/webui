@@ -16,15 +16,14 @@ import { IxExplorerComponent } from 'app/pages/common/ix-forms/components/ix-exp
 import { IxFieldsetComponent } from 'app/pages/common/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFormErrorsComponent } from 'app/pages/common/ix-forms/components/ix-form-errors/ix-form-errors.component';
 import { IxInputComponent } from 'app/pages/common/ix-forms/components/ix-input/ix-input.component';
-import { IxModalComponent } from 'app/pages/common/ix-forms/components/ix-modal/ix-modal.component';
-import { IxModalDirective } from 'app/pages/common/ix-forms/components/ix-modal/ix-modal.directive';
 import { IxSelectComponent } from 'app/pages/common/ix-forms/components/ix-select/ix-select.component';
+import { IxSlideInComponent } from 'app/pages/common/ix-forms/components/ix-slide-in/ix-slide-in.component';
 import { IxTextareaComponent } from 'app/pages/common/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxUserComboboxComponent } from 'app/pages/common/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { IxFormatterService } from 'app/pages/common/ix-forms/services/ix-formatter.service';
 import IxValidatorsService from 'app/pages/common/ix-forms/services/ix-validators.service';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
-import { IxModalHeaderComponent } from './components/ix-modal/components/ix-modal-header/ix-modal-header.component';
+import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 
 @NgModule({
   imports: [
@@ -46,8 +45,7 @@ import { IxModalHeaderComponent } from './components/ix-modal/components/ix-moda
     IxSelectComponent,
     IxComboboxComponent,
     IxFieldsetComponent,
-    IxModalComponent,
-    IxModalDirective,
+    IxSlideInComponent,
     IxModalHeaderComponent,
     IxCheckboxComponent,
     IxFormErrorsComponent,
@@ -61,10 +59,9 @@ import { IxModalHeaderComponent } from './components/ix-modal/components/ix-moda
     IxInputComponent,
     IxSelectComponent,
     IxComboboxComponent,
-    IxModalComponent,
+    IxSlideInComponent,
     IxModalHeaderComponent,
     IxFieldsetComponent,
-    IxModalDirective,
     IxUserComboboxComponent,
     IxCheckboxComponent,
     IxFormErrorsComponent,

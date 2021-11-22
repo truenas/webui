@@ -10,10 +10,12 @@
 
 
   <div class="outlined input-container">
-    <input #ixInput matInput
+    <input
+      #ixInput
+      matInput
       [value]="selectedOption?.label"
       [placeholder]="placeholder"
-      (input)="onChanged($event.target.value)"
+      (input)="onChanged(ixInput.value)"
       (blur)="onTouch()"
       [matAutocomplete]="auto"
     >

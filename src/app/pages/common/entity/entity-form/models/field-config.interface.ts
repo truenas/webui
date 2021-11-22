@@ -217,8 +217,12 @@ export interface FormSelectionListConfig<P = any> extends BaseFieldConfig<P> {
   inlineFields?: boolean;
   inlineFieldFlex?: string;
   onChange?(data: any): void;
-  options?: Option[];
+  options?: FormSelectionOption[];
   type: 'selectionlist';
+}
+
+export interface FormSelectionOption extends Option {
+  tooltip?: string;
 }
 
 export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
@@ -228,7 +232,7 @@ export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
 }
 
 export interface FormTaskConfig<P = any> extends BaseFieldConfig<P> {
-  tabs?: FieldConfig[];
+  tabs?: (FieldConfig & { tabName: string })[];
   tabName?: string;
   type: 'task';
 }

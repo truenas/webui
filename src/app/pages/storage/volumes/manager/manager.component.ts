@@ -142,14 +142,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   ) {}
 
   duplicate(): void {
-    const duplicable_disks = this.duplicable_disks;
+    const duplicableDisks = this.duplicable_disks;
     let maxVdevs = 0;
     if (this.first_data_vdev_disknum && this.first_data_vdev_disknum > 0) {
       maxVdevs = Math.floor(this.duplicable_disks.length / this.first_data_vdev_disknum);
     }
-    const vdevs_options = [];
+    const vdevsOptions = [];
     for (let i = maxVdevs; i > 0; i--) {
-      vdevs_options.push({ label: i, value: i });
+      vdevsOptions.push({ label: i, value: i });
     }
     const conf: DialogFormConfiguration = {
       title: helptext.manager_duplicate_title,
@@ -160,7 +160,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           value: maxVdevs,
           placeholder: helptext.manager_duplicate_vdevs_placeholder,
           tooltip: helptext.manager_duplicate_vdevs_tooltip,
-          options: vdevs_options,
+          options: vdevsOptions,
         },
         {
           type: 'paragraph',
@@ -178,20 +178,20 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           const vdev = origVdevs[0];
           value.vdevs = value.vdevs - 1;
           for (let i = 0; i < this.first_data_vdev_disknum; i++) {
-            const disk = duplicable_disks.shift();
+            const disk = duplicableDisks.shift();
             vdev.addDisk(disk);
             this.removeDisk(disk);
           }
         }
         for (let i = 0; i < value.vdevs; i++) {
-          const vdev_values = { disks: [] as ManagerDisk[], type: this.first_data_vdev_type };
+          const vdevValues = { disks: [] as ManagerDisk[], type: this.first_data_vdev_type };
           for (let j = 0; j < this.first_data_vdev_disknum; j++) {
-            const disk = duplicable_disks.shift();
-            vdev_values.disks.push(disk);
+            const disk = duplicableDisks.shift();
+            vdevValues.disks.push(disk);
             // remove disk from selected
             this.selected = _.remove(this.selected, (d) => d.devname !== disk.devname);
           }
-          this.addVdev('data', vdev_values);
+          this.addVdev('data', vdevValues);
         }
         entityDialog.dialogRef.close(true);
         setTimeout(() => {
@@ -200,14 +200,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       },
       parent: this,
       afterInit: (entityDialog: EntityDialogComponent) => {
-        const copy_desc: FormParagraphConfig = _.find(entityDialog.fieldConfig, { name: 'copy_desc' });
+        const copyDesc: FormParagraphConfig = _.find(entityDialog.fieldConfig, { name: 'copy_desc' });
         const setParatext = (vdevs: number): void => {
           const used = this.first_data_vdev_disknum * vdevs;
           const remaining = this.duplicable_disks.length - used;
           const size = filesize(this.first_data_vdev_disksize, { standard: 'iec' });
           const type = this.first_data_vdev_disktype;
           const vdevType = this.first_data_vdev_type;
-          copy_desc.paraText = this.translate.instant(
+          copyDesc.paraText = this.translate.instant(
             'Create {vdevs} new {vdevType} data vdevs using {used} ({size}) {type}s and leaving {remaining} of those drives unused.',
             {
               vdevs, vdevType, size, used, type, remaining,
@@ -249,16 +249,15 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }
         this.first_data_vdev_disknum = res[0].topology.data[0].children.length;
 
-        let first_disk: VDev;
-        if (this.first_data_vdev_disknum === 0
-              && this.first_data_vdev_type === 'disk') {
+        let firstDisk: VDev;
+        if (this.first_data_vdev_disknum === 0 && this.first_data_vdev_type === 'disk') {
           this.first_data_vdev_disknum = 1;
           this.first_data_vdev_type = 'stripe';
-          first_disk = res[0].topology.data[0];
+          firstDisk = res[0].topology.data[0];
         } else {
-          first_disk = res[0].topology.data[0].children[0];
+          firstDisk = res[0].topology.data[0].children[0];
         }
-        this.ws.call('disk.query', [[['name', '=', first_disk.disk]]]).pipe(untilDestroyed(this)).subscribe((disk) => {
+        this.ws.call('disk.query', [[['name', '=', firstDisk.disk]]]).pipe(untilDestroyed(this)).subscribe((disk) => {
           if (disk[0]) {
             this.first_data_vdev_disksize = disk[0].size;
             this.first_data_vdev_disktype = disk[0].type;
@@ -276,7 +275,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       }
     },
     (err) => {
-      new EntityUtils().handleWSError(this, err, this.dialog);
+      new EntityUtils().handleWsError(this, err, this.dialog);
     });
   }
 
@@ -340,14 +339,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.original_disks = Array.from(this.disks);
 
       // assign disks for suggested layout
-      let largest_capacity = 0;
+      let largestCapacity = 0;
       this.disks.forEach((disk) => {
-        if (disk.real_capacity > largest_capacity) {
-          largest_capacity = disk.real_capacity;
+        if (disk.real_capacity > largestCapacity) {
+          largestCapacity = disk.real_capacity;
         }
       });
       this.disks.forEach((disk) => {
-        if (disk.real_capacity === largest_capacity) {
+        if (disk.real_capacity === largestCapacity) {
           this.suggestable_disks.push(disk);
         }
       });
@@ -358,13 +357,13 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.getDuplicableDisks();
     }, (err) => {
       this.loader.close();
-      new EntityUtils().handleWSError(this, err, this.dialog);
+      new EntityUtils().handleWsError(this, err, this.dialog);
     });
   }
 
-  addVdev(group: string, initial_values = {}): void {
+  addVdev(group: string, initialValues = {}): void {
     this.dirty = true;
-    this.vdevs[group].push(initial_values);
+    this.vdevs[group].push(initialValues);
     setTimeout(() => { // there appears to be a slight race condition with adding/removing
       this.getCurrentLayout();
     }, 100);
@@ -390,14 +389,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   getCurrentLayout(): void {
-    let size_estimate = 0;
+    let sizeEstimate = 0;
     if (!this.isNew) {
-      size_estimate = this.extendedAvailable;
+      sizeEstimate = this.extendedAvailable;
     }
-    let data_vdev_disknum = 0;
-    let data_disk_found = false;
-    let any_disk_found = false;
-    let data_vdev_type: string;
+    let dataVdevDisknum = 0;
+    let wasDataDiskFound = false;
+    let wereAnyDisksFound = false;
+    let dataVdevType: string;
     this.disknumError = null;
     this.vdevtypeError = null;
     this.vdevdisksError = false;
@@ -411,7 +410,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       if (vdev.group === 'data') {
         if (i === 0 && this.isNew) {
           this.first_data_vdev_type = vdev.type;
-          data_vdev_type = vdev.type;
+          dataVdevType = vdev.type;
           if (vdev.disks.length > 0) {
             this.first_data_vdev_disknum = vdev.disks.length;
             this.first_data_vdev_disksize = vdev.disks[0].size;
@@ -425,24 +424,24 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           }
         }
         if (vdev.disks.length > 0) {
-          data_disk_found = true;
-          data_vdev_disknum = vdev.disks.length;
-          data_vdev_type = vdev.type;
+          wasDataDiskFound = true;
+          dataVdevDisknum = vdev.disks.length;
+          dataVdevType = vdev.type;
         } else {
           this.emptyDataVdev = true;
-          data_vdev_disknum = 0;
+          dataVdevDisknum = 0;
         }
-        size_estimate += vdev.rawSize;
-        if (data_vdev_disknum > 0) {
-          if (data_vdev_disknum !== this.first_data_vdev_disknum && this.first_data_vdev_type !== 'stripe') {
-            this.getDiskNumErrorMsg(data_vdev_disknum);
+        sizeEstimate += vdev.rawSize;
+        if (dataVdevDisknum > 0) {
+          if (dataVdevDisknum !== this.first_data_vdev_disknum && this.first_data_vdev_type !== 'stripe') {
+            this.getDiskNumErrorMsg(dataVdevDisknum);
           }
-          if (data_vdev_type !== this.first_data_vdev_type) {
-            this.getVdevTypeErrorMsg(data_vdev_type);
+          if (dataVdevType !== this.first_data_vdev_type) {
+            this.getVdevTypeErrorMsg(dataVdevType);
           }
         }
       } else if (vdev.disks.length > 0) {
-        any_disk_found = true;
+        wereAnyDisksFound = true;
       }
       if (vdev.vdev_disks_error) {
         this.vdevdisksError = true;
@@ -464,13 +463,13 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       }
     });
     if (this.isNew) {
-      this.needs_disk = !data_disk_found;
-    } else if (data_disk_found || any_disk_found) {
+      this.needs_disk = !wasDataDiskFound;
+    } else if (wasDataDiskFound || wereAnyDisksFound) {
       this.needs_disk = false;
     } else {
       this.needs_disk = true;
     }
-    this.size = filesize(size_estimate, { standard: 'iec' });
+    this.size = filesize(sizeEstimate, { standard: 'iec' });
 
     this.getDuplicableDisks();
   }
@@ -631,7 +630,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           )
           .pipe(untilDestroyed(this)).subscribe(
             () => {},
-            (e) => new EntityUtils().handleWSError(this, e, this.dialog),
+            (e) => new EntityUtils().handleWsError(this, e, this.dialog),
             () => {
               dialogRef.close(false);
               this.goBack();
@@ -639,7 +638,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           );
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           dialogRef.close(false);
-          new EntityUtils().handleWSError(this, error, this.dialog);
+          new EntityUtils().handleWsError(this, error, this.dialog);
         });
         dialogRef.componentInstance.submit();
       });

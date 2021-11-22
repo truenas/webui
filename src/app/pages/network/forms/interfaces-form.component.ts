@@ -340,22 +340,22 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   }
 
   setType(type: NetworkInterfaceType): void {
-    const is_vlan = (type === NetworkInterfaceType.Vlan);
-    const is_bridge = (type === NetworkInterfaceType.Bridge);
-    const is_lagg = (type === NetworkInterfaceType.LinkAggregation);
+    const isVlan = (type === NetworkInterfaceType.Vlan);
+    const isBridge = (type === NetworkInterfaceType.Bridge);
+    const isLagg = (type === NetworkInterfaceType.LinkAggregation);
     this.vlan_fields.forEach((field) => {
-      this.entityForm.setDisabled(field, !is_vlan, !is_vlan);
+      this.entityForm.setDisabled(field, !isVlan, !isVlan);
     });
     this.lagg_fields.forEach((field) => {
-      this.entityForm.setDisabled(field, !is_lagg, !is_lagg);
+      this.entityForm.setDisabled(field, !isLagg, !isLagg);
     });
     const lagProtocol = this.entityForm.formGroup.get('lag_protocol')?.value;
     if (lagProtocol) {
       if (lagProtocol === LinkAggregationProtocol.Lacp) {
-        this.entityForm.setDisabled('xmit_hash_policy', !is_lagg, !is_lagg);
-        this.entityForm.setDisabled('lacpdu_rate', !is_lagg, !is_lagg);
+        this.entityForm.setDisabled('xmit_hash_policy', !isLagg, !isLagg);
+        this.entityForm.setDisabled('lacpdu_rate', !isLagg, !isLagg);
       } else if (lagProtocol === LinkAggregationProtocol.LoadBalance) {
-        this.entityForm.setDisabled('xmit_hash_policy', !is_lagg, !is_lagg);
+        this.entityForm.setDisabled('xmit_hash_policy', !isLagg, !isLagg);
         this.entityForm.setDisabled('lacpdu_rate', true, true);
       } else {
         this.entityForm.setDisabled('lacpdu_rate', true, true);
@@ -367,11 +367,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     }
 
     this.bridge_fields.forEach((field) => {
-      this.entityForm.setDisabled(field, !is_bridge, !is_bridge);
+      this.entityForm.setDisabled(field, !isBridge, !isBridge);
     });
-    this.vlan_fieldset.label = is_vlan;
-    this.lag_fieldset.label = is_lagg;
-    this.bridge_fieldset.label = is_bridge;
+    this.vlan_fieldset.label = isVlan;
+    this.lag_fieldset.label = isLagg;
+    this.bridge_fieldset.label = isBridge;
   }
 
   preInit(entityForm: EntityFormComponent): void {
@@ -446,12 +446,12 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)
       && window.localStorage.getItem('alias_ips') === 'show') {
-      const failover_virtual_address = _.find(this.ipListControl.templateListField, { name: 'failover_virtual_address' });
-      const failover_address = _.find(this.ipListControl.templateListField, { name: 'failover_address' });
-      failover_virtual_address['disabled'] = false;
-      failover_virtual_address['isHidden'] = false;
-      failover_address['disabled'] = false;
-      failover_address['isHidden'] = false;
+      const failoverVirtualAddress = _.find(this.ipListControl.templateListField, { name: 'failover_virtual_address' });
+      const failoverAddress = _.find(this.ipListControl.templateListField, { name: 'failover_address' });
+      failoverVirtualAddress['disabled'] = false;
+      failoverVirtualAddress['isHidden'] = false;
+      failoverAddress['disabled'] = false;
+      failoverAddress['isHidden'] = false;
     }
     this.aliases_fc = _.find(this.fieldConfig, { name: 'aliases' });
 
@@ -471,39 +471,39 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     });
 
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-        this.failover_fieldset.label = is_ha;
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
+        this.failover_fieldset.label = isHa;
         if (window.localStorage.getItem('product_type').includes(ProductType.Scale)) {
           _.remove(this.failover_fields, (el) => el === 'failover_vhid');
         }
         this.failover_fields.forEach((field) => {
-          entityForm.setDisabled(field, !is_ha, !is_ha);
+          entityForm.setDisabled(field, !isHa, !isHa);
         });
-        if (is_ha) {
+        if (isHa) {
           this.entityForm.formGroup.controls['aliases'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any[]) => {
-            let v6_found = false;
-            let mismatch_found = false;
+            let v6Found = false;
+            let mismatchFound = false;
             res.forEach((alias) => {
               const address = alias['address'];
-              const failover_address = alias['failover_address'];
-              const virtual_address = alias['failover_virtual_address'];
+              const failoverAddress = alias['failover_address'];
+              const virtualAddress = alias['failover_virtual_address'];
               if (
-                !(address && failover_address && virtual_address)
-                && !(!address && !failover_address && !virtual_address)
+                !(address && failoverAddress && virtualAddress)
+                && !(!address && !failoverAddress && !virtualAddress)
               ) {
-                mismatch_found = true;
+                mismatchFound = true;
               }
               if (isCidr.v6(address)
-                  || isCidr.v6(failover_address)
-                  || isCidr.v6(virtual_address)) {
-                v6_found = true;
+                  || isCidr.v6(failoverAddress)
+                  || isCidr.v6(virtualAddress)) {
+                v6Found = true;
               }
             });
-            if (v6_found) {
+            if (v6Found) {
               this.aliases_fc.hasErrors = true;
               this.aliases_fc.errors = helptext.failover_alias_v6_error;
               this.save_button_enabled = false;
-            } else if (mismatch_found) {
+            } else if (mismatchFound) {
               this.aliases_fc.hasErrors = true;
               this.aliases_fc.errors = helptext.failover_alias_set_error;
               this.save_button_enabled = false;
@@ -524,9 +524,9 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
 
       if (this.vlan_pint.type === 'select') {
         this.networkService.getVlanParentInterfaceChoices().pipe(untilDestroyed(this)).subscribe((choices) => {
-          const vlan_pint = this.vlan_pint as FormSelectConfig;
+          const vlanPint = this.vlan_pint as FormSelectConfig;
           for (const key in choices) {
-            vlan_pint.options.push({ label: choices[key], value: key });
+            vlanPint.options.push({ label: choices[key], value: key });
           }
         });
       }
@@ -570,8 +570,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       data['mtu'] = 1500;
     }
     const aliases: NetworkInterfaceAlias[] = [];
-    const failover_aliases: { address: string }[] = [];
-    const failover_virtual_aliases: { address: string }[] = [];
+    const failoverAliases: { address: string }[] = [];
+    const failoverVirtualAliases: { address: string }[] = [];
     data.aliases.forEach((alias: any) => {
       if (!alias['delete']
         && !!alias['address']) {
@@ -584,15 +584,15 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           });
         }
         if (alias['failover_address']) {
-          const f_strings = alias['failover_address'].split('/');
-          if (f_strings[0]) {
-            failover_aliases.push({ address: f_strings[0] });
+          const addressStrings = alias['failover_address'].split('/');
+          if (addressStrings[0]) {
+            failoverAliases.push({ address: addressStrings[0] });
           }
         }
         if (alias['failover_virtual_address']) {
-          const fv_strings = alias['failover_virtual_address'].split('/');
-          if (fv_strings[0]) {
-            failover_virtual_aliases.push({ address: fv_strings[0] });
+          const virtualAddressStrings = alias['failover_virtual_address'].split('/');
+          if (virtualAddressStrings[0]) {
+            failoverVirtualAliases.push({ address: virtualAddressStrings[0] });
           }
         }
       }
@@ -602,11 +602,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     if (data.type === NetworkInterfaceType.Bridge && data.bridge_members === undefined) {
       data.bridge_members = [];
     }
-    if (failover_aliases.length > 0) {
-      data.failover_aliases = failover_aliases;
+    if (failoverAliases.length > 0) {
+      data.failover_aliases = failoverAliases;
     }
-    if (failover_virtual_aliases.length > 0) {
-      data.failover_virtual_aliases = failover_virtual_aliases;
+    if (failoverVirtualAliases.length > 0) {
+      data.failover_virtual_aliases = failoverVirtualAliases;
     }
     return data;
   }
@@ -614,16 +614,16 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   resourceTransformIncomingRestData(data: NetworkInterface): any {
     const aliases = data.aliases;
     const transformedAliases: any[] = [];
-    const failover_aliases = data.failover_aliases;
-    const failover_virtual_aliases = data.failover_virtual_aliases;
+    const failoverAliases = data.failover_aliases;
+    const failoverVirtualAliases = data.failover_virtual_aliases;
     for (let i = 0; i < aliases.length; i++) {
       transformedAliases[i] = {};
       transformedAliases[i].address = aliases[i].address + '/' + aliases[i].netmask;
-      if (failover_aliases && failover_aliases[i]) {
-        transformedAliases[i].failover_address = failover_aliases[i].address;
+      if (failoverAliases && failoverAliases[i]) {
+        transformedAliases[i].failover_address = failoverAliases[i].address;
       }
-      if (failover_virtual_aliases && failover_virtual_aliases[i]) {
-        transformedAliases[i].failover_virtual_address = failover_virtual_aliases[i].address;
+      if (failoverVirtualAliases && failoverVirtualAliases[i]) {
+        transformedAliases[i].failover_virtual_address = failoverVirtualAliases[i].address;
       }
     }
 

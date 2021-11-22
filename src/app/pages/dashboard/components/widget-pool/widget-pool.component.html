@@ -251,7 +251,7 @@
                   <span *ngFor="let device of vdev.children; let child = index">
                     <div *ngIf="device.disk">
                       <span>{{device.disk}}</span>
-                      {{trimMultipath(device.disk.name).name}}
+                      {{trimMultipath(device.disk).name}}
                       <span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;
                     </div>
                   </span>

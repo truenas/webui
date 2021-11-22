@@ -134,7 +134,7 @@ export class ReplicationListComponent implements EntityTableConfig {
                 });
               },
               (err) => {
-                new EntityUtils().handleWSError(this.entityList, err);
+                new EntityUtils().handleWsError(this.entityList, err);
               },
             );
           });
@@ -179,7 +179,7 @@ export class ReplicationListComponent implements EntityTableConfig {
                 },
                 (err) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+                  new EntityUtils().handleWsError(entityDialog, err, this.dialog);
                 },
               );
             },
@@ -242,7 +242,7 @@ export class ReplicationListComponent implements EntityTableConfig {
       },
       (err) => {
         row.enabled = !row.enabled;
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }

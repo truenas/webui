@@ -11,7 +11,7 @@ import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('GroupFormComponent', () => {
   let spectator: Spectator<GroupFormComponent>;
@@ -30,7 +30,7 @@ describe('GroupFormComponent', () => {
         mockCall('group.update'),
         mockCall('group.get_next_gid', 1234),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
     ],
   });
