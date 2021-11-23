@@ -17,9 +17,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1251.feature', 'Verify that group edit page functions')
-def test_verify_that_group_edit_page_functions():
-    """Verify that group edit page functions."""
+@scenario('features/NAS-T1251.feature', 'Verify that you can create a new group')
+def test_verify_that_you_can_create_a_new_group():
+    """Verify that you can create a new group."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
