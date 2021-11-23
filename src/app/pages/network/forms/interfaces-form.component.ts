@@ -152,7 +152,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
           selectOnly: true,
           searchOptions: [],
           parent: this,
-          updater: (value: string) => this.updateSearchOptions(value),
+          updater: (value: string, values?: string[]) => this.updateSearchOptions(value, values),
         },
       ],
       colspan: 2,
@@ -580,10 +580,11 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     });
   }
 
-  updateSearchOptions(value = ''): void {
+  updateSearchOptions(value = '', values?: string[]): void {
     this.lag_ports.searchOptions = this.lagPortsOption.filter((option) => (
-      !value
-        || (value && (option.value as string).toLowerCase().includes(value.toLowerCase()))
+      (!value
+        || (value && (option.value as string).toLowerCase().includes(value.toLowerCase())))
+      && (!values || !values.includes(option.value as string))
     ));
   }
 
