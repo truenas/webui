@@ -190,11 +190,11 @@ def input_the_nfs_dataset_path_in_paths_click_advanced_options(driver):
 @then('input nobody in Mapall User input nogroup in Mapall Group')
 def input_nobody_in_mapall_user_input_nogroup_in_mapall_group(driver):
     """input nobody in Mapall User input nogroup in Mapall Group."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="Mapall User"]', 'clickable')
-    driver.find_element_by_xpath('//input[@placeholder="Mapall User"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Mapall User"]').send_keys('nobody')
-    driver.find_element_by_xpath('//input[@placeholder="Mapall Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Mapall Group"]').send_keys('nogroup')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Mapall User") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"Mapall User") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Mapall User") and contains(@class,"mat-form-field-infix")]//input').send_keys('nobody')
+    driver.find_element_by_xpath('//div[contains(.,"Mapall Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Mapall Group") and contains(@class,"mat-form-field-infix")]//input').send_keys('nogroup')
 
 
 @then('click Submit, the new share should be created without error')
