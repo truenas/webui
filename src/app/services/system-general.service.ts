@@ -122,6 +122,10 @@ export class SystemGeneralService {
     return this.ws.call('certificate.country_choices');
   }
 
+  isStable(): Observable<boolean> {
+    return this.ws.call('system.is_stable');
+  }
+
   getSysInfo(): Observable<SystemInfo> {
     return this.ws.call('system.info');
   }

@@ -8,6 +8,8 @@ import {
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import * as Sentry from '@sentry/angular';
+import { combineLatest } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
@@ -121,6 +123,23 @@ export class GuiFormComponent {
       this.cdr.markForCheck();
       this.slideInService.close();
       this.handleServiceRestart(body);
+      if (body.crash_reporting) {
+        combineLatest([
+          this.sysGeneralService.isStable(),
+          this.sysGeneralService.getSysInfo(),
+        ]).pipe(untilDestroyed(this)).subscribe((res) => {
+          if (res[0]) {
+            Sentry.init({
+              dsn: 'https://7ac3e76fe2a94f77a58e1c38ea6b42d9@sentry.ixsystems.com/4',
+              release: res[1].version,
+            });
+          }
+        });
+      } else {
+        Sentry.init({
+          enabled: false,
+        });
+      }
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.formGroup);
