@@ -33,7 +33,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
 
   protected datasetId: string;
   formGroup: FormGroup;
-  route_success: string[] = ['storage'];
+  routeSuccess: string[] = ['storage'];
   isEntity = true;
   private entityForm: EntityFormComponent;
   protected userField: FormComboboxConfig;
@@ -284,7 +284,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityForm.success = true;
       dialogRef.close();
-      this.router.navigate(['/', ...this.route_success]);
+      this.router.navigate(['/', ...this.routeSuccess]);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       console.error(err);

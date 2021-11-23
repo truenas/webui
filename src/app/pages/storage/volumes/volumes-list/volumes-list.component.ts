@@ -104,8 +104,8 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
   expanded = false;
   paintMe = true;
   systemdatasetPool: string;
-  has_encrypted_root: { [pool: string]: boolean } = {};
-  has_key_dataset: { [pool: string]: boolean } = {};
+  hasEncryptedRoot: { [pool: string]: boolean } = {};
+  hasKeyDataset: { [pool: string]: boolean } = {};
   entityEmptyConf: EmptyConfig = {
     type: EmptyType.FirstUse,
     large: true,
@@ -192,13 +192,13 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
       this.zfsPoolRows.pop();
     }
 
-    this.has_key_dataset = {};
-    this.has_encrypted_root = {};
+    this.hasKeyDataset = {};
+    this.hasEncryptedRoot = {};
     this.ws.call('pool.dataset.query_encrypted_roots_keys').pipe(untilDestroyed(this)).subscribe((res) => {
       for (const key in res) {
         if (res.hasOwnProperty(key)) {
           const pool = key.split('/')[0];
-          this.has_key_dataset[pool] = true;
+          this.hasKeyDataset[pool] = true;
         }
       }
     });
@@ -249,7 +249,7 @@ export class VolumesListComponent extends EntityTableComponent implements OnInit
           try {
             pool.children[0].is_encrypted_root = (pool.children[0].id === pool.children[0].encryption_root);
             if (pool.children[0].is_encrypted_root) {
-              this.has_encrypted_root[pool.name] = true;
+              this.hasEncryptedRoot[pool.name] = true;
             }
             pool.children[0].available_parsed = this.storage.convertBytestoHumanReadable(
               pool.children[0].available.parsed || 0,

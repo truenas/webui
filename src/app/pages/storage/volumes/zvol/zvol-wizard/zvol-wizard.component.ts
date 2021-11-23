@@ -51,7 +51,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   addWsCall = 'pool.dataset.create' as const;
   protected path: string;
   queryCall = 'pool.dataset.query' as const;
-  advanced_field = ['volblocksize'];
+  advancedFields = ['volblocksize'];
   isBasicMode = true;
   protected isNew = true;
   protected isEntity = true;
@@ -59,7 +59,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
   volid: string;
   customFilter: QueryParams<Dataset> = [];
   protected entityWizard: EntityWizardComponent;
-  minimum_recommended_zvol_volblocksize: keyof ZvolWizardComponent['reverseZvolBlockSizeMap'];
+  minimumRecommendedZvolVolblocksize: keyof ZvolWizardComponent['reverseZvolBlockSizeMap'];
   namesInUse: string[] = [];
   title: string;
   isLinear = true;
@@ -354,7 +354,7 @@ export class ZvolWizardComponent implements WizardConfiguration {
         this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
           zvolEntityForm.controls['volblocksize'].setValue(res);
           // TODO: Check if actual server response matches map
-          this.minimum_recommended_zvol_volblocksize = res as any;
+          this.minimumRecommendedZvolVolblocksize = res as any;
         });
       } else {
         let parentDataset: string | string[] = pkDataset[0].name.split('/');
@@ -486,10 +486,10 @@ export class ZvolWizardComponent implements WizardConfiguration {
     });
     zvolEntityForm.controls['volblocksize'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: keyof ZvolWizardComponent['reverseZvolBlockSizeMap']) => {
       const resNumber = parseInt(this.reverseZvolBlockSizeMap[res], 10);
-      if (this.minimum_recommended_zvol_volblocksize) {
-        const recommendedSize = parseInt(this.reverseZvolBlockSizeMap[this.minimum_recommended_zvol_volblocksize], 0);
+      if (this.minimumRecommendedZvolVolblocksize) {
+        const recommendedSize = parseInt(this.reverseZvolBlockSizeMap[this.minimumRecommendedZvolVolblocksize], 0);
         if (resNumber < recommendedSize) {
-          this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize').warnings = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimum_recommended_zvol_volblocksize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
+          this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize').warnings = `${this.translate.instant(helptext.blocksize_warning.a)} ${this.minimumRecommendedZvolVolblocksize}. ${this.translate.instant(helptext.blocksize_warning.b)}`;
         } else {
           this.wizardConfig[1].fieldConfig.find((c) => c.name === 'volblocksize').warnings = null;
         }

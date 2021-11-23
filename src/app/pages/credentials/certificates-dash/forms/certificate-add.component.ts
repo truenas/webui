@@ -612,7 +612,7 @@ export class CertificateAddComponent implements WizardConfiguration {
     'passphrase',
     'passphrase2',
   ];
-  private importCSRFields = [
+  private importCsrFields = [
     'CSR',
     'privatekey',
     'passphrase',
@@ -755,7 +755,7 @@ export class CertificateAddComponent implements WizardConfiguration {
 
     this.csrFields.forEach((field) => this.hideField(field, true));
     this.importFields.forEach((field) => this.hideField(field, true));
-    this.importCSRFields.forEach((field) => this.hideField(field, true));
+    this.importCsrFields.forEach((field) => this.hideField(field, true));
     this.internalFields.forEach((field) => this.hideField(field, false));
     this.hideField(this.internalFields[2], true);
     this.getField('csronsys').valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
@@ -767,7 +767,7 @@ export class CertificateAddComponent implements WizardConfiguration {
       if (res == 'CERTIFICATE_CREATE_INTERNAL') {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importFields.forEach((field) => this.hideField(field, true));
-        this.importCSRFields.forEach((field) => this.hideField(field, true));
+        this.importCsrFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, false));
         this.extensionFields.forEach((field) => this.hideField(field, false));
 
@@ -781,7 +781,7 @@ export class CertificateAddComponent implements WizardConfiguration {
         }
       } else if (res == 'CERTIFICATE_CREATE_CSR') {
         this.importFields.forEach((field) => this.hideField(field, true));
-        this.importCSRFields.forEach((field) => this.hideField(field, true));
+        this.importCsrFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
         this.csrFields.forEach((field) => this.hideField(field, false));
         this.extensionFields.forEach((field) => this.hideField(field, false));
@@ -796,7 +796,7 @@ export class CertificateAddComponent implements WizardConfiguration {
         }
       } else if (res == 'CERTIFICATE_CREATE_IMPORTED') {
         this.csrFields.forEach((field) => this.hideField(field, true));
-        this.importCSRFields.forEach((field) => this.hideField(field, true));
+        this.importCsrFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
         this.importFields.forEach((field) => this.hideField(field, false));
         this.extensionFields.forEach((field) => this.hideField(field, true));
@@ -815,7 +815,7 @@ export class CertificateAddComponent implements WizardConfiguration {
         this.csrFields.forEach((field) => this.hideField(field, true));
         this.importFields.forEach((field) => this.hideField(field, true));
         this.internalFields.forEach((field) => this.hideField(field, true));
-        this.importCSRFields.forEach((field) => this.hideField(field, false));
+        this.importCsrFields.forEach((field) => this.hideField(field, false));
         this.extensionFields.forEach((field) => this.hideField(field, true));
 
         this.wizardConfig[2].skip = true;

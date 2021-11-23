@@ -18,14 +18,14 @@ import { WebSocketService } from 'app/services';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class ServiceUPSComponent implements FormConfiguration {
-  protected ups_driver: FormComboboxConfig;
-  private ups_drivers_list: Choices = {};
-  private ups_driver_key: string;
-  protected ups_port: FormComboboxConfig;
+  protected upsDriverField: FormComboboxConfig;
+  private upsDrivers: Choices = {};
+  private upsDriverKey: string;
+  protected upsPortField: FormComboboxConfig;
   protected entityForm: EntityFormComponent;
 
   queryCall = 'ups.config' as const;
-  route_success: string[] = ['services'];
+  routeSuccess: string[] = ['services'];
   title = helptext.formTitle;
 
   fieldSets: FieldSet[] = [
@@ -249,26 +249,26 @@ export class ServiceUPSComponent implements FormConfiguration {
     this.entityForm = entityForm;
 
     const generalSet = this.fieldSets.find((set) => set.name === helptext.ups_fieldset_general);
-    this.ups_driver = generalSet.config.find((config) => config.name === 'driver') as FormComboboxConfig;
-    this.ups_port = generalSet.config.find((config) => config.name === 'port') as FormComboboxConfig;
+    this.upsDriverField = generalSet.config.find((config) => config.name === 'driver') as FormComboboxConfig;
+    this.upsPortField = generalSet.config.find((config) => config.name === 'port') as FormComboboxConfig;
 
     this.ws.call('ups.driver_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.ups_drivers_list = res;
+      this.upsDrivers = res;
       for (const item in res) {
-        this.ups_driver.options.push({ label: res[item], value: res[item] });
+        this.upsDriverField.options.push({ label: res[item], value: res[item] });
       }
     });
 
     this.ws.call('ups.port_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((port) => {
-        this.ups_port.options.push({ label: port, value: port });
+        this.upsPortField.options.push({ label: port, value: port });
       });
     });
 
     entityForm.formGroup.controls['driver'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.ups_driver_key = this.getKeyByValue(this.ups_drivers_list, res);
-      if (this.ups_drivers_list[res]) {
-        entityForm.formGroup.controls['driver'].setValue(this.ups_drivers_list[res]);
+      this.upsDriverKey = this.getKeyByValue(this.upsDrivers, res);
+      if (this.upsDrivers[res]) {
+        entityForm.formGroup.controls['driver'].setValue(this.upsDrivers[res]);
       }
     });
 
@@ -284,6 +284,6 @@ export class ServiceUPSComponent implements FormConfiguration {
   }
 
   beforeSubmit(data: UpsConfigUpdate): void {
-    data.driver = this.ups_driver_key;
+    data.driver = this.upsDriverKey;
   }
 }

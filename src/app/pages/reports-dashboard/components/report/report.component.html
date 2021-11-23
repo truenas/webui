@@ -202,17 +202,17 @@
     >
       <mat-icon *ngIf="retroLogo == 1" class="generic" svgIcon="freenas_logo_full"></mat-icon>
       <mat-icon
-        *ngIf="retroLogo == 0 && product_type == ProductType.Core"
+        *ngIf="retroLogo == 0 && productType == ProductType.Core"
         class="generic"
         svgIcon="truenas_core_logo_full"
       ></mat-icon>
       <mat-icon
-        *ngIf="retroLogo == 0 && product_type == ProductType.Enterprise"
+        *ngIf="retroLogo == 0 && productType == ProductType.Enterprise"
         class="generic"
         svgIcon="truenas_enterprise_logo_full"
       ></mat-icon>
       <mat-icon
-        *ngIf="(retroLogo == 0 && product_type == ProductType.Scale) || product_type == ProductType.ScaleEnterprise"
+        *ngIf="(retroLogo == 0 && productType == ProductType.Scale) || productType == ProductType.ScaleEnterprise"
         class="generic"
         svgIcon="truenas_scale_logo_full"
       ></mat-icon>

@@ -16,7 +16,7 @@ import { LocaleService } from 'app/services/locale.service';
   styleUrls: ['./failover.component.scss'],
 })
 export class FailoverComponent implements OnInit {
-  product_type: ProductType;
+  productType: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
   readonly ProductType = ProductType;
@@ -27,7 +27,7 @@ export class FailoverComponent implements OnInit {
     private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
     this.ws = ws;
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.product_type = res as ProductType;
+      this.productType = res as ProductType;
     });
   }
 
@@ -44,7 +44,7 @@ export class FailoverComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.product_type = window.localStorage.getItem('product_type') as ProductType;
+    this.productType = window.localStorage.getItem('product_type') as ProductType;
 
     this.dialog.closeAll();
     // TODO: Check if next and error should trade places

@@ -21,7 +21,7 @@ export class WebdavListComponent implements EntityTableConfig {
   queryCall = 'sharing.webdav.query' as const;
   updateCall = 'sharing.webdav.update' as const;
   wsDelete = 'sharing.webdav.delete' as const;
-  route_delete: string[] = ['sharing', 'webdav', 'delete'];
+  routeDelete: string[] = ['sharing', 'webdav', 'delete'];
   rowIdentifier = helptextSharingWebdav.column_name;
 
   columns = [

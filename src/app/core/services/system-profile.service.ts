@@ -15,7 +15,7 @@ export class SystemProfileService extends BaseService {
   cache: SystemInfo;
   private buffer: CoreEvent[] = [];
 
-  private ha_status: HaStatus;
+  private haStatus: HaStatus;
 
   features: SystemFeatures = {
     HA: false,
@@ -41,8 +41,8 @@ export class SystemProfileService extends BaseService {
     }).subscribe(() => {
       if (this.cache && this.features.HA) {
         // This is a TrueNAS box with HA support
-        if (this.ha_status && this.ha_status.status.length > 0) {
-          this.core.emit({ name: 'HA_Status', data: this.ha_status, sender: this });
+        if (this.haStatus && this.haStatus.status.length > 0) {
+          this.core.emit({ name: 'HA_Status', data: this.haStatus, sender: this });
         }
       }
     });
@@ -138,7 +138,7 @@ export class SystemProfileService extends BaseService {
     const enabledText = res.length == 0 ? 'HA Enabled' : 'HA Disabled';
 
     window.sessionStorage.setItem('ha_status', haEnabled.toString());
-    this.ha_status = { status: enabledText, reasons: res };
-    this.core.emit({ name: 'HA_Status', data: this.ha_status, sender: this });
+    this.haStatus = { status: enabledText, reasons: res };
+    this.core.emit({ name: 'HA_Status', data: this.haStatus, sender: this });
   }
 }

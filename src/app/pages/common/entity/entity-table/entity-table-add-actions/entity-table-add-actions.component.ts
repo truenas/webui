@@ -29,7 +29,7 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
   animationMode = 'fling';
 
   get totalActions(): number {
-    const addAction = this.entity.conf.route_add || this.entity.conf.doAdd ? 1 : 0;
+    const addAction = this.entity.conf.routeAdd || this.entity.conf.doAdd ? 1 : 0;
     return this.actions.length + addAction;
   }
 

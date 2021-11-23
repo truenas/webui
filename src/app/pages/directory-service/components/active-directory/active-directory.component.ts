@@ -36,9 +36,9 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   updateCall = 'activedirectory.update' as const;
   isEntity = false;
   isBasicMode = true;
-  protected kerberos_realm: FormSelectConfig;
-  protected kerberos_principal: FormSelectConfig;
-  protected nss_info: FormSelectConfig;
+  protected kerberosRealmField: FormSelectConfig;
+  protected kerberosPrincipalField: FormSelectConfig;
+  protected nssInfoField: FormSelectConfig;
   adStatus = false;
   entityEdit: EntityFormComponent;
   custActions = [
@@ -285,7 +285,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     },
   ];
 
-  advanced_field = helptext.activedirectory_advanced_fields;
+  advancedFields = helptext.activedirectory_advanced_fields;
 
   isCustActionVisible(actionname: string): boolean {
     if (actionname === 'advanced_mode' && !this.isBasicMode) {
@@ -345,27 +345,27 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
-      this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
+      this.kerberosRealmField = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
       realms.forEach((realm) => {
-        this.kerberos_realm.options.push(
+        this.kerberosRealmField.options.push(
           { label: realm.realm, value: realm.id },
         );
       });
     });
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
+      this.kerberosPrincipalField = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
       res.forEach((item) => {
-        this.kerberos_principal.options.push(
+        this.kerberosPrincipalField.options.push(
           { label: item, value: item },
         );
       });
     });
 
     this.ws.call('activedirectory.nss_info_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      this.nss_info = _.find(this.fieldConfig, { name: 'nss_info' }) as FormSelectConfig;
+      this.nssInfoField = _.find(this.fieldConfig, { name: 'nss_info' }) as FormSelectConfig;
       choices.forEach((choice) => {
-        this.nss_info.options.push(
+        this.nssInfoField.options.push(
           { label: choice, value: choice },
         );
       });
@@ -429,20 +429,20 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     }
 
     this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
-      this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
+      this.kerberosRealmField = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
       realms.forEach((realm) => {
-        this.kerberos_realm.options.push(
+        this.kerberosRealmField.options.push(
           { label: realm.realm, value: realm.id },
         );
       });
     });
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
-      this.kerberos_principal.options.length = 0;
-      this.kerberos_principal.options.push({ label: '---', value: null });
+      this.kerberosPrincipalField = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
+      this.kerberosPrincipalField.options.length = 0;
+      this.kerberosPrincipalField.options.push({ label: '---', value: null });
       res.forEach((item) => {
-        this.kerberos_principal.options.push(
+        this.kerberosPrincipalField.options.push(
           { label: item, value: item },
         );
       });

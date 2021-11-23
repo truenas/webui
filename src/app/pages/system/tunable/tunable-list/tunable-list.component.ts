@@ -20,17 +20,17 @@ export class TunableListComponent implements EntityTableConfig {
   wsDelete = 'tunable.delete' as const;
   queryCall = 'tunable.query' as const;
 
-  route_edit: string[] = ['system', 'tunable', 'edit'];
-  protected route_success: string[] = ['system', 'tunable'];
-  route_add: string[] = ['system', 'tunable', 'add'];
-  route_add_tooltip: string = this.translate.instant('Add Tunable');
+  routeEdit: string[] = ['system', 'tunable', 'edit'];
+  protected routeSuccess: string[] = ['system', 'tunable'];
+  routeAdd: string[] = ['system', 'tunable', 'add'];
+  routeAddTooltip: string = this.translate.instant('Add Tunable');
 
-  protected route_edit_scale: string[] = ['system', 'sysctl', 'edit'];
-  protected route_success_scale: string[] = ['system', 'advanced'];
-  protected route_add_scale: string[] = ['system', 'sysctl', 'add'];
-  protected route_add_tooltip_scale = this.translate.instant('Add Sysctl');
+  protected routeEditScale: string[] = ['system', 'sysctl', 'edit'];
+  protected routeSuccessScale: string[] = ['system', 'advanced'];
+  protected routeAddScale: string[] = ['system', 'sysctl', 'add'];
+  protected routeAddTooltipScale = this.translate.instant('Add Sysctl');
 
-  protected product_type: ProductType;
+  protected productType: ProductType;
 
   protected entityList: EntityTableComponent;
 
@@ -78,12 +78,12 @@ export class TunableListComponent implements EntityTableConfig {
 
   preInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
-    this.product_type = window.localStorage.getItem('product_type') as ProductType;
-    if (this.product_type === ProductType.Scale || this.product_type === ProductType.ScaleEnterprise) {
-      this.route_add = this.route_add_scale;
-      this.route_edit = this.route_edit_scale;
-      this.route_success = this.route_success_scale;
-      this.route_add_tooltip = this.route_add_tooltip_scale;
+    this.productType = window.localStorage.getItem('product_type') as ProductType;
+    if (this.productType === ProductType.Scale || this.productType === ProductType.ScaleEnterprise) {
+      this.routeAdd = this.routeAddScale;
+      this.routeEdit = this.routeEditScale;
+      this.routeSuccess = this.routeSuccessScale;
+      this.routeAddTooltip = this.routeAddTooltipScale;
       this.config.deleteMsg.title = this.translate.instant('Sysctl');
       this.title = this.title_scale;
     }

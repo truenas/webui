@@ -17,7 +17,7 @@ import { StorageService } from 'app/services/storage.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DiskBulkEditComponent implements FormConfiguration {
-  route_success: string[] = ['storage', 'disks'];
+  routeSuccess: string[] = ['storage', 'disks'];
   isEntity = true;
 
   fieldConfig: FieldConfig[] = [];
@@ -94,14 +94,14 @@ export class DiskBulkEditComponent implements FormConfiguration {
   ) {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['poolId']) {
-        this.route_success = ['storage', 'pools', 'status', params['poolId']];
+        this.routeSuccess = ['storage', 'pools', 'status', params['poolId']];
       }
     });
   }
 
   afterInit(): void {
     if (!this.diskBucket.ids) {
-      this.router.navigate(this.route_success);
+      this.router.navigate(this.routeSuccess);
     }
   }
 
@@ -137,7 +137,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
               }
             }
             if (isSuccessful) {
-              this.router.navigate(this.route_success);
+              this.router.navigate(this.routeSuccess);
             }
           }
         },

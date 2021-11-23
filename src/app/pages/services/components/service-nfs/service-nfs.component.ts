@@ -22,7 +22,7 @@ import { WebSocketService, DialogService } from 'app/services';
 })
 export class ServiceNFSComponent implements FormConfiguration {
   queryCall = 'nfs.config' as const;
-  route_success: string[] = ['services'];
+  routeSuccess: string[] = ['services'];
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];
   title = helptext.formTitle;
@@ -272,7 +272,7 @@ export class ServiceNFSComponent implements FormConfiguration {
   }
 
   afterSave(entityForm: EntityFormComponent): void {
-    this.router.navigate(this.route_success);
+    this.router.navigate(this.routeSuccess);
     if (entityForm.formGroup.value.v4_krb && !this.v4krbValue) {
       this.addSpn();
     }

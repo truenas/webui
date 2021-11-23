@@ -19,9 +19,9 @@ export class ScrubListComponent implements EntityTableConfig {
   title = this.translate.instant('Scrub Tasks');
   queryCall = 'pool.scrub.query' as const;
   wsDelete = 'pool.scrub.delete' as const;
-  route_add: string[] = ['tasks', 'scrub', 'add'];
-  route_add_tooltip = this.translate.instant('Add Scrub Task');
-  route_edit: string[] = ['tasks', 'scrub', 'edit'];
+  routeAdd: string[] = ['tasks', 'scrub', 'add'];
+  routeAddTooltip = this.translate.instant('Add Scrub Task');
+  routeEdit: string[] = ['tasks', 'scrub', 'edit'];
   entityList: EntityTableComponent;
   parent: ScrubListComponent;
 
