@@ -54,13 +54,12 @@ def on_the_dashboard_click_on_credentials_and_local_groups(driver):
 @then('on the Groups page, close the note and click Add')
 def on_the_groups_page_close_the_note_and_click_add(driver):
     """on the Groups page, close the note and click Add."""
-    #assert wait_on_element(driver, 7, '//h1[contains(.,"Display Note")]')
-    #assert wait_on_element(driver, 5, '//span[contains(text(),"CLOSE")]', 'clickable')
-    #driver.find_element_by_xpath('//span[contains(text(),"CLOSE")]').click()  
+    assert wait_on_element(driver, 7, '//h1[contains(.,"Display Note")]')
+    assert wait_on_element(driver, 5, '//span[contains(text(),"CLOSE")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"CLOSE")]').click()  
     assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__Groups_ADD"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__Groups_ADD"]').click()
-
 
 
 @then('input the group name and click save')
