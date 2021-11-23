@@ -1,4 +1,4 @@
-import { HarnessPredicate, parallel } from '@angular/cdk/testing';
+import { HarnessPredicate } from '@angular/cdk/testing';
 import {
   MatFooterRowHarness,
   MatHeaderRowHarness,
@@ -32,10 +32,15 @@ export class IxTableHarness extends MatTableHarness {
     return headerRow;
   }
 
-  async getRowCells(): Promise<MatRowHarnessColumnsText[]> {
-    const rows = await this.getRows();
-    const rowCells = await parallel(() => rows.map((row) => row.getCellTextByColumnName()));
+  async getCells(includeHeaderRow = false): Promise<string[][]> {
+    const cells = await this.getCellTextByIndex();
 
-    return rowCells;
+    if (includeHeaderRow) {
+      const headers = await this.getHeaderRows();
+      const headerRow = await headers[0].getCellTextByIndex();
+      cells.unshift(headerRow);
+    }
+
+    return Promise.resolve(cells);
   }
 }

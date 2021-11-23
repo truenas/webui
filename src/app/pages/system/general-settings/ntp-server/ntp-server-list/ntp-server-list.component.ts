@@ -4,7 +4,7 @@ import {
 import { MatTableDataSource } from '@angular/material/table';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
@@ -67,9 +67,15 @@ export class NtpServerListComponent implements OnInit {
 
   ngOnInit(): void {
     this.getData();
+
+    this.slideInService.onClose$.pipe(
+      untilDestroyed(this),
+    ).subscribe(() => {
+      this.getData();
+    });
   }
 
-  createDataSource(servers: NtpServer[]): void {
+  createDataSource(servers: NtpServer[] = []): void {
     this.dataSource = new MatTableDataSource(servers);
     this.cdr.markForCheck();
   }
@@ -81,12 +87,10 @@ export class NtpServerListComponent implements OnInit {
       this.loading = false;
       this.error = false;
       this.createDataSource(servers);
-      this.cdr.markForCheck();
     }, () => {
       this.loading = false;
       this.error = true;
-      this.createDataSource([]);
-      this.cdr.markForCheck();
+      this.createDataSource();
     });
   }
 
@@ -104,17 +108,13 @@ export class NtpServerListComponent implements OnInit {
       title: this.translate.instant('Delete NTP Server'),
       message: this.translate.instant('Are you sure you want to delete the <b>{address}</b> NTP Server?',
         { address: server.address }),
-      hideCheckBox: true,
       buttonMsg: this.translate.instant('Delete'),
     }).pipe(
       filter(Boolean),
+      switchMap(() => this.ws.call('system.ntpserver.delete', [server.id])),
       untilDestroyed(this),
     ).subscribe(() => {
-      this.ws.call('system.ntpserver.delete', [server.id]).pipe(
-        untilDestroyed(this),
-      ).subscribe(() => {
-        this.getData();
-      });
+      this.getData();
     });
   }
 }
