@@ -130,11 +130,11 @@ def input_the_maproot_dataset_path_in_paths_click_advanced_options(driver):
 @then('input nobody in Maproot User input nogroup in Maproot Group')
 def input_nobody_in_maproot_user_input_nogroup_in_maproot_group(driver):
     """input nobody in Maproot User input nogroup in Maproot Group."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="Maproot User"]', 'clickable')
-    driver.find_element_by_xpath('//input[@placeholder="Maproot User"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Maproot User"]').send_keys('nobody')
-    driver.find_element_by_xpath('//input[@placeholder="Maproot Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Maproot Group"]').send_keys('nogroup')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Maproot user") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"Maproot user") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Maproot user") and contains(@class,"mat-form-field-infix")]//input').send_keys('nobody')
+    driver.find_element_by_xpath('//div[contains(.,"Maproot Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Maproot Group") and contains(@class,"mat-form-field-infix")]//input').send_keys('nogroup')
 
 
 @then('click Submit, the new share should be created without error')
