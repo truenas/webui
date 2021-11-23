@@ -91,8 +91,8 @@ def enter_license(driver, License):
 @then('click Save')
 def click_save(driver):
     """click Save."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 7, '//button[contains(.,"Save")]', 'clickable')
+    driver.find_element_by_xpath('//button[contains(.,"Save")]').click()
 
 
 @then('The following should appear "Reload the page for the license to take effect"')
