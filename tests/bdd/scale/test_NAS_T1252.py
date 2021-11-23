@@ -17,9 +17,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1252.feature', 'Verify that you can create a new group')
-def test_verify_that_you_can_create_a_new_group():
-    """Verify that you can create a new group."""
+@scenario('features/NAS-T1252.feature', 'Verify that you can change a group name')
+def test_verify_that_you_can_change_a_group_name():
+    """Verify that you can change a group name."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
