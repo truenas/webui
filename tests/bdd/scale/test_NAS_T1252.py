@@ -17,9 +17,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1251.feature', 'Verify that group edit page functions')
-def test_verify_that_group_edit_page_functions():
-    """Verify that group edit page functions."""
+@scenario('features/NAS-T1252.feature', 'Verify that you can create a new group')
+def test_verify_that_you_can_create_a_new_group():
+    """Verify that you can create a new group."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
@@ -61,9 +61,20 @@ def on_the_groups_page_expand_qe_group_and_click_edit(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_qetest_qetest"]').click()
 
 
-@then('verify the edit page opens')
-def verify_the_edit_page_opens(driver):
-    """verify the edit page opens."""
+@then('change the group name from qetest to qatest and click save')
+def change_the_group_name_from_qetest_to_qatest_and_click_save(driver):
+    """change the group name from qetest to qatest and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(text(),"Edit Group")]')
-    assert wait_on_element(driver, 7, '//mat-icon[@id="ix-close-icon"]', 'clickable')
-    driver.find_element_by_xpath('//mat-icon[@id="ix-close-icon"]').click()
+    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="name"]//input')
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="name"]//input').clear()
+    driver.find_element_by_xpath('//ix-input[@formcontrolname="name"]//input').send_keys('qatest')
+    assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
+
+
+@then('verify that the group name shows as qatest')
+def verify_that_the_group_name_shows_as_qatest(driver):
+    """verify that the group name shows as qatest."""
+    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Groups")]')
+    assert wait_on_element(driver, 10, '//div[contains(.,"qatest")]')
