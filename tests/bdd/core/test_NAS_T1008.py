@@ -109,13 +109,13 @@ def click_on_who_select_user(driver):
 @then('the User input should appear')
 def the_user_input_should_appear(driver):
     """the User input should appear."""
-    assert wait_on_element(driver, 7, '(//input[@placeholder="User"])[2]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"User *") and contains(@class,"mat-form-field-infix")]//input')
 
 
 @then(parsers.parse('in User input, enter "{user_input}" and select "{user}"'))
 def in_user_input_enter_eric_and_select_ericbsd(driver, user_input, user):
     """in User input, enter "eric" and select "ericbsd"."""
-    driver.find_element_by_xpath('(//input[@placeholder="User"])[2]').send_keys(user_input)
+    driver.find_element_by_xpath('//div[contains(.,"User *") and contains(@class,"mat-form-field-infix")]//input').send_keys(user_input)
     assert wait_on_element(driver, 7, f'//mat-option[@ix-auto="option__{user}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{user}"]').click()
 
@@ -134,5 +134,5 @@ def click_the_save_button_should_be_returned_to_the_pools_page(driver):
 def verify_the_new_acl_item_for_user_ericbsd_still_exist(driver, user):
     """verify the new ACL item for user "ericbsd" still exist."""
     assert wait_on_element(driver, 5, '//h4[contains(.,"File Information")]')
-    assert wait_on_element(driver, 5, '(//input[@placeholder="User"])[2]')
-    assert attribute_value_exist(driver, '(//input[@placeholder="User"])[2]', 'value', user)
+    assert wait_on_element(driver, 5, '//div[contains(.,"User *") and contains(@class,"mat-form-field-infix")]//input')
+    assert attribute_value_exist(driver, '//div[contains(.,"User *") and contains(@class,"mat-form-field-infix")]//input', 'value', user)
