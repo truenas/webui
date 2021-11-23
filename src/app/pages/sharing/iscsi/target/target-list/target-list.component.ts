@@ -25,9 +25,9 @@ export class TargetListComponent implements EntityTableConfig, OnInit {
   title = this.translate.instant('Targets');
   queryCall = 'iscsi.target.query' as const;
   wsDelete = 'iscsi.target.delete' as const;
-  route_add: string[] = ['sharing', 'iscsi', 'target', 'add'];
-  route_add_tooltip = this.translate.instant('Add Target');
-  route_edit: string[] = ['sharing', 'iscsi', 'target', 'edit'];
+  routeAdd: string[] = ['sharing', 'iscsi', 'target', 'add'];
+  routeAddTooltip = this.translate.instant('Add Target');
+  routeEdit: string[] = ['sharing', 'iscsi', 'target', 'edit'];
 
   columns = [
     {

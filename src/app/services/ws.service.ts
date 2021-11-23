@@ -144,7 +144,7 @@ export class WebSocketService {
       this.onconnect();
     } else if (data.msg == 'nosub') {
       console.warn(data);
-    } else if (data.collection == 'disk.query') {
+    } else if (data.collection == 'disk.query' || data.collection == 'reporting.realtime') {
       const nom = data.collection.replace('.', '_');
       if (this.pendingSubs[nom] && this.pendingSubs[nom].observers) {
         for (const uuid in this.pendingSubs[nom].observers) {

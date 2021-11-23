@@ -52,7 +52,7 @@ describe('ServiceSmartComponent', () => {
     const form = await loader.getHarness(IxFormHarness);
     const values = await form.getValues();
 
-    expect(ws.call).toHaveBeenCalled();
+    expect(ws.call).toHaveBeenCalledWith('smart.config');
     expect(values).toEqual({
       'Check Interval': '30',
       'Power Mode': 'Never',

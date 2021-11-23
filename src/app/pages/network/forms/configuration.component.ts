@@ -231,7 +231,7 @@ export class ConfigurationComponent implements FormConfiguration {
     },
   ]);
   private entityEdit: EntityFormComponent;
-  private failover_fields = ['hostname_b', 'hostname_virtual'];
+  private failoverFields = ['hostname_b', 'hostname_virtual'];
   title = helptext.title;
   afterModalFormClosed: () => void;
 
@@ -251,7 +251,7 @@ export class ConfigurationComponent implements FormConfiguration {
     this.entityEdit = entityEdit;
     if ([ProductType.Enterprise, ProductType.ScaleEnterprise].includes(window.localStorage.getItem('product_type') as ProductType)) {
       this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => { // fixme, stupid race condition makes me need to call this again
-        this.failover_fields.forEach((field) => {
+        this.failoverFields.forEach((field) => {
           entityEdit.setDisabled(field, !isHa, !isHa);
         });
       });

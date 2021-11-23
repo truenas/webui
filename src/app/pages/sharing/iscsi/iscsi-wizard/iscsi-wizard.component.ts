@@ -31,7 +31,7 @@ import { CloudCredentialService } from 'app/services/cloud-credential.service';
   providers: [IscsiService, CloudCredentialService, NetworkService, StorageService],
 })
 export class IscsiWizardComponent implements WizardConfiguration {
-  route_success: string[] = ['sharing', 'iscsi'];
+  routeSuccess: string[] = ['sharing', 'iscsi'];
   isLinear = true;
   summaryTitle = 'iSCSI Summary';
   summaryObj: { [name: string]: any } = {
@@ -865,7 +865,7 @@ export class IscsiWizardComponent implements WizardConfiguration {
 
     this.loader.close();
     if (!toStop) {
-      this.router.navigate(new Array('/').concat(this.route_success));
+      this.router.navigate(new Array('/').concat(this.routeSuccess));
     }
   }
 

@@ -22,7 +22,7 @@ import {
 })
 export class OpenvpnServerComponent implements FormConfiguration {
   queryCall = 'openvpn.server.config' as const;
-  protected certID: number;
+  protected certificateId: number;
   protected serverAddress: string;
   protected entityEdit: EntityFormComponent;
   dialogConf: DialogFormConfiguration;
@@ -226,7 +226,7 @@ export class OpenvpnServerComponent implements FormConfiguration {
     };
 
     this.services.getClientInfo().pipe(untilDestroyed(this)).subscribe((res) => {
-      this.certID = res.client_certificate;
+      this.certificateId = res.client_certificate;
     });
 
     this.services.getOpenVpnServerAuthAlgorithmChoices().pipe(untilDestroyed(this)).subscribe((res) => {

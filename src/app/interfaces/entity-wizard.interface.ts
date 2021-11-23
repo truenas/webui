@@ -11,12 +11,12 @@ export interface WizardConfiguration {
   summaryTitle?: string;
   wizardConfig: Wizard[];
   saveSubmitText?: string;
-  advanced_field?: string[];
+  advancedFields?: string[];
   isBasicMode?: boolean;
   showSpinner?: boolean;
   isAutoSummary?: boolean;
-  route_cancel?: string[];
-  route_success?: string[];
+  routeCancel?: string[];
+  routeSuccess?: string[];
   custActions?: EntityWizardAction[];
 
   customNext?: (stepper: MatStepper) => void;

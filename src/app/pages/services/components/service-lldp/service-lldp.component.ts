@@ -16,7 +16,7 @@ import { WebSocketService, ServicesService } from 'app/services';
 })
 export class ServiceLLDPComponent implements FormConfiguration {
   queryCall = 'lldp.config' as const;
-  route_success: string[] = ['services'];
+  routeSuccess: string[] = ['services'];
   title = helptext.formTitle;
 
   fieldConfig: FieldConfig[] = [];

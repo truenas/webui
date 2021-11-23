@@ -1,12 +1,12 @@
 <div id="wrapper">
   <mat-card id="shutdown-card">
     <mat-card-content id="message">{{ "System is failing over..." | translate }}</mat-card-content>
-    <img id="logo" *ngIf="product_type === ProductType.Core; else isTruenas" src="assets/images/light-logo-full.svg" alt="TrueNAS CORE logo">
+    <img id="logo" *ngIf="productType === ProductType.Core; else isTruenas" src="assets/images/light-logo-full.svg" alt="TrueNAS CORE logo">
     <ng-template #isTruenas>
       <img id="logo" src="assets/images/TrueNAS_Logo_Full_White.svg" alt="TrueNAS ENTERPRISE logo">
     </ng-template>
     <div>
-      <span fxFlex class="copyright-txt">TrueNAS {{product_type}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
+      <span fxFlex class="copyright-txt">TrueNAS {{productType}}® © {{copyrightYear}} - <a href="http://www.ixsystems.com" target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.</span>
     </div>
   </mat-card>
 </div>

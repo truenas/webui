@@ -118,7 +118,7 @@ export class DialogService {
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
     dialogRef.componentInstance.icon = icon;
-    dialogRef.componentInstance.is_html = isHtml;
+    dialogRef.componentInstance.isHtml = isHtml;
 
     return dialogRef.afterClosed();
   }

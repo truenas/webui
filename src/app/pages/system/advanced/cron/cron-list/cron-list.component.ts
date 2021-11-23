@@ -28,9 +28,9 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   title = 'Cron Jobs';
   wsDelete = 'cronjob.delete' as const;
   queryCall = 'cronjob.query' as const;
-  route_add: string[] = ['tasks', 'cron', 'add'];
-  route_add_tooltip = 'Add Cron Job';
-  route_edit: string[] = ['tasks', 'cron', 'edit'];
+  routeAdd: string[] = ['tasks', 'cron', 'add'];
+  routeAddTooltip = this.translate.instant('Add Cron Job');
+  routeEdit: string[] = ['tasks', 'cron', 'edit'];
   entityList: EntityTableComponent;
 
   columns = [

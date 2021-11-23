@@ -1,180 +1,110 @@
 import {
-  ApplicationRef, Component, Injector, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import globalHelptext from 'app/helptext/global-helptext';
+import { of } from 'rxjs';
+import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ssh';
-import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { NetworkService, WebSocketService } from 'app/services';
+import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
 @Component({
-  selector: 'ssh-edit',
-  template: '<entity-form [conf]="this"></entity-form>',
-  providers: [NetworkService],
+  templateUrl: './service-ssh.component.html',
+  styleUrls: ['./service-ssh.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ServiceSSHComponent implements FormConfiguration, OnInit {
-  // Form Layout
+export class ServiceSshComponent implements OnInit {
+  isFormLoading = false;
   isBasicMode = true;
-  queryCall = 'ssh.config' as const;
-  title = helptext.formTitle;
-  route_success: string[] = ['services'];
 
-  fieldSets: FieldSet[] = [
-    {
-      name: globalHelptext.fieldset_general_options,
-      label: true,
-      config: [
-        {
-          type: 'input',
-          name: 'tcpport',
-          placeholder: helptext.ssh_tcpport_placeholder,
-          tooltip: helptext.ssh_tcpport_tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'rootlogin',
-          placeholder: helptext.ssh_rootlogin_placeholder,
-          tooltip: helptext.ssh_rootlogin_tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'passwordauth',
-          placeholder: helptext.ssh_passwordauth_placeholder,
-          tooltip: helptext.ssh_passwordauth_tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'kerberosauth',
-          placeholder: helptext.ssh_kerberosauth_placeholder,
-          tooltip: helptext.ssh_kerberosauth_tooltip,
-        },
-        {
-          type: 'checkbox',
-          name: 'tcpfwd',
-          placeholder: helptext.ssh_tcpfwd_placeholder,
-          tooltip: helptext.ssh_tcpfwd_tooltip,
-        },
-      ],
-    },
-    { name: 'divider', divider: false },
-    {
-      name: globalHelptext.fieldset_other_options,
-      label: false,
-      config: [
-        {
-          type: 'select',
-          name: 'bindiface',
-          placeholder: helptext.ssh_bindiface_placeholder,
-          tooltip: helptext.ssh_bindiface_tooltip,
-          multiple: true,
-          options: [],
-        },
-        {
-          type: 'checkbox',
-          name: 'compression',
-          placeholder: helptext.ssh_compression_placeholder,
-          tooltip: helptext.ssh_compression_tooltip,
-        },
-        {
-          type: 'select',
-          name: 'sftp_log_level',
-          placeholder: helptext.ssh_sftp_log_level_placeholder,
-          tooltip: helptext.ssh_sftp_log_level_tooltip,
-          options: helptext.ssh_sftp_log_level_options,
-        },
-        {
-          type: 'select',
-          name: 'sftp_log_facility',
-          placeholder: helptext.ssh_sftp_log_facility_placeholder,
-          tooltip: helptext.ssh_sftp_log_facility_tooltip,
-          options: helptext.ssh_sftp_log_facility_options,
-        },
-        {
-          type: 'select',
-          name: 'weak_ciphers',
-          placeholder: helptext.ssh_weak_ciphers_placeholder,
-          tooltip: helptext.ssh_weak_ciphers_tooltip,
-          options: helptext.ssh_weak_ciphers_options,
-          multiple: true,
-        },
-        {
-          type: 'textarea',
-          name: 'options',
-          placeholder: helptext.ssh_options_placeholder,
-          tooltip: helptext.ssh_options_tooltip,
-        },
-      ],
-    },
-    { name: 'divider', divider: true },
-  ];
+  form = this.fb.group({
+    tcpport: [null as number],
+    rootlogin: [false],
+    passwordauth: [false],
+    kerberosauth: [false],
+    tcpfwd: [false],
+    bindiface: [[] as string[]],
+    compression: [false],
+    sftp_log_level: [null as SshSftpLogLevel],
+    sftp_log_facility: [null as SshSftpLogFacility],
+    weak_ciphers: [[] as SshWeakCipher[]],
+    options: [''],
+  });
 
-  advanced_field: string[] = [
-    'bindiface',
-    'compression',
-    'sftp_log_level',
-    'sftp_log_facility',
-    'options',
-    'weak_ciphers',
-  ];
+  readonly tooltips = {
+    tcpport: helptext.ssh_tcpport_tooltip,
+    rootlogin: helptext.ssh_rootlogin_tooltip,
+    passwordauth: helptext.ssh_passwordauth_tooltip,
+    kerberosauth: helptext.ssh_kerberosauth_tooltip,
+    tcpfwd: helptext.ssh_tcpfwd_tooltip,
+    bindiface: helptext.ssh_bindiface_tooltip,
+    compression: helptext.ssh_compression_tooltip,
+    sftp_log_level: helptext.ssh_sftp_log_level_tooltip,
+    sftp_log_facility: helptext.ssh_sftp_log_facility_tooltip,
+    weak_ciphers: helptext.ssh_weak_ciphers_tooltip,
+    options: helptext.ssh_options_tooltip,
+  };
 
-  custActions = [
-    {
-      id: 'basic_mode',
-      name: globalHelptext.basic_options,
-      function: () => {
-        this.fieldSets.find((set) => set.name === globalHelptext.fieldset_other_options).label = false;
-        this.fieldSets.find((set) => set.name === 'divider').divider = false;
-        this.isBasicMode = !this.isBasicMode;
-      },
-    },
-    {
-      id: 'advanced_mode',
-      name: globalHelptext.advanced_options,
-      function: () => {
-        this.fieldSets.find((set) => set.name === globalHelptext.fieldset_other_options).label = true;
-        this.fieldSets.find((set) => set.name === 'divider').divider = true;
-        this.isBasicMode = !this.isBasicMode;
-      },
-    },
-  ];
-
-  protected ssh_bindiface: FormSelectConfig;
-
-  isCustActionVisible(actionId: string): boolean {
-    if (actionId == 'advanced_mode' && !this.isBasicMode) {
-      return false;
-    } if (actionId == 'basic_mode' && this.isBasicMode) {
-      return false;
-    }
-    return true;
-  }
+  readonly sftpLogLevels$ = of(helptext.ssh_sftp_log_level_options);
+  readonly sftpLogFacilities$ = of(helptext.ssh_sftp_log_facility_options);
+  readonly sshWeakCiphers$ = of(helptext.ssh_weak_ciphers_options);
+  readonly bindInterfaces$ = this.ws.call('ssh.bindiface_choices').pipe(choicesToOptions());
 
   constructor(
-    protected router: Router,
-    protected route: ActivatedRoute,
-    protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
-    protected networkService: NetworkService,
+    private ws: WebSocketService,
+    private errorHandler: FormErrorHandlerService,
+    private cdr: ChangeDetectorRef,
+    private fb: FormBuilder,
+    private router: Router,
+    private dialogService: DialogService,
   ) {}
 
-  afterInit(entityEdit: EntityFormComponent): void {
-    entityEdit.submitFunction = (body) => this.ws.call('ssh.update', [body]);
+  ngOnInit(): void {
+    this.isFormLoading = true;
+    this.ws.call('ssh.config').pipe(untilDestroyed(this)).subscribe(
+      (config) => {
+        this.form.patchValue(config);
+        this.isFormLoading = false;
+        this.cdr.markForCheck();
+      },
+      (error) => {
+        this.isFormLoading = false;
+        new EntityUtils().handleWsError(null, error, this.dialogService);
+        this.cdr.markForCheck();
+      },
+    );
   }
 
-  ngOnInit(): void {
-    this.ws.call('ssh.bindiface_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.ssh_bindiface = this.fieldSets
-        .find((set) => set.name === globalHelptext.fieldset_other_options)
-        .config.find((config) => config.name === 'bindiface') as FormSelectConfig;
-      for (const k in res) {
-        this.ssh_bindiface.options.push({ label: res[k], value: k });
-      }
-    });
+  onAdvancedSettingsToggled(): void {
+    this.isBasicMode = !this.isBasicMode;
+  }
+
+  onSubmit(): void {
+    const values = {
+      ...this.form.value,
+      tcpport: Number(this.form.value.tcpport),
+    };
+
+    this.isFormLoading = true;
+    this.ws.call('ssh.update', [values])
+      .pipe(untilDestroyed(this))
+      .subscribe(() => {
+        this.isFormLoading = false;
+        this.router.navigate(['/services']);
+        this.cdr.markForCheck();
+      }, (error) => {
+        this.isFormLoading = false;
+        this.errorHandler.handleWsFormError(error, this.form);
+        this.cdr.markForCheck();
+      });
+  }
+
+  onCancel(): void {
+    this.router.navigate(['/services']);
   }
 }

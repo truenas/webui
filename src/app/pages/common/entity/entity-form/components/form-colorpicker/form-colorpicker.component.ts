@@ -15,15 +15,6 @@ export class FormColorpickerComponent implements Field, OnInit {
   group: FormGroup;
   fieldShow: string;
   picker = false;
-  private _textInput = '';
-
-  get textInput(): string {
-    return this._textInput;
-  }
-
-  set textInput(val: string) {
-    this._textInput = val;
-  }
 
   get colorProxy(): string {
     return this.group.value[this.config.name];

@@ -1,17 +1,8 @@
-import {
-  Component,
-  ElementRef,
-  Input,
-  ViewChild,
-  AfterViewInit,
-  OnDestroy,
-} from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { fromEvent as observableFromEvent, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { GlobalAction } from 'app/interfaces/global-action.interface';
-import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { VolumeImportWizardComponent } from 'app/pages/storage/volumes/volume-import-wizard/volume-import-wizard.component';
 import { VolumesListComponent } from 'app/pages/storage/volumes/volumes-list/volumes-list.component';
@@ -21,46 +12,30 @@ import { ModalService } from 'app/services/modal.service';
 @Component({
   selector: 'app-volumes-list-controls',
   templateUrl: './volumes-list-controls.component.html',
-  providers: [MessageService],
+  styleUrls: ['./volumes-list-controls.component.scss'],
 })
-export class VolumesListControlsComponent implements GlobalAction, AfterViewInit, OnDestroy {
-  @ViewChild('filter', { static: false }) filter: ElementRef;
+export class VolumesListControlsComponent implements GlobalAction, OnInit {
   @Input() entity: VolumesListComponent;
 
   conf: EntityTableConfig;
-  filterValue = '';
   actions: EntityTableAction[];
 
-  private filterSubscription: Subscription;
-
-  get totalActions(): number {
-    const addAction = this.entity.conf.route_add ? 1 : 0;
-    return this.actions.length + addAction;
-  }
+  form = this.fb.group({
+    keyword: [''],
+  });
 
   constructor(
+    private fb: FormBuilder,
     private core: CoreService,
     private modalService: ModalService,
   ) {}
 
-  ngOnDestroy(): void {
-    this.filterSubscription?.unsubscribe();
-  }
-
-  ngAfterViewInit(): void {
-    if (!this.filter) {
-      return;
-    }
-
-    this.filterSubscription = observableFromEvent(
-      this.filter.nativeElement,
-      'keyup',
-    )
-      .pipe(debounceTime(250), distinctUntilChanged())
-      .pipe(untilDestroyed(this)).subscribe(() => {
-        this.filterValue = this.filter.nativeElement.value || '';
-        this.filterDatasets(this.filterValue);
-      });
+  ngOnInit(): void {
+    this.form.controls.keyword.valueChanges.pipe(untilDestroyed(this)).subscribe(
+      (value: string) => {
+        this.filterDatasets(value);
+      },
+    );
   }
 
   applyConfig(config: VolumesListComponent): void {
@@ -71,12 +46,6 @@ export class VolumesListControlsComponent implements GlobalAction, AfterViewInit
     } else {
       throw new Error('This component requires an entity class for a config');
     }
-  }
-
-  resetDatasetFilter(): void {
-    this.filterValue = '';
-    this.filter.nativeElement.value = '';
-    this.filterDatasets('');
   }
 
   filterDatasets(value: string): void {

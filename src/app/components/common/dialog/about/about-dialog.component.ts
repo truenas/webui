@@ -17,7 +17,6 @@ export interface DialogData {
 })
 export class AboutDialogComponent {
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
-  product_type: ProductType;
   extraMsg: boolean;
   systemType: ProductType;
   helptext = helptext;

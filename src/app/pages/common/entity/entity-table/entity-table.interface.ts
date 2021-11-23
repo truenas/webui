@@ -15,9 +15,9 @@ export interface EntityTableConfig<Row = any> {
   queryCall?: ApiMethod;
   queryCallOption?: any;
   queryCallJob?: boolean;
-  resource_name?: string;
-  route_edit?: string | string[];
-  route_add?: string[];
+  resourceName?: string;
+  routeEdit?: string | string[];
+  routeAdd?: string[];
   queryRes?: any[];
   showActions?: boolean;
   isActionVisible?: (actionId: string, row: Row) => boolean;
@@ -47,7 +47,7 @@ export interface EntityTableConfig<Row = any> {
   disableActionsConfig?: boolean;
   inlineActions?: boolean;
   addBtnDisabled?: boolean;
-  route_add_tooltip?: string;
+  routeAddTooltip?: string;
 
   wsDeleteParams?: (row: Row, id: string) => any;
   addRows?: (entity: EntityTableComponent) => void;

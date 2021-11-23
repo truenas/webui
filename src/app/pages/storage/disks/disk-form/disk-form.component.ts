@@ -16,7 +16,7 @@ import { WebSocketService } from 'app/services';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DiskFormComponent implements FormConfiguration {
-  route_success: string[] = ['storage', 'disks'];
+  routeSuccess: string[] = ['storage', 'disks'];
   queryCall = 'disk.query' as const;
   editCall = 'disk.update' as const;
   customFilter: any[] = [[['identifier', '=']]];
@@ -209,7 +209,7 @@ export class DiskFormComponent implements FormConfiguration {
   inIt(pk: string): void {
     this.title = helptext.disk_form_title;
 
-    delete this.route_success;
+    delete this.routeSuccess;
 
     if (pk) {
       this.rowid = pk;
