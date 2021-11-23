@@ -11,9 +11,10 @@ export class InfoDialogComponent {
   title: string;
   info: string;
   icon: string;
-  is_html: boolean;
+  isHtml: boolean;
 
-  constructor(public dialogRef: MatDialogRef < InfoDialogComponent >, protected translate: TranslateService) {
-
-  }
+  constructor(
+    public dialogRef: MatDialogRef<InfoDialogComponent>,
+    protected translate: TranslateService,
+  ) {}
 }

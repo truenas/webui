@@ -30,7 +30,7 @@ export class CertificateEditComponent implements FormConfiguration {
   isEntity = true;
   title: string = helptextSystemCertificates.edit.title;
   private viewButtonText: string = helptextSystemCertificates.viewButton.certificate;
-  protected isCSR: boolean;
+  protected isCsr: boolean;
   queryCallOption: [QueryFilter<Certificate>];
 
   fieldConfig: FieldConfig[];
@@ -217,7 +217,7 @@ export class CertificateEditComponent implements FormConfiguration {
   resourceTransformIncomingRestData(data: Certificate): Certificate {
     this.incomingData = data;
     if (data.cert_type_CSR) {
-      this.isCSR = true;
+      this.isCsr = true;
       this.title = helptextSystemCertificates.edit.titleCSR;
       this.viewButtonText = helptextSystemCertificates.viewButton.csr;
     }
@@ -238,7 +238,7 @@ export class CertificateEditComponent implements FormConfiguration {
   ];
 
   isCustActionVisible(actionname: string): boolean {
-    if (actionname === 'create_ACME' && !this.isCSR) {
+    if (actionname === 'create_ACME' && !this.isCsr) {
       return false;
     }
     return true;

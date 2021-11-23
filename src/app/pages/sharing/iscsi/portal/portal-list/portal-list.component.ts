@@ -16,9 +16,9 @@ export class PortalListComponent implements EntityTableConfig {
   tableTitle = this.translate.instant('Portals');
   queryCall = 'iscsi.portal.query' as const;
   wsDelete = 'iscsi.portal.delete' as const;
-  route_add: string[] = ['sharing', 'iscsi', 'portals', 'add'];
-  route_add_tooltip = this.translate.instant('Add Portal');
-  route_edit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
+  routeAdd: string[] = ['sharing', 'iscsi', 'portals', 'add'];
+  routeAddTooltip = this.translate.instant('Add Portal');
+  routeEdit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
 
   columns = [
     {

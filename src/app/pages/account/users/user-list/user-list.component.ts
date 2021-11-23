@@ -31,14 +31,14 @@ import { UserFormComponent } from '../user-form/user-form.component';
 })
 export class UserListComponent implements EntityTableConfig<UserListRow> {
   title = 'Users';
-  route_add: string[] = ['account', 'users', 'add'];
-  route_add_tooltip = 'Add User';
-  route_edit: string[] = ['account', 'users', 'edit'];
+  routeAdd: string[] = ['account', 'users', 'add'];
+  routeAddTooltip = this.translate.instant('Add User');
+  routeEdit: string[] = ['account', 'users', 'edit'];
 
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
-  protected usr_lst: [User[]?] = [];
-  protected grp_lst: [Group[]?] = [];
+  protected users: [User[]?] = [];
+  protected groups: [Group[]?] = [];
   hasDetails = true;
   queryCall = 'user.query' as const;
   wsDelete = 'user.delete' as const;
@@ -174,19 +174,19 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
   }
 
   ableToDeleteGroup(id: number): boolean {
-    const user = _.find(this.usr_lst[0], { id });
-    const groupUsers = _.find(this.grp_lst[0], { id: user.group.id }).users;
+    const user = _.find(this.users[0], { id });
+    const groupUsers = _.find(this.groups[0], { id: user.group.id }).users;
     // Show checkbox if deleting the last member of a group
     return groupUsers.length === 1;
   }
 
   resourceTransformIncomingRestData(rawUsers: User[]): UserListRow[] {
     let users = [...rawUsers] as UserListRow[];
-    this.usr_lst = [];
-    this.grp_lst = [];
-    this.usr_lst.push(users);
+    this.users = [];
+    this.groups = [];
+    this.users.push(users);
     this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.grp_lst.push(res);
+      this.groups.push(res);
       users.forEach((user) => {
         const group = _.find(res, { gid: user.group.bsdgrp_gid });
         user.gid = group['gid'];

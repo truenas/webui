@@ -35,7 +35,6 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 })
 export class AlertConfigComponent implements OnInit {
   formEvent$: Subject<CoreEvent>;
-  protected route_success = ['system', 'alertsettings'];
   protected queryCall = 'alertclasses.config' as const;
   protected editCall = 'alertclasses.update' as const;
   protected isEntity = true;

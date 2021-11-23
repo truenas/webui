@@ -48,9 +48,9 @@ export class ReplicationListComponent implements EntityTableConfig {
   title = this.translate.instant('Replication Tasks');
   queryCall = 'replication.query' as const;
   wsDelete = 'replication.delete' as const;
-  route_add: string[] = ['tasks', 'replication', 'wizard'];
-  route_edit: string[] = ['tasks', 'replication', 'edit'];
-  route_success: string[] = ['tasks', 'replication'];
+  routeAdd: string[] = ['tasks', 'replication', 'wizard'];
+  routeEdit: string[] = ['tasks', 'replication', 'edit'];
+  routeSuccess: string[] = ['tasks', 'replication'];
   entityList: EntityTableComponent;
   asyncView = true;
 

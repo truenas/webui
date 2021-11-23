@@ -33,7 +33,7 @@ export class IpmiFormComponent implements FormConfiguration {
   controllerName = globalHelptext.Ctrlr;
   currentControllerLabel: string;
   failoverControllerLabel: string;
-  managementIP: string;
+  managementIp: string;
   custActions = [
     {
       id: 'ipmi_identify',
@@ -46,7 +46,7 @@ export class IpmiFormComponent implements FormConfiguration {
       id: 'connect',
       name: this.translate.instant('Manage'),
       function: () => {
-        window.open(`http://${this.managementIP}`);
+        window.open(`http://${this.managementIp}`);
       },
     },
   ];
@@ -223,7 +223,7 @@ export class IpmiFormComponent implements FormConfiguration {
     });
 
     entityEdit.formGroup.controls['ipaddress'].valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
-      this.managementIP = value;
+      this.managementIp = value;
     });
 
     entityEdit.formGroup.controls['netmask'].statusChanges.pipe(untilDestroyed(this)).subscribe((status: string) => {

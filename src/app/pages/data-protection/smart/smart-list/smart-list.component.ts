@@ -22,9 +22,9 @@ import { StorageService } from 'app/services/storage.service';
 export class SmartListComponent implements EntityTableConfig {
   title = this.translate.instant('S.M.A.R.T. Tests');
   queryCall = 'smart.test.query' as const;
-  route_add: string[] = ['tasks', 'smart', 'add'];
-  route_add_tooltip = this.translate.instant('Add S.M.A.R.T. Test');
-  route_edit: string[] = ['tasks', 'smart', 'edit'];
+  routeAdd: string[] = ['tasks', 'smart', 'add'];
+  routeAddTooltip = this.translate.instant('Add S.M.A.R.T. Test');
+  routeEdit: string[] = ['tasks', 'smart', 'edit'];
   wsDelete = 'smart.test.delete' as const;
   entityList: EntityTableComponent;
   parent: SmartListComponent;

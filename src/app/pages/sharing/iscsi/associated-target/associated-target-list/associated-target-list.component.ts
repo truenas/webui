@@ -26,9 +26,9 @@ export class AssociatedTargetListComponent implements EntityTableConfig {
   tableTitle = 'Associated Targets';
   queryCall = 'iscsi.targetextent.query' as const;
   wsDelete = 'iscsi.targetextent.delete' as const;
-  route_add: string[] = ['sharing', 'iscsi', 'associatedtarget', 'add'];
-  route_add_tooltip = 'Add Target/Extent';
-  route_edit: string[] = ['sharing', 'iscsi', 'associatedtarget', 'edit'];
+  routeAdd: string[] = ['sharing', 'iscsi', 'associatedtarget', 'add'];
+  routeAddTooltip = this.translate.instant('Add Target/Extent');
+  routeEdit: string[] = ['sharing', 'iscsi', 'associatedtarget', 'edit'];
 
   columns = [
     {

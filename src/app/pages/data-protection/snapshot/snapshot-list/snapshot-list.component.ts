@@ -22,9 +22,9 @@ export class SnapshotListComponent implements EntityTableConfig<PeriodicSnapshot
   queryCall = 'pool.snapshottask.query' as const;
   updateCall = 'pool.snapshottask.update' as const;
   wsDelete = 'pool.snapshottask.delete' as const;
-  route_add: string[] = ['tasks', 'snapshot', 'add'];
-  route_add_tooltip = 'Add Periodic Snapshot Task';
-  route_edit: string[] = ['tasks', 'snapshot', 'edit'];
+  routeAdd: string[] = ['tasks', 'snapshot', 'add'];
+  routeAddTooltip = this.translate.instant('Add Periodic Snapshot Task');
+  routeEdit: string[] = ['tasks', 'snapshot', 'edit'];
   entityList: EntityTableComponent;
   asyncView = true;
 

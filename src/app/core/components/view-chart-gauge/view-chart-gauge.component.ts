@@ -27,7 +27,7 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
   private _data: (string | number)[];
   private arc: d3.Arc<unknown, d3.DefaultArcObject>;
   chartId = UUID.UUID();
-  private doublePI = 2 * Math.PI;
+  private doublePi = 2 * Math.PI;
   units = '%'; // default unit type
   diameter = 120; // default diameter
 
@@ -125,13 +125,13 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
 
     // Arc background
     g.append('path')
-      .datum({ endAngle: this.doublePI })
+      .datum({ endAngle: this.doublePi })
       .style('fill', 'var(--bg1)')
       .attr('d', this.arc);
 
     // Arc foreground
     g.append('path')
-      .datum({ endAngle: 0.127 * this.doublePI })
+      .datum({ endAngle: 0.127 * this.doublePi })
       .style('fill', 'var(--primary)')
       .attr('class', 'value')
       .attr('d', this.arc);
@@ -164,7 +164,7 @@ export class ViewChartGaugeComponent /* extends DisplayObject */ implements Afte
   }
 
   percentToAngle(value: number): number {
-    return value / 100 * this.doublePI;
+    return value / 100 * this.doublePi;
   }
 
   updateSubtitle(): void {

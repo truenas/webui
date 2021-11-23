@@ -52,7 +52,7 @@ interface ZvolFormData {
 export class ZvolFormComponent implements FormConfiguration {
   pk: string;
   protected path: string;
-  advanced_field = ['volblocksize'];
+  advancedFields = ['volblocksize'];
   isBasicMode = true;
   isNew = true;
   isEntity = true;

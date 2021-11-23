@@ -21,7 +21,6 @@ import { WebSocketService } from './services/ws.service';
 export class AppComponent {
   appTitle = 'TrueNAS';
   protected accountUserResource = 'account/users/1';
-  product_type = '';
 
   constructor(
     public title: Title,
