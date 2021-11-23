@@ -17,9 +17,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1250.feature', 'Verify that you can create a new group')
-def test_verify_that_you_can_create_a_new_group():
-    """Verify that you can create a new group."""
+@scenario('features/NAS-T1251.feature', 'Verify that group edit page functions')
+def test_verify_that_group_edit_page_functions():
+    """Verify that group edit page functions."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
@@ -46,37 +46,23 @@ def on_the_dashboard_click_on_credentials_and_local_groups(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]').click()
 
 
-@then('on the Groups page, close the note and click Add')
-def on_the_groups_page_close_the_note_and_click_add(driver):
-    """on the Groups page, close the note and click Add."""
-    assert wait_on_element(driver, 7, '//h1[contains(.,"Display Note")]')
-    assert wait_on_element(driver, 5, '//span[contains(text(),"CLOSE")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"CLOSE")]').click()  
+@then('on the Groups page expand QE group and click edit')
+def on_the_groups_page_expand_qe_group_and_click_edit(driver):
+    """on the Groups page expand QE group and click edit."""
     assert wait_on_element(driver, 10, '//h1[contains(text(),"Groups")]')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__Groups_ADD"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__Groups_ADD"]').click()
+    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__qetest"]/td', 'clickable')
+    driver.find_element_by_xpath('//tr[@ix-auto="expander__qetest"]/td').click()
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_qetest_qetest"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_qetest_qetest"]').click()
 
 
-@then('input the group name and click save')
-def input_the_group_name_and_click_save(driver):
-    """input the group name and click save."""
-    assert wait_on_element(driver, 7, '//h3[contains(.,"Add Group")]')
-
-    assert wait_on_element(driver, 7, '//ix-input[@formcontrolname="name"]//input')
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="name"]//input').clear()
-    driver.find_element_by_xpath('//ix-input[@formcontrolname="name"]//input').send_keys('qetest')
-    assert wait_on_element(driver, 7, '//span[contains(text(),"Save")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
-
-
-@then('verify the group was added')
-def verify_the_group_was_added(driver):
-    """verify the group was added."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, '//h1[contains(.,"Groups")]')
-    assert wait_on_element(driver, 10, '//div[contains(.,"qetest")]')
+@then('verify the edit page opens')
+def verify_the_edit_page_opens(driver):
+    """verify the edit page opens."""
+    assert wait_on_element(driver, 10, '//h3[contains(text(),"Edit Group")]')
+    assert wait_on_element(driver, 7, '//mat-icon[@id="ix-close-icon"]', 'clickable')
+    driver.find_element_by_xpath('//mat-icon[@id="ix-close-icon"]').click()
