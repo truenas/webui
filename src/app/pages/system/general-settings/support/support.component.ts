@@ -9,6 +9,7 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { LicenseComponent } from './license/license.component';
 import { ProactiveComponent } from './proactive/proactive.component';
@@ -40,6 +41,7 @@ export class SupportComponent implements OnInit {
     private modalService: ModalService,
     private loader: AppLoaderService,
     private dialog: DialogService,
+    private slideInService: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -140,7 +142,7 @@ export class SupportComponent implements OnInit {
   }
 
   updateLicense(): void {
-    this.modalService.openInSlideIn(LicenseComponent);
+    this.slideInService.open(LicenseComponent);
   }
 
   fileTicket(): void {

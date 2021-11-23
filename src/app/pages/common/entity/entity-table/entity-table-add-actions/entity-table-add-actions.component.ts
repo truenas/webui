@@ -24,7 +24,6 @@ export class EntityTableAddActionsComponent implements GlobalAction, OnInit, Aft
 
   actions: EntityTableAction[];
   menuTriggerMessage = 'Click for options';
-
   spin = true;
   direction = 'left';
   animationMode = 'fling';
