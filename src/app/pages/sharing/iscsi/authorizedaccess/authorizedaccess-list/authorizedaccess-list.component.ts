@@ -13,9 +13,9 @@ export class AuthorizedAccessListComponent implements EntityTableConfig {
   tableTitle = this.translate.instant('Authorized Access');
   queryCall = 'iscsi.auth.query' as const;
   wsDelete = 'iscsi.auth.delete' as const;
-  route_add: string[] = ['sharing', 'iscsi', 'auth', 'add'];
-  route_edit: string[] = ['sharing', 'iscsi', 'auth', 'edit'];
-  route_add_tooltip = this.translate.instant('Add Authorized Access');
+  routeAdd: string[] = ['sharing', 'iscsi', 'auth', 'add'];
+  routeEdit: string[] = ['sharing', 'iscsi', 'auth', 'edit'];
+  routeAddTooltip = this.translate.instant('Add Authorized Access');
 
   columns = [
     {

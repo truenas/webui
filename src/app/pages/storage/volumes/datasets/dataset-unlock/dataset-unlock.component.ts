@@ -40,7 +40,7 @@ import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
 export class DatasetUnlockComponent implements FormConfiguration {
   queryCall = 'pool.dataset.encryption_summary' as const;
   updateCall = 'pool.dataset.unlock' as const;
-  route_success: string[] = ['storage'];
+  routeSuccess: string[] = ['storage'];
   isEntity = true;
   isNew = true;
   pk: string;
@@ -446,7 +446,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
   }
 
   goBack(): void {
-    this.router.navigate(this.route_success);
+    this.router.navigate(this.routeSuccess);
   }
 
   keyFileUpdater(file: FormUploadComponent): void {

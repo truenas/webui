@@ -43,8 +43,8 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   title = this.translate.instant('Virtual Machines');
   queryCall = 'vm.query' as const;
   wsDelete = 'vm.delete' as const;
-  route_add: string[] = ['vm', 'wizard'];
-  route_edit: string[] = ['vm', 'edit'];
+  routeAdd: string[] = ['vm', 'wizard'];
+  routeEdit: string[] = ['vm', 'edit'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private productType = window.localStorage.getItem('product_type') as ProductType;
   hasVirtualizationSupport = false;

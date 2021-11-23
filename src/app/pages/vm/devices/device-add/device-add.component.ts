@@ -35,7 +35,7 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class DeviceAddComponent implements OnInit, OnDestroy {
   protected addCall = 'vm.device.create' as const;
-  route_success: string[];
+  routeSuccess: string[];
   vmid: number;
   vmname: string;
   fieldSets: VmDeviceFieldSet[];
@@ -414,7 +414,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.vmid = Number(params['pk']);
       this.vmname = params['name'];
-      this.route_success = ['vm', String(this.vmid), 'devices', this.vmname];
+      this.routeSuccess = ['vm', String(this.vmid), 'devices', this.vmname];
     });
 
     this.preInit();
@@ -552,7 +552,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
   }
 
   goBack(): void {
-    this.router.navigate(new Array('/').concat(this.route_success));
+    this.router.navigate(new Array('/').concat(this.routeSuccess));
   }
 
   onSubmit(): void {
@@ -577,7 +577,7 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
       this.loader.open();
       this.ws.call(this.addCall, [payload]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
       (error) => {
         this.loader.close();

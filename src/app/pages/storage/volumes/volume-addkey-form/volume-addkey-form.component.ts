@@ -30,12 +30,11 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
 
   queryCall = 'pool.query' as const;
   queryKey = 'id';
-  route_return: string[] = ['storage', 'pools'];
+  routeReturn: string[] = ['storage', 'pools'];
   isNew = false;
   isEntity = true;
   poolName: string;
-  admin_pw = '';
-  button_disabled = true;
+  adminPassword = '';
   entityData = {
     name: '',
     passphrase: '',
@@ -72,11 +71,11 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
     {
       id: 'delete_recovery_key',
       name: helptext.add_key_invalid_button,
-      disabled: this.button_disabled,
+      disabled: true,
       function: () => {
-        this.ws.call('auth.check_user', ['root', this.admin_pw]).pipe(untilDestroyed(this)).subscribe((res) => {
+        this.ws.call('auth.check_user', ['root', this.adminPassword]).pipe(untilDestroyed(this)).subscribe((res) => {
           if (res) {
-            this.encryptionService.deleteRecoveryKey(this.pk, this.admin_pw, this.poolName, this.route_return);
+            this.encryptionService.deleteRecoveryKey(this.pk, this.adminPassword, this.poolName, this.routeReturn);
           } else {
             this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');
           }
@@ -88,7 +87,7 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
       name: helptext.add_key_custom_cancel,
       function: () => {
         this.router.navigate(new Array('/').concat(
-          this.route_return,
+          this.routeReturn,
         ));
       },
     }];
@@ -123,16 +122,16 @@ export class VolumeAddkeyFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     entityForm.formGroup.controls['password'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      this.admin_pw = res;
+      this.adminPassword = res;
       const btn = document.getElementById('cust_button_Invalidate Existing Key') as HTMLInputElement;
-      btn.disabled = this.admin_pw === '';
+      btn.disabled = this.adminPassword === '';
     });
   }
 
   customSubmit(value: { name: string; password: string }): void {
     this.ws.call('auth.check_user', ['root', value.password]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
-        this.encryptionService.makeRecoveryKey(this.pk, value.name, this.route_return);
+        this.encryptionService.makeRecoveryKey(this.pk, value.name, this.routeReturn);
       } else {
         this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');
       }

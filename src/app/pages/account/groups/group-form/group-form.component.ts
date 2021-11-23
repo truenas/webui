@@ -33,7 +33,7 @@ export class GroupFormComponent {
 
   form = this.fb.group({
     gid: [null as number, [Validators.required, regexValidator(/^\d+$/)]],
-    name: ['', [Validators.required, Validators.pattern(UserService.VALIDATOR_NAME)]],
+    name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
     sudo: [false],
     smb: [false],
     allowDuplicateGid: [false],

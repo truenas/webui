@@ -522,7 +522,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   //Entity Module Overrides
 
   app-members .form-card.mat-card,
-  entity-task .form-card.mat-card,
   device-edit .form-card.mat-card,
   entity-form .form-card.mat-card {
     margin: 0 auto;

@@ -26,7 +26,7 @@ import { DialogService } from 'app/services/dialog.service';
 })
 export class DeviceEditComponent implements OnInit {
   protected updateCall = 'vm.device.update' as const;
-  route_success: string[];
+  routeSuccess: string[];
   deviceid: number;
   vmname: string;
   fieldSets: VmDeviceFieldSet[];
@@ -399,7 +399,7 @@ export class DeviceEditComponent implements OnInit {
       this.deviceid = parseInt(params['pk'], 10);
       this.vmname = params['name'];
       this.vmId = params['vmid'];
-      this.route_success = ['vm', params['vmid'], 'devices', this.vmname];
+      this.routeSuccess = ['vm', params['vmid'], 'devices', this.vmname];
     });
 
     this.core.emit({ name: 'SysInfoRequest' });
@@ -535,7 +535,7 @@ export class DeviceEditComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(new Array('/').concat(this.route_success));
+    this.router.navigate(new Array('/').concat(this.routeSuccess));
   }
 
   onSubmit(): void {
@@ -555,7 +555,7 @@ export class DeviceEditComponent implements OnInit {
       this.loader.open();
       this.ws.call(this.updateCall, [params.pk, payload]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
       (error) => {
         this.loader.close();

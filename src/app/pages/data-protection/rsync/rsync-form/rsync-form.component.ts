@@ -239,9 +239,9 @@ export class RsyncFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ]);
 
-  protected rsync_module_field: string[] = ['remotemodule'];
-  protected rsync_ssh_field: string[] = ['remoteport', 'remotepath', 'validate_rpath'];
-  protected user_field: FormComboboxConfig;
+  protected rsyncModuleField: string[] = ['remotemodule'];
+  protected rsyncSshFields: string[] = ['remoteport', 'remotepath', 'validate_rpath'];
+  protected userField: FormComboboxConfig;
 
   constructor(
     protected router: Router,
@@ -257,10 +257,10 @@ export class RsyncFormComponent implements FormConfiguration {
     this.isNew = entityForm.isNew;
     this.title = entityForm.isNew ? helptext.rsync_task_add : helptext.rsync_task_edit;
 
-    this.user_field = this.fieldSets.config('user') as FormComboboxConfig;
+    this.userField = this.fieldSets.config('user') as FormComboboxConfig;
     this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((items) => {
       items.forEach((user) => {
-        this.user_field.options.push({
+        this.userField.options.push({
           label: user.username,
           value: user.username,
         });
@@ -294,7 +294,7 @@ export class RsyncFormComponent implements FormConfiguration {
 
   updateUserSearchOptions(value = ''): void {
     this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
-      this.user_field.searchOptions = items.map((user) => {
+      this.userField.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });
     });
@@ -304,11 +304,11 @@ export class RsyncFormComponent implements FormConfiguration {
     let hideFields;
     let showFields;
     if (mode === RsyncMode.Ssh) {
-      hideFields = this.rsync_module_field;
-      showFields = this.rsync_ssh_field;
+      hideFields = this.rsyncModuleField;
+      showFields = this.rsyncSshFields;
     } else {
-      hideFields = this.rsync_ssh_field;
-      showFields = this.rsync_module_field;
+      hideFields = this.rsyncSshFields;
+      showFields = this.rsyncModuleField;
     }
     hideFields.forEach((field) => {
       this.entityForm.setDisabled(field, true, true);

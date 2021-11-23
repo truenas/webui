@@ -35,7 +35,7 @@ export class PortalFormComponent implements FormConfiguration {
   addCall = 'iscsi.portal.create' as const;
   queryCall = 'iscsi.portal.query' as const;
   editCall = 'iscsi.portal.update' as const;
-  route_success: string[] = ['sharing', 'iscsi', 'portals'];
+  routeSuccess: string[] = ['sharing', 'iscsi', 'portals'];
   customFilter: any[] = [[['id', '=']]];
   isEntity = true;
 
@@ -204,7 +204,7 @@ export class PortalFormComponent implements FormConfiguration {
     this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
       (res) => {
         this.loader.close();

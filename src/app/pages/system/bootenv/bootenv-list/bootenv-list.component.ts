@@ -33,9 +33,9 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   @ViewChild('scrubIntervalEvent', { static: true }) scrubIntervalEvent: ElementRef;
 
   title = this.translate.instant('Boot Environments');
-  resource_name = 'system/bootenv';
+  resourceName = 'system/bootenv';
   queryCall = 'bootenv.query' as const;
-  protected route_delete: string[] = ['system', 'boot', 'delete'];
+  protected routeDelete: string[] = ['system', 'boot', 'delete'];
   wsDelete = 'bootenv.delete' as const;
   wsMultiDelete = 'core.bulk' as const;
   protected entityList: EntityTableComponent;

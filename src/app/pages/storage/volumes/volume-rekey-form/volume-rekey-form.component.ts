@@ -23,7 +23,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
 
   queryCall = 'pool.query' as const;
   queryKey = 'id';
-  route_success: string[] = ['storage', 'pools'];
+  routeSuccess: string[] = ['storage', 'pools'];
   isNew = false;
   isEntity = true;
   poolName: string;
@@ -119,16 +119,16 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
             switch (true) {
               case value.encryptionkey_passphrase && !value.set_recoverykey:
                 this.encryptionService.setPassphrase(this.pk, value.encryptionkey_passphrase,
-                  value.passphrase, value.name, this.route_success, false);
+                  value.passphrase, value.name, this.routeSuccess, false);
                 break;
 
               case !value.encryptionkey_passphrase && value.set_recoverykey:
-                this.encryptionService.openEncryptDialog(this.pk, this.route_success, value.name, true);
+                this.encryptionService.openEncryptDialog(this.pk, this.routeSuccess, value.name, true);
                 break;
 
               case value.encryptionkey_passphrase && value.set_recoverykey:
                 this.encryptionService.setPassphrase(this.pk, value.encryptionkey_passphrase,
-                  value.passphrase, value.name, this.route_success, true, true);
+                  value.passphrase, value.name, this.routeSuccess, true, true);
                 break;
 
               default:
@@ -138,7 +138,7 @@ export class VolumeRekeyFormComponent implements FormConfiguration {
                   '500px',
                   'info',
                 );
-                this.encryptionService.openEncryptDialog(this.pk, this.route_success, this.poolName);
+                this.encryptionService.openEncryptDialog(this.pk, this.routeSuccess, this.poolName);
             }
           },
           (err) => {

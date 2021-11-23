@@ -35,7 +35,7 @@ export class NFSFormComponent implements FormConfiguration {
   isEntity = true;
   isBasicMode = true;
   entityForm: EntityFormComponent;
-  save_button_enabled = true;
+  saveButtonEnabled = true;
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['alldirs', 'quiet'];
   title: string = helptextSharingNfs.title;
@@ -234,7 +234,7 @@ export class NFSFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ]);
 
-  advanced_field = [
+  advancedFields = [
     'ro',
     'networks',
     'hosts',

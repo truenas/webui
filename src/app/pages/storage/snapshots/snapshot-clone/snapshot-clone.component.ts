@@ -19,8 +19,8 @@ import { WebSocketService } from 'app/services';
 })
 
 export class SnapshotCloneComponent implements FormConfiguration {
-  route_success: string[] = ['storage', 'pools'];
-  route_cancel: string[] = ['storage', 'snapshots'];
+  routeSuccess: string[] = ['storage', 'pools'];
+  routeCancel: string[] = ['storage', 'snapshots'];
   addCall = 'zfs.snapshot.clone' as const;
   pk: string;
   isEntity = true;
