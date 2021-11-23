@@ -381,6 +381,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
     if (this.poolHealth.isHealthy) {
       this.poolHealth.isHealthy = false;
+      this.poolHealth.level = this.translate.instant('warn');
     }
 
     if (this.poolHealth.errors.length > 0) {
