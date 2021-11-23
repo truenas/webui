@@ -36,7 +36,7 @@ export class FailoverComponent implements FormConfiguration {
     message: '',
     hideCheckbox: false,
   };
-  master_fg: FormControl;
+  masterControl: FormControl;
   warned = false;
 
   custActions = [
@@ -145,8 +145,8 @@ export class FailoverComponent implements FormConfiguration {
         this.confirmSubmit = res;
       }
     });
-    this.master_fg = this.entityForm.formGroup.controls['master'] as FormControl;
-    this.master_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+    this.masterControl = this.entityForm.formGroup.controls['master'] as FormControl;
+    this.masterControl.valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (!res && !this.warned) {
         this.dialog.confirm({
           title: helptextSystemFailover.master_dialog_title,
@@ -156,7 +156,7 @@ export class FailoverComponent implements FormConfiguration {
           disableClose: true,
         }).pipe(untilDestroyed(this)).subscribe((confirm) => {
           if (!confirm) {
-            this.master_fg.setValue(true);
+            this.masterControl.setValue(true);
           } else {
             this.warned = true;
           }

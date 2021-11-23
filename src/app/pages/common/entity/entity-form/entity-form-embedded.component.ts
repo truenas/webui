@@ -40,17 +40,17 @@ export interface EmbeddedFormConfig {
   saveSubmitText?: string;
   preInit?: (entityForm: EntityFormEmbeddedComponent) => void;
   target?: Subject<CoreEvent>;
-  resource_name?: string;
+  resourceName?: string;
   isEntity?: boolean;
   isNew?: boolean;
   pk?: number | string;
   fieldConfig?: FieldConfig[];
   afterInit?: (entityForm: EntityFormEmbeddedComponent) => void;
   initial?: (this: EmbeddedFormConfig, entityForm: EntityFormEmbeddedComponent) => void;
-  route_cancel?: string[];
-  route_success?: string[];
+  routeCancel?: string[];
+  routeSuccess?: string[];
   // TODO: Broken
-  route_delete?: string[];
+  routeDelete?: string[];
   actionButtonsAlign?: string;
   custActions?: any[];
   customFilter?: any[];
@@ -61,11 +61,10 @@ export interface EmbeddedFormConfig {
   customSubmit?: (value: any) => void;
   clean?: (this: EmbeddedFormConfig, value: any) => void;
   errorReport?: any;
-  hide_fileds?: string[];
   isBasicMode?: boolean;
-  advanced_field?: string[];
-  basic_field?: string[];
-  route_conf?: string[];
+  advancedFields?: string[];
+  basicFields?: string[];
+  routeConf?: string[];
   preHandler?: (data: any, formArray: FormArray) => any;
   initialCount?: number;
   initialCount_default?: number;
@@ -315,7 +314,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
 
   isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
-      if (this.conf.advanced_field.includes(id)) {
+      if (this.conf.advancedFields.includes(id)) {
         return false;
       }
     }
@@ -323,9 +322,9 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   }
 
   goConf(): void {
-    let route = this.conf.route_conf;
+    let route = this.conf.routeConf;
     if (!route) {
-      route = this.conf.route_success;
+      route = this.conf.routeSuccess;
     }
     this.router.navigate(new Array('/').concat(route));
   }

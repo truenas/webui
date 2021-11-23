@@ -129,8 +129,8 @@ export class KmipComponent implements FormConfiguration {
   ];
 
   showSpinner = true;
-  kmip_enabled: boolean;
-  sync_pending = false;
+  isKmipEnabled: boolean;
+  isSyncPending = false;
 
   constructor(
     private systemGeneralService: SystemGeneralService,
@@ -140,12 +140,12 @@ export class KmipComponent implements FormConfiguration {
   ) {
     this.ws.call(this.queryCall).pipe(untilDestroyed(this)).subscribe(
       (res) => {
-        this.kmip_enabled = res.enabled;
-        if (this.kmip_enabled) {
+        this.isKmipEnabled = res.enabled;
+        if (this.isKmipEnabled) {
           this.ws.call('kmip.kmip_sync_pending').pipe(untilDestroyed(this)).subscribe(
             (isPending) => {
               this.showSpinner = false;
-              this.sync_pending = isPending;
+              this.isSyncPending = isPending;
             },
             (penddingCallErr) => {
               new EntityUtils().handleWsError(this, penddingCallErr, this.dialogService);

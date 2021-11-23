@@ -33,7 +33,7 @@ export class BootEnvironmentFormComponent {
   title: string;
 
   formGroup = this.formBuilder.group({
-    name: ['', [Validators.required, regexValidator(this.bootEnvService.bootenv_name_regex)]],
+    name: ['', [Validators.required, regexValidator(this.bootEnvService.bootenvNameRegex)]],
   });
 
   isFormLoading = false;

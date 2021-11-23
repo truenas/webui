@@ -67,7 +67,6 @@ import { EntityJobComponent } from './entity-job/entity-job.component';
 import { EntitySnackbarComponent } from './entity-snackbar/entity-snackbar.component';
 import { EntityTableRowDetailsComponent } from './entity-table/entity-table-row-details/entity-table-row-details.component';
 import { EntityTableComponent } from './entity-table/entity-table.component';
-import { EntityTaskComponent } from './entity-task/entity-task.component';
 import { EntityTemplateDirective } from './entity-template.directive';
 import { ToolbarButtonComponent } from './entity-toolbar/components/toolbar-button/toolbar-button.component';
 import { ToolbarCheckboxComponent } from './entity-toolbar/components/toolbar-checkbox/toolbar-checkbox.component';
@@ -147,7 +146,6 @@ import { TableService } from './table/table.service';
     FormReadFileComponent,
     EntityJobComponent,
     EntityWizardComponent,
-    EntityTaskComponent,
     FormParagraphComponent,
     EntityDialogComponent,
     EntitySnackbarComponent,
@@ -179,7 +177,6 @@ import { TableService } from './table/table.service';
     EntityTableActionsComponent,
     DynamicFieldDirective,
     EntityWizardComponent,
-    EntityTaskComponent,
     EntityDialogComponent,
     EntitySnackbarComponent,
     EntityToolbarComponent,

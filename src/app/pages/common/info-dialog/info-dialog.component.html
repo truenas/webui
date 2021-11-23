@@ -3,10 +3,10 @@
   {{ title | translate }}
 </h1>
 <div mat-dialog-content>
-  <div *ngIf="!is_html" class="info-panel">
+  <div *ngIf="!isHtml" class="info-panel">
     <div class="textarea" readonly matInput>{{info | translate}}</div>
   </div>
-  <div *ngIf="is_html"class="info-panel ip-overflow-auto">
+  <div *ngIf="isHtml" class="info-panel ip-overflow-auto">
     <span [innerHtml]="info"></span>
   </div>
 </div>

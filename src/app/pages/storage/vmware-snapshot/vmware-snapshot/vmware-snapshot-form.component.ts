@@ -31,7 +31,7 @@ import { DialogService } from 'app/services/dialog.service';
 })
 
 export class VmwareSnapshotFormComponent implements FormConfiguration {
-  route_success: string[] = ['storage', 'vmware-snapshots'];
+  routeSuccess: string[] = ['storage', 'vmware-snapshots'];
   isEntity = true;
   queryCall = 'vmware.query' as const;
   addCall = 'vmware.create' as const;
@@ -196,7 +196,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
         this.loader.open();
         this.ws.call(this.addCall, [payload]).pipe(untilDestroyed(this)).subscribe(() => {
           this.loader.close();
-          this.router.navigate(new Array('/').concat(this.route_success));
+          this.router.navigate(new Array('/').concat(this.routeSuccess));
         },
         (error) => {
           this.loader.close();
@@ -207,7 +207,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
       this.loader.open();
       this.ws.call(this.addCall, [payload]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
       (error) => {
         this.loader.close();
@@ -221,7 +221,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
       this.loader.open();
       this.ws.call('vmware.update', [this.entityForm.pk, body]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       }, (error) => {
         this.loader.close();
         this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);
@@ -230,7 +230,7 @@ export class VmwareSnapshotFormComponent implements FormConfiguration {
       this.loader.open();
       this.ws.call('vmware.create', [body]).pipe(untilDestroyed(this)).subscribe(() => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       }, (error) => {
         this.loader.close();
         this.dialogService.errorReport(error.error, error.reason, error.trace.formatted);

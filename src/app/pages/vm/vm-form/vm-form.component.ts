@@ -37,16 +37,16 @@ export class VmFormComponent implements FormConfiguration {
   queryCall = 'vm.query' as const;
   editCall = 'vm.update' as const;
   isEntity = true;
-  route_success: string[] = ['vm'];
+  routeSuccess: string[] = ['vm'];
   protected entityForm: EntityFormComponent;
-  save_button_enabled: boolean;
+  saveButtonEnabled: boolean;
   private rawVmData: VirtualMachine;
   vcpus: number;
   cores: number;
   threads: number;
   private gpus: Device[];
   private isolatedGpuPciIds: string[];
-  private maxVCPUs: number;
+  private maxVcpus: number;
   private productType = window.localStorage.getItem('product_type') as ProductType;
   queryCallOption: any[] = [];
 
@@ -232,7 +232,7 @@ export class VmFormComponent implements FormConfiguration {
       }
     });
     this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((max) => {
-      this.maxVCPUs = max;
+      this.maxVcpus = max;
     });
   }
 
@@ -331,13 +331,13 @@ export class VmFormComponent implements FormConfiguration {
     return () => {
       const config = this.fieldConfig.find((c) => c.name === name);
       setTimeout(() => {
-        const errors = this.vcpus * this.cores * this.threads > this.maxVCPUs
+        const errors = this.vcpus * this.cores * this.threads > this.maxVcpus
           ? { validCPU: true }
           : null;
 
         if (errors) {
           config.hasErrors = true;
-          config.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVCPUs });
+          config.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
         } else {
           config.hasErrors = false;
           config.warnings = '';
@@ -464,7 +464,7 @@ export class VmFormComponent implements FormConfiguration {
     combineLatest(observables).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
       (error) => {
         this.loader.close();

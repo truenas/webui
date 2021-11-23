@@ -25,10 +25,10 @@ import { DialogService } from 'app/services/dialog.service';
   `,
 })
 export class DeviceListComponent implements EntityTableConfig {
-  resource_name: string;
-  route_add: string[];
-  route_edit: string[];
-  protected route_delete: string[];
+  resourceName: string;
+  routeAdd: string[];
+  routeEdit: string[];
+  protected routeDelete: string[];
   protected pk: string;
   vm: string;
   private entityList: EntityTableComponent;
@@ -177,11 +177,11 @@ export class DeviceListComponent implements EntityTableConfig {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
       this.vm = params['name'];
-      this.route_add = ['vm', this.pk, 'devices', this.vm, 'add'];
-      this.route_edit = ['vm', this.pk, 'devices', this.vm, 'edit'];
-      this.route_delete = ['vm', this.pk, 'devices', this.vm, 'delete'];
+      this.routeAdd = ['vm', this.pk, 'devices', this.vm, 'add'];
+      this.routeEdit = ['vm', this.pk, 'devices', this.vm, 'edit'];
+      this.routeDelete = ['vm', this.pk, 'devices', this.vm, 'delete'];
       // this is filter by vm's id to show devices belonging to that VM
-      this.resource_name = 'vm/device/?vm__id=' + this.pk;
+      this.resourceName = 'vm/device/?vm__id=' + this.pk;
       this.title = this.translate.instant('VM {vm} devices', { vm: this.vm });
       this.cdRef.detectChanges();
       this.queryCallOption[0][0].push(parseInt(this.pk, 10));

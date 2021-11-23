@@ -37,7 +37,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   commonName: string;
   private getRow = new Subscription();
   private rowNum: number;
-  private dns_map: FormSelectConfig;
+  private dnsMapField: FormSelectConfig;
   title = helptextSystemCertificates.list.action_create_acme_certificate;
   protected isOneColumnForm = true;
   fieldConfig: FieldConfig[];
@@ -129,7 +129,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   queryCallOption: [QueryFilter<Certificate>];
   initialCount = 1;
   private domainList: FormArray;
-  private domainList_fc: FormListConfig;
+  private domainListField: FormListConfig;
 
   constructor(
     protected ws: WebSocketService,
@@ -147,9 +147,9 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   preInit(entityForm: EntityFormComponent): void {
     this.ws.call('acme.dns.authenticator.query').pipe(untilDestroyed(this)).subscribe((authenticators) => {
       const listConfig = this.fieldSets[2].config[0] as FormListConfig;
-      this.dns_map = _.find(listConfig.templateListField, { name: 'authenticators' }) as FormSelectConfig;
+      this.dnsMapField = _.find(listConfig.templateListField, { name: 'authenticators' }) as FormSelectConfig;
       authenticators.forEach((item) => {
-        this.dns_map.options.push({ label: item.name, value: item.id });
+        this.dnsMapField.options.push({ label: item.name, value: item.id });
       });
     });
 
@@ -167,8 +167,8 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     this.fieldConfig = entityEdit.fieldConfig;
 
     this.domainList = entityEdit.formGroup.controls['domains'] as FormArray;
-    this.domainList_fc = _.find(this.fieldConfig, { name: 'domains' }) as FormListConfig;
-    const listFields = this.domainList_fc.listFields;
+    this.domainListField = _.find(this.fieldConfig, { name: 'domains' }) as FormListConfig;
+    const listFields = this.domainListField.listFields;
 
     this.ws.call(this.queryCall, [this.queryCallOption]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.commonName = res[0].common;
@@ -178,11 +178,11 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
         if (domains && domains.length > 0) {
           for (let i = 0; i < domains.length; i++) {
             if (this.domainList.controls[i] === undefined) {
-              const templateListField = _.cloneDeep(this.domainList_fc.templateListField);
+              const templateListField = _.cloneDeep(this.domainListField.templateListField);
               const newfg = this.entityFormService.createFormGroup(templateListField);
               newfg.setParent(this.domainList);
               this.domainList.controls.push(newfg);
-              this.domainList_fc.listFields.push(templateListField);
+              this.domainListField.listFields.push(templateListField);
             }
 
             const controls = listFields[i];
@@ -190,7 +190,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
             const authConfig = _.find(controls, { name: 'authenticators' }) as FormSelectConfig;
             (this.domainList.controls[i] as FormGroup).controls['name_text'].setValue(domains[i]);
             nameTextConfig.paraText = '<b>' + domains[i] + '</b>';
-            authConfig.options = this.dns_map.options;
+            authConfig.options = this.dnsMapField.options;
           }
         }
       });

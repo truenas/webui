@@ -22,9 +22,9 @@ export class ExtentListComponent implements EntityTableConfig {
   tableTitle = this.translate.instant('Extents');
   protected entityTable: EntityTableComponent;
   queryCall = 'iscsi.extent.query' as const;
-  route_add: string[] = ['sharing', 'iscsi', 'extent', 'add'];
-  route_add_tooltip = this.translate.instant('Add Extent');
-  route_edit: string[] = ['sharing', 'iscsi', 'extent', 'edit'];
+  routeAdd: string[] = ['sharing', 'iscsi', 'extent', 'add'];
+  routeAddTooltip = this.translate.instant('Add Extent');
+  routeEdit: string[] = ['sharing', 'iscsi', 'extent', 'edit'];
   wsDelete = 'iscsi.extent.delete' as const;
 
   columns = [

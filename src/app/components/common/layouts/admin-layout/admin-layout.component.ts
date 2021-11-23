@@ -34,8 +34,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isSidenotOpen = false;
   consoleMsg = '';
   hostname: string;
-  consoleMSgList: string[] = [];
-  product_type = window.localStorage['product_type'] as ProductType;
+  consoleMessages: string[] = [];
+  productType = window.localStorage['product_type'] as ProductType;
   logoPath = 'assets/images/light-logo.svg';
   logoTextPath = 'assets/images/light-logo-text.svg';
   currentTheme = '';
@@ -66,7 +66,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   ) {
     // detect server type
     sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.product_type = res as ProductType;
+      this.productType = res as ProductType;
     });
 
     // Close sidenav after route change in mobile
@@ -210,20 +210,20 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     // consoleMSgList will store just 500 messages.
     msgarr.forEach((message) => {
       if ((message) !== '') {
-        this.consoleMSgList.push((message));
+        this.consoleMessages.push((message));
       }
     });
-    while (this.consoleMSgList.length > 500) {
-      this.consoleMSgList.shift();
+    while (this.consoleMessages.length > 500) {
+      this.consoleMessages.shift();
     }
     if (num > 500) {
       num = 500;
     }
-    if (num > this.consoleMSgList.length) {
-      num = this.consoleMSgList.length;
+    if (num > this.consoleMessages.length) {
+      num = this.consoleMessages.length;
     }
-    for (let i = this.consoleMSgList.length - 1; i >= this.consoleMSgList.length - num; --i) {
-      msgs = this.consoleMSgList[i] + '\n' + msgs;
+    for (let i = this.consoleMessages.length - 1; i >= this.consoleMessages.length - num; --i) {
+      msgs = this.consoleMessages[i] + '\n' + msgs;
     }
 
     return msgs;

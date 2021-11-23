@@ -23,9 +23,9 @@ export class SMBListComponent implements EntityTableConfig {
   queryCall = 'sharing.smb.query' as const;
   updateCall = 'sharing.smb.update' as const;
   wsDelete = 'sharing.smb.delete' as const;
-  route_add: string[] = ['sharing', 'smb', 'add'];
-  route_add_tooltip = 'Add Windows (SMB) Share';
-  protected route_delete: string[] = ['sharing', 'smb', 'delete'];
+  routeAdd: string[] = ['sharing', 'smb', 'add'];
+  routeAddTooltip = this.translate.instant('Add Windows (SMB) Share');
+  protected routeDelete: string[] = ['sharing', 'smb', 'delete'];
   private entityList: EntityTableComponent;
   productType = window.localStorage.getItem('product_type') as ProductType;
   emptyTableConfigMessages = {

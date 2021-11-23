@@ -120,7 +120,7 @@ export class EntityWizardComponent implements OnInit {
 
   isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
-      if (this.conf.advanced_field.includes(id)) {
+      if (this.conf.advancedFields.includes(id)) {
         return false;
       }
     }
@@ -132,9 +132,9 @@ export class EntityWizardComponent implements OnInit {
       this.conf.customCancel();
       return;
     }
-    let route = this.conf.route_cancel;
+    let route = this.conf.routeCancel;
     if (!route) {
-      route = this.conf.route_success;
+      route = this.conf.routeSuccess;
     }
     this.router.navigate(new Array('/').concat(route));
   }
@@ -185,8 +185,8 @@ export class EntityWizardComponent implements OnInit {
           this.loader.close();
           if (res.error) {
             this.dialog.errorReport(res.error, (res as any).reason, res.exception);
-          } else if (this.conf.route_success) {
-            this.router.navigate(new Array('/').concat(this.conf.route_success));
+          } else if (this.conf.routeSuccess) {
+            this.router.navigate(new Array('/').concat(this.conf.routeSuccess));
           } else {
             this.dialog.info(this.translate.instant('Settings saved'), '', '300px', 'info', true);
           }
