@@ -46,7 +46,6 @@ def on_the_dashboard_click_on_credentials_and_local_groups(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Groups"]').click()
 
