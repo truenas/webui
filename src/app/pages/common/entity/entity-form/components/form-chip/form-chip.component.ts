@@ -46,7 +46,7 @@ export class FormChipComponent implements Field, OnInit {
   }
 
   add(event: MatChipInputEvent): void {
-    const input = event.input;
+    const input = event.chipInput.inputElement;
     const value = event.value;
 
     if ((value || '').trim() && !this.config.selectOnly) {
@@ -107,7 +107,6 @@ export class FormChipComponent implements Field, OnInit {
   openPanel(): void {
     if (this.config.selectOnly) {
       setTimeout(() => {
-        this.trigger._onChange('');
         this.trigger.openPanel();
       });
     }

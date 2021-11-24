@@ -159,7 +159,9 @@ export default {
   lagg_interfaces_tooltip: T('Select the interfaces to use in the aggregation.<br>\
  Warning: Link Aggregation creation fails if any of the selected\
  interfaces have been manually configured.'),
-  lagg_interfaces_failover_tooltip: T('The order is important because the FAILOVER\
+  lagg_interfaces_failover_tooltip: T('Select the interfaces to use in the aggregation.<br>\
+  Warning: Link Aggregation creation fails if any of the selected interfaces\
+ have been manually configured.<br>The order is important because the FAILOVER\
  lagg protocol will mark the first interface as the "primary" interface.'),
   lagg_interfaces_validation: [Validators.required],
 

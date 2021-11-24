@@ -572,7 +572,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         this.entityForm.setDisabled('xmit_hash_policy', true, true);
       }
       if (value === LinkAggregationProtocol.Failover) {
-        this.lagPortsField.tooltip = helptext.lagg_interfaces_tooltip + ' ' + helptext.lagg_interfaces_failover_tooltip;
+        this.lagPortsField.tooltip = helptext.lagg_interfaces_failover_tooltip;
       } else {
         this.lagPortsField.tooltip = helptext.lagg_interfaces_tooltip;
       }
@@ -580,11 +580,17 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
   }
 
   updateSearchOptions(value = '', values?: string[]): void {
-    this.lagPortsField.searchOptions = this.lagPortsOption.filter((option) => (
-      (!value
-        || (value && (option.value as string).toLowerCase().includes(value.toLowerCase())))
-      && (!values || !values.includes(option.value as string))
-    ));
+    this.lagPortsField.searchOptions = this.lagPortsOption.filter((option) => {
+      /** Not display the options already selected (for selectOnly) */
+      if (values && values.includes(option.value as string)) {
+        return false;
+      }
+      /** Not display the options no match with the search */
+      if (value && !(option.value as string).toLowerCase().includes(value.toLowerCase())) {
+        return false;
+      }
+      return true;
+    });
   }
 
   clean(data: any): any {
