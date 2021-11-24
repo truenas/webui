@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
+import { runOnPushChangeDetection } from 'app/core/testing/utils/run-on-push.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
@@ -72,7 +73,6 @@ describe('NtpServerListComponent', () => {
     ws = spectator.inject(WebSocketService);
     jest.spyOn(spectator.fixture.componentInstance, 'doAdd').mockImplementation();
     jest.spyOn(spectator.fixture.componentInstance, 'doDelete').mockImplementation();
-    spectator.fixture.detectChanges();
   });
 
   afterEach(() => {
@@ -95,10 +95,6 @@ describe('NtpServerListComponent', () => {
   });
 
   it('should show table rows', async () => {
-    spectator.fixture.componentInstance.loading = false;
-    spectator.fixture.componentInstance.error = false;
-    spectator.fixture.componentInstance.createDataSource(fakeDataSource);
-
     const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCells(true);
 
@@ -117,6 +113,7 @@ describe('NtpServerListComponent', () => {
     spectator.fixture.componentInstance.loading = false;
     spectator.fixture.componentInstance.error = false;
     spectator.fixture.componentInstance.createDataSource();
+    await runOnPushChangeDetection(spectator.fixture);
 
     const table = await loader.getHarness<IxTableHarness>(IxTableHarness);
     const text = await table.getCellTextByIndex();
@@ -128,6 +125,7 @@ describe('NtpServerListComponent', () => {
     spectator.fixture.componentInstance.loading = false;
     spectator.fixture.componentInstance.error = true;
     spectator.fixture.componentInstance.createDataSource();
+    await runOnPushChangeDetection(spectator.fixture);
 
     const table = await loader.getHarness<IxTableHarness>(IxTableHarness);
     const text = await table.getCellTextByIndex();

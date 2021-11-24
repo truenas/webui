@@ -77,7 +77,6 @@ export class NtpServerListComponent implements OnInit {
 
   createDataSource(servers: NtpServer[] = []): void {
     this.dataSource = new MatTableDataSource(servers);
-    this.cdr.markForCheck();
   }
 
   getData(): void {
@@ -87,10 +86,12 @@ export class NtpServerListComponent implements OnInit {
       this.loading = false;
       this.error = false;
       this.createDataSource(servers);
+      this.cdr.markForCheck();
     }, () => {
       this.loading = false;
       this.error = true;
       this.createDataSource();
+      this.cdr.markForCheck();
     });
   }
 
