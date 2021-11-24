@@ -25,12 +25,11 @@ import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormConfigurationComponent } from 'app/pages/common/entity/entity-form/entity-form-configuration.component';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
@@ -119,6 +118,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private el: ElementRef,
     public modalService: ModalService,
     private translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) {
     core.register({ observerClass: this, eventName: 'SidenavStatus' }).pipe(untilDestroyed(this)).subscribe(() => {
       setTimeout(() => {
@@ -429,7 +429,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.formEvents$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
         switch (evt.name) {
           case 'FormSubmit':
-            this.formHandler(evt);
+            this.dashState = evt.data;
             break;
           case 'ToolbarChanged':
             this.showConfigForm();
@@ -571,75 +571,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showConfigForm(): void {
-    const widgetTypes: string[] = [];
-    this.dashState.forEach((item) => {
-      if (!widgetTypes.includes(item.name)) {
-        widgetTypes.push(item.name);
-      }
-    });
-
-    const fieldSets = [
-      {
-        name: 'Toggle Widget Visibility',
-        width: '100%',
-        label: true,
-        config: this.dashState.map((widget) => {
-          let ph;
-          if (widget.identifier) {
-            const spl = widget.identifier.split(',');
-            ph = spl[1];
-          } else {
-            ph = widget.name;
-          }
-
-          return {
-            type: 'checkbox',
-            name: ph,
-            value: widget.rendered,
-            placeholder: ph,
-          };
-        }),
-      },
-    ] as FieldSet[];
-
-    const formComponent = this.modalService.openInSlideIn(EntityFormConfigurationComponent);
-    formComponent.fieldSets = new FieldSets(fieldSets);
-    formComponent.title = this.translate.instant('Dashboard Configuration');
-    formComponent.isOneColumnForm = true;
-    formComponent.formType = 'EntityFormComponent';
-    formComponent.target = this.formEvents$;
-  }
-
-  formHandler(evt: CoreEvent): void {
-    // This method handles the form data
-
-    const clone = Object.assign([], this.dashState);
-    const keys = Object.keys(evt.data);
-
-    // Apply
-    keys.forEach((key) => {
-      const value = evt.data[key];
-      const dashItem = clone.find((w) => {
-        if (w.identifier) {
-          const spl = w.identifier.split(',');
-          const name = spl[1];
-          return key == name;
-        }
-        return key == w.name;
-      });
-
-      dashItem.rendered = value;
-    });
-
-    this.dashState = clone;
-    this.modalService.closeSlideIn();
-
-    // Save
-    this.ws.call('user.set_attribute', [1, 'dashState', clone]).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
-        throw new Error('Unable to save Dashboard State');
-      }
-    });
+    const modal = this.slideInService.open(DashboardFormComponent);
+    modal.setupForm(this.dashState, this.formEvents$);
   }
 
   applyState(state: DashConfigItem[]): void {
