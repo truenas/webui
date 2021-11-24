@@ -475,21 +475,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     conf.push({ name: 'CPU', rendered: true, id: conf.length.toString() });
     conf.push({ name: 'Memory', rendered: true, id: conf.length.toString() });
 
+    conf.push({ name: 'Storage', rendered: true, id: conf.length.toString() });
+
     this.pools.forEach((pool) => {
       conf.push({
         name: 'Pool', identifier: 'name,' + pool.name, rendered: false, id: conf.length.toString(),
       });
     });
 
-    conf.push({ name: 'Storage', rendered: true, id: conf.length.toString() });
+    conf.push({ name: 'Network', rendered: true, id: conf.length.toString() });
 
     this.nics.forEach((nic) => {
       conf.push({
         name: 'Interface', identifier: 'name,' + nic.name, rendered: false, id: conf.length.toString(),
       });
     });
-
-    conf.push({ name: 'Network', rendered: true, id: conf.length.toString() });
 
     return conf;
   }
