@@ -40,8 +40,8 @@ interface DialogData {
 export class SnapshotListComponent implements EntityTableConfig {
   title = 'Snapshots';
   queryCall = 'zfs.snapshot.query' as const;
-  route_add: string[] = ['storage', 'snapshots', 'add'];
-  route_add_tooltip = 'Add Snapshot';
+  routeAdd: string[] = ['storage', 'snapshots', 'add'];
+  routeAddTooltip = this.translate.instant('Add Snapshot');
   wsDelete = 'zfs.snapshot.delete' as const;
   protected loaderOpen = false;
   protected entityList: EntityTableComponent;

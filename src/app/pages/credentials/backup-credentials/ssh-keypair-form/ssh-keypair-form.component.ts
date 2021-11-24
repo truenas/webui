@@ -30,7 +30,7 @@ export class SshKeypairFormComponent {
   isFormLoading = false;
 
   form = this.fb.group({
-    name: ['', [Validators.required, Validators.pattern(UserService.VALIDATOR_NAME)]],
+    name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
     private_key: [''],
     public_key: ['', atLeastOne('private_key', [helptext.private_key_placeholder, helptext.public_key_placeholder])],
   });

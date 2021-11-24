@@ -20,7 +20,7 @@ export class SMBAclComponent implements FormConfiguration {
   queryCall = 'smb.sharesec.query' as const;
   editCall = 'smb.sharesec.update' as const;
 
-  route_success: string[] = ['sharing', 'smb'];
+  routeSuccess: string[] = ['sharing', 'smb'];
   isEntity = true;
   customFilter: QueryParams<SmbSharesec>;
 
@@ -127,7 +127,7 @@ export class SMBAclComponent implements FormConfiguration {
     },
   ];
 
-  protected shareACLField: FormListConfig;
+  protected shareAclField: FormListConfig;
   protected entityForm: EntityFormComponent;
 
   constructor(private aroute: ActivatedRoute) { }
@@ -142,12 +142,12 @@ export class SMBAclComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
-    this.shareACLField = _.find(entityForm.fieldConfig, { name: 'share_acl' }) as FormListConfig;
+    this.shareAclField = _.find(entityForm.fieldConfig, { name: 'share_acl' }) as FormListConfig;
 
     entityForm.formGroup.controls['share_acl'].valueChanges.pipe(untilDestroyed(this)).subscribe((res) => {
       for (let i = 0; i < res.length; i++) {
         if (res[i].ae_who_sid !== undefined && res[i].ae_who_sid !== '') {
-          const sidField = _.find(this.shareACLField['listFields'][i], { name: 'ae_who_sid' });
+          const sidField = _.find(this.shareAclField['listFields'][i], { name: 'ae_who_sid' });
           if (!sidField.required) {
             this.updateRequiredValidator('ae_who_sid', i, true);
             this.updateRequiredValidator('ae_who_name_domain', i, false);
@@ -155,8 +155,8 @@ export class SMBAclComponent implements FormConfiguration {
           }
         } else if (res[i].ae_who_name_domain !== undefined && res[i].ae_who_name_domain !== ''
                 || res[i].ae_who_name_name !== undefined && res[i].ae_who_name_name !== '') {
-          const domainField = _.find(this.shareACLField['listFields'][i], { name: 'ae_who_name_domain' });
-          const nameField = _.find(this.shareACLField['listFields'][i], { name: 'ae_who_name_name' });
+          const domainField = _.find(this.shareAclField['listFields'][i], { name: 'ae_who_name_domain' });
+          const nameField = _.find(this.shareAclField['listFields'][i], { name: 'ae_who_name_name' });
           if (!domainField.required || !nameField.required) {
             this.updateRequiredValidator('ae_who_sid', i, false);
             this.updateRequiredValidator('ae_who_name_domain', i, true);
@@ -169,7 +169,7 @@ export class SMBAclComponent implements FormConfiguration {
 
   updateRequiredValidator(fieldName: string, index: number, required: boolean): void {
     const fieldCtrl = ((this.entityForm.formGroup.controls['share_acl'] as FormGroup).controls[index] as FormGroup).controls[fieldName];
-    const fieldConfig = _.find(this.shareACLField['listFields'][index], { name: fieldName });
+    const fieldConfig = _.find(this.shareAclField['listFields'][index], { name: fieldName });
     if (fieldConfig.required !== required) {
       fieldConfig.required = required;
       if (required) {

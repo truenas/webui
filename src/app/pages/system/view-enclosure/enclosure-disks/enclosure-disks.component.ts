@@ -70,7 +70,6 @@ export interface DiskFailure {
   templateUrl: './enclosure-disks.component.html',
   styleUrls: ['./enclosure-disks.component.scss'],
 })
-
 export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnDestroy {
   showCaption = true;
   protected pendingDialog: EntityDialogComponent;
@@ -93,7 +92,6 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   app: Application;
   private resources = PIXI.loader.resources;
   container: Container;
-  system_product = 'unknown';
   failedDisks: DiskFailure[] = [];
   subenclosure: any; // Declare rear and internal enclosure visualizations here
 

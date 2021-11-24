@@ -7,14 +7,14 @@ import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-t
   selector: 'app-rsync-module-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class RsyncConfigurationListComponent implements EntityTableConfig {
+export class RsyncModuleListComponent implements EntityTableConfig {
   title = this.translate.instant('RSYNC Modules');
   queryCall = 'rsyncmod.query' as const;
   hasDetails = true;
   wsDelete = 'rsyncmod.delete' as const;
-  route_add: string[] = ['services', 'rsync', 'rsync-module', 'add'];
-  route_edit: string[] = ['services', 'rsync', 'rsync-module', 'edit'];
-  protected route_delete: string[] = ['services', 'rsync', 'rsync-module', 'delete'];
+  routeAdd: string[] = ['services', 'rsync', 'rsync-module', 'add'];
+  routeEdit: string[] = ['services', 'rsync', 'rsync-module', 'edit'];
+  protected routeDelete: string[] = ['services', 'rsync', 'rsync-module', 'delete'];
 
   columns = [
     { name: this.translate.instant('Name'), prop: 'name' },

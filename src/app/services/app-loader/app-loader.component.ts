@@ -17,7 +17,6 @@ export class AppLoaderComponent {
   message: string;
 
   consoleMsg: string;
-  consoleMSgList: string[] = [];
 
   isShowConsole = false;
 

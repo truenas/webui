@@ -27,7 +27,7 @@ import {
 })
 
 export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
-  route_success = ['storage', 'snapshots'];
+  routeSuccess = ['storage', 'snapshots'];
   isEntity = true;
   isNew = true;
   initialized = true;

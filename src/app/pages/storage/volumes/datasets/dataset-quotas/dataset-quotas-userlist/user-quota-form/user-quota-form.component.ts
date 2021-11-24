@@ -32,7 +32,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   isEntity = true;
   entityForm: EntityFormComponent;
   pk: string;
-  route_success: string[];
+  routeSuccess: string[];
   searchedEntries: string[] = [];
   entryField: FormChipConfig;
   isNew = true;
@@ -42,7 +42,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
   private selectedEntriesValue: FormControl;
   private entryErrs: HTMLCollectionOf<Element>;
   private entryErrBool = false;
-  save_button_enabled = false;
+  saveButtonEnabled = false;
   private differ: IterableDiffer<string>;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet<this>[] = [
@@ -145,9 +145,9 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
         && (this.selectedEntriesValue.value && this.selectedEntriesValue.value.length > 0
         || this.searchedEntries && this.searchedEntries.length > 0)
         && !this.entryErrBool) {
-      this.save_button_enabled = true;
+      this.saveButtonEnabled = true;
     } else {
-      this.save_button_enabled = false;
+      this.saveButtonEnabled = false;
     }
   }
 
@@ -162,7 +162,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
-    this.route_success = ['storage', 'user-quotas', this.pk];
+    this.routeSuccess = ['storage', 'user-quotas', this.pk];
     this.selectedEntriesField = _.find(this.fieldConfig, { name: 'system_entries' }) as FormSelectConfig;
     this.selectedEntriesValue = this.entityForm.formGroup.controls['system_entries'] as FormControl;
     this.entryField = _.find(this.fieldSets.find((set) => set.name === helptext.users.user_title).config,
@@ -259,7 +259,7 @@ export class UserQuotaFormComponent implements FormConfiguration, DoCheck {
     this.loader.open();
     this.ws.call('pool.dataset.set_quota', [this.pk, payload]).pipe(untilDestroyed(this)).subscribe(() => {
       this.loader.close();
-      this.router.navigate(new Array('/').concat(this.route_success));
+      this.router.navigate(new Array('/').concat(this.routeSuccess));
     }, (err) => {
       this.loader.close();
       this.dialog.errorReport('Error', err.reason, err.trace.formatted);

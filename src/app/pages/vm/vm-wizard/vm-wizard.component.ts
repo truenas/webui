@@ -66,7 +66,7 @@ export class VMWizardComponent implements WizardConfiguration {
   private currentStep = 0;
   title = helptext.formTitle;
   hideCancel = true;
-  private maxVCPUs = 16;
+  private maxVcpus = 16;
   private gpus: Device[];
   private isolatedGpuPciIds: string[];
 
@@ -491,9 +491,9 @@ export class VMWizardComponent implements WizardConfiguration {
   preInit(entityWizard: EntityWizardComponent): void {
     this.entityWizard = entityWizard;
     this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((max) => {
-      this.maxVCPUs = max;
+      this.maxVcpus = max;
       const vcpuLimitConf: FormParagraphConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' });
-      vcpuLimitConf.paraText = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVCPUs });
+      vcpuLimitConf.paraText = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
     });
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
       this.gpus = gpus;
@@ -900,13 +900,13 @@ export class VMWizardComponent implements WizardConfiguration {
     return (): any => {
       const config = this.wizardConfig[1].fieldConfig.find((c) => c.name === name);
       setTimeout(() => {
-        const errors = this.vcpus * this.cores * this.threads > this.maxVCPUs
+        const errors = this.vcpus * this.cores * this.threads > this.maxVcpus
           ? { validCPU: true }
           : null;
 
         if (errors) {
           config.hasErrors = true;
-          config.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVCPUs });
+          config.warnings = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
         } else {
           config.hasErrors = false;
           config.warnings = '';

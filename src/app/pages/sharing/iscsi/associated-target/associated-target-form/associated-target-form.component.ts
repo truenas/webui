@@ -24,7 +24,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
   addCall = 'iscsi.targetextent.create' as const;
   queryCall = 'iscsi.targetextent.query' as const;
   editCall = 'iscsi.targetextent.update' as const;
-  route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
+  routeSuccess: string[] = ['sharing', 'iscsi', 'associatedtarget'];
   isEntity = true;
   customFilter: [[Partial<QueryFilter<IscsiTargetExtent>>]] = [[['id', '=']]];
 
@@ -70,8 +70,8 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
 
-  protected target_control: FormSelectConfig;
-  protected extent_control: FormSelectConfig;
+  protected targetControlField: FormSelectConfig;
+  protected extentControlField: FormSelectConfig;
   pk: number;
   protected entityForm: EntityFormComponent;
 
@@ -91,19 +91,19 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    this.target_control = _.find(this.fieldConfig, { name: 'target' }) as FormSelectConfig;
-    this.target_control.options.push({ label: '----------', value: '' });
+    this.targetControlField = _.find(this.fieldConfig, { name: 'target' }) as FormSelectConfig;
+    this.targetControlField.options.push({ label: '----------', value: '' });
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       targets.forEach((target) => {
-        this.target_control.options.push({ label: target.name, value: target.id });
+        this.targetControlField.options.push({ label: target.name, value: target.id });
       });
     });
 
-    this.extent_control = _.find(this.fieldConfig, { name: 'extent' }) as FormSelectConfig;
-    this.extent_control.options.push({ label: '----------', value: '' });
+    this.extentControlField = _.find(this.fieldConfig, { name: 'extent' }) as FormSelectConfig;
+    this.extentControlField.options.push({ label: '----------', value: '' });
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       extents.forEach((extent) => {
-        this.extent_control.options.push({ label: (extent).name, value: (extent).id });
+        this.extentControlField.options.push({ label: (extent).name, value: (extent).id });
       });
     });
   }
@@ -119,7 +119,7 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
       (res) => {
         this.loader.close();

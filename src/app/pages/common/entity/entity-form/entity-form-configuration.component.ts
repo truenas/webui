@@ -24,14 +24,7 @@ export class EntityFormConfigurationComponent implements FormConfiguration {
   afterModalFormClosed: () => void;
   formType: string;
 
-  _isOneColumnForm = false;
-  get isOneColumnForm(): boolean {
-    return this._isOneColumnForm;
-  }
-
-  set isOneColumnForm(value) {
-    this._isOneColumnForm = value;
-  }
+  isOneColumnForm = false;
 
   // EntityForm
   customSubmit?: (value: any) => void;

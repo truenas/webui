@@ -94,7 +94,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   // For widgetsysinfo
-  isHA: boolean; // = false;
+  isHa: boolean;
   sysinfoReady = false;
 
   // For CPU widget
@@ -227,7 +227,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
       if (hasFailover) {
-        this.isHA = true;
+        this.isHa = true;
       }
     });
     this.sysinfoReady = true;
@@ -466,7 +466,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       { name: 'System Information', rendered: true, id: '0' },
     ];
 
-    if (this.isHA) {
+    if (this.isHa) {
       conf.push({
         name: 'System Information(Standby)', identifier: 'passive,true', rendered: true, id: conf.length.toString(),
       });

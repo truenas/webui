@@ -30,11 +30,11 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
 
   queryCall = 'pool.query' as const;
   queryKey = 'id';
-  route_return: string[] = ['storage', 'pools'];
+  routeReturn: string[] = ['storage', 'pools'];
   isNew = false;
   isEntity = true;
   poolName: string;
-  admin_pw = '';
+  adminPassword = '';
   entityData = {
     name: '',
     passphrase: '',
@@ -81,9 +81,9 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
       name: this.translate.instant('Download Encryption Key'),
       disabled: true,
       function: () => {
-        this.ws.call('auth.check_user', ['root', this.admin_pw]).pipe(untilDestroyed(this)).subscribe((res) => {
+        this.ws.call('auth.check_user', ['root', this.adminPassword]).pipe(untilDestroyed(this)).subscribe((res) => {
           if (res) {
-            this.encryptionService.openEncryptDialog(this.pk, this.route_return, this.poolName);
+            this.encryptionService.openEncryptDialog(this.pk, this.routeReturn, this.poolName);
           } else {
             this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');
           }
@@ -95,7 +95,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
       name: this.translate.instant('Cancel'),
       function: () => {
         this.router.navigate(new Array('/').concat(
-          this.route_return,
+          this.routeReturn,
         ));
       },
     }];
@@ -129,9 +129,9 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
 
   afterInit(entityForm: EntityFormComponent): void {
     entityForm.formGroup.controls['adminpw'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
-      this.admin_pw = res;
+      this.adminPassword = res;
       const btn = document.getElementById('cust_button_Download Encryption Key') as HTMLInputElement;
-      btn.disabled = this.admin_pw === '';
+      btn.disabled = this.adminPassword === '';
     });
   }
 
@@ -139,7 +139,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
     this.ws.call('auth.check_user', ['root', value.adminpw]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res) {
         this.encryptionService.setPassphrase(this.pk, value.passphrase, value.adminpw,
-          value.name, this.route_return, false, true, 'created for');
+          value.name, this.routeReturn, false, true, 'created for');
       } else {
         this.dialogService.info('Error', 'The administrator password is incorrect.', '340px');
       }

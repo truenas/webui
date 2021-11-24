@@ -40,7 +40,7 @@ export class CertificatesDashComponent implements OnInit {
   cards: { name: string; tableConf: AppTableConfig<CertificatesDashComponent> }[];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private downloadActions: AppTableAction[];
-  private unsignedCAs: Option[] = [];
+  private unsignedCertificateAuthorities: Option[] = [];
   private caId: number;
 
   constructor(
@@ -67,7 +67,7 @@ export class CertificatesDashComponent implements OnInit {
     });
     this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((item) => {
-        this.unsignedCAs.push(
+        this.unsignedCertificateAuthorities.push(
           { label: item.name, value: item.id },
         );
       });
@@ -347,7 +347,7 @@ export class CertificatesDashComponent implements OnInit {
       name: 'sign_CSR',
       matTooltip: helptextSystemCa.list.action_sign,
       onClick: (rowinner: CertificateAuthority) => {
-        this.dialogService.dialogForm(this.signCSRFormConf);
+        this.dialogService.dialogForm(this.signCsrFormConf);
         this.caId = rowinner.id;
       },
     };
@@ -389,14 +389,14 @@ export class CertificatesDashComponent implements OnInit {
     }, 200);
   }
 
-  protected signCSRFieldConf: FieldConfig[] = [
+  protected signCsrFieldConf: FieldConfig[] = [
     {
       type: 'select',
       name: 'csr_cert_id',
       placeholder: helptextSystemCa.sign.csr_cert_id.placeholder,
       tooltip: helptextSystemCa.sign.csr_cert_id.tooltip,
       required: true,
-      options: this.unsignedCAs,
+      options: this.unsignedCertificateAuthorities,
     },
     {
       type: 'input',
@@ -406,9 +406,9 @@ export class CertificatesDashComponent implements OnInit {
     },
   ];
 
-  signCSRFormConf: DialogFormConfiguration = {
+  signCsrFormConf: DialogFormConfiguration = {
     title: helptextSystemCa.sign.fieldset_certificate,
-    fieldConfig: this.signCSRFieldConf,
+    fieldConfig: this.signCsrFieldConf,
     method_ws: 'certificateauthority.ca_sign_csr',
     saveButtonText: helptextSystemCa.sign.sign,
     customSubmit: (entityDialog) => this.doSignCsr(entityDialog),

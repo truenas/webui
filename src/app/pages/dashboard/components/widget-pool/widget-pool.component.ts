@@ -55,7 +55,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   @ViewChild('overview', { static: false }) overview: TemplateRef<void>;
   @ViewChild('data', { static: false }) data: TemplateRef<void>;
   @ViewChild('disks', { static: false }) disks: TemplateRef<void>;
-  @ViewChild('disk_details', { static: false }) disk_details: TemplateRef<void>;
+  @ViewChild('diskDetails', { static: false }) diskDetails: TemplateRef<void>;
   @ViewChild('empty', { static: false }) empty: TemplateRef<void>;
   templates: { [template: string]: TemplateRef<void> };
   tpl: TemplateRef<void>;
@@ -199,7 +199,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       data: this.data,
       disks: this.disks,
       empty: this.empty,
-      'disk details': this.disk_details,
+      'disk details': this.diskDetails,
     };
 
     this.path = [
@@ -382,6 +382,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
     if (this.poolHealth.isHealthy) {
       this.poolHealth.isHealthy = false;
+      this.poolHealth.level = this.translate.instant('warn');
     }
 
     if (this.poolHealth.errors.length > 0) {

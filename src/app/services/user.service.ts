@@ -10,7 +10,7 @@ import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  static VALIDATOR_NAME = /^[a-zA-Z0-9_][a-zA-Z0-9_\.-]*[$]?$/;
+  static namePattern = /^[a-zA-Z0-9_][a-zA-Z0-9_\.-]*[$]?$/;
   protected uncachedUserQuery = 'dscache.get_uncached_user' as const;
   protected uncachedGroupQuery = 'dscache.get_uncached_group' as const;
   protected userQuery = 'user.query' as const;

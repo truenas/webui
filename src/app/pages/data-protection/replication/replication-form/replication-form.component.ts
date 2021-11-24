@@ -47,7 +47,7 @@ import { ModalService } from 'app/services/modal.service';
 })
 export class ReplicationFormComponent implements FormConfiguration {
   isNew = false;
-  form_message = {
+  formMessage = {
     type: 'notice',
     content: '',
   };
@@ -1171,8 +1171,8 @@ export class ReplicationFormComponent implements FormConfiguration {
       .call('replication.count_eligible_manual_snapshots', [payload])
       .pipe(untilDestroyed(this)).subscribe(
         (res) => {
-          this.form_message.type = res.eligible === 0 ? 'warning' : 'info';
-          this.form_message.content = this.translate.instant(
+          this.formMessage.type = res.eligible === 0 ? 'warning' : 'info';
+          this.formMessage.content = this.translate.instant(
             '{eligible} of {total} existing snapshots of dataset {targetDataset} would be replicated with this task.',
             {
               eligible: res.eligible,
@@ -1182,7 +1182,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           );
         },
         (err) => {
-          this.form_message.content = '';
+          this.formMessage.content = '';
           new EntityUtils().handleWsError(this, err);
         },
       );
@@ -1212,7 +1212,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       ) {
         this.countEligibleManualSnapshots();
       } else {
-        this.form_message.content = '';
+        this.formMessage.content = '';
       }
     });
     this.entityForm.formGroup.controls['schema_or_regex'].valueChanges.pipe(untilDestroyed(this)).subscribe(() => {
@@ -1226,7 +1226,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       ) {
         this.countEligibleManualSnapshots();
       } else {
-        this.form_message.content = '';
+        this.formMessage.content = '';
       }
       this.fieldSets.config('schema_or_regex').placeholder = helptext[(res === Direction.Push ? 'name_schema_or_regex_placeholder_push' : 'name_schema_or_regex_placeholder_pull')];
       this.toggleNamingSchemaOrRegex();
@@ -1241,7 +1241,7 @@ export class ReplicationFormComponent implements FormConfiguration {
       ) {
         this.countEligibleManualSnapshots();
       } else {
-        this.form_message.content = '';
+        this.formMessage.content = '';
       }
 
       if (retentionPolicyField.options !== this.retentionPolicyChoice) {
@@ -1585,7 +1585,7 @@ export class ReplicationFormComponent implements FormConfiguration {
     ) {
       this.countEligibleManualSnapshots();
     } else {
-      this.form_message.content = '';
+      this.formMessage.content = '';
     }
   }
 

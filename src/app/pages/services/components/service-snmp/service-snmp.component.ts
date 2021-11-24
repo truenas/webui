@@ -20,7 +20,7 @@ import {
 export class ServiceSNMPComponent implements FormConfiguration {
   updateCall = 'snmp.update' as const;
   queryCall = 'snmp.config' as const;
-  route_success: string[] = ['services'];
+  routeSuccess: string[] = ['services'];
   title = helptext.formTitle;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [

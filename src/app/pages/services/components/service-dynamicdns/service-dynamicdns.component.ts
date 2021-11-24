@@ -18,7 +18,7 @@ import { WebSocketService, ValidationService } from 'app/services';
 export class ServiceDDNSComponent implements FormConfiguration {
   addCall = 'dyndns.update' as const;
   title = helptext.formTitle;
-  route_success: string[] = ['services'];
+  routeSuccess: string[] = ['services'];
 
   fieldSets = new FieldSets([
     {

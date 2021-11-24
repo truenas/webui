@@ -834,7 +834,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
     if (this.conf.doAdd) {
       this.conf.doAdd(null, this);
     } else {
-      this.router.navigate(new Array('/').concat(this.conf.route_add));
+      this.router.navigate(new Array('/').concat(this.conf.routeAdd));
     }
   }
 
@@ -843,7 +843,7 @@ export class EntityTableComponent<Row = any> implements OnInit, AfterViewInit, A
       this.conf.doEdit(id, this);
     } else {
       this.router.navigate(
-        new Array('/').concat(this.conf.route_edit).concat(id as any),
+        new Array('/').concat(this.conf.routeEdit).concat(id as any),
       );
     }
   }

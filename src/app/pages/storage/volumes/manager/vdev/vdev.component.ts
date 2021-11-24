@@ -74,7 +74,7 @@ export class VdevComponent implements OnInit {
 
   getType(): string {
     if (this.type === undefined) {
-      this.type = this.manager.first_data_vdev_type;
+      this.type = this.manager.firstDataVdevType;
     }
 
     // TODO: Enum
@@ -162,7 +162,7 @@ export class VdevComponent implements OnInit {
     totalsize = smallestdisk * this.disks.length;
 
     if (this.type === undefined) { // do the same as getType() to prevent issues while repeating
-      this.type = this.manager.first_data_vdev_type;
+      this.type = this.manager.firstDataVdevType;
     }
     if (this.type === 'mirror') {
       estimate = smallestdisk;
