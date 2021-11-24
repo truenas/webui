@@ -161,6 +161,8 @@ def active_directory_should_successfully_save_and_start_without_an_error(driver)
 @then('Navigate to Shell')
 def navigate_to_shell(driver):
     """Navigate to Shell."""
+    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Reporting"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
 
 
