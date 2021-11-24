@@ -128,7 +128,7 @@ export class GuiFormComponent {
           this.sysGeneralService.isStable(),
           this.sysGeneralService.getSysInfo(),
         ]).pipe(untilDestroyed(this)).subscribe((res) => {
-          if (res[0]) {
+          if (!res[0]) {
             Sentry.init({
               dsn: 'https://7ac3e76fe2a94f77a58e1c38ea6b42d9@sentry.ixsystems.com/4',
               release: res[1].version,

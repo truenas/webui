@@ -382,7 +382,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       this.sysGeneralService.getSysInfo(),
       this.sysGeneralService.getGeneralConfig$,
     ]).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res[0] && res[2].crash_reporting) {
+      if (!res[0] && res[2].crash_reporting) {
         Sentry.init({
           dsn: 'https://7ac3e76fe2a94f77a58e1c38ea6b42d9@sentry.ixsystems.com/4',
           release: res[1].version,
