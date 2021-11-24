@@ -156,6 +156,7 @@ def active_directory_should_successfully_save_and_start_without_an_error(driver)
     """Active Directory should successfully save and start without an error."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"Settings saved.")]')
+    assert wait_on_element_disappear(driver, 20, '//h1[contains(text(),"Configuring Active Directory")]')
 
 
 @then('Navigate to Shell')

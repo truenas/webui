@@ -145,8 +145,9 @@ def active_directory_should_successfully_save_and_start_without_an_error(driver)
     """Active Directory should successfully save and start without an error."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Settings saved.")]')
-    # This 15 seconds of sleep is to let the system ketchup.
-    time.sleep(15)
+    assert wait_on_element_disappear(driver, 20, '//h1[contains(text(),"Configuring Active Directory")]')
+    # This 5 seconds of sleep is to let the system ketchup.
+    time.sleep(2)
 
 
 @then(parsers.parse('run "{cmd}" on the NAS with ssh'))
