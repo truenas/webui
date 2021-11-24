@@ -163,6 +163,8 @@ def navigate_to_shell(driver):
     """Navigate to Shell."""
     element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Reporting"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Shell"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
 
 
