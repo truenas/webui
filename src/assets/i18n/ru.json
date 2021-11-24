@@ -1029,6 +1029,7 @@
   "Select an unused disk to add to this vdev. <br>WARNING: any data stored on the unused disk will be erased!": "",
   "Select permissions to apply to the chosen <i>Who</i>. Choices change depending on the <i>Permissions Type</i>.": "",
   "Select the IP addresses to be listened on  by the portal. Click ADD to add IP addresses with a different network  port. The address <i>0.0.0.0</i> can be selected to listen on all IPv4  addresses, or <i>::</i> to listen on all IPv6 addresses.": "",
+  "Select the interfaces to use in the aggregation.<br>  Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.<br>The order is important because the FAILOVER lagg protocol will mark the first interface as the \"primary\" interface.": "",
   "Select the interfaces to use in the aggregation.<br> Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.": "",
   "Select the location of the principal in the  keytab created in <b>Directory Services > Kerberos Keytabs</b>.": "",
   "Select the system services that will be allowed to communicate externally.": "",

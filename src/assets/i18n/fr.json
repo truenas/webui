@@ -635,6 +635,7 @@
   "Security Settings": "",
   "Select Client Certificate": "",
   "Select Pool": "",
+  "Select the interfaces to use in the aggregation.<br>  Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.<br>The order is important because the FAILOVER lagg protocol will mark the first interface as the \"primary\" interface.": "",
   "Select the interfaces to use in the aggregation.<br> Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.": "",
   "Select the type of Share you want to add": "",
   "Self Healed": "",

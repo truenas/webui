@@ -1718,6 +1718,7 @@
   "Select a preset ACL": "",
   "Select a schedule preset or choose <i>Custom</i>  to open the advanced scheduler. Note that an in-progress cron task postpones  any later scheduled instance of the same task until the running task is  complete.": "",
   "Select an ACL Preset": "",
+  "Select the interfaces to use in the aggregation.<br>  Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.<br>The order is important because the FAILOVER lagg protocol will mark the first interface as the \"primary\" interface.": "",
   "Select the interfaces to use in the aggregation.<br> Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.": "",
   "Select the system services that will be allowed to communicate externally.": "",
   "Select the type of Share you want to add": "",

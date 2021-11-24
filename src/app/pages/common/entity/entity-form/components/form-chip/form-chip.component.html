@@ -49,6 +49,7 @@
           (matChipInputTokenEnd)="add($event)"
           (keyup)="updateSearchOptions(chipInput.value)"
           [matAutocomplete]="autoComplete"
+          (focus)="openPanel()"
         >
         <mat-autocomplete #autoComplete="matAutocomplete" (optionSelected)="selected($event)">
           <mat-option *ngFor="let option of config.searchOptions" [value]="option.value"

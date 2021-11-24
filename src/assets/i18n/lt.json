@@ -2996,6 +2996,7 @@
   "Select the disks to decrypt.": "",
   "Select the disks to monitor.": "",
   "Select the group to control the dataset. Groups created manually or imported from a directory service appear in the drop-down menu.": "",
+  "Select the interfaces to use in the aggregation.<br>  Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.<br>The order is important because the FAILOVER lagg protocol will mark the first interface as the \"primary\" interface.": "",
   "Select the interfaces to use in the aggregation.<br> Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.": "",
   "Select the level of severity.": "",
   "Select the locale for the MSDOSFS device to see files of that locale properly": "",
