@@ -82,7 +82,7 @@ def you_should_see_the_dashboard(driver):
 @then('Click on the Accounts, Click on Users')
 def click_on_the_accounts_click_on_users(driver):
     """Click on the Accounts, Click on Users."""
-assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Accounts"]', 'clickable')
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Accounts"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
     assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
