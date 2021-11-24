@@ -26,7 +26,7 @@ def test_create_a_new_dataset_with_access_permission_to_only_ericbsd():
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_url}"."""
     if nas_url not in driver.current_url:
-        driver.get(f"http://{nas_url}/ui/sessions/signin")
+        driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
 
 

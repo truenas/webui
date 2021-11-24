@@ -31,7 +31,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     global host
     host = nas_url
     if nas_url not in driver.current_url:
-        driver.get(f"http://{nas_url}/ui/sessions/signin")
+        driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
 
 
