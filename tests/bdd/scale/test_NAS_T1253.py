@@ -19,9 +19,9 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1253.feature', 'SCALE UI: Verify enabling sudo for group works')
-def test_scale_ui_verify_enabling_sudo_for_group_works():
-    """SCALE UI: Verify enabling sudo for group works."""
+@scenario('features/NAS-T1253.feature', 'Verify enabling sudo for group works')
+def test_verify_enabling_sudo_for_group_works():
+    """Verify enabling sudo for group works."""
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
