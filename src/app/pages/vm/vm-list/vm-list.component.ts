@@ -520,7 +520,6 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
                 validation: [Validators.required],
               }],
               saveButtonText: this.translate.instant('Open'),
-              parent: this,
               customSubmit: (entityDialog: EntityDialogComponent) => {
                 const displayDevice = _.find(displayDevices, { id: entityDialog.formValue.display_device });
                 if (displayDevice.attributes.password_configured) {
@@ -602,7 +601,6 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
         validation: [Validators.required],
       }],
       saveButtonText: this.translate.instant('Open'),
-      parent: this,
       customSubmit: (passDialog: EntityDialogComponent) => {
         this.loader.open();
         this.ws.call(

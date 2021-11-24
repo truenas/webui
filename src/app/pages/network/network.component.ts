@@ -732,7 +732,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     }];
   }
 
-  isOpenVpnActionVisible(name: string, row: any): boolean {
+  isOpenVpnActionVisible(name: string, row: Service): boolean {
     if (
       (name === 'start' && row.state === ServiceStatus.Running)
       || (name === 'stop' && row.state === ServiceStatus.Stopped)

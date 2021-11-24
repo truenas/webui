@@ -13,6 +13,7 @@ import { SecondaryMenuComponent } from 'app/components/common/secondary-menu/sec
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { DialogService } from 'app/services/dialog.service';
@@ -43,6 +44,7 @@ import { TopbarComponent } from './topbar/topbar.component';
     EntityModule,
     CoreComponents,
     AngularSvgIconModule.forRoot(),
+    CastModule,
   ],
   declarations: [
     AdminLayoutComponent,

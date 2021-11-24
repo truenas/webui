@@ -53,12 +53,11 @@ export class KerberosKeytabsListComponent implements EntityTableConfig {
     }] as EntityTableAction[];
   }
 
-  getActions(row: any): EntityTableAction<KerberosKeytab>[] {
+  getActions(): EntityTableAction<KerberosKeytab>[] {
     const actions = [];
     actions.push({
       id: 'edit',
       label: this.translate.instant('Edit'),
-      disabled: row.disableEdit,
       onClick: (row: KerberosKeytab) => {
         this.doAdd(row.id);
       },

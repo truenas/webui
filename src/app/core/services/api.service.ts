@@ -65,7 +65,7 @@ export class ApiService {
         redef.args = [uid, 'preferences', def.args];
         return redef;
       },
-      postProcessor(res: any, callArgs: any, core: any) {
+      postProcessor(res: any, callArgs: any, core: CoreService) {
         const cloneRes = { ...res };
         if (res == 1) {
           core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });

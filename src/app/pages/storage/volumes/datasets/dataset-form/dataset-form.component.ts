@@ -777,7 +777,7 @@ export class DatasetFormComponent implements FormConfiguration {
     524288: '512K',
     1048576: '1024K',
   };
-  protected reverseRecordSizeMap = {
+  protected reverseRecordSizeMap: { [formattedSize: string]: string } = {
     512: '512',
     '1K': '1024',
     '2K': '2048',
@@ -1003,7 +1003,7 @@ export class DatasetFormComponent implements FormConfiguration {
 
     this.recordsizeField = _.find(this.fieldConfig, { name: 'recordsize' });
     this.recordsizeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((recordSize: string) => {
-      const recordSizeNumber = parseInt((this.reverseRecordSizeMap as any)[recordSize], 10);
+      const recordSizeNumber = parseInt(this.reverseRecordSizeMap[recordSize], 10);
       if (this.minimumRecommendedRecordsize && this.recommendedSize) {
         this.recordsizeWarning = helptext.dataset_form_warning_1
           + this.minimumRecommendedRecordsize
@@ -1056,7 +1056,7 @@ export class DatasetFormComponent implements FormConfiguration {
       this.ws.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(untilDestroyed(this)).subscribe((res) => {
         this.minimumRecommendedRecordsize = res;
         this.recommendedSize = parseInt(
-          (this.reverseRecordSizeMap as any)[this.minimumRecommendedRecordsize], 0,
+          this.reverseRecordSizeMap[this.minimumRecommendedRecordsize], 0,
         );
       });
 
@@ -1250,7 +1250,7 @@ export class DatasetFormComponent implements FormConfiguration {
               const currentDataset = _.find(this.parentDataset.children, { name: this.pk });
               if (currentDataset.hasOwnProperty('recordsize') && currentDataset['recordsize'].value) {
                 const config = _.find(this.fieldConfig, { name: 'recordsize' }) as FormSelectConfig;
-                (_.find(config.options, { value: currentDataset['recordsize'].value }) as any)['hiddenFromDisplay'] = false;
+                _.find(config.options, { value: currentDataset['recordsize'].value })['hiddenFromDisplay'] = false;
               }
               const editSync = _.find(this.fieldConfig, { name: 'sync' }) as FormSelectConfig;
               const editCompression = _.find(this.fieldConfig, { name: 'compression' }) as FormSelectConfig;

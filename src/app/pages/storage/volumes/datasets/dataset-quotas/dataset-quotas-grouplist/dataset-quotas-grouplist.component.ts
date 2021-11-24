@@ -81,7 +81,7 @@ export class DatasetQuotasGrouplistComponent implements EntityTableConfig, OnDes
         const params = [['id', '=', row.id] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
         this.ws.call('pool.dataset.get_quota', [this.pk, DatasetQuotaType.Group, params]).pipe(untilDestroyed(this)).subscribe((res) => {
           this.loader.close();
-          const conf: DialogFormConfiguration<this> = {
+          const conf: DialogFormConfiguration = {
             title: helptext.groups.dialog.title,
             fieldConfig: [
               {

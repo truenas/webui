@@ -477,7 +477,6 @@ export class SharesDashboardComponent implements AfterViewInit {
         dialog.dialogRef.close();
         this.add(null, dialog.formValue.share_type);
       },
-      parent: this,
     };
     this.dialog.dialogForm(conf);
   }
