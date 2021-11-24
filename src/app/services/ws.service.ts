@@ -142,36 +142,32 @@ export class WebSocketService {
       this.connected = true;
       setTimeout(() => this.ping(), 20000);
       this.onconnect();
-    } else if (data.msg == 'nosub') {
-      console.warn(data);
-    } else if (data.collection == 'disk.query' || data.collection == 'reporting.realtime') {
-      const nom = data.collection.replace('.', '_');
-      if (this.pendingSubs[nom] && this.pendingSubs[nom].observers) {
-        for (const uuid in this.pendingSubs[nom].observers) {
-          const subObserver = this.pendingSubs[nom].observers[uuid];
-          if (data.error) {
-            console.error('Error: ', data.error);
-            subObserver.error(data.error);
-          }
-          if (subObserver && data.fields) {
-            subObserver.next(data.fields);
-          } else if (subObserver && !data.fields) {
-            subObserver.next(data);
-          }
-        }
-      }
     } else if (data.msg == ApiEventMessage.Changed || data.msg == ApiEventMessage.Added) {
       this.subscriptions.forEach((v, k) => {
         if (k == '*' || k == data.collection) {
           v.forEach((item) => { item.next(data); });
         }
       });
-    } else if (data.msg == 'pong') {
-      // pass
-    } else if (data.msg == 'sub') {
-      // pass
+    } else if (data.msg) {
+      console.warn('Msg Received', data);
     } else {
       console.warn('Unknown message: ', data);
+    }
+
+    const collectionName = data.collection.replace('.', '_');
+    if (collectionName && this.pendingSubs[collectionName]?.observers) {
+      for (const uuid in this.pendingSubs[collectionName].observers) {
+        const subObserver = this.pendingSubs[collectionName].observers[uuid];
+        if (data.error) {
+          console.error('Error: ', data.error);
+          subObserver.error(data.error);
+        }
+        if (subObserver && data.fields) {
+          subObserver.next(data.fields);
+        } else if (subObserver && !data.fields) {
+          subObserver.next(data);
+        }
+      }
     }
   }
 
