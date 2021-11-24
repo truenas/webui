@@ -96,8 +96,8 @@ def verify_the_checkbox_works_and_click_save(driver):
     """verify the checkbox works and click Save."""
     wait_for_value = wait_for_attribute_value(driver, 5, '//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox', 'class', 'mat-checkbox-checked')
     assert wait_for_value
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
 
 
