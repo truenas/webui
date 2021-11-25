@@ -75,7 +75,7 @@ export class ChartReleasesComponent implements OnInit {
   rollBackChart: DialogFormConfiguration = {
     title: helptext.charts.rollback_dialog.title,
     fieldConfig: [{
-      type: 'input',
+      type: 'select',
       name: 'item_version',
       placeholder: helptext.charts.rollback_dialog.version.placeholder,
       tooltip: helptext.charts.rollback_dialog.version.tooltip,
@@ -139,6 +139,7 @@ export class ChartReleasesComponent implements OnInit {
   };
 
   readonly ChartReleaseStatus = ChartReleaseStatus;
+  readonly isEmpty = _.isEmpty;
 
   constructor(private mdDialog: MatDialog, private appLoaderService: AppLoaderService,
     private dialogService: DialogService, private translate: TranslateService,
@@ -329,6 +330,13 @@ export class ChartReleasesComponent implements OnInit {
   rollback(name: string): void {
     this.rollbackChartName = name;
     this.dialogService.dialogForm(this.rollBackChart, true);
+    const rollBackList = Object.keys(this.chartItems[this.rollbackChartName].history);
+    const rollBackConfig = this.rollBackChart.fieldConfig[0] as FormSelectConfig;
+    rollBackConfig.value = rollBackList[0];
+    rollBackConfig.options = rollBackList.map((item) => ({
+      label: item,
+      value: item,
+    }));
   }
 
   doRollback(entityDialog: EntityDialogComponent): void {
