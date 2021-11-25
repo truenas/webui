@@ -154,7 +154,7 @@ export class WebSocketService {
       console.warn('Unknown message: ', data);
     }
 
-    const collectionName = data.collection.replace('.', '_');
+    const collectionName = data.collection?.replace('.', '_');
     if (collectionName && this.pendingSubs[collectionName]?.observers) {
       for (const uuid in this.pendingSubs[collectionName].observers) {
         const subObserver = this.pendingSubs[collectionName].observers[uuid];
