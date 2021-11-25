@@ -138,7 +138,7 @@ export class WebSocketService {
         call.observer.next(data.result);
         call.observer.complete();
       }
-    } else if (data.msg == 'connected') {
+    } else if (data.msg == ApiEventMessage.Connected) {
       this.connected = true;
       setTimeout(() => this.ping(), 20000);
       this.onconnect();
@@ -148,7 +148,9 @@ export class WebSocketService {
           v.forEach((item) => { item.next(data); });
         }
       });
-    } else if (data.msg) {
+    } else
+    // do nothing for pong or sub, otherwise console warn
+    if (data.msg && (data.msg !== ApiEventMessage.Pong || data.msg !== ApiEventMessage.Sub)) {
       console.warn('Msg Received', data);
     } else {
       console.warn('Unknown message: ', data);
