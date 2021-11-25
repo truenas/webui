@@ -2,13 +2,13 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { runOnPushChangeDetection } from 'app/core/testing/utils/run-on-push.utils';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/pages/common/ix-tables/testing/ix-table.harness';
+import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
 import { NtpServerListComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-list/ntp-server-list.component';
 import { DialogService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
@@ -48,6 +48,7 @@ describe('NtpServerListComponent', () => {
   let spectator: Spectator<NtpServerListComponent>;
   let loader: HarnessLoader;
   let ws: WebSocketService;
+  let slideIn: IxSlideInService;
 
   const createComponent = createComponentFactory({
     component: NtpServerListComponent,
@@ -63,7 +64,10 @@ describe('NtpServerListComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      IxSlideInService,
+      mockProvider(IxSlideInService, {
+        onClose$: new Subject<unknown>(),
+        open: jest.fn(),
+      }),
     ],
   });
 
@@ -71,8 +75,7 @@ describe('NtpServerListComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     ws = spectator.inject(WebSocketService);
-    jest.spyOn(spectator.fixture.componentInstance, 'doAdd').mockImplementation();
-    jest.spyOn(spectator.fixture.componentInstance, 'doDelete').mockImplementation();
+    slideIn = spectator.inject(IxSlideInService);
   });
 
   afterEach(() => {
@@ -113,7 +116,7 @@ describe('NtpServerListComponent', () => {
     spectator.fixture.componentInstance.loading = false;
     spectator.fixture.componentInstance.error = false;
     spectator.fixture.componentInstance.createDataSource();
-    await runOnPushChangeDetection(spectator.fixture);
+    spectator.detectComponentChanges();
 
     const table = await loader.getHarness<IxTableHarness>(IxTableHarness);
     const text = await table.getCellTextByIndex();
@@ -125,7 +128,7 @@ describe('NtpServerListComponent', () => {
     spectator.fixture.componentInstance.loading = false;
     spectator.fixture.componentInstance.error = true;
     spectator.fixture.componentInstance.createDataSource();
-    await runOnPushChangeDetection(spectator.fixture);
+    spectator.detectComponentChanges();
 
     const table = await loader.getHarness<IxTableHarness>(IxTableHarness);
     const text = await table.getCellTextByIndex();
@@ -134,19 +137,24 @@ describe('NtpServerListComponent', () => {
   });
 
   it('should open add ntp server form', async () => {
+    jest.spyOn(slideIn, 'open').mockImplementation();
     const addButton = await loader.getHarness(MatButtonHarness.with({ text: 'Add' }));
     await addButton.click();
 
-    expect(spectator.fixture.componentInstance.doAdd).toHaveBeenCalledTimes(1);
+    expect(slideIn.open).toHaveBeenCalledWith(NtpServerFormComponent);
+  });
+
+  it('should open edit ntp server form', () => {
+    jest.spyOn(slideIn, 'open').mockImplementation();
+    spectator.click(spectator.query('.mat-column-address', { root: true }));
+
+    expect(slideIn.open).toHaveBeenCalledWith(NtpServerFormComponent);
   });
 
   it('should display confirm dialog of deleting ntp server', async () => {
     const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Delete"]' }));
     await deleteButton.click();
 
-    expect(spectator.fixture.componentInstance.doDelete).toHaveBeenCalledTimes(1);
-    // TODO: Investigate this
-    // For some reason it received `system.ntpserver.query` instead of correct value
-    // expect(ws.call).toHaveBeenCalledWith('system.ntpserver.delete');
+    expect(ws.call).toHaveBeenCalledWith('system.ntpserver.delete', [2]);
   });
 });
