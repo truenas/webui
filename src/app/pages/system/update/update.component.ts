@@ -96,7 +96,6 @@ export class UpdateComponent implements OnInit {
     saveButtonText: this.translate.instant('SAVE CONFIGURATION'),
     cancelButtonText: this.translate.instant('NO'),
     customSubmit: (entityDialog) => this.saveConfigSubmit(entityDialog),
-    parent: this,
   };
 
   protected dialogRef: MatDialogRef<EntityJobComponent>;
@@ -600,7 +599,7 @@ export class UpdateComponent implements OnInit {
   }
 
   // Save Config dialog
-  saveConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
+  saveConfigSubmit(entityDialog: EntityDialogComponent): void {
     let fileName = '';
     let mimetype: string;
     if (this.sysInfo) {

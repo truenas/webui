@@ -64,7 +64,6 @@ export class DockerImagesComponent implements EntityTableConfig {
     }],
     saveButtonText: helptext.dockerImages.chooseTag.action,
     customSubmit: (entityDialog) => this.updateImage(entityDialog),
-    parent: this,
   };
 
   refresh(): void {

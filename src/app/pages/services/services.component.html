@@ -1,0 +1,68 @@
+<mat-card>
+  <mat-card-content>
+    <table ix-table [dataSource]="dataSource">
+      <ng-container matColumnDef="name">
+        <th *matHeaderCellDef>{{ 'Name' | translate }}</th>
+        <td *matCellDef="let service; dataSource: dataSource">{{ serviceNames.get(service.service) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="state">
+        <th *matHeaderCellDef>{{ 'Running' | translate }}</th>
+        <td *matCellDef="let service; dataSource: dataSource">
+          <mat-spinner
+            *ngIf="serviceLoadingMap.get(service.service); else slider"
+            [diameter]="40"
+            [matTooltip]="(service.state === ServiceStatus.Running ? 'Stopping' : 'Starting') | uppercase | translate"
+            matTooltipPosition="right"
+          ></mat-spinner>
+          <ng-template #slider>
+            <div
+              class="clickable"
+              (click)="$event.stopPropagation(); this.onSliderChange(service)"
+              [matTooltip]="service.state"
+              matTooltipPosition="right"
+            ></div>
+
+            <mat-slide-toggle [checked]="service.state === ServiceStatus.Running"></mat-slide-toggle>
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="enable">
+        <th *matHeaderCellDef>{{ 'Start Automatically' | translate }}</th>
+        <td *matCellDef="let service; dataSource: dataSource">
+          <mat-checkbox
+            color="primary"
+            [(ngModel)]="service.enable"
+            (change)="onCheckboxChange(service)"
+            (click)="$event.stopPropagation();"
+          ></mat-checkbox>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th *matHeaderCellDef></th>
+        <td *matCellDef="let service; dataSource: dataSource">
+          <button mat-icon-button type="button" (click)="$event.stopPropagation(); configureService(service)">
+            <mat-icon
+              role="img"
+              fontSet="mdi-set"
+              fontIcon="mdi-pencil"
+              [matTooltip]="'Configure' | translate"
+              aria-label="Configure"
+            ></mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let element; columns: displayedColumns; dataSource: dataSource"></tr>
+
+      <tr class="mat-row mat-no-data-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          <entity-empty [conf]="loadingConf"></entity-empty>
+        </td>
+      </tr>
+    </table>
+  </mat-card-content>
+</mat-card>

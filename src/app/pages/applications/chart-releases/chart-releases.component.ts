@@ -75,7 +75,7 @@ export class ChartReleasesComponent implements OnInit {
   rollBackChart: DialogFormConfiguration = {
     title: helptext.charts.rollback_dialog.title,
     fieldConfig: [{
-      type: 'input',
+      type: 'select',
       name: 'item_version',
       placeholder: helptext.charts.rollback_dialog.version.placeholder,
       tooltip: helptext.charts.rollback_dialog.version.tooltip,
@@ -89,7 +89,6 @@ export class ChartReleasesComponent implements OnInit {
     method_ws: 'chart.release.rollback',
     saveButtonText: helptext.charts.rollback_dialog.action,
     customSubmit: (entityDialog) => this.doRollback(entityDialog),
-    parent: this,
   };
 
   choosePod: DialogFormConfiguration = {
@@ -113,7 +112,6 @@ export class ChartReleasesComponent implements OnInit {
     saveButtonText: helptext.podConsole.choosePod.action,
     customSubmit: (entityDialog) => this.doPodSelect(entityDialog),
     afterInit: (entityDialog) => this.afterShellDialogInit(entityDialog),
-    parent: this,
   };
 
   choosePodForLogs: DialogFormConfiguration = {
@@ -138,10 +136,10 @@ export class ChartReleasesComponent implements OnInit {
     saveButtonText: helptext.podConsole.choosePod.action,
     customSubmit: (entityDialog) => this.doPodSelectForLogs(entityDialog),
     afterInit: (entityDialog) => this.afterLogsDialogInit(entityDialog),
-    parent: this,
   };
 
   readonly ChartReleaseStatus = ChartReleaseStatus;
+  readonly isEmpty = _.isEmpty;
 
   constructor(private mdDialog: MatDialog, private appLoaderService: AppLoaderService,
     private dialogService: DialogService, private translate: TranslateService,
@@ -332,9 +330,16 @@ export class ChartReleasesComponent implements OnInit {
   rollback(name: string): void {
     this.rollbackChartName = name;
     this.dialogService.dialogForm(this.rollBackChart, true);
+    const rollBackList = Object.keys(this.chartItems[this.rollbackChartName].history);
+    const rollBackConfig = this.rollBackChart.fieldConfig[0] as FormSelectConfig;
+    rollBackConfig.value = rollBackList[0];
+    rollBackConfig.options = rollBackList.map((item) => ({
+      label: item,
+      value: item,
+    }));
   }
 
-  doRollback(entityDialog: EntityDialogComponent<this>): void {
+  doRollback(entityDialog: EntityDialogComponent): void {
     const form = entityDialog.formGroup.controls;
     const payload = {
       item_version: form['item_version'].value,
@@ -575,14 +580,14 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  doPodSelect(entityDialog: EntityDialogComponent<this>): void {
+  doPodSelect(entityDialog: EntityDialogComponent): void {
     const pod = entityDialog.formGroup.controls['pods'].value;
     const command = entityDialog.formGroup.controls['command'].value;
     this.router.navigate(new Array('/apps/1/shell/').concat([this.selectedAppName, pod, command]));
     this.dialogService.closeAllDialogs();
   }
 
-  doPodSelectForLogs(entityDialog: EntityDialogComponent<this>): void {
+  doPodSelectForLogs(entityDialog: EntityDialogComponent): void {
     const pod = entityDialog.formGroup.controls['pods'].value;
     const container = entityDialog.formGroup.controls['containers'].value;
     const tailLines = entityDialog.formGroup.controls['tail_lines'].value;
@@ -590,7 +595,7 @@ export class ChartReleasesComponent implements OnInit {
     this.dialogService.closeAllDialogs();
   }
 
-  afterShellDialogInit(entityDialog: EntityDialogComponent<this>): void {
+  afterShellDialogInit(entityDialog: EntityDialogComponent): void {
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const containers = this.podDetails[value];
       const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;
@@ -603,7 +608,7 @@ export class ChartReleasesComponent implements OnInit {
     });
   }
 
-  afterLogsDialogInit(entityDialog: EntityDialogComponent<this>): void {
+  afterLogsDialogInit(entityDialog: EntityDialogComponent): void {
     entityDialog.formGroup.controls['pods'].valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const containers = this.podDetails[value];
       const containerFc = _.find(entityDialog.fieldConfig, { name: 'containers' }) as FormSelectConfig;

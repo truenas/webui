@@ -87,7 +87,6 @@ export class CatalogComponent implements OnInit {
     method_ws: 'kubernetes.update',
     saveButtonText: helptext.choosePool.action,
     customSubmit: (entityForm) => this.doPoolSelect(entityForm),
-    parent: this,
   };
 
   constructor(
@@ -318,7 +317,7 @@ export class CatalogComponent implements OnInit {
     });
   }
 
-  doPoolSelect(entityDialog: EntityDialogComponent<this>): void {
+  doPoolSelect(entityDialog: EntityDialogComponent): void {
     const pool = entityDialog.formGroup.controls['pools'].value;
     const migrateApplications = entityDialog.formGroup.controls['migrateApplications'].value;
     this.dialogService.closeAllDialogs();

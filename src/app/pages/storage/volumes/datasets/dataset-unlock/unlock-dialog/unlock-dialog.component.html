@@ -35,7 +35,6 @@
 <div mat-dialog-actions>
   <span fxFlex></span>
   <button
-    *ngIf="!final"
     id="unlock-dialog__cancel-button"
     mat-button
     name="cancel_button"
@@ -46,6 +45,7 @@
     ix-auto-identifier="{{cancelMsg | uppercase}}"
   >{{cancelMsg | translate | uppercase}}</button>
   <button
+    *ngIf="!final"
     id="unlock-dialog__action-button"
     mat-button
     name="ok_button"

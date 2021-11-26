@@ -154,7 +154,6 @@ export class SnapshotListComponent implements EntityTableConfig {
     method_ws: 'zfs.snapshot.rollback',
     saveButtonText: helptext.label_rollback,
     customSubmit: (entityDialog) => this.rollbackSubmit(entityDialog),
-    parent: this,
     warning: helptext.rollback_warning,
   };
 
@@ -425,7 +424,7 @@ export class SnapshotListComponent implements EntityTableConfig {
     });
   }
 
-  rollbackSubmit(entityDialog: EntityDialogComponent<this>): void {
+  rollbackSubmit(entityDialog: EntityDialogComponent): void {
     const item = this.rollback;
     const recursive = entityDialog.formValue.recursive;
     const data = {} as ZfsRollbackParams[1];

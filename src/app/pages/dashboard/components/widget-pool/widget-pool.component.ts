@@ -100,7 +100,8 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
 
   get unhealthyDisks(): { totalErrors: number | string; disks: string[] } {
     if (this.poolState && this.poolState.topology) {
-      const unhealthy: any[] = []; // Disks with errors
+      const unhealthy: string[] = []; // Disks with errors
+      // TODO: Check if this `item.read_errors` and related should read from `stats`
       this.poolState.topology.data.forEach((item: any) => {
         if (item.type == VDevType.Disk) {
           const diskErrors = item.read_errors + item.write_errors + item.checksum_errors;
@@ -381,6 +382,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     }
     if (this.poolHealth.isHealthy) {
       this.poolHealth.isHealthy = false;
+      this.poolHealth.level = this.translate.instant('warn');
     }
 
     if (this.poolHealth.errors.length > 0) {

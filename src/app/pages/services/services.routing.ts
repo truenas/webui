@@ -1,7 +1,7 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ServiceDynamicDnsComponent } from 'app/pages/services/components/service-dynamic-dns/service-dynamic-dns.component';
-import { RYSNCConfigurationFormComponent } from 'app/pages/services/components/service-rsync/rsync-configuration/rsyncmodule/rsync-configuration-form.component';
+import { RsyncModuleFormComponent } from 'app/pages/services/components/service-rsync/rsync-module-form/rsync-module-form.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceFTPComponent } from './components/service-ftp/service-ftp.component';
 import { ServiceLLDPComponent } from './components/service-lldp/service-lldp.component';
@@ -52,18 +52,18 @@ export const routes: Routes = [
           {
             path: ':pk',
             component: ServiceRSYNCComponent,
-            data: { title: '', breadcrumb: '' },
+            data: { title: 'Rsync', breadcrumb: 'Rsync' },
           },
           {
             path: 'rsync-module',
             data: { title: 'Rsync Module', breadcrumb: 'Rsync Module' },
             children: [{
               path: 'add',
-              component: RYSNCConfigurationFormComponent,
+              component: RsyncModuleFormComponent,
               data: { title: 'Add', breadcrumb: 'Add' },
             }, {
               path: 'edit/:pk',
-              component: RYSNCConfigurationFormComponent,
+              component: RsyncModuleFormComponent,
               data: { title: 'Edit', breadcrumb: 'Edit' },
             }],
           },

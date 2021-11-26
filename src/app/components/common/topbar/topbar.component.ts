@@ -646,7 +646,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
           },
         },
       ],
-      parent: this,
       customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close();
         this.updateTrueCommand();
@@ -714,7 +713,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
         return !(actionId === 'deregister' && !this.tcConnected);
       },
       saveButtonText: this.tcConnected ? helptext.updateDialog.save_btn : helptext.updateDialog.connect_btn,
-      parent: this,
       afterInit: (entityDialog: EntityDialogComponent) => {
         updateDialog = entityDialog;
         // load settings
@@ -829,7 +827,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       ],
       saveButtonText: this.translate.instant('Save'),
       custActions: [],
-      parent: this,
       customSubmit: (entityDialog: EntityDialogComponent) => {
         this.loader.open();
         const pwChange = entityDialog.formValue;

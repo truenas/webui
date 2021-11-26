@@ -237,7 +237,6 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     method_ws: 'certificateauthority.ca_sign_csr',
     saveButtonText: helptextSystemCa.sign.sign,
     customSubmit: (entityDialog) => this.doSignCsr(entityDialog),
-    parent: this,
   };
 
   custActions = [
@@ -286,7 +285,7 @@ export class CertificateAuthorityEditComponent implements FormConfiguration {
     this.title = helptextSystemCa.edit.title;
   }
 
-  doSignCsr(entityDialog: EntityDialogComponent<this>): void {
+  doSignCsr(entityDialog: EntityDialogComponent): void {
     const payload = {
       ca_id: this.rowNum,
       csr_cert_id: entityDialog.formGroup.controls.csr_cert_id.value,
