@@ -1,172 +1,134 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import {
+  Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef,
+} from '@angular/core';
+import { MatTableDataSource } from '@angular/material/table';
 import { NavigationExtras, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { filter, map, switchMap } from 'rxjs/operators';
-import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
+import { Subject } from 'rxjs';
+import {
+  filter, switchMap,
+} from 'rxjs/operators';
+import { CoreService } from 'app/core/services/core-service/core.service';
+import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { QueryParams } from 'app/interfaces/query-api.interface';
+import { CoreEvent } from 'app/interfaces/events';
 import { Service } from 'app/interfaces/service.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { IscsiService, SystemGeneralService, WebSocketService } from 'app/services/';
+import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
+import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { ServicesService } from 'app/pages/services/services.service';
+import { IscsiService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
-
-interface ServiceRow extends Service {
-  onChanging: boolean;
-  name: string;
-}
+import { serviceNames } from '../../enums/service-name.enum';
 
 @UntilDestroy()
 @Component({
   selector: 'services',
   styleUrls: ['./services.component.scss'],
-  template: '<entity-table #servicetable [title]="title" [conf]="this"></entity-table>',
+  templateUrl: './services.component.html',
   providers: [IscsiService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ServicesComponent implements EntityTableConfig, OnInit {
-  @ViewChild('servicetable', { static: false }) serviceTable: EntityTableComponent;
-
-  title = this.translate.instant('Services');
-  isFooterConsoleOpen: boolean;
-  queryCall = 'service.query' as const;
-  queryCallOption: QueryParams<Service> = [[], { order_by: ['service'] }];
+export class ServicesComponent implements OnInit {
+  dataSource: MatTableDataSource<Service> = new MatTableDataSource([]);
+  displayedColumns = ['name', 'state', 'enable', 'actions'];
+  toolbarConfig: ToolbarConfig;
+  settingsEvent$: Subject<CoreEvent> = new Subject();
+  filterString = '';
   rowIdentifier = 'name';
-  entityList: EntityTableComponent;
-  inlineActions = true;
-
-  columns = [
-    { name: this.translate.instant('Name'), prop: 'name', always_display: true },
-    {
-      name: this.translate.instant('Running'),
-      prop: 'state',
-      toggle: true,
-      always_display: true,
-    },
-    {
-      name: this.translate.instant('Start Automatically'),
-      prop: 'enable',
-      checkbox: true,
-      always_display: true,
-    },
-  ];
-
-  config = {
-    paging: false,
-    sorting: { columns: this.columns },
+  loading = true;
+  loadingConf: EmptyConfig = {
+    type: EmptyType.Loading,
+    large: false,
+    title: this.translate.instant('Loading...'),
   };
-  hiddenServices: ServiceName[] = [ServiceName.Gluster, ServiceName.Afp];
-
-  showSpinner = true;
+  serviceNames = serviceNames;
+  serviceLoadingMap = new Map<ServiceName, boolean>();
+  readonly ServiceStatus = ServiceStatus;
 
   constructor(
-    protected ws: WebSocketService,
-    protected router: Router,
+    private router: Router,
     private translate: TranslateService,
     private dialog: DialogService,
     private iscsiService: IscsiService,
-    private sysGeneralService: SystemGeneralService,
+    private services: ServicesService,
+    private cdr: ChangeDetectorRef,
+    private core: CoreService,
   ) {}
 
-  resourceTransformIncomingRestData(services: Service[]): ServiceRow[] {
-    return services
-      .filter((service) => !this.hiddenServices.includes(service.service))
-      .map((service) => ({
-        ...service,
-        name: this.getServiceName(service),
-        onChanging: false,
-      }));
+  ngOnInit(): void {
+    this.setupToolbar();
+    this.getData();
+    this.getUpdates();
   }
 
-  ngOnInit(): void {
-    this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
-        this.isFooterConsoleOpen = res.consolemsg;
-      }
+  getData(): void {
+    this.services.getAll().pipe(untilDestroyed(this)).subscribe(
+      (services) => {
+        this.dataSource = new MatTableDataSource(services);
+        for (const key of serviceNames.keys()) {
+          this.serviceLoadingMap.set(key, false);
+        }
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+      () => {
+        this.loading = false;
+        this.cdr.markForCheck();
+      },
+    );
+  }
+
+  getUpdates(): void {
+    this.services.getUpdates().pipe(untilDestroyed(this)).subscribe(() => {
+      this.getData();
     });
   }
 
-  afterInit(entityList: EntityTableComponent): void {
-    this.entityList = entityList;
-    this.subscribeToServiceUpdates();
-  }
-
-  subscribeToServiceUpdates(): void {
-    this.ws
-      .subscribe('service.query')
-      .pipe(
-        map((event) => event.fields),
-        filter((service) => !this.hiddenServices.includes(service.service)),
-        untilDestroyed(this),
-      )
-      .subscribe((incomingService: Service) => {
-        const service = this.entityList.rows.find((service) => service.service === incomingService.service);
-        service.onChanging = true;
-
-        setTimeout(() => {
-          service.state = incomingService.state;
-          service.enable = incomingService.enable;
-          service.onChanging = false;
-        }, 300);
-      });
-  }
-
-  getActions(parentRow: ServiceRow): EntityTableAction[] {
-    return [{
-      actionName: 'configure',
-      name: parentRow.service,
-      icon: 'edit',
-      id: 'Configure',
-      label: this.translate.instant('Configure'),
-      onClick: (row: ServiceRow) => {
-        if (row.service === ServiceName.OpenVpnClient || row.service === ServiceName.OpenVpnServer) {
-          const navigationExtras: NavigationExtras = { state: { configureOpenVPN: row.service.replace('openvpn_', '') } };
-          this.router.navigate(['network'], navigationExtras);
-        } else {
-          this.editService(row.service);
-        }
-      },
-    }];
-  }
-
-  onSliderChange(service: ServiceRow): void {
+  onSliderChange(service: Service): void {
     this.toggle(service);
   }
 
-  onCheckboxChange(service: ServiceRow): void {
+  onCheckboxChange(service: Service): void {
     this.enableToggle(service);
   }
 
-  toggle(service: ServiceRow): void {
+  toggle(service: Service): void {
     const rpc = service.state === ServiceStatus.Running ? 'service.stop' : 'service.start';
 
-    const serviceName = this.getServiceName(service);
-
+    const serviceName = this.serviceNames.get(service.service);
     if (rpc === 'service.stop') {
       if (service.service == ServiceName.Iscsi) {
         this.iscsiService.getGlobalSessions().pipe(
           switchMap((sessions) => {
-            let msg = '';
+            let message = this.translate.instant('Stop {serviceName}?', { serviceName });
             if (sessions.length) {
-              msg = `<font color="red">${this.translate.instant('There are {sessions} active iSCSI connections.', { sessions: sessions.length })}</font><br>${this.translate.instant('Stop the {serviceName} service and close these connections?', { serviceName })}`;
+              message = `<font color="red">${this.translate.instant('There are {sessions} active iSCSI connections.', { sessions: sessions.length })}</font><br>${this.translate.instant('Stop the {serviceName} service and close these connections?', { serviceName })}`;
             }
 
             return this.dialog.confirm({
               title: this.translate.instant('Alert'),
-              message: msg == '' ? this.translate.instant('Stop {serviceName}?', { serviceName }) : msg,
+              message,
               hideCheckBox: true,
               buttonMsg: this.translate.instant('Stop'),
             });
           }),
           filter(Boolean),
-        ).pipe(untilDestroyed(this)).subscribe(() => this.updateService(rpc, service));
+          untilDestroyed(this),
+        ).subscribe(() => {
+          this.updateService(rpc, service);
+        });
       } else {
         this.dialog.confirm({
           title: this.translate.instant('Alert'),
           message: this.translate.instant('Stop {serviceName}?', { serviceName }),
           hideCheckBox: true,
           buttonMsg: this.translate.instant('Stop'),
-        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+        }).pipe(
+          filter(Boolean),
+          untilDestroyed(this),
+        ).subscribe(() => {
           this.updateService(rpc, service);
         });
       }
@@ -175,77 +137,104 @@ export class ServicesComponent implements EntityTableConfig, OnInit {
     }
   }
 
-  updateService(rpc: 'service.start' | 'service.stop', service: ServiceRow): void {
-    let waiting = true;
-    // Delay spinner for fast API responses
-    setTimeout(() => {
-      if (waiting) service.onChanging = true;
-    }, 1000);
+  updateService(rpc: 'service.start' | 'service.stop', service: Service): void {
+    if (this.serviceLoadingMap.get(service.service)) {
+      return;
+    }
+    this.serviceLoadingMap.set(service.service, true);
+    this.cdr.markForCheck();
 
-    const serviceName = this.getServiceName(service);
-    this.ws.call(rpc, [service.service]).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (res) {
+    const serviceName = this.serviceNames.get(service.service);
+    this.services.startStopAction(rpc, service.service).pipe(
+      untilDestroyed(this),
+    ).subscribe((success) => {
+      if (success) {
         if (service.state === ServiceStatus.Running && rpc === 'service.stop') {
           this.dialog.info(
             this.translate.instant('Service failed to stop'),
             this.translate.instant('{serviceName} service failed to stop.', { serviceName }),
           );
         }
-        service.state = ServiceStatus.Running;
-        service.onChanging = false;
-        this.serviceTable.changeDetectorRef.detectChanges();
-        waiting = false;
-      } else {
-        if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
-          this.dialog.info(
-            this.translate.instant('Service failed to start'),
-            this.translate.instant('{serviceName} service failed to start.', { serviceName }),
-          );
-        }
-        service.state = ServiceStatus.Stopped;
-        service.onChanging = false;
-        this.serviceTable.changeDetectorRef.detectChanges();
-        waiting = false;
+      } else if (service.state === ServiceStatus.Stopped && rpc === 'service.start') {
+        this.dialog.info(
+          this.translate.instant('Service failed to start'),
+          this.translate.instant('{serviceName} service failed to start.', { serviceName }),
+        );
       }
-    }, (res) => {
+
+      this.getData();
+    }, (error) => {
       let message = this.translate.instant('Error starting service {serviceName}.', { serviceName });
       if (rpc === 'service.stop') {
         message = this.translate.instant('Error stopping service {serviceName}.', { serviceName });
       }
-      this.dialog.errorReport(message, res.message, res.stack);
-      service.onChanging = false;
-      this.serviceTable.changeDetectorRef.detectChanges();
-      waiting = false;
+      this.dialog.errorReport(message, error.message, error.stack);
+      this.serviceLoadingMap.set(service.service, false);
+      this.cdr.markForCheck();
     });
   }
 
-  enableToggle(service: ServiceRow): void {
-    this.ws
-      .call('service.update', [service.id, { enable: service.enable }])
+  enableToggle(service: Service): void {
+    this.services.enableDisableAction(service.id, service.enable)
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
         if (!res) {
           // Middleware should return the service id
           throw new Error('Method service.update failed. No response from server');
         }
+        this.cdr.markForCheck();
       });
   }
 
-  editService(service: ServiceName): void {
-    switch (service) {
-      case ServiceName.Iscsi:
-        this.router.navigate(['/', 'sharing', 'iscsi']);
-        break;
-      case ServiceName.Cifs:
-        this.router.navigate(['/', 'services', 'smb']);
-        break;
-      default:
-        this.router.navigate(['/', 'services', service]);
-        break;
+  configureService(row: Service): void {
+    if (row.service === ServiceName.OpenVpnClient || row.service === ServiceName.OpenVpnServer) {
+      const navigationExtras: NavigationExtras = { state: { configureOpenVPN: row.service.replace('openvpn_', '') } };
+      this.router.navigate(['network'], navigationExtras);
+    } else {
+      switch (row.service) {
+        case ServiceName.Iscsi:
+          this.router.navigate(['/sharing', 'iscsi']);
+          break;
+        case ServiceName.Cifs:
+          this.router.navigate(['/services', 'smb']);
+          break;
+        default:
+          this.router.navigate(['/services', row.service]);
+          break;
+      }
     }
   }
 
-  getServiceName(service: Service): string {
-    return serviceNames.get(service.service) || service.service;
+  setupToolbar(): void {
+    this.settingsEvent$ = new Subject();
+    this.settingsEvent$.pipe(
+      untilDestroyed(this),
+    ).subscribe((event: CoreEvent) => {
+      if (event.data.event_control == 'filter') {
+        this.filterString = event.data.filter;
+        this.dataSource.filter = event.data.filter;
+      }
+    });
+
+    const controls = [
+      {
+        name: 'filter',
+        type: 'input',
+        value: this.filterString,
+        placeholder: this.translate.instant('Search'),
+      },
+    ];
+
+    const toolbarConfig = {
+      target: this.settingsEvent$,
+      controls,
+    };
+    const settingsConfig = {
+      actionType: EntityToolbarComponent,
+      actionConfig: toolbarConfig,
+    };
+
+    this.toolbarConfig = toolbarConfig;
+    this.core.emit({ name: 'GlobalActions', data: settingsConfig, sender: this });
   }
 }

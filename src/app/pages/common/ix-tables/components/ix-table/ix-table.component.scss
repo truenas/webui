@@ -1,0 +1,61 @@
+.mat-card-content :host {
+  border: 0 !important;
+}
+
+.ix-table.cdk-table {
+  border-spacing: 0;
+  display: table;
+  width: 100%;
+
+  &.ix-table-fixed-layout {
+    table-layout: fixed;
+  }
+
+  thead tr,
+  tbody tr,
+  tfoot tr {
+    height: 48px;
+  }
+
+  thead th,
+  tbody td,
+  tfoot td {
+    border-bottom: 1px solid var(--lines);
+    color: var(--fg2);
+    overflow: hidden;
+    padding-left: 8px;
+    padding-right: 8px;
+    text-align: left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:first-of-type {
+      padding-left: 24px;
+    }
+
+    &:last-of-type {
+      padding-right: 24px;
+    }
+  }
+
+  thead th {
+    background-color: var(--bg2);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  tbody td {
+    font-size: 14px;
+
+    &:last-of-type {
+      padding-right: 16px;
+      text-align: right;
+    }
+  }
+
+  .ix-no-data-row td {
+    padding: 16px;
+  }
+}
+

@@ -6,6 +6,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
 import { ServiceDDNSComponent } from 'app/pages/services/components/service-dynamicdns/service-dynamicdns.component';
 import { ServiceFTPComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServiceLLDPComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
@@ -22,7 +23,6 @@ import { ServiceTFTPComponent } from 'app/pages/services/components/service-tftp
 import { ServiceUPSComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ServiceWebdavComponent } from 'app/pages/services/components/service-webdav/service-webdav.component';
 import { AppConfirmModule } from 'app/services/app-confirm/app-confirm.module';
-import { UserService } from 'app/services/user.service';
 import { EntityModule } from '../common/entity/entity.module';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServicesComponent } from './services.component';
@@ -41,6 +41,7 @@ import { routing } from './services.routing';
     CommonDirectivesModule,
     IxFormsModule,
     ReactiveFormsModule,
+    IxTableModule,
   ],
   declarations: [
     ServicesComponent,
@@ -61,7 +62,6 @@ import { routing } from './services.routing';
     ServiceWebdavComponent,
     ServiceS3Component,
   ],
-  providers: [UserService],
 })
 export class ServicesModule {
 }
