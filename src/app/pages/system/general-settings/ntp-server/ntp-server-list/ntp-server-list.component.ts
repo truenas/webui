@@ -29,7 +29,7 @@ export class NtpServerListComponent implements OnInit {
     'maxpoll',
     'actions',
   ];
-  loading = true;
+  loading = false;
   loadingConf: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
@@ -80,6 +80,8 @@ export class NtpServerListComponent implements OnInit {
   }
 
   getData(): void {
+    this.loading = true;
+
     this.ws.call('system.ntpserver.query').pipe(
       untilDestroyed(this),
     ).subscribe((servers) => {
