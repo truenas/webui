@@ -7,20 +7,19 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import {
-  filter, switchMap,
+  filter, map, switchMap,
 } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
-import { ServiceName } from 'app/enums/service-name.enum';
+import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { CoreEvent } from 'app/interfaces/events';
 import { Service } from 'app/interfaces/service.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { ServicesService } from 'app/pages/services/services.service';
 import { IscsiService } from 'app/services/';
 import { DialogService } from 'app/services/dialog.service';
-import { serviceNames } from '../../enums/service-name.enum';
+import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()
 @Component({
@@ -37,22 +36,24 @@ export class ServicesComponent implements OnInit {
   settingsEvent$: Subject<CoreEvent> = new Subject();
   filterString = '';
   rowIdentifier = 'name';
+  error = false;
   loading = true;
   loadingConf: EmptyConfig = {
     type: EmptyType.Loading,
     large: false,
     title: this.translate.instant('Loading...'),
   };
-  serviceNames = serviceNames;
   serviceLoadingMap = new Map<ServiceName, boolean>();
+  readonly serviceNames = serviceNames;
   readonly ServiceStatus = ServiceStatus;
+  private readonly hiddenServices: ServiceName[] = [ServiceName.Gluster, ServiceName.Afp];
 
   constructor(
+    private ws: WebSocketService,
     private router: Router,
     private translate: TranslateService,
     private dialog: DialogService,
     private iscsiService: IscsiService,
-    private services: ServicesService,
     private cdr: ChangeDetectorRef,
     private core: CoreService,
   ) {}
@@ -64,24 +65,37 @@ export class ServicesComponent implements OnInit {
   }
 
   getData(): void {
-    this.services.getAll().pipe(untilDestroyed(this)).subscribe(
+    this.ws.call('service.query', [[], { order_by: ['service'] }]).pipe(
+      map((services) => {
+        return services.filter((service) => !this.hiddenServices.includes(service.service));
+      }),
+      untilDestroyed(this),
+    ).subscribe(
       (services) => {
         this.dataSource = new MatTableDataSource(services);
-        for (const key of serviceNames.keys()) {
-          this.serviceLoadingMap.set(key, false);
-        }
+        this.loading = false;
+        this.error = false;
+        this.cdr.markForCheck();
+      },
+      () => {
+        this.error = true;
         this.loading = false;
         this.cdr.markForCheck();
       },
       () => {
-        this.loading = false;
-        this.cdr.markForCheck();
+        for (const key of serviceNames.keys()) {
+          this.serviceLoadingMap.set(key, false);
+        }
       },
     );
   }
 
   getUpdates(): void {
-    this.services.getUpdates().pipe(untilDestroyed(this)).subscribe(() => {
+    this.ws.subscribe('service.query').pipe(
+      map((event) => event.fields),
+      filter((service) => !this.hiddenServices.includes(service.service)),
+      untilDestroyed(this),
+    ).subscribe(() => {
       this.getData();
     });
   }
@@ -145,7 +159,7 @@ export class ServicesComponent implements OnInit {
     this.cdr.markForCheck();
 
     const serviceName = this.serviceNames.get(service.service);
-    this.services.startStopAction(rpc, service.service).pipe(
+    this.ws.call(rpc, [service.service]).pipe(
       untilDestroyed(this),
     ).subscribe((success) => {
       if (success) {
@@ -175,7 +189,7 @@ export class ServicesComponent implements OnInit {
   }
 
   enableToggle(service: Service): void {
-    this.services.enableDisableAction(service.id, service.enable)
+    this.ws.call('service.update', [service.id, { enable: service.enable }])
       .pipe(untilDestroyed(this))
       .subscribe((res) => {
         if (!res) {
