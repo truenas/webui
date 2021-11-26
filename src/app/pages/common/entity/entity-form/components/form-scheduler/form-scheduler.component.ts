@@ -194,7 +194,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   set crontab(value: string) {
     this._crontab = value;
-    this.customOption.value = this._crontab;
   }
 
   customOption: CronPreset = {
