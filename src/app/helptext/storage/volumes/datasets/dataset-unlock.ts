@@ -29,7 +29,7 @@ export default {
     unlock: T('Unlock'),
     unlock_message: T('These datasets will be unlocked with the provided credentials.'),
     ok_button: T('Continue'),
-    cancel_button: T('Cancel'),
+    cancel_button: T('Close'),
   },
   unlock_result_dialog: {
     errors_message: T('These datasets could not be unlocked.'),
