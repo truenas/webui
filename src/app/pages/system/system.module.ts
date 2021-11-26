@@ -11,11 +11,13 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/initshutdown/init-shutdown-form/init-shutdown-form.component';
 import { SystemDatasetPoolComponent } from 'app/pages/system/advanced/system-dataset-pool/system-dataset-pool.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
-import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server-form/ntp-server-form.component';
+import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-form/ntp-server-form.component';
+import { NtpServerListComponent } from 'app/pages/system/general-settings/ntp-server/ntp-server-list/ntp-server-list.component';
 import { QrDialogComponent } from 'app/pages/system/two-factor/qr-dialog/qr-dialog.component';
 import { ManualUpdateComponent } from 'app/pages/system/update/manual-update/manual-update.component';
 import { CoreComponents } from '../../core/components/core-components.module';
@@ -60,7 +62,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     ReactiveFormsModule, NgxUploaderModule, routing,
     MaterialModule, MarkdownModule.forRoot(), TranslateModule, FlexLayoutModule,
     EnclosureModule, CommonDirectivesModule, QRCodeModule,
-    TooltipModule, CoreComponents, CastModule,
+    TooltipModule, CoreComponents, CastModule, IxTableModule,
   ],
   declarations: [
     AdvancedSettingsComponent,
@@ -75,6 +77,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     UpdateComponent,
     ManualUpdateComponent,
     NtpServerFormComponent,
+    NtpServerListComponent,
     AlertServiceListComponent,
     SupportComponent,
     EmailComponent,

@@ -54,8 +54,12 @@
     }
   }
 
-  .ix-no-data-row td {
+  .no-data-row td {
     padding: 16px;
+  }
+
+  .row-clickable {
+    cursor: pointer;
   }
 }
 
