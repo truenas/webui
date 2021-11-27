@@ -12,8 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import * as Sentry from '@sentry/angular';
-import { combineLatest, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ApiService } from 'app/core/services/api.service';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
@@ -377,18 +376,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   successLogin(): void {
     this.snackBar.dismiss();
-    combineLatest([
-      this.sysGeneralService.isStable(),
-      this.sysGeneralService.getSysInfo(),
-      this.sysGeneralService.getGeneralConfig$,
-    ]).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res[0] && res[2].crash_reporting) {
-        Sentry.init({
-          dsn: 'https://7ac3e76fe2a94f77a58e1c38ea6b42d9@sentry.ixsystems.com/4',
-          release: res[1].version,
-        });
-      }
-    });
 
     this.tokenObservable = this.ws.call('auth.generate_token', [300]).pipe(untilDestroyed(this)).subscribe((token) => {
       if (!token) {
