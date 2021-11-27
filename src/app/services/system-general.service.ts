@@ -2,7 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import * as Sentry from '@sentry/angular';
 import { environment } from 'environments/environment';
 import * as _ from 'lodash';
-import { Subject, Observable, forkJoin } from 'rxjs';
+import { Subject, Observable, combineLatest } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
@@ -55,7 +55,7 @@ export class SystemGeneralService {
   });
 
   toggleSentryInit(): void {
-    forkJoin([
+    combineLatest([
       this.isStable(),
       this.getSysInfo(),
       this.getGeneralConfig$,
