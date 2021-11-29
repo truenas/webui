@@ -33,12 +33,7 @@ export class DashboardFormComponent {
   storageWidgets: DashConfigItem[] = [];
   networkWidgets: DashConfigItem[] = [];
 
-  isFormLoading = false;
   formEvents$: Subject<CoreEvent>;
-
-  /* tooltips: BootenvTooltip = {
-    name: helptextSystemBootenv.create_name_tooltip,
-  }; */
 
   constructor(
     private translate: TranslateService,
