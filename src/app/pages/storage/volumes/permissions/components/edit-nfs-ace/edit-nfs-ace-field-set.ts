@@ -8,11 +8,12 @@ import {
   NfsFormFlagsType,
   NfsFormPermsType,
 } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-form-values.interface';
+import { EditNfsAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace.component';
 import { getFormUserGroupLoaders } from 'app/pages/storage/volumes/permissions/utils/get-form-user-group-loaders.utils';
 import { newNfsAce } from 'app/pages/storage/volumes/permissions/utils/new-ace.utils';
 import { UserService } from 'app/services';
 
-export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
+export function getEditNfsAceFieldSet(this: EditNfsAceComponent, userService: UserService): FieldSet[] {
   const {
     loadMoreUserOptions,
     loadMoreGroupOptions,
@@ -37,6 +38,7 @@ export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
         {
           type: 'combobox',
           name: 'user',
+          parent: this,
           placeholder: helptext.dataset_acl_user_placeholder,
           tooltip: helptext.dataset_acl_user_tooltip,
           updateLocal: true,
@@ -63,6 +65,7 @@ export function getEditNfsAceFieldSet(userService: UserService): FieldSet[] {
           tooltip: helptext.dataset_acl_group_tooltip,
           updateLocal: true,
           options: [],
+          parent: this,
           searchOptions: [],
           updater: updateGroupSearchOptions,
           loadMoreOptions: loadMoreGroupOptions,
