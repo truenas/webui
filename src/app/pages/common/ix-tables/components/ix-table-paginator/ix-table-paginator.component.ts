@@ -41,7 +41,7 @@ export class IxTablePaginatorComponent<T> extends MatPaginator {
   }
 
   get total(): number {
-    return this.dataSource.data.length || 0;
+    return this.dataSource?.data.length || 0;
   }
 
   constructor(

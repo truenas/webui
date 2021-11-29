@@ -50,7 +50,10 @@
 
     &:last-of-type {
       padding-right: 16px;
-      text-align: right;
+
+      &.cdk-column-actions {
+        text-align: right;
+      }
     }
   }
 

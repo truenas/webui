@@ -1,0 +1,42 @@
+:host {
+  .mat-card {
+    overflow: hidden;
+  }
+}
+
+.cdk-column-expandedDetail {
+  overflow: hidden;
+  width: 100%;
+}
+
+.mat-row {
+  &.details-row {
+    height: 0;
+    min-height: 0;
+
+    td {
+      overflow: hidden;
+      width: 100%;
+    }
+  }
+}
+
+.ix-table-details {
+  .mat-divider {
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+
+  .details {
+    padding: 16px;
+
+    strong {
+      margin-right: 8px;
+    }
+  }
+
+  .actions {
+    padding: 8px 16px;
+  }
+}
