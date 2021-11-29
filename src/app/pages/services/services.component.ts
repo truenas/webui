@@ -175,8 +175,6 @@ export class ServicesComponent implements OnInit {
           this.translate.instant('{serviceName} service failed to start.', { serviceName }),
         );
       }
-
-      this.getData();
     }, (error) => {
       let message = this.translate.instant('Error starting service {serviceName}.', { serviceName });
       if (rpc === 'service.stop') {

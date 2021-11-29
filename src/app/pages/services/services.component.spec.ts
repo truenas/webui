@@ -67,22 +67,6 @@ describe('ServicesComponent', () => {
     spectator.fixture.detectChanges();
   });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
-
-  it('should show table headers', async () => {
-    const table = await loader.getHarness(IxTableHarness);
-    const headerRow = await table.getHeaderRow();
-
-    expect(headerRow).toMatchObject({
-      name: 'Name',
-      state: 'Running',
-      enable: 'Start Automatically',
-      actions: '',
-    });
-  });
-
   it('should show table rows', async () => {
     const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCells(true);
@@ -94,22 +78,30 @@ describe('ServicesComponent', () => {
     expect(cells).toEqual(expectedRows);
   });
 
-  it('should redirect to configure service page', async () => {
-    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'edit' }));
+  it('should redirect to configure service page when edit button is pressed', async () => {
+    const table = await loader.getHarness(IxTableHarness);
+    const firstRow = await table.getFirstRow();
+    const serviceKey = [...serviceNames.entries()].find(([_, value]) => value === firstRow.name)[0];
+
+    const editButton = await table.getHarness(MatButtonHarness.with({ text: 'edit' }));
     await editButton.click();
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/services', 'dynamicdns']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/services', serviceKey]);
   });
 
-  it('should check service state changes', async () => {
-    const slideToggle = await loader.getHarness(MatSlideToggleHarness);
+  it('should change service enable state when slide is checked', async () => {
+    const table = await loader.getHarness(IxTableHarness);
+    const firstRow = await table.getFirstRow();
+    const serviceKey = [...serviceNames.entries()].find(([_, value]) => value === firstRow.name)[0];
+
+    const slideToggle = await table.getHarness(MatSlideToggleHarness);
     await slideToggle.toggle();
 
     expect(await slideToggle.isChecked()).toBeTruthy();
-    expect(ws.call).toHaveBeenCalledWith('service.start', ['dynamicdns']);
+    expect(ws.call).toHaveBeenCalledWith('service.start', [serviceKey]);
   });
 
-  it('should check service autostart changes', async () => {
+  it('should change service autostart state when checkbox is ticked', async () => {
     const checkbox = await loader.getHarness(MatCheckboxHarness);
     await checkbox.check();
 
