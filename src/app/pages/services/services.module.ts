@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
@@ -36,7 +35,6 @@ import { routing } from './services.routing';
     routing,
     MaterialModule,
     AppConfirmModule,
-    NgxDatatableModule,
     TranslateModule,
     CommonDirectivesModule,
     IxFormsModule,

@@ -43,4 +43,9 @@ export class IxTableHarness extends MatTableHarness {
 
     return Promise.resolve(cells);
   }
+
+  async getFirstRow(): Promise<MatRowHarnessColumnsText> {
+    const rows = await this.getRows();
+    return rows[0].getCellTextByColumnName();
+  }
 }
