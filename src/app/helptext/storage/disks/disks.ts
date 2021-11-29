@@ -9,7 +9,7 @@ export default {
   fieldset_temperature: T('Temperature Alerts'),
   fieldset_smartsed: T('S.M.A.R.T./SED'),
   disk_form_name_placeholder: T('Name'),
-  disk_form_name_tooltip: T('FreeBSD disk device name.'),
+  disk_form_name_tooltip: T('Disk device name.'),
 
   disk_form_serial_placeholder: T('Serial'),
   disk_form_serial_tooltip: T('Serial number for this disk.'),
@@ -80,7 +80,7 @@ export default {
     label: T('Settings'),
     disks: {
       placeholder: T('Disks to be edited:'),
-      tooltip: T('FreeBSD device names of each disk being edited.'),
+      tooltip: T('Device names of each disk being edited.'),
     },
     serial: {
       placeholder: T('Serial'),

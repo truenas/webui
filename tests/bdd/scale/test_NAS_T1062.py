@@ -85,18 +85,19 @@ def the_ssh_general_options_page_should_open(driver):
 @then('click the checkbox "Log in as root with password"')
 def click_the_checkbox_log_in_as_root_with_password(driver):
     """click the checkbox "Log in as root with password"."""
-    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__Log in as Root with Password"]', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 10, '//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox', 'clickable')
+    value_exist = attribute_value_exist(driver, '//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox', 'class', 'mat-checkbox-checked')
     if not value_exist:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Log in as Root with Password"]').click()
+        driver.find_element_by_xpath('//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox').click()
 
 
 @then('verify the checkbox works and click Save')
 def verify_the_checkbox_works_and_click_save(driver):
     """verify the checkbox works and click Save."""
-    wait_for_value = wait_for_attribute_value(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Log in as Root with Password"]', 'class', 'mat-checkbox-checked')
+    wait_for_value = wait_for_attribute_value(driver, 5, '//ix-checkbox[@formcontrolname="rootlogin"]//mat-checkbox', 'class', 'mat-checkbox-checked')
     assert wait_for_value
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element(driver, 5, '//span[contains(text(),"Save")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(text(),"Save")]').click()
     wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
 
 

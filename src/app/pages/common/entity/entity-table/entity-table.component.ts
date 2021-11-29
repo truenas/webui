@@ -50,12 +50,6 @@ import { EmptyConfig, EmptyType } from '../entity-empty/entity-empty.component';
 import { EntityJobComponent } from '../entity-job/entity-job.component';
 import { EntityUtils } from '../utils';
 
-export interface Command {
-  command: string; // Use '|' or '--pipe' to use the output of previous command as input
-  input: any;
-  options?: any[]; // Function parameters
-}
-
 @UntilDestroy()
 @Component({
   changeDetection: ChangeDetectionStrategy.OnPush,

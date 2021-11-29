@@ -7,14 +7,15 @@ import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { Preferences } from 'app/interfaces/preferences.interface';
 import {
   EmbeddedFormConfig,
   EntityFormEmbeddedComponent,
 } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { UserPreferences } from 'app/pages/preferences/page/preferences.types';
 import { defaultTheme, ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
@@ -27,7 +28,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
   target: Subject<CoreEvent> = new Subject();
   isWaiting = false;
   values: any[] = [];
-  preferences: UserPreferences;
+  preferences: Preferences;
   saveSubmitText = this.translate.instant('Update Preferences');
   multiStateSubmit = true;
   isEntity = true;
@@ -51,7 +52,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
 
   ngOnInit(): void {
     this.core.emit({ name: 'UserPreferencesRequest', sender: this });
-    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
+    this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
       if (this.isWaiting) {
         this.target.next({ name: 'SubmitComplete', sender: this });
         this.isWaiting = false;
@@ -124,7 +125,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
     });
   }
 
-  onPreferences(prefs: any): void {
+  onPreferences(prefs: Preferences): void {
     this.fieldSets[0].config = [
       {
         type: 'select',
@@ -201,7 +202,7 @@ export class PreferencesPageComponent implements EmbeddedFormConfig, OnInit, OnD
     }
   }
 
-  updateValues(prefs: any): void {
+  updateValues(prefs: Preferences): void {
     const keys = Object.keys(this.embeddedForm.formGroup.controls);
     keys.forEach((key) => {
       if (key !== 'reset') {

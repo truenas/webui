@@ -3,7 +3,7 @@ import {
   Component, OnInit, ElementRef, ViewChild,
 } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { MatAutocompleteSelectedEvent, MatAutocomplete } from '@angular/material/autocomplete';
+import { MatAutocompleteSelectedEvent, MatAutocomplete, MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -26,6 +26,7 @@ export class FormChipComponent implements Field, OnInit {
 
   @ViewChild('chipInput') chipInput: ElementRef<HTMLInputElement>;
   @ViewChild('autoComplete') matAutocomplete: MatAutocomplete;
+  @ViewChild(MatAutocompleteTrigger) trigger: MatAutocompleteTrigger;
 
   selectable = true;
   removable = true;
@@ -40,14 +41,15 @@ export class FormChipComponent implements Field, OnInit {
       if (this.chipLists !== this.group.controls[this.config.name].value && typeof this.group.controls[this.config.name].value === 'object') {
         this.chipLists = this.group.controls[this.config.name].value;
       }
+      this.updateSearchOptions('');
     });
   }
 
   add(event: MatChipInputEvent): void {
-    const input = event.input;
+    const input = event.chipInput.inputElement;
     const value = event.value;
 
-    if ((value || '').trim()) {
+    if ((value || '').trim() && !this.config.selectOnly) {
       this.chipLists.push(value.trim());
       this.group.controls[this.config.name].setValue(this.chipLists);
     }
@@ -67,27 +69,46 @@ export class FormChipComponent implements Field, OnInit {
   }
 
   selected(event: MatAutocompleteSelectedEvent): void {
-    this.chipLists.push(event.option.viewValue);
+    if (this.config.selectOnly) {
+      if (this.chipLists.includes(event.option.viewValue)) {
+        this.chipLists = this.chipLists.filter((e) => e !== event.option.viewValue);
+      } else {
+        this.chipLists = [...new Set([...this.chipLists, event.option.viewValue])];
+      }
+    } else {
+      this.chipLists.push(event.option.viewValue);
+    }
+    this.group.controls[this.config.name].setValue(this.chipLists);
     this.chipInput.nativeElement.value = '';
     this.chipCtrl.setValue(null);
+    this.openPanel();
   }
 
   updateSearchOptions(value: any): void {
     if (this.config.updater && this.config.parent) {
+      const values = this.chipLists as string[];
       if (this.config.updateLocal) {
-        this.config.updater(value, this.config.parent, this.config);
+        this.config.updater(value, values, this.config.parent, this.config);
       } else {
-        this.config.updater(value, this.config.parent);
+        this.config.updater(value, values, this.config.parent);
       }
     } else {
       value = value.toLowerCase();
       const searchOptions: Option[] = [];
       this.config.options.forEach((option) => {
-        if (option.label.toLowerCase().includes(value)) {
+        if (!value || option.label.toLowerCase().includes(value)) {
           searchOptions.push(option);
         }
       });
       this.config.searchOptions = searchOptions;
+    }
+  }
+
+  openPanel(): void {
+    if (this.config.selectOnly) {
+      setTimeout(() => {
+        this.trigger.openPanel();
+      });
     }
   }
 }

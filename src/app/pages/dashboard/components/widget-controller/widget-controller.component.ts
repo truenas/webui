@@ -34,7 +34,6 @@ export class WidgetControllerComponent extends WidgetComponent implements OnDest
 
   title: string = this.translate.instant('Dashboard');
   subtitle: string = this.translate.instant('Navigation');
-  widgetColorCssVar = 'var(--accent)';
   configurable = false;
   screenType = 'Desktop'; // Desktop || Mobile
 

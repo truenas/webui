@@ -1,8 +1,8 @@
-#row-filter.form-element .mat-form-field-wrapper {
-  padding: 4px 8px;
+:host {
+  display: block;
 }
 
-div#row-filter.form-element.toolbar-input {
+#row-filter.form-element.toolbar-input {
   display: inline-block;
   position: relative;
 

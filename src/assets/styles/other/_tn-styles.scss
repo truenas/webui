@@ -1182,6 +1182,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background: var(--bg2) !important;
   }
 
+  .mat-autocomplete-panel .mat-option.mat-selected:not(.mat-active):not(:hover),
   .mat-autocomplete-panel .mat-option:hover {
     background-color: var(--primary) !important;
   }

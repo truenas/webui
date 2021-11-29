@@ -55,8 +55,7 @@ export class AcmednsFormComponent implements FormConfiguration {
           name: 'authenticator',
           placeholder: helptext.authenticator_provider_placeholder,
           tooltip: helptext.authenticator_provider_tooltip,
-          options: [
-          ],
+          options: [],
           parent: this,
         };
         const fieldSet: FieldSet[] = [

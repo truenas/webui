@@ -33,8 +33,8 @@ export interface NewTicketResponse {
   url: string;
 }
 
-export type OauthJiraMessage<T = any> = MessageEvent<{
+export type OauthJiraMessage = MessageEvent<{
   error?: string;
-  result?: T;
+  result?: string;
   data?: string;
 }>;

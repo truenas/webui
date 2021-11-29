@@ -2,6 +2,7 @@ import {
   ComponentFactoryResolver, Injectable, Injector, Type,
 } from '@angular/core';
 import { Subject } from 'rxjs';
+import { ModalConfiguration } from 'app/components/common/modal/modal-configuration.interface';
 import { ModalComponent } from 'app/components/common/modal/modal.component';
 
 export interface ModalServiceMessage {
@@ -61,7 +62,7 @@ export class ModalService {
   /**
    * @deprecated Use openInSlideIn
    */
-  private open(id: string, conf: any, rowid?: any): void {
+  private open(id: string, conf: ModalConfiguration, rowid?: string | number): void {
     if (rowid) {
       conf.rowid = rowid;
       this.getRow$.next(rowid);

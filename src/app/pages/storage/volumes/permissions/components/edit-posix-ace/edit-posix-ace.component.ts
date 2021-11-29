@@ -36,7 +36,7 @@ export class EditPosixAceComponent implements FormConfiguration, OnChanges {
     private store: DatasetAclEditorStore,
     private relationService: FieldRelationService,
   ) {
-    this.fieldSets = getEditPosixAceFieldSet(userService);
+    this.fieldSets = (getEditPosixAceFieldSet.bind(this))(userService);
   }
 
   ngOnChanges(): void {

@@ -153,11 +153,11 @@ export class DataProtectionDashboardComponent implements OnInit {
             key_props: ['pool_name'],
           },
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(ScrubFormComponent);
+          add: () => {
+            this.modalService.openInSlideIn(ScrubFormComponent);
           },
-          edit(row: ScrubTaskUi) {
-            this.parent.modalService.openInSlideIn(ScrubFormComponent, row.id);
+          edit: (row: ScrubTaskUi) => {
+            this.modalService.openInSlideIn(ScrubFormComponent, row.id);
           },
           tableActions: [
             {
@@ -202,14 +202,14 @@ export class DataProtectionDashboardComponent implements OnInit {
           dataSourceHelper: this.snapshotDataSourceHelper,
           isActionVisible: this.isActionVisible,
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(SnapshotFormComponent);
+          add: () => {
+            this.modalService.openInSlideIn(SnapshotFormComponent);
           },
-          edit(row: PeriodicSnapshotTaskUi) {
-            this.parent.modalService.openInSlideIn(SnapshotFormComponent, row.id);
+          edit: (row: PeriodicSnapshotTaskUi) => {
+            this.modalService.openInSlideIn(SnapshotFormComponent, row.id);
           },
-          onButtonClick(row) {
-            this.parent.stateButton(row);
+          onButtonClick: (row) => {
+            this.stateButton(row);
           },
         },
       },
@@ -245,14 +245,14 @@ export class DataProtectionDashboardComponent implements OnInit {
             },
           ],
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(ReplicationWizardComponent);
+          add: () => {
+            this.modalService.openInSlideIn(ReplicationWizardComponent);
           },
-          edit(row: ReplicationTaskUi) {
-            this.parent.modalService.openInSlideIn(ReplicationFormComponent, row.id);
+          edit: (row: ReplicationTaskUi) => {
+            this.modalService.openInSlideIn(ReplicationFormComponent, row.id);
           },
-          onButtonClick(row) {
-            this.parent.stateButton(row);
+          onButtonClick: (row) => {
+            this.stateButton(row);
           },
         },
       },
@@ -293,14 +293,14 @@ export class DataProtectionDashboardComponent implements OnInit {
             },
           ],
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(CloudsyncFormComponent);
+          add: () => {
+            this.modalService.openInSlideIn(CloudsyncFormComponent);
           },
-          edit(row: CloudSyncTaskUi) {
-            this.parent.modalService.openInSlideIn(CloudsyncFormComponent, row.id);
+          edit: (row: CloudSyncTaskUi) => {
+            this.modalService.openInSlideIn(CloudsyncFormComponent, row.id);
           },
-          onButtonClick(row: CloudSyncTaskUi) {
-            this.parent.stateButton(row);
+          onButtonClick: (row: CloudSyncTaskUi) => {
+            this.stateButton(row);
           },
         },
       },
@@ -338,14 +338,14 @@ export class DataProtectionDashboardComponent implements OnInit {
           getActions: this.getRsyncActions.bind(this),
           isActionVisible: this.isActionVisible,
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(RsyncFormComponent);
+          add: () => {
+            this.modalService.openInSlideIn(RsyncFormComponent);
           },
-          edit(row: RsyncTaskUi) {
-            this.parent.modalService.openInSlideIn(RsyncFormComponent, row.id);
+          edit: (row: RsyncTaskUi) => {
+            this.modalService.openInSlideIn(RsyncFormComponent, row.id);
           },
-          onButtonClick(row: RsyncTaskUi) {
-            this.parent.stateButton(row);
+          onButtonClick: (row: RsyncTaskUi) => {
+            this.stateButton(row);
           },
         },
       },
@@ -382,11 +382,11 @@ export class DataProtectionDashboardComponent implements OnInit {
               prop: 'next_run',
             },
           ],
-          add() {
-            this.parent.modalService.openInSlideIn(SmartFormComponent);
+          add: () => {
+            this.modalService.openInSlideIn(SmartFormComponent);
           },
-          edit(row: SmartTestUi) {
-            this.parent.modalService.openInSlideIn(SmartFormComponent, row.id);
+          edit: (row: SmartTestUi) => {
+            this.modalService.openInSlideIn(SmartFormComponent, row.id);
           },
         },
       },

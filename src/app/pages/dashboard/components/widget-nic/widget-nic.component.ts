@@ -70,16 +70,6 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     });
   }
 
-  get vlanAddresses(): any[] {
-    if (!this.nicState) { return []; }
-    if (this.path[2].name == 'empty' || this.nicState.vlans.length == 0 || !this.nicState.vlans[parseInt(this.path[2].index)]) { return []; }
-
-    const vlan = this.nicState.vlans[parseInt(this.path[2].index)];
-    return vlan.aliases.filter((item: any) => {
-      return [NetworkInterfaceAliasType.Inet, NetworkInterfaceAliasType.Inet6].includes(item.type);
-    });
-  }
-
   get linkState(): string {
     if (!this.nicState && !this.nicState.aliases) { return ''; }
     return this.nicState.link_state.replace(/_/g, ' ');

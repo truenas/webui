@@ -133,8 +133,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     if (this.media.isActive('xs') || this.media.isActive('sm')) {
       this.isSidenavOpen = false;
     }
+    this.sysGeneralService.toggleSentryInit();
+
     this.checkIfConsoleMsgShows();
     this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
+      this.sysGeneralService.toggleSentryInit();
       this.checkIfConsoleMsgShows();
     });
 
