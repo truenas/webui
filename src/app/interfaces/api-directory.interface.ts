@@ -788,6 +788,7 @@ export type ApiDirectory = {
   'system.product_type': { params: void; response: ProductType };
   'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
   'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
+  'system.is_stable': { params: void; response: boolean };
 
   // Support
   'support.is_available': { params: void; response: boolean };
