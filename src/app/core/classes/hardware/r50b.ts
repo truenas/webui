@@ -109,8 +109,8 @@ export class R50B extends Chassis {
       this.rear.driveTraysOffsetX = -26;
       this.rear.driveTraysOffsetY = -60;
       this.rear.container = new PIXI.Container();
-      this.rear.chassisPath = 'assets/images/hardware/r50/r50_rear_960w.png';
-      this.rear.driveTrayBackgroundPath = 'assets/images/hardware/r50/r50b_rear_960w_drivetray_bg.png';
+      this.rear.chassisPath = 'assets/images/hardware/r50/r50b_rear_960w.png';
+      this.rear.driveTrayBackgroundPath = 'assets/images/hardware/r50/r50_rear_960w_drivetray_bg.png';
       this.rear.driveTrayHandlePath = 'assets/images/hardware/r50/r50_rear_960w_drivetray_handle.png';
       this.rear.columns = 1;
       this.rear.rows = 3;
