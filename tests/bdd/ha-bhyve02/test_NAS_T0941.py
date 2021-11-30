@@ -143,6 +143,6 @@ def click_the_save_button_should_be_return_to_pool_page(driver):
 @then(parsers.parse('Verify that user and group name is "{ldap_user}"'))
 def verify_that_user_and_group_name(driver, ldap_user):
     """Verify that user and group name is "ldap_user"."""
-    assert wait_on_element(driver, 7, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input')
+    assert wait_on_element(driver, 7, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input', 'inputable')
     assert attribute_value_exist(driver, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input', 'value', ldap_user)
     assert attribute_value_exist(driver, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'value', ldap_user)
