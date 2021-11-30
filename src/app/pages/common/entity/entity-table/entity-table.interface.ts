@@ -15,9 +15,9 @@ export interface EntityTableConfig<Row = any> {
   queryCall?: ApiMethod;
   queryCallOption?: any;
   queryCallJob?: boolean;
-  resource_name?: string;
-  route_edit?: string | string[];
-  route_add?: string[];
+  resourceName?: string;
+  routeEdit?: string | string[];
+  routeAdd?: string[];
   queryRes?: any[];
   showActions?: boolean;
   isActionVisible?: (actionId: string, row: Row) => boolean;
@@ -47,7 +47,7 @@ export interface EntityTableConfig<Row = any> {
   disableActionsConfig?: boolean;
   inlineActions?: boolean;
   addBtnDisabled?: boolean;
-  route_add_tooltip?: string;
+  routeAddTooltip?: string;
 
   wsDeleteParams?: (row: Row, id: string) => any;
   addRows?: (entity: EntityTableComponent) => void;
@@ -60,7 +60,6 @@ export interface EntityTableConfig<Row = any> {
   getAddActions?: () => any[];
   rowValue?: (row: unknown, attr: string) => unknown;
   wsMultiDeleteParams?: (selected: Row[]) => any;
-  updateMultiAction?: (selected: Row[]) => any;
   doAdd?: (id?: string | number, tableComponent?: EntityTableComponent) => void;
   doEdit?: (id?: string | number, tableComponent?: EntityTableComponent) => void;
   onCheckboxChange?: (row: Row) => void;
@@ -82,8 +81,11 @@ export interface EntityTableAction<Row = any> {
   icon: string;
   label: string;
   onClick: (row?: Row) => void;
+  title?: string;
   disabled?: boolean;
   actions?: EntityTableAction[];
+  matTooltip?: string;
+  ttposition?: TooltipPosition;
 }
 
 export interface EntityTableMultiAction<Row = any> {

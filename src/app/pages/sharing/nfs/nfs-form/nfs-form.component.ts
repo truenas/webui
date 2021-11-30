@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import globalHelptext from 'app/helptext/global-helptext';
-import { helptext_sharing_nfs, shared } from 'app/helptext/sharing';
+import { helptextSharingNfs, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Group } from 'app/interfaces/group.interface';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
@@ -34,15 +35,15 @@ export class NFSFormComponent implements FormConfiguration {
   isEntity = true;
   isBasicMode = true;
   entityForm: EntityFormComponent;
-  save_button_enabled = true;
+  saveButtonEnabled = true;
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['alldirs', 'quiet'];
-  title: string = helptext_sharing_nfs.title;
+  title: string = helptextSharingNfs.title;
   isOneColumnForm = true;
 
   fieldSets = new FieldSets([
     {
-      name: helptext_sharing_nfs.fieldset_paths,
+      name: helptextSharingNfs.fieldset_paths,
       label: true,
       config: [
         {
@@ -52,13 +53,13 @@ export class NFSFormComponent implements FormConfiguration {
           templateListField: [
             {
               name: 'path',
-              placeholder: helptext_sharing_nfs.placeholder_path,
-              tooltip: helptext_sharing_nfs.tooltip_path,
+              placeholder: helptextSharingNfs.placeholder_path,
+              tooltip: helptextSharingNfs.tooltip_path,
               type: 'explorer',
-              explorerType: 'directory',
+              explorerType: ExplorerType.Directory,
               initial: '/mnt',
               required: true,
-              validation: helptext_sharing_nfs.validators_path,
+              validation: helptextSharingNfs.validators_path,
             },
           ],
           listFields: [],
@@ -67,53 +68,53 @@ export class NFSFormComponent implements FormConfiguration {
     },
     { name: 'divider_general', divider: true },
     {
-      name: helptext_sharing_nfs.fieldset_general,
+      name: helptextSharingNfs.fieldset_general,
       class: 'general',
       label: true,
       config: [
         {
           type: 'input',
           name: 'comment',
-          placeholder: helptext_sharing_nfs.placeholder_comment,
-          tooltip: helptext_sharing_nfs.tooltip_comment,
+          placeholder: helptextSharingNfs.placeholder_comment,
+          tooltip: helptextSharingNfs.tooltip_comment,
         },
         {
           type: 'checkbox',
           name: 'alldirs',
-          placeholder: helptext_sharing_nfs.placeholder_alldirs,
-          tooltip: helptext_sharing_nfs.tooltip_alldirs,
+          placeholder: helptextSharingNfs.placeholder_alldirs,
+          tooltip: helptextSharingNfs.tooltip_alldirs,
         },
         {
           type: 'checkbox',
           name: 'quiet',
-          placeholder: helptext_sharing_nfs.placeholder_quiet,
-          tooltip: helptext_sharing_nfs.tooltip_quiet,
+          placeholder: helptextSharingNfs.placeholder_quiet,
+          tooltip: helptextSharingNfs.tooltip_quiet,
         },
         {
           type: 'checkbox',
           name: 'enabled',
-          placeholder: helptext_sharing_nfs.placeholder_enabled,
-          tooltip: helptext_sharing_nfs.tooltip_enabled,
+          placeholder: helptextSharingNfs.placeholder_enabled,
+          tooltip: helptextSharingNfs.tooltip_enabled,
           value: true,
         },
       ],
     },
     {
-      name: helptext_sharing_nfs.fieldset_access,
+      name: helptextSharingNfs.fieldset_access,
       label: false,
       class: 'access',
       config: [
         {
           type: 'checkbox',
           name: 'ro',
-          placeholder: helptext_sharing_nfs.placeholder_ro,
-          tooltip: helptext_sharing_nfs.tooltip_ro,
+          placeholder: helptextSharingNfs.placeholder_ro,
+          tooltip: helptextSharingNfs.tooltip_ro,
         },
         {
           type: 'combobox',
           name: 'maproot_user',
-          placeholder: helptext_sharing_nfs.placeholder_maproot_user,
-          tooltip: helptext_sharing_nfs.tooltip_maproot_user,
+          placeholder: helptextSharingNfs.placeholder_maproot_user,
+          tooltip: helptextSharingNfs.tooltip_maproot_user,
           options: [],
           value: '',
           searchOptions: [],
@@ -125,8 +126,8 @@ export class NFSFormComponent implements FormConfiguration {
         {
           type: 'combobox',
           name: 'maproot_group',
-          placeholder: helptext_sharing_nfs.placeholder_maproot_group,
-          tooltip: helptext_sharing_nfs.tooltip_maproot_group,
+          placeholder: helptextSharingNfs.placeholder_maproot_group,
+          tooltip: helptextSharingNfs.tooltip_maproot_group,
           options: [],
           value: '',
           searchOptions: [],
@@ -138,8 +139,8 @@ export class NFSFormComponent implements FormConfiguration {
         {
           type: 'combobox',
           name: 'mapall_user',
-          placeholder: helptext_sharing_nfs.placeholder_mapall_user,
-          tooltip: helptext_sharing_nfs.tooltip_mapall_user,
+          placeholder: helptextSharingNfs.placeholder_mapall_user,
+          tooltip: helptextSharingNfs.tooltip_mapall_user,
           options: [],
           value: '',
           searchOptions: [],
@@ -151,8 +152,8 @@ export class NFSFormComponent implements FormConfiguration {
         {
           type: 'combobox',
           name: 'mapall_group',
-          placeholder: helptext_sharing_nfs.placeholder_mapall_group,
-          tooltip: helptext_sharing_nfs.tooltip_mapall_group,
+          placeholder: helptextSharingNfs.placeholder_mapall_group,
+          tooltip: helptextSharingNfs.tooltip_mapall_group,
           options: [],
           value: '',
           searchOptions: [],
@@ -165,7 +166,7 @@ export class NFSFormComponent implements FormConfiguration {
           type: 'select',
           multiple: true,
           name: 'security',
-          placeholder: helptext_sharing_nfs.placeholder_security,
+          placeholder: helptextSharingNfs.placeholder_security,
           options: [
             {
               label: 'SYS',
@@ -190,7 +191,7 @@ export class NFSFormComponent implements FormConfiguration {
       ],
     },
     {
-      name: helptext_sharing_nfs.fieldset_networks,
+      name: helptextSharingNfs.fieldset_networks,
       label: false,
       class: 'networks',
       config: [
@@ -201,8 +202,8 @@ export class NFSFormComponent implements FormConfiguration {
             {
               type: 'ipwithnetmask',
               name: 'network',
-              placeholder: helptext_sharing_nfs.placeholder_network,
-              tooltip: helptext_sharing_nfs.tooltip_network,
+              placeholder: helptextSharingNfs.placeholder_network,
+              tooltip: helptextSharingNfs.tooltip_network,
               validation: [ipv4or6cidrValidator()],
             },
           ],
@@ -211,7 +212,7 @@ export class NFSFormComponent implements FormConfiguration {
       ],
     },
     {
-      name: helptext_sharing_nfs.fieldset_hosts,
+      name: helptextSharingNfs.fieldset_hosts,
       label: false,
       class: 'hosts',
       config: [
@@ -222,8 +223,8 @@ export class NFSFormComponent implements FormConfiguration {
             {
               type: 'input',
               name: 'host',
-              placeholder: helptext_sharing_nfs.placeholder_hosts,
-              tooltip: helptext_sharing_nfs.tooltip_hosts,
+              placeholder: helptextSharingNfs.placeholder_hosts,
+              tooltip: helptextSharingNfs.tooltip_hosts,
             },
           ],
           listFields: [],
@@ -233,7 +234,7 @@ export class NFSFormComponent implements FormConfiguration {
     { name: 'divider', divider: true },
   ]);
 
-  advanced_field = [
+  advancedFields = [
     'ro',
     'networks',
     'hosts',
@@ -296,10 +297,10 @@ export class NFSFormComponent implements FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.entityForm = entityForm;
 
-    this.title = entityForm.isNew ? helptext_sharing_nfs.title : helptext_sharing_nfs.editTitle;
+    this.title = entityForm.isNew ? helptextSharingNfs.title : helptextSharingNfs.editTitle;
 
     this.userService
-      .userQueryDSCache()
+      .userQueryDsCache()
       .pipe(untilDestroyed(this))
       .subscribe((items) => {
         const users = [
@@ -318,7 +319,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
 
     this.userService
-      .groupQueryDSCache()
+      .groupQueryDsCache()
       .pipe(untilDestroyed(this))
       .subscribe((groups) => {
         const groupOptions: Option[] = [
@@ -445,7 +446,7 @@ export class NFSFormComponent implements FormConfiguration {
 
   updateGroupSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
     parent.userService
-      .groupQueryDSCache(value)
+      .groupQueryDsCache(value)
       .pipe(untilDestroyed(parent))
       .subscribe((groups) => {
         const config = parent.fieldSets.config(field) as FormComboboxConfig;
@@ -463,7 +464,7 @@ export class NFSFormComponent implements FormConfiguration {
 
   updateUserSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
     parent.userService
-      .userQueryDSCache(value)
+      .userQueryDsCache(value)
       .pipe(untilDestroyed(parent))
       .subscribe((users) => {
         const config = parent.fieldSets.config(field) as FormComboboxConfig;
@@ -473,7 +474,7 @@ export class NFSFormComponent implements FormConfiguration {
 
   loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, fieldConfig: FieldConfig): void {
     parent.userService
-      .userQueryDSCache(searchText, length)
+      .userQueryDsCache(searchText, length)
       .pipe(untilDestroyed(parent))
       .subscribe((items) => {
         const users = items.map((user) => ({ label: user.username, value: user.username }));
@@ -490,7 +491,7 @@ export class NFSFormComponent implements FormConfiguration {
 
   loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, fieldConfig: FieldConfig): void {
     parent.userService
-      .groupQueryDSCache(searchText, false, length)
+      .groupQueryDsCache(searchText, false, length)
       .pipe(untilDestroyed(parent))
       .subscribe((items: Group[]) => {
         const groups = items.map((group) => ({ label: group.group, value: group.group }));

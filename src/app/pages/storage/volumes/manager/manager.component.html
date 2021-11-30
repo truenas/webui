@@ -13,7 +13,7 @@
                 <label class="label input-text">
                   {{ 'Name' | translate }}*
                 </label>
-                <tooltip class="volumeTooltip" [message]="name_tooltip | translate"></tooltip>
+                <tooltip class="volumeTooltip" [message]="nameTooltip | translate"></tooltip>
               </div>
 
               <div class="full-width">
@@ -31,7 +31,7 @@
               >
                 {{"Encryption" | translate}}
               </mat-checkbox>
-              <tooltip class="volumeTooltip" [message]="encryption_tooltip | translate"></tooltip>
+              <tooltip class="volumeTooltip" [message]="encryptionTooltip | translate"></tooltip>
             </div>
 
             <div *ngIf="isEncrypted" fxFlex="30%" class="inline form-element encryption-select">
@@ -44,12 +44,12 @@
               <mat-form-field class="full-width">
                 <mat-select
                   id="pool-manager__encryption_algorithm-select"
-                  [(ngModel)]="encryption_algorithm"
+                  [(ngModel)]="encryptionAlgorithm"
                   class="form-control"
                   [placeholder]="'Encryption Algorithm' | translate"
                 >
-                  <mat-option *ngFor="let option of encryption_algorithm_options" [value]="option.value"
-                    id="encryption_algorithm_option_{{option.label}}">
+                  <mat-option *ngFor="let option of encryptionAlgorithmOptions" [value]="option.value"
+                              id="encryption_algorithm_option_{{option.label}}">
                     {{ option.label | translate }}
                   </mat-option>
 
@@ -62,8 +62,8 @@
 
           <div fxFlex="100%" class="button-bar">
             <div><button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button></div>
-            <div><button id="pool-manager__suggest-layout-button" *ngIf="suggestable_disks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent mat-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button></div>
-            <div><tooltip class="volumeTooltip" [message]="suggested_layout_tooltip"></tooltip></div>
+            <div><button id="pool-manager__suggest-layout-button" *ngIf="suggestableDisks.length <= 8" [disabled]="dirty" mat-button class="btn btn-accent mat-accent" (click)="suggestLayout()">{{"Suggest Layout" | translate}}</button></div>
+            <div><tooltip class="volumeTooltip" [message]="suggestedLayoutTooltip"></tooltip></div>
             <div class="button-spacer"></div>
             <div>
               <button mat-button [matMenuTriggerFor]="menu" color="primary" class="menu-toggle"
@@ -259,11 +259,11 @@
             [rows]="disks"
             [headerHeight]="50"
             [rowHeight]="50"
-            footerHeight="auto"
+            [footerHeight]="$any('auto')"
             [columnMode]="'force'"
             [limit]="10"
             [selected]="selected"
-            selectionType="checkbox"
+            [selectionType]="'checkbox' | cast"
             [externalSorting]="true"
             (sort)='reorderEvent($event)'
             (select)='onSelect($event)'
@@ -343,7 +343,7 @@
                 (keyup)="updateFilter($event)"
               />
             </mat-form-field>
-            <mat-error *ngIf="re_has_errors">{{"Invalid regex filter" | translate}}</mat-error>
+            <mat-error *ngIf="regExpHasErrors">{{"Invalid regex filter" | translate}}</mat-error>
           </div>
         </div>
         <div class="pool">
@@ -382,7 +382,7 @@
       <div *ngIf="stripeVdevTypeError" class="sizeMessage red" [innerHTML]="stripeVdevTypeError"></div>
       <div *ngIf="logVdevTypeWarning" class="sizeMessage orange" [innerHTML]="logVdevTypeWarning"></div>
       <div *ngIf="error" class="sizeMessage red" [innerHTML]="error"></div>
-      <div class="forceCreateCheckbox" *ngIf="has_savable_errors">
+      <div class="forceCreateCheckbox" *ngIf="hasSavableErrors">
         <mat-checkbox color="primary" id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()">{{'Force' | translate}}</mat-checkbox>
       </div>
       <div class="buttons" id="pool-manager__button-group">

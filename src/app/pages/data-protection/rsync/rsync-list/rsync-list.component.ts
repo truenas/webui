@@ -25,9 +25,9 @@ export class RsyncListComponent implements EntityTableConfig {
   title = this.translate.instant('Rsync Tasks');
   queryCall = 'rsynctask.query' as const;
   wsDelete = 'rsynctask.delete' as const;
-  route_add: string[] = ['tasks', 'rsync', 'add'];
-  route_add_tooltip = this.translate.instant('Add Rsync Task');
-  route_edit: string[] = ['tasks', 'rsync', 'edit'];
+  routeAdd: string[] = ['tasks', 'rsync', 'add'];
+  routeAddTooltip = this.translate.instant('Add Rsync Task');
+  routeEdit: string[] = ['tasks', 'rsync', 'edit'];
   entityList: EntityTableComponent;
   asyncView = true;
 
@@ -113,7 +113,7 @@ export class RsyncListComponent implements EntityTableConfig {
                 });
               },
               (err) => {
-                new EntityUtils().handleWSError(this, err);
+                new EntityUtils().handleWsError(this, err);
               },
             );
           }

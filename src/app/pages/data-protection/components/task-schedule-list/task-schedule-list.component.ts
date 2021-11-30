@@ -18,7 +18,7 @@ export class TaskScheduleListComponent implements OnInit, OnChanges {
 
   futureRuns: string[];
 
-  constructor(private _taskService: TaskService) {}
+  constructor(private taskService: TaskService) {}
 
   ngOnInit(): void {
     this.buildFutureRuns();
@@ -35,7 +35,7 @@ export class TaskScheduleListComponent implements OnInit, OnChanges {
       || this.config.schedule;
 
     if (scheduleExpression !== 'Disabled') {
-      this.futureRuns = this._taskService
+      this.futureRuns = this.taskService
         .getTaskNextRuns(scheduleExpression, TaskScheduleListComponent.LIST_LENGTH)
         .map((run) => run.toLocaleString());
     }

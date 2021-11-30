@@ -112,13 +112,13 @@ export class DialogService {
     return dialogRef.afterClosed();
   }
 
-  info(title: string, info: string, width = '500px', icon = 'report_problem', is_html = false): Observable<boolean> {
+  info(title: string, info: string, width = '500px', icon = 'report_problem', isHtml = false): Observable<boolean> {
     const dialogRef = this.dialog.open(InfoDialogComponent, { width });
 
     dialogRef.componentInstance.title = title;
     dialogRef.componentInstance.info = info;
     dialogRef.componentInstance.icon = icon;
-    dialogRef.componentInstance.is_html = is_html;
+    dialogRef.componentInstance.isHtml = isHtml;
 
     return dialogRef.afterClosed();
   }

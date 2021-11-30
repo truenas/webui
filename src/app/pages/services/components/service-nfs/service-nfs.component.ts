@@ -22,7 +22,7 @@ import { WebSocketService, DialogService } from 'app/services';
 })
 export class ServiceNFSComponent implements FormConfiguration {
   queryCall = 'nfs.config' as const;
-  route_success: string[] = ['services'];
+  routeSuccess: string[] = ['services'];
   productType = window.localStorage.getItem('product_type') as ProductType;
   hideOnScale = ['servers', 'allow_nonroot', 'mountd_log', 'statd_lockd_log'];
   title = helptext.formTitle;
@@ -174,7 +174,7 @@ export class ServiceNFSComponent implements FormConfiguration {
       id: 'has_nfs_status',
       name: helptext.addSPN.btnTxt,
       function: () => {
-        this.addSPN();
+        this.addSpn();
       },
     },
   ];
@@ -272,13 +272,13 @@ export class ServiceNFSComponent implements FormConfiguration {
   }
 
   afterSave(entityForm: EntityFormComponent): void {
-    this.router.navigate(this.route_success);
+    this.router.navigate(this.routeSuccess);
     if (entityForm.formGroup.value.v4_krb && !this.v4krbValue) {
-      this.addSPN();
+      this.addSpn();
     }
   }
 
-  addSPN(): void {
+  addSpn(): void {
     if (!this.hasNfsStatus && this.adHealth === DirectoryServiceState.Healthy) {
       this.dialog.confirm({
         title: helptext.add_principal_prompt.title,

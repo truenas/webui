@@ -31,7 +31,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
   protected fullFilter: QueryParams<DatasetQuota> = [['OR', [['quota', '>', 0], ['obj_quota', '>', 0]]]];
   protected emptyFilter: QueryParams<DatasetQuota> = [];
   protected useFullFilter = true;
-  route_add: string[];
+  routeAdd: string[];
 
   columns = [
     {
@@ -81,7 +81,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
         const params = [['id', '=', row.id] as QueryFilter<DatasetQuota>] as QueryParams<DatasetQuota>;
         this.ws.call('pool.dataset.get_quota', [this.pk, DatasetQuotaType.User, params]).pipe(untilDestroyed(this)).subscribe((res) => {
           this.loader.close();
-          const conf: DialogFormConfiguration<this> = {
+          const conf: DialogFormConfiguration = {
             title: helptext.users.dialog.title,
             fieldConfig: [
               {
@@ -173,7 +173,7 @@ export class DatasetQuotasUserlistComponent implements EntityTableConfig, OnDest
     this.entityList = entityList;
     const paramMap = this.aroute.snapshot.params;
     this.pk = paramMap.pk;
-    this.route_add = ['storage', 'user-quotas-form', this.pk];
+    this.routeAdd = ['storage', 'user-quotas-form', this.pk];
     this.useFullFilter = window.localStorage.getItem('useFullFilter') !== 'false';
   }
 

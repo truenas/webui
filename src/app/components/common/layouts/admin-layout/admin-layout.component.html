@@ -12,7 +12,7 @@
           </div>
 
           <!-- TrueNAS Core -->
-          <div class="branding topbar" *ngIf="!retroLogo && product_type == ProductType.Core ">
+          <div class="branding topbar" *ngIf="!retroLogo && productType == ProductType.Core ">
             <a routerLink="/dashboard" class="logo">
               <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_core_logomark_color' : 'truenas_core_logomark'" alt="TrueNAS Core logo" class="app-logo"></mat-icon>
             </a>
@@ -22,7 +22,7 @@
           </div>
 
           <!-- TrueNAS Enterprise -->
-          <div class="branding topbar" *ngIf="!retroLogo && product_type == ProductType.Enterprise ">
+          <div class="branding topbar" *ngIf="!retroLogo && productType == ProductType.Enterprise ">
             <a routerLink="/dashboard" class="logo">
               <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_enterprise_logomark_color' : 'truenas_enterprise_logomark'" alt="TrueNAS Core logo" class="app-logo"></mat-icon>
             </a>
@@ -32,7 +32,7 @@
           </div>
 
           <!-- TrueNAS Scale -->
-          <div class="branding topbar {{'truenas-' + product_type.toLowerCase()}}" *ngIf="!retroLogo && (product_type == ProductType.Scale || product_type == ProductType.ScaleEnterprise) ">
+          <div class="branding topbar {{'truenas-' + productType.toLowerCase()}}" *ngIf="!retroLogo && (productType == ProductType.Scale || productType == ProductType.ScaleEnterprise) ">
             <a routerLink="/dashboard" class="logo">
               <mat-icon [svgIcon]="themeService.isDefaultTheme ? 'truenas_scale_logomark_color' : 'truenas_scale_logomark'" alt="TrueNAS Core logo" class="app-logo"></mat-icon>
             </a>
@@ -51,7 +51,7 @@
 
       <div *ngIf="!isSidenavCollapsed" class="sidenav-copyright-txt">
         <div *ngIf="hostname" class="hostname-label" matTooltip="Hostname: {{hostname}}">{{hostname}}</div>
-        <div>TrueNAS {{product_type}}®</div>
+        <div>TrueNAS {{productType}}®</div>
         <div>
           © {{copyrightYear}} - <a href="http://www.ixsystems.com"
               target="_blank" title="iXsystems, Inc."> iXsystems, Inc</a>.
@@ -60,7 +60,7 @@
       <div
         *ngIf="isSidenavCollapsed"
         class="sidenav-copyright-icon"
-        matTooltip="TrueNAS {{product_type}}® © {{copyrightYear}} by iXsystems Inc."
+        matTooltip="TrueNAS {{productType}}® © {{copyrightYear}} by iXsystems Inc."
         matTooltipPosition="right"
       >
         <mat-icon>copyright</mat-icon>
@@ -81,7 +81,7 @@
 
     <!-- App content -->
     <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
-      <pagetitle [breadcrumbs]="true" [product_type]="product_type"></pagetitle>
+      <pagetitle [breadcrumbs]="true" [productType]="productType"></pagetitle>
       <router-outlet></router-outlet>
     </div>
     <div class="footer-console-bar" *ngIf="isShowFooterConsole" ix-auto ix-auto-type="shell" ix-auto-identifier="footer-console">
@@ -97,4 +97,4 @@
 </mat-sidenav-container>
 
 <jw-modal id="slide-in-form"></jw-modal>
-<ix-slide-in id="slide-in-form"></ix-slide-in>
+<ix-slide-in id="ix-slide-in-form"></ix-slide-in>

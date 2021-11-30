@@ -32,7 +32,7 @@ export class AlertServiceComponent implements FormConfiguration {
   queryCallOption: [Partial<QueryFilter<AlertService>>] = [['id', '=']];
   editCall = 'alertservice.update' as const;
   testCall = 'alertservice.test' as const;
-  route_success: string[] = ['system', 'alertservice'];
+  routeSuccess: string[] = ['system', 'alertservice'];
 
   isEntity = true;
   entityForm: EntityFormComponent;
@@ -694,7 +694,7 @@ export class AlertServiceComponent implements FormConfiguration {
           },
           (err: WebsocketError) => {
             this.loader.close();
-            new EntityUtils().handleWSError(this, err, this.dialogService);
+            new EntityUtils().handleWsError(this, err, this.dialogService);
           },
         );
       },
@@ -785,22 +785,22 @@ export class AlertServiceComponent implements FormConfiguration {
       this.ws.call(this.addCall, [payload]).pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
-          this.router.navigate(new Array('/').concat(this.route_success));
+          this.router.navigate(new Array('/').concat(this.routeSuccess));
         },
         (err: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         },
       );
     } else {
       this.ws.call(this.editCall, [this.entityForm.pk, payload]).pipe(untilDestroyed(this)).subscribe(
         () => {
           this.loader.close();
-          this.router.navigate(new Array('/').concat(this.route_success));
+          this.router.navigate(new Array('/').concat(this.routeSuccess));
         },
         (err: WebsocketError) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         },
       );
     }

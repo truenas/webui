@@ -25,10 +25,10 @@ import { DialogService } from 'app/services/dialog.service';
   `,
 })
 export class DeviceListComponent implements EntityTableConfig {
-  resource_name: string;
-  route_add: string[];
-  route_edit: string[];
-  protected route_delete: string[];
+  resourceName: string;
+  routeAdd: string[];
+  routeEdit: string[];
+  protected routeDelete: string[];
   protected pk: string;
   vm: string;
   private entityList: EntityTableComponent;
@@ -78,8 +78,8 @@ export class DeviceListComponent implements EntityTableConfig {
       name: 'edit',
       icon: 'edit',
       label: this.translate.instant('Edit'),
-      onClick: (edit_row: VmDevice) => {
-        this.router.navigate(['/', 'vm', this.pk, 'devices', this.vm, 'edit', String(edit_row.id), edit_row.dtype]);
+      onClick: (device: VmDevice) => {
+        this.router.navigate(['/', 'vm', this.pk, 'devices', this.vm, 'edit', String(device.id), device.dtype]);
       },
     });
     actions.push({
@@ -87,8 +87,8 @@ export class DeviceListComponent implements EntityTableConfig {
       name: 'delete',
       icon: 'delete',
       label: this.translate.instant('Delete'),
-      onClick: (delete_row: VmDevice) => {
-        this.deviceDelete(delete_row);
+      onClick: (device: VmDevice) => {
+        this.deviceDelete(device);
       },
     });
     actions.push({
@@ -100,14 +100,13 @@ export class DeviceListComponent implements EntityTableConfig {
         const conf: DialogFormConfiguration = {
           title: this.translate.instant('Change Device Order'),
           message: this.translate.instant('Change order for <b>{vmDevice}</b>', { vmDevice: `${row1.dtype} ${row1.id}` }),
-          parent: this,
           fieldConfig: [{
             type: 'input',
             name: 'order',
           },
           ],
           saveButtonText: this.translate.instant('Save'),
-          preInit(entityDialog: EntityDialogComponent) {
+          preInit: (entityDialog: EntityDialogComponent) => {
             _.find(entityDialog.fieldConfig, { name: 'order' })['value'] = row1.order;
           },
           customSubmit: (entityDialog: EntityDialogComponent) => {
@@ -177,11 +176,11 @@ export class DeviceListComponent implements EntityTableConfig {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       this.pk = params['pk'];
       this.vm = params['name'];
-      this.route_add = ['vm', this.pk, 'devices', this.vm, 'add'];
-      this.route_edit = ['vm', this.pk, 'devices', this.vm, 'edit'];
-      this.route_delete = ['vm', this.pk, 'devices', this.vm, 'delete'];
+      this.routeAdd = ['vm', this.pk, 'devices', this.vm, 'add'];
+      this.routeEdit = ['vm', this.pk, 'devices', this.vm, 'edit'];
+      this.routeDelete = ['vm', this.pk, 'devices', this.vm, 'delete'];
       // this is filter by vm's id to show devices belonging to that VM
-      this.resource_name = 'vm/device/?vm__id=' + this.pk;
+      this.resourceName = 'vm/device/?vm__id=' + this.pk;
       this.title = this.translate.instant('VM {vm} devices', { vm: this.vm });
       this.cdRef.detectChanges();
       this.queryCallOption[0][0].push(parseInt(this.pk, 10));

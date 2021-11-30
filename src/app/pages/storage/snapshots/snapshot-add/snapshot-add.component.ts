@@ -27,7 +27,7 @@ import {
 })
 
 export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
-  route_success = ['storage', 'snapshots'];
+  routeSuccess = ['storage', 'snapshots'];
   isEntity = true;
   isNew = true;
   initialized = true;
@@ -94,7 +94,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
       { extra: { flat: false } }]).pipe(untilDestroyed(this)).subscribe((datasets) => {
       const rows = new EntityUtils().flattenData(datasets);
 
-      rows.forEach((dataItem) => {
+      rows.forEach((dataItem: { name: string }) => {
         if (typeof (dataItem.name) !== 'undefined' && dataItem.name.length > 0) {
           const config = this.fieldConfig[0] as FormSelectConfig;
           config.options.push({
@@ -109,7 +109,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
 
     this.ws
       .call('replication.list_naming_schemas')
-      .pipe(map(new EntityUtils().array1DToLabelValuePair))
+      .pipe(map(new EntityUtils().array1dToLabelValuePair))
       .pipe(untilDestroyed(this)).subscribe(
         (options) => {
           const config = this.fieldConfig.find((config) => config.name === 'naming_schema') as FormSelectConfig;
@@ -118,7 +118,7 @@ export class SnapshotAddComponent implements AfterViewInit, FormConfiguration {
             ...options,
           ];
         },
-        (error) => new EntityUtils().handleWSError(this, error, this.dialog),
+        (error) => new EntityUtils().handleWsError(this, error, this.dialog),
       );
   }
 

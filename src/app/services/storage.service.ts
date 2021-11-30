@@ -35,9 +35,7 @@ export class StorageService {
     return this.ws.call(this.diskResource, []);
   }
 
-  downloadFile(filename: string, contents: string, mime_type: string): void {
-    mime_type = mime_type || 'text/plain';
-
+  downloadFile(filename: string, contents: string, mimeType = 'text/plain'): void {
     const byteCharacters = atob(contents);
 
     const byteNumbers = new Array(byteCharacters.length);
@@ -47,7 +45,7 @@ export class StorageService {
 
     const byteArray = new Uint8Array(byteNumbers);
 
-    const blob = new Blob([byteArray], { type: mime_type });
+    const blob = new Blob([byteArray], { type: mimeType });
 
     this.downloadBlob(blob, filename);
   }
@@ -68,12 +66,12 @@ export class StorageService {
     dlink.remove();
   }
 
-  streamDownloadFile(http: HttpClient, url: string, filename: string, mime_type: string): Observable<Blob> {
+  streamDownloadFile(http: HttpClient, url: string, filename: string, mimeType: string): Observable<Blob> {
     return http.post(url, '',
       { responseType: 'blob' }).pipe(
       map(
         (res) => {
-          const blob = new Blob([res], { type: mime_type });
+          const blob = new Blob([res], { type: mimeType });
           return blob;
         },
       ),
@@ -143,8 +141,8 @@ export class StorageService {
     } else if (typeof (tempArr[n]) === 'string'
       && tempArr[n][tempArr[n].length - 1].match(/[KMGTB]/)
       && tempArr[n][tempArr[n].length - 2].match(/[0-9]/)) {
-      let B = []; let K = []; let M = []; let G = []; let
-        T = [];
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      let B = []; let K = []; let M = []; let G = []; let T = [];
       for (const i of tempArr) {
         switch (i.slice(-1)) {
           case 'B':
@@ -202,9 +200,9 @@ export class StorageService {
       (v = -1);
     }
     arr.sort((a, b) => {
-      const A = a[key];
-      const B = b[key];
-      if (sorter.indexOf(A) > sorter.indexOf(B)) {
+      const aValue = a[key];
+      const bValue = b[key];
+      if (sorter.indexOf(aValue) > sorter.indexOf(bValue)) {
         return v;
       }
       return -1 * v;
@@ -271,14 +269,14 @@ export class StorageService {
       return '';
     }
 
-    const IECUnitsStr = this.IECUnits.join('|');
+    const iecUnitsStr = this.IECUnits.join('|');
     const shortUnitsStr = this.IECUnits.map((unit) => unit.charAt(0) + unit.charAt(2)).join('|');
     const humanUnitsStr = this.IECUnits.map((unit) => unit.charAt(0)).join('|');
-    const allUnitsStr = (IECUnitsStr + '|' + shortUnitsStr + '|' + humanUnitsStr).toUpperCase();
-    const unitsRE = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
+    const allUnitsStr = (iecUnitsStr + '|' + shortUnitsStr + '|' + humanUnitsStr).toUpperCase();
+    const unitsRe = new RegExp('^\\s*(' + allUnitsStr + '){1}\\s*$');
 
     unitStr = unitStr.toUpperCase();
-    if (unitStr.match(unitsRE)) {
+    if (unitStr.match(unitsRe)) {
       // always return IEC units
       // could take a parameter to return short or human units
       return unitStr.charAt(0).toUpperCase() + 'iB';

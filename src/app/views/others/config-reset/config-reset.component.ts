@@ -19,7 +19,7 @@ import { LocaleService } from 'app/services/locale.service';
   providers: [],
 })
 export class ConfigResetComponent implements OnInit {
-  product_type: ProductType;
+  productType: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
   dialogRef: MatDialogRef<EntityJobComponent>;
 
@@ -31,24 +31,24 @@ export class ConfigResetComponent implements OnInit {
     private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
     this.ws = ws;
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.product_type = res as ProductType;
+      this.productType = res as ProductType;
     });
   }
 
-  isWSConnected(): void {
+  isWsConnected(): void {
     if (this.ws.connected) {
       this.loader.close();
       // ws is connected
       this.router.navigate(['/session/signin']);
     } else {
       setTimeout(() => {
-        this.isWSConnected();
+        this.isWsConnected();
       }, 1000);
     }
   }
 
   ngOnInit(): void {
-    this.product_type = window.localStorage.getItem('product_type') as ProductType;
+    this.productType = window.localStorage.getItem('product_type') as ProductType;
 
     this.dialog.closeAll();
     this.resetConfigSubmit();
@@ -64,7 +64,7 @@ export class ConfigResetComponent implements OnInit {
       this.ws.prepareShutdown();
       this.loader.open();
       setTimeout(() => {
-        this.isWSConnected();
+        this.isWsConnected();
       }, 15000);
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {

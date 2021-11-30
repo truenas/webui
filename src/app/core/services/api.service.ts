@@ -65,7 +65,7 @@ export class ApiService {
         redef.args = [uid, 'preferences', def.args];
         return redef;
       },
-      postProcessor(res: any, callArgs: any, core: any) {
+      postProcessor(res: any, callArgs: any, core: CoreService) {
         const cloneRes = { ...res };
         if (res == 1) {
           core.emit({ name: 'UserDataRequest', data: [[['id', '=', 1]]] });
@@ -179,25 +179,18 @@ export class ApiService {
   }
 
   registerDefinitions(): void {
-    // DEBUG: console.log("APISERVICE: Registering API Definitions");
     for (const def in this.apiDefinitions) {
-      // DEBUG: console.log("def = " + def);
       this.core.register({ observerClass: this, eventName: def }).pipe(untilDestroyed(this)).subscribe(
         (evt: CoreEvent) => {
           // Process Event if CoreEvent is in the api definitions list
           // TODO: Proper type:
           const name = evt.name as keyof ApiService['apiDefinitions'];
           if (this.apiDefinitions[name]) {
-            // DEBUG: console.log(evt);
             const apiDef = this.apiDefinitions[name];
-            // DEBUG: console.log(apiDef)
-            // let call = this.parseCoreEvent(evt);
             this.callWebsocket(evt, apiDef);
           }
         },
-        () => {
-          // DEBUG: console.log(err)
-        },
+        () => {},
       );
     }
   }
@@ -225,13 +218,12 @@ export class ApiService {
         }
       }
 
-      const call = cloneDef.apiCall;// this.parseEventWs(evt);
+      const call = cloneDef.apiCall;
       this.ws.call(call.namespace, call.args).pipe(untilDestroyed(this)).subscribe((res) => {
         // PostProcess
         if (cloneDef.postProcessor) {
           res = cloneDef.postProcessor(res, evt.data, this.core);
         }
-        // this.core.emit({name:call.responseEvent, data:res, sender: evt.data}); // OLD WAY
         if (call.responseEvent) {
           this.core.emit({ name: call.responseEvent, data: res, sender: this });
         }
@@ -249,7 +241,7 @@ export class ApiService {
         cloneDef.apiCall = cloneDef.preProcessor(cloneDef.apiCall);
       }
 
-      const call = cloneDef.apiCall;// this.parseEventWs(evt);
+      const call = cloneDef.apiCall;
       this.ws.call(call.namespace, call.args || []).pipe(untilDestroyed(this)).subscribe((res) => {
         // PostProcess
         if (cloneDef.postProcessor) {

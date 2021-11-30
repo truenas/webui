@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import {
@@ -30,21 +30,21 @@ export class InitiatorFormComponent implements OnInit {
   protected queryCall = 'iscsi.initiator.query' as const;
   protected editCall = 'iscsi.initiator.update' as const;
   protected customFilter: any[] = [[['id', '=']]];
-  route_success: string[] = ['sharing', 'iscsi', 'initiator'];
+  routeSuccess: string[] = ['sharing', 'iscsi', 'initiator'];
   protected pk: number;
 
   fieldConfig: FieldConfig[] = [
     {
       type: 'checkbox',
       name: 'all',
-      placeholder: helptext_sharing_iscsi.all_placeholder_initiators,
+      placeholder: helptextSharingIscsi.all_placeholder_initiators,
       tooltip: '',
     },
     {
       type: 'input-list',
       name: 'initiators',
-      placeholder: helptext_sharing_iscsi.initiator_form_placeholder_initiators,
-      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_initiators,
+      placeholder: helptextSharingIscsi.initiator_form_placeholder_initiators,
+      tooltip: helptextSharingIscsi.initiator_form_tooltip_initiators,
       customEventMethod: (parent) => {
         for (const selected of parent.source.selectedOptions.selected) {
           parent.listControl.value.add(selected.value.initiator);
@@ -62,8 +62,8 @@ export class InitiatorFormComponent implements OnInit {
     {
       type: 'input-list',
       name: 'auth_network',
-      placeholder: helptext_sharing_iscsi.initiator_form_placeholder_auth_network,
-      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_auth_network,
+      placeholder: helptextSharingIscsi.initiator_form_placeholder_auth_network,
+      tooltip: helptextSharingIscsi.initiator_form_tooltip_auth_network,
       validation: [ipv4or6OptionalCidrValidator()],
       customEventMethod: (parent) => {
         for (const selected of parent.source.selectedOptions.selected.length) {
@@ -82,15 +82,15 @@ export class InitiatorFormComponent implements OnInit {
     {
       type: 'input',
       name: 'comment',
-      placeholder: helptext_sharing_iscsi.initiator_form_placeholder_comment,
-      tooltip: helptext_sharing_iscsi.initiator_form_tooltip_comment,
+      placeholder: helptextSharingIscsi.initiator_form_placeholder_comment,
+      tooltip: helptextSharingIscsi.initiator_form_tooltip_comment,
     },
   ];
 
   formGroup: FormGroup;
   connectedInitiators: IscsiGlobalSession[];
   connectedInitiatorsDisabled = false;
-  connectedInitiatorsTooltip = helptext_sharing_iscsi.initiator_form_tooltip_connected_initiators;
+  connectedInitiatorsTooltip = helptextSharingIscsi.initiator_form_tooltip_connected_initiators;
   error: string;
 
   constructor(
@@ -110,7 +110,7 @@ export class InitiatorFormComponent implements OnInit {
         this.connectedInitiators = _.unionBy(res, (item) => item['initiator'] && item['initiator_addr']);
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err);
+        new EntityUtils().handleWsError(this, err);
       },
     );
   }
@@ -155,7 +155,7 @@ export class InitiatorFormComponent implements OnInit {
           }
         },
         (err) => {
-          new EntityUtils().handleWSError(this, err);
+          new EntityUtils().handleWsError(this, err);
         },
       );
     }
@@ -182,17 +182,17 @@ export class InitiatorFormComponent implements OnInit {
     submitFunction.pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
       (err) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, err);
+        new EntityUtils().handleWsError(this, err);
       },
     );
   }
 
   goBack(): void {
-    this.router.navigate(new Array('/').concat(this.route_success));
+    this.router.navigate(new Array('/').concat(this.routeSuccess));
   }
 
   setRelation(config: FieldConfig): void {

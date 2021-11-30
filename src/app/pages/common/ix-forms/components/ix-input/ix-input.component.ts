@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
-import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
@@ -22,7 +22,16 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() autocomplete = 'off';
   @Input() autocapitalize = 'off';
 
-  value = '';
+  /** If formatted value returned by parseAndFormatInput has non-numeric letters
+   * and input 'type' is a number, the input will stay empty on the form */
+  @Input() format: (value: string | number) => string;
+  @Input() parse: (value: string | number) => string | number;
+
+  formControl = new FormControl(this).value as FormControl;
+
+  value: string | number = '';
+  formatted: string | number = '';
+
   isDisabled = false;
   showPassword = false;
 
@@ -36,9 +45,25 @@ export class IxInputComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
-  writeValue(value: string): void {
+  writeValue(value: string | number): void {
+    let formatted = value;
+    if (value) {
+      if (this.format) {
+        formatted = this.format(value);
+      }
+    }
+    this.formatted = formatted;
     this.value = value;
     this.cdr.markForCheck();
+  }
+
+  input(value: string): void {
+    this.value = value;
+    this.formatted = value;
+    if (this.parse && !!value) {
+      this.value = this.parse(value);
+    }
+    this.onChange(this.value);
   }
 
   registerOnChange(onChange: (value: string | number) => void): void {
@@ -67,11 +92,27 @@ export class IxInputComponent implements ControlValueAccessor {
 
   resetInput(): void {
     this.value = '';
+    this.formatted = '';
     this.onChange('');
   }
 
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
+    this.cdr.markForCheck();
+  }
+
+  blur(): void {
+    this.onTouch();
+    if (this.formatted) {
+      if (this.parse) {
+        this.value = this.parse(this.formatted);
+      }
+      if (this.format) {
+        this.formatted = this.format(this.value);
+      }
+    }
+
+    this.onChange(this.value);
     this.cdr.markForCheck();
   }
 

@@ -3,10 +3,11 @@ import { PosixAclTag } from 'app/enums/posix-acl.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { EditPosixAceComponent } from 'app/pages/storage/volumes/permissions/components/edit-posix-ace/edit-posix-ace.component';
 import { getFormUserGroupLoaders } from 'app/pages/storage/volumes/permissions/utils/get-form-user-group-loaders.utils';
 import { UserService } from 'app/services';
 
-export function getEditPosixAceFieldSet(userService: UserService): FieldSet[] {
+export function getEditPosixAceFieldSet(this: EditPosixAceComponent, userService: UserService): FieldSet[] {
   const {
     loadMoreUserOptions,
     loadMoreGroupOptions,
@@ -31,6 +32,7 @@ export function getEditPosixAceFieldSet(userService: UserService): FieldSet[] {
         {
           type: 'combobox',
           name: 'user',
+          parent: this,
           placeholder: helptext.dataset_acl_user_placeholder,
           tooltip: helptext.dataset_acl_user_tooltip,
           updateLocal: true,
@@ -53,6 +55,7 @@ export function getEditPosixAceFieldSet(userService: UserService): FieldSet[] {
         {
           type: 'combobox',
           name: 'group',
+          parent: this,
           placeholder: helptext.dataset_acl_group_placeholder,
           tooltip: helptext.dataset_acl_group_tooltip,
           updateLocal: true,

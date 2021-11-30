@@ -40,7 +40,7 @@ import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
 export class DatasetUnlockComponent implements FormConfiguration {
   queryCall = 'pool.dataset.encryption_summary' as const;
   updateCall = 'pool.dataset.unlock' as const;
-  route_success: string[] = ['storage'];
+  routeSuccess: string[] = ['storage'];
   isEntity = true;
   isNew = true;
   pk: string;
@@ -49,10 +49,10 @@ export class DatasetUnlockComponent implements FormConfiguration {
   protected entityForm: EntityFormComponent;
 
   protected datasets: FormArray;
-  protected datasets_fc: FormListConfig;
-  protected key_file_fc: FormCheckboxConfig;
-  protected key_file_fg: FormControl;
-  protected unlock_children_fg: FormControl;
+  protected datasetsField: FormListConfig;
+  protected keyFileField: FormCheckboxConfig;
+  protected keyFileControl: FormControl;
+  protected unlockChildrenControl: FormControl;
 
   subs: Subs;
 
@@ -194,9 +194,9 @@ export class DatasetUnlockComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     this.datasets = entityEdit.formGroup.controls['datasets'] as FormArray;
-    this.datasets_fc = _.find(this.fieldConfig, { name: 'datasets' }) as FormListConfig;
-    this.key_file_fc = _.find(this.fieldConfig, { name: 'key_file' }) as FormCheckboxConfig;
-    const listFields = this.datasets_fc.listFields;
+    this.datasetsField = _.find(this.fieldConfig, { name: 'datasets' }) as FormListConfig;
+    this.keyFileField = _.find(this.fieldConfig, { name: 'key_file' }) as FormCheckboxConfig;
+    const listFields = this.datasetsField.listFields;
     const dialogRef = this.dialog.open(EntityJobComponent, {
       data: { title: helptext.fetching_encryption_summary_title },
       disableClose: true,
@@ -213,35 +213,35 @@ export class DatasetUnlockComponent implements FormConfiguration {
       if (res.result && res.result.length > 0) {
         for (let i = 0; i < res.result.length; i++) {
           if (this.datasets.controls[i] === undefined) {
-            const templateListField = _.cloneDeep(this.datasets_fc.templateListField);
+            const templateListField = _.cloneDeep(this.datasetsField.templateListField);
             const newfg = this.entityFormService.createFormGroup(templateListField);
             newfg.setParent(this.datasets);
             this.datasets.controls.push(newfg);
-            this.datasets_fc.listFields.push(templateListField);
+            this.datasetsField.listFields.push(templateListField);
           }
           const controls = listFields[i];
-          const passphrase_fc = _.find(controls, { name: 'passphrase' });
-          const name_text_fc: FormParagraphConfig = _.find(controls, { name: 'name_text' });
+          const passphraseConfig = _.find(controls, { name: 'passphrase' });
+          const nameTextConfig: FormParagraphConfig = _.find(controls, { name: 'name_text' });
           const result = res.result[i];
 
           (this.datasets.controls[i] as FormGroup).controls['name'].setValue(result['name']);
-          name_text_fc.paraText = helptext.dataset_name_paratext + result['name'];
-          const is_passphrase = result.key_format === DatasetEncryptionType.Passphrase;
-          if (!is_passphrase) { // hide key datasets by default
-            name_text_fc.isHidden = true;
+          nameTextConfig.paraText = helptext.dataset_name_paratext + result['name'];
+          const isPassphrase = result.key_format === DatasetEncryptionType.Passphrase;
+          if (!isPassphrase) { // hide key datasets by default
+            nameTextConfig.isHidden = true;
             // only show key_file checkbox and upload if keys encrypted datasets exist
-            if (this.key_file_fg.value === false) {
-              this.key_file_fg.setValue(true);
-              this.key_file_fc.isHidden = false;
-              this.key_file_fc.width = '50%';
+            if (this.keyFileControl.value === false) {
+              this.keyFileControl.setValue(true);
+              this.keyFileField.isHidden = false;
+              this.keyFileField.width = '50%';
             }
           }
-          (this.datasets.controls[i] as FormGroup).controls['is_passphrase'].setValue(is_passphrase);
+          (this.datasets.controls[i] as FormGroup).controls['is_passphrase'].setValue(isPassphrase);
           this.setDisabled(
-            passphrase_fc,
+            passphraseConfig,
             (this.datasets.controls[i] as FormGroup).controls['passphrase'] as FormControl,
-            !is_passphrase,
-            !is_passphrase,
+            !isPassphrase,
+            !isPassphrase,
           );
         }
       }
@@ -249,54 +249,54 @@ export class DatasetUnlockComponent implements FormConfiguration {
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       if (err) {
         dialogRef.close();
-        new EntityUtils().handleWSError(entityEdit, err, this.dialogService);
+        new EntityUtils().handleWsError(entityEdit, err, this.dialogService);
       }
     });
 
-    this.key_file_fg = entityEdit.formGroup.controls['key_file'] as FormControl;
-    this.unlock_children_fg = entityEdit.formGroup.controls['unlock_children'] as FormControl;
+    this.keyFileControl = entityEdit.formGroup.controls['key_file'] as FormControl;
+    this.unlockChildrenControl = entityEdit.formGroup.controls['unlock_children'] as FormControl;
 
-    this.key_file_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((hide_key_datasets: boolean) => {
+    this.keyFileControl.valueChanges.pipe(untilDestroyed(this)).subscribe((hideKeyDatasets: boolean) => {
       for (let i = 0; i < this.datasets.controls.length; i++) {
-        const dataset_controls = (this.datasets.controls[i] as FormGroup).controls;
+        const datasetControls = (this.datasets.controls[i] as FormGroup).controls;
         const controls = listFields[i];
-        const key_fc = _.find(controls, { name: 'key' });
-        const name_text_fc = _.find(controls, { name: 'name_text' });
+        const keyConfig = _.find(controls, { name: 'key' });
+        const nameTextConfig = _.find(controls, { name: 'name_text' });
 
-        const is_passphrase = dataset_controls['is_passphrase'].value;
-        const unlock_children = this.unlock_children_fg.value;
-        if (dataset_controls['name'].value === this.pk) {
-          if (!is_passphrase) {
-            name_text_fc.isHidden = hide_key_datasets;
-            this.setDisabled(key_fc, dataset_controls['key'], hide_key_datasets, hide_key_datasets);
+        const isPassphrase = datasetControls['is_passphrase'].value;
+        const unlockChildren = this.unlockChildrenControl.value;
+        if (datasetControls['name'].value === this.pk) {
+          if (!isPassphrase) {
+            nameTextConfig.isHidden = hideKeyDatasets;
+            this.setDisabled(keyConfig, datasetControls['key'], hideKeyDatasets, hideKeyDatasets);
           }
-        } else if (unlock_children && !is_passphrase) {
-          name_text_fc.isHidden = hide_key_datasets;
-          this.setDisabled(key_fc, dataset_controls['key'], hide_key_datasets, hide_key_datasets);
+        } else if (unlockChildren && !isPassphrase) {
+          nameTextConfig.isHidden = hideKeyDatasets;
+          this.setDisabled(keyConfig, datasetControls['key'], hideKeyDatasets, hideKeyDatasets);
         }
       }
     });
-    this.unlock_children_fg.valueChanges
+    this.unlockChildrenControl.valueChanges
       .pipe(untilDestroyed(this))
-      .subscribe((unlock_children: boolean) => {
+      .subscribe((unlockChildren: boolean) => {
         for (let i = 0; i < this.datasets.controls.length; i++) {
           const controls = listFields[i];
-          const dataset_controls = (this.datasets.controls[i] as FormGroup).controls;
-          if (dataset_controls['name'].value !== this.pk) {
-            const key_fc = _.find(controls, { name: 'key' });
-            const passphrase_fc = _.find(controls, { name: 'passphrase' });
-            const name_text_fc = _.find(controls, { name: 'name_text' });
-            const is_passphrase = dataset_controls['is_passphrase'].value;
-            const hide_key_datasets = this.key_file_fg.value;
-            if (is_passphrase) {
-              name_text_fc.isHidden = !unlock_children;
-              this.setDisabled(passphrase_fc, dataset_controls['passphrase'], !unlock_children, !unlock_children);
-            } else if (hide_key_datasets) {
-              name_text_fc.isHidden = true;
-              this.setDisabled(key_fc, dataset_controls['key'], true, true);
+          const datasetControls = (this.datasets.controls[i] as FormGroup).controls;
+          if (datasetControls['name'].value !== this.pk) {
+            const keyConfig = _.find(controls, { name: 'key' });
+            const passphraseConfig = _.find(controls, { name: 'passphrase' });
+            const nameTextConfig = _.find(controls, { name: 'name_text' });
+            const isPassphrase = datasetControls['is_passphrase'].value;
+            const hideKeyDatasets = this.keyFileControl.value;
+            if (isPassphrase) {
+              nameTextConfig.isHidden = !unlockChildren;
+              this.setDisabled(passphraseConfig, datasetControls['passphrase'], !unlockChildren, !unlockChildren);
+            } else if (hideKeyDatasets) {
+              nameTextConfig.isHidden = true;
+              this.setDisabled(keyConfig, datasetControls['key'], true, true);
             } else {
-              name_text_fc.isHidden = !unlock_children;
-              this.setDisabled(key_fc, dataset_controls['key'], !unlock_children, !unlock_children);
+              nameTextConfig.isHidden = !unlockChildren;
+              this.setDisabled(keyConfig, datasetControls['key'], !unlockChildren, !unlockChildren);
             }
           }
         }
@@ -382,12 +382,12 @@ export class DatasetUnlockComponent implements FormConfiguration {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       dialogRef.close();
-      new EntityUtils().handleWSError(this.entityForm, err, this.dialogService);
+      new EntityUtils().handleWsError(this.entityForm, err, this.dialogService);
     });
   }
 
   unlockSubmit(payload: DatasetUnlockParams): void {
-    payload['recursive'] = this.unlock_children_fg.value;
+    payload['recursive'] = this.unlockChildrenControl.value;
     const dialogRef = this.dialog.open(EntityJobComponent, {
       data: { title: helptext.unlocking_datasets_title },
       disableClose: true,
@@ -412,12 +412,12 @@ export class DatasetUnlockComponent implements FormConfiguration {
       if (res && res.result) {
         if (res.result.failed) {
           const failed = res.result.failed;
-          for (const err_ds in failed) {
-            if (failed.hasOwnProperty(err_ds)) {
-              const fail = failed[err_ds];
+          for (const errorDataset in failed) {
+            if (failed.hasOwnProperty(errorDataset)) {
+              const fail = failed[errorDataset];
               const error = fail.error;
               const skip = fail.skipped;
-              errors.push({ name: err_ds, unlock_error: error });
+              errors.push({ name: errorDataset, unlock_error: error });
               for (const name of skip) {
                 skipped.push({ name });
               }
@@ -441,12 +441,12 @@ export class DatasetUnlockComponent implements FormConfiguration {
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       dialogRef.close();
-      new EntityUtils().handleWSError(this.entityForm, err, this.dialogService);
+      new EntityUtils().handleWsError(this.entityForm, err, this.dialogService);
     });
   }
 
   goBack(): void {
-    this.router.navigate(this.route_success);
+    this.router.navigate(this.routeSuccess);
   }
 
   keyFileUpdater(file: FormUploadComponent): void {

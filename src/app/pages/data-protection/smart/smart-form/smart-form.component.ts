@@ -28,7 +28,7 @@ export class SmartFormComponent implements FormConfiguration {
   protected entityForm: EntityFormComponent;
   isEntity = true;
   isNew = false;
-  protected disk_field: FormSelectConfig;
+  protected diskField: FormSelectConfig;
   pk: number;
   title: string;
   protected isOneColumnForm = true;
@@ -110,13 +110,13 @@ export class SmartFormComponent implements FormConfiguration {
     protected modalService: ModalService,
     protected translate: TranslateService,
   ) {
-    this.disk_field = this.fieldSets.config('disks') as FormSelectConfig;
+    this.diskField = this.fieldSets.config('disks') as FormSelectConfig;
     this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
       (choices) => {
         for (const key in choices) {
-          this.disk_field.options.push({ label: choices[key], value: key });
+          this.diskField.options.push({ label: choices[key], value: key });
         }
-      }, (err) => new EntityUtils().handleWSError(this, err),
+      }, (err) => new EntityUtils().handleWsError(this, err),
     );
     this.modalService.getRow$.pipe(take(1)).pipe(untilDestroyed(this)).subscribe((id: string) => {
       this.customFilter = [[['id', '=', id]]];

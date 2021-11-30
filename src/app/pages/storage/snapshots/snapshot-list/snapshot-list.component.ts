@@ -40,8 +40,8 @@ interface DialogData {
 export class SnapshotListComponent implements EntityTableConfig {
   title = 'Snapshots';
   queryCall = 'zfs.snapshot.query' as const;
-  route_add: string[] = ['storage', 'snapshots', 'add'];
-  route_add_tooltip = 'Add Snapshot';
+  routeAdd: string[] = ['storage', 'snapshots', 'add'];
+  routeAddTooltip = this.translate.instant('Add Snapshot');
   wsDelete = 'zfs.snapshot.delete' as const;
   protected loaderOpen = false;
   protected entityList: EntityTableComponent;
@@ -154,7 +154,6 @@ export class SnapshotListComponent implements EntityTableConfig {
     method_ws: 'zfs.snapshot.rollback',
     saveButtonText: helptext.label_rollback,
     customSubmit: (entityDialog) => this.rollbackSubmit(entityDialog),
-    parent: this,
     warning: helptext.rollback_warning,
   };
 
@@ -253,7 +252,7 @@ export class SnapshotListComponent implements EntityTableConfig {
           entityList.handleData(snapshot, true);
         },
         (error) => {
-          new EntityUtils().handleWSError(this, error, entityList.dialogService);
+          new EntityUtils().handleWsError(this, error, entityList.dialogService);
         });
     });
   }
@@ -282,7 +281,7 @@ export class SnapshotListComponent implements EntityTableConfig {
             this.entityList.getData();
           },
           (res: WebsocketError) => {
-            new EntityUtils().handleWSError(this, res, this.entityList.dialogService);
+            new EntityUtils().handleWsError(this, res, this.entityList.dialogService);
             this.entityList.loaderOpen = false;
             this.entityList.loader.close();
           },
@@ -359,11 +358,11 @@ export class SnapshotListComponent implements EntityTableConfig {
 
     dialogRef.componentInstance.success
       .pipe(untilDestroyed(this))
-      .subscribe((job_res: Job<CoreBulkResponse<boolean>[]>) => {
+      .subscribe((job: Job<CoreBulkResponse<boolean>[]>) => {
         const jobErrors: string[] = [];
         const jobSuccess: boolean[] = [];
 
-        job_res.result.forEach((item) => {
+        job.result.forEach((item) => {
           if (item.error) {
             jobErrors.push(item.error);
           } else {
@@ -395,7 +394,7 @@ export class SnapshotListComponent implements EntityTableConfig {
       });
 
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      new EntityUtils().handleWSError(this.entityList, err, this.dialogService);
+      new EntityUtils().handleWsError(this.entityList, err, this.dialogService);
       dialogRef.close();
     });
   }
@@ -421,11 +420,11 @@ export class SnapshotListComponent implements EntityTableConfig {
     }, (err) => {
       this.entityList.loader.close();
       this.entityList.loaderOpen = false;
-      new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
+      new EntityUtils().handleWsError(this.entityList, err, this.entityList.dialogService);
     });
   }
 
-  rollbackSubmit(entityDialog: EntityDialogComponent<this>): void {
+  rollbackSubmit(entityDialog: EntityDialogComponent): void {
     const item = this.rollback;
     const recursive = entityDialog.formValue.recursive;
     const data = {} as ZfsRollbackParams[1];
@@ -446,7 +445,7 @@ export class SnapshotListComponent implements EntityTableConfig {
           this.entityList.loaderOpen = false;
           this.entityList.loader.close();
           entityDialog.dialogRef.close();
-          new EntityUtils().handleWSError(this.entityList, err, this.entityList.dialogService);
+          new EntityUtils().handleWsError(this.entityList, err, this.entityList.dialogService);
         },
       );
   }

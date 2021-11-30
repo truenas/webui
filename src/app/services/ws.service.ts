@@ -48,7 +48,7 @@ export class WebSocketService {
 
   subscriptions = new Map<string, Observer<unknown>[]>();
 
-  constructor(private _router: Router) {
+  constructor(protected router: Router) {
     this.authStatus$ = new Subject<boolean>();
     this.onOpenSubject$ = new Subject();
     this.onCloseSubject$ = new Subject();
@@ -106,7 +106,7 @@ export class WebSocketService {
     this.onCloseSubject$.next(true);
     setTimeout(() => this.connect(), 5000);
     if (!this.shuttingdown) {
-      this._router.navigate(['/sessions/signin']);
+      this.router.navigate(['/sessions/signin']);
     }
   }
 
@@ -138,40 +138,38 @@ export class WebSocketService {
         call.observer.next(data.result);
         call.observer.complete();
       }
-    } else if (data.msg == 'connected') {
+    } else if (data.msg == ApiEventMessage.Connected) {
       this.connected = true;
       setTimeout(() => this.ping(), 20000);
       this.onconnect();
-    } else if (data.msg == 'nosub') {
-      console.warn(data);
-    } else if (data.msg == ApiEventMessage.Added || data.collection == 'disk.query') {
-      const nom = data.collection.replace('.', '_');
-      if (this.pendingSubs[nom] && this.pendingSubs[nom].observers) {
-        for (const uuid in this.pendingSubs[nom].observers) {
-          const subObserver = this.pendingSubs[nom].observers[uuid];
-          if (data.error) {
-            console.error('Error: ', data.error);
-            subObserver.error(data.error);
-          }
-          if (subObserver && data.fields) {
-            subObserver.next(data.fields);
-          } else if (subObserver && !data.fields) {
-            subObserver.next(data);
-          }
-        }
-      }
-    } else if (data.msg == ApiEventMessage.Changed) {
+    } else if (data.msg == ApiEventMessage.Changed || data.msg == ApiEventMessage.Added) {
       this.subscriptions.forEach((v, k) => {
         if (k == '*' || k == data.collection) {
           v.forEach((item) => { item.next(data); });
         }
       });
-    } else if (data.msg == 'pong') {
-      // pass
-    } else if (data.msg == 'sub') {
-      // pass
+    } else
+    // do nothing for pong or sub, otherwise console warn
+    if (data.msg && (data.msg !== ApiEventMessage.Pong || data.msg !== ApiEventMessage.Sub)) {
+      console.warn('Msg Received', data);
     } else {
       console.warn('Unknown message: ', data);
+    }
+
+    const collectionName = data.collection?.replace('.', '_');
+    if (collectionName && this.pendingSubs[collectionName]?.observers) {
+      for (const uuid in this.pendingSubs[collectionName].observers) {
+        const subObserver = this.pendingSubs[collectionName].observers[uuid];
+        if (data.error) {
+          console.error('Error: ', data.error);
+          subObserver.error(data.error);
+        }
+        if (subObserver && data.fields) {
+          subObserver.next(data.fields);
+        } else if (subObserver && !data.fields) {
+          subObserver.next(data);
+        }
+      }
     }
   }
 
@@ -240,8 +238,7 @@ export class WebSocketService {
 
       // cleanup routine
       observer.complete = () => {
-        const unsub_payload = { id: uuid, msg: 'unsub' };
-        this.send(unsub_payload);
+        this.send({ id: uuid, msg: 'unsub' });
         this.pendingSubs[nom].observers[uuid].unsubscribe();
         delete this.pendingSubs[nom].observers[uuid];
         if (!this.pendingSubs[nom].observers) { delete this.pendingSubs[nom]; }
@@ -254,9 +251,9 @@ export class WebSocketService {
 
   job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {
     const source = Observable.create((observer: Subscriber<Job<ApiDirectory[K]['response']>>) => {
-      this.call(method, params).pipe(untilDestroyed(this)).subscribe((job_id) => {
+      this.call(method, params).pipe(untilDestroyed(this)).subscribe((jobId) => {
         this.subscribe('core.get_jobs').pipe(untilDestroyed(this)).subscribe((event) => {
-          if (event.id == job_id) {
+          if (event.id == jobId) {
             observer.next(event.fields);
             if (event.fields.state === JobState.Success) observer.complete();
             if (event.fields.state === JobState.Failed) observer.error(event.fields);
@@ -267,9 +264,9 @@ export class WebSocketService {
     return source;
   }
 
-  login(username: string, password: string, otp_token?: string): Observable<boolean> {
-    const params: LoginParams = otp_token
-      ? [username, password, otp_token]
+  login(username: string, password: string, otpToken?: string): Observable<boolean> {
+    const params: LoginParams = otpToken
+      ? [username, password, otpToken]
       : [username, password];
     return Observable.create((observer: Subscriber<boolean>) => {
       this.call('auth.login', params).pipe(untilDestroyed(this)).subscribe((wasLoggedIn) => {
@@ -324,7 +321,7 @@ export class WebSocketService {
     this.call('auth.logout').pipe(untilDestroyed(this)).subscribe(() => {
       this.clearCredentials();
       this.socket.close();
-      this._router.navigate(['/sessions/signin']);
+      this.router.navigate(['/sessions/signin']);
       window.location.reload();
     });
   }

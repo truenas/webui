@@ -1,7 +1,7 @@
 import {
   Component, Input,
 } from '@angular/core';
-import { FieldConfig, FormSelectConfig } from '../../../entity-form/models/field-config.interface';
+import { FieldConfig, FormDictConfig, FormSelectConfig } from '../../../entity-form/models/field-config.interface';
 import { EntityUtils } from '../../../utils';
 
 @Component({
@@ -62,5 +62,9 @@ export class WizardSummaryComponent {
 
   originalOrder(): number {
     return 0;
+  }
+
+  asFormDictConfig(value: FieldConfig): FormDictConfig {
+    return value as FormDictConfig;
   }
 }

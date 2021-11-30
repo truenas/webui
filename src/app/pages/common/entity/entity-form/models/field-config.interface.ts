@@ -1,7 +1,8 @@
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { MatRadioChange } from '@angular/material/radio/radio';
-import { ITreeOptions } from 'angular-tree-component';
+import { ITreeOptions } from '@circlon/angular-tree-component';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormExplorerComponent } from 'app/pages/common/entity/entity-form/components/form-explorer/form-explorer.component';
@@ -80,8 +81,9 @@ export interface FormChipConfig<P = any> extends BaseFieldConfig<P> {
   searchOptions?: Option[];
   type: 'chip';
   updateLocal?: boolean;
-  updater?: (value: string, parent: P, config?: FormChipConfig) => void;
+  updater?: (value: string, values: string[], parent: P, config?: FormChipConfig) => void;
   togglePw?: boolean;
+  selectOnly?: boolean;
 }
 
 export interface FormComboboxConfig<P = any> extends BaseFieldConfig<P> {
@@ -116,9 +118,8 @@ export interface FormExplorerConfig<P = any> extends BaseFieldConfig<P> {
     explorer?: FormExplorerComponent;
   };
   explorerParam?: any;
-  explorerType?: string;
+  explorerType?: ExplorerType;
   fileLocation?: string;
-  hideDirs?: string;
   initial?: string;
   multiple?: boolean;
   rootSelectable?: boolean;
@@ -217,8 +218,12 @@ export interface FormSelectionListConfig<P = any> extends BaseFieldConfig<P> {
   inlineFields?: boolean;
   inlineFieldFlex?: string;
   onChange?(data: any): void;
-  options?: Option[];
+  options?: FormSelectionOption[];
   type: 'selectionlist';
+}
+
+export interface FormSelectionOption extends Option {
+  tooltip?: string;
 }
 
 export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
@@ -228,7 +233,7 @@ export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
 }
 
 export interface FormTaskConfig<P = any> extends BaseFieldConfig<P> {
-  tabs?: FieldConfig[];
+  tabs?: (FieldConfig & { tabName: string })[];
   tabName?: string;
   type: 'task';
 }

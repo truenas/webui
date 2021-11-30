@@ -17,7 +17,7 @@ import { RoutePartsService, RoutePart } from 'app/services/route-parts/route-par
   styleUrls: ['./breadcrumb.component.scss'],
 })
 export class BreadcrumbComponent implements OnInit {
-  @Input() product_type: ProductType;
+  @Input() productType: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
   routeParts: RoutePart[];

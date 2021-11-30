@@ -33,7 +33,7 @@ import {
   WebSocketService,
 } from 'app/services';
 import { IpmiService } from 'app/services/ipmi.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { EntityUtils } from '../common/entity/utils';
 import { CardWidgetConf } from './card-widget/card-widget.component';
@@ -54,15 +54,15 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
   protected configCall = 'network.configuration.config' as const;
   formEvent$: Subject<CoreEvent>;
 
-  ha_enabled = false;
+  isHaEnabled = false;
   hasPendingChanges = false;
   checkinWaiting = false;
-  checkin_timeout = 60;
-  checkin_timeout_pattern = /\d+/;
-  checkin_remaining: number = null;
-  private uniqueIPs: string[] = [];
+  checkinTimeout = 60;
+  checkinTimeoutPattern = /\d+/;
+  checkinRemaining: number = null;
+  private uniqueIps: string[] = [];
   private affectedServices: string[] = [];
-  checkin_interval: Interval;
+  checkinInterval: Interval;
 
   private navigation: Navigation;
   helptext = helptext;
@@ -87,7 +87,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     },
     delete: (row: NetworkInterfaceUi, table: TableComponent) => {
       const deleteAction = row.type === NetworkInterfaceType.Physical ? this.translate.instant('Reset configuration for ') : this.translate.instant('Delete ');
-      if (this.ha_enabled) {
+      if (this.isHaEnabled) {
         this.dialog.info(helptext.ha_enabled_edit_title, helptext.ha_enabled_edit_msg);
       } else {
         this.tableService.delete(table, row, deleteAction);
@@ -132,10 +132,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     ],
     parent: this,
     add: () => {
-      this.ixModalService.open(StaticRouteFormComponent);
+      this.slideInService.open(StaticRouteFormComponent);
     },
     edit: (route: StaticRoute) => {
-      const modal = this.ixModalService.open(StaticRouteFormComponent);
+      const modal = this.slideInService.open(StaticRouteFormComponent);
       modal.setEditingStaticRoute(route);
     },
     deleteMsg: {
@@ -216,7 +216,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     private translate: TranslateService,
     private tableService: TableService,
     private ipmiService: IpmiService,
-    private ixModalService: IxModalService,
+    private slideInService: IxSlideInService,
   ) {
     super();
     this.getGlobalSettings();
@@ -299,7 +299,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         this.hasConsoleFooter = advancedConfig.consolemsg;
       });
 
-    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.staticRoutesTableConf.tableComponent.getData();
     });
 
@@ -309,10 +309,10 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       .pipe(untilDestroyed(this))
       .subscribe((evt: NetworkInterfacesChangedEvent) => {
         if (evt && evt.data.checkin) {
-          this.checkin_remaining = null;
+          this.checkinRemaining = null;
           this.checkinWaiting = false;
-          if (this.checkin_interval) {
-            clearInterval(this.checkin_interval);
+          if (this.checkinInterval) {
+            clearInterval(this.checkinInterval);
           }
           this.hasPendingChanges = false;
         }
@@ -322,14 +322,14 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       this.ws
         .call('failover.licensed')
         .pipe(untilDestroyed(this))
-        .subscribe((is_ha) => {
-          if (is_ha) {
+        .subscribe((isHa) => {
+          if (isHa) {
             this.ws
               .call('failover.disabled_reasons')
               .pipe(untilDestroyed(this))
-              .subscribe((failover_disabled) => {
-                if (failover_disabled.length === 0) {
-                  this.ha_enabled = true;
+              .subscribe((reasons) => {
+                if (reasons.length === 0) {
+                  this.isHaEnabled = true;
                 }
               });
           }
@@ -360,15 +360,15 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
       .pipe(untilDestroyed(this))
       .subscribe((seconds) => {
         if (seconds != null) {
-          if (seconds > 0 && this.checkin_remaining == null) {
-            this.checkin_remaining = Math.round(seconds);
-            this.checkin_interval = setInterval(() => {
-              if (this.checkin_remaining > 0) {
-                this.checkin_remaining -= 1;
+          if (seconds > 0 && this.checkinRemaining == null) {
+            this.checkinRemaining = Math.round(seconds);
+            this.checkinInterval = setInterval(() => {
+              if (this.checkinRemaining > 0) {
+                this.checkinRemaining -= 1;
               } else {
-                this.checkin_remaining = null;
+                this.checkinRemaining = null;
                 this.checkinWaiting = false;
-                clearInterval(this.checkin_interval);
+                clearInterval(this.checkinInterval);
                 window.location.reload(); // should just refresh after the timer goes off
               }
             }, 1000);
@@ -376,9 +376,9 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
           this.checkinWaiting = true;
         } else {
           this.checkinWaiting = false;
-          this.checkin_remaining = null;
-          if (this.checkin_interval) {
-            clearInterval(this.checkin_interval);
+          this.checkinRemaining = null;
+          if (this.checkinInterval) {
+            clearInterval(this.checkinInterval);
           }
         }
       });
@@ -404,8 +404,8 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
           });
 
           ips.forEach((ip) => {
-            if (!this.uniqueIPs.includes(ip)) {
-              this.uniqueIPs.push(ip);
+            if (!this.uniqueIps.includes(ip)) {
+              this.uniqueIps.push(ip);
             }
           });
         }
@@ -421,7 +421,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
             if (confirm) {
               this.loader.open();
               this.ws
-                .call('interface.commit', [{ checkin_timeout: this.checkin_timeout }])
+                .call('interface.commit', [{ checkin_timeout: this.checkinTimeout }])
                 .pipe(untilDestroyed(this))
                 .subscribe(
                   () => {
@@ -436,7 +436,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
                   },
                   (err) => {
                     this.loader.close();
-                    new EntityUtils().handleWSError(this, err, this.dialog);
+                    new EntityUtils().handleWsError(this, err, this.dialog);
                   },
                 );
             }
@@ -450,7 +450,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
         .confirm({
           title: helptext.services_restarted.title,
           message: this.translate.instant(helptext.services_restarted.message, {
-            uniqueIPs: this.uniqueIPs.join(', '),
+            uniqueIPs: this.uniqueIps.join(', '),
             affectedServices: this.affectedServices.join(', '),
           }),
           hideCheckBox: true,
@@ -487,12 +487,12 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
           this.dialog.info(helptext.checkin_complete_title, helptext.checkin_complete_message, '500px', 'info');
           this.hasPendingChanges = false;
           this.checkinWaiting = false;
-          clearInterval(this.checkin_interval);
-          this.checkin_remaining = null;
+          clearInterval(this.checkinInterval);
+          this.checkinRemaining = null;
         },
         (err) => {
           this.loader.close();
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         },
       );
   }
@@ -523,7 +523,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
               },
               (err) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialog);
+                new EntityUtils().handleWsError(this, err, this.dialog);
               },
             );
         }
@@ -535,7 +535,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     this.core.emit({ name: 'NetworkInterfacesChanged', data: { commit: false, checkin: false }, sender: this });
   }
 
-  goToHA(): void {
+  goToHa(): void {
     this.router.navigate(['/', 'system', 'failover']);
   }
 
@@ -732,7 +732,7 @@ export class NetworkComponent extends ViewControllerComponent implements OnInit,
     }];
   }
 
-  isOpenVpnActionVisible(name: string, row: any): boolean {
+  isOpenVpnActionVisible(name: string, row: Service): boolean {
     if (
       (name === 'start' && row.state === ServiceStatus.Running)
       || (name === 'stop' && row.state === ServiceStatus.Stopped)

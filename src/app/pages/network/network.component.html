@@ -8,14 +8,14 @@
               <p> {{helptext.pending_changes_text | translate}} </p>
               <p> {{helptext.checkin_text | translate }}
                 <mat-form-field floatPlaceholder="never" id="timeout-field">
-                  <input matInput [(ngModel)]="checkin_timeout" [pattern]="checkin_timeout_pattern">
+                  <input matInput [(ngModel)]="checkinTimeout" [pattern]="checkinTimeoutPattern">
                 </mat-form-field>
                 {{ helptext.checkin_text_2 | translate }}
               </p>
             </div>
             <ng-template #checkIn>
               <div>
-                <p>{{helptext.pending_checkin_text | translate}} {{checkin_remaining}}
+                <p>{{helptext.pending_checkin_text | translate}} {{checkinRemaining}}
                                   {{helptext.pending_checkin_text_2 | translate}}</p>
               </div>
             </ng-template>
@@ -24,27 +24,27 @@
             <button
               *ngIf="!checkinWaiting"
               mat-button
-              [disabled]="ha_enabled"
+              [disabled]="isHaEnabled"
               ix-auto ix-auto-type="button" ix-auto-identifier="testChange"
               (click)="commitPendingChanges()"
             >{{helptext.commit_button | translate}}</button>
             <button
               *ngIf="checkinWaiting"
               mat-button
-              [disabled]="ha_enabled"
+              [disabled]="isHaEnabled"
               ix-auto ix-auto-type="button" ix-auto-identifier="keepChange"
               (click)="checkInNow()"
             >{{helptext.keep_button | translate}}</button>
             <button
               mat-button
-              [disabled]="ha_enabled"
+              [disabled]="isHaEnabled"
               ix-auto ix-auto-type="button" ix-auto-identifier="revertChange"
               (click)="rollbackPendingChanges()"
             >{{helptext.rollback_button | translate}}</button>
           </mat-card-actions>
-          <div *ngIf="ha_enabled" class="disabled-notice">
+          <div *ngIf="isHaEnabled" class="disabled-notice">
             {{helptext.ha_enabled_text | translate}} (<span
-              class="pseudolink" (click)="goToHA()"
+              class="pseudolink" (click)="goToHa()"
               ix-auto ix-auto-type="link" ix-auto-identifier="goToHA"
               >{{helptext.go_to_ha | translate}}</span>).</div>
         </mat-card>

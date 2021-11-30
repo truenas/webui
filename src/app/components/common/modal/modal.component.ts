@@ -1,6 +1,11 @@
 import {
-  Component, ElementRef, Input, OnInit, OnDestroy,
+  Component, ElementRef, Input, OnInit, OnDestroy, HostListener,
 } from '@angular/core';
+import {
+  EmbeddedFormConfiguration,
+  FormModalConfiguration,
+  ModalConfiguration, WizardModalConfiguration,
+} from 'app/components/common/modal/modal-configuration.interface';
 import { ModalService } from 'app/services/modal.service';
 
 @Component({
@@ -9,9 +14,14 @@ import { ModalService } from 'app/services/modal.service';
   styleUrls: ['./modal.component.scss'],
 })
 export class ModalComponent implements OnInit, OnDestroy {
+  @HostListener('document:keydown.escape') onKeydownHandler(): void {
+    if (this.modal) {
+      this.close();
+    }
+  }
   @Input() id: string;
   private element: HTMLElement;
-  conf: any;
+  conf: ModalConfiguration;
   formOpen = false;
   wizard = false;
   modal: HTMLElement;
@@ -51,7 +61,7 @@ export class ModalComponent implements OnInit, OnDestroy {
   }
 
   // open modal
-  open(conf: any): void {
+  open(conf: ModalConfiguration): void {
     this.conf = conf;
     this.conf.isModalForm = true;
     this.conf.closeModalForm = this.close.bind(this);
@@ -67,7 +77,7 @@ export class ModalComponent implements OnInit, OnDestroy {
     this.background = document.querySelector(`.${this.id}-background`);
     this.slideIn = document.querySelector('.slide-in-form');
 
-    if (conf.wizardConfig) {
+    if ('wizardConfig' in conf) {
       this.wizard = true;
     }
     this.modal.classList.add('open');
@@ -95,5 +105,18 @@ export class ModalComponent implements OnInit, OnDestroy {
       this.title = '';
       resolve(true);
     });
+  }
+
+  // TODO: Pretty bad, remove at some point.
+  asFormConfig(modalConfig: ModalConfiguration): FormModalConfiguration {
+    return modalConfig as FormModalConfiguration;
+  }
+
+  asEmbeddedConfig(modalConfig: ModalConfiguration): EmbeddedFormConfiguration {
+    return modalConfig as EmbeddedFormConfiguration;
+  }
+
+  asWizardConfig(modalConfig: ModalConfiguration): WizardModalConfiguration {
+    return modalConfig as WizardModalConfiguration;
   }
 }

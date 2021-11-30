@@ -10,7 +10,7 @@ import { WebSocketService } from './ws.service';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  static VALIDATOR_NAME = /^[a-zA-Z0-9_][a-zA-Z0-9_\.-]*[$]?$/;
+  static namePattern = /^[a-zA-Z0-9_][a-zA-Z0-9_\.-]*[$]?$/;
   protected uncachedUserQuery = 'dscache.get_uncached_user' as const;
   protected uncachedGroupQuery = 'dscache.get_uncached_group' as const;
   protected userQuery = 'user.query' as const;
@@ -19,9 +19,8 @@ export class UserService {
 
   constructor(protected ws: WebSocketService) {}
 
-  groupQueryDSCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
-    // TODO: Proper type for query API.
-    let queryArgs: any[] = [];
+  groupQueryDsCache(search = '', hideBuiltIn = false, offset = 0): Observable<Group[]> {
+    let queryArgs: QueryFilter<Group>[] = [];
     search = search.trim();
     if (search.length > 0) {
       queryArgs = [['group', '^', search]];
@@ -32,7 +31,7 @@ export class UserService {
     return this.ws.call(this.groupQuery, [queryArgs, { ...this.queryOptions, offset }]);
   }
 
-  getGroupByGID(gid: string): Observable<Group[]> {
+  getGroupByGid(gid: string): Observable<Group[]> {
     return this.ws.call(this.groupQuery, [[['gid', '=', gid]], this.queryOptions]);
   }
 
@@ -40,7 +39,7 @@ export class UserService {
     return this.ws.call(this.uncachedGroupQuery, [group]);
   }
 
-  userQueryDSCache(search = '', offset = 0): Observable<User[]> {
+  userQueryDsCache(search = '', offset = 0): Observable<User[]> {
     let queryArgs: QueryFilter<User>[] = [];
     search = search.trim();
     if (search.length > 0) {
@@ -49,7 +48,7 @@ export class UserService {
     return this.ws.call(this.userQuery, [queryArgs, { ...this.queryOptions, offset }]);
   }
 
-  getUserByUID(uid: string): Observable<User[]> {
+  getUserByUid(uid: string): Observable<User[]> {
     return this.ws.call(this.userQuery, [[['uid', '=', uid]], this.queryOptions]);
   }
 

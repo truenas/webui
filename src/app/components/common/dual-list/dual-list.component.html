@@ -1,6 +1,7 @@
 <div class="container-dualListBox">
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight"
     cdkDropList
+    id="user-list"
     #userList="cdkDropList"
     [cdkDropListData]="availableItems.totalItems"
     [cdkDropListConnectedTo]="[memberList]"
@@ -13,8 +14,8 @@
       [ngClass]="{ chosen: availableItems.isSelected(item) }"
       (mousedown)="availableItems.mouseDown(item, $event)"
       (mouseup)="availableItems.mouseUp(item, $event)">
-      <mat-list *ngIf="templateItem;else noTemplateItem" >
-        <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item}"></ng-container>
+      <mat-list *ngIf="templateItem;else noTemplateItem">
+        <ng-container [ngTemplateOutlet]="templateItem" [ngTemplateOutletContext]="{ data: item }"></ng-container>
       </mat-list>
       <ng-template #noTemplateItem>
         {{item.name}}
@@ -43,6 +44,7 @@
   </div>
   <div class="container-items" [style.minHeight]="minHeight" [style.maxHeight]="maxHeight"
     cdkDropList
+    id="member-list"
     #memberList="cdkDropList"
     [cdkDropListData]="selectedItems.totalItems"
     [cdkDropListConnectedTo]="[userList]"

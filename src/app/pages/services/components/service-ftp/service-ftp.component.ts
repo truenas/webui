@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import helptext from 'app/helptext/services/components/service-ftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -29,12 +30,12 @@ import {
 export class ServiceFTPComponent implements FormConfiguration, OnInit {
   editCall = 'ftp.update' as const;
   queryCall = 'ftp.config' as const;
-  route_success: string[] = ['services'];
+  routeSuccess: string[] = ['services'];
 
   isBasicMode = true;
   protected entityForm: EntityFormComponent;
 
-  protected rootlogin_fg: FormControl;
+  protected rootloginControl: FormControl;
   protected warned = false;
   protected rootlogin: boolean;
   fieldConfig: FieldConfig[];
@@ -125,7 +126,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
         {
           type: 'explorer',
           initial: '/mnt',
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           name: 'anonpath',
           placeholder: helptext.anonpath_placeholder,
           tooltip: helptext.anonpath_tooltip,
@@ -385,7 +386,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
     { name: 'divider', divider: true },
   ] as FieldSet<this>[]);
 
-  advanced_field = this.fieldSets.advancedFields;
+  advancedFields = this.fieldSets.advancedFields;
 
   custActions = [
     {
@@ -439,8 +440,8 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityForm = entityEdit;
     entityEdit.submitFunction = this.submitFunction;
-    this.rootlogin_fg = entityEdit.formGroup.controls['rootlogin'] as FormControl;
-    this.rootlogin_fg.valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
+    this.rootloginControl = entityEdit.formGroup.controls['rootlogin'] as FormControl;
+    this.rootloginControl.valueChanges.pipe(untilDestroyed(this)).subscribe((res: boolean) => {
       if (res && !this.warned && !this.rootlogin) {
         this.dialog.confirm({
           title: helptext.rootlogin_dialog_title,
@@ -450,7 +451,7 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
           disableClose: true,
         }).pipe(untilDestroyed(this)).subscribe((confirm) => {
           if (!confirm) {
-            this.rootlogin_fg.setValue(false);
+            this.rootloginControl.setValue(false);
           } else {
             this.warned = true;
           }

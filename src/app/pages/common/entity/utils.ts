@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ChartSchemaNode } from 'app/interfaces/chart-release.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -18,7 +19,21 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { DialogService } from 'app/services';
 import { Relation, RelationGroup } from './entity-form/models/field-relation.interface';
 
+// eslint-disable-next-line @typescript-eslint/naming-convention
 export const NULL_VALUE = 'null_value';
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+export type ItemBeforeFlattening = object & {
+  id: string | number;
+  children?: ItemBeforeFlattening[];
+};
+
+type DataBeforeFlattening = ItemBeforeFlattening | ItemBeforeFlattening[];
+
+export interface FlattenedData extends Record<string, unknown> {
+  _level?: number;
+  _parent?: string | number;
+}
 
 export class EntityUtils {
   handleError(entity: any, res: any): void {
@@ -52,8 +67,8 @@ export class EntityUtils {
         if (fc) {
           const element = document.getElementById(i);
           if (element) {
-            if (entity.conf && entity.conf.advanced_field
-              && _.indexOf(entity.conf.advanced_field, i) > -1
+            if (entity.conf && entity.conf.advancedFields
+              && _.indexOf(entity.conf.advancedFields, i) > -1
               && entity.conf.isBasicMode) {
               entity.conf.isBasicMode = false;
             }
@@ -75,7 +90,7 @@ export class EntityUtils {
     }
   }
 
-  handleWSError(
+  handleWsError(
     entity: any,
     res: WebsocketError | Job,
     dialogService?: DialogService,
@@ -118,8 +133,8 @@ export class EntityUtils {
         if (fc && !fc['isHidden']) {
           const element = document.getElementById(field);
           if (element) {
-            if (entity.conf && entity.conf.advanced_field
-              && _.indexOf(entity.conf.advanced_field, field) > -1
+            if (entity.conf && entity.conf.advancedFields
+              && _.indexOf(entity.conf.advancedFields, field) > -1
               && entity.conf.isBasicMode) {
               entity.conf.isBasicMode = false;
             }
@@ -159,15 +174,15 @@ export class EntityUtils {
     return (!!a) && (a.constructor === Object);
   };
 
-  flattenData(data: any | any[], level = 0, parent?: any): any[] {
-    let ndata: any[] = [];
+  flattenData(data: DataBeforeFlattening, level = 0, parent?: { id: string | number }): FlattenedData[] {
+    let ndata: FlattenedData[] = [];
     if (this.isObject(data)) {
       data = [data];
     }
-    (data as any[]).forEach((item) => {
-      item._level = level;
+    data.forEach((item) => {
+      (item as FlattenedData)._level = level;
       if (parent) {
-        item._parent = parent.id;
+        (item as FlattenedData)._parent = parent.id;
       }
       ndata.push(item);
       if (item.children) {
@@ -184,14 +199,14 @@ export class EntityUtils {
       : !!value;
   }
 
-  array1DToLabelValuePair(arr: (string | number)[]): Option[] {
+  array1dToLabelValuePair(arr: (string | number)[]): Option[] {
     return arr.map((value) => ({ label: value.toString(), value }));
   }
 
   /**
    * make cron time dow consistence
    */
-  parseDOW(cron: string): string {
+  parseDow(cron: string): string {
     const dowOptions = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
     const cronArray = cron.replace(/00/g, '0').split(' ');
     if (cronArray[cronArray.length - 1] !== '*') {
@@ -371,11 +386,12 @@ export class EntityUtils {
         ipConfig['type'] = 'ipwithnetmask';
       }
     } else if (schemaConfig.schema.type == 'hostpath') {
-      const conf = { ...fieldConfig } as FormExplorerConfig;
-      conf['type'] = 'explorer';
-      conf['initial'] = '/mnt';
-      conf['explorerType'] = 'file';
-      fieldConfig = conf;
+      fieldConfig = {
+        ...fieldConfig,
+        type: 'explorer',
+        initial: '/mnt',
+        explorerType: ExplorerType.File,
+      } as FormExplorerConfig;
     } else if (schemaConfig.schema.type == 'path') {
       const inputConfig = fieldConfig as FormInputConfig;
       inputConfig['type'] = 'input';

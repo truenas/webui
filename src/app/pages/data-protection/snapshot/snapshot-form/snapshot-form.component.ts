@@ -26,9 +26,9 @@ export class SnapshotFormComponent implements FormConfiguration {
   isEntity = true;
   pk: number;
   protected dataset: string;
-  protected dataset_disabled = false;
+  protected isDatasetDisabled = false;
   protected datasetFg: AbstractControl;
-  save_button_enabled = true;
+  saveButtonEnabled = true;
   protected entityForm: EntityFormComponent;
   title: string;
   isNew = false;
@@ -137,12 +137,12 @@ export class SnapshotFormComponent implements FormConfiguration {
     protected storageService: StorageService,
     protected dialog: DialogService,
     protected modalService: ModalService) {
-    const begin_field = this.fieldSets.config('begin') as FormSelectConfig;
-    const end_field = this.fieldSets.config('end') as FormSelectConfig;
-    const time_options = this.taskService.getTimeOptions();
-    time_options.forEach((option) => {
-      begin_field.options.push({ label: option.label, value: option.value });
-      end_field.options.push({ label: option.label, value: option.value });
+    const beginField = this.fieldSets.config('begin') as FormSelectConfig;
+    const endField = this.fieldSets.config('end') as FormSelectConfig;
+    const timeOptions = this.taskService.getTimeOptions();
+    timeOptions.forEach((option) => {
+      beginField.options.push({ label: option.label, value: option.value });
+      endField.options.push({ label: option.label, value: option.value });
     });
   }
 
@@ -157,23 +157,23 @@ export class SnapshotFormComponent implements FormConfiguration {
     this.storageService.getDatasetNameOptions().pipe(untilDestroyed(this)).subscribe(
       (options) => {
         if (this.dataset !== undefined && !_.find(options, { label: this.dataset })) {
-          const disabled_dataset = { label: this.dataset, value: this.dataset, disable: true };
-          this.dataset_disabled = true;
-          options.push(disabled_dataset);
+          const disabledDataset = { label: this.dataset, value: this.dataset, disable: true };
+          this.isDatasetDisabled = true;
+          options.push(disabledDataset);
 
           datasetField.warnings = helptext.dataset_warning;
-          this.save_button_enabled = false;
+          this.saveButtonEnabled = false;
         }
         datasetField.options = _.sortBy(options, [(o) => o.label]);
       },
-      (error) => new EntityUtils().handleWSError(this, error, this.dialog),
+      (error) => new EntityUtils().handleWsError(this, error, this.dialog),
     );
 
     this.datasetFg = entityForm.formGroup.controls['dataset'];
 
     this.datasetFg.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
-      if (this.dataset_disabled && this.dataset !== value) {
-        this.save_button_enabled = true;
+      if (this.isDatasetDisabled && this.dataset !== value) {
+        this.saveButtonEnabled = true;
         datasetField.warnings = '';
       }
     });

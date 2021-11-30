@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_system_ntpservers = {
+export const helptextSystemNtpservers = {
   fieldset: T('NTP Server Settings'),
 
   address: {

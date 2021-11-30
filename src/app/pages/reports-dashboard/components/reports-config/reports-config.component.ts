@@ -132,7 +132,7 @@ export class ReportsConfigComponent implements FormConfiguration {
       this.entityForm.formGroup.markAsPristine();
       this.afterModalFormSaved();
     }, (err) => {
-      new EntityUtils().handleWSError(this.entityForm, err);
+      new EntityUtils().handleWsError(this.entityForm, err);
     });
   }
 }

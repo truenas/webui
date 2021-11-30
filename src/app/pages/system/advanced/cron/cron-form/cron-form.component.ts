@@ -25,7 +25,7 @@ export class CronFormComponent implements FormConfiguration {
   editCall = 'cronjob.update' as const;
   addCall = 'cronjob.create' as const;
   pk: number;
-  protected user_field: FormComboboxConfig;
+  protected userField: FormComboboxConfig;
   protected isOneColumnForm = true;
   isEntity = true;
 
@@ -110,8 +110,8 @@ export class CronFormComponent implements FormConfiguration {
   constructor(protected userService: UserService, protected modalService: ModalService) {}
 
   updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((users) => {
-      this.user_field.searchOptions = users.map((user) => {
+    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((users) => {
+      this.userField.searchOptions = users.map((user) => {
         return { label: user.username, value: user.username };
       });
     });
@@ -124,10 +124,10 @@ export class CronFormComponent implements FormConfiguration {
     this.title = entityForm.isNew ? helptext.cron_job_add : helptext.cron_job_edit;
 
     // Setup user field options
-    this.user_field = _.find(this.fieldSets[0].config, { name: 'user' }) as FormComboboxConfig;
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
+    this.userField = _.find(this.fieldSets[0].config, { name: 'user' }) as FormComboboxConfig;
+    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((users) => {
       for (const user of users) {
-        this.user_field.options.push({
+        this.userField.options.push({
           label: user.username,
           value: user.username,
         });

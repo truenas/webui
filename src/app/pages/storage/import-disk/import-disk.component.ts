@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { CoreService } from 'app/core/services/core-service/core.service';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import helptext from 'app/helptext/storage/import-disk/import-disk';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
@@ -78,7 +79,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
           name: 'dst_path',
           placeholder: helptext.import_disk_dst_path_placeholder,
           tooltip: helptext.import_disk_dst_path_tooltip,
-          explorerType: 'directory',
+          explorerType: ExplorerType.Directory,
           initial: '/mnt',
           required: true,
           validation: helptext.import_disk_dst_path_validation,
@@ -88,9 +89,9 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   ];
 
   volume: FormSelectConfig;
-  fs_type: FormControl;
-  private fs_type_list: FormRadioConfig;
-  msdosfs_locale: FormSelectConfig;
+  fsTypeControl: FormControl;
+  private fsTypeField: FormRadioConfig;
+  msdosfsLocaleField: FormSelectConfig;
   private entityForm: EntityFormComponent;
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   custActions: FormCustomAction[];
@@ -113,33 +114,33 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
   afterInit(entityForm: EntityFormComponent): void {
     this.fieldConfig = entityForm.fieldConfig;
     this.volume = _.find(this.fieldConfig, { name: 'volume' }) as FormSelectConfig;
-    this.fs_type_list = _.find(this.fieldConfig, { name: 'fs_type' }) as FormRadioConfig;
-    this.msdosfs_locale = _.find(this.fieldConfig, { name: 'msdosfs_locale' }) as FormSelectConfig;
-    this.fs_type = entityForm.formGroup.controls['fs_type'] as FormControl;
+    this.fsTypeField = _.find(this.fieldConfig, { name: 'fs_type' }) as FormRadioConfig;
+    this.msdosfsLocaleField = _.find(this.fieldConfig, { name: 'msdosfs_locale' }) as FormSelectConfig;
+    this.fsTypeControl = entityForm.formGroup.controls['fs_type'] as FormControl;
 
     this.ws.call('pool.import_disk_msdosfs_locales').pipe(untilDestroyed(this)).subscribe((locales) => {
       locales.forEach((locale) => {
-        this.msdosfs_locale.options.push({ label: locale, value: locale });
+        this.msdosfsLocaleField.options.push({ label: locale, value: locale });
       });
     }, (res) => {
       this.dialogService.errorReport(this.translate.instant('Error getting locales'), res.message, res.stack);
       this.initialized = true;
     });
 
-    this.fs_type.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
+    this.fsTypeControl.valueChanges.pipe(untilDestroyed(this)).subscribe((value: string) => {
       if (value === 'msdosfs') {
-        this.msdosfs_locale['isHidden'] = false;
+        this.msdosfsLocaleField['isHidden'] = false;
       } else {
-        this.msdosfs_locale['isHidden'] = true;
+        this.msdosfsLocaleField['isHidden'] = true;
       }
     });
 
     entityForm.formGroup.controls['volume'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: string) => {
       this.ws.call('pool.import_disk_autodetect_fs_type', [res]).pipe(untilDestroyed(this)).subscribe((res) => {
         // If ws call fails to return type, no type is selected; otherwise, type is autoselected.
-        for (const option of this.fs_type_list.options) {
+        for (const option of this.fsTypeField.options) {
           if (res === option.value) {
-            this.fs_type.setValue(option.value);
+            this.fsTypeControl.setValue(option.value);
           }
         }
       });
@@ -177,24 +178,24 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
 
   customSubmit(payload: any): void {
     this.custActions = [];
-    const fs_options: Record<string, unknown> = {};
+    const fsOptions: Record<string, unknown> = {};
     if (payload.fs_type === 'msdosfs' && payload.msdosfs_locale) {
-      fs_options['locale'] = payload.msdosfs_locale;
+      fsOptions['locale'] = payload.msdosfs_locale;
     }
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Importing Disk') } });
     this.dialogRef.componentInstance.setDescription(this.translate.instant('Importing Disk...'));
-    this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fs_options, payload.dst_path]);
+    this.dialogRef.componentInstance.setCall('pool.import_disk', [payload.volume, payload.fs_type, fsOptions, payload.dst_path]);
     this.dialogRef.componentInstance.submit();
-    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job_res: Job<any>) => {
+    this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe((job: Job<any>) => {
       this.dialogRef.close();
       this.entityForm.success = true;
-      this.job.showLogs(job_res, this.translate.instant('Disk Imported: Log Summary'), this.translate.instant('Close'));
+      this.job.showLogs(job, this.translate.instant('Disk Imported: Log Summary'), this.translate.instant('Close'));
       this.custActions = [
         {
           id: 'view_import_log',
           name: 'View Import Log',
           function: () => {
-            this.job.showLogs(job_res, this.translate.instant('Logs'), this.translate.instant('Close'));
+            this.job.showLogs(job, this.translate.instant('Logs'), this.translate.instant('Close'));
           },
         },
       ];
@@ -214,7 +215,7 @@ export class ImportDiskComponent implements OnDestroy, FormConfiguration {
       ];
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      new EntityUtils().handleWSError(this.entityForm, err);
+      new EntityUtils().handleWsError(this.entityForm, err);
     });
   }
 

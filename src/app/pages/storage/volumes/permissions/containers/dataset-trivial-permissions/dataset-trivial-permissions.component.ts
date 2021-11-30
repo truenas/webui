@@ -33,7 +33,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
 
   protected datasetId: string;
   formGroup: FormGroup;
-  route_success: string[] = ['storage'];
+  routeSuccess: string[] = ['storage'];
   isEntity = true;
   private entityForm: EntityFormComponent;
   protected userField: FormComboboxConfig;
@@ -188,7 +188,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       this.aclType = dataset[0].acltype.value as AclType;
     });
 
-    this.userService.userQueryDSCache().pipe(untilDestroyed(this)).subscribe((users) => {
+    this.userService.userQueryDsCache().pipe(untilDestroyed(this)).subscribe((users) => {
       this.userField = _.find(
         this.fieldSets.find((set) => set.name === helptext.heading_owner).config,
         { name: 'user' },
@@ -198,7 +198,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
       });
     });
 
-    this.userService.groupQueryDSCache().pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.userService.groupQueryDsCache().pipe(untilDestroyed(this)).subscribe((groups) => {
       this.groupField = _.find(
         this.fieldSets.find((set) => set.name === helptext.heading_owner).config,
         { name: 'group' },
@@ -235,7 +235,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   }
 
   updateGroupSearchOptions(value = ''): void {
-    this.userService.groupQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
+    this.userService.groupQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((groups) => {
       this.groupField.searchOptions = groups.map((group) => {
         return { label: group.group, value: group.group };
       });
@@ -243,7 +243,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   }
 
   updateUserSearchOptions(value = ''): void {
-    this.userService.userQueryDSCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
+    this.userService.userQueryDsCache(value).pipe(untilDestroyed(this)).subscribe((items) => {
       this.userField.searchOptions = items.map((user) => {
         return { label: user.username, value: user.username };
       });
@@ -284,7 +284,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
     dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityForm.success = true;
       dialogRef.close();
-      this.router.navigate(['/', ...this.route_success]);
+      this.router.navigate(['/', ...this.routeSuccess]);
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
       console.error(err);
@@ -292,7 +292,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   }
 
   loadMoreOptions(length: number, parent: this, searchText: string): void {
-    parent.userService.userQueryDSCache(searchText, length)
+    parent.userService.userQueryDsCache(searchText, length)
       .pipe(untilDestroyed(parent))
       .subscribe((users) => {
         const userOptions = users.map((user) => {
@@ -307,7 +307,7 @@ export class DatasetTrivialPermissionsComponent implements FormConfiguration {
   }
 
   loadMoreGroupOptions(length: number, parent: this, searchText: string): void {
-    parent.userService.groupQueryDSCache(searchText, false, length)
+    parent.userService.groupQueryDsCache(searchText, false, length)
       .pipe(untilDestroyed(parent))
       .subscribe((groups) => {
         const groupOptions = groups.map((group) => {

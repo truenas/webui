@@ -15,7 +15,7 @@ import { NicInfoEvent } from 'app/interfaces/events/nic-info-event.interface';
 import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { VolumeDataEvent } from 'app/interfaces/events/volume-data-event.interface';
-import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
+import { EntityToolbarActionConfig } from 'app/interfaces/global-action.interface';
 import {
   NetworkInterface,
   NetworkInterfaceState,
@@ -25,12 +25,11 @@ import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { VolumesData, VolumeData } from 'app/interfaces/volume-data.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormConfigurationComponent } from 'app/pages/common/entity/entity-form/entity-form-configuration.component';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashConfigItem } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
 import { WebSocketService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 
 // TODO: This adds additional fields. Unclear if vlan is coming from backend
@@ -51,7 +50,7 @@ export type DashboardNicState = NetworkInterfaceState & {
 })
 export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   formEvents$: Subject<CoreEvent> = new Subject();
-  actionsConfig: GlobalActionConfig;
+  actionsConfig: EntityToolbarActionConfig;
 
   screenType = 'Desktop'; // Desktop || Mobile
   optimalDesktopWidth = '100%';
@@ -94,14 +93,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   };
 
   // For widgetsysinfo
-  isHA: boolean; // = false;
+  isHa: boolean;
   sysinfoReady = false;
 
   // For CPU widget
   systemInformation: SystemInfoWithFeatures;
 
   // For widgetpool
-  system_product = 'Generic';
   pools: Pool[];
   volumeData: VolumesData;
 
@@ -120,6 +118,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     private el: ElementRef,
     public modalService: ModalService,
     private translate: TranslateService,
+    private slideInService: IxSlideInService,
   ) {
     core.register({ observerClass: this, eventName: 'SidenavStatus' }).pipe(untilDestroyed(this)).subscribe(() => {
       setTimeout(() => {
@@ -228,7 +227,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((hasFailover) => {
       if (hasFailover) {
-        this.isHA = true;
+        this.isHa = true;
       }
     });
     this.sysinfoReady = true;
@@ -359,13 +358,13 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     data.forEach((dataset) => {
       if (typeof dataset == undefined || !dataset) { return; }
-      const used_pct = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
+      const usedPercent = dataset.used.parsed / (dataset.used.parsed + dataset.available.parsed);
       const zvol = {
         avail: dataset.available.parsed,
         id: dataset.id,
         name: dataset.name,
         used: dataset.used.parsed,
-        used_pct: (used_pct * 100).toFixed(0) + '%',
+        used_pct: (usedPercent * 100).toFixed(0) + '%',
       };
 
       vd[zvol.id] = zvol;
@@ -430,7 +429,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       this.formEvents$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
         switch (evt.name) {
           case 'FormSubmit':
-            this.formHandler(evt);
+            this.dashState = evt.data;
             break;
           case 'ToolbarChanged':
             this.showConfigForm();
@@ -467,7 +466,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
       { name: 'System Information', rendered: true, id: '0' },
     ];
 
-    if (this.isHA) {
+    if (this.isHa) {
       conf.push({
         name: 'System Information(Standby)', identifier: 'passive,true', rendered: true, id: conf.length.toString(),
       });
@@ -476,21 +475,21 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     conf.push({ name: 'CPU', rendered: true, id: conf.length.toString() });
     conf.push({ name: 'Memory', rendered: true, id: conf.length.toString() });
 
+    conf.push({ name: 'Storage', rendered: true, id: conf.length.toString() });
+
     this.pools.forEach((pool) => {
       conf.push({
         name: 'Pool', identifier: 'name,' + pool.name, rendered: false, id: conf.length.toString(),
       });
     });
 
-    conf.push({ name: 'Storage', rendered: true, id: conf.length.toString() });
+    conf.push({ name: 'Network', rendered: true, id: conf.length.toString() });
 
     this.nics.forEach((nic) => {
       conf.push({
         name: 'Interface', identifier: 'name,' + nic.name, rendered: false, id: conf.length.toString(),
       });
     });
-
-    conf.push({ name: 'Network', rendered: true, id: conf.length.toString() });
 
     return conf;
   }
@@ -572,75 +571,8 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   showConfigForm(): void {
-    const widgetTypes: string[] = [];
-    this.dashState.forEach((item) => {
-      if (!widgetTypes.includes(item.name)) {
-        widgetTypes.push(item.name);
-      }
-    });
-
-    const fieldSets = [
-      {
-        name: 'Toggle Widget Visibility',
-        width: '100%',
-        label: true,
-        config: this.dashState.map((widget) => {
-          let ph;
-          if (widget.identifier) {
-            const spl = widget.identifier.split(',');
-            ph = spl[1];
-          } else {
-            ph = widget.name;
-          }
-
-          return {
-            type: 'checkbox',
-            name: ph,
-            value: widget.rendered,
-            placeholder: ph,
-          };
-        }),
-      },
-    ] as FieldSet[];
-
-    const formComponent = this.modalService.openInSlideIn(EntityFormConfigurationComponent);
-    formComponent.fieldSets = new FieldSets(fieldSets);
-    formComponent.title = this.translate.instant('Dashboard Configuration');
-    formComponent.isOneColumnForm = true;
-    formComponent.formType = 'EntityFormComponent';
-    formComponent.target = this.formEvents$;
-  }
-
-  formHandler(evt: CoreEvent): void {
-    // This method handles the form data
-
-    const clone = Object.assign([], this.dashState);
-    const keys = Object.keys(evt.data);
-
-    // Apply
-    keys.forEach((key) => {
-      const value = evt.data[key];
-      const dashItem = clone.find((w) => {
-        if (w.identifier) {
-          const spl = w.identifier.split(',');
-          const name = spl[1];
-          return key == name;
-        }
-        return key == w.name;
-      });
-
-      dashItem.rendered = value;
-    });
-
-    this.dashState = clone;
-    this.modalService.closeSlideIn();
-
-    // Save
-    this.ws.call('user.set_attribute', [1, 'dashState', clone]).pipe(untilDestroyed(this)).subscribe((res) => {
-      if (!res) {
-        throw new Error('Unable to save Dashboard State');
-      }
-    });
+    const modal = this.slideInService.open(DashboardFormComponent);
+    modal.setupForm(this.dashState, this.formEvents$);
   }
 
   applyState(state: DashConfigItem[]): void {

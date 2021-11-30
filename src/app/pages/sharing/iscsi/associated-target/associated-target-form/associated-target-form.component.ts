@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Overwrite } from 'utility-types';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiTargetExtent, IscsiTargetExtentUpdate } from 'app/interfaces/iscsi.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -24,13 +24,13 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
   addCall = 'iscsi.targetextent.create' as const;
   queryCall = 'iscsi.targetextent.query' as const;
   editCall = 'iscsi.targetextent.update' as const;
-  route_success: string[] = ['sharing', 'iscsi', 'associatedtarget'];
+  routeSuccess: string[] = ['sharing', 'iscsi', 'associatedtarget'];
   isEntity = true;
   customFilter: [[Partial<QueryFilter<IscsiTargetExtent>>]] = [[['id', '=']]];
 
   fieldSets: FieldSet[] = [
     {
-      name: helptext_sharing_iscsi.fieldset_associated_target,
+      name: helptextSharingIscsi.fieldset_associated_target,
       label: true,
       class: 'associated_target',
       width: '100%',
@@ -38,31 +38,31 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'target',
-          placeholder: helptext_sharing_iscsi.associated_target_placeholder_target,
-          tooltip: helptext_sharing_iscsi.associated_target_tooltip_target,
+          placeholder: helptextSharingIscsi.associated_target_placeholder_target,
+          tooltip: helptextSharingIscsi.associated_target_tooltip_target,
           options: [],
           value: '',
           required: true,
-          validation: helptext_sharing_iscsi.associated_target_validators_target,
+          validation: helptextSharingIscsi.associated_target_validators_target,
         },
         {
           type: 'input',
           inputType: 'number',
           name: 'lunid',
-          placeholder: helptext_sharing_iscsi.associated_target_placeholder_lunid,
-          tooltip: helptext_sharing_iscsi.associated_target_tooltip_lunid,
+          placeholder: helptextSharingIscsi.associated_target_placeholder_lunid,
+          tooltip: helptextSharingIscsi.associated_target_tooltip_lunid,
           value: '',
-          validation: helptext_sharing_iscsi.associated_target_validators_lunid,
+          validation: helptextSharingIscsi.associated_target_validators_lunid,
         },
         {
           type: 'select',
           name: 'extent',
-          placeholder: helptext_sharing_iscsi.associated_target_placeholder_extent,
-          tooltip: helptext_sharing_iscsi.associated_target_tooltip_extent,
+          placeholder: helptextSharingIscsi.associated_target_placeholder_extent,
+          tooltip: helptextSharingIscsi.associated_target_tooltip_extent,
           options: [],
           value: '',
           required: true,
-          validation: helptext_sharing_iscsi.associated_target_validators_extent,
+          validation: helptextSharingIscsi.associated_target_validators_extent,
         },
       ],
     },
@@ -70,8 +70,8 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
 
-  protected target_control: FormSelectConfig;
-  protected extent_control: FormSelectConfig;
+  protected targetControlField: FormSelectConfig;
+  protected extentControlField: FormSelectConfig;
   pk: number;
   protected entityForm: EntityFormComponent;
 
@@ -91,19 +91,19 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     this.entityForm = entityForm;
     this.fieldConfig = entityForm.fieldConfig;
 
-    this.target_control = _.find(this.fieldConfig, { name: 'target' }) as FormSelectConfig;
-    this.target_control.options.push({ label: '----------', value: '' });
+    this.targetControlField = _.find(this.fieldConfig, { name: 'target' }) as FormSelectConfig;
+    this.targetControlField.options.push({ label: '----------', value: '' });
     this.iscsiService.getTargets().pipe(untilDestroyed(this)).subscribe((targets) => {
       targets.forEach((target) => {
-        this.target_control.options.push({ label: target.name, value: target.id });
+        this.targetControlField.options.push({ label: target.name, value: target.id });
       });
     });
 
-    this.extent_control = _.find(this.fieldConfig, { name: 'extent' }) as FormSelectConfig;
-    this.extent_control.options.push({ label: '----------', value: '' });
+    this.extentControlField = _.find(this.fieldConfig, { name: 'extent' }) as FormSelectConfig;
+    this.extentControlField.options.push({ label: '----------', value: '' });
     this.iscsiService.getExtents().pipe(untilDestroyed(this)).subscribe((extents) => {
       extents.forEach((extent) => {
-        this.extent_control.options.push({ label: (extent).name, value: (extent).id });
+        this.extentControlField.options.push({ label: (extent).name, value: (extent).id });
       });
     });
   }
@@ -119,11 +119,11 @@ export class AssociatedTargetFormComponent implements FormConfiguration {
     this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
       (res) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, res);
+        new EntityUtils().handleWsError(this.entityForm, res);
       },
     );
   }

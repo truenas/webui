@@ -31,14 +31,14 @@ import { UserFormComponent } from '../user-form/user-form.component';
 })
 export class UserListComponent implements EntityTableConfig<UserListRow> {
   title = 'Users';
-  route_add: string[] = ['account', 'users', 'add'];
-  route_add_tooltip = 'Add User';
-  route_edit: string[] = ['account', 'users', 'edit'];
+  routeAdd: string[] = ['account', 'users', 'add'];
+  routeAddTooltip = this.translate.instant('Add User');
+  routeEdit: string[] = ['account', 'users', 'edit'];
 
   protected entityList: EntityTableComponent;
   protected loaderOpen = false;
-  protected usr_lst: [User[]?] = [];
-  protected grp_lst: [Group[]?] = [];
+  protected users: [User[]?] = [];
+  protected groups: [Group[]?] = [];
   hasDetails = true;
   queryCall = 'user.query' as const;
   wsDelete = 'user.delete' as const;
@@ -124,8 +124,8 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
       icon: 'edit',
       label: helptext.user_list_actions_edit_label,
       name: helptext.user_list_actions_edit_id,
-      onClick: (users_edit) => {
-        this.modalService.openInSlideIn(UserFormComponent, users_edit.id);
+      onClick: (user) => {
+        this.modalService.openInSlideIn(UserFormComponent, user.id);
       },
     });
     if (!row.builtin) {
@@ -134,19 +134,19 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
         icon: 'delete',
         name: 'delete',
         label: helptext.user_list_actions_delete_label,
-        onClick: (users_edit) => {
+        onClick: (user) => {
           const conf: DialogFormConfiguration = {
             title: helptext.deleteDialog.title,
-            message: helptext.deleteDialog.message + `<i>${users_edit.username}</i>?`,
+            message: this.translate.instant('Delete user "{name}"?', { name: user.username }),
             fieldConfig: [],
             confirmCheckbox: true,
             saveButtonText: helptext.deleteDialog.saveButtonText,
             preInit: () => {
-              if (this.ableToDeleteGroup(users_edit.id)) {
+              if (this.ableToDeleteGroup(user.id)) {
                 conf.fieldConfig.push({
                   type: 'checkbox',
                   name: 'delete_group',
-                  placeholder: helptext.deleteDialog.deleteGroup_placeholder + users_edit.group.bsdgrp_group,
+                  placeholder: helptext.deleteDialog.deleteGroup_placeholder + user.group.bsdgrp_group,
                   value: false,
                 });
               }
@@ -154,14 +154,14 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
             customSubmit: (entityDialog: EntityDialogComponent) => {
               entityDialog.dialogRef.close(true);
               this.loader.open();
-              this.ws.call(this.wsDelete, [users_edit.id, entityDialog.formValue])
+              this.ws.call(this.wsDelete, [user.id, entityDialog.formValue])
                 .pipe(untilDestroyed(this))
                 .subscribe(() => {
                   this.entityList.getData();
                   this.loader.close();
                 },
                 (err) => {
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                  new EntityUtils().handleWsError(this, err, this.dialogService);
                   this.loader.close();
                 });
             },
@@ -174,22 +174,19 @@ export class UserListComponent implements EntityTableConfig<UserListRow> {
   }
 
   ableToDeleteGroup(id: number): boolean {
-    const user = _.find(this.usr_lst[0], { id });
-    const group_users = _.find(this.grp_lst[0], { id: user.group.id }).users;
+    const user = _.find(this.users[0], { id });
+    const groupUsers = _.find(this.groups[0], { id: user.group.id }).users;
     // Show checkbox if deleting the last member of a group
-    if (group_users.length === 1) {
-      return true;
-    }
-    return false;
+    return groupUsers.length === 1;
   }
 
   resourceTransformIncomingRestData(rawUsers: User[]): UserListRow[] {
     let users = [...rawUsers] as UserListRow[];
-    this.usr_lst = [];
-    this.grp_lst = [];
-    this.usr_lst.push(users);
+    this.users = [];
+    this.groups = [];
+    this.users.push(users);
     this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.grp_lst.push(res);
+      this.groups.push(res);
       users.forEach((user) => {
         const group = _.find(res, { gid: user.group.bsdgrp_gid });
         user.gid = group['gid'];

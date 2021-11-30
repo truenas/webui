@@ -21,7 +21,6 @@ import { WebSocketService } from './services/ws.service';
 export class AppComponent {
   appTitle = 'TrueNAS';
   protected accountUserResource = 'account/users/1';
-  product_type = '';
 
   constructor(
     public title: Title,
@@ -112,15 +111,14 @@ export class AppComponent {
   }
 
   private detectBrowser(name: string): boolean {
-    const N = navigator.appName;
-    const UA = navigator.userAgent;
+    const appName = navigator.appName;
+    const ua = navigator.userAgent;
     let temp;
-    const browserVersion = UA.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
-    if (browserVersion && (temp = UA.match(/version\/([\.\d]+)/i)) != null) browserVersion[2] = temp[1];
-    const browserName = browserVersion ? browserVersion[1] : N;
+    const browserVersion = ua.match(/(opera|chrome|safari|firefox|msie)\/?\s*(\.?\d+(\.\d+)*)/i);
+    if (browserVersion && (temp = ua.match(/version\/([\.\d]+)/i)) != null) browserVersion[2] = temp[1];
+    const browserName = browserVersion ? browserVersion[1] : appName;
 
-    if (name == browserName) return true;
-    return false;
+    return name == browserName;
   }
 
   private globalPreviewControl(): void {

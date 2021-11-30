@@ -7,11 +7,11 @@ import { forkJoin, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
-import { helptext_system_advanced, helptext_system_advanced as helptext } from 'app/helptext/system/advanced';
+import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { AdvancedConfigUpdate } from 'app/interfaces/advanced-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -42,8 +42,8 @@ export class SyslogFormComponent implements OnInit {
     syslog: helptext.system_dataset_tooltip,
   };
 
-  readonly levelOptions = of(helptext_system_advanced.sysloglevel.options);
-  readonly transportOptions = of(helptext_system_advanced.syslog_transport.options);
+  readonly levelOptions = of(helptextSystemAdvanced.sysloglevel.options);
+  readonly transportOptions = of(helptextSystemAdvanced.syslog_transport.options);
   readonly certificateOptions = this.ws.call('system.advanced.syslog_certificate_choices').pipe(
     choicesToOptions(),
     map((options) => [{ label: '---', value: null }, ...options]),
@@ -55,7 +55,7 @@ export class SyslogFormComponent implements OnInit {
     private fb: FormBuilder,
     private ws: WebSocketService,
     private sysGeneralService: SystemGeneralService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private dialogService: DialogService,
     private cdr: ChangeDetectorRef,
   ) {}
@@ -89,11 +89,12 @@ export class SyslogFormComponent implements OnInit {
       untilDestroyed(this),
     ).subscribe(() => {
       this.isFormLoading = false;
-      this.modalService.close();
+      this.cdr.markForCheck();
+      this.slideInService.close();
       this.sysGeneralService.refreshSysGeneral();
     }, (res) => {
       this.isFormLoading = false;
-      new EntityUtils().handleWSError(this, res);
+      new EntityUtils().handleWsError(this, res);
       this.cdr.markForCheck();
     });
   }
@@ -108,6 +109,7 @@ export class SyslogFormComponent implements OnInit {
       .subscribe(
         ([advancedConfig, { syslog }]) => {
           this.isFormLoading = false;
+          this.cdr.markForCheck();
           this.form.patchValue({
             ...advancedConfig,
             syslog_tls_certificate: String(advancedConfig.syslog_tls_certificate),
@@ -117,7 +119,7 @@ export class SyslogFormComponent implements OnInit {
         },
         (error) => {
           this.isFormLoading = false;
-          new EntityUtils().handleWSError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(null, error, this.dialogService);
         },
       );
   }

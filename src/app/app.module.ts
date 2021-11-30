@@ -1,5 +1,5 @@
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { NgModule, Injector } from '@angular/core';
+import { NgModule, Injector, ErrorHandler } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -11,6 +11,7 @@ import { StoreModule } from '@ngrx/store';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
+import * as Sentry from '@sentry/angular';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import {
@@ -32,7 +33,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import { ErdService } from 'app/services/erd.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NotificationsService } from 'app/services/notifications.service';
 import { RouterEffects } from 'app/store/effects/router.effects';
 import { reducers } from 'app/store/reducers';
@@ -134,7 +135,13 @@ import { WebSocketService } from './services/ws.service';
     NotificationsService,
     ErdService,
     JobsManagerStore,
-    IxModalService,
+    IxSlideInService,
+    {
+      provide: ErrorHandler,
+      useValue: Sentry.createErrorHandler({
+        showDialog: false,
+      }),
+    },
   ],
   bootstrap: [
     AppComponent,

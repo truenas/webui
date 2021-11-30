@@ -6,7 +6,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -28,24 +28,24 @@ export class CertificateEditComponent implements FormConfiguration {
   queryCall = 'certificate.query' as const;
   editCall = 'certificate.update' as const;
   isEntity = true;
-  title: string = helptext_system_certificates.edit.title;
-  private viewButtonText: string = helptext_system_certificates.viewButton.certificate;
-  protected isCSR: boolean;
+  title: string = helptextSystemCertificates.edit.title;
+  private viewButtonText: string = helptextSystemCertificates.viewButton.certificate;
+  protected isCsr: boolean;
   queryCallOption: [QueryFilter<Certificate>];
 
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
-      name: helptext_system_certificates.edit.fieldset_certificate,
+      name: helptextSystemCertificates.edit.fieldset_certificate,
       class: 'certificate',
       config: [
         {
           type: 'input',
           name: 'name',
-          placeholder: helptext_system_certificates.edit.name.placeholder,
-          tooltip: helptext_system_certificates.edit.name.tooltip,
+          placeholder: helptextSystemCertificates.edit.name.placeholder,
+          tooltip: helptextSystemCertificates.edit.name.tooltip,
           required: true,
-          validation: helptext_system_certificates.edit.name.validation,
+          validation: helptextSystemCertificates.edit.name.validation,
         },
       ],
     },
@@ -54,24 +54,24 @@ export class CertificateEditComponent implements FormConfiguration {
       class: 'spacer',
       config: [],
     }, {
-      name: helptext_system_certificates.edit.subject,
+      name: helptextSystemCertificates.edit.subject,
       label: true,
       class: 'subject',
       config: [
         {
           type: 'paragraph',
           name: 'country',
-          paraText: helptext_system_certificates.edit_view.country,
+          paraText: helptextSystemCertificates.edit_view.country,
         },
         {
           type: 'paragraph',
           name: 'state',
-          paraText: helptext_system_certificates.edit_view.state,
+          paraText: helptextSystemCertificates.edit_view.state,
         },
         {
           type: 'paragraph',
           name: 'city',
-          paraText: helptext_system_certificates.edit_view.city,
+          paraText: helptextSystemCertificates.edit_view.city,
         },
       ],
     }, {
@@ -81,17 +81,17 @@ export class CertificateEditComponent implements FormConfiguration {
         {
           type: 'paragraph',
           name: 'organization',
-          paraText: helptext_system_certificates.edit_view.organization,
+          paraText: helptextSystemCertificates.edit_view.organization,
         },
         {
           type: 'paragraph',
           name: 'organizational_unit',
-          paraText: helptext_system_certificates.edit_view.organizational_unit,
+          paraText: helptextSystemCertificates.edit_view.organizational_unit,
         },
         {
           type: 'paragraph',
           name: 'email',
-          paraText: helptext_system_certificates.edit_view.email,
+          paraText: helptextSystemCertificates.edit_view.email,
         },
       ],
     }, {
@@ -101,17 +101,17 @@ export class CertificateEditComponent implements FormConfiguration {
         {
           type: 'paragraph',
           name: 'common',
-          paraText: helptext_system_certificates.edit_view.common,
+          paraText: helptextSystemCertificates.edit_view.common,
         },
         {
           type: 'paragraph',
           name: 'san',
-          paraText: helptext_system_certificates.edit_view.san,
+          paraText: helptextSystemCertificates.edit_view.san,
         },
         {
           type: 'paragraph',
           name: 'DN',
-          paraText: helptext_system_certificates.edit_view.DN,
+          paraText: helptextSystemCertificates.edit_view.DN,
         },
       ],
     }, {
@@ -126,27 +126,27 @@ export class CertificateEditComponent implements FormConfiguration {
         {
           type: 'paragraph',
           name: 'cert_type',
-          paraText: helptext_system_certificates.edit_view.type,
+          paraText: helptextSystemCertificates.edit_view.type,
         },
         {
           type: 'paragraph',
           name: 'root_path',
-          paraText: helptext_system_certificates.edit_view.path,
+          paraText: helptextSystemCertificates.edit_view.path,
         },
         {
           type: 'paragraph',
           name: 'digest_algorithm',
-          paraText: helptext_system_certificates.edit_view.digest_algorithm,
+          paraText: helptextSystemCertificates.edit_view.digest_algorithm,
         },
         {
           type: 'paragraph',
           name: 'key_length',
-          paraText: helptext_system_certificates.edit_view.key_length,
+          paraText: helptextSystemCertificates.edit_view.key_length,
         },
         {
           type: 'paragraph',
           name: 'key_type',
-          paraText: helptext_system_certificates.edit_view.key_type,
+          paraText: helptextSystemCertificates.edit_view.key_type,
         },
         {
           type: 'button',
@@ -164,32 +164,32 @@ export class CertificateEditComponent implements FormConfiguration {
         {
           type: 'paragraph',
           name: 'until',
-          paraText: helptext_system_certificates.edit_view.unitl,
+          paraText: helptextSystemCertificates.edit_view.unitl,
         },
         {
           type: 'paragraph',
           name: 'issuer',
-          paraText: helptext_system_certificates.edit_view.issuer,
+          paraText: helptextSystemCertificates.edit_view.issuer,
         },
         {
           type: 'paragraph',
           name: 'revoked',
-          paraText: helptext_system_certificates.edit_view.revoked,
+          paraText: helptextSystemCertificates.edit_view.revoked,
         },
         {
           type: 'paragraph',
           name: 'signedby',
-          paraText: helptext_system_certificates.edit_view.signed_by,
+          paraText: helptextSystemCertificates.edit_view.signed_by,
         },
         {
           type: 'paragraph',
           name: 'lifetime',
-          paraText: helptext_system_certificates.edit_view.lifetime,
+          paraText: helptextSystemCertificates.edit_view.lifetime,
         },
         {
           type: 'button',
           name: 'private_key_view',
-          customEventActionLabel: helptext_system_certificates.viewButton.key,
+          customEventActionLabel: helptextSystemCertificates.viewButton.key,
           customEventMethod: () => {
             this.viewKey();
           },
@@ -217,9 +217,9 @@ export class CertificateEditComponent implements FormConfiguration {
   resourceTransformIncomingRestData(data: Certificate): Certificate {
     this.incomingData = data;
     if (data.cert_type_CSR) {
-      this.isCSR = true;
-      this.title = helptext_system_certificates.edit.titleCSR;
-      this.viewButtonText = helptext_system_certificates.viewButton.csr;
+      this.isCsr = true;
+      this.title = helptextSystemCertificates.edit.titleCSR;
+      this.viewButtonText = helptextSystemCertificates.viewButton.csr;
     }
     this.setForm();
     return data;
@@ -228,7 +228,7 @@ export class CertificateEditComponent implements FormConfiguration {
   custActions = [
     {
       id: 'create_ACME',
-      name: helptext_system_certificates.list.action_create_acme_certificate,
+      name: helptextSystemCertificates.list.action_create_acme_certificate,
       function: () => {
         this.modalService.closeSlideIn();
         const message = { action: 'open', component: 'acmeComponent', row: this.rowNum };
@@ -238,7 +238,7 @@ export class CertificateEditComponent implements FormConfiguration {
   ];
 
   isCustActionVisible(actionname: string): boolean {
-    if (actionname === 'create_ACME' && !this.isCSR) {
+    if (actionname === 'create_ACME' && !this.isCsr) {
       return false;
     }
     return true;
@@ -291,12 +291,12 @@ export class CertificateEditComponent implements FormConfiguration {
           .subscribe((file) => {
             this.storage.downloadBlob(file, fileName);
           }, (err) => {
-            this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-              helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+            this.dialog.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
+              helptextSystemCertificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
           });
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }
@@ -312,12 +312,12 @@ export class CertificateEditComponent implements FormConfiguration {
           .subscribe((file) => {
             this.storage.downloadBlob(file, fileName);
           }, (err) => {
-            this.dialog.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-              helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+            this.dialog.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
+              helptextSystemCertificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
           });
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }
@@ -328,8 +328,8 @@ export class CertificateEditComponent implements FormConfiguration {
         title: this.incomingData.name,
         message: this.incomingData.CSR,
         hideCheckBox: true,
-        buttonMsg: helptext_system_certificates.viewDialog.download,
-        cancelMsg: helptext_system_certificates.viewDialog.close,
+        buttonMsg: helptextSystemCertificates.viewDialog.download,
+        cancelMsg: helptextSystemCertificates.viewDialog.close,
         textToCopy: this.incomingData.CSR,
         keyTextArea: true,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
@@ -340,8 +340,8 @@ export class CertificateEditComponent implements FormConfiguration {
         title: this.incomingData.name,
         message: this.incomingData.certificate,
         hideCheckBox: true,
-        buttonMsg: helptext_system_certificates.viewDialog.download,
-        cancelMsg: helptext_system_certificates.viewDialog.close,
+        buttonMsg: helptextSystemCertificates.viewDialog.download,
+        cancelMsg: helptextSystemCertificates.viewDialog.close,
         textToCopy: this.incomingData.certificate,
         keyTextArea: true,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
@@ -355,8 +355,8 @@ export class CertificateEditComponent implements FormConfiguration {
       title: this.incomingData.name,
       message: this.incomingData.privatekey,
       hideCheckBox: true,
-      buttonMsg: helptext_system_certificates.viewDialog.download,
-      cancelMsg: helptext_system_certificates.viewDialog.close,
+      buttonMsg: helptextSystemCertificates.viewDialog.download,
+      cancelMsg: helptextSystemCertificates.viewDialog.close,
       textToCopy: this.incomingData.privatekey,
       keyTextArea: true,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
@@ -376,7 +376,7 @@ export class CertificateEditComponent implements FormConfiguration {
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
       this.matDialog.closeAll();
       this.modalService.refreshTable();
-      new EntityUtils().handleWSError(this.entityForm, res);
+      new EntityUtils().handleWsError(this.entityForm, res);
     });
   }
 }

@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { AbstractControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SupportConfig, SupportConfigUpdate } from 'app/interfaces/support.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
@@ -23,7 +23,7 @@ export class ProactiveComponent implements FormConfiguration {
   entityEdit: EntityFormComponent;
   queryCall = 'support.config' as const;
   controls: { [key: string]: AbstractControl };
-  save_button_enabled: boolean;
+  saveButtonEnabled: boolean;
   title = helptext.proactive.title;
   fieldConfig: FieldConfig[] = [];
   fieldSets: FieldSet[] = [
@@ -210,10 +210,10 @@ export class ProactiveComponent implements FormConfiguration {
               document.getElementById(i).style.opacity = '0.38';
             });
           });
-          this.save_button_enabled = false;
+          this.saveButtonEnabled = false;
         } else {
           this.getContacts();
-          this.save_button_enabled = true;
+          this.saveButtonEnabled = true;
           this.ws.call('support.is_available_and_enabled').pipe(untilDestroyed(this)).subscribe((res) => {
             if (res) {
               this.entityEdit.formGroup.controls['enabled'].setValue(true);

@@ -43,8 +43,8 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   title = this.translate.instant('Virtual Machines');
   queryCall = 'vm.query' as const;
   wsDelete = 'vm.delete' as const;
-  route_add: string[] = ['vm', 'wizard'];
-  route_edit: string[] = ['vm', 'edit'];
+  routeAdd: string[] = ['vm', 'wizard'];
+  routeEdit: string[] = ['vm', 'edit'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private productType = window.localStorage.getItem('product_type') as ProductType;
   hasVirtualizationSupport = false;
@@ -299,7 +299,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
         this.checkMemory();
       });
       this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       });
     } else {
       this.loader.open();
@@ -323,7 +323,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           } if (method === this.wsMethods.update) {
             row.autostart = !row.autostart;
           }
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         },
       );
     }
@@ -337,7 +337,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           resolve(rows);
         },
         (err) => {
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
           reject(err);
         },
       );
@@ -353,47 +353,47 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
       id: 'START',
       icon: 'play_arrow',
       label: this.translate.instant('Start'),
-      onClick: (start_row: VirtualMachineRow) => {
-        this.onSliderChange(start_row);
+      onClick: (vm: VirtualMachineRow) => {
+        this.onSliderChange(vm);
       },
     },
     {
       id: 'RESTART',
       icon: 'replay',
       label: this.translate.instant('Restart'),
-      onClick: (restart_row: VirtualMachineRow) => {
-        this.doRowAction(restart_row, this.wsMethods.restart);
+      onClick: (vm: VirtualMachineRow) => {
+        this.doRowAction(vm, this.wsMethods.restart);
       },
     },
     {
       id: 'POWER_OFF',
       icon: 'power_settings_new',
       label: this.translate.instant('Power Off'),
-      onClick: (power_off_row: VirtualMachineRow) => {
-        this.doRowAction(row, this.wsMethods.poweroff, [power_off_row.id]);
+      onClick: (vm: VirtualMachineRow) => {
+        this.doRowAction(row, this.wsMethods.poweroff, [vm.id]);
       },
     },
     {
       id: 'STOP',
       icon: 'stop',
       label: this.translate.instant('Stop'),
-      onClick: (stop_row: VirtualMachineRow) => {
-        this.onSliderChange(stop_row);
+      onClick: (vm: VirtualMachineRow) => {
+        this.onSliderChange(vm);
       },
     },
     {
       id: 'EDIT',
       icon: 'edit',
       label: this.translate.instant('Edit'),
-      onClick: (edit_row: VirtualMachineRow) => {
-        this.router.navigate(new Array('').concat(['vm', 'edit', String(edit_row.id)]));
+      onClick: (vm: VirtualMachineRow) => {
+        this.router.navigate(new Array('').concat(['vm', 'edit', String(vm.id)]));
       },
     },
     {
       id: 'DELETE',
       icon: 'delete',
       label: this.translate.instant('Delete'),
-      onClick: (delete_row: VirtualMachineRow) => {
+      onClick: (vm: VirtualMachineRow) => {
         const conf: DialogFormConfiguration = {
           title: this.translate.instant('Delete Virtual Machine'),
           fieldConfig: [
@@ -419,9 +419,9 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
               type: 'input',
               name: 'confirm_name',
               placeholder: '',
-              maskValue: delete_row.name,
+              maskValue: vm.name,
               required: true,
-              validation: [regexValidator(new RegExp(delete_row.name))],
+              validation: [regexValidator(new RegExp(vm.name))],
               hideErrMsg: true,
             },
           ],
@@ -429,13 +429,13 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           customSubmit: (entityDialog: EntityDialogComponent) => {
             entityDialog.dialogRef.close(true);
             const params = [
-              delete_row.id,
+              vm.id,
               {
                 zvols: entityDialog.formValue.zvols,
                 force: entityDialog.formValue.force,
               },
             ];
-            this.doRowAction(delete_row, this.wsDelete, params, true);
+            this.doRowAction(vm, this.wsDelete, params, true);
           },
         };
         this.dialogService.dialogForm(conf);
@@ -445,15 +445,15 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
       id: 'DEVICES',
       icon: 'device_hub',
       label: this.translate.instant('Devices'),
-      onClick: (devices_row: VirtualMachineRow) => {
-        this.router.navigate(new Array('').concat(['vm', String(devices_row.id), 'devices', devices_row.name]));
+      onClick: (vm: VirtualMachineRow) => {
+        this.router.navigate(new Array('').concat(['vm', String(vm.id), 'devices', vm.name]));
       },
     },
     {
       id: 'CLONE',
       icon: 'filter_none',
       label: this.translate.instant('Clone'),
-      onClick: (clone_row: VirtualMachineRow) => {
+      onClick: (vm: VirtualMachineRow) => {
         const conf: DialogFormConfiguration = {
           title: this.translate.instant('Name'),
           fieldConfig: [
@@ -468,11 +468,11 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
           saveButtonText: this.translate.instant('Clone'),
           customSubmit: (entityDialog: EntityDialogComponent) => {
             entityDialog.dialogRef.close(true);
-            const params = [clone_row.id];
+            const params = [vm.id];
             if (entityDialog.formValue.name) {
               params.push(entityDialog.formValue.name);
             }
-            this.doRowAction(clone_row, this.wsMethods.clone, params, true);
+            this.doRowAction(vm, this.wsMethods.clone, params, true);
           },
         };
         this.dialogService.dialogForm(conf);
@@ -482,31 +482,31 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
       id: 'DISPLAY',
       icon: 'settings_ethernet',
       label: this.translate.instant('Display'),
-      onClick: (display_vm: VirtualMachineRow) => {
+      onClick: (vm: VirtualMachineRow) => {
         this.loader.open();
-        this.ws.call('vm.get_display_devices', [display_vm.id]).pipe(untilDestroyed(this)).subscribe((display_devices_res) => {
-          if (display_devices_res.length === 1) {
-            if (!display_devices_res[0].attributes.password_configured) {
+        this.ws.call('vm.get_display_devices', [vm.id]).pipe(untilDestroyed(this)).subscribe((displayDevices) => {
+          if (displayDevices.length === 1) {
+            if (!displayDevices[0].attributes.password_configured) {
               this.ws.call(
                 'vm.get_display_web_uri',
                 [
-                  display_vm.id,
+                  vm.id,
                   this.extractHostname(window.origin),
                 ],
-              ).pipe(untilDestroyed(this)).subscribe((web_uri_res) => {
+              ).pipe(untilDestroyed(this)).subscribe((webUris) => {
                 this.loader.close();
-                if (web_uri_res[display_devices_res[0].id].error) {
-                  return this.dialogService.info('Error', web_uri_res[display_devices_res[0].id].error);
+                if (webUris[displayDevices[0].id].error) {
+                  return this.dialogService.info('Error', webUris[displayDevices[0].id].error);
                 }
-                window.open(web_uri_res[display_devices_res[0].id].uri, '_blank');
+                window.open(webUris[displayDevices[0].id].uri, '_blank');
               }, (err) => {
                 this.loader.close();
                 new EntityUtils().handleError(this, err);
               });
             } else {
               this.loader.close();
-              const display_device = _.find(display_devices_res, { id: display_devices_res[0].id });
-              this.showPasswordDialog(display_vm, display_device);
+              const displayDevice = _.find(displayDevices, { id: displayDevices[0].id });
+              this.showPasswordDialog(vm, displayDevice);
             }
           } else {
             this.loader.close();
@@ -516,29 +516,28 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
               fieldConfig: [{
                 type: 'radio',
                 name: 'display_device',
-                options: display_devices_res.map((d) => ({ label: d.attributes.type, value: d.id })),
+                options: displayDevices.map((d) => ({ label: d.attributes.type, value: d.id })),
                 validation: [Validators.required],
               }],
               saveButtonText: this.translate.instant('Open'),
-              parent: this,
               customSubmit: (entityDialog: EntityDialogComponent) => {
-                const display_device = _.find(display_devices_res, { id: entityDialog.formValue.display_device });
-                if (display_device.attributes.password_configured) {
-                  this.showPasswordDialog(display_vm, display_device);
+                const displayDevice = _.find(displayDevices, { id: entityDialog.formValue.display_device });
+                if (displayDevice.attributes.password_configured) {
+                  this.showPasswordDialog(vm, displayDevice);
                 } else {
                   this.loader.open();
                   this.ws.call(
                     'vm.get_display_web_uri',
                     [
-                      display_vm.id,
+                      vm.id,
                       this.extractHostname(window.origin),
                     ],
-                  ).pipe(untilDestroyed(this)).subscribe((web_uris_res) => {
+                  ).pipe(untilDestroyed(this)).subscribe((webUris) => {
                     this.loader.close();
-                    if (web_uris_res[display_device.id].error) {
-                      return this.dialogService.info('Error', web_uris_res[display_device.id].error);
+                    if (webUris[displayDevice.id].error) {
+                      return this.dialogService.info('Error', webUris[displayDevice.id].error);
                     }
-                    window.open(web_uris_res[display_device.id].uri, '_blank');
+                    window.open(webUris[displayDevice.id].uri, '_blank');
                   }, (err) => {
                     this.loader.close();
                     new EntityUtils().handleError(this, err);
@@ -571,27 +570,26 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
         const path = `/var/log/libvirt/bhyve/${vm.id}_${vm.name}.log`;
         const filename = `${vm.id}_${vm.name}.log`;
         this.ws.call('core.download', ['filesystem.get', [path], filename]).pipe(untilDestroyed(this)).subscribe(
-          (download_res) => {
-            const url = download_res[1];
+          ([_, url]) => {
             const mimetype = 'text/plain';
             this.storageService.streamDownloadFile(this.http, url, filename, mimetype)
               .pipe(untilDestroyed(this))
               .subscribe((file) => {
                 this.storageService.downloadBlob(file, filename);
               }, (err) => {
-                new EntityUtils().handleWSError(this, err, this.dialogService);
+                new EntityUtils().handleWsError(this, err, this.dialogService);
               });
           },
           (err) => {
-            new EntityUtils().handleWSError(this, err, this.dialogService);
+            new EntityUtils().handleWsError(this, err, this.dialogService);
           },
         );
       },
     }] as EntityTableAction[];
   }
 
-  showPasswordDialog(display_vm: VirtualMachineRow, display_device: VmDisplayDevice): void {
-    const pass_conf: DialogFormConfiguration = {
+  showPasswordDialog(vm: VirtualMachineRow, displayDevice: VmDisplayDevice): void {
+    const passwordConfiguration: DialogFormConfiguration = {
       title: this.translate.instant('Enter password'),
       message: this.translate.instant('Enter password to unlock this display device'),
       fieldConfig: [{
@@ -603,31 +601,30 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
         validation: [Validators.required],
       }],
       saveButtonText: this.translate.instant('Open'),
-      parent: this,
       customSubmit: (passDialog: EntityDialogComponent) => {
         this.loader.open();
         this.ws.call(
           'vm.get_display_web_uri',
           [
-            display_vm.id,
+            vm.id,
             this.extractHostname(window.origin),
             {
               devices_passwords: [
                 {
-                  device_id: display_device.id,
+                  device_id: displayDevice.id,
                   password: passDialog.formValue.password,
                 },
               ],
             },
           ],
-        ).pipe(untilDestroyed(this)).subscribe((pass_res) => {
+        ).pipe(untilDestroyed(this)).subscribe((webUris) => {
           this.loader.close();
-          if (pass_res[display_device.id].error) {
+          if (webUris[displayDevice.id].error) {
             passDialog.formGroup.controls['password'].reset();
-            return pass_conf.fieldConfig[0].warnings = pass_res[display_device.id].error;
+            return passwordConfiguration.fieldConfig[0].warnings = webUris[displayDevice.id].error;
           }
           passDialog.dialogRef.close();
-          window.open(pass_res[display_device.id].uri, '_blank');
+          window.open(webUris[displayDevice.id].uri, '_blank');
         }, (err) => {
           passDialog.dialogRef.close();
           this.loader.close();
@@ -635,7 +632,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
         });
       },
     };
-    this.dialogService.dialogForm(pass_conf);
+    this.dialogService.dialogForm(passwordConfiguration);
   }
 
   isActionVisible(actionId: string, row: VirtualMachineRow): boolean {

@@ -128,7 +128,7 @@ export class AnimationService {
   }
 
   private fade(animationTarget: DisplayObject, finishState: string): void {
-    let startOpacity; // animationTarget.target.get('opacity');
+    let startOpacity;
     let finishOpacity;
     if (finishState == 'In') {
       startOpacity = 0;
@@ -198,7 +198,7 @@ export class AnimationService {
       return;
     }
 
-    const startY = animationTarget.target.get('y');
+    const startY: number = animationTarget.target.get('y');
     value(startY, animationTarget.target.set('y') as any);
 
     const gravity = (start: number): ColdSubscription => {
@@ -246,11 +246,10 @@ export class AnimationService {
       { borderColor: '', borderWidth: 0 },
       ({ borderColor, borderWidth }: { borderColor: string; borderWidth: number }) => animationTarget.element.set({
         boxShadow: `0 0 0 ${borderWidth}px ${borderColor}`,
-        // border: `solid ${borderWidth} ${borderColor}px`
       }),
     );
 
-    const radiation = (start: any, elementBorder: ValueReaction): void => {
+    const radiation = (_: unknown, elementBorder: ValueReaction): void => {
       keyframes({
         values: [
           { borderWidth: 0, borderColor: 'rgb(204, 0, 0, 1)' },

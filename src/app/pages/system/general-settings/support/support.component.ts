@@ -1,7 +1,7 @@
 import { Component, OnInit, Type } from '@angular/core';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { helptext_system_support as helptext } from 'app/helptext/system/support';
+import { helptextSystemSupport as helptext } from 'app/helptext/system/support';
 import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -9,6 +9,7 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { LicenseInfoInSupport } from 'app/pages/system/general-settings/support/license-info-in-support.interface';
 import { SystemInfoInSupport } from 'app/pages/system/general-settings/support/system-info-in-support.interface';
 import { WebSocketService, AppLoaderService, DialogService } from 'app/services';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { LicenseComponent } from './license/license.component';
 import { ProactiveComponent } from './proactive/proactive.component';
@@ -23,7 +24,7 @@ import { SupportFormUnlicensedComponent } from './support-unlicensed/support-for
 })
 export class SupportComponent implements OnInit {
   isProduction: boolean;
-  product_image = '';
+  productImage = '';
   isProductImageRack = false;
   extraMargin = true;
   serverList = ['M40', 'M50', 'X10', 'X20', 'Z20', 'Z30', 'Z35', 'Z50'];
@@ -40,6 +41,7 @@ export class SupportComponent implements OnInit {
     private modalService: ModalService,
     private loader: AppLoaderService,
     private dialog: DialogService,
+    private slideInService: IxSlideInService,
   ) {}
 
   ngOnInit(): void {
@@ -93,46 +95,46 @@ export class SupportComponent implements OnInit {
     return Math.round((then.getTime() - now.getTime()) / (oneDay));
   }
 
-  getServerImage(sys_product: string): void {
+  getServerImage(sysProduct: string): void {
     let imagePath = '';
     this.serverList.forEach((model) => {
-      if (sys_product.includes(model)) {
+      if (sysProduct.includes(model)) {
         imagePath = `/servers/${model}.png`;
       }
     });
     if (imagePath) {
       this.isProductImageRack = true;
-      this.product_image = imagePath;
+      this.productImage = imagePath;
     } else {
-      this.product_image = 'ix-original-cropped.png';
+      this.productImage = 'ix-original-cropped.png';
       this.isProductImageRack = false;
       this.extraMargin = false;
     }
   }
 
-  getMiniImage(sys_product: string): void {
-    switch (sys_product) {
+  getMiniImage(sysProduct: string): void {
+    switch (sysProduct) {
       case 'FREENAS-MINI-2.0':
       case 'FREENAS-MINI-3.0-E':
       case 'FREENAS-MINI-3.0-E+':
       case 'TRUENAS-MINI-3.0-E':
       case 'TRUENAS-MINI-3.0-E+':
-        this.product_image = 'freenas_mini_cropped.png';
+        this.productImage = 'freenas_mini_cropped.png';
         break;
       case 'FREENAS-MINI-3.0-X':
       case 'FREENAS-MINI-3.0-X+':
       case 'TRUENAS-MINI-3.0-X':
       case 'TRUENAS-MINI-3.0-X+':
-        this.product_image = 'freenas_mini_x_cropped.png';
+        this.productImage = 'freenas_mini_x_cropped.png';
         break;
       case 'FREENAS-MINI-XL':
       case 'FREENAS-MINI-3.0-XL+':
       case 'TRUENAS-MINI-3.0-XL+':
-        this.product_image = 'freenas_mini_xl_cropped.png';
+        this.productImage = 'freenas_mini_xl_cropped.png';
         break;
       default:
         // this.product_image = 'ix-original-cropped.png';
-        this.product_image = 'freenas_mini_xl_cropped.png';
+        this.productImage = 'freenas_mini_xl_cropped.png';
         break;
     }
     this.isProductImageRack = false;
@@ -140,7 +142,7 @@ export class SupportComponent implements OnInit {
   }
 
   updateLicense(): void {
-    this.modalService.openInSlideIn(LicenseComponent);
+    this.slideInService.open(LicenseComponent);
   }
 
   fileTicket(): void {
@@ -187,7 +189,7 @@ export class SupportComponent implements OnInit {
     message: helptext.updateProd.message,
   };
 
-  doProdUpdate(entityDialog: EntityDialogComponent<this>): void {
+  doProdUpdate(entityDialog: EntityDialogComponent): void {
     const self = entityDialog;
     self.loader.open();
     const dialogRef = entityDialog.mdDialog.open(EntityJobComponent,

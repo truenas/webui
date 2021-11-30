@@ -335,8 +335,6 @@ export interface Data {
    * Default is %Y-%m-%d
    */
   xFormat?: string;
-  // xLocaltime?: any;
-  // xSort?: any;
   /**
    * Set custom data name.
    */

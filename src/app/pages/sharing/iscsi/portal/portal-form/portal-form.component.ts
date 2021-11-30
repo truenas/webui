@@ -3,7 +3,7 @@ import { Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { helptext_sharing_iscsi } from 'app/helptext/sharing';
+import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -35,7 +35,7 @@ export class PortalFormComponent implements FormConfiguration {
   addCall = 'iscsi.portal.create' as const;
   queryCall = 'iscsi.portal.query' as const;
   editCall = 'iscsi.portal.update' as const;
-  route_success: string[] = ['sharing', 'iscsi', 'portals'];
+  routeSuccess: string[] = ['sharing', 'iscsi', 'portals'];
   customFilter: any[] = [[['id', '=']]];
   isEntity = true;
 
@@ -48,7 +48,7 @@ export class PortalFormComponent implements FormConfiguration {
   });
   fieldSets: FieldSet[] = [
     {
-      name: helptext_sharing_iscsi.fieldset_portal_basic,
+      name: helptextSharingIscsi.fieldset_portal_basic,
       label: true,
       class: 'basic',
       width: '100%',
@@ -56,13 +56,13 @@ export class PortalFormComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'comment',
-          placeholder: helptext_sharing_iscsi.portal_form_placeholder_comment,
-          tooltip: helptext_sharing_iscsi.portal_form_tooltip_comment,
+          placeholder: helptextSharingIscsi.portal_form_placeholder_comment,
+          tooltip: helptextSharingIscsi.portal_form_tooltip_comment,
         },
       ],
     },
     {
-      name: helptext_sharing_iscsi.fieldset_portal_authgroup,
+      name: helptextSharingIscsi.fieldset_portal_authgroup,
       label: true,
       class: 'authgroup',
       width: '100%',
@@ -70,8 +70,8 @@ export class PortalFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'discovery_authmethod',
-          placeholder: helptext_sharing_iscsi.portal_form_placeholder_discovery_authmethod,
-          tooltip: helptext_sharing_iscsi.portal_form_tooltip_discovery_authmethod,
+          placeholder: helptextSharingIscsi.portal_form_placeholder_discovery_authmethod,
+          tooltip: helptextSharingIscsi.portal_form_tooltip_discovery_authmethod,
           options: [
             {
               label: 'NONE',
@@ -91,15 +91,15 @@ export class PortalFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'discovery_authgroup',
-          placeholder: helptext_sharing_iscsi.portal_form_placeholder_discovery_authgroup,
-          tooltip: helptext_sharing_iscsi.portal_form_tooltip_discovery_authgroup,
+          placeholder: helptextSharingIscsi.portal_form_placeholder_discovery_authgroup,
+          tooltip: helptextSharingIscsi.portal_form_tooltip_discovery_authgroup,
           options: [{ label: '---', value: null }],
           value: null,
         },
       ],
     },
     {
-      name: helptext_sharing_iscsi.fieldset_portal_ip,
+      name: helptextSharingIscsi.fieldset_portal_ip,
       label: true,
       class: 'ip',
       width: '100%',
@@ -112,8 +112,8 @@ export class PortalFormComponent implements FormConfiguration {
               type: 'select',
               multiple: true,
               name: 'ip',
-              placeholder: helptext_sharing_iscsi.portal_form_placeholder_ip,
-              tooltip: helptext_sharing_iscsi.portal_form_tooltip_ip,
+              placeholder: helptextSharingIscsi.portal_form_placeholder_ip,
+              tooltip: helptextSharingIscsi.portal_form_tooltip_ip,
               options: [],
               class: 'inline',
               width: '60%',
@@ -124,10 +124,10 @@ export class PortalFormComponent implements FormConfiguration {
             {
               type: 'input',
               name: 'port',
-              placeholder: helptext_sharing_iscsi.portal_form_placeholder_port,
-              tooltip: helptext_sharing_iscsi.portal_form_tooltip_port,
+              placeholder: helptextSharingIscsi.portal_form_placeholder_port,
+              tooltip: helptextSharingIscsi.portal_form_tooltip_port,
               value: '3260',
-              validation: helptext_sharing_iscsi.portal_form_validators_port,
+              validation: helptextSharingIscsi.portal_form_validators_port,
               class: 'inline',
               width: '30%',
             },
@@ -140,15 +140,17 @@ export class PortalFormComponent implements FormConfiguration {
 
   fieldConfig: FieldConfig[];
   pk: number;
-  protected authgroup_field: FormSelectConfig;
+  protected authgroupField: FormSelectConfig;
   protected entityForm: EntityFormComponent;
   protected ip: PortalAddress[];
 
-  constructor(protected router: Router,
+  constructor(
+    protected router: Router,
     protected iscsiService: IscsiService,
     protected aroute: ActivatedRoute,
     protected loader: AppLoaderService,
-    protected ws: WebSocketService) { }
+    protected ws: WebSocketService,
+  ) { }
 
   prerequisite(): Promise<boolean> {
     return new Promise(async (resolve) => {
@@ -178,11 +180,11 @@ export class PortalFormComponent implements FormConfiguration {
       }
     });
     const authgroupFieldset = _.find(this.fieldSets, { class: 'authgroup' });
-    this.authgroup_field = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' }) as FormSelectConfig;
+    this.authgroupField = _.find(authgroupFieldset.config, { name: 'discovery_authgroup' }) as FormSelectConfig;
     this.iscsiService.getAuth().pipe(untilDestroyed(this)).subscribe((accessRecords) => {
       accessRecords.forEach((record) => {
-        if (_.find(this.authgroup_field.options, { value: record.tag }) == undefined) {
-          this.authgroup_field.options.push({ label: String(record.tag), value: record.tag });
+        if (_.find(this.authgroupField.options, { value: record.tag }) == undefined) {
+          this.authgroupField.options.push({ label: String(record.tag), value: record.tag });
         }
       });
     });
@@ -202,11 +204,11 @@ export class PortalFormComponent implements FormConfiguration {
     this.ws.call(this.editCall, [this.pk, value]).pipe(untilDestroyed(this)).subscribe(
       () => {
         this.loader.close();
-        this.router.navigate(new Array('/').concat(this.route_success));
+        this.router.navigate(new Array('/').concat(this.routeSuccess));
       },
       (res) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, res);
+        new EntityUtils().handleWsError(this.entityForm, res);
       },
     );
   }

@@ -7,7 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
-import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
+import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { Bootenv } from 'app/interfaces/bootenv.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -19,7 +19,7 @@ import { EntityUtils } from 'app/pages/common/entity/utils';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { DialogService, WebSocketService, SystemGeneralService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { StorageService } from 'app/services/storage.service';
 import { BootenvRow } from './bootenv-row.interface';
@@ -33,25 +33,25 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   @ViewChild('scrubIntervalEvent', { static: true }) scrubIntervalEvent: ElementRef;
 
   title = this.translate.instant('Boot Environments');
-  resource_name = 'system/bootenv';
+  resourceName = 'system/bootenv';
   queryCall = 'bootenv.query' as const;
-  protected route_delete: string[] = ['system', 'boot', 'delete'];
+  protected routeDelete: string[] = ['system', 'boot', 'delete'];
   wsDelete = 'bootenv.delete' as const;
   wsMultiDelete = 'core.bulk' as const;
   protected entityList: EntityTableComponent;
   protected wsActivate = 'bootenv.activate' as const;
   protected wsKeep = 'bootenv.set_attribute' as const;
   protected loaderOpen = false;
-  size_consumed: string;
+  sizeConsumed: string;
   condition: string;
-  size_boot: string;
+  sizeBoot: string;
   percentange: string;
   header: string;
-  scrub_msg: string;
-  scrub_interval: number;
+  scrubMessage: string;
+  scrubInterval: number;
 
   constructor(
-    private _router: Router,
+    private router: Router,
     public ws: WebSocketService,
     public dialog: DialogService,
     protected loader: AppLoaderService,
@@ -59,7 +59,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     protected localeService: LocaleService,
     private sysGeneralService: SystemGeneralService,
     protected translate: TranslateService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
   ) {}
 
   columns = [
@@ -81,7 +81,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
 
   preInit(): void {
     this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.scrub_interval = res.boot_scrub;
+      this.scrubInterval = res.boot_scrub;
       this.updateBootState();
     });
   }
@@ -116,7 +116,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   afterInit(entityList: EntityTableComponent): void {
     this.entityList = entityList;
 
-    this.modalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
+    this.slideInService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
       this.entityList.getData();
     });
   }
@@ -144,7 +144,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: this.translate.instant('Clone'),
       id: 'clone',
       onClick: (row: BootenvRow) => {
-        const modal = this.modalService.open(BootEnvironmentFormComponent);
+        const modal = this.slideInService.open(BootEnvironmentFormComponent);
         modal.setupForm(BootEnvironmentActions.Clone, row.id);
       },
     });
@@ -153,7 +153,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       label: this.translate.instant('Rename'),
       id: 'rename',
       onClick: (row: BootenvRow) => {
-        const modal = this.modalService.open(BootEnvironmentFormComponent);
+        const modal = this.slideInService.open(BootEnvironmentFormComponent);
         modal.setupForm(BootEnvironmentActions.Rename, row.id);
       },
     });
@@ -167,8 +167,8 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             (success) => {
               if (!success) {
                 this.dialog.errorReport(
-                  helptext_system_bootenv.delete_failure_dialog.title,
-                  helptext_system_bootenv.delete_failure_dialog.message,
+                  helptextSystemBootenv.delete_failure_dialog.title,
+                  helptextSystemBootenv.delete_failure_dialog.message,
                 );
               }
             },
@@ -240,7 +240,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     this.dialog.confirm({
       title: this.translate.instant('Activate'),
       message: this.translate.instant('Activate this Boot Environment?'),
-      buttonMsg: helptext_system_bootenv.list_dialog_activate_action,
+      buttonMsg: helptextSystemBootenv.list_dialog_activate_action,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.loader.open();
       this.loaderOpen = true;
@@ -251,7 +251,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
           this.entityList.selection.clear();
         },
         (res: WebsocketError) => {
-          new EntityUtils().handleWSError(this, res, this.dialog);
+          new EntityUtils().handleWsError(this, res, this.dialog);
           this.loader.close();
         },
       );
@@ -261,16 +261,16 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   updateBootState(): void {
     this.ws.call('boot.get_state').pipe(untilDestroyed(this)).subscribe((state) => {
       if (state.scan.end_time) {
-        this.scrub_msg = this.localeService.formatDateTime(state.scan.end_time.$date);
+        this.scrubMessage = this.localeService.formatDateTime(state.scan.end_time.$date);
       } else {
-        this.scrub_msg = this.translate.instant('Never');
+        this.scrubMessage = this.translate.instant('Never');
       }
-      this.size_consumed = this.storage.convertBytestoHumanReadable(state.properties.allocated.parsed);
+      this.sizeConsumed = this.storage.convertBytestoHumanReadable(state.properties.allocated.parsed);
       this.condition = state.properties.health.value;
       if (this.condition === 'DEGRADED') {
         this.condition = this.condition + this.translate.instant(' Check Notifications for more details.');
       }
-      this.size_boot = this.storage.convertBytestoHumanReadable(state.properties.size.parsed);
+      this.sizeBoot = this.storage.convertBytestoHumanReadable(state.properties.size.parsed);
       this.percentange = state.properties.capacity.value;
     });
   }
@@ -280,7 +280,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       this.dialog.confirm({
         title: this.translate.instant('Keep'),
         message: this.translate.instant('Keep this Boot Environment?'),
-        buttonMsg: helptext_system_bootenv.list_dialog_keep_action,
+        buttonMsg: helptextSystemBootenv.list_dialog_keep_action,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.loader.open();
         this.loaderOpen = true;
@@ -291,7 +291,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             this.entityList.selection.clear();
           },
           (res: WebsocketError) => {
-            new EntityUtils().handleWSError(this, res, this.dialog);
+            new EntityUtils().handleWsError(this, res, this.dialog);
             this.loader.close();
           },
         );
@@ -300,7 +300,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
       this.dialog.confirm({
         title: this.translate.instant('Unkeep'),
         message: this.translate.instant('No longer keep this Boot Environment?'),
-        buttonMsg: helptext_system_bootenv.list_dialog_unkeep_action,
+        buttonMsg: helptextSystemBootenv.list_dialog_unkeep_action,
       }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
         this.loader.open();
         this.loaderOpen = true;
@@ -311,7 +311,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             this.entityList.selection.clear();
           },
           (res: WebsocketError) => {
-            new EntityUtils().handleWSError(this, res, this.dialog);
+            new EntityUtils().handleWsError(this, res, this.dialog);
             this.loader.close();
           },
         );
@@ -323,15 +323,15 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
     return [{
       label: this.translate.instant('Add'),
       onClick: () => {
-        const modal = this.modalService.open(BootEnvironmentFormComponent);
+        const modal = this.slideInService.open(BootEnvironmentFormComponent);
         modal.setupForm(BootEnvironmentActions.Create);
       },
     }, {
       label: this.translate.instant('Stats/Settings'),
       onClick: () => {
         this.sysGeneralService.getAdvancedConfig$.pipe(untilDestroyed(this)).subscribe((res) => {
-          this.scrub_interval = res.boot_scrub;
-          const localWS = this.ws;
+          this.scrubInterval = res.boot_scrub;
+          const localWs = this.ws;
           const localDialog = this.dialog;
           const statusConfigFieldConf: FieldConfig[] = [
             {
@@ -342,24 +342,24 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             {
               type: 'paragraph',
               name: 'size_boot',
-              paraText: this.translate.instant('<b>Size:</b> {size_boot}', { size_boot: this.size_boot }),
+              paraText: this.translate.instant('<b>Size:</b> {sizeBoot}', { sizeBoot: this.sizeBoot }),
             },
             {
               type: 'paragraph',
               name: 'size_consumed',
-              paraText: this.translate.instant('<b>Used:</b> {size_consumed}', { size_consumed: this.size_consumed }),
+              paraText: this.translate.instant('<b>Used:</b> {sizeConsumed}', { sizeConsumed: this.sizeConsumed }),
             },
             {
               type: 'paragraph',
               name: 'scrub_msg',
-              paraText: this.translate.instant('<b>Last Scrub Run:</b> {scrub_msg}<br /><br />', { scrub_msg: this.scrub_msg }),
+              paraText: this.translate.instant('<b>Last Scrub Run:</b> {scrubMessage}<br /><br />', { scrubMessage: this.scrubMessage }),
             },
             {
               type: 'input',
               name: 'new_scrub_interval',
               placeholder: this.translate.instant('Scrub interval (in days)'),
               inputType: 'number',
-              value: this.scrub_interval,
+              value: this.scrubInterval,
               required: true,
             },
           ];
@@ -369,11 +369,10 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
             fieldConfig: statusConfigFieldConf,
             saveButtonText: this.translate.instant('Update Interval'),
             cancelButtonText: this.translate.instant('Close'),
-            parent: this,
             customSubmit: (entityDialog: EntityDialogComponent) => {
               const scrubIntervalValue = parseInt(entityDialog.formValue.new_scrub_interval);
               if (scrubIntervalValue > 0) {
-                localWS.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(this)).subscribe(() => {
+                localWs.call('boot.set_scrub_interval', [scrubIntervalValue]).pipe(untilDestroyed(this)).subscribe(() => {
                   localDialog.closeAllDialogs();
                   localDialog.info(
                     this.translate.instant('Scrub Interval Set'),
@@ -410,14 +409,14 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   }
 
   goToStatus(): void {
-    this._router.navigate(['/', 'system', 'boot', 'status']);
+    this.router.navigate(['/', 'system', 'boot', 'status']);
   }
 
   scrub(): void {
     this.dialog.confirm({
       title: this.translate.instant('Scrub'),
       message: this.translate.instant('Start the scrub now?'),
-      buttonMsg: helptext_system_bootenv.list_dialog_scrub_action,
+      buttonMsg: helptextSystemBootenv.list_dialog_scrub_action,
     }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
       this.loader.open();
       this.loaderOpen = true;
@@ -426,7 +425,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
         this.dialog.info(this.translate.instant('Scrub Started'), '', '300px', 'info', true);
       },
       (res: WebsocketError) => {
-        new EntityUtils().handleWSError(this, res, this.dialog);
+        new EntityUtils().handleWsError(this, res, this.dialog);
         this.loader.close();
       });
     });

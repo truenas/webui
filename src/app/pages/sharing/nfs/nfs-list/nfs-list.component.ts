@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { shared, helptext_sharing_nfs } from 'app/helptext/sharing';
+import { shared, helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
@@ -20,18 +20,18 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
   queryCall = 'sharing.nfs.query' as const;
   updateCall = 'sharing.nfs.update' as const;
   wsDelete = 'sharing.nfs.delete' as const;
-  route_add: string[] = ['sharing', 'nfs', 'add'];
-  route_add_tooltip = this.translate.instant('Add Unix (NFS) Share');
-  route_edit: string[] = ['sharing', 'nfs', 'edit'];
-  protected route_delete: string[] = ['sharing', 'nfs', 'delete'];
+  routeAdd: string[] = ['sharing', 'nfs', 'add'];
+  routeAddTooltip = this.translate.instant('Add Unix (NFS) Share');
+  routeEdit: string[] = ['sharing', 'nfs', 'edit'];
+  protected routeDelete: string[] = ['sharing', 'nfs', 'delete'];
   entityList: EntityTableComponent;
 
   columns = [
     {
-      name: this.translate.instant(helptext_sharing_nfs.column_path), prop: 'paths', showLockedStatus: true, always_display: true,
+      name: this.translate.instant(helptextSharingNfs.column_path), prop: 'paths', showLockedStatus: true, always_display: true,
     },
-    { name: this.translate.instant(helptext_sharing_nfs.column_comment), prop: 'comment' },
-    { name: this.translate.instant(helptext_sharing_nfs.column_enabled), prop: 'enabled', checkbox: true },
+    { name: this.translate.instant(helptextSharingNfs.column_comment), prop: 'comment' },
+    { name: this.translate.instant(helptextSharingNfs.column_enabled), prop: 'enabled', checkbox: true },
   ];
   rowIdentifier = 'nfs_paths';
   config = {
@@ -82,7 +82,7 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
         },
         (err) => {
           row.enabled = !row.enabled;
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         },
       );
   }

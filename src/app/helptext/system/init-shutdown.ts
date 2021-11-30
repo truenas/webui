@@ -8,7 +8,6 @@ export default {
 
   ini_command_placeholder: T('Command'),
   ini_command_tooltip: T('Enter the command with any options.'),
-  ini_command_validation: [Validators.required],
 
   ini_script_placeholder: T('Script'),
   ini_script_validation: [Validators.required],

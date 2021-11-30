@@ -109,7 +109,7 @@
                           </span>
                           <span *ngIf="poolState.status == PoolStatus.Online || poolState.status == PoolStatus.Healthy"
                             class="{{poolHealth.level}} icon">
-                            <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-check-circle"></mat-icon>
+                            <mat-icon role="img" fontSet="mdi-set" [fontIcon]="poolHealth.isHealthy ? 'mdi-check-circle' : 'mdi-alert'"></mat-icon>
                           </span>
                         </ng-template>
                       </div>
@@ -251,7 +251,7 @@
                   <span *ngFor="let device of vdev.children; let child = index">
                     <div *ngIf="device.disk">
                       <span>{{device.disk}}</span>
-                      {{trimMultipath(device.disk.name).name}}
+                      {{trimMultipath(device.disk).name}}
                       <span *ngIf="child < 3 - 1 && child !== vdev.children.length - 1">,</span>&nbsp;&nbsp;
                     </div>
                   </span>
@@ -328,7 +328,7 @@
           </ng-template>
 
           <!-- DISK DETAILS -->
-          <ng-template #disk_details>
+          <ng-template #diskDetails>
             <div class="list-subheader"><span class="capitalize">{{"Disk Details" | translate}}</span></div>
             <mat-list >
               <mat-list-item role="listitem">

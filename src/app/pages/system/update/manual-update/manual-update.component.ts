@@ -11,7 +11,7 @@ import { filter, take } from 'rxjs/operators';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
-import { helptext_system_update as helptext } from 'app/helptext/system/update';
+import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
@@ -31,11 +31,11 @@ import { DialogService } from 'app/services/dialog.service';
 })
 export class ManualUpdateComponent extends ViewControllerComponent implements FormConfiguration {
   formGroup: FormGroup;
-  route_success: string[] = ['system', 'update'];
+  routeSuccess: string[] = ['system', 'update'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   fileLocation: string;
   subs: { formData: FormData; apiEndPoint: string };
-  isHA = false;
+  isHa = false;
   isUpdateRunning = false;
   updateMethod = 'update.update';
   saveSubmitText = this.translate.instant('Apply Update');
@@ -76,7 +76,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     },
   ];
 
-  save_button_enabled = false;
+  saveButtonEnabled = false;
 
   constructor(
     protected router: Router,
@@ -105,9 +105,9 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
 
   preInit(): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-        if (is_ha) {
-          this.isHA = true;
+      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((isHa) => {
+        if (isHa) {
+          this.isHa = true;
           this.updateMethod = 'failover.upgrade';
         } else {
           _.find(this.fieldConfig, { name: 'rebootAfterManualUpdate' })['isHidden'] = false;
@@ -136,8 +136,8 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
         ures[0].attributes.preferences['rebootAfterManualUpdate'] = false;
       }
       entityForm.formGroup.controls['rebootAfterManualUpdate'].setValue(ures[0].attributes.preferences['rebootAfterManualUpdate']);
-      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.pipe(untilDestroyed(this)).subscribe((form_res: boolean) => {
-        ures[0].attributes.preferences['rebootAfterManualUpdate'] = form_res;
+      entityForm.formGroup.controls['rebootAfterManualUpdate'].valueChanges.pipe(untilDestroyed(this)).subscribe((rebootAfterManualUpdate: boolean) => {
+        ures[0].attributes.preferences['rebootAfterManualUpdate'] = rebootAfterManualUpdate;
         this.ws.call('user.set_attribute', [1, 'preferences', ures[0].attributes.preferences]).pipe(untilDestroyed(this)).subscribe(() => {
         });
       });
@@ -160,20 +160,20 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   }
 
   customSubmit(): void {
-    this.save_button_enabled = false;
+    this.saveButtonEnabled = false;
     this.systemService.updateRunningNoticeSent.emit();
     this.ws.call('user.query', [[['id', '=', 1]]]).pipe(untilDestroyed(this)).subscribe((ures) => {
       this.dialogRef = this.dialog.open(EntityJobComponent, {
         data: { title: helptext.manual_update_action },
       });
-      if (this.isHA) {
+      if (this.isHa) {
         this.dialogRef.componentInstance.disableProgressValue(true);
       }
       this.dialogRef.componentInstance.changeAltMessage(helptext.manual_update_description);
       this.dialogRef.componentInstance.wspost(this.subs.apiEndPoint, this.subs.formData);
       this.dialogRef.componentInstance.success.pipe(untilDestroyed(this)).subscribe(() => {
         this.dialogRef.close(false);
-        if (!this.isHA) {
+        if (!this.isHa) {
           if (ures[0].attributes.preferences['rebootAfterManualUpdate']) {
             this.router.navigate(['/others/reboot']);
           } else {
@@ -207,14 +207,14 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
             helptext.manual_update_error_dialog.message,
             `${prefailure.status.toString()} ${prefailure.statusText}`,
           );
-          this.save_button_enabled = true;
+          this.saveButtonEnabled = true;
         });
       this.dialogRef.componentInstance.failure
         .pipe(take(1))
         .pipe(untilDestroyed(this)).subscribe((failure) => {
           this.dialogRef.close(false);
           this.dialogService.errorReport(failure.error, failure.state, failure.exception);
-          this.save_button_enabled = true;
+          this.saveButtonEnabled = true;
         });
     });
   }
@@ -222,9 +222,9 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
   updater(file: FormUploadComponent): void {
     const fileBrowser = file.fileInput.nativeElement;
     if (fileBrowser.files && fileBrowser.files[0]) {
-      this.save_button_enabled = true;
+      this.saveButtonEnabled = true;
       const formData: FormData = new FormData();
-      if (this.isHA) {
+      if (this.isHa) {
         formData.append('data', JSON.stringify({
           method: 'failover.upgrade',
         }));
@@ -237,13 +237,13 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       formData.append('file', fileBrowser.files[0]);
       this.subs = { apiEndPoint: file.apiEndPoint, formData };
     } else {
-      this.save_button_enabled = false;
+      this.saveButtonEnabled = false;
     }
   }
 
   showRunningUpdate(jobId: number): void {
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.translate.instant('Update') } });
-    if (this.isHA) {
+    if (this.isHa) {
       this.dialogRef.componentInstance.disableProgressValue(true);
     }
     this.dialogRef.componentInstance.jobId = jobId;
@@ -252,7 +252,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       this.router.navigate(['/others/reboot']);
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
   }
 

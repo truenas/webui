@@ -18,7 +18,7 @@ export class KerberosKeytabsFormComponent implements FormConfiguration {
   addCall = 'kerberos.keytab.create' as const;
   editCall = 'kerberos.keytab.update' as const;
   queryCall = 'kerberos.keytab.query' as const;
-  pk: any;
+  pk: number;
   queryKey = 'id';
   isEntity = true;
   private getRow = new Subscription();
@@ -53,7 +53,7 @@ export class KerberosKeytabsFormComponent implements FormConfiguration {
   ];
 
   constructor(private modalService: ModalService) {
-    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId) => {
+    this.getRow = this.modalService.getRow$.pipe(untilDestroyed(this)).subscribe((rowId: number) => {
       this.pk = rowId;
       this.getRow.unsubscribe();
     });

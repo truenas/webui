@@ -23,7 +23,7 @@
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
                 [enclosureSupport]="systemInformation.features.enclosure"
-                [isHA]="isHA"
+                [isHA]="isHa"
                 [isPassive]="false"
                 [widgetSize]="medium">
               </widget-sysinfo>
@@ -33,7 +33,7 @@
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
                 [enclosureSupport]="systemInformation.features.enclosure"
-                [isHA]="isHA"
+                [isHA]="isHa"
                 [isPassive]="true"
                 [widgetSize]="medium">
               </widget-sysinfo>
@@ -42,47 +42,42 @@
               <widget-cpu *ngSwitchCase="'cpu'"
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
-                [data]="dataFromConfig(widget)"
+                [data]="dataFromConfig(widget) | cast"
                 [cpuModel]="systemInformation.model"
                 [widgetSize]="medium"
-                configurable="false">
-              </widget-cpu>
+              ></widget-cpu>
 
               <widget-memory *ngSwitchCase="'memory'"
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
                 [ecc]="systemInformation.ecc_memory"
-                [data]="dataFromConfig(widget)"
+                [data]="dataFromConfig(widget) | cast"
                 [widgetSize]="medium"
-                configurable="false">
-              </widget-memory>
+              ></widget-memory>
 
               <widget-pool *ngSwitchCase="'pool'"
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
-                [poolState]="dataFromConfig(widget)"
+                [poolState]="dataFromConfig(widget) | cast"
                 [volumeData]="volumeDataFromConfig(widget)"
                 [widgetSize]="medium"
-                configurable="false">
-              </widget-pool>
+              ></widget-pool>
 
               <widget-storage *ngSwitchCase="'storage'"
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
-                [pools]="dataFromConfig(widget)"
-                [volumeData]="volumeDataFromConfig(widget)"
+                [pools]="dataFromConfig(widget) | cast"
+                [volumeData]="volumeDataFromConfig(widget) | cast"
                 [widgetSize]="medium"
-                configurable="false">
-              </widget-storage>
+              ></widget-storage>
 
               <widget-nic *ngSwitchCase="'interface'"
                 fxFlex="{{widgetWidth}}px"
                 fxFlex.xs="100"
-                [nicState]="dataFromConfig(widget)"
+                [nicState]="dataFromConfig(widget) | cast"
                 [stats]="statsDataEvent$"
                 [widgetSize]="medium"
-                configurable="false">
-              </widget-nic>
+              ></widget-nic>
 
               <widget-network *ngSwitchCase="'network'"
                 fxFlex="{{widgetWidth}}px"
@@ -90,8 +85,7 @@
                 [nics]="nics"
                 [stats]="statsDataEvent$"
                 [widgetSize]="medium"
-                configurable="false">
-              </widget-network>
+              ></widget-network>
 
             </ng-container>
           </ng-container>
@@ -111,8 +105,7 @@
       [actionsConfig]="actionsConfig.actionConfig"
       [emptyConfig]="emptyDashConf"
       [widgetSize]="medium"
-      configurable="false">
-    </widget-controller>
+    ></widget-controller>
 
     <div class="mobile-widget-container">
       <ng-container  *ngIf="screenType == 'Mobile' && statsDataEvent$ && pools && nics && volumeData && sysinfoReady">
@@ -123,7 +116,7 @@
               (back)="onMobileBack()"
               id="active"
               [enclosureSupport]="systemInformation.features.enclosure"
-              [isHA]="isHA"
+              [isHA]="isHa"
               [isPassive]="false"
               [widgetSize]="medium">
             </widget-sysinfo>
@@ -132,59 +125,53 @@
               (back)="onMobileBack()"
               id="passive"
               [enclosureSupport]="systemInformation.features.enclosure"
-              [isHA]="isHA"
+              [isHA]="isHa"
               [isPassive]="true"
               [widgetSize]="medium">
             </widget-sysinfo>
 
             <widget-cpu *ngSwitchCase="'cpu'"
               (back)="onMobileBack()"
-              [data]="dataFromConfig(widget)"
+              [data]="dataFromConfig(widget) | cast"
               [cpuModel]="systemInformation.model"
               [widgetSize]="medium"
-              configurable="false">
-            </widget-cpu>
+            ></widget-cpu>
 
             <widget-memory *ngSwitchCase="'memory'"
               (back)="onMobileBack()"
-              [data]="dataFromConfig(widget)"
+              [data]="dataFromConfig(widget) | cast"
               [widgetSize]="medium"
-              configurable="false">
-            </widget-memory>
+            ></widget-memory>
 
             <widget-pool *ngSwitchCase="'pool'"
               (back)="onMobileBack()"
-              [poolState]="dataFromConfig(widget)"
-              [volumeData]="volumeDataFromConfig(widget)"
+              [poolState]="dataFromConfig(widget) | cast"
+              [volumeData]="volumeDataFromConfig(widget) | cast"
               [widgetSize]="medium"
-              configurable="false">
-            </widget-pool>
+            ></widget-pool>
 
             <widget-storage *ngSwitchCase="'storage'"
               (back)="onMobileBack()"
               fxFlex="{{widgetWidth}}px"
               fxFlex.xs="100"
-              [pools]="dataFromConfig(widget)"
-              [volumeData]="volumeDataFromConfig(widget)"
+              [pools]="dataFromConfig(widget) | cast"
+              [volumeData]="volumeDataFromConfig(widget) | cast"
               [widgetSize]="medium"
-              configurable="false">
-            </widget-storage>
+            ></widget-storage>
 
             <widget-nic *ngSwitchCase="'interface'"
               (back)="onMobileBack()"
-              [nicState]="dataFromConfig(widget)"
+              [nicState]="dataFromConfig(widget) | cast"
               [stats]="statsDataEvent$"
               [widgetSize]="medium"
-              configurable="false">
-            </widget-nic>
+            ></widget-nic>
 
             <widget-network *ngSwitchCase="'network'"
               (back)="onMobileBack()"
               [nics]="nics"
               [stats]="statsDataEvent$"
               [widgetSize]="medium"
-              configurable="false">
-            </widget-network>
+            ></widget-network>
 
           </ng-container>
         </ng-container>

@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
-export const helptext_system_general = {
+export const helptextSystemGeneral = {
   fieldset_gui: T('GUI'),
   fieldset_other: T('Other Options'),
   stg_fieldset_loc: T('Localization'),

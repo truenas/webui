@@ -63,7 +63,7 @@ import {
   CloudsyncBucket,
   CloudsyncCredential,
   CloudsyncCredentialUpdate,
-  CloudsyncCredentialVerify, CloudsyncOneDriveDrive, CloudsyncOneDriveParams,
+  CloudsyncCredentialVerify, CloudsyncCredentialVerifyResult, CloudsyncOneDriveDrive, CloudsyncOneDriveParams,
 } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider, CloudsyncRestoreParams } from 'app/interfaces/cloudsync-provider.interface';
 import { ConfigResetParams } from 'app/interfaces/config-reset-params.interface';
@@ -98,7 +98,7 @@ import { DsUncachedGroup, DsUncachedUser } from 'app/interfaces/ds-cache.interfa
 import { DynamicDnsConfig, DynamicDnsUpdate } from 'app/interfaces/dynamic-dns.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { FailoverConfig, FailoverRemoteCall, FailoverUpdate } from 'app/interfaces/failover.interface';
-import { FibreChannelPort } from 'app/interfaces/fibre-channel-port.interface';
+import { FibreChannelPort, FibreChannelPortUpdate } from 'app/interfaces/fibre-channel-port.interface';
 import { FileRecord, ListdirQueryParams } from 'app/interfaces/file-record.interface';
 import { FileSystemStat, Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { FtpConfig, FtpConfigUpdate } from 'app/interfaces/ftp-config.interface';
@@ -325,7 +325,7 @@ export type ApiDirectory = {
   // Catalog
   'catalog.query': { params: CatalogQueryParams; response: Catalog[] };
   'catalog.update': { params: [id: string, update: CatalogUpdate]; response: Catalog };
-  'catalog.create': { params: CatalogCreate; response: Catalog };
+  'catalog.create': { params: [CatalogCreate]; response: Catalog };
   'catalog.delete': { params: [name: string]; response: boolean };
   'catalog.items': { params: [label: string, params: CatalogItemsQueryParams]; response: CatalogItems };
   'catalog.sync': { params: [label: string]; response: void };
@@ -393,7 +393,7 @@ export type ApiDirectory = {
     response: CloudsyncCredential;
   };
   'cloudsync.credentials.delete': { params: [id: number]; response: boolean };
-  'cloudsync.credentials.verify': { params: [CloudsyncCredentialVerify]; response: any };
+  'cloudsync.credentials.verify': { params: [CloudsyncCredentialVerify]; response: CloudsyncCredentialVerifyResult };
   'cloudsync.onedrive_list_drives': { params: [CloudsyncOneDriveParams]; response: CloudsyncOneDriveDrive[] };
   'cloudsync.list_buckets': { params: [id: number]; response: CloudsyncBucket[] };
   'cloudsync.list_directory': { params: [CloudSyncListDirectoryParams]; response: CloudSyncDirectoryListing[] };
@@ -425,7 +425,6 @@ export type ApiDirectory = {
   'disk.query': { params: QueryParams<Disk, DiskQueryOptions>; response: Disk[] };
   'disk.update': { params: [string, DiskUpdate]; response: Disk };
   'disk.get_unused': { params: [joinPartitions?: boolean]; response: UnusedDisk[] };
-  'disk.get_encrypted': { params: any; response: any };
   'disk.temperatures': { params: [disks: string[]]; response: DiskTemperatures };
   'disk.wipe': { params: DiskWipeParams; response: void };
 
@@ -436,7 +435,7 @@ export type ApiDirectory = {
   // Enclosure
   'enclosure.query': { params: void; response: Enclosure[] };
   'enclosure.update': { params: [enclosureId: string, update: { label: string }]; response: Enclosure };
-  'enclosure.set_slot_status': { params: [id: string, slot: number, status: EnclosureSlotStatus ]; response: any };
+  'enclosure.set_slot_status': { params: [id: string, slot: number, status: EnclosureSlotStatus ]; response: void };
 
   // Filesystem
   'filesystem.acl_is_trivial': {
@@ -473,7 +472,7 @@ export type ApiDirectory = {
 
   // FCPort
   'fcport.query': { params: QueryParams<FibreChannelPort>; response: FibreChannelPort[] };
-  'fcport.update': { params: any; response: any };
+  'fcport.update': { params: [id: string, update: FibreChannelPortUpdate]; response: unknown };
 
   // DS Cache
   'dscache.get_uncached_group': { params: [groupname: string]; response: DsUncachedGroup };
@@ -640,11 +639,11 @@ export type ApiDirectory = {
   'openvpn.server.config': { params: void; response: OpenvpnServerConfig };
 
   // Pool
-  'pool.attach': { params: [id: number, params: PoolAttachParams]; response: any };
+  'pool.attach': { params: [id: number, params: PoolAttachParams]; response: void };
   'pool.attachments': { params: [id: number]; response: PoolAttachment[] };
   'pool.create': { params: [CreatePool]; response: Pool };
   'pool.dataset.attachments': { params: [datasetId: string]; response: PoolAttachment[] };
-  'pool.dataset.change_key': { params: [id: number, params: DatasetChangeKeyParams]; response: any };
+  'pool.dataset.change_key': { params: [id: number, params: DatasetChangeKeyParams]; response: void };
   'pool.dataset.compression_choices': { params: void; response: Choices };
   'pool.dataset.create': { params: any; response: Dataset };
   'pool.dataset.delete': { params: [path: string, params: { recursive: boolean; force?: boolean }]; response: boolean };
@@ -669,7 +668,7 @@ export type ApiDirectory = {
   'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.dataset.update': { params: any; response: Dataset };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
-  'pool.download_encryption_key': { params: any; response: any };
+  'pool.download_encryption_key': { params: any; response: string };
   'pool.expand': { params: PoolExpandParams; response: null };
   'pool.export': { params: PoolExportParams; response: void };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
@@ -680,7 +679,6 @@ export type ApiDirectory = {
   'pool.import_find': { params: void; response: PoolFindResult[] };
   'pool.import_pool': { params: [PoolImportParams]; response: boolean };
   'pool.is_upgraded': { params: [poolId: number]; response: boolean };
-  'pool.lock': { params: any; response: any };
   'pool.offline': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.online': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.passphrase': { params: any; response: any };
@@ -688,7 +686,7 @@ export type ApiDirectory = {
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
   'pool.recoverykey_rm': { params: any; response: any };
   'pool.rekey': { params: any; response: any };
-  'pool.remove': { params: PoolRemoveParams; response: any };
+  'pool.remove': { params: PoolRemoveParams; response: void };
   'pool.replace': { params: [id: number, params: PoolReplaceParams]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
   'pool.resilver.update': { params: [ResilverConfigUpdate]; response: ResilverConfig };
@@ -711,7 +709,7 @@ export type ApiDirectory = {
   'replication.create': { params: any; response: any };
   'replication.query': { params: QueryParams<ReplicationTask>; response: ReplicationTask[] };
   'replication.restore': { params: [id: number, params: { name: string; target_dataset: string }]; response: void };
-  'replication.run': { params: [id: number]; response: any };
+  'replication.run': { params: [id: number]; response: number };
   'replication.delete': { params: [id: number]; response: boolean };
   'replication.count_eligible_manual_snapshots': { params: [CountManualSnapshotsParams]; response: EligibleManualSnapshotsCount };
   'replication.list_naming_schemas': { params: void; response: string[] };
@@ -790,6 +788,7 @@ export type ApiDirectory = {
   'system.product_type': { params: void; response: ProductType };
   'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
   'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
+  'system.is_stable': { params: void; response: boolean };
 
   // Support
   'support.is_available': { params: void; response: boolean };
@@ -889,7 +888,7 @@ export type ApiDirectory = {
   'vm.device.delete': { params: [id: number]; response: boolean };
   'vm.random_mac': { params: void; response: string };
   'vm.device.query': { params: QueryParams<VmDevice>; response: VmDevice[] };
-  'vm.stop': { params: VmStopParams; response: any };
+  'vm.stop': { params: VmStopParams; response: void };
   'vm.maximum_supported_vcpus': { params: void; response: number };
   'vm.device.update': { params: [id: number, update: VmDeviceUpdate]; response: VmDevice };
   'vm.port_wizard': { params: void; response: VmPortWizardResult };
@@ -915,7 +914,7 @@ export type ApiDirectory = {
 
   // User
   'user.update': { params: [id: number, update: UserUpdate]; response: number };
-  'user.create': { params: any; response: any };
+  'user.create': { params: [UserUpdate]; response: number };
   'user.query': { params: QueryParams<User>; response: User[] };
   'user.set_root_password': { params: [password: string]; response: void };
   'user.delete': { params: DeleteUserParams; response: number };
@@ -938,7 +937,7 @@ export type ApiDirectory = {
   'update.get_pending': { params: void; response: SystemUpdateChange[] };
   'update.check_available': { params: void; response: SystemUpdate };
   'update.set_train': { params: [train: string]; response: void };
-  'update.download': { params: any; response: any };
+  'update.download': { params: void; response: boolean };
   'update.update': { params: [UpdateParams]; response: void };
 
   // ZFS
@@ -964,7 +963,7 @@ export type ApiDirectory = {
 
   // InitShutdownScript
   'initshutdownscript.query': { params: QueryParams<InitShutdownScript>; response: InitShutdownScript[] };
-  'initshutdownscript.create': { params: CreateInitShutdownScript; response: InitShutdownScript };
+  'initshutdownscript.create': { params: [CreateInitShutdownScript]; response: InitShutdownScript };
   'initshutdownscript.update': { params: UpdateInitShutdownScriptParams; response: InitShutdownScript };
   'initshutdownscript.delete': { params: [id: number]; response: boolean };
 };

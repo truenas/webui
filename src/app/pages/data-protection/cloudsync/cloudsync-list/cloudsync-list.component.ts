@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import helptext from 'app/helptext/data-protection/cloudsync/cloudsync-form';
@@ -35,9 +36,9 @@ import { ModalService } from 'app/services/modal.service';
 export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi> {
   title = this.translate.instant('Cloud Sync Tasks');
   queryCall = 'cloudsync.query' as const;
-  route_add: string[] = ['tasks', 'cloudsync', 'add'];
-  route_add_tooltip = 'Add Cloud Sync Task';
-  route_edit: string[] = ['tasks', 'cloudsync', 'edit'];
+  routeAdd: string[] = ['tasks', 'cloudsync', 'add'];
+  routeAddTooltip = this.translate.instant('Add Cloud Sync Task');
+  routeEdit: string[] = ['tasks', 'cloudsync', 'edit'];
   wsDelete = 'cloudsync.delete' as const;
   entityList: EntityTableComponent;
   asyncView = true;
@@ -146,7 +147,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this.entityList, err);
+                    new EntityUtils().handleWsError(this.entityList, err);
                   },
                 );
               }
@@ -179,7 +180,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     );
                   },
                   (wsErr) => {
-                    new EntityUtils().handleWSError(this.entityList, wsErr);
+                    new EntityUtils().handleWsError(this.entityList, wsErr);
                   },
                 );
               }
@@ -216,7 +217,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                     });
                   },
                   (err) => {
-                    new EntityUtils().handleWSError(this.entityList, err);
+                    new EntityUtils().handleWsError(this.entityList, err);
                   },
                 );
               }
@@ -262,7 +263,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
               },
               {
                 type: 'explorer',
-                explorerType: 'directory',
+                explorerType: ExplorerType.Directory,
                 name: 'path',
                 placeholder: helptext.path_placeholder,
                 tooltip: helptext.path_tooltip,
@@ -295,7 +296,7 @@ export class CloudsyncListComponent implements EntityTableConfig<CloudSyncTaskUi
                 },
                 (err) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+                  new EntityUtils().handleWsError(entityDialog, err, this.dialog);
                 },
               );
             },

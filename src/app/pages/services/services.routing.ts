@@ -1,7 +1,8 @@
 import { ModuleWithProviders } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { RYSNCConfigurationFormComponent } from 'app/pages/services/components/service-rsync/rsync-configuration/rsyncmodule/rsync-configuration-form.component';
-import { ServiceDDNSComponent } from './components/service-dynamicdns/service-dynamicdns.component';
+import { ServiceDynamicDnsComponent } from 'app/pages/services/components/service-dynamic-dns/service-dynamic-dns.component';
+import { RsyncModuleFormComponent } from 'app/pages/services/components/service-rsync/rsync-module-form/rsync-module-form.component';
+import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ServiceFTPComponent } from './components/service-ftp/service-ftp.component';
 import { ServiceLLDPComponent } from './components/service-lldp/service-lldp.component';
 import { ServiceNFSComponent } from './components/service-nfs/service-nfs.component';
@@ -10,7 +11,6 @@ import { ServiceS3Component } from './components/service-s3/service-s3.component
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
 import { ServiceSMBComponent } from './components/service-smb/service-smb.component';
 import { ServiceSNMPComponent } from './components/service-snmp/service-snmp.component';
-import { ServiceSSHComponent } from './components/service-ssh/service-ssh.component';
 import { ServiceTFTPComponent } from './components/service-tftp/service-tftp.component';
 import { ServiceUPSComponent } from './components/service-ups/service-ups.component';
 import { ServiceWebdavComponent } from './components/service-webdav/service-webdav.component';
@@ -25,7 +25,7 @@ export const routes: Routes = [
   {
     data: { title: 'SSH', breadcrumb: 'SSH' },
     path: 'ssh',
-    component: ServiceSSHComponent,
+    component: ServiceSshComponent,
   },
   {
     data: { title: 'FTP', breadcrumb: 'FTP' },
@@ -52,18 +52,18 @@ export const routes: Routes = [
           {
             path: ':pk',
             component: ServiceRSYNCComponent,
-            data: { title: '', breadcrumb: '' },
+            data: { title: 'Rsync', breadcrumb: 'Rsync' },
           },
           {
             path: 'rsync-module',
             data: { title: 'Rsync Module', breadcrumb: 'Rsync Module' },
             children: [{
               path: 'add',
-              component: RYSNCConfigurationFormComponent,
+              component: RsyncModuleFormComponent,
               data: { title: 'Add', breadcrumb: 'Add' },
             }, {
               path: 'edit/:pk',
-              component: RYSNCConfigurationFormComponent,
+              component: RsyncModuleFormComponent,
               data: { title: 'Edit', breadcrumb: 'Edit' },
             }],
           },
@@ -94,7 +94,7 @@ export const routes: Routes = [
   {
     data: { title: 'DynamicDNS', breadcrumb: 'DynamicDNS' },
     path: 'dynamicdns',
-    component: ServiceDDNSComponent,
+    component: ServiceDynamicDnsComponent,
   },
   {
     data: { title: 'SMB', breadcrumb: 'SMB' },

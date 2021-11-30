@@ -1,3 +1,5 @@
+import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
+
 export interface SshConfig {
   bindiface: string[];
   compression: boolean;
@@ -21,11 +23,11 @@ export interface SshConfig {
   passwordauth: boolean;
   privatekey: string;
   rootlogin: boolean;
-  sftp_log_facility: string; // TODO: Enum
-  sftp_log_level: string;
+  sftp_log_facility: SshSftpLogFacility;
+  sftp_log_level: SshSftpLogLevel;
   tcpfwd: boolean;
   tcpport: number;
-  weak_ciphers: string[];
+  weak_ciphers: SshWeakCipher[];
 }
 
 export interface SshConfigUpdate {
@@ -35,9 +37,9 @@ export interface SshConfigUpdate {
   options: string;
   passwordauth: boolean;
   rootlogin: boolean;
-  sftp_log_facility: string;
-  sftp_log_level: string;
+  sftp_log_facility: SshSftpLogFacility;
+  sftp_log_level: SshSftpLogLevel;
   tcpfwd: boolean;
   tcpport: number;
-  weak_ciphers: string[];
+  weak_ciphers: SshWeakCipher[];
 }

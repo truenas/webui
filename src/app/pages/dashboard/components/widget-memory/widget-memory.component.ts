@@ -48,7 +48,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   isReady = false;
   title: string = this.translate.instant('Memory');
   subtitle: string = this.translate.instant('% of all cores');
-  widgetColorCssVar = 'var(--accent)';
   configurable = false;
   chartId = UUID.UUID();
   memTotal: number;
@@ -219,10 +218,10 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       const bgColor = this.colorPattern[index];
       const bgColorType = this.utils.getValueType(bgColor);
 
-      const bgRGB = bgColorType == 'hex' ? this.utils.hexToRGB(bgColor).rgb : this.utils.rgbToArray(bgColor);
+      const bgRgb = bgColorType == 'hex' ? this.utils.hexToRgb(bgColor).rgb : this.utils.rgbToArray(bgColor);
 
-      (ds.backgroundColor as ChartColor[]).push(this.rgbToString(bgRGB, 0.85));
-      (ds.borderColor as ChartColor[]).push(this.rgbToString(bgRGB));
+      (ds.backgroundColor as ChartColor[]).push(this.rgbToString(bgRgb, 0.85));
+      (ds.borderColor as ChartColor[]).push(this.rgbToString(bgRgb));
     });
 
     datasets.push(ds);

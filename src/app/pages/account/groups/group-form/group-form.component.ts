@@ -13,7 +13,7 @@ import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { UserService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -33,7 +33,7 @@ export class GroupFormComponent {
 
   form = this.fb.group({
     gid: [null as number, [Validators.required, regexValidator(/^\d+$/)]],
-    name: ['', [Validators.required, Validators.pattern(UserService.VALIDATOR_NAME)]],
+    name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
     sudo: [false],
     smb: [false],
     allowDuplicateGid: [false],
@@ -50,7 +50,7 @@ export class GroupFormComponent {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
@@ -117,10 +117,12 @@ export class GroupFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
-      this.modalService.close();
+      this.slideInService.close();
+      this.cdr.markForCheck();
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);
+      this.cdr.markForCheck();
     });
   }
 }

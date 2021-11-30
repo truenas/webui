@@ -16,9 +16,9 @@ export class PortalListComponent implements EntityTableConfig {
   tableTitle = this.translate.instant('Portals');
   queryCall = 'iscsi.portal.query' as const;
   wsDelete = 'iscsi.portal.delete' as const;
-  route_add: string[] = ['sharing', 'iscsi', 'portals', 'add'];
-  route_add_tooltip = this.translate.instant('Add Portal');
-  route_edit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
+  routeAdd: string[] = ['sharing', 'iscsi', 'portals', 'add'];
+  routeAddTooltip = this.translate.instant('Add Portal');
+  routeEdit: string[] = ['sharing', 'iscsi', 'portals', 'edit'];
 
   columns = [
     {
@@ -77,8 +77,8 @@ export class PortalListComponent implements EntityTableConfig {
   dataHandler(entityTable: EntityTableComponent): void {
     entityTable.rows.forEach((row) => {
       for (const ip in row.listen) {
-        const listenIP = this.ipChoices[row.listen[ip].ip] || row.listen[ip].ip;
-        row.listen[ip] = listenIP + ':' + row.listen[ip].port;
+        const listenIp = this.ipChoices[row.listen[ip].ip] || row.listen[ip].ip;
+        row.listen[ip] = listenIp + ':' + row.listen[ip].port;
       }
     });
   }

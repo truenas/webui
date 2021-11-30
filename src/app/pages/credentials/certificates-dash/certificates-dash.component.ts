@@ -5,8 +5,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
-import { helptext_system_ca } from 'app/helptext/system/ca';
-import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { helptextSystemCa } from 'app/helptext/system/ca';
+import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { CertificateAuthority } from 'app/interfaces/certificate-authority.interface';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -40,7 +40,7 @@ export class CertificatesDashComponent implements OnInit {
   cards: { name: string; tableConf: AppTableConfig<CertificatesDashComponent> }[];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
   private downloadActions: AppTableAction[];
-  private unsignedCAs: Option[] = [];
+  private unsignedCertificateAuthorities: Option[] = [];
   private caId: number;
 
   constructor(
@@ -67,7 +67,7 @@ export class CertificatesDashComponent implements OnInit {
     });
     this.systemGeneralService.getUnsignedCertificates().pipe(untilDestroyed(this)).subscribe((res) => {
       res.forEach((item) => {
-        this.unsignedCAs.push(
+        this.unsignedCertificateAuthorities.push(
           { label: item.name, value: item.id },
         );
       });
@@ -115,11 +115,11 @@ export class CertificatesDashComponent implements OnInit {
             },
           ],
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(CertificateAddComponent);
+          add: () => {
+            this.modalService.openInSlideIn(CertificateAddComponent);
           },
-          edit(row: Certificate) {
-            this.parent.modalService.openInSlideIn(CertificateEditComponent, row.id);
+          edit: (row: Certificate) => {
+            this.modalService.openInSlideIn(CertificateEditComponent, row.id);
           },
         },
       },
@@ -142,11 +142,11 @@ export class CertificatesDashComponent implements OnInit {
             },
           ],
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(CertificateAddComponent, 'csr');
+          add: () => {
+            this.modalService.openInSlideIn(CertificateAddComponent, 'csr');
           },
-          edit(row: Certificate) {
-            this.parent.modalService.openInSlideIn(CertificateEditComponent, row.id);
+          edit: (row: Certificate) => {
+            this.modalService.openInSlideIn(CertificateEditComponent, row.id);
           },
         },
       },
@@ -182,23 +182,23 @@ export class CertificatesDashComponent implements OnInit {
             },
           ],
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(CertificateAuthorityAddComponent);
+          add: () => {
+            this.modalService.openInSlideIn(CertificateAuthorityAddComponent);
           },
-          edit(row: CertificateAuthority) {
-            this.parent.modalService.openInSlideIn(CertificateAuthorityEditComponent, row.id);
+          edit: (row: CertificateAuthority) => {
+            this.modalService.openInSlideIn(CertificateAuthorityEditComponent, row.id);
           },
-          delete(row: CertificateAuthority, table: TableComponent) {
+          delete: (row: CertificateAuthority, table: TableComponent) => {
             if (row.signed_certificates > 0) {
-              this.parent.dialogService.confirm({
-                title: helptext_system_ca.delete_error.title,
-                message: helptext_system_ca.delete_error.message,
+              this.dialogService.confirm({
+                title: helptextSystemCa.delete_error.title,
+                message: helptextSystemCa.delete_error.message,
                 hideCheckBox: true,
-                buttonMsg: helptext_system_ca.delete_error.button,
+                buttonMsg: helptextSystemCa.delete_error.button,
                 hideCancel: true,
               });
             } else {
-              this.parent.tableService.delete(table, row);
+              this.tableService.delete(table, row);
             }
           },
         },
@@ -215,11 +215,11 @@ export class CertificatesDashComponent implements OnInit {
             { name: this.translate.instant('Authenticator'), prop: 'authenticator' },
           ],
           parent: this,
-          add() {
-            this.parent.modalService.openInSlideIn(AcmednsFormComponent);
+          add: () => {
+            this.modalService.openInSlideIn(AcmednsFormComponent);
           },
-          edit(row: CertificateAuthority) {
-            this.parent.modalService.openInSlideIn(AcmednsFormComponent, row.id);
+          edit: (row: CertificateAuthority) => {
+            this.modalService.openInSlideIn(AcmednsFormComponent, row.id);
           },
         },
       },
@@ -266,12 +266,12 @@ export class CertificatesDashComponent implements OnInit {
                 .subscribe((file) => {
                   this.storage.downloadBlob(file, fileName);
                 }, (err) => {
-                  this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-                    helptext_system_certificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
+                  this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
+                    helptextSystemCertificates.list.download_error_dialog.cert_message, `${err.status} - ${err.statusText}`);
                 });
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
           const keyName = rowinner.name + '.key';
@@ -284,12 +284,12 @@ export class CertificatesDashComponent implements OnInit {
                 .subscribe((file) => {
                   this.storage.downloadBlob(file, keyName);
                 }, (err) => {
-                  this.dialogService.errorReport(helptext_system_certificates.list.download_error_dialog.title,
-                    helptext_system_certificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
+                  this.dialogService.errorReport(helptextSystemCertificates.list.download_error_dialog.title,
+                    helptextSystemCertificates.list.download_error_dialog.key_message, `${err.status} - ${err.statusText}`);
                 });
             },
             (err) => {
-              new EntityUtils().handleWSError(this, err, this.dialogService);
+              new EntityUtils().handleWsError(this, err, this.dialogService);
             },
           );
         },
@@ -317,7 +317,7 @@ export class CertificatesDashComponent implements OnInit {
             });
             this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWSError(null, res, this.dialogService);
+              new EntityUtils().handleWsError(null, res, this.dialogService);
             });
           });
       },
@@ -345,9 +345,9 @@ export class CertificatesDashComponent implements OnInit {
     const acmeAction = {
       icon: 'beenhere',
       name: 'sign_CSR',
-      matTooltip: helptext_system_ca.list.action_sign,
+      matTooltip: helptextSystemCa.list.action_sign,
       onClick: (rowinner: CertificateAuthority) => {
-        this.dialogService.dialogForm(this.signCSRFormConf);
+        this.dialogService.dialogForm(this.signCsrFormConf);
         this.caId = rowinner.id;
       },
     };
@@ -374,7 +374,7 @@ export class CertificatesDashComponent implements OnInit {
             });
             this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((res) => {
               this.dialog.closeAll();
-              new EntityUtils().handleWSError(null, res, this.dialogService);
+              new EntityUtils().handleWsError(null, res, this.dialogService);
             });
           });
       },
@@ -389,33 +389,32 @@ export class CertificatesDashComponent implements OnInit {
     }, 200);
   }
 
-  protected signCSRFieldConf: FieldConfig[] = [
+  protected signCsrFieldConf: FieldConfig[] = [
     {
       type: 'select',
       name: 'csr_cert_id',
-      placeholder: helptext_system_ca.sign.csr_cert_id.placeholder,
-      tooltip: helptext_system_ca.sign.csr_cert_id.tooltip,
+      placeholder: helptextSystemCa.sign.csr_cert_id.placeholder,
+      tooltip: helptextSystemCa.sign.csr_cert_id.tooltip,
       required: true,
-      options: this.unsignedCAs,
+      options: this.unsignedCertificateAuthorities,
     },
     {
       type: 'input',
       name: 'name',
-      placeholder: helptext_system_ca.edit.name.placeholder,
-      tooltip: helptext_system_ca.sign.name.tooltip,
+      placeholder: helptextSystemCa.edit.name.placeholder,
+      tooltip: helptextSystemCa.sign.name.tooltip,
     },
   ];
 
-  signCSRFormConf: DialogFormConfiguration = {
-    title: helptext_system_ca.sign.fieldset_certificate,
-    fieldConfig: this.signCSRFieldConf,
+  signCsrFormConf: DialogFormConfiguration = {
+    title: helptextSystemCa.sign.fieldset_certificate,
+    fieldConfig: this.signCsrFieldConf,
     method_ws: 'certificateauthority.ca_sign_csr',
-    saveButtonText: helptext_system_ca.sign.sign,
-    customSubmit: (entityDialog) => this.doSignCSR(entityDialog),
-    parent: this,
+    saveButtonText: helptextSystemCa.sign.sign,
+    customSubmit: (entityDialog) => this.doSignCsr(entityDialog),
   };
 
-  doSignCSR(entityDialog: EntityDialogComponent<this>): void {
+  doSignCsr(entityDialog: EntityDialogComponent): void {
     const payload = {
       ca_id: this.caId,
       csr_cert_id: entityDialog.formGroup.controls.csr_cert_id.value,
@@ -428,7 +427,7 @@ export class CertificatesDashComponent implements OnInit {
       this.getCards();
     }, (err: WebsocketError) => {
       entityDialog.loader.close();
-      this.dialogService.errorReport(helptext_system_ca.error, err.reason, err.trace.formatted);
+      this.dialogService.errorReport(helptextSystemCa.error, err.reason, err.trace.formatted);
     });
   }
 }

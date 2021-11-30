@@ -207,8 +207,8 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       }
     });
 
-    if (this.conf.save_button_enabled == undefined) {
-      this.conf.save_button_enabled = true;
+    if (this.conf.saveButtonEnabled == undefined) {
+      this.conf.saveButtonEnabled = true;
     }
     if (this.conf.saveSubmitText) {
       this.saveSubmitText = this.conf.saveSubmitText;
@@ -224,7 +224,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.conf.preInit(this);
     }
     this.sub = this.route.params.pipe(untilDestroyed(this)).subscribe((params) => {
-      this.resourceName = this.conf.resource_name;
+      this.resourceName = this.conf.resourceName;
       if (this.resourceName && !this.resourceName.endsWith('/')) {
         this.resourceName = this.resourceName + '/';
       }
@@ -304,15 +304,15 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             for (const key in this.data) {
               const fg = this.formGroup.controls[key];
               if (fg) {
-                const current_field: FieldConfig = this.fieldConfig.find((control) => control.name === key);
-                if (current_field.type === 'array') {
+                const currentField: FieldConfig = this.fieldConfig.find((control) => control.name === key);
+                if (currentField.type === 'array') {
                   this.setArrayValue(this.data[key], fg as FormArray, key);
-                } else if (current_field.type === 'list') {
+                } else if (currentField.type === 'list') {
                   this.setListValue(this.data[key], fg as FormArray, key);
-                } else if (current_field.type === 'dict') {
+                } else if (currentField.type === 'dict') {
                   fg.patchValue(this.data[key]);
                 } else {
-                  const selectField: FormSelectConfig = current_field as FormSelectConfig;
+                  const selectField: FormSelectConfig = currentField as FormSelectConfig;
                   if (!_.isArray(this.data[key]) && selectField.type === 'select' && selectField.multiple) {
                     if (this.data[key]) {
                       this.data[key] = _.split(this.data[key], ',');
@@ -347,13 +347,13 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
                 this.wsfg = this.formGroup.controls[key];
                 this.wsResponseIdx = this.wsResponse[key];
                 if (this.wsfg) {
-                  const current_field: FieldConfig = this.fieldConfig.find((control) => control.name === key);
-                  const selectField: FormSelectConfig = current_field as FormSelectConfig;
+                  const currentField: FieldConfig = this.fieldConfig.find((control) => control.name === key);
+                  const selectField: FormSelectConfig = currentField as FormSelectConfig;
 
-                  if (current_field.type === 'array') {
+                  if (currentField.type === 'array') {
                     this.setArrayValue(this.wsResponse[key], this.wsfg as FormArray, key);
-                  } else if (current_field.type === 'list' || current_field.type === 'dict') {
-                    this.setObjectListValue(this.wsResponse[key], this.wsfg, current_field);
+                  } else if (currentField.type === 'list' || currentField.type === 'dict') {
+                    this.setObjectListValue(this.wsResponse[key], this.wsfg, currentField);
                   } else if (!(selectField.type === 'select' && selectField.options.length == 0)) {
                     this.wsfg.setValue(this.wsResponse[key]);
                   }
@@ -405,9 +405,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   goBack(): void {
-    let route = this.conf.route_cancel;
+    let route = this.conf.routeCancel;
     if (!route) {
-      route = this.conf.route_success;
+      route = this.conf.routeSuccess;
     }
     this.router.navigate(new Array('/').concat(route));
   }
@@ -503,7 +503,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
             if ((this.conf.isEditJob || this.conf.isCreateJob) && res.error) {
               if (res.exc_info && res.exc_info.extra) {
-                new EntityUtils().handleWSError(this, res);
+                new EntityUtils().handleWsError(this, res);
               } else {
                 this.dialog.errorReport('Error', res.error, res.exception);
               }
@@ -511,9 +511,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
               if (this.conf.afterSave) {
                 this.conf.afterSave(this);
               } else {
-                if (this.conf.route_success) {
+                if (this.conf.routeSuccess) {
                   this.router.navigate(new Array('/').concat(
-                    this.conf.route_success,
+                    this.conf.routeSuccess,
                   ));
                 } else {
                   this.success = true;
@@ -540,7 +540,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
             if (this.conf.errorReport) {
               this.conf.errorReport(res);
             } else if (res.hasOwnProperty('reason') && (res.hasOwnProperty('trace'))) {
-              new EntityUtils().handleWSError(this, res);
+              new EntityUtils().handleWsError(this, res);
             } else {
               new EntityUtils().handleError(this, res);
             }
@@ -565,25 +565,20 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   isShow(id: string): boolean {
     if (this.conf.isBasicMode) {
-      if (this.conf.advanced_field.includes(id)) {
+      if (this.conf.advancedFields.includes(id)) {
         return false;
       }
-    } else if (this.conf.basic_field !== undefined && this.conf.basic_field.includes(id)) {
+    } else if (this.conf.basicFields !== undefined && this.conf.basicFields.includes(id)) {
       return false;
     }
 
-    if (this.conf.hide_fileds !== undefined) {
-      if (this.conf.hide_fileds.includes(id)) {
-        return false;
-      }
-    }
     return true;
   }
 
   goConf(): void {
-    let route = this.conf.route_conf;
+    let route = this.conf.routeConf;
     if (!route) {
-      route = this.conf.route_success;
+      route = this.conf.routeSuccess;
     }
     this.router.navigate(new Array('/').concat(route));
   }
@@ -605,11 +600,11 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   }
 
   setArrayValue(data: any[], formArray: FormArray, name: string): void {
-    let array_controls: FieldConfig[];
+    let arrayFieldConfigs: FieldConfig[];
     this.fieldConfig.forEach((config) => {
       if (config.name === name) {
         const arrayConfig: FormArrayConfig = config as FormArrayConfig;
-        array_controls = arrayConfig.formarray;
+        arrayFieldConfigs = arrayConfig.formarray;
       }
     });
 
@@ -621,7 +616,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.conf.initialCount += 1;
       this.conf.initialCount_default += 1;
 
-      const formGroup = this.entityFormService.createFormGroup(array_controls);
+      const formGroup = this.entityFormService.createFormGroup(arrayFieldConfigs);
       for (const i in value) {
         const formControl = formGroup.controls[i];
         formControl.setValue(value[i]);

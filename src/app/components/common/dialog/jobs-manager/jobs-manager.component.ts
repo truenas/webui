@@ -39,6 +39,7 @@ export class JobsManagerComponent implements OnInit {
   isLoading: boolean;
   jobs: Job[] = [];
   numberOfRunningJobs$ = this.store.numberOfRunningJobs$;
+  numberOfWaitingJobs$ = this.store.numberOfWaitingJobs$;
   numberOfFailedJobs$ = this.store.numberOfFailedJobs$;
   emptyConfig: EmptyConfig = {
     type: EmptyType.NoPageData,

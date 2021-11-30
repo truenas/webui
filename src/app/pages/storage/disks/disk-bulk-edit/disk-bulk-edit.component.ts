@@ -17,7 +17,7 @@ import { StorageService } from 'app/services/storage.service';
   template: '<entity-form [conf]="this"></entity-form>',
 })
 export class DiskBulkEditComponent implements FormConfiguration {
-  route_success: string[] = ['storage', 'disks'];
+  routeSuccess: string[] = ['storage', 'disks'];
   isEntity = true;
 
   fieldConfig: FieldConfig[] = [];
@@ -85,7 +85,7 @@ export class DiskBulkEditComponent implements FormConfiguration {
   ];
 
   constructor(
-    private _router: Router,
+    private router: Router,
     private dialogService: DialogService,
     protected ws: WebSocketService,
     protected aroute: ActivatedRoute,
@@ -94,14 +94,14 @@ export class DiskBulkEditComponent implements FormConfiguration {
   ) {
     this.aroute.params.pipe(untilDestroyed(this)).subscribe((params) => {
       if (params['poolId']) {
-        this.route_success = ['storage', 'pools', 'status', params['poolId']];
+        this.routeSuccess = ['storage', 'pools', 'status', params['poolId']];
       }
     });
   }
 
   afterInit(): void {
     if (!this.diskBucket.ids) {
-      this._router.navigate(this.route_success);
+      this.router.navigate(this.routeSuccess);
     }
   }
 
@@ -128,16 +128,16 @@ export class DiskBulkEditComponent implements FormConfiguration {
         (res) => {
           if (res.state === JobState.Success) {
             this.loader.close();
-            let success_state = true;
+            let isSuccessful = true;
             for (const result of res.result) {
               if (result.error != null) {
                 this.dialogService.errorReport(helptext.dialog_error, result.error);
-                success_state = false;
+                isSuccessful = false;
                 break;
               }
             }
-            if (success_state) {
-              this._router.navigate(this.route_success);
+            if (isSuccessful) {
+              this.router.navigate(this.routeSuccess);
             }
           }
         },

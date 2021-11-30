@@ -63,10 +63,12 @@ export class ServiceSmartComponent implements OnInit {
         (config) => {
           this.form.patchValue(config);
           this.isFormLoading = false;
+          this.cdr.markForCheck();
         },
         (error) => {
-          new EntityUtils().handleWSError(null, error, this.dialogService);
+          new EntityUtils().handleWsError(null, error, this.dialogService);
           this.isFormLoading = false;
+          this.cdr.markForCheck();
         },
       );
   }
@@ -90,6 +92,7 @@ export class ServiceSmartComponent implements OnInit {
       .subscribe(
         () => {
           this.isFormLoading = false;
+          this.cdr.markForCheck();
           this.router.navigate(['/services']);
         },
         (error) => {

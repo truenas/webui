@@ -21,8 +21,8 @@ import { DialogFormConfiguration } from './dialog-form-configuration.interface';
   styleUrls: ['./entity-dialog.component.scss'],
   providers: [EntityFormService, DatePipe, FieldRelationService],
 })
-export class EntityDialogComponent<P = any> implements OnInit {
-  @Input() conf: DialogFormConfiguration<P>;
+export class EntityDialogComponent implements OnInit {
+  @Input() conf: DialogFormConfiguration;
 
   title: string;
   warning: string;
@@ -33,10 +33,6 @@ export class EntityDialogComponent<P = any> implements OnInit {
   error: string;
   formValue: any;
   showPassword = false;
-  /**
-   * @deprecated Capture parent with an arrow function instead
-   */
-  parent: P;
   submitEnabled = true;
   instructions: string;
   confirmCheckbox = false;
@@ -56,10 +52,6 @@ export class EntityDialogComponent<P = any> implements OnInit {
     this.title = this.translate.instant(this.conf.title);
 
     this.fieldConfig = this.conf.fieldConfig;
-
-    if (this.conf.parent) {
-      this.parent = this.conf.parent;
-    }
 
     if (this.conf.confirmCheckbox) {
       this.confirmCheckbox = this.conf.confirmCheckbox;
@@ -102,7 +94,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
         (e) => {
           this.loader.close();
           this.dialogRef.close(false);
-          new EntityUtils().handleWSError(this, e);
+          new EntityUtils().handleWsError(this, e);
         },
         () => {
           this.loader.close();
@@ -125,7 +117,7 @@ export class EntityDialogComponent<P = any> implements OnInit {
     });
   }
 
-  togglePW(): void {
+  togglePassword(): void {
     const inputs = document.getElementsByTagName('input');
     for (const input of inputs) {
       if (!input.placeholder.toLowerCase().includes('current')
@@ -168,5 +160,10 @@ export class EntityDialogComponent<P = any> implements OnInit {
 
   toggleSubmit(data: MatCheckboxChange): void {
     this.submitEnabled = data.checked;
+  }
+
+  isButtonVisible(field: FieldConfig): boolean {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-boolean-literal-compare
+    return 'hideButton' in field && field.hideButton === false;
   }
 }

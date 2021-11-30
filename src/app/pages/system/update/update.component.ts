@@ -13,7 +13,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SystemUpdateOperationType, SystemUpdateStatus } from 'app/enums/system-update.enum';
 import globalHelptext from 'app/helptext/global-helptext';
-import { helptext_system_update as helptext } from 'app/helptext/system/update';
+import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { SysInfoEvent, SystemInfoWithFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemUpdateTrain } from 'app/interfaces/system-update.interface';
@@ -96,7 +96,6 @@ export class UpdateComponent implements OnInit {
     saveButtonText: this.translate.instant('SAVE CONFIGURATION'),
     cancelButtonText: this.translate.instant('NO'),
     customSubmit: (entityDialog) => this.saveConfigSubmit(entityDialog),
-    parent: this,
   };
 
   protected dialogRef: MatDialogRef<EntityJobComponent>;
@@ -124,23 +123,23 @@ export class UpdateComponent implements OnInit {
 
   parseTrainName(name: string): string[] {
     const version = [];
-    let sw_version = '';
+    let swVersion = '';
     let branch = '';
     let split: string[] = [];
     let sdk = '';
     if (name.match(/-SDK$/)) {
       split = name.split('-');
-      sw_version = split[1];
+      swVersion = split[1];
       branch = split[2];
       sdk = split[3];
-      version.push(sw_version);
+      version.push(swVersion);
       version.push(branch);
       version.push(sdk);
     } else {
       split = name.split('-');
-      sw_version = split[1];
+      swVersion = split[1];
       branch = split[2];
-      version.push(sw_version);
+      version.push(swVersion);
       version.push(branch);
     }
     return version;
@@ -269,8 +268,8 @@ export class UpdateComponent implements OnInit {
     this.dialogService.confirm({
       title: this.translate.instant('Switch Train'),
       message: warning + this.translate.instant('Switch update trains?'),
-    }).pipe(untilDestroyed(this)).subscribe((train_res: boolean) => {
-      if (train_res) {
+    }).pipe(untilDestroyed(this)).subscribe((confirmSwitch: boolean) => {
+      if (confirmSwitch) {
         this.train = event;
         this.setTrainDescription();
         this.setTrainAndCheck();
@@ -310,7 +309,7 @@ export class UpdateComponent implements OnInit {
     this.ws.call('update.set_train', [this.train]).pipe(untilDestroyed(this)).subscribe(() => {
       this.check();
     }, (err) => {
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
       this.showSpinner = false;
     },
     () => {
@@ -409,7 +408,7 @@ export class UpdateComponent implements OnInit {
       this.router.navigate(['/others/reboot']);
     });
     this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
   }
 
@@ -426,7 +425,7 @@ export class UpdateComponent implements OnInit {
         }
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
       },
     );
   }
@@ -509,7 +508,7 @@ export class UpdateComponent implements OnInit {
       },
       (err) => {
         this.loader.close();
-        new EntityUtils().handleWSError(this, err, this.dialogService);
+        new EntityUtils().handleWsError(this, err, this.dialogService);
         this.dialogService.errorReport(this.translate.instant('Error checking for updates.'), err.reason, err.trace.formatted);
       },
       () => {
@@ -555,7 +554,7 @@ export class UpdateComponent implements OnInit {
             this.pendingupdates();
           });
           this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-            new EntityUtils().handleWSError(this, err, this.dialogService);
+            new EntityUtils().handleWsError(this, err, this.dialogService);
           });
         } else {
           this.update();
@@ -593,14 +592,14 @@ export class UpdateComponent implements OnInit {
           }).pipe(untilDestroyed(this)).subscribe();
         });
         this.dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((err) => {
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         });
       });
     }
   }
 
   // Save Config dialog
-  saveConfigSubmit(entityDialog: EntityDialogComponent<this>): void {
+  saveConfigSubmit(entityDialog: EntityDialogComponent): void {
     let fileName = '';
     let mimetype: string;
     if (this.sysInfo) {

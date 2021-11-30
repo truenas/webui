@@ -6,8 +6,12 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { take } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
-import { helptext_system_cloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
-import { CloudsyncCredential } from 'app/interfaces/cloudsync-credential.interface';
+import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
+import {
+  CloudsyncCredential,
+  CloudsyncCredentialVerify,
+  CloudsyncOneDriveDrive,
+} from 'app/interfaces/cloudsync-credential.interface';
 import { CloudsyncProvider } from 'app/interfaces/cloudsync-provider.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
@@ -38,14 +42,14 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   queryCallOption: QueryFilter<CloudsyncCredential>[];
   protected formGroup: FormGroup;
   protected id: number;
-  protected keyID: number;
+  protected keyId: number;
   protected isOneColumnForm = true;
   private rowNum: number;
   title = helptext.formTitle;
 
   protected selectedProvider = 'S3';
   protected credentialsOauth = false;
-  protected oauthURL: string;
+  protected oauthUrl: string;
   hideSaveBtn = true;
 
   fieldSets: FieldSet[] = [
@@ -1243,7 +1247,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         const attributes: any = {};
         const value = _.cloneDeep(this.entityForm.formGroup.value);
         this.beforeSubmit(value);
-        let attr_name: string;
+        let attrName: string;
 
         for (const item in value) {
           if (item != 'name' && item != 'provider') {
@@ -1251,9 +1255,9 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
               this.entityForm.formGroup.controls[item].markAsTouched();
             }
             if (item !== 'preview-GOOGLE_CLOUD_STORAGE' && item !== 'advanced-S3' && item !== 'drives-ONEDRIVE') {
-              attr_name = item.split('-')[0];
+              attrName = item.split('-')[0];
               if (value[item] != '' && value[item] != undefined) {
-                attributes[attr_name] = value[item];
+                attributes[attrName] = value[item];
               }
             }
             delete value[item];
@@ -1307,11 +1311,11 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       },
     );
     const authenticationFieldset = _.find(this.fieldSets, { class: 'authentication' });
-    const privateKeySFTPField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' }) as FormSelectConfig;
+    const privateKeySftpField = _.find(authenticationFieldset.config, { name: 'private_key-SFTP' }) as FormSelectConfig;
     this.ws.call('keychaincredential.query', [[['type', '=', KeychainCredentialType.SshKeyPair]]]).pipe(untilDestroyed(this)).subscribe(
       (credentials) => {
         credentials.forEach((credential) => {
-          privateKeySFTPField.options.push({ label: credential.name, value: credential.id });
+          privateKeySftpField.options.push({ label: credential.name, value: credential.id });
         });
       },
     );
@@ -1364,8 +1368,8 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
       this.selectedProvider = res;
 
-      this.oauthURL = _.find(this.providers, { name: res }).credentials_oauth;
-      this.credentialsOauth = this.oauthURL != null;
+      this.oauthUrl = _.find(this.providers, { name: res }).credentials_oauth;
+      this.credentialsOauth = this.oauthUrl != null;
       entityForm.setDisabled('client_id', !this.credentialsOauth, !this.credentialsOauth);
       entityForm.setDisabled('client_secret', !this.credentialsOauth, !this.credentialsOauth);
       entityForm.setDisabled('oauth_signin_button', !this.credentialsOauth, !this.credentialsOauth);
@@ -1390,7 +1394,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
     const driveTypeCtrl = entityForm.formGroup.controls['drive_type-ONEDRIVE'];
     const driveIdCtrl = entityForm.formGroup.controls['drive_id-ONEDRIVE'];
-    entityForm.formGroup.controls['drives-ONEDRIVE'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any) => {
+    entityForm.formGroup.controls['drives-ONEDRIVE'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: CloudsyncOneDriveDrive) => {
       if (res) {
         driveTypeCtrl.setValue(res.drive_type);
         driveIdCtrl.setValue(res.drive_id);
@@ -1432,7 +1436,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     );
   }
 
-  verifyCredentials(value: any): void {
+  verifyCredentials(value: CloudsyncCredentialVerify & { name: string }): void {
     delete value['name'];
     this.ws.call('cloudsync.credentials.verify', [value]).pipe(untilDestroyed(this)).subscribe(
       (res) => {
@@ -1445,13 +1449,13 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
       },
       (err) => {
         this.entityForm.loader.close();
-        new EntityUtils().handleWSError(this.entityForm, err, this.dialog);
+        new EntityUtils().handleWsError(this.entityForm, err, this.dialog);
       },
     );
   }
 
   logInToProvider(): void {
-    window.open(this.oauthURL + '?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
+    window.open(this.oauthUrl + '?origin=' + encodeURIComponent(window.location.toString()), '_blank', 'width=640,height=480');
     const controls = this.entityForm.formGroup.controls;
     const dialogService = this.dialog;
     const translate = this.translate;
@@ -1486,7 +1490,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   }
 
   async makeNewKeyPair(value: any, submitting?: boolean): Promise<void> {
-    await this.replicationService.genSSHKeypair().then(
+    await this.replicationService.genSshKeypair().then(
       async (keyPair) => {
         const payload = {
           name: value['name'] + ' Key',
@@ -1495,27 +1499,27 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         };
         await this.ws.call('keychaincredential.create', [payload]).toPromise().then(
           (sshKey) => {
-            this.keyID = sshKey.id;
-            const privateKeySFTPField = _.find(this.fieldConfig, { name: 'private_key-SFTP' }) as FormSelectConfig;
-            privateKeySFTPField.options.push({ label: payload.name, value: this.keyID });
-            this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyID);
+            this.keyId = sshKey.id;
+            const privateKeySftpField = _.find(this.fieldConfig, { name: 'private_key-SFTP' }) as FormSelectConfig;
+            privateKeySftpField.options.push({ label: payload.name, value: this.keyId });
+            this.entityForm.formGroup.controls['private_key-SFTP'].setValue(this.keyId);
             if (submitting) {
               value['private_key-SFTP'] = sshKey.id;
               this.finishSubmit(value);
             } else {
-              value.attributes.private_key = this.keyID;
+              value.attributes.private_key = this.keyId;
               this.verifyCredentials(value);
             }
           },
-          (sshKey_err) => {
+          (error) => {
             this.entityForm.loader.close();
-            new EntityUtils().handleWSError(this, sshKey_err, this.dialog);
+            new EntityUtils().handleWsError(this, error, this.dialog);
           },
         );
       },
       (err) => {
         this.entityForm.loader.close();
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }
@@ -1523,12 +1527,12 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
   finishSubmit(value: any): void {
     this.entityForm.loader.open();
     const attributes: any = {};
-    let attr_name: string;
+    let attrName: string;
     for (const item in value) {
       if (item != 'name' && item != 'provider') {
         if (item != 'preview-GOOGLE_CLOUD_STORAGE' && item != 'advanced-S3' && item !== 'drives-ONEDRIVE' && value[item] != '') {
-          attr_name = item.split('-')[0];
-          attributes[attr_name] = attr_name === 'auth_version' ? parseInt(value[item], 10) : value[item];
+          attrName = item.split('-')[0];
+          attributes[attrName] = attrName === 'auth_version' ? parseInt(value[item], 10) : value[item];
         }
         delete value[item];
       }
@@ -1545,7 +1549,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         this.entityForm.loader.close();
         this.modalService.refreshTable();
         if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
-          new EntityUtils().handleWSError(this, err, this.dialog);
+          new EntityUtils().handleWsError(this, err, this.dialog);
         } else {
           new EntityUtils().handleError(this, err);
         }
@@ -1577,12 +1581,12 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
     }
 
     for (const i in entityForm.wsResponseIdx) {
-      let field_name = i;
-      if (field_name != 'client_id' && field_name != 'client_secret') {
-        field_name += '-' + provider;
+      let fieldName = i;
+      if (fieldName != 'client_id' && fieldName != 'client_secret') {
+        fieldName += '-' + provider;
       }
-      if (entityForm.formGroup.controls[field_name]) {
-        entityForm.formGroup.controls[field_name].setValue(entityForm.wsResponseIdx[i]);
+      if (entityForm.formGroup.controls[fieldName]) {
+        entityForm.formGroup.controls[fieldName].setValue(entityForm.wsResponseIdx[i]);
       }
     }
   }
@@ -1606,7 +1610,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         });
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err, this.dialog);
+        new EntityUtils().handleWsError(this, err, this.dialog);
       },
     );
   }

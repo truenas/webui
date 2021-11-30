@@ -28,9 +28,9 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
   title = 'Cron Jobs';
   wsDelete = 'cronjob.delete' as const;
   queryCall = 'cronjob.query' as const;
-  route_add: string[] = ['tasks', 'cron', 'add'];
-  route_add_tooltip = 'Add Cron Job';
-  route_edit: string[] = ['tasks', 'cron', 'edit'];
+  routeAdd: string[] = ['tasks', 'cron', 'add'];
+  routeAddTooltip = this.translate.instant('Add Cron Job');
+  routeEdit: string[] = ['tasks', 'cron', 'edit'];
   entityList: EntityTableComponent;
 
   columns = [
@@ -146,12 +146,12 @@ export class CronListComponent implements EntityTableConfig<CronjobRow> {
 
   resourceTransformIncomingRestData(data: Cronjob[]): CronjobRow[] {
     return data.map((job) => {
-      const cron_schedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
+      const cronSchedule = `${job.schedule.minute} ${job.schedule.hour} ${job.schedule.dom} ${job.schedule.month} ${job.schedule.dow}`;
 
       return {
         ...job,
-        cron_schedule,
-        next_run: this.taskService.getTaskNextRun(cron_schedule),
+        cron_schedule: cronSchedule,
+        next_run: this.taskService.getTaskNextRun(cronSchedule),
       };
     });
   }

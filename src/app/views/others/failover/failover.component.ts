@@ -16,7 +16,7 @@ import { LocaleService } from 'app/services/locale.service';
   styleUrls: ['./failover.component.scss'],
 })
 export class FailoverComponent implements OnInit {
-  product_type: ProductType;
+  productType: ProductType;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
   readonly ProductType = ProductType;
@@ -27,24 +27,24 @@ export class FailoverComponent implements OnInit {
     private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
     this.ws = ws;
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
-      this.product_type = res as ProductType;
+      this.productType = res as ProductType;
     });
   }
 
-  isWSConnected(): void {
+  isWsConnected(): void {
     if (this.ws.connected) {
       this.loader.close();
       // ws is connected
       this.router.navigate(['/session/signin']);
     } else {
       setTimeout(() => {
-        this.isWSConnected();
+        this.isWsConnected();
       }, 5000);
     }
   }
 
   ngOnInit(): void {
-    this.product_type = window.localStorage.getItem('product_type') as ProductType;
+    this.productType = window.localStorage.getItem('product_type') as ProductType;
 
     this.dialog.closeAll();
     // TODO: Check if next and error should trade places
@@ -60,7 +60,7 @@ export class FailoverComponent implements OnInit {
         this.ws.prepareShutdown();
         this.loader.open();
         setTimeout(() => {
-          this.isWSConnected();
+          this.isWsConnected();
         }, 1000);
       },
     );

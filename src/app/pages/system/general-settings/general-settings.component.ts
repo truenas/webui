@@ -3,14 +3,11 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
-import { helptext_system_general as helptext } from 'app/helptext/system/general';
-import { helptext_system_ntpservers as helptext_ntp } from 'app/helptext/system/ntp-servers';
+import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { CoreEvent } from 'app/interfaces/events';
 import { LocalizationSettings } from 'app/interfaces/localization-settings.interface';
-import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
@@ -22,12 +19,17 @@ import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-co
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { LocalizationFormComponent } from 'app/pages/system/general-settings/localization-form/localization-form.component';
-import { NtpServerFormComponent } from 'app/pages/system/general-settings/ntp-server-form/ntp-server-form.component';
 import { DataCard } from 'app/pages/system/interfaces/data-card.interface';
 import { SystemGeneralService, DialogService, StorageService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { LocaleService } from 'app/services/locale.service';
 import { GuiFormComponent } from './gui-form/gui-form.component';
+
+enum GeneralCardId {
+  Gui = 'gui',
+  Localization = 'localization',
+  Ntp = 'ntp',
+}
 
 @UntilDestroy()
 @Component({
@@ -35,10 +37,9 @@ import { GuiFormComponent } from './gui-form/gui-form.component';
   templateUrl: './general-settings.component.html',
 })
 export class GeneralSettingsComponent implements OnInit {
-  dataCards: DataCard[] = [];
+  dataCards: DataCard<GeneralCardId>[] = [];
   supportTitle = helptext.supportTitle;
-  localeData: DataCard;
-  ntpServersData: DataCard;
+  localeData: DataCard<GeneralCardId.Localization>;
   configData: SystemGeneralConfig;
   subs: Subs;
   formEvent$: Subject<CoreEvent>;
@@ -61,7 +62,6 @@ export class GeneralSettingsComponent implements OnInit {
     method_ws: 'core.download',
     saveButtonText: helptext.save_config_form.button_text,
     customSubmit: (entityDialog) => this.saveConfigSubmit(entityDialog),
-    parent: this,
     warning: helptext.save_config_form.warning,
   };
 
@@ -74,7 +74,6 @@ export class GeneralSettingsComponent implements OnInit {
       validation: helptext.upload_config_form.validation,
       fileLocation: '',
       updater: (file: FormUploadComponent) => this.updater(file),
-      parent: this,
       hideButton: true,
     },
   ];
@@ -104,7 +103,6 @@ export class GeneralSettingsComponent implements OnInit {
     method_ws: 'config.reset',
     saveButtonText: helptext.reset_config_form.button_text,
     customSubmit: () => this.resetConfigSubmit(),
-    parent: this,
   };
 
   constructor(
@@ -114,20 +112,15 @@ export class GeneralSettingsComponent implements OnInit {
     private router: Router,
     public mdDialog: MatDialog,
     private core: CoreService,
-    private ixModalService: IxModalService,
+    private slideInService: IxSlideInService,
     private storage: StorageService,
     private http: HttpClient,
-    private translate: TranslateService,
   ) { }
 
   ngOnInit(): void {
     this.getDataCardData();
     this.sysGeneralService.refreshSysGeneral$.pipe(untilDestroyed(this)).subscribe(() => {
       this.getDataCardData();
-    });
-
-    this.ixModalService.onClose$.pipe(untilDestroyed(this)).subscribe(() => {
-      this.ntpServersData?.tableConf?.tableComponent.getData();
     });
 
     this.formEvent$ = new Subject();
@@ -176,7 +169,7 @@ export class GeneralSettingsComponent implements OnInit {
       this.dataCards = [
         {
           title: helptext.guiTitle,
-          id: 'gui',
+          id: GeneralCardId.Gui,
           items: [
             { label: helptext.ui_certificate.label, value: res.ui_certificate.name },
             { label: helptext.ui_address.label, value: res.ui_address.join(', ') },
@@ -215,7 +208,7 @@ export class GeneralSettingsComponent implements OnInit {
           const dateTime = this.localeService.getDateAndTime(res.timezone);
           this.localeData = {
             title: helptext.localeTitle,
-            id: 'localization',
+            id: GeneralCardId.Localization,
             items: [
               { label: helptext.stg_language.placeholder, value: languages[res.language] },
               { label: helptext.date_format.placeholder, value: dateTime[0] },
@@ -234,46 +227,16 @@ export class GeneralSettingsComponent implements OnInit {
           this.dataCards.push(this.localeData);
         });
       });
-
-      this.ntpServersData = {
-        id: 'ntp',
-        title: helptext.ntpTitle,
-        tableConf: {
-          title: helptext.ntpTitle,
-          queryCall: 'system.ntpserver.query',
-          deleteCall: 'system.ntpserver.delete',
-          deleteMsg: {
-            title: '',
-            key_props: ['address'],
-          },
-          parent: this,
-          columns: [
-            { name: helptext_ntp.address.label, prop: 'address' },
-            { name: helptext_ntp.burst.label, prop: 'burst', width: '40px' },
-            { name: helptext_ntp.iburst.label, prop: 'iburst', width: '40px' },
-            { name: helptext_ntp.prefer.label, prop: 'prefer', width: '40px' },
-            { name: helptext_ntp.minpoll.label, prop: 'minpoll', width: '60px' },
-            { name: helptext_ntp.maxpoll.label, prop: 'maxpoll', width: '60px' },
-          ],
-          add: () => {
-            this.ixModalService.open(NtpServerFormComponent);
-          },
-          edit: (server: NtpServer) => {
-            const modal = this.ixModalService.open(NtpServerFormComponent);
-            modal.setupForm(server);
-          },
-        },
-      };
     });
   }
 
-  doAdd(name: string): void {
+  doAdd(name: GeneralCardId): void {
     switch (name) {
-      case 'gui':
-        this.ixModalService.open(GuiFormComponent);
+      case GeneralCardId.Gui:
+        this.slideInService.open(GuiFormComponent);
         break;
       default:
-        const localizationFormModal = this.ixModalService.open(LocalizationFormComponent);
+        const localizationFormModal = this.slideInService.open(LocalizationFormComponent);
         localizationFormModal.setupForm(this.localizationSettings);
         break;
     }
@@ -319,14 +282,14 @@ export class GeneralSettingsComponent implements OnInit {
           (err: WebsocketError) => {
             entityDialog.loader.close();
             entityDialog.dialogRef.close();
-            new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+            new EntityUtils().handleWsError(entityDialog, err, this.dialog);
           },
         );
     },
     (err: WebsocketError) => {
       entityDialog.loader.close();
       entityDialog.dialogRef.close();
-      new EntityUtils().handleWSError(entityDialog, err, this.dialog);
+      new EntityUtils().handleWsError(entityDialog, err, this.dialog);
     });
   }
 

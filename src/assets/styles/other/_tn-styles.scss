@@ -522,7 +522,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   //Entity Module Overrides
 
   app-members .form-card.mat-card,
-  entity-task .form-card.mat-card,
   device-edit .form-card.mat-card,
   entity-form .form-card.mat-card {
     margin: 0 auto;
@@ -1183,6 +1182,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     background: var(--bg2) !important;
   }
 
+  .mat-autocomplete-panel .mat-option.mat-selected:not(.mat-active):not(:hover),
   .mat-autocomplete-panel .mat-option:hover {
     background-color: var(--primary) !important;
   }

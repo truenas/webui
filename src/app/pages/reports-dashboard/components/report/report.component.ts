@@ -69,7 +69,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   data: ReportingData;
   ready = false;
-  product_type = window.localStorage['product_type'] as ProductType;
+  productType = window.localStorage['product_type'] as ProductType;
   private delay = 1000; // delayed report render time
 
   readonly ProductType = ProductType;
@@ -86,8 +86,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
   legendData: any = {};
   subtitle: string = this.translate.instant('% of all cores');
   altTitle = '';
-  altSubtitle = '';
-  widgetColorCssVar = 'var(--primary)';
   isActive = true;
 
   currentStartDate: number;// as seconds from Unix Epoch
@@ -98,11 +96,9 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   stepForwardDisabled = true;
 
-  private _zoomInDisabled = false;
   get zoomInDisabled(): boolean {
     return this.timeZoomIndex >= (this.zoomLevels.length - 1);
   }
-  _zoomOutDisabled = false;
   get zoomOutDisabled(): boolean {
     return this.timeZoomIndex <= 0;
   }
@@ -117,16 +113,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
 
   // Loader
   loader = false;
-  private _dataRcvd = false;
-  get dataRcvd(): boolean {
-    return this._dataRcvd;
-  }
-  set dataRcvd(val) {
-    this._dataRcvd = val;
-    if (val) {
-      this.loader = false;
-    }
-  }
 
   // Chart Options
   showLegendValues = false;

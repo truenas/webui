@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { TranslateService } from '@ngx-translate/core';
 import { AlertServiceType } from 'app/enums/alert-service-type.enum';
 import { AlertService } from 'app/interfaces/alert-service.interface';
 import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
@@ -14,12 +15,12 @@ import { WebSocketService, DialogService } from 'app/services';
 })
 export class AlertServiceListComponent implements EntityTableConfig<AlertService> {
   title = 'Alert Services';
-  route_add_tooltip = 'Add Alert Service';
+  routeAddTooltip = this.translate.instant('Add Alert Service');
   queryCall = 'alertservice.query' as const;
   wsDelete = 'alertservice.delete' as const;
-  protected route_success: string[] = ['system', 'alertservice'];
-  route_add: string[] = ['system', 'alertservice', 'add'];
-  route_edit: string[] = ['system', 'alertservice', 'edit'];
+  protected routeSuccess: string[] = ['system', 'alertservice'];
+  routeAdd: string[] = ['system', 'alertservice', 'add'];
+  routeEdit: string[] = ['system', 'alertservice', 'edit'];
 
   columns = [
     { name: 'Service Name', prop: 'name', always_display: true },
@@ -54,6 +55,7 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
     protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
     protected dialogService: DialogService,
+    private translate: TranslateService,
   ) { }
 
   isActionVisible(actionId: string, row: AlertService): boolean {
@@ -74,7 +76,7 @@ export class AlertServiceListComponent implements EntityTableConfig<AlertService
         },
         (err) => {
           row.enabled = !row.enabled;
-          new EntityUtils().handleWSError(this, err, this.dialogService);
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         },
       );
   }

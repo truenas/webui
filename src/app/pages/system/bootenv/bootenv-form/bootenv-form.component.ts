@@ -8,7 +8,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { BootEnvironmentActions } from 'app/enums/bootenv-actions.enum';
-import { helptext_system_bootenv } from 'app/helptext/system/boot-env';
+import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import {
   BootenvTooltip,
   CreateBootenvParams,
@@ -17,7 +17,7 @@ import {
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { BootEnvService, WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -33,13 +33,13 @@ export class BootEnvironmentFormComponent {
   title: string;
 
   formGroup = this.formBuilder.group({
-    name: ['', [Validators.required, regexValidator(this.bootEnvService.bootenv_name_regex)]],
+    name: ['', [Validators.required, regexValidator(this.bootEnvService.bootenvNameRegex)]],
   });
 
   isFormLoading = false;
 
   tooltips: BootenvTooltip = {
-    name: helptext_system_bootenv.create_name_tooltip,
+    name: helptextSystemBootenv.create_name_tooltip,
   };
 
   constructor(
@@ -47,7 +47,7 @@ export class BootEnvironmentFormComponent {
     private formBuilder: FormBuilder,
     private ws: WebSocketService,
     private bootEnvService: BootEnvService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private errorHandler: FormErrorHandlerService,
     private changeDetectorRef: ChangeDetectorRef,
   ) {}
@@ -64,7 +64,7 @@ export class BootEnvironmentFormComponent {
         });
 
         this.tooltips = {
-          name: helptext_system_bootenv.create_name_tooltip,
+          name: helptextSystemBootenv.create_name_tooltip,
         };
         break;
       case this.Operations.Clone:
@@ -77,14 +77,14 @@ export class BootEnvironmentFormComponent {
         );
 
         this.tooltips = {
-          name: helptext_system_bootenv.clone_name_tooltip,
-          source: helptext_system_bootenv.clone_source_tooltip,
+          name: helptextSystemBootenv.clone_name_tooltip,
+          source: helptextSystemBootenv.clone_source_tooltip,
         };
         break;
       default:
         this.title = this.translate.instant('Create Boot Environment');
         this.tooltips = {
-          name: helptext_system_bootenv.create_name_tooltip,
+          name: helptextSystemBootenv.create_name_tooltip,
         };
         break;
     }
@@ -101,10 +101,10 @@ export class BootEnvironmentFormComponent {
 
         this.ws.call('bootenv.create', createParams).pipe(untilDestroyed(this)).subscribe(() => {
           this.isFormLoading = false;
-          this.modalService.close();
+          this.slideInService.close();
         }, (error) => {
           this.isFormLoading = false;
-          this.modalService.close();
+          this.slideInService.close();
           this.errorHandler.handleWsFormError(error, this.formGroup);
         });
 
@@ -119,10 +119,10 @@ export class BootEnvironmentFormComponent {
 
         this.ws.call('bootenv.update', renameParams).pipe(untilDestroyed(this)).subscribe(() => {
           this.isFormLoading = false;
-          this.modalService.close();
+          this.slideInService.close();
         }, (error) => {
           this.isFormLoading = false;
-          this.modalService.close();
+          this.slideInService.close();
           this.errorHandler.handleWsFormError(error, this.formGroup);
         });
 
@@ -135,10 +135,10 @@ export class BootEnvironmentFormComponent {
 
         this.ws.call('bootenv.create', cloneParams).pipe(untilDestroyed(this)).subscribe(() => {
           this.isFormLoading = false;
-          this.modalService.close();
+          this.slideInService.close();
         }, (error) => {
           this.isFormLoading = false;
-          this.modalService.close();
+          this.slideInService.close();
           this.errorHandler.handleWsFormError(error, this.formGroup);
         });
 

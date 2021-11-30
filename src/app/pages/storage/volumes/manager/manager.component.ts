@@ -36,14 +36,13 @@ import { VdevComponent } from './vdev/vdev.component';
 })
 export class ManagerComponent implements OnInit, AfterViewInit {
   disks: ManagerDisk[] = [];
-  suggestable_disks: ManagerDisk[] = [];
-  can_suggest = false;
+  suggestableDisks: ManagerDisk[] = [];
   selected: ManagerDisk[] = [];
   vdevs: any = {
     data: [{}], cache: [], spares: [], log: [], special: [], dedup: [],
   };
-  original_disks: ManagerDisk[];
-  orig_suggestable_disks: ManagerDisk[];
+  originalDisks: ManagerDisk[];
+  originalSuggestableDisks: ManagerDisk[];
   error: string;
   @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent> ;
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
@@ -56,17 +55,17 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   datasetQueryCall = 'pool.dataset.query' as const;
   pk: number;
   isNew = true;
-  vol_encrypt = 0;
+  volEncrypt = 0;
   isEncrypted = false;
-  encryption_algorithm = 'AES-256-GCM';
-  encryption_algorithm_options: Option[] = [];
-  re_has_errors = false;
+  encryptionAlgorithm = 'AES-256-GCM';
+  encryptionAlgorithmOptions: Option[] = [];
+  regExpHasErrors = false;
   nameFilter: RegExp;
   capacityFilter: RegExp;
   nameFilterField: string;
   capacityFilterField: string;
   dirty = false;
-  protected existing_pools: Pool[] = [];
+  protected existingPools: Pool[] = [];
   poolError: string = null;
   loaderOpen = false;
   help = helptext;
@@ -74,7 +73,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   submitTitle: string = this.translate.instant('Create');
   protected extendedSubmitTitle: string = this.translate.instant('Add Vdevs');
 
-  protected needs_disk = true;
+  protected needsDisk = true;
   protected needsDiskMessage = helptext.manager_needsDiskMessage;
   protected extendedNeedsDiskMessage = helptext.manager_extendedNeedsDiskMessage;
   size: string;
@@ -101,28 +100,26 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   diskAddWarning = helptext.manager_diskAddWarning;
   diskExtendWarning = helptext.manager_diskExtendWarning;
 
-  first_data_vdev_type: string;
-  first_data_vdev_disknum = 0;
-  first_data_vdev_disksize: number;
-  first_data_vdev_disktype: string;
+  firstDataVdevType: string;
+  firstDataVdevDisknum = 0;
+  firstDataVdevDisksize: number;
+  firstDataVdevDisktype: string;
 
-  private duplicable_disks: ManagerDisk[] = [];
+  private duplicableDisks: ManagerDisk[] = [];
 
   canDuplicate = false;
 
-  name_tooltip = helptext.manager_name_tooltip;
+  nameTooltip = helptext.manager_name_tooltip;
+  encryptionTooltip = helptext.manager_encryption_tooltip;
+  suggestedLayoutTooltip = helptext.manager_suggested_layout_tooltip;
 
-  encryption_tooltip = helptext.manager_encryption_tooltip;
-
-  suggested_layout_tooltip = helptext.manager_suggested_layout_tooltip;
-
-  encryption_message = helptext.manager_encryption_message;
+  encryptionMessage = helptext.manager_encryption_message;
 
   startingHeight: number;
   expandedRows: number;
   swapondrive = 2;
 
-  has_savable_errors = false;
+  hasSavableErrors = false;
   force = false;
 
   protected mindisks = {
@@ -142,14 +139,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   ) {}
 
   duplicate(): void {
-    const duplicable_disks = this.duplicable_disks;
+    const duplicableDisks = this.duplicableDisks;
     let maxVdevs = 0;
-    if (this.first_data_vdev_disknum && this.first_data_vdev_disknum > 0) {
-      maxVdevs = Math.floor(this.duplicable_disks.length / this.first_data_vdev_disknum);
+    if (this.firstDataVdevDisknum && this.firstDataVdevDisknum > 0) {
+      maxVdevs = Math.floor(this.duplicableDisks.length / this.firstDataVdevDisknum);
     }
-    const vdevs_options = [];
+    const vdevsOptions = [];
     for (let i = maxVdevs; i > 0; i--) {
-      vdevs_options.push({ label: i, value: i });
+      vdevsOptions.push({ label: i, value: i });
     }
     const conf: DialogFormConfiguration = {
       title: helptext.manager_duplicate_title,
@@ -160,7 +157,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           value: maxVdevs,
           placeholder: helptext.manager_duplicate_vdevs_placeholder,
           tooltip: helptext.manager_duplicate_vdevs_tooltip,
-          options: vdevs_options,
+          options: vdevsOptions,
         },
         {
           type: 'paragraph',
@@ -177,37 +174,36 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         if (origVdevs.length === 1 && origVdevs[0].disks.length === 0) {
           const vdev = origVdevs[0];
           value.vdevs = value.vdevs - 1;
-          for (let i = 0; i < this.first_data_vdev_disknum; i++) {
-            const disk = duplicable_disks.shift();
+          for (let i = 0; i < this.firstDataVdevDisknum; i++) {
+            const disk = duplicableDisks.shift();
             vdev.addDisk(disk);
             this.removeDisk(disk);
           }
         }
         for (let i = 0; i < value.vdevs; i++) {
-          const vdev_values = { disks: [] as ManagerDisk[], type: this.first_data_vdev_type };
-          for (let j = 0; j < this.first_data_vdev_disknum; j++) {
-            const disk = duplicable_disks.shift();
-            vdev_values.disks.push(disk);
+          const vdevValues = { disks: [] as ManagerDisk[], type: this.firstDataVdevType };
+          for (let j = 0; j < this.firstDataVdevDisknum; j++) {
+            const disk = duplicableDisks.shift();
+            vdevValues.disks.push(disk);
             // remove disk from selected
             this.selected = _.remove(this.selected, (d) => d.devname !== disk.devname);
           }
-          this.addVdev('data', vdev_values);
+          this.addVdev('data', vdevValues);
         }
         entityDialog.dialogRef.close(true);
         setTimeout(() => {
           this.getCurrentLayout();
         }, 500);
       },
-      parent: this,
       afterInit: (entityDialog: EntityDialogComponent) => {
-        const copy_desc: FormParagraphConfig = _.find(entityDialog.fieldConfig, { name: 'copy_desc' });
+        const copyDesc: FormParagraphConfig = _.find(entityDialog.fieldConfig, { name: 'copy_desc' });
         const setParatext = (vdevs: number): void => {
-          const used = this.first_data_vdev_disknum * vdevs;
-          const remaining = this.duplicable_disks.length - used;
-          const size = filesize(this.first_data_vdev_disksize, { standard: 'iec' });
-          const type = this.first_data_vdev_disktype;
-          const vdevType = this.first_data_vdev_type;
-          copy_desc.paraText = this.translate.instant(
+          const used = this.firstDataVdevDisknum * vdevs;
+          const remaining = this.duplicableDisks.length - used;
+          const size = filesize(this.firstDataVdevDisksize, { standard: 'iec' });
+          const type = this.firstDataVdevDisktype;
+          const vdevType = this.firstDataVdevType;
+          copyDesc.paraText = this.translate.instant(
             'Create {vdevs} new {vdevType} data vdevs using {used} ({size}) {type}s and leaving {remaining} of those drives unused.',
             {
               vdevs, vdevType, size, used, type, remaining,
@@ -224,11 +220,11 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   getDiskNumErrorMsg(disks: number): void {
-    this.disknumError = `${this.translate.instant(this.disknumErrorMessage)} ${this.translate.instant('First vdev has {n} disks, new vdev has {m}', { n: this.first_data_vdev_disknum, m: disks })}`;
+    this.disknumError = `${this.translate.instant(this.disknumErrorMessage)} ${this.translate.instant('First vdev has {n} disks, new vdev has {m}', { n: this.firstDataVdevDisknum, m: disks })}`;
   }
 
   getVdevTypeErrorMsg(type: string): void {
-    this.vdevtypeError = `${this.translate.instant(this.vdevtypeErrorMessage)} ${this.translate.instant('First vdev is a {vdevType}, new vdev is {newVdevType}', { vdevType: this.first_data_vdev_type, newVdevType: type })}`;
+    this.vdevtypeError = `${this.translate.instant(this.vdevtypeErrorMessage)} ${this.translate.instant('First vdev is a {vdevType}, new vdev is {newVdevType}', { vdevType: this.firstDataVdevType, newVdevType: type })}`;
   }
 
   getStripeVdevTypeErrorMsg(group: string): void {
@@ -243,30 +239,29 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   getPoolData(): void {
     this.ws.call(this.queryCall, [[['id', '=', this.pk]]]).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res[0]) {
-        this.first_data_vdev_type = res[0].topology.data[0].type.toLowerCase();
-        if (this.first_data_vdev_type === 'raidz1') {
-          this.first_data_vdev_type = 'raidz';
+        this.firstDataVdevType = res[0].topology.data[0].type.toLowerCase();
+        if (this.firstDataVdevType === 'raidz1') {
+          this.firstDataVdevType = 'raidz';
         }
-        this.first_data_vdev_disknum = res[0].topology.data[0].children.length;
+        this.firstDataVdevDisknum = res[0].topology.data[0].children.length;
 
-        let first_disk: VDev;
-        if (this.first_data_vdev_disknum === 0
-              && this.first_data_vdev_type === 'disk') {
-          this.first_data_vdev_disknum = 1;
-          this.first_data_vdev_type = 'stripe';
-          first_disk = res[0].topology.data[0];
+        let firstDisk: VDev;
+        if (this.firstDataVdevDisknum === 0 && this.firstDataVdevType === 'disk') {
+          this.firstDataVdevDisknum = 1;
+          this.firstDataVdevType = 'stripe';
+          firstDisk = res[0].topology.data[0];
         } else {
-          first_disk = res[0].topology.data[0].children[0];
+          firstDisk = res[0].topology.data[0].children[0];
         }
-        this.ws.call('disk.query', [[['name', '=', first_disk.disk]]]).pipe(untilDestroyed(this)).subscribe((disk) => {
+        this.ws.call('disk.query', [[['name', '=', firstDisk.disk]]]).pipe(untilDestroyed(this)).subscribe((disk) => {
           if (disk[0]) {
-            this.first_data_vdev_disksize = disk[0].size;
-            this.first_data_vdev_disktype = disk[0].type;
+            this.firstDataVdevDisksize = disk[0].size;
+            this.firstDataVdevDisktype = disk[0].type;
           }
           this.getDuplicableDisks();
         });
         this.name = res[0].name;
-        this.vol_encrypt = res[0].encrypt;
+        this.volEncrypt = res[0].encrypt;
         this.ws.call(this.datasetQueryCall, [[['id', '=', res[0].name]]]).pipe(untilDestroyed(this)).subscribe((datasets) => {
           if (datasets[0]) {
             this.extendedAvailable = datasets[0].available.parsed;
@@ -276,7 +271,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       }
     },
     (err) => {
-      new EntityUtils().handleWSError(this, err, this.dialog);
+      new EntityUtils().handleWsError(this, err, this.dialog);
     });
   }
 
@@ -284,7 +279,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.ws.call('pool.dataset.encryption_algorithm_choices').pipe(untilDestroyed(this)).subscribe((algorithms) => {
       for (const algorithm in algorithms) {
         if (algorithms.hasOwnProperty(algorithm)) {
-          this.encryption_algorithm_options.push({ label: algorithm, value: algorithm });
+          this.encryptionAlgorithmOptions.push({ label: algorithm, value: algorithm });
         }
       }
     });
@@ -304,7 +299,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     } else {
       this.ws.call(this.queryCall, []).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res) {
-          this.existing_pools = res;
+          this.existingPools = res;
         }
       });
     }
@@ -337,34 +332,33 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       });
 
       this.disks = this.sorter.tableSorter(this.disks, 'devname', 'asc');
-      this.original_disks = Array.from(this.disks);
+      this.originalDisks = Array.from(this.disks);
 
       // assign disks for suggested layout
-      let largest_capacity = 0;
+      let largestCapacity = 0;
       this.disks.forEach((disk) => {
-        if (disk.real_capacity > largest_capacity) {
-          largest_capacity = disk.real_capacity;
+        if (disk.real_capacity > largestCapacity) {
+          largestCapacity = disk.real_capacity;
         }
       });
       this.disks.forEach((disk) => {
-        if (disk.real_capacity === largest_capacity) {
-          this.suggestable_disks.push(disk);
+        if (disk.real_capacity === largestCapacity) {
+          this.suggestableDisks.push(disk);
         }
       });
-      this.orig_suggestable_disks = Array.from(this.suggestable_disks);
-      this.can_suggest = this.suggestable_disks.length < 11;
+      this.originalSuggestableDisks = Array.from(this.suggestableDisks);
 
       this.temp = [...this.disks];
       this.getDuplicableDisks();
     }, (err) => {
       this.loader.close();
-      new EntityUtils().handleWSError(this, err, this.dialog);
+      new EntityUtils().handleWsError(this, err, this.dialog);
     });
   }
 
-  addVdev(group: string, initial_values = {}): void {
+  addVdev(group: string, initialValues = {}): void {
     this.dirty = true;
-    this.vdevs[group].push(initial_values);
+    this.vdevs[group].push(initialValues);
     setTimeout(() => { // there appears to be a slight race condition with adding/removing
       this.getCurrentLayout();
     }, 100);
@@ -390,66 +384,66 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   getCurrentLayout(): void {
-    let size_estimate = 0;
+    let sizeEstimate = 0;
     if (!this.isNew) {
-      size_estimate = this.extendedAvailable;
+      sizeEstimate = this.extendedAvailable;
     }
-    let data_vdev_disknum = 0;
-    let data_disk_found = false;
-    let any_disk_found = false;
-    let data_vdev_type: string;
+    let dataVdevDisknum = 0;
+    let wasDataDiskFound = false;
+    let wereAnyDisksFound = false;
+    let dataVdevType: string;
     this.disknumError = null;
     this.vdevtypeError = null;
     this.vdevdisksError = false;
     this.stripeVdevTypeError = null;
     this.logVdevTypeWarning = null;
     this.vdevdisksSizeError = false;
-    this.has_savable_errors = false;
+    this.hasSavableErrors = false;
     this.emptyDataVdev = false;
 
     this.vdevComponents.forEach((vdev, i) => {
       if (vdev.group === 'data') {
         if (i === 0 && this.isNew) {
-          this.first_data_vdev_type = vdev.type;
-          data_vdev_type = vdev.type;
+          this.firstDataVdevType = vdev.type;
+          dataVdevType = vdev.type;
           if (vdev.disks.length > 0) {
-            this.first_data_vdev_disknum = vdev.disks.length;
-            this.first_data_vdev_disksize = vdev.disks[0].size;
-            this.first_data_vdev_disktype = vdev.disks[0].type;
+            this.firstDataVdevDisknum = vdev.disks.length;
+            this.firstDataVdevDisksize = vdev.disks[0].size;
+            this.firstDataVdevDisktype = vdev.disks[0].type;
             this.canDuplicate = true;
           } else {
-            this.first_data_vdev_disknum = 0;
-            this.first_data_vdev_disksize = null;
-            this.first_data_vdev_disktype = null;
+            this.firstDataVdevDisknum = 0;
+            this.firstDataVdevDisksize = null;
+            this.firstDataVdevDisktype = null;
             this.canDuplicate = false;
           }
         }
         if (vdev.disks.length > 0) {
-          data_disk_found = true;
-          data_vdev_disknum = vdev.disks.length;
-          data_vdev_type = vdev.type;
+          wasDataDiskFound = true;
+          dataVdevDisknum = vdev.disks.length;
+          dataVdevType = vdev.type;
         } else {
           this.emptyDataVdev = true;
-          data_vdev_disknum = 0;
+          dataVdevDisknum = 0;
         }
-        size_estimate += vdev.rawSize;
-        if (data_vdev_disknum > 0) {
-          if (data_vdev_disknum !== this.first_data_vdev_disknum && this.first_data_vdev_type !== 'stripe') {
-            this.getDiskNumErrorMsg(data_vdev_disknum);
+        sizeEstimate += vdev.rawSize;
+        if (dataVdevDisknum > 0) {
+          if (dataVdevDisknum !== this.firstDataVdevDisknum && this.firstDataVdevType !== 'stripe') {
+            this.getDiskNumErrorMsg(dataVdevDisknum);
           }
-          if (data_vdev_type !== this.first_data_vdev_type) {
-            this.getVdevTypeErrorMsg(data_vdev_type);
+          if (dataVdevType !== this.firstDataVdevType) {
+            this.getVdevTypeErrorMsg(dataVdevType);
           }
         }
       } else if (vdev.disks.length > 0) {
-        any_disk_found = true;
+        wereAnyDisksFound = true;
       }
       if (vdev.vdev_disks_error) {
         this.vdevdisksError = true;
       }
       if (vdev.vdev_disks_size_error) {
         this.vdevdisksSizeError = true;
-        this.has_savable_errors = true;
+        this.hasSavableErrors = true;
       }
       if (['dedup', 'log', 'special', 'data'].includes(vdev.group)) {
         if (vdev.disks.length >= 1 && vdev.type.toLowerCase() === 'stripe') {
@@ -459,30 +453,30 @@ export class ManagerComponent implements OnInit, AfterViewInit {
             this.getStripeVdevTypeErrorMsg(vdev.group);
           }
 
-          this.has_savable_errors = true;
+          this.hasSavableErrors = true;
         }
       }
     });
     if (this.isNew) {
-      this.needs_disk = !data_disk_found;
-    } else if (data_disk_found || any_disk_found) {
-      this.needs_disk = false;
+      this.needsDisk = !wasDataDiskFound;
+    } else if (wasDataDiskFound || wereAnyDisksFound) {
+      this.needsDisk = false;
     } else {
-      this.needs_disk = true;
+      this.needsDisk = true;
     }
-    this.size = filesize(size_estimate, { standard: 'iec' });
+    this.size = filesize(sizeEstimate, { standard: 'iec' });
 
     this.getDuplicableDisks();
   }
 
   getDuplicableDisks(): void {
-    this.duplicable_disks = [];
+    this.duplicableDisks = [];
     this.disks.forEach((disk) => {
-      if (disk.size === this.first_data_vdev_disksize && disk.type === this.first_data_vdev_disktype) {
-        this.duplicable_disks.push(disk);
+      if (disk.size === this.firstDataVdevDisksize && disk.type === this.firstDataVdevDisktype) {
+        this.duplicableDisks.push(disk);
       }
     });
-    if (!this.first_data_vdev_disknum || this.duplicable_disks.length < this.first_data_vdev_disknum) {
+    if (!this.firstDataVdevDisknum || this.duplicableDisks.length < this.firstDataVdevDisknum) {
       this.canDuplicate = false;
     } else {
       this.canDuplicate = true;
@@ -496,7 +490,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     if (this.vdevtypeError) {
       return false;
     }
-    if (this.needs_disk) {
+    if (this.needsDisk) {
       return false;
     }
     if (this.poolError) {
@@ -505,7 +499,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     if (this.vdevdisksError) {
       return false;
     }
-    if (this.has_savable_errors && !this.force) {
+    if (this.hasSavableErrors && !this.force) {
       return false;
     }
     return true;
@@ -515,7 +509,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     if (this.emptyDataVdev) {
       return false;
     }
-    if (this.disks.length < this.mindisks[this.first_data_vdev_type as keyof ManagerComponent['mindisks']]) {
+    if (this.disks.length < this.mindisks[this.firstDataVdevType as keyof ManagerComponent['mindisks']]) {
       return false;
     }
     return true;
@@ -598,7 +592,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         if (this.isNew) {
           body = { name: this.name, encryption: this.isEncrypted, topology: layout } as CreatePool;
           if (this.isEncrypted) {
-            body['encryption_options'] = { generate_key: true, algorithm: this.encryption_algorithm };
+            body['encryption_options'] = { generate_key: true, algorithm: this.encryptionAlgorithm };
           }
         } else {
           body = { topology: layout } as UpdatePool;
@@ -631,7 +625,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           )
           .pipe(untilDestroyed(this)).subscribe(
             () => {},
-            (e) => new EntityUtils().handleWSError(this, e, this.dialog),
+            (e) => new EntityUtils().handleWsError(this, e, this.dialog),
             () => {
               dialogRef.close(false);
               this.goBack();
@@ -639,7 +633,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           );
         dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
           dialogRef.close(false);
-          new EntityUtils().handleWSError(this, error, this.dialog);
+          new EntityUtils().handleWsError(this, error, this.dialog);
         });
         dialogRef.componentInstance.submit();
       });
@@ -653,20 +647,20 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     if (this.isEncrypted) {
       this.dialog.confirm({
         title: this.translate.instant('Warning'),
-        message: this.encryption_message,
+        message: this.encryptionMessage,
         buttonMsg: this.translate.instant('I Understand'),
       }).pipe(untilDestroyed(this)).subscribe((res) => {
         if (res) {
           this.isEncrypted = true;
-          this.vol_encrypt = 1;
+          this.volEncrypt = 1;
         } else {
           this.isEncrypted = false;
-          this.vol_encrypt = 0;
+          this.volEncrypt = 0;
         }
       });
     } else {
       this.isEncrypted = false;
-      this.vol_encrypt = 0;
+      this.volEncrypt = 0;
     }
   }
 
@@ -701,7 +695,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     try {
       re = new RegExp(val);
     } catch (e: unknown) {
-      this.re_has_errors = true;
+      this.regExpHasErrors = true;
     }
 
     // filter our data
@@ -712,7 +706,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.capacityFilter = re;
       }
 
-      this.re_has_errors = false;
+      this.regExpHasErrors = false;
 
       // update the rows
       this.disks = this.temp.filter((d) => {
@@ -746,8 +740,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.capacityFilter = new RegExp('');
     this.vdevs['data'].push({});
     this.vdevComponents.first.estimateSize();
-    this.disks = Array.from(this.original_disks);
-    this.suggestable_disks = Array.from(this.orig_suggestable_disks);
+    this.disks = Array.from(this.originalDisks);
+    this.suggestableDisks = Array.from(this.originalSuggestableDisks);
     this.temp = [...this.disks];
     this.dirty = false;
     this.table.offset = 0;
@@ -755,17 +749,17 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   suggestRedundancyLayout(): void {
-    this.suggestable_disks.forEach((disk) => {
+    this.suggestableDisks.forEach((disk) => {
       this.vdevComponents.first.addDisk(disk);
     });
-    while (this.suggestable_disks.length > 0) {
-      this.removeDisk(this.suggestable_disks[0]);
-      this.suggestable_disks.shift();
+    while (this.suggestableDisks.length > 0) {
+      this.removeDisk(this.suggestableDisks[0]);
+      this.suggestableDisks.shift();
     }
   }
 
   checkPoolName(): void {
-    if (_.find(this.existing_pools, { name: this.name })) {
+    if (_.find(this.existingPools, { name: this.name })) {
       this.poolError = this.translate.instant('A pool with this name already exists.');
     } else {
       this.poolError = null;

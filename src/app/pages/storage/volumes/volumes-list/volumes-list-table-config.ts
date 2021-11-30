@@ -77,13 +77,13 @@ export class VolumesListTableConfig implements EntityTableConfig {
   };
 
   protected dialogRef: MatDialogRef<EntityJobComponent>;
-  route_add = ['storage', 'import'];
-  route_add_tooltip = T('Create or Import Pool');
+  routeAdd = ['storage', 'import'];
+  routeAddTooltip = T('Create or Import Pool');
   showDefaults = false;
   showSpinner: boolean;
   // TODO: Unused?
   encryptedStatus: number;
-  private vmware_res_status: boolean;
+  private datasetHasVms: boolean;
   dialogConf: DialogFormConfiguration;
   restartServices = false;
   subs: Subs;
@@ -129,32 +129,34 @@ export class VolumesListTableConfig implements EntityTableConfig {
   getEncryptedActions(rowData: VolumesListPool): EntityTableAction[] {
     const actions = [];
 
-    if (this.parentVolumesListComponent.has_encrypted_root[rowData.name]
-      && this.parentVolumesListComponent.has_key_dataset[rowData.name]) {
+    if (this.parentVolumesListComponent.hasEncryptedRoot[rowData.name]
+      && this.parentVolumesListComponent.hasKeyDataset[rowData.name]) {
       actions.push({
         label: T('Export Dataset Keys'),
         onClick: (row1: VolumesListPool) => {
           const message = helptext.export_keys_message + row1.name;
           const fileName = 'dataset_' + row1.name + '_keys.json';
-          this.dialogService.passwordConfirm(message).pipe(untilDestroyed(this, 'destroy')).subscribe((export_keys) => {
-            if (export_keys) {
-              this.loader.open();
-              const mimetype = 'application/json';
-              this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-                this.loader.close();
-                const url = res[1];
-                this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
-                  .pipe(untilDestroyed(this, 'destroy'))
-                  .subscribe((file) => {
-                    if (res !== null && (res as any) !== '') {
-                      this.storageService.downloadBlob(file, fileName);
-                    }
-                  });
-              }, (e) => {
-                this.loader.close();
-                new EntityUtils().handleWSError(this, e, this.dialogService);
-              });
+          this.dialogService.passwordConfirm(message).pipe(untilDestroyed(this, 'destroy')).subscribe((exportKeys) => {
+            if (!exportKeys) {
+              return;
             }
+
+            this.loader.open();
+            const mimetype = 'application/json';
+            this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
+              this.loader.close();
+              const url = res[1];
+              this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
+                .pipe(untilDestroyed(this, 'destroy'))
+                .subscribe((file) => {
+                  if (res !== null && (res as any) !== '') {
+                    this.storageService.downloadBlob(file, fileName);
+                  }
+                });
+            }, (e) => {
+              this.loader.close();
+              new EntityUtils().handleWsError(this, e, this.dialogService);
+            });
           });
         },
       });
@@ -273,7 +275,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           });
           dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
             dialogRef.close(false);
-            new EntityUtils().handleWSError(this, res, this.dialogService);
+            new EntityUtils().handleWsError(this, res, this.dialogService);
           });
         },
       } as DialogFormConfiguration)),
@@ -343,7 +345,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((err) => {
                   if (err) {
                     dialogRef.close();
-                    new EntityUtils().handleWSError(entityDialog, err, this.dialogService);
+                    new EntityUtils().handleWsError(entityDialog, err, this.dialogService);
                   }
                 });
               },
@@ -527,30 +529,30 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 p1 += '<br /><br />';
               }
               this.ws.call('pool.processes', [row1.id]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-                const running_processes: PoolProcess[] = [];
-                const running_unknown_processes: PoolProcess[] = [];
+                const runningProcesses: PoolProcess[] = [];
+                const runningUnknownProcesses: PoolProcess[] = [];
                 if (res.length > 0) {
                   res.forEach((item) => {
                     if (!item.service) {
                       if (item.name && item.name !== '') {
-                        running_processes.push(item);
+                        runningProcesses.push(item);
                       } else {
-                        running_unknown_processes.push(item);
+                        runningUnknownProcesses.push(item);
                       }
                     }
                   });
-                  if (running_processes.length > 0) {
+                  if (runningProcesses.length > 0) {
                     const runningMsg = this.translate.instant(helptext.exportMessages.running);
                     p1 += runningMsg + `<b>${row1.name}</b>:`;
-                    running_processes.forEach((process) => {
+                    runningProcesses.forEach((process) => {
                       if (process.name) {
                         p1 += `<br> - ${process.name}`;
                       }
                     });
                   }
-                  if (running_unknown_processes.length > 0) {
+                  if (runningUnknownProcesses.length > 0) {
                     p1 += '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
-                    running_unknown_processes.forEach((process) => {
+                    runningUnknownProcesses.forEach((process) => {
                       if (process.pid) {
                         p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
                       }
@@ -563,7 +565,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               },
               (err) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialogService);
+                new EntityUtils().handleWsError(this, err, this.dialogService);
               });
             },
             (err) => {
@@ -614,7 +616,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     },
                     (err) => {
                       this.loader.close();
-                      new EntityUtils().handleWSError(this, err, this.dialogService);
+                      new EntityUtils().handleWsError(this, err, this.dialogService);
                     },
                   );
                 });
@@ -710,7 +712,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     if (res.exc_info && res.exc_info.extra) {
                       (res as any).extra = res.exc_info.extra;
                     }
-                    new EntityUtils().handleWSError(this, res, this.dialogService, conf.fieldConfig);
+                    new EntityUtils().handleWsError(this, res, this.dialogService, conf.fieldConfig);
                   }
                   if (res.state === JobState.Success) {
                     if (entityDialog) {
@@ -727,7 +729,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 },
                 (err) => {
                   this.loader.close();
-                  new EntityUtils().handleWSError(this, err, this.dialogService);
+                  new EntityUtils().handleWsError(this, err, this.dialogService);
                 },
               );
             };
@@ -867,30 +869,30 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   p1 += '<br /><br />';
                 }
 
-                const running_processes: PoolProcess[] = [];
-                const running_unknown_processes: PoolProcess[] = [];
+                const runningProcesses: PoolProcess[] = [];
+                const runningUnknownProcesses: PoolProcess[] = [];
                 if (processes.length > 0) {
                   processes.forEach((item) => {
                     if (!item.service) {
                       if (item.name && item.name !== '') {
-                        running_processes.push(item);
+                        runningProcesses.push(item);
                       } else {
-                        running_unknown_processes.push(item);
+                        runningUnknownProcesses.push(item);
                       }
                     }
                   });
-                  if (running_processes.length > 0) {
+                  if (runningProcesses.length > 0) {
                     const runningMsg = this.translate.instant(helptext.exportMessages.running);
                     p1 += runningMsg + `<b>${datasetName}</b>:`;
-                    running_processes.forEach((process) => {
+                    runningProcesses.forEach((process) => {
                       if (process.name) {
                         p1 += `<br> - ${process.name}`;
                       }
                     });
                   }
-                  if (running_unknown_processes.length > 0) {
+                  if (runningUnknownProcesses.length > 0) {
                     p1 += '<br><br>' + this.translate.instant(helptext.exportMessages.unknown);
-                    running_unknown_processes.forEach((process) => {
+                    runningUnknownProcesses.forEach((process) => {
                       if (process.pid) {
                         p1 += `<br> - ${process.pid} - ${process.cmdline.substring(0, 40)}`;
                       }
@@ -903,7 +905,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
               },
               (err) => {
                 this.loader.close();
-                new EntityUtils().handleWSError(this, err, this.dialogService);
+                new EntityUtils().handleWsError(this, err, this.dialogService);
               },
             );
 
@@ -928,9 +930,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
                     this.loader.close();
                     this.parentVolumesListComponent.repaintMe();
                   },
-                  (e_res) => {
+                  (error) => {
                     this.loader.close();
-                    if (e_res.reason.indexOf('Device busy') > -1) {
+                    if (error.reason.indexOf('Device busy') > -1) {
                       this.dialogService.confirm({
                         title: this.translate.instant('Device Busy'),
                         message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName }),
@@ -965,8 +967,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                         this.translate.instant(
                           'Error deleting dataset {datasetName}.', { datasetName },
                         ),
-                        e_res.reason,
-                        e_res.stack,
+                        error.reason,
+                        error.stack,
                       );
                     }
                   },
@@ -1027,8 +1029,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
         name: T('Create Snapshot'),
         label: T('Create Snapshot'),
         onClick: (row: VolumesListDataset) => {
-          this.ws.call('vmware.dataset_has_vms', [row.id, false]).pipe(untilDestroyed(this, 'destroy')).subscribe((vmware_res) => {
-            this.vmware_res_status = vmware_res;
+          this.ws.call('vmware.dataset_has_vms', [row.id, false]).pipe(untilDestroyed(this, 'destroy')).subscribe((datasetHasVms) => {
+            this.datasetHasVms = datasetHasVms;
           });
           this.dialogConf = {
             title: 'One time snapshot of ' + rowData.id,
@@ -1058,9 +1060,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 parent: this,
                 updater: (parent: VolumesListTableConfig) => {
                   parent.recursiveIsChecked = !parent.recursiveIsChecked;
-                  parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(parent, 'destroy')).subscribe((vmware_res) => {
-                    parent.vmware_res_status = vmware_res;
-                    _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' })['isHidden'] = !parent.vmware_res_status;
+                  parent.ws.call('vmware.dataset_has_vms', [row.id, parent.recursiveIsChecked]).pipe(untilDestroyed(parent, 'destroy')).subscribe((datasetHasVms) => {
+                    parent.datasetHasVms = datasetHasVms;
+                    _.find(parent.dialogConf.fieldConfig, { name: 'vmware_sync' })['isHidden'] = !parent.datasetHasVms;
                   });
                 },
               },
@@ -1069,7 +1071,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 name: 'vmware_sync',
                 placeholder: helptext.vmware_sync_placeholder,
                 tooltip: helptext.vmware_sync_tooltip,
-                isHidden: !this.vmware_res_status,
+                isHidden: !this.datasetHasVms,
               },
             ],
             method_ws: 'zfs.snapshot.create',
@@ -1111,12 +1113,12 @@ export class VolumesListTableConfig implements EntityTableConfig {
   }
 
   getEncryptedDatasetActions(rowData: VolumesListDataset): EntityTableAction[] {
-    const encryption_actions = [];
+    const encryptionActions = [];
     if (rowData.encrypted) {
       if (rowData.locked) {
         if (rowData.is_encrypted_root
           && (!rowData.parent || (rowData.parent && !(rowData.parent as VolumesListDataset).locked))) {
-          encryption_actions.push({
+          encryptionActions.push({
             id: rowData.name,
             name: T('Unlock'),
             label: T('Unlock'),
@@ -1130,28 +1132,28 @@ export class VolumesListTableConfig implements EntityTableConfig {
           });
         }
       } else {
-        encryption_actions.push({
+        encryptionActions.push({
           id: rowData.name,
           name: T('Encryption Options'),
           label: T('Encryption Options'),
           onClick: (row: VolumesListDataset) => {
             // open encryption options dialog
-            let key_child = false;
+            let keyChild = false;
             for (const ds of this.datasetData) {
               if (ds['id'].startsWith(row.id) && ds.id !== row.id
                 && ds.encryption_root && (ds.id === ds.encryption_root)
                 && ds.key_format && ds.key_format.value && ds.key_format.value === 'HEX') {
-                key_child = true;
+                keyChild = true;
                 break;
               }
             }
-            const can_inherit = (row.parent && (row.parent as VolumesListDataset).encrypted);
-            const passphrase_parent = row.parent
+            const canInherit = (row.parent && (row.parent as VolumesListDataset).encrypted);
+            const passphraseParent = row.parent
               && (row.parent as VolumesListDataset).key_format
               && (row.parent as VolumesListDataset).key_format.value === DatasetEncryptionType.Passphrase;
-            let is_key = false;
-            if (!passphrase_parent) {
-              is_key = key_child ? true : !row.is_passphrase;
+            let isKey = false;
+            if (!passphraseParent) {
+              isKey = keyChild ? true : !row.is_passphrase;
             }
             let pbkdf2iters = '350000'; // will pull from row when it has been added to the payload
             if (row.pbkdf2iters && row.pbkdf2iters && row.pbkdf2iters.rawvalue !== '0') {
@@ -1168,25 +1170,25 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   placeholder: helptext.encryption_options_dialog.inherit_placeholder,
                   tooltip: helptext.encryption_options_dialog.inherit_tooltip,
                   value: !row.is_encrypted_root,
-                  isHidden: !can_inherit,
-                  disabled: !can_inherit,
+                  isHidden: !canInherit,
+                  disabled: !canInherit,
                 },
                 {
                   type: 'select',
                   name: 'encryption_type',
                   placeholder: dataset_helptext.dataset_form_encryption.encryption_type_placeholder,
                   tooltip: dataset_helptext.dataset_form_encryption.encryption_type_tooltip,
-                  value: (is_key ? 'key' : 'passphrase'),
+                  value: (isKey ? 'key' : 'passphrase'),
                   options: dataset_helptext.dataset_form_encryption.encryption_type_options,
-                  isHidden: passphrase_parent || key_child,
+                  isHidden: passphraseParent || keyChild,
                 },
                 {
                   type: 'checkbox',
                   name: 'generate_key',
                   placeholder: dataset_helptext.dataset_form_encryption.generate_key_checkbox_placeholder,
                   tooltip: dataset_helptext.dataset_form_encryption.generate_key_checkbox_tooltip,
-                  disabled: !is_key,
-                  isHidden: !is_key,
+                  disabled: !isKey,
+                  isHidden: !isKey,
                 },
                 {
                   type: 'textarea',
@@ -1195,8 +1197,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   tooltip: dataset_helptext.dataset_form_encryption.key_tooltip,
                   validation: dataset_helptext.dataset_form_encryption.key_validation,
                   required: true,
-                  disabled: !is_key,
-                  isHidden: !is_key,
+                  disabled: !isKey,
+                  isHidden: !isKey,
                 },
                 {
                   type: 'input',
@@ -1207,8 +1209,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   validation: dataset_helptext.dataset_form_encryption.passphrase_validation,
                   togglePw: true,
                   required: true,
-                  disabled: is_key,
-                  isHidden: is_key,
+                  disabled: isKey,
+                  isHidden: isKey,
                 },
                 {
                   type: 'input',
@@ -1218,8 +1220,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   required: true,
                   togglePw: true,
                   validation: this.validationService.matchOtherValidator('passphrase'),
-                  disabled: is_key,
-                  isHidden: is_key,
+                  disabled: isKey,
+                  isHidden: isKey,
                 },
                 {
                   type: 'input',
@@ -1229,8 +1231,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   required: true,
                   value: pbkdf2iters,
                   validation: dataset_helptext.dataset_form_encryption.pbkdf2iters_validation,
-                  disabled: is_key,
-                  isHidden: is_key,
+                  disabled: isKey,
+                  isHidden: isKey,
                 },
                 {
                   type: 'input',
@@ -1248,48 +1250,48 @@ export class VolumesListTableConfig implements EntityTableConfig {
               ],
               saveButtonText: helptext.encryption_options_dialog.save_button,
               afterInit: (entityDialog: EntityDialogComponent) => {
-                const inherit_encryption_fg = entityDialog.formGroup.controls['inherit_encryption'];
-                const encryption_type_fg = entityDialog.formGroup.controls['encryption_type'];
-                const encryption_type_fc = _.find(entityDialog.fieldConfig, { name: 'encryption_type' });
-                const generate_key_fg = entityDialog.formGroup.controls['generate_key'];
+                const inheritEncryptionControl = entityDialog.formGroup.controls['inherit_encryption'];
+                const encryptionTypeControl = entityDialog.formGroup.controls['encryption_type'];
+                const encryptionTypeConfig = _.find(entityDialog.fieldConfig, { name: 'encryption_type' });
+                const generateKeyControl = entityDialog.formGroup.controls['generate_key'];
 
-                const all_encryption_fields = ['encryption_type', 'passphrase', 'confirm_passphrase', 'pbkdf2iters', 'generate_key', 'key'];
+                const allEncryptionFields = ['encryption_type', 'passphrase', 'confirm_passphrase', 'pbkdf2iters', 'generate_key', 'key'];
 
-                if (inherit_encryption_fg.value) { // if already inheriting show as inherit
-                  all_encryption_fields.forEach((field) => {
+                if (inheritEncryptionControl.value) { // if already inheriting show as inherit
+                  allEncryptionFields.forEach((field) => {
                     entityDialog.setDisabled(field, true, true);
                   });
                 }
-                inherit_encryption_fg.valueChanges.pipe(untilDestroyed(this, 'destroy')).subscribe((inherit) => {
+                inheritEncryptionControl.valueChanges.pipe(untilDestroyed(this, 'destroy')).subscribe((inherit) => {
                   if (inherit) {
-                    all_encryption_fields.forEach((field) => {
+                    allEncryptionFields.forEach((field) => {
                       entityDialog.setDisabled(field, inherit, inherit);
                     });
                   } else {
                     entityDialog.setDisabled('encryption_type', inherit, inherit);
-                    if (passphrase_parent || key_child) { // keep hidden if passphrase parent;
-                      encryption_type_fc.isHidden = true;
+                    if (passphraseParent || keyChild) { // keep hidden if passphrase parent;
+                      encryptionTypeConfig.isHidden = true;
                     }
-                    const key = (encryption_type_fg.value === 'key');
+                    const key = (encryptionTypeControl.value === 'key');
                     entityDialog.setDisabled('passphrase', key, key);
                     entityDialog.setDisabled('confirm_passphrase', key, key);
                     entityDialog.setDisabled('pbkdf2iters', key, key);
                     entityDialog.setDisabled('generate_key', !key, !key);
                     if (key) {
-                      const gen_key = generate_key_fg.value;
-                      entityDialog.setDisabled('key', gen_key, gen_key);
+                      const genKey = generateKeyControl.value;
+                      entityDialog.setDisabled('key', genKey, genKey);
                     } else {
                       entityDialog.setDisabled('key', true, true);
                     }
                   }
                 });
 
-                encryption_type_fg.valueChanges.pipe(untilDestroyed(this, 'destroy')).subscribe((enc_type) => {
-                  const key = (enc_type === 'key');
+                encryptionTypeControl.valueChanges.pipe(untilDestroyed(this, 'destroy')).subscribe((encType) => {
+                  const key = (encType === 'key');
                   entityDialog.setDisabled('generate_key', !key, !key);
                   if (key) {
-                    const gen_key = generate_key_fg.value;
-                    entityDialog.setDisabled('key', gen_key, gen_key);
+                    const genKey = generateKeyControl.value;
+                    entityDialog.setDisabled('key', genKey, genKey);
                   } else {
                     entityDialog.setDisabled('key', true, true);
                   }
@@ -1298,9 +1300,9 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   entityDialog.setDisabled('pbkdf2iters', key, key);
                 });
 
-                generate_key_fg.valueChanges.pipe(untilDestroyed(this, 'destroy')).subscribe((gen_key) => {
-                  if (!inherit_encryption_fg.value && encryption_type_fg.value === 'key') {
-                    entityDialog.setDisabled('key', gen_key, gen_key);
+                generateKeyControl.valueChanges.pipe(untilDestroyed(this, 'destroy')).subscribe((genKey) => {
+                  if (!inheritEncryptionControl.value && encryptionTypeControl.value === 'key') {
+                    entityDialog.setDisabled('key', genKey, genKey);
                   }
                 });
               },
@@ -1323,7 +1325,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                       this.parentVolumesListComponent.repaintMe();
                     }, (err: WebsocketError) => {
                       entityDialog.loader.close();
-                      new EntityUtils().handleWSError(entityDialog, err, this.dialogService);
+                      new EntityUtils().handleWsError(entityDialog, err, this.dialogService);
                     });
                   } else { // just close the dialog if the inherit checkbox is checked but we are already inheriting
                     entityDialog.dialogRef.close();
@@ -1364,7 +1366,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((err) => {
                     if (err) {
                       dialogRef.close();
-                      new EntityUtils().handleWSError(entityDialog, err, this.dialogService);
+                      new EntityUtils().handleWsError(entityDialog, err, this.dialogService);
                     }
                   });
                 }
@@ -1375,14 +1377,14 @@ export class VolumesListTableConfig implements EntityTableConfig {
           },
         });
         if (rowData.is_encrypted_root && rowData.is_passphrase) {
-          encryption_actions.push({
+          encryptionActions.push({
             id: rowData.name,
             name: T('Lock'),
             label: T('Lock'),
             onClick: (row: VolumesListDataset) => {
               const datasetName = row.name;
               const params: DatasetLockParams = [row.id];
-              let force_umount = false;
+              let forceUmount = false;
               const ds = this.dialogService.confirm({
                 title: this.translate.instant('Lock Dataset {datasetName}', { datasetName }),
                 message: this.translate.instant('Lock Dataset {datasetName}?', { datasetName }),
@@ -1393,7 +1395,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 data: params,
               });
               ds.componentInstance.switchSelectionEmitter.pipe(untilDestroyed(this, 'destroy')).subscribe((res: boolean) => {
-                force_umount = res;
+                forceUmount = res;
               });
               ds.afterClosed().pipe(
                 filter(Boolean),
@@ -1406,7 +1408,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                 dialogRef.componentInstance.setDescription(
                   this.translate.instant('Locking dataset {datasetName}', { datasetName: rowData.name }),
                 );
-                params.push({ force_umount });
+                params.push({ force_umount: forceUmount });
                 dialogRef.componentInstance.setCall(ds.componentInstance.method, params);
                 dialogRef.componentInstance.submit();
                 let done = false;
@@ -1420,7 +1422,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
 
                 dialogRef.componentInstance.failure.pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
                   dialogRef.close(false);
-                  new EntityUtils().handleWSError(this, res, this.dialogService);
+                  new EntityUtils().handleWsError(this, res, this.dialogService);
                 });
               });
             },
@@ -1435,7 +1437,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
           const fileName = 'dataset_' + rowData.name + '_key.txt';
           const mimetype = 'text/plain';
           const message = helptext.export_keys_message + rowData.id;
-          encryption_actions.push({
+          encryptionActions.push({
             id: rowData.id,
             name: T('Export Key'),
             label: T('Export Key'),
@@ -1475,7 +1477,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                         });
                     }, (e) => {
                       this.loader.close();
-                      new EntityUtils().handleWSError(this, e, this.dialogService);
+                      new EntityUtils().handleWsError(this, e, this.dialogService);
                     });
                   });
                 });
@@ -1485,7 +1487,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
         }
       }
     }
-    return encryption_actions as EntityTableAction[];
+    return encryptionActions as EntityTableAction[];
   }
 
   getTimestamp(): string {
@@ -1499,15 +1501,15 @@ export class VolumesListTableConfig implements EntityTableConfig {
     node.data = data;
     this.getMoreDatasetInfo(data, data.parent);
     node.data.group_actions = true;
-    let actions_title: string = this.translate.instant(helptext.dataset_actions);
+    let actionsTitle: string = this.translate.instant(helptext.dataset_actions);
     if (data.type === DatasetType.Volume) {
-      actions_title = this.translate.instant(helptext.zvol_actions);
+      actionsTitle = this.translate.instant(helptext.zvol_actions);
     }
-    const actions = [{ title: actions_title, actions: this.getActions(data) }];
+    const actions = [{ title: actionsTitle, actions: this.getActions(data) }];
     if (data.type === DatasetType.Filesystem || data.type === DatasetType.Volume) {
-      const encryption_actions = this.getEncryptedDatasetActions(data);
-      if (encryption_actions.length > 0) {
-        actions.push({ title: this.translate.instant(helptext.encryption_actions_title), actions: encryption_actions });
+      const encryptionActions = this.getEncryptedDatasetActions(data);
+      if (encryptionActions.length > 0) {
+        actions.push({ title: this.translate.instant(helptext.encryption_actions_title), actions: encryptionActions });
       }
     }
     node.data.actions = actions;
@@ -1572,7 +1574,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
       dataObj.used_parsed = this.storageService.convertBytestoHumanReadable(dataObj.used.parsed || 0);
       dataObj.is_encrypted_root = (dataObj.id === dataObj.encryption_root);
       if (dataObj.is_encrypted_root) {
-        this.parentVolumesListComponent.has_encrypted_root[(parent as VolumesListDataset).pool] = true;
+        this.parentVolumesListComponent.hasEncryptedRoot[(parent as VolumesListDataset).pool] = true;
       }
       dataObj.non_encrypted_on_encrypted = (!dataObj.encrypted && (parent as VolumesListDataset).encrypted);
     });

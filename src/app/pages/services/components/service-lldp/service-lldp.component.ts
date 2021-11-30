@@ -16,7 +16,7 @@ import { WebSocketService, ServicesService } from 'app/services';
 })
 export class ServiceLLDPComponent implements FormConfiguration {
   queryCall = 'lldp.config' as const;
-  route_success: string[] = ['services'];
+  routeSuccess: string[] = ['services'];
   title = helptext.formTitle;
 
   fieldConfig: FieldConfig[] = [];
@@ -62,7 +62,7 @@ export class ServiceLLDPComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     entityEdit.submitFunction = (body) => this.ws.call('lldp.update', [body]);
 
-    this.services.getLLDPCountries().pipe(untilDestroyed(this)).subscribe((res) => {
+    this.services.getLldpCountries().pipe(untilDestroyed(this)).subscribe((res) => {
       const countries = this.fieldSets
         .find((set) => set.name === 'General Options')
         .config.find((config) => config.name === 'country') as FormComboboxConfig;

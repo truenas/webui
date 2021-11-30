@@ -17,7 +17,7 @@
     <mat-chip-list
       #chipList class="form-chip"
       [required]="config.required"
-      [formControl]="group.controls[config.name]"
+      [formControl]="group.controls[config.name] | cast"
       ix-auto
       ix-auto-type="input"
       ix-auto-identifier="{{config.placeholder}}"
@@ -47,8 +47,9 @@
           [matChipInputFor]="chipList"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
           (matChipInputTokenEnd)="add($event)"
-          (keyup)="updateSearchOptions($event.target.value)"
+          (keyup)="updateSearchOptions(chipInput.value)"
           [matAutocomplete]="autoComplete"
+          (focus)="openPanel()"
         >
         <mat-autocomplete #autoComplete="matAutocomplete" (optionSelected)="selected($event)">
           <mat-option *ngFor="let option of config.searchOptions" [value]="option.value"

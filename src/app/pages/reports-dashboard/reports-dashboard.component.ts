@@ -182,9 +182,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
       this.translate.instant('Target'),
       this.translate.instant('ZFS'),
     ];
-    const UPS = this.otherReports.find((report) => report.title.startsWith('UPS'));
+    const ups = this.otherReports.find((report) => report.title.startsWith('UPS'));
 
-    if (UPS) {
+    if (ups) {
       labels.splice(8, 0, 'UPS');
     }
 
@@ -294,9 +294,9 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     }
   }
 
-  flattenReports(list: Report[]): any[] {
+  flattenReports(list: Report[]): Report[] {
     // Based on identifiers, create a single dimensional array of reports to render
-    const result: any[] = [];
+    const result: Report[] = [];
     list.forEach((report) => {
       // Without identifiers
 

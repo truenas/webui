@@ -35,7 +35,7 @@ export class PasswordDialogComponent {
   ) {}
 
   submit(): void {
-    this.sysGeneralService.checkRootPW(this.password).pipe(untilDestroyed(this)).subscribe(
+    this.sysGeneralService.checkRootPassword(this.password).pipe(untilDestroyed(this)).subscribe(
       (res) => {
         if (res) {
           this.dialogRef.close(true);
@@ -44,12 +44,12 @@ export class PasswordDialogComponent {
         }
       },
       (err) => {
-        new EntityUtils().handleWSError(this, err);
+        new EntityUtils().handleWsError(this, err);
       },
     );
   }
 
-  togglePW(): void {
+  togglePassword(): void {
     this.inputType = this.inputType === 'password' ? '' : 'password';
     this.showPassword = !this.showPassword;
   }

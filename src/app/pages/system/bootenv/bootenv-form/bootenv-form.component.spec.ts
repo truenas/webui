@@ -11,7 +11,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
 import { BootEnvironmentFormComponent } from 'app/pages/system/bootenv/bootenv-form/bootenv-form.component';
 import { WebSocketService } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 describe('BootEnvironmentFormComponent', () => {
   let spectator: Spectator<BootEnvironmentFormComponent>;
@@ -28,7 +28,7 @@ describe('BootEnvironmentFormComponent', () => {
         mockCall('bootenv.create'),
         mockCall('bootenv.update'),
       ]),
-      mockProvider(IxModalService),
+      mockProvider(IxSlideInService),
       mockProvider(FormErrorHandlerService),
     ],
   });

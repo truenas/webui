@@ -16,7 +16,7 @@
       [value]="selectedOption?.label"
       [placeholder]="placeholder"
       [disabled]="isDisabled"
-      (input)="onChanged($event.target.value)"
+      (input)="onChanged(ixInput.value)"
       (blur)="onTouch()"
       [matAutocomplete]="auto"
     >
@@ -35,7 +35,8 @@
       </mat-option>
     </mat-autocomplete>
   </div>
-  <ix-form-errors [control]="controlDirective.control" [label]="label"></ix-form-errors>
+  <ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
+  
   <mat-hint *ngIf="hint">{{hint}}</mat-hint>
 
 </div>

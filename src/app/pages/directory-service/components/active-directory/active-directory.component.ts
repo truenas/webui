@@ -5,6 +5,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
@@ -35,9 +36,9 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   updateCall = 'activedirectory.update' as const;
   isEntity = false;
   isBasicMode = true;
-  protected kerberos_realm: FormSelectConfig;
-  protected kerberos_principal: FormSelectConfig;
-  protected nss_info: FormSelectConfig;
+  protected kerberosRealmField: FormSelectConfig;
+  protected kerberosPrincipalField: FormSelectConfig;
+  protected nssInfoField: FormSelectConfig;
   adStatus = false;
   entityEdit: EntityFormComponent;
   custActions = [
@@ -45,14 +46,14 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       id: helptext.activedirectory_custactions_basic_id,
       name: global_helptext.basic_options,
       function: () => {
-        this.setBasicMode(true);
+        this.isBasicMode = true;
       },
     },
     {
       id: helptext.activedirectory_custactions_advanced_id,
       name: global_helptext.advanced_options,
       function: () => {
-        this.setBasicMode(false);
+        this.isBasicMode = false;
       },
     },
     {
@@ -116,7 +117,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
                 },
                 (err: WebsocketError) => {
                   entityDialog.loader.close();
-                  new EntityUtils().handleWSError(helptext.ad_leave_domain_dialog.error, err, this.dialogservice);
+                  new EntityUtils().handleWsError(helptext.ad_leave_domain_dialog.error, err, this.dialogservice);
                 });
             },
           },
@@ -284,7 +285,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     },
   ];
 
-  advanced_field = helptext.activedirectory_advanced_fields;
+  advancedFields = helptext.activedirectory_advanced_fields;
 
   isCustActionVisible(actionname: string): boolean {
     if (actionname === 'advanced_mode' && !this.isBasicMode) {
@@ -324,14 +325,16 @@ export class ActiveDirectoryComponent implements FormConfiguration {
 
   preInit(entityForm: EntityFormComponent): void {
     if (window.localStorage.getItem('product_type').includes(ProductType.Enterprise)) {
-      this.ws.call('failover.licensed').pipe(untilDestroyed(this)).subscribe((is_ha) => {
-        if (is_ha) {
-          this.ws.call('smb.get_smb_ha_mode').pipe(untilDestroyed(this)).subscribe((ha_mode) => {
-            if (ha_mode === 'LEGACY') {
-              entityForm.setDisabled('netbiosname_b', false, false);
-            }
-          });
+      this.ws.call('failover.licensed').pipe(
+        filter(Boolean),
+        switchMap(() => this.ws.call('smb.get_smb_ha_mode')),
+        untilDestroyed(this),
+      ).subscribe((haMode) => {
+        if (haMode !== 'LEGACY') {
+          return;
         }
+
+        entityForm.setDisabled('netbiosname_b', false, false);
       });
     }
     this.ws.call('directoryservices.get_state').pipe(untilDestroyed(this)).subscribe((res) => {
@@ -342,27 +345,27 @@ export class ActiveDirectoryComponent implements FormConfiguration {
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
     this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
-      this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
+      this.kerberosRealmField = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
       realms.forEach((realm) => {
-        this.kerberos_realm.options.push(
+        this.kerberosRealmField.options.push(
           { label: realm.realm, value: realm.id },
         );
       });
     });
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
+      this.kerberosPrincipalField = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
       res.forEach((item) => {
-        this.kerberos_principal.options.push(
+        this.kerberosPrincipalField.options.push(
           { label: item, value: item },
         );
       });
     });
 
     this.ws.call('activedirectory.nss_info_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      this.nss_info = _.find(this.fieldConfig, { name: 'nss_info' }) as FormSelectConfig;
+      this.nssInfoField = _.find(this.fieldConfig, { name: 'nss_info' }) as FormSelectConfig;
       choices.forEach((choice) => {
-        this.nss_info.options.push(
+        this.nssInfoField.options.push(
           { label: choice, value: choice },
         );
       });
@@ -387,10 +390,6 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     });
 
     entityEdit.submitFunction = this.submitFunction;
-  }
-
-  setBasicMode(basic_mode: boolean): void {
-    this.isBasicMode = basic_mode;
   }
 
   beforeSubmit(data: any): void {
@@ -430,20 +429,20 @@ export class ActiveDirectoryComponent implements FormConfiguration {
     }
 
     this.ws.call('kerberos.realm.query').pipe(untilDestroyed(this)).subscribe((realms) => {
-      this.kerberos_realm = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
+      this.kerberosRealmField = _.find(this.fieldConfig, { name: 'kerberos_realm' }) as FormSelectConfig;
       realms.forEach((realm) => {
-        this.kerberos_realm.options.push(
+        this.kerberosRealmField.options.push(
           { label: realm.realm, value: realm.id },
         );
       });
     });
 
     this.ws.call('kerberos.keytab.kerberos_principal_choices').pipe(untilDestroyed(this)).subscribe((res) => {
-      this.kerberos_principal = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
-      this.kerberos_principal.options.length = 0;
-      this.kerberos_principal.options.push({ label: '---', value: null });
+      this.kerberosPrincipalField = _.find(this.fieldConfig, { name: 'kerberos_principal' }) as FormSelectConfig;
+      this.kerberosPrincipalField.options.length = 0;
+      this.kerberosPrincipalField.options.push({ label: '---', value: null });
       res.forEach((item) => {
-        this.kerberos_principal.options.push(
+        this.kerberosPrincipalField.options.push(
           { label: item, value: item },
         );
       });
@@ -464,7 +463,7 @@ export class ActiveDirectoryComponent implements FormConfiguration {
       this.modalService.refreshTable();
     });
     dialogRef.componentInstance.failure.pipe(untilDestroyed(this)).subscribe((error) => {
-      new EntityUtils().handleWSError(this, error, this.dialogservice);
+      new EntityUtils().handleWsError(this, error, this.dialogservice);
       this.modalService.refreshTable();
       dialogRef.close();
     });

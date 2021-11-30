@@ -25,7 +25,7 @@ export class ApiKeysComponent implements EntityTableConfig {
   title = helptext.title;
   queryCall = 'api_key.query' as const;
   wsDelete = 'api_key.delete' as const;
-  route_add_tooltip = helptext.route_add_tooltip;
+  routeAddTooltip = helptext.route_add_tooltip;
   addCall = 'api_key.create' as const;
   editCall = 'api_key.update' as const;
 
@@ -71,7 +71,6 @@ export class ApiKeysComponent implements EntityTableConfig {
         entityFrom.formGroup.controls['name'].setValue(this.currItem.name);
       }
     },
-    parent: this,
   };
 
   timeZone: string;
@@ -114,7 +113,7 @@ export class ApiKeysComponent implements EntityTableConfig {
     this.dialogService.dialogForm(this.apikeysFormConf);
   }
 
-  doSubmit(entityDialogForm: EntityDialogComponent<ApiKeysComponent>): void {
+  doSubmit(entityDialogForm: EntityDialogComponent): void {
     if (this.currItem) {
       this.ws.call(this.editCall, [this.currItem.id, entityDialogForm.formValue]).pipe(untilDestroyed(this)).subscribe(
         (res) => {
@@ -125,7 +124,7 @@ export class ApiKeysComponent implements EntityTableConfig {
           this.entityList.getData();
         },
         (err: WebsocketError) => {
-          new EntityUtils().handleWSError(this, err, this.dialogService, this.apikeysFormConf.fieldConfig);
+          new EntityUtils().handleWsError(this, err, this.dialogService, this.apikeysFormConf.fieldConfig);
         },
       );
     } else {
@@ -136,7 +135,7 @@ export class ApiKeysComponent implements EntityTableConfig {
           this.entityList.getData();
         },
         (err: WebsocketError) => {
-          new EntityUtils().handleWSError(this, err, this.dialogService, this.apikeysFormConf.fieldConfig);
+          new EntityUtils().handleWsError(this, err, this.dialogService, this.apikeysFormConf.fieldConfig);
         },
       );
     }

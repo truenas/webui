@@ -35,16 +35,16 @@ export class ReportsService implements OnDestroy {
     this.reportsUtils = new Worker(new URL('./reports-utils.worker', import.meta.url), { type: 'module' });
 
     this.core.register({ observerClass: this, eventName: 'ReportDataRequest' }).subscribe((evt: CoreEvent) => {
-      this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((raw_res) => {
+      this.ws.call('reporting.get_data', [[evt.data.params], evt.data.timeFrame]).subscribe((reportingData) => {
         let res;
 
         // If requested, we truncate trailing null values
         if (evt.data.truncate) {
-          const truncated = this.truncateData(raw_res[0].data);
-          res = Object.assign([], raw_res);
+          const truncated = this.truncateData(reportingData[0].data);
+          res = Object.assign([], reportingData);
           res[0].data = truncated;
         } else {
-          res = raw_res;
+          res = reportingData;
         }
 
         const commands = [

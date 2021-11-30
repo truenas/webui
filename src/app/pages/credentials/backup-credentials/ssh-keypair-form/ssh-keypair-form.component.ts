@@ -13,7 +13,7 @@ import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form
 import {
   AppLoaderService, DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';
-import { IxModalService } from 'app/services/ix-modal.service';
+import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
@@ -30,7 +30,7 @@ export class SshKeypairFormComponent {
   isFormLoading = false;
 
   form = this.fb.group({
-    name: ['', [Validators.required, Validators.pattern(UserService.VALIDATOR_NAME)]],
+    name: ['', [Validators.required, Validators.pattern(UserService.namePattern)]],
     private_key: [''],
     public_key: ['', atLeastOne('private_key', [helptext.private_key_placeholder, helptext.public_key_placeholder])],
   });
@@ -49,7 +49,7 @@ export class SshKeypairFormComponent {
   constructor(
     private fb: FormBuilder,
     private ws: WebSocketService,
-    private modalService: IxModalService,
+    private slideInService: IxSlideInService,
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private loader: AppLoaderService,
@@ -77,7 +77,7 @@ export class SshKeypairFormComponent {
     },
     (err) => {
       this.loader.close();
-      new EntityUtils().handleWSError(this, err, this.dialogService);
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
   }
 
@@ -115,7 +115,8 @@ export class SshKeypairFormComponent {
 
     request$.pipe(untilDestroyed(this)).subscribe(() => {
       this.isFormLoading = false;
-      this.modalService.close();
+      this.cdr.markForCheck();
+      this.slideInService.close();
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);

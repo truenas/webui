@@ -5,7 +5,7 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { helptext_system_certificates } from 'app/helptext/system/certificates';
+import { helptextSystemCertificates } from 'app/helptext/system/certificates';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
@@ -37,13 +37,13 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   commonName: string;
   private getRow = new Subscription();
   private rowNum: number;
-  private dns_map: FormSelectConfig;
-  title = helptext_system_certificates.list.action_create_acme_certificate;
+  private dnsMapField: FormSelectConfig;
+  title = helptextSystemCertificates.list.action_create_acme_certificate;
   protected isOneColumnForm = true;
   fieldConfig: FieldConfig[];
   fieldSets: FieldSet[] = [
     {
-      name: helptext_system_certificates.acme.fieldset_acme,
+      name: helptextSystemCertificates.acme.fieldset_acme,
       label: false,
       class: 'acme',
       width: '100%',
@@ -51,35 +51,35 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
         {
           type: 'input',
           name: 'identifier',
-          placeholder: helptext_system_certificates.acme.identifier.placeholder,
-          tooltip: helptext_system_certificates.acme.identifier.tooltip,
+          placeholder: helptextSystemCertificates.acme.identifier.placeholder,
+          tooltip: helptextSystemCertificates.acme.identifier.tooltip,
           required: true,
-          validation: helptext_system_certificates.add.name.validation,
+          validation: helptextSystemCertificates.add.name.validation,
           hasErrors: false,
           errors: 'Allowed characters: letters, numbers, underscore (_), and dash (-).',
         },
         {
           type: 'checkbox',
           name: 'tos',
-          placeholder: helptext_system_certificates.acme.tos.placeholder,
-          tooltip: helptext_system_certificates.acme.tos.tooltip,
+          placeholder: helptextSystemCertificates.acme.tos.placeholder,
+          tooltip: helptextSystemCertificates.acme.tos.tooltip,
           required: true,
         },
         {
           type: 'input',
           name: 'renew_days',
-          placeholder: helptext_system_certificates.acme.renew_day.placeholder,
-          tooltip: helptext_system_certificates.acme.renew_day.tooltip,
+          placeholder: helptextSystemCertificates.acme.renew_day.placeholder,
+          tooltip: helptextSystemCertificates.acme.renew_day.tooltip,
           inputType: 'number',
           required: true,
           value: 10,
-          validation: helptext_system_certificates.acme.renew_day.validation,
+          validation: helptextSystemCertificates.acme.renew_day.validation,
         },
         {
           type: 'select',
           name: 'acme_directory_uri',
-          placeholder: helptext_system_certificates.acme.dir_uri.placeholder,
-          tooltip: helptext_system_certificates.acme.dir_uri.tooltip,
+          placeholder: helptextSystemCertificates.acme.dir_uri.placeholder,
+          tooltip: helptextSystemCertificates.acme.dir_uri.tooltip,
           required: true,
           options: [
           ],
@@ -112,8 +112,8 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
             {
               type: 'select',
               name: 'authenticators',
-              placeholder: helptext_system_certificates.acme.authenticator.placeholder,
-              tooltip: helptext_system_certificates.acme.authenticator.tooltip,
+              placeholder: helptextSystemCertificates.acme.authenticator.placeholder,
+              tooltip: helptextSystemCertificates.acme.authenticator.tooltip,
               required: true,
               options: [],
             },
@@ -129,7 +129,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   queryCallOption: [QueryFilter<Certificate>];
   initialCount = 1;
   private domainList: FormArray;
-  private domainList_fc: FormListConfig;
+  private domainListField: FormListConfig;
 
   constructor(
     protected ws: WebSocketService,
@@ -147,16 +147,16 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   preInit(entityForm: EntityFormComponent): void {
     this.ws.call('acme.dns.authenticator.query').pipe(untilDestroyed(this)).subscribe((authenticators) => {
       const listConfig = this.fieldSets[2].config[0] as FormListConfig;
-      this.dns_map = _.find(listConfig.templateListField, { name: 'authenticators' }) as FormSelectConfig;
+      this.dnsMapField = _.find(listConfig.templateListField, { name: 'authenticators' }) as FormSelectConfig;
       authenticators.forEach((item) => {
-        this.dns_map.options.push({ label: item.name, value: item.id });
+        this.dnsMapField.options.push({ label: item.name, value: item.id });
       });
     });
 
     this.ws.call('certificate.acme_server_choices').pipe(untilDestroyed(this)).subscribe((choices) => {
-      const acme_directory_uri = _.find(this.fieldSets[0].config, { name: 'acme_directory_uri' }) as FormSelectConfig;
+      const acmeDirectoryUri = _.find(this.fieldSets[0].config, { name: 'acme_directory_uri' }) as FormSelectConfig;
       for (const key in choices) {
-        acme_directory_uri.options.push({ label: choices[key], value: key });
+        acmeDirectoryUri.options.push({ label: choices[key], value: key });
       }
       entityForm.formGroup.controls['acme_directory_uri'].setValue(Object.keys(choices)[0]);
     });
@@ -167,8 +167,8 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     this.fieldConfig = entityEdit.fieldConfig;
 
     this.domainList = entityEdit.formGroup.controls['domains'] as FormArray;
-    this.domainList_fc = _.find(this.fieldConfig, { name: 'domains' }) as FormListConfig;
-    const listFields = this.domainList_fc.listFields;
+    this.domainListField = _.find(this.fieldConfig, { name: 'domains' }) as FormListConfig;
+    const listFields = this.domainListField.listFields;
 
     this.ws.call(this.queryCall, [this.queryCallOption]).pipe(untilDestroyed(this)).subscribe((res) => {
       this.commonName = res[0].common;
@@ -178,19 +178,19 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
         if (domains && domains.length > 0) {
           for (let i = 0; i < domains.length; i++) {
             if (this.domainList.controls[i] === undefined) {
-              const templateListField = _.cloneDeep(this.domainList_fc.templateListField);
+              const templateListField = _.cloneDeep(this.domainListField.templateListField);
               const newfg = this.entityFormService.createFormGroup(templateListField);
               newfg.setParent(this.domainList);
               this.domainList.controls.push(newfg);
-              this.domainList_fc.listFields.push(templateListField);
+              this.domainListField.listFields.push(templateListField);
             }
 
             const controls = listFields[i];
-            const name_text_fc: FormParagraphConfig = _.find(controls, { name: 'name_text' });
-            const auth_fc = _.find(controls, { name: 'authenticators' }) as FormSelectConfig;
+            const nameTextConfig: FormParagraphConfig = _.find(controls, { name: 'name_text' });
+            const authConfig = _.find(controls, { name: 'authenticators' }) as FormSelectConfig;
             (this.domainList.controls[i] as FormGroup).controls['name_text'].setValue(domains[i]);
-            name_text_fc.paraText = '<b>' + domains[i] + '</b>';
-            auth_fc.options = this.dns_map.options;
+            nameTextConfig.paraText = '<b>' + domains[i] + '</b>';
+            authConfig.options = this.dnsMapField.options;
           }
         }
       });
@@ -198,9 +198,9 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
   }
 
   customSubmit(value: any): void {
-    const dns_mapping: any = { };
+    const dnsMapping: any = { };
     value.domains.forEach((domain: any) => {
-      dns_mapping[domain.name_text] = domain.authenticators;
+      dnsMapping[domain.name_text] = domain.authenticators;
     });
 
     const payload = value;
@@ -208,12 +208,12 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
     delete payload['identifier'];
     payload['csr_id'] = this.csrOrg.id;
     payload['create_type'] = 'CERTIFICATE_CREATE_ACME';
-    payload['dns_mapping'] = dns_mapping;
+    payload['dns_mapping'] = dnsMapping;
     delete payload['domains'];
     this.dialogRef = this.dialog.open(EntityJobComponent, {
       data: {
         title: (
-          helptext_system_certificates.acme.job_dialog_title),
+          helptextSystemCertificates.acme.job_dialog_title),
       },
       disableClose: true,
     });
@@ -228,9 +228,9 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
       this.dialog.closeAll();
       // Dialog needed b/c handleWSError doesn't open a dialog when rejection comes back from provider
       if (err.error.includes('[EFAULT')) {
-        new EntityUtils().handleWSError(this.entityForm, err);
+        new EntityUtils().handleWsError(this.entityForm, err);
       } else {
-        this.dialogService.errorReport(helptext_system_certificates.acme.error_dialog.title,
+        this.dialogService.errorReport(helptextSystemCertificates.acme.error_dialog.title,
           err.exc_info.type, err.exception);
       }
     });
