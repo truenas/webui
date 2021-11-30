@@ -30,6 +30,7 @@ import { R20A } from 'app/core/classes/hardware/r20a';
 import { R20B } from 'app/core/classes/hardware/r20b';
 import { R40 } from 'app/core/classes/hardware/r40';
 import { R50 } from 'app/core/classes/hardware/r50';
+import { R50B } from 'app/core/classes/hardware/r50b';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import {
   SystemProfiler, EnclosureMetadata, EnclosureDisk, VDevMetadata,
@@ -417,6 +418,10 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new R50(true);
         this.showCaption = false;
         break;
+      case 'R50B':
+        this.chassis = new R50B(true);
+        this.showCaption = false;
+        break;
       case 'M Series':
         const rearChassis = !!this.system.rearIndex;
         this.chassis = new M50(rearChassis);
@@ -528,6 +533,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new R40();
         break;
       case 'R50':
+      case 'R50B':
         this.chassis = new R50(true);
         this.showCaption = false;
         break;
