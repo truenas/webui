@@ -113,13 +113,13 @@ def click_on_who_select_user(driver):
 @then('The User input should appear')
 def the_user_input_should_appear(driver):
     """The User input should appear."""
-    assert wait_on_element(driver, 5, '(//input[@placeholder="User"])[2]')
+    assert wait_on_element(driver, 5, '//div[contains(.,"User") and @id="user"]//input')
 
 
 @then(parsers.parse('In User Input enter "{input}" and select "{user}"'))
 def in_user_input_enter_eric_and_select_ericbsd(driver, input, user):
     """In User Input enter "{input}" and select "{user}"."""
-    driver.find_element_by_xpath('(//input[@placeholder="User"])[2]').send_keys(input)
+    driver.find_element_by_xpath('//div[contains(.,"User") and @id="user"]//input').send_keys(input)
     assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__{user}"]')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__{user}"]').click()
 
@@ -146,8 +146,8 @@ def click_on_my_acl_dataset_3_dots_button_select_edit_permissions(driver):
 def verify_the_new_acl_item_for_user_name_still_exist(driver, user):
     """Verify the new ACL item for user "{user}" still exist."""
     assert wait_on_element(driver, 5, '//h4[contains(.,"File Information")]')
-    assert wait_on_element(driver, 5, '(//input[@placeholder="User"])[2]')
-    assert attribute_value_exist(driver, '(//input[@placeholder="User"])[2]', 'value', user)
+    assert wait_on_element(driver, 5, '//div[contains(.,"User") and @id="user"]//input')
+    assert attribute_value_exist(driver, '//div[contains(.,"User") and @id="user"]//input', 'value', user)
 
 
 @then('Navigate to Dashboard')
