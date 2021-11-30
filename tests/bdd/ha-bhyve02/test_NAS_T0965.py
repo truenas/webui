@@ -152,7 +152,7 @@ def if_the_smb_service_is_not_started_start_the_service(driver):
     element = driver.find_element_by_xpath('//button[@ix-auto="button__S3_Actions"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(1)
-    driver.find_element_by_xpath('//div[@ix-auto="value__SMB"]')
+    assert wait_on_element(driver, 7, '//div[@ix-auto="overlay__SMB_Running"]', 'clickable')
     value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__SMB_Running"]', 'class', 'mat-checked')
     if not value_exist:
         driver.find_element_by_xpath('//div[@ix-auto="overlay__SMB_Running"]').click()
@@ -162,6 +162,7 @@ def if_the_smb_service_is_not_started_start_the_service(driver):
 @then('Click on SMB Start Automatically checkbox')
 def click_on_smb_start_automatically_checkbox(driver):
     """Click on SMB Start Automatically checkbox."""
+    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__SMB_Start Automatically"]', 'clickable')
     value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__SMB_Start Automatically"]', 'class', 'mat-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__SMB_Start Automatically"]').click()
