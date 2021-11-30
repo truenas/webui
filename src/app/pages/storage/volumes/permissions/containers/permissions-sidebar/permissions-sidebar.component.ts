@@ -55,6 +55,17 @@ export class PermissionsSidebarComponent implements OnInit, OnChanges {
         this.isLoading = state.isLoading;
         this.acl = state.acl;
         this.stat = state.stat;
+        if (this.acl) {
+          for (const acl of this.acl.acl) {
+            if (acl.tag.toLowerCase().includes('owner') && acl.who == null) {
+              acl.who = this.acl.uid.toString();
+            }
+            if (acl.tag.toLowerCase().includes('group') && acl.who == null) {
+              acl.who = this.acl.gid.toString();
+            }
+          }
+        }
+
         this.cdr.markForCheck();
       });
   }

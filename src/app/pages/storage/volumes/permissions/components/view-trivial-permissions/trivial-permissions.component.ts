@@ -33,12 +33,12 @@ export class TrivialPermissionsComponent {
     return [
       {
         type: PermissionsItemType.User,
-        name: stat.user,
+        name: stat.user == null ? 'User ID: ' + stat.uid.toString() : stat.user,
         description: posixPermissionsToDescription(this.translate, permissions.owner),
       },
       {
         type: PermissionsItemType.Group,
-        name: stat.group,
+        name: stat.group == null ? 'Group ID: ' + stat.gid.toString() : stat.group,
         description: posixPermissionsToDescription(this.translate, permissions.group),
       },
       {
