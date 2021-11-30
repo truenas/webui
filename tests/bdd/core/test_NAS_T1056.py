@@ -105,16 +105,16 @@ def click_on_the_mapall_dataset_3_dots_button_select_edit_permissions(driver):
 @then('on the Permissions page, set the user to nobody and the Group to nogroup')
 def on_the_permissions_page_set_the_user_to_nobody_and_the_group_to_nogroup(driver):
     """on the Permissions page, set the user to nobody and the Group to nogroup."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]', 'clickable')
-    driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys('nobody')
+    assert wait_on_element(driver, 7, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input').send_keys('nobody')
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__nobody"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div').click()
-    assert wait_on_element(driver, 7, '//input[@placeholder="Group"]')
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys('nogroup')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys('nogroup')
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__nogroup"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div', 'clickable')
@@ -169,11 +169,11 @@ def input_the_mapall_dataset_path_in_paths_click_advanced_options(driver):
 @then('input nobody in Mapall User input nogroup in Mapall Group')
 def input_nobody_in_mapall_user_input_nogroup_in_mapall_group(driver):
     """input nobody in Mapall User input nogroup in Mapall Group."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="Mapall User"]', 'clickable')
-    driver.find_element_by_xpath('//input[@placeholder="Mapall User"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Mapall User"]').send_keys('nobody')
-    driver.find_element_by_xpath('//input[@placeholder="Mapall Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Mapall Group"]').send_keys('nogroup')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Mapall User") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"Mapall User") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Mapall User") and contains(@class,"mat-form-field-infix")]//input').send_keys('nobody')
+    driver.find_element_by_xpath('//div[contains(.,"Mapall Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Mapall Group") and contains(@class,"mat-form-field-infix")]//input').send_keys('nogroup')
 
 
 @then('click Submit, the new share should be created without error')

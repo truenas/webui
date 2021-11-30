@@ -210,9 +210,6 @@ def umount_and_remove_the_mount_point_disconnect_from_system(driver, nas_ip, sys
         cmd = f"iscsiadm -m node -T {iqn} -p {nas_ip}:3260 -u"
         logout_results = ssh_cmd(cmd, 'root', passwd, hst)
         assert logout_results['result'], str(logout_results)
-        cmd = f"iscsiadm -m node -o delete -T {iqn}"
-        delete_results = ssh_cmd(cmd, 'root', passwd, hst)
-        assert delete_results['result'], str(delete_results)
         cmd = "iscsiadm -m session"
         session_results = ssh_cmd(cmd, 'root', passwd, hst)
         assert not session_results['result'], str(session_results)

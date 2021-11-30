@@ -31,7 +31,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     global host
     host = nas_url
     if nas_url not in driver.current_url:
-        driver.get(f"http://{nas_url}/ui/sessions/signin")
+        driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
 
 
@@ -156,11 +156,16 @@ def active_directory_should_successfully_save_and_start_without_an_error(driver)
     """Active Directory should successfully save and start without an error."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"Settings saved.")]')
+    assert wait_on_element_disappear(driver, 20, '//h1[contains(text(),"Configuring Active Directory")]')
 
 
 @then('Navigate to Shell')
 def navigate_to_shell(driver):
     """Navigate to Shell."""
+    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Reporting"]')
+    driver.execute_script("arguments[0].scrollIntoView();", element)
+    time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Shell"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Shell"]').click()
 
 
@@ -168,7 +173,7 @@ def navigate_to_shell(driver):
 def the_shell_should_should_open(driver):
     """The Shell page should open."""
     assert wait_on_element(driver, 5, '//span[@class="reverse-video terminal-cursor"]')
-    time.sleep(5)
+    time.sleep(10)
 
 
 @then(parsers.parse('input "{cmd}"'))
@@ -241,7 +246,10 @@ def navigate_to_dashboard(driver):
 @then('Press INITIATE FAILOVER, check confirm and press FAILOVER')
 def press_initiate_failover_check_confirm_and_press_failover(driver):
     """Press INITIATE FAILOVER, check confirm and press FAILOVER"""
-    driver.refresh()
+    # driver.refresh()
+    # if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
+    #     assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    #     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 60, '//button[@ix-auto="button__INITIATE FAILOVER"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__INITIATE FAILOVER"]').click()
     assert wait_on_element(driver, 5, '//h1[contains(.,"Initiate Failover")]')
@@ -253,9 +261,9 @@ def press_initiate_failover_check_confirm_and_press_failover(driver):
 @then('Wait for the login page to appear')
 def wait_for_the_login_page_to_appear(driver):
     """Wait for the login page to appear"""
-    assert wait_on_element(driver, 60, '//input[@placeholder="Username"]')
+    assert wait_on_element(driver, 120, '//input[@placeholder="Username"]')
     # wait for HA is enabled to avoid UI refreshing
-    assert wait_on_element(driver, 60, '//p[contains(.,"HA is enabled")]')
+    assert wait_on_element(driver, 120, '//p[contains(.,"HA is enabled")]')
 
 
 @then(parsers.parse('At the login page enter "{user}" and "{password}"'))
@@ -268,14 +276,16 @@ def at_the_login_page_enter_root_and_password(driver, user, password):
     driver.find_element_by_xpath('//input[@placeholder="Password"]').send_keys(password)
     assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
     driver.find_element_by_xpath('//button[@name="signin_button"]').click()
-    assert wait_on_element(driver, 5, '//span[contains(.,"System Information")]')
+    assert wait_on_element(driver, 60, '//span[contains(.,"System Information")]')
+    if wait_on_element(driver, 5, '//div[contains(.,"Looking for help?")]'):
+        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then(parsers.parse('ssh and input {tdbdump_command} after failover'))
 def ssh_and_input_tdbdump_comman_dafter_failover(driver, tdbdump_command):
     """ssh and input {tdbdump_command} after failover."""
     global ssh_result2
-    print('after failover')
     ssh_result2 = ssh_cmd(tdbdump_command, 'root', passwd, host)
     assert ssh_result2['result'], ssh_result2['output']
     assert '\\' in ssh_result1['output'], ssh_result1['output']
@@ -376,9 +386,9 @@ def setting_permissions_set_user_to_root_and_then_select_AD01_administrator_for_
 
     assert wait_on_element(driver, 5, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div').click()
-    assert wait_on_element(driver, 5, '//input[@placeholder="Group"]')
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys('AD01\\administrator')
+    assert wait_on_element(driver, 5, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys('AD01\\administrator')
 
 
 @then('Click the Save button, should be return to pool page')
@@ -395,5 +405,5 @@ def click_the_save_button(driver):
 def verify_that_group_name_is_AD01_administrator(driver):
     """Verify that group name is "AD01\administrator"."""
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//input[@placeholder="Group"]', 'clickable')
-    assert attribute_value_exist(driver, '//input[@placeholder="Group"]', 'value', "AD01\\administrator")
+    assert wait_on_element(driver, 5, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'clickable')
+    assert attribute_value_exist(driver, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'value', "AD01\\administrator")

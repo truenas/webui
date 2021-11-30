@@ -21,7 +21,7 @@ def test_edit_user_email(driver):
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_user}"."""
     if nas_url not in driver.current_url:
-        driver.get(f"http://{nas_url}/ui/sessions/signin")
+        driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
 
 
@@ -40,6 +40,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -113,7 +114,7 @@ def change_the_users_email_and_click_save(driver, email):
     """Change the users email for "{email}" and click save."""
     global user_email
     user_email = email
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'clickable')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys(email)
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')

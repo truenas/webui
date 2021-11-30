@@ -41,6 +41,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -54,11 +55,9 @@ def you_should_be_on_the_dashboard(driver):
 @then('click on the Accounts on the side menu, click on Users')
 def click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """click on the Accounts on the side menu, click on Users."""
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Accounts"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    assert 'open' in class_attribute, class_attribute
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
 
 
@@ -152,5 +151,6 @@ def revert_your_changes_and_click_save(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__home_mode_otherExec"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element(driver, 5, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 5, '//div[@ix-auto="value__ericbsd_Username"]')
+    wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
+    assert wait_on_element(driver, 7, '//div[@ix-auto="value__ericbsd_Username"]')

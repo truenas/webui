@@ -21,7 +21,7 @@ def test_verify_invalid_email_cannot_enter_be_in_the_user_edit_page(driver):
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_url}"."""
     if nas_url not in driver.current_url:
-        driver.get(f"http://{nas_url}/ui/sessions/signin")
+        driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
 
 
@@ -40,6 +40,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -52,14 +53,9 @@ def you_should_see_the_dashboard(driver):
 @then('Click on the Accounts, Click on Users')
 def click_on_the_accounts_click_on_users(driver):
     """Click on the Accounts, Click on Users."""
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    if 'open' not in class_attribute:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    assert 'open' in class_attribute, class_attribute
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Accounts"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
 
 

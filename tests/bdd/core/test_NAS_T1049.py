@@ -75,8 +75,8 @@ def verify_the_company_name_go_to_wwwixsystemscom(driver):
     driver.find_element_by_xpath('//a[@title="iXsystems, Inc."]').click()
     time.sleep(1)
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 7, '//img[@id="logo"]')
-    assert driver.current_url == 'https://www.ixsystems.com/', driver.current_url
+    assert wait_on_element(driver, 7, '//img[contains(@title,"ix_logo")]')
+    assert 'www.ixsystems.com' in driver.current_url, driver.current_url
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
 
@@ -113,8 +113,8 @@ def verify_ixsystems_goes_to_wwwixsystemscom(driver):
     driver.find_element_by_xpath('//div[@class="copyright-txt"]/a').click()
     time.sleep(1)
     driver.switch_to.window(driver.window_handles[1])
-    assert wait_on_element(driver, 7, '//img[@id="logo"]')
-    assert driver.current_url == 'https://www.ixsystems.com/', driver.current_url
+    assert wait_on_element(driver, 7, '//img[contains(@title,"ix_logo")]')
+    assert 'www.ixsystems.com' in driver.current_url, driver.current_url
     driver.close()
     driver.switch_to.window(driver.window_handles[0])
 

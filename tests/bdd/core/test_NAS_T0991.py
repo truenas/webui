@@ -39,6 +39,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -52,11 +53,9 @@ def you_should_be_on_the_dashboard(driver):
 @then('click on the Accounts on the side menu, click on Users')
 def click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """click on the Accounts on the side menu, click on Users."""
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Accounts"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    assert 'open' in class_attribute, class_attribute
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
 
 
@@ -89,7 +88,7 @@ def the_user_edit_page_should_open(driver):
 @then('change the path of the users Home Directory')
 def change_the_path_of_the_users_home_directory(driver):
     """change the path of the users Home Directory."""
-    assert wait_on_element(driver, 7, '//input[@ix-auto="input__home"]')
+    assert wait_on_element(driver, 7, '//input[@ix-auto="input__home"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__home"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__home"]').send_keys('/mnt/tank/ericbsd')
 

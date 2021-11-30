@@ -154,9 +154,9 @@ def click_submit_the_new_share_should_be_created_without_error(driver):
 @then('click on the guest dataset 3 dots button, select Edit Permissions')
 def click_on_the_guest_dataset_3_dots_button_select_edit_permissions(driver):
     """click on the guest dataset 3 dots button, select Edit Permissions."""
-    assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__guest"]')
+    assert wait_on_element(driver, 7, '//mat-icon[@id="actions_menu_button__guest"]', 'clickable')
     driver.find_element_by_xpath('//mat-icon[@id="actions_menu_button__guest"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="action__guest_Edit Permissions"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="action__guest_Edit Permissions"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="action__guest_Edit Permissions"]').click()
 
 
@@ -173,16 +173,16 @@ def on_the_edit_acl_page_set_the_user_to_nobody_and_the_group_to_nogroup(driver)
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Default ACL Options_OPEN"]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__CONTINUE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]')
-    driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys('nobody')
+    assert wait_on_element(driver, 7, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input')
+    driver.find_element_by_xpath('//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input').send_keys('nobody')
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__nobody"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div').click()
-    assert wait_on_element(driver, 7, '//input[@placeholder="Group"]')
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys('nogroup')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys('nogroup')
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__nogroup"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div')
@@ -194,7 +194,7 @@ def click_save_the_permissions_should_save_without_error(driver):
     """click Save, the permissions should save without error."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"guest")]')
 
 

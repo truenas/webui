@@ -52,6 +52,7 @@ def you_should_be_on_the_dashboard(driver):
 @then('click Storage on the side menu and click Pools')
 def click_storage_on_the_side_menu_and_click_pools(driver):
     """click Storage on the side menu and click Pools."""
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
     assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Pools"]')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Pools"]').click()

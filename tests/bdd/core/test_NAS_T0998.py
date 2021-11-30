@@ -74,11 +74,9 @@ def you_should_be_on_the_dashboard(driver):
 @then('click on the Accounts on the side menu, click on Users')
 def click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """click on the Accounts on the side menu, click on Users."""
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Accounts"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
-    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    assert 'open' in class_attribute, class_attribute
+    assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
 
 
@@ -111,7 +109,7 @@ def the_user_edit_page_should_open(driver):
 @then('input the public key in the SSH Public Key field, then click save')
 def input_the_public_key_in_the_ssh_public_key_field_then_click_save(driver, ssh_key):
     """input the public key in the SSH Public Key field, then click save."""
-    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'clickable')
+    assert wait_on_element(driver, 5, '//textarea[@placeholder="SSH Public Key"]', 'inputable')
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').clear()
     driver.find_element_by_xpath('//textarea[@placeholder="SSH Public Key"]').send_keys(ssh_key)
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')

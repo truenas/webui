@@ -159,7 +159,7 @@ def click_to_enable_use_as_home_share_then_click_save(driver):
 @then('the new share should be created without error')
 def the_new_share_should_be_created_without_error(driver):
     """the new share should be created without error."""
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//a[contains(.,"Edit ACL")]')
 
 
@@ -172,9 +172,9 @@ def on_the_edit_acl_page_click_on_select_an_acl_preset(driver):
 @then('select HOME, click continue, set Group to builtin_users')
 def select_home_click_continue_set_group_to_builtin_users(driver):
     """select HOME, click continue, set Group to builtin_users."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="Group"]')
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys('wheel')
+    assert wait_on_element(driver, 7, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys('wheel')
     assert wait_on_element(driver, 7, '//mat-option[@ix-auto="option__wheel"]')
     ActionChains(driver).send_keys(Keys.ESCAPE).perform()
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div')

@@ -118,8 +118,7 @@ def click_on_the_reset_config_button_click_confirm_then_reset_config(driver):
 @then('the system will reboot, wait the login to come back')
 def the_system_will_reboot_wait_the_login_to_come_back(driver):
     """the system will reboot, wait the login to come back."""
-    assert wait_on_element_disappear(driver, 120, '//h1[contains(.,"Resetting. Please wait")]')
-    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
+    time.sleep(10)
     assert wait_on_element(driver, 300, '//input[@formcontrolname="password"]')
     # this sleep give a little to get ready for more load
     time.sleep(3)
@@ -152,6 +151,8 @@ def reboot_the_system_and_try_to_login_using_the_previous_password_testing(drive
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__RESTART"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__RESTART"]').click()
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    # assert wait_on_element(driver, 30, '//mat-card[contains(.,"System is restarting")]')
+    time.sleep(10)
     assert wait_on_element(driver, 300, '//input[@placeholder="Username"]', 'clickable')
     # this sleep give a little to get ready for more load
     time.sleep(3)

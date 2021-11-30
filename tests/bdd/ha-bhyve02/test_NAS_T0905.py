@@ -21,7 +21,7 @@ def test_verify_setting_up_ha_works_with_a_single_failover_group(driver):
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "nas(url"."""
     if nas_url not in driver.current_url:
-        driver.get(f"http://{nas_url}/ui/sessions/signin")
+        driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
 
 
@@ -40,6 +40,7 @@ def login_appear_enter_root_and_password(driver, password):
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -113,6 +114,9 @@ def click_agree(driver):
     """Click Agree."""
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__I AGREE"]')
     driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
+    if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
+        assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('We should be returned to license information')
@@ -399,6 +403,7 @@ def navigate_to_dashboard_and_verify_that_both_controllers_show(driver):
     # need to wait for all controller to be online.
     assert wait_on_element(driver, 60, '//div[contains(.,"tn-bhyve03-nodea")]')
     assert wait_on_element(driver, 180, '//div[contains(.,"tn-bhyve03-nodeb")]')
+    assert wait_on_element(driver, 60, '//mat-icon[@svgicon="ha_enabled"]')
 
 
 @then('Both controllers should show version and license on the dashboard.')

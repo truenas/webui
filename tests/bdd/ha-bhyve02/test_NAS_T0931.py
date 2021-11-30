@@ -50,7 +50,7 @@ def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     global host
     host = nas_url
     if nas_url not in driver.current_url:
-        driver.get(f"http://{nas_url}/ui/sessions/signin")
+        driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
 
 
@@ -82,14 +82,9 @@ def you_should_see_the_dashboard(driver):
 @then('Click on the Accounts, Click on Users')
 def click_on_the_accounts_click_on_users(driver):
     """Click on the Accounts, Click on Users."""
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    if 'open' not in class_attribute:
-        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
-    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Users"]')
-    element = driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]')
-    class_attribute = element.get_attribute('class')
-    assert 'open' in class_attribute, class_attribute
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Accounts"]', 'clickable')
+    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Accounts"]').click()
+    assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Users"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Users"]').click()
 
 

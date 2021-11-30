@@ -26,7 +26,7 @@ def test_create_a_new_dataset_with_the_wheel_group_with_775_permission(driver):
 def the_browser_is_open_navigate_to_nas_url(driver, nas_url):
     """The browser is open navigate to "{nas_url}"."""
     if nas_url not in driver.current_url:
-        driver.get(f"http://{nas_url}/ui/sessions/signin")
+        driver.get(f"http://{nas_url}/ui/dashboard/")
         time.sleep(1)
 
 
@@ -45,6 +45,7 @@ def if_login_page_appear_enter_root_and_password(driver, user, password):
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 5, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -119,14 +120,14 @@ def select_root_for_user_check_the_apply_user_then_select_wheel_for_group_name_c
     """Select "root" for User, check the Apply User then select "wheel" for Group name, check the Apply Group."""
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply User"]/label/div').click()
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]')
-    driver.find_element_by_xpath('//input[@placeholder="User"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="User"]').send_keys(user)
+    assert wait_on_element(driver, 7, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input')
+    driver.find_element_by_xpath('//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input').send_keys(user)
     assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Apply Group"]/label/div').click()
-    assert wait_on_element(driver, 7, '//input[@placeholder="Group"]')
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').clear()
-    driver.find_element_by_xpath('//input[@placeholder="Group"]').send_keys(group)
+    assert wait_on_element(driver, 7, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input')
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').clear()
+    driver.find_element_by_xpath('//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input').send_keys(group)
 
 
 @then('Click on Group Write Access')
@@ -148,6 +149,6 @@ def click_the_save_button_should_be_return_to_pool_page(driver):
 @then(parsers.parse('Verify that users is "{user}" and groups is "{group}"'))
 def verify_that_users_is_root_and_groups_is_wheel(driver, user, group):
     """Verify that users is "root" and groups is "wheel"."""
-    assert wait_on_element(driver, 7, '//input[@placeholder="User"]')
-    assert attribute_value_exist(driver, '//input[@placeholder="User"]', 'value', user)
-    assert attribute_value_exist(driver, '//input[@placeholder="Group"]', 'value', group)
+    assert wait_on_element(driver, 7, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input')
+    assert attribute_value_exist(driver, '//div[contains(.,"User") and contains(@class,"mat-form-field-infix")]//input', 'value', user)
+    assert attribute_value_exist(driver, '//div[contains(.,"Group") and contains(@class,"mat-form-field-infix")]//input', 'value', group)

@@ -10,12 +10,15 @@ from platform import system
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.common.exceptions import (
+    ElementClickInterceptedException,
     NoSuchElementException,
     TimeoutException
 )
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 # random hostname
 hostname = f'uitest{"".join(random.choices(string.digits, k=3))}'
@@ -71,7 +74,8 @@ def browser():
     # application/gzip is use for .tgz
     profile.set_preference("browser.helperApps.neverAsk.saveToDisk", "application/x-tar,application/gzip,application/json")
     profile.set_preference("browser.download.manager.showWhenStarting", False)
-    profile.set_preference("browser.link.open_newwindow", 3)
+    # browser.link.open_newwindow is frozen 2 the only way to change it is like bellow
+    profile.DEFAULT_PREFERENCES["frozen"]["browser.link.open_newwindow"] = 3
     binary = '/usr/bin/firefox' if system() == "Linux" else '/usr/local/bin/firefox'
     firefox_capabilities = DesiredCapabilities.FIREFOX
     firefox_capabilities['marionette'] = True
@@ -99,35 +103,61 @@ def pytest_sessionfinish(session, exitstatus):
 @pytest.mark.hookwrapper
 def pytest_runtest_makereport(item):
     """
-    Extends the PyTest Plugin to take and embed screenshot whenever test fails.
+    Handle errors and tack screenshot whenever a test fails.
     """
     outcome = yield
     report = outcome.get_result()
-    if report.when == 'call' or report.when == "setup":
-        xfail = hasattr(report, 'wasxfail')
-        if (report.skipped and xfail) or (report.failed and not xfail):
-            screenshot_name = f'screenshot/{report.nodeid.replace("::", "_")}.png'
-            # look if there is a Error window
-            if element_exist('//h1[contains(.,"Error")]') and not element_exist('//h1[contains(.,"Error details")]'):
-                web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
-                time.sleep(2)
-                traceback_name = f'screenshot/{report.nodeid.replace("::", "_")}.txt'
-                save_traceback(traceback_name)
-            save_screenshot(screenshot_name)
-            # Press CLOSE if exist
-            if element_exist('//button[@ix-auto="button__CLOSE"]'):
+    if report.when == 'call' and report.failed is True:
+        folder = report.nodeid.partition('/')[0]
+        raw_name = report.nodeid.replace("::", "_").partition('/')[2]
+        filename = raw_name.replace('://', '_').replace('/', '_').replace(':', '')
+        screenshot_name = f'screenshot/{folder}/{filename}.png'
+        screenshot_error_name = f'screenshot/{folder}/{filename}_error.png'
+        traceback_name = f'screenshot/{folder}/{filename}.txt'
+        # look if there is a Error window
+        error_xpath = '//h1[normalize-space(text())="Error"]'
+        failed_xpath = '//h1[normalize-space(text())="FAILED"]'
+        download_xpath = '//h1[normalize-space(text())="Error Downloading File"]'
+        if element_exist(error_xpath) or element_exist(failed_xpath) or element_exist(download_xpath):
+            web_driver.find_element_by_xpath('//div[@ix-auto="button__backtrace-toggle"]').click()
+            time.sleep(2)
+            save_traceback(traceback_name)
+            save_screenshot(screenshot_error_name)
+            # Press CLOSE if exist only if there is an error box.
+            time.sleep(1)
+            try:
                 web_driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-            else:
-                if element_exist('//button[@ix-auto="button__I AGREE"]'):
-                    web_driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
-            # if test that use disable failover make sure to enable failover back.
-            if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
-                if element_exist('//mat-icon[@svgicon="ha_disabled"]'):
-                    enable_failover()
-            if 'T1010' in screenshot_name:
-                disable_active_directory()
-            if 'T1013' in screenshot_name:
-                disable_ldap()
+            except ElementClickInterceptedException:
+                # if can't click Close ESCAPE
+                ActionChains(web_driver).send_keys(Keys.ESCAPE).perform()
+        save_screenshot(screenshot_name)
+        # To make sure we are not stuck on a combobox to stop other test to fail
+        if element_exist('//mat-option'):
+            ActionChains(web_driver).send_keys(Keys.TAB).perform()
+        # If the current tab is not the initial tab close the tab
+        # and switch to initial tab
+        initial_tab = web_driver.window_handles[0]
+        current_tab = web_driver.current_window_handle
+        all_tab = web_driver.window_handles
+        tab_number = len(all_tab)
+        if initial_tab != current_tab:
+            web_driver.close()
+            web_driver.switch_to.window(initial_tab)
+        elif initial_tab == current_tab and tab_number > 1:
+            for handle in all_tab:
+                web_driver.switch_to.window(handle)
+                if handle != initial_tab:
+                    web_driver.close()
+            web_driver.switch_to.window(initial_tab)
+        # if test that use disable failover make sure to enable failover back.
+        # if 'T0905' in screenshot_name or 'T0919' in screenshot_name or 'T0920' in screenshot_name or 'T0922' in screenshot_name:
+        #     if element_exist('//mat-icon[@svgicon="ha_disabled"]'):
+        #         enable_failover()
+        # elif 'T1010' in screenshot_name:
+        if 'T1010' in screenshot_name:
+            disable_active_directory()
+        elif 'T1013' in screenshot_name:
+            disable_ldap()
 
 
 def save_screenshot(name):

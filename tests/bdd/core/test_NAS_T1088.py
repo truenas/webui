@@ -93,12 +93,14 @@ def try_to_unlock_the_root_dataset_with_an_invalid_passphrase(driver):
     driver.find_element_by_xpath('//input[@placeholder="Dataset Passphrase"]').send_keys('aabcd1234')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SUBMIT"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SUBMIT"]').click()
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
 
 @then('an exception about pool unlock failure should be raised')
 def an_exception_about_pool_unlock_failure_should_be_raised(driver):
     """an exception about pool unlock failure should be raised."""
     assert wait_on_element(driver, 5, '//h1[contains(.,"Unlock Datasets")]')
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//p[contains(.,"The following datasets cannot be unlocked")]')
     assert wait_on_element(driver, 5, '(//strong[contains(.,"encryptedpool")])[1]/../a/u')
     driver.find_element_by_xpath('(//strong[contains(.,"encryptedpool")])[1]/../a/u').click()
@@ -118,5 +120,6 @@ def an_exception_about_pool_unlock_failure_should_be_raised(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
-    assert wait_on_element(driver, 5, '//td[@id="tbody__name_encryptedpool"]/span/span/mat-icon')
+    time.sleep(1)
+    assert wait_on_element(driver, 7, '//td[@id="tbody__name_encryptedpool"]/span/span/mat-icon')
     wait_for_attribute_value(driver, 5, '//td[@id="tbody__name_encryptedpool"]/span/span/mat-icon', 'fonticon', 'mdi-lock')
