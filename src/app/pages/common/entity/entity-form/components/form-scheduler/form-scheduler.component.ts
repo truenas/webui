@@ -338,18 +338,28 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   onPopupSave(): void {
     this.togglePopup();
+    this.customOption.value = this._crontab;
 
-    if (this.formControl) {
-      this.group.controls[this.config.name].setValue(this.crontab);
-    }
+    setTimeout(() => {
+      if (this.formControl) {
+        this.group.controls[this.config.name].setValue(this.crontab);
+      }
 
-    if (this.control.value) {
-      this.control.setValue(new EntityUtils().parseDow(this.control.value));
-    }
+      if (this.control.value) {
+        this.control.setValue(new EntityUtils().parseDow(this.control.value));
+      }
+    });
   }
 
   backdropClicked(): void {
     this.togglePopup();
+  }
+
+  customClicked(): void {
+    this.togglePopup();
+    if (this.control.value) {
+      this.control.setValue(new EntityUtils().parseDow(this.control.value));
+    }
   }
 
   togglePopup(): void {
