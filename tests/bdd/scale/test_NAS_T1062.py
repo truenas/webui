@@ -68,8 +68,8 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
 @then('on the service page, press on configure(pencil) SSH')
 def on_the_service_page_press_on_configurepencil_ssh(driver):
     """on the service page, press on configure(pencil) SSH."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="action__Configure_DYNAMICDNS"]')
-    element = driver.find_element_by_xpath('//button[@ix-auto="action__Configure_DYNAMICDNS"]')
+    assert wait_on_element(driver, 5, '//td[contains(text(),"Dynamic DNS")]')
+    element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
     # Scroll to SSH service
     driver.execute_script("arguments[0].scrollIntoView();", element)
     time.sleep(1)
