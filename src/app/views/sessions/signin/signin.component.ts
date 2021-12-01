@@ -376,6 +376,7 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
 
   successLogin(): void {
     this.snackBar.dismiss();
+
     this.tokenObservable = this.ws.call('auth.generate_token', [300]).pipe(untilDestroyed(this)).subscribe((token) => {
       if (!token) {
         return;

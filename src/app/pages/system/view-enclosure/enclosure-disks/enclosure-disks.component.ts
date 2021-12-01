@@ -27,8 +27,10 @@ import { M50 } from 'app/core/classes/hardware/m50';
 import { R10 } from 'app/core/classes/hardware/r10';
 import { R20 } from 'app/core/classes/hardware/r20';
 import { R20A } from 'app/core/classes/hardware/r20a';
+import { R20B } from 'app/core/classes/hardware/r20b';
 import { R40 } from 'app/core/classes/hardware/r40';
 import { R50 } from 'app/core/classes/hardware/r50';
+import { R50B } from 'app/core/classes/hardware/r50b';
 import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
 import {
   SystemProfiler, EnclosureMetadata, EnclosureDisk, VDevMetadata,
@@ -399,19 +401,25 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'R10':
         this.chassis = new R10();
         break;
+      case 'R20':
+        this.chassis = new R20(true);
+        break;
       case 'TRUENAS-R20A':
       case 'R20A':
         this.chassis = new R20A(true);
         break;
-      case 'R20':
       case 'R20B':
-        this.chassis = new R20(true);
+        this.chassis = new R20B(true);
         break;
       case 'R40':
         this.chassis = new R40();
         break;
       case 'R50':
         this.chassis = new R50(true);
+        this.showCaption = false;
+        break;
+      case 'R50B':
+        this.chassis = new R50B(true);
         this.showCaption = false;
         break;
       case 'M Series':
@@ -525,6 +533,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new R40();
         break;
       case 'R50':
+      case 'R50B':
         this.chassis = new R50(true);
         this.showCaption = false;
         break;

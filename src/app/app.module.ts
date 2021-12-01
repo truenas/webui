@@ -1,5 +1,5 @@
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { NgModule, Injector } from '@angular/core';
+import { NgModule, Injector, ErrorHandler } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -11,6 +11,7 @@ import { StoreModule } from '@ngrx/store';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
+import * as Sentry from '@sentry/angular';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import {
@@ -135,6 +136,12 @@ import { WebSocketService } from './services/ws.service';
     ErdService,
     JobsManagerStore,
     IxSlideInService,
+    {
+      provide: ErrorHandler,
+      useValue: Sentry.createErrorHandler({
+        showDialog: false,
+      }),
+    },
   ],
   bootstrap: [
     AppComponent,

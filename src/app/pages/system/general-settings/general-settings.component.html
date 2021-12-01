@@ -35,9 +35,5 @@
     </mat-card-content>
   </mat-card>
 
-  <app-table
-    *ngIf="ntpServersData?.tableConf"
-    [conf]="ntpServersData.tableConf"
-    gdArea="ntp-card"
-  ></app-table>
+  <app-ntp-server-list gdArea="ntp-card"></app-ntp-server-list>
 </div>
