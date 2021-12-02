@@ -1162,10 +1162,6 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     color: var(--accent);
   }
 
-  .services-table .service-toggle-running {
-    @include variable(fill, --accent, $accent);
-  }
-
   .mat-simple-snackbar-action {
     color: var(--accent);
   }
