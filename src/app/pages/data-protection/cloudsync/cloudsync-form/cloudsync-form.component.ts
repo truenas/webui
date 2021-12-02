@@ -1054,7 +1054,6 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (value['direction'] == Direction.Pull) {
       value['snapshot'] = false;
     }
-
     return value;
   }
 
