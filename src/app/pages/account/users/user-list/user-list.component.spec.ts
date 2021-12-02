@@ -134,7 +134,7 @@ describe('UserListComponent', () => {
       ],
       ['test', '1004', 'false', 'test', 'expand_more'],
       [
-        'GID:1004Home Directory:/home/testShell:/usr/bin/bashEmail:Password Disabled:falseLock User:falsePermit Sudo:falseMicrosoft Account:falseSamba Authentication:trueeditEditdeleteDelete',
+        'GID:1004Home Directory:/home/testShell:/usr/bin/bashEmail:–Password Disabled:falseLock User:falsePermit Sudo:falseMicrosoft Account:falseSamba Authentication:trueeditEditdeleteDelete',
       ],
     ];
 
@@ -169,7 +169,7 @@ describe('UserListComponent', () => {
   it('should open edit user form', async () => {
     jest.spyOn(modal, 'openInSlideIn').mockImplementation();
 
-    const editButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Edit User"]' }));
+    const editButton = await loader.getHarness(MatButtonHarness.with({ text: 'editEdit' }));
     await editButton.click();
 
     expect(modal.openInSlideIn).toHaveBeenCalledWith(UserFormComponent, 1);
@@ -178,7 +178,7 @@ describe('UserListComponent', () => {
   xit('should display confirm dialog of deleting user', async () => {
     // TODO: Fix this
 
-    const deleteButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Delete User"]' }));
+    const deleteButton = await loader.getHarness(MatButtonHarness.with({ text: 'deleteDelete' }));
     await deleteButton.click();
 
     expect(ws.call).toHaveBeenCalledWith('user.delete');

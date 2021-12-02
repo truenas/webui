@@ -1,7 +1,4 @@
 import {
-  trigger, state, animate, style, transition,
-} from '@angular/animations';
-import {
   Component, OnInit, AfterViewInit, ChangeDetectorRef, ViewChild, ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatSort, Sort } from '@angular/material/sort';
@@ -16,6 +13,7 @@ import { PreferencesService } from 'app/core/services/preferences.service';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Group } from 'app/interfaces/group.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
@@ -23,9 +21,7 @@ import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/ent
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ControlConfig, ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import {
-  DialogService,
-} from 'app/services';
+import { DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
 import { UserFormComponent } from '../user-form/user-form.component';
@@ -35,13 +31,6 @@ import { UserFormComponent } from '../user-form/user-form.component';
   templateUrl: './user-list.component.html',
   styleUrls: ['./user-list.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0' })),
-      state('expanded', style({ height: '*' })),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
 })
 export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
@@ -146,6 +135,20 @@ export class UserListComponent implements OnInit, AfterViewInit {
       this.groups = [];
       this.groups.push(groups);
     });
+  }
+
+  getDetails(user: User): Option[] {
+    return [
+      { label: this.translate.instant('GID'), value: user?.group?.bsdgrp_gid },
+      { label: this.translate.instant('Home Directory'), value: user.home },
+      { label: this.translate.instant('Shell'), value: user.shell },
+      { label: this.translate.instant('Email'), value: user.email },
+      { label: this.translate.instant('Password Disabled'), value: user.password_disabled.toString() },
+      { label: this.translate.instant('Lock User'), value: user.locked.toString() },
+      { label: this.translate.instant('Permit Sudo'), value: user.sudo.toString() },
+      { label: this.translate.instant('Microsoft Account'), value: user.microsoft_account.toString() },
+      { label: this.translate.instant('Samba Authentication'), value: user.smb.toString() },
+    ];
   }
 
   createDataSource(users: User[] = []): void {

@@ -1,0 +1,21 @@
+:host {
+  display: block;
+
+  .mat-divider {
+    left: 0;
+    position: absolute;
+    width: 100%;
+  }
+
+  .details {
+    padding: 16px;
+  }
+
+  .detail-label {
+    margin-right: 8px;
+  }
+
+  .actions {
+    padding: 8px 16px;
+  }
+}
