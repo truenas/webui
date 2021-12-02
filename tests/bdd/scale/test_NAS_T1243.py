@@ -138,15 +138,15 @@ def unlock_the_pool(driver):
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Dataset Passphrase"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Dataset Passphrase"]').send_keys("abcd1234")
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
+    assert wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
     assert wait_on_element(driver, 10, '//p[contains(.,"These datasets will be unlocked with the provided credentials.")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
+    assert wait_on_element(driver, 10, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
 
     assert wait_on_element(driver, 10, '//p[contains(.,"These datasets were successfully unlocked.")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CONTINUE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CONTINUE"]').click()
+    assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
 
-    assert wait_on_element(driver, 10, '//mat-icon[@fonticon="mdi-lock-open-variant"]')
+    assert wait_on_element(driver, 20, '//mat-icon[@fonticon="mdi-lock-open-variant"]')
