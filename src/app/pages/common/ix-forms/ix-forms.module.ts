@@ -14,6 +14,7 @@ import { IxComboboxComponent } from 'app/pages/common/ix-forms/components/ix-com
 import { IxErrorsComponent } from 'app/pages/common/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/pages/common/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/pages/common/ix-forms/components/ix-fieldset/ix-fieldset.component';
+import { IxFileUploadComponent } from 'app/pages/common/ix-forms/components/ix-file-upload/ix-file-upload.component';
 import { IxInputComponent } from 'app/pages/common/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/pages/common/ix-forms/components/ix-select/ix-select.component';
 import { IxSlideInComponent } from 'app/pages/common/ix-forms/components/ix-slide-in/ix-slide-in.component';
@@ -51,6 +52,7 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
     IxTextareaComponent,
     IxChipsComponent,
     IxExplorerComponent,
+    IxFileUploadComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -65,6 +67,7 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
     IxTextareaComponent,
     IxChipsComponent,
     IxExplorerComponent,
+    IxFileUploadComponent,
   ],
   providers: [
     IxFormatterService,
