@@ -1,10 +1,10 @@
 <div class="ix-table-expandable-row" [@rowExpand]="isExpanded ? 'expanded' : 'collapsed'">
-  <div class="details">
+  <dl class="details">
     <div *ngFor="let option of data">
-      <strong class="detail-label">{{ option.label }}:</strong>
-      <span>{{ option.value?.toString() || '–' }}</span>
+      <dt>{{ option.label }}:</dt>
+      <dd>{{ option.value?.toString() || '–' }}</dd>
     </div>
-  </div>
+  </dl>
 
   <mat-divider></mat-divider>
 

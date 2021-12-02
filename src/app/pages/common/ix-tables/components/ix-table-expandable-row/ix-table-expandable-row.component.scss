@@ -8,7 +8,20 @@
   }
 
   .details {
+    margin: 0;
     padding: 16px;
+
+    dt {
+      display: inline-block;
+      font-weight: bold;
+      margin-right: 8px;
+    }
+
+    dd {
+      display: inline-block;
+      margin: 0;
+    }
+
   }
 
   .detail-label {
