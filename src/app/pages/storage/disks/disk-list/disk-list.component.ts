@@ -136,17 +136,7 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
     private dialog: MatDialog,
     private core: CoreService,
     protected translate: TranslateService,
-  ) {
-    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unused) => {
-      this.unused = unused;
-    }, (err) => new EntityUtils().handleWsError(this, err));
-    this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
-      (res) => {
-        this.SMARTdiskChoices = res;
-      },
-      (err) => new EntityUtils().handleWsError(this, err),
-    );
-  }
+  ) {}
 
   getActions(parentRow: Disk): EntityTableAction[] {
     const actions = [{
@@ -290,6 +280,19 @@ export class DiskListComponent implements EntityTableConfig<Disk> {
         entityList.getData();
       }
     });
+
+    this.ws.call('disk.get_unused', []).pipe(untilDestroyed(this)).subscribe((unused) => {
+      this.unused = unused;
+      entityList.getData();
+    }, (err) => new EntityUtils().handleWsError(this, err));
+
+    this.ws.call('smart.test.disk_choices').pipe(untilDestroyed(this)).subscribe(
+      (res) => {
+        this.SMARTdiskChoices = res;
+        entityList.getData();
+      },
+      (err) => new EntityUtils().handleWsError(this, err),
+    );
   }
 
   resourceTransformIncomingRestData(data: Disk[]): Disk[] {
