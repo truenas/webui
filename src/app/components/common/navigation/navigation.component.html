@@ -30,7 +30,7 @@
         <span>{{item.name | translate}}</span>
       </a>
       <a *ngIf="item.type === 'slideOut'" name="{{item.name.replace(' ', '_')}}-menu" (click)="toggleMenu(item.state, item.sub)" class="sidenav-link">
-        <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="above"></span>
+        <span class="menu-item-tooltip" [matTooltip]="item.tooltip" matTooltipPosition="right"></span>
         <mat-icon>{{item.icon}}</mat-icon>
         <span>{{item.name | translate}}</span>
         <span fxFlex></span>
