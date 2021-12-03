@@ -16,7 +16,7 @@
           {{ preset.label | translate }} <em class="crontab">({{preset.value}})</em>
           <span class="text-small preset-description" *ngIf="preset.description"> {{preset.description}}</span>
         </mat-option>
-        <mat-option #trigger="cdkOverlayOrigin" cdkOverlayOrigin (click)="togglePopup()" [value]="customOption.value">
+        <mat-option #trigger="cdkOverlayOrigin" cdkOverlayOrigin (click)="customClicked()" [value]="customOption.value">
           {{ 'Custom' | translate }} <em class="crontab">({{customOption.value}})</em>
         </mat-option>
       </mat-select>
