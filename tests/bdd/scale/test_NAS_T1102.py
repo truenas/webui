@@ -1,12 +1,9 @@
 # coding=utf-8
 """SCALE UI: feature tests."""
 
-import time
-from function import(
+from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -37,16 +34,13 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
 @when('you should be on the dashboard, click Storage on the side menu')
 def you_should_be_on_the_dashboard_click_storage_on_the_side_menu(driver):
     """you should be on the dashboard, click Storage on the side menu."""
-    assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Storage"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Storage"]').click()
@@ -55,7 +49,6 @@ def you_should_be_on_the_dashboard_click_storage_on_the_side_menu(driver):
 @when('the pools page appears click create pool')
 def the_pools_page_appears_click_create_pool(driver):
     """the pools page appears click create pool."""
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
     assert wait_on_element(driver, 10, '//a[@ix-auto="button___POOL_CREATE"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="button___POOL_CREATE"]').click()
@@ -65,21 +58,17 @@ def the_pools_page_appears_click_create_pool(driver):
 def the_pool_manager_appears_enter_the_system_for_pool_name(driver):
     """the Pool Manager appears, enter the system for pool name."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Pool Manager")]')
-    time.sleep(2)
-    assert wait_on_element(driver, 10, '//input[@id="pool-manager__name-input-field"]')
+    assert wait_on_element(driver, 10, '//input[@id="pool-manager__name-input-field"]', 'inputable')
     driver.find_element_by_xpath('//input[@id="pool-manager__name-input-field"]').send_keys('system')
 
 
 @then('click sdc checkbox, press the right arrow under Data VDevs')
 def click_sdc_checkbox_press_the_right_arrow_under_data_vdevs(driver):
     """click sdc checkbox, press the right arrow under Data VDevs."""
-    time.sleep(2)
     assert wait_on_element(driver, 7, '//datatable-body[contains(.,"sd")]//mat-checkbox[1]', 'clickable')
     driver.find_element_by_xpath('//datatable-body[contains(.,"sd")]//mat-checkbox[1]').click()
-    time.sleep(2)
     assert wait_on_element(driver, 5, '//button[@id="vdev__add-button"]', 'clickable')
     driver.find_element_by_xpath('//button[@id="vdev__add-button"]').click()
-    time.sleep(2)
     assert wait_on_element(driver, 7, '//mat-checkbox[@id="pool-manager__force-submit-checkbox"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@id="pool-manager__force-submit-checkbox"]').click()
 
@@ -104,8 +93,8 @@ def click_create_on_the_warning_widget_click_confirm_checkbox_click_create_pool(
 @then('Create pool should appear while pool is being created')
 def create_pool_should_appear_while_pool_is_being_created(driver):
     """Create pool should appear while pool is being created."""
-    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Create Pool")]')
-    time.sleep(20)
+    assert wait_on_element(driver, 10, '//h1[contains(.,"Create Pool")]')
+    assert wait_on_element_disappear(driver, 120, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element(driver, 10, '//h1[contains(.,"Storage")]')
 
 
@@ -143,18 +132,13 @@ def click_on_system_dataset_pool_select_system_click_save(driver):
     assert wait_on_element(driver, 5, '//h3[contains(.,"System Dataset Pool")]')
     assert wait_on_element(driver, 5, '//mat-select', 'clickable')
     driver.find_element_by_xpath('//mat-select').click()
-    assert wait_on_element(driver, 5, f'//mat-option[@role="option"]//span[contains(.,"system")]')
-    driver.find_element_by_xpath(f'//mat-option[@role="option"]//span[contains(.,"system")]').click()
-    time.sleep(1)
+    assert wait_on_element(driver, 5, '//mat-option[@role="option"]//span[contains(.,"system")]')
+    driver.find_element_by_xpath('//mat-option[@role="option"]//span[contains(.,"system")]').click()
     assert wait_on_element(driver, 30, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]', 'clickable')
     driver.find_element_by_xpath('//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]').click()
-
 
 
 @then('Please wait should appear while settings are being applied')
 def please_wait_should_appear_while_settings_are_being_applied(driver):
     """Please wait should appear while settings are being applied."""
     assert wait_on_element_disappear(driver, 20, '//ix-slide-in[@id="ix-slide-in-form"]//button//span[contains(.,"Save")]')
-    # return to dashboard so 1104 can start properly
-    assert wait_on_element(driver, 20, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
