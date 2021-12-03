@@ -38,6 +38,7 @@ def ssh_key():
     ssh_key_file = open(f'{keyPath}.pub', 'r')
     return ssh_key_file.read().strip()
 
+
 @scenario('features/NAS-T1099.feature', 'Add a ssh key to a user and verify it works')
 def test_add_a_ssh_key_to_a_user_and_verify_it_works():
     """Add a ssh key to a user and verify it works."""
@@ -58,6 +59,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -65,13 +67,9 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """on the dashboard, click on the Accounts on the side menu, click on Users."""
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(2)
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    time.sleep(2)
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
 
@@ -79,7 +77,6 @@ def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(drive
 @when('the Users page should open, click the Greater-Than-Sign right of the users')
 def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driver):
     """the Users page should open, click the Greater-Than-Sign right of the users."""
-    time.sleep(2)
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__root"]/td', 'clickable')
     driver.find_element_by_xpath('//tr[@ix-auto="expander__root"]/td').click()
@@ -88,7 +85,6 @@ def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driv
 @then('the User Field should expand down, click the Edit button')
 def the_user_field_should_expand_down_click_the_edit_button(driver):
     """the User Field should expand down, click the Edit button."""
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_root"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_root"]').click()
 
@@ -97,36 +93,30 @@ def the_user_field_should_expand_down_click_the_edit_button(driver):
 def the_user_edit_page_should_open_input_the_ssh_key_and_click_save(driver, ssh_key):
     """the User Edit Page should open, input the SSH key and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    time.sleep(3)
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').clear()
     driver.find_element_by_xpath('//div[@ix-auto="textarea__SSH Public Key"]/div/textarea').send_keys(ssh_key)
-    time.sleep(1)
-    assert wait_on_element(driver, 2, '//button[@ix-auto="button__SAVE"]')
+    assert wait_on_element(driver, 2, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
+    assert wait_on_element_disappear(driver, 30, '//h6[contains(.,"Please wait")]')
 
-    
+
 @then('reopen the user edit page and verify sshkey was saved.')
 def reopen_the_user_edit_page_and_verify_sshkey_was_saved(driver, ssh_key):
     """reopen the user edit page and verify sshkey was saved.."""
-    time.sleep(4)
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__root"]/td', 'clickable')
     driver.find_element_by_xpath('//tr[@ix-auto="expander__root"]/td').click()
-    time.sleep(2)
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_root"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_root"]').click()
-    time.sleep(2)
+    assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 5, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'inputable')
     assert attribute_value_exist(driver, '//div[@ix-auto="textarea__SSH Public Key"]/div/textarea', 'value', ssh_key)
-    ## return to dashboard
-    time.sleep(1)
+    time.sleep(0.5)
     assert wait_on_element(driver, 10, '//*[@id="close-icon"]', 'clickable')
     driver.find_element_by_xpath('//*[@id="close-icon"]').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
 
 
 @then('Verify that you can ssh with the sshkey')
@@ -137,5 +127,3 @@ def verify_that_you_can_ssh_with_the_sshkey(driver, nas_ip):
     results = ssh_cmd(cmd, 'root', None, nas_ip)
     assert results['result'], results['output']
     assert 'ssh' in results['output'], results['output']
-
-
