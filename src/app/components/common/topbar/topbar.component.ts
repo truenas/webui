@@ -312,8 +312,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       isCollapsed: this.layoutService.isMenuCollapsed,
     };
 
-    this.prefService.preferences.sidenavStatus = data;
-    this.prefService.savePreferences();
+    if (!this.layoutService.isMobile) {
+      this.prefService.preferences.sidenavStatus = data;
+      this.prefService.savePreferences();
+    }
 
     this.core.emit({
       name: 'SidenavStatus',

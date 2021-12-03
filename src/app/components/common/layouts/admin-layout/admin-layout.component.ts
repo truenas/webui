@@ -170,9 +170,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       setTimeout(() => {
         this.sideNav.open();
       });
+      this.layoutService.isMenuCollapsed = this.prefService.preferences.sidenavStatus.isCollapsed;
+      this.isSidenavCollapsed = this.prefService.preferences.sidenavStatus.isCollapsed;
+    } else {
+      this.layoutService.isMenuCollapsed = false;
     }
-    this.layoutService.isMenuCollapsed = this.prefService.preferences.sidenavStatus.isCollapsed;
-    this.isSidenavCollapsed = this.prefService.preferences.sidenavStatus.isCollapsed;
     this.cd.detectChanges();
   }
 
