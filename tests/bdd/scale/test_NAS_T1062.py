@@ -60,7 +60,6 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
 
@@ -72,7 +71,8 @@ def on_the_service_page_press_on_configurepencil_ssh(driver):
     element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
     # Scroll to SSH service
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
+    time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//button', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"SSH")]//button').click()
 
 
@@ -108,7 +108,7 @@ def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver
     # Scroll to SSH service
     element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
+    time.sleep(0.5)
     assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-checkbox')
     value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-checkbox', 'class', 'mat-checkbox-checked')
     if not value_exist:
@@ -124,7 +124,7 @@ def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
     wait_on_element_disappear(driver, 30, '//mat-spinner[@role="progressbar"]')
     assert wait_for_attribute_value(driver, 20, '//tr[contains(.,"SSH")]//mat-slide-toggle', 'class', 'mat-checked')
-    
+
 
 @then('ssh to a NAS with root and the root password should work')
 def ssh_to_a_nas_with_root_and_the_root_password_should_work(driver, root_password, nas_ip):
