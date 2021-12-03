@@ -23,7 +23,7 @@
   </mat-toolbar-row>
 
 <mat-card-content class="table-container">
-  <div class="table-container" #table [class.empty]="dataSource && !dataSource.length">
+  <div class="table-container" #table [class.empty]="dataSource && !dataSource.length" [class.loading]="!tableConf.tableComponent">
     <table *ngIf="dataSource && dataSource.length > 0" mat-table [dataSource]="displayedDataSource" class="table-component">
       <ng-container *ngIf="_tableConf.complex; then complex else simple"></ng-container>
       <!-- Simple Info Column -->
