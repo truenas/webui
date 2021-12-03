@@ -19,7 +19,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { delay, filter } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
@@ -496,7 +496,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
       this.loader.open();
       this.loaderOpen = true;
       this.submitFunction(value)
-        .pipe(untilDestroyed(this)).subscribe(
+        .pipe(delay(10000), untilDestroyed(this)).subscribe(
           (res) => {
             this.loader.close();
             this.loaderOpen = false;

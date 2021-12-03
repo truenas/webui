@@ -246,7 +246,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       dialogRef.componentInstance.consoleMsg = this.accumulateConsoleMsg('', 500);
     });
 
-    dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+    dialogRef.beforeClosed().pipe(untilDestroyed(this)).subscribe(() => {
       clearInterval(dialogRef.componentInstance.intervalPing);
       sub.unsubscribe();
     });
