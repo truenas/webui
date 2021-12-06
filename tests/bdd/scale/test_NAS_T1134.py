@@ -5,9 +5,6 @@ import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
-    wait_on_element_disappear,
 )
 from pytest_bdd import (
     given,
@@ -38,6 +35,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -67,8 +65,8 @@ def the_add_datasetpage_should_open_input_ericbsd_dataset_for_the_naem_and_click
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Share Type_SMB"]').click()
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    #assert wait_on_element(driver, 5, '//h6[contains(.,"Please wait")]')
-    #assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
+    # assert wait_on_element(driver, 5, '//h6[contains(.,"Please wait")]')
+    # assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
 
     
 @then(parsers.parse('the {dataset_name} should be created, click the dataset three dots and select View Permissions, then click the pencil to Edit'))
@@ -84,7 +82,6 @@ def the_ericbsd_dataset_should_be_created_click_the_dataset_three_dots_and_selec
     time.sleep(1)
     assert wait_on_element(driver, 5, '//mat-icon[text()="edit"]')
     driver.find_element_by_xpath('//mat-icon[text()="edit"]').click()
-
 
 
 @then(parsers.parse('the Edit Permissions page should open, select "{user}" for User, click on the Apply User checkbox, select {group} for Group name, click on the Apply Group checkbox, click on Group Write Access, and click the Save button'))
@@ -109,10 +106,10 @@ def the_edit_permissions_page_should_open_select_ericbsd_for_user_click_on_the_a
 def you_should_be_returned_to_the_pool_list_page_click_on_the_ericbsd_dataset_three_dots_button_view_and_edit_permissions_and_the_edit_permissions_page_should_open(driver):
     """you should be returned to the pool list page, click on the ericbsd_dataset three dots button, view and edit Permissions, and the Edit Permissions page should open."""
     time.sleep(4)
-    assert wait_on_element(driver, 10, f'//div[contains(text(),"ericbsd_dataset")]')
+    assert wait_on_element(driver, 10, '//div[contains(text(),"ericbsd_dataset")]')
     time.sleep(1)
-    assert wait_on_element(driver, 5, f'//tr[contains(.,"ericbsd_dataset")]//mat-icon[text()="more_vert"]')
-    driver.find_element_by_xpath(f'//tr[contains(.,"ericbsd_dataset")]//mat-icon[text()="more_vert"]').click()
+    assert wait_on_element(driver, 5, '//tr[contains(.,"ericbsd_dataset")]//mat-icon[text()="more_vert"]')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd_dataset")]//mat-icon[text()="more_vert"]').click()
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[normalize-space(text())="View Permissions"]')
     driver.find_element_by_xpath('//button[normalize-space(text())="View Permissions"]').click()
@@ -122,4 +119,3 @@ def you_should_be_returned_to_the_pool_list_page_click_on_the_ericbsd_dataset_th
 def verify_that_the_user_and_group_is_ericbsd(driver):
     """verify that the user and group is ericbsd."""
     assert wait_on_element(driver, 5, '//div[contains(text(),"Group - ericbsd")]')
-    

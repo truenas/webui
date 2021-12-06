@@ -10,8 +10,7 @@ from function import (
     wait_on_element_disappear,
     wait_for_attribute_value,
     run_cmd,
-    ssh_cmd,
-    post
+    ssh_cmd
 )
 from pytest_bdd import (
     given,
@@ -116,26 +115,26 @@ def smb_should_be_added(driver):
     """"smbname should be added."""
     assert wait_on_element(driver, 5, '//mat-panel-title//h5//a[contains(.,"(SMB)")]')
     assert wait_on_element(driver, 5, '//div[contains(.,"test wheel SMB share")]')
-    ## Make sure SMB is started
+    # Make sure SMB is started
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
     time.sleep(1)
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
     assert wait_on_element(driver, 7, '//services')
-    assert wait_on_element(driver, 7, '//mat-checkbox[@ix-auto="checkbox__enable__SNMP"]')
+    assert wait_on_element(driver, 7, '//tr[contains(.,"SNMP)]//mat-checkbox')
     # Scroll to SMB service
-    element = driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SNMP"]')
+    element = driver.find_element_by_xpath('//tr[contains(.,"SNMP)]//mat-checkbox')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
-    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__enable__SMB"]', 'class', 'mat-checkbox-checked')
+    time.sleep(0.5)
+    value_exist = attribute_value_exist(driver, '//tr[contains(.,"SMB)]//mat-checkbox', 'class', 'mat-checkbox-checked')
     if not value_exist:
         driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SMB"]').click()
-    time.sleep(2)
-    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
+    assert wait_on_element(driver, 5, '//tr[contains(.,"SMB")]//mat-slide-toggle/label', 'clickable')
+    value_exist = attribute_value_exist(driver, '//tr[contains(.,"SMB")]//mat-slide-toggle', 'class', 'mat-checked')
     if not value_exist:
-        driver.find_element_by_xpath('//div[@ix-auto="overlay__stateSMB"]').click()
-    time.sleep(2)
+        driver.find_element_by_xpath('//tr[contains(.,"SMB")]//mat-slide-toggle/label').click()
+    assert wait_on_element(driver, 5, '//tr[contains(.,"SMB")]//mat-slide-toggle/label', 'clickable')
     assert wait_for_attribute_value(driver, 20, '//mat-slide-toggle[@ix-auto="slider__state__SMB"]', 'class', 'mat-checked')
 
 
@@ -176,8 +175,3 @@ def verify_that_the_file_is_not_on_the_nas(driver, root_password, nas_ip):
     results = ssh_cmd(cmd, 'root', root_password, nas_ip)
     assert results['result'], results['output']
     assert 'testfile' in results['output'], results['output'] is False
-
-    ## return to dashboard
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
