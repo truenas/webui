@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { AclType } from 'app/enums/acl-type.enum';
+import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { Acl } from 'app/interfaces/acl.interface';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
@@ -55,6 +56,17 @@ export class PermissionsSidebarComponent implements OnInit, OnChanges {
         this.isLoading = state.isLoading;
         this.acl = state.acl;
         this.stat = state.stat;
+        if (this.acl && this.acl.acl && this.acl.acltype === AclType.Nfs4) {
+          for (const acl of this.acl.acl) {
+            if (acl.tag === NfsAclTag.Owner && acl.who == null) {
+              acl.who = this.acl.uid.toString();
+            }
+            if ((acl.tag === NfsAclTag.Group || acl.tag === NfsAclTag.UserGroup) && acl.who == null) {
+              acl.who = this.acl.gid.toString();
+            }
+          }
+        }
+
         this.cdr.markForCheck();
       });
   }

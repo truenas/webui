@@ -79,7 +79,6 @@ SmartTestUi
 export class DataProtectionDashboardComponent implements OnInit {
   dataCards: TaskCard[] = [];
   disks: Disk[] = [];
-  parent: DataProtectionDashboardComponent;
 
   constructor(
     private ws: WebSocketService,
@@ -133,7 +132,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           titleHref: '/tasks/scrub',
           queryCall: 'pool.scrub.query',
           deleteCall: 'pool.scrub.delete',
-          dataSourceHelper: this.scrubDataSourceHelper,
+          dataSourceHelper: (data) => this.scrubDataSourceHelper(data),
           emptyEntityLarge: false,
           columns: [
             { name: this.translate.instant('Pool'), prop: 'pool_name' },
@@ -199,7 +198,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               button: true,
             },
           ],
-          dataSourceHelper: this.snapshotDataSourceHelper,
+          dataSourceHelper: (data) => this.snapshotDataSourceHelper(data),
           isActionVisible: this.isActionVisible,
           parent: this,
           add: () => {
@@ -224,7 +223,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             title: this.translate.instant('Replication Task'),
             key_props: ['name'],
           },
-          dataSourceHelper: this.replicationDataSourceHelper,
+          dataSourceHelper: (data) => this.replicationDataSourceHelper(data),
           getActions: this.getReplicationActions.bind(this),
           isActionVisible: this.isActionVisible,
           columns: [
@@ -267,7 +266,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             title: this.translate.instant('Cloud Sync Task'),
             key_props: ['description'],
           },
-          dataSourceHelper: this.cloudsyncDataSourceHelper,
+          dataSourceHelper: (data) => this.cloudsyncDataSourceHelper(data),
           getActions: this.getCloudsyncActions.bind(this),
           isActionVisible: this.isActionVisible,
           columns: [
@@ -334,7 +333,7 @@ export class DataProtectionDashboardComponent implements OnInit {
               button: true,
             },
           ],
-          dataSourceHelper: this.rsyncDataSourceHelper,
+          dataSourceHelper: (data) => this.rsyncDataSourceHelper(data),
           getActions: this.getRsyncActions.bind(this),
           isActionVisible: this.isActionVisible,
           parent: this,
@@ -360,7 +359,7 @@ export class DataProtectionDashboardComponent implements OnInit {
             title: this.translate.instant('S.M.A.R.T. Test'),
             key_props: ['type', 'desc'],
           },
-          dataSourceHelper: this.smartTestsDataSourceHelper,
+          dataSourceHelper: (data) => this.smartTestsDataSourceHelper(data),
           parent: this,
           columns: [
             {
@@ -404,8 +403,8 @@ export class DataProtectionDashboardComponent implements OnInit {
   scrubDataSourceHelper(data: ScrubTaskUi[]): ScrubTaskUi[] {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.frequency = this.parent.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.parent.taskService.getTaskNextRun(task.cron_schedule);
+      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       return task;
     });
@@ -416,21 +415,20 @@ export class DataProtectionDashboardComponent implements OnInit {
       const formattedCronSchedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
       task.credential = task.credentials.name;
       task.cron_schedule = task.enabled ? formattedCronSchedule : this.translate.instant('Disabled');
-      task.frequency = this.parent.taskService.getTaskCronDescription(formattedCronSchedule);
-      task.next_run = task.enabled ? this.parent.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
-      task.next_run_time = task.enabled ? this.parent.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
+      task.frequency = this.taskService.getTaskCronDescription(formattedCronSchedule);
+      task.next_run = task.enabled ? this.taskService.getTaskNextRun(formattedCronSchedule) : this.translate.instant('Disabled');
+      task.next_run_time = task.enabled ? this.taskService.getTaskNextTime(formattedCronSchedule) : this.translate.instant('Disabled');
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.parent.job
-          .getJobStatus(task.job.id)
-          .pipe(untilDestroyed(this.parent))
-          .subscribe((job: Job) => {
-            task.state = { state: job.state };
-            task.job = job;
-          });
+        this.job.getJobStatus(task.job.id).pipe(
+          untilDestroyed(this),
+        ).subscribe((job: Job) => {
+          task.state = { state: job.state };
+          task.job = job;
+        });
       }
 
       return task;
@@ -449,17 +447,16 @@ export class DataProtectionDashboardComponent implements OnInit {
     return data.map((task) => {
       task.task_last_snapshot = task.state.last_snapshot
         ? task.state.last_snapshot
-        : this.parent.translate.instant(helptext.no_snapshot_sent_yet);
+        : this.translate.instant(helptext.no_snapshot_sent_yet);
 
       if (task.job !== null) {
         task.state.state = task.job.state;
-        this.parent.job
-          .getJobStatus(task.job.id)
-          .pipe(untilDestroyed(this.parent))
-          .subscribe((job: Job) => {
-            task.state.state = job.state;
-            task.job = job;
-          });
+        this.job.getJobStatus(task.job.id).pipe(
+          untilDestroyed(this),
+        ).subscribe((job: Job) => {
+          task.state.state = job.state;
+          task.job = job;
+        });
       }
       return task;
     });
@@ -468,16 +465,16 @@ export class DataProtectionDashboardComponent implements OnInit {
   smartTestsDataSourceHelper(data: SmartTestUi[]): SmartTestUi[] {
     return data.map((test) => {
       test.cron_schedule = `0 ${test.schedule.hour} ${test.schedule.dom} ${test.schedule.month} ${test.schedule.dow}`;
-      test.frequency = this.parent.taskService.getTaskCronDescription(test.cron_schedule);
-      test.next_run = this.parent.taskService.getTaskNextRun(test.cron_schedule);
+      test.frequency = this.taskService.getTaskCronDescription(test.cron_schedule);
+      test.next_run = this.taskService.getTaskNextRun(test.cron_schedule);
 
       if (test.all_disks) {
-        test.disks = [this.parent.translate.instant(helptext_smart.smarttest_all_disks_placeholder)];
+        test.disks = [this.translate.instant(helptext_smart.smarttest_all_disks_placeholder)];
       } else if (test.disks.length) {
         test.disks = [
           test.disks
             .map((identifier) => {
-              const fullDisk = this.parent.disks.find((item) => item.identifier === identifier);
+              const fullDisk = this.disks.find((item) => item.identifier === identifier);
               if (fullDisk) {
                 identifier = fullDisk.devname;
               }
@@ -494,8 +491,8 @@ export class DataProtectionDashboardComponent implements OnInit {
     return data.map((task) => {
       task.keepfor = `${task.lifetime_value} ${task.lifetime_unit}(S)`;
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.frequency = this.parent.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.parent.taskService.getTaskNextRun(task.cron_schedule);
+      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       return task;
     });
@@ -504,20 +501,19 @@ export class DataProtectionDashboardComponent implements OnInit {
   rsyncDataSourceHelper(data: RsyncTaskUi[]): RsyncTaskUi[] {
     return data.map((task) => {
       task.cron_schedule = `${task.schedule.minute} ${task.schedule.hour} ${task.schedule.dom} ${task.schedule.month} ${task.schedule.dow}`;
-      task.frequency = this.parent.taskService.getTaskCronDescription(task.cron_schedule);
-      task.next_run = this.parent.taskService.getTaskNextRun(task.cron_schedule);
+      task.frequency = this.taskService.getTaskCronDescription(task.cron_schedule);
+      task.next_run = this.taskService.getTaskNextRun(task.cron_schedule);
 
       if (task.job === null) {
         task.state = { state: task.locked ? JobState.Locked : JobState.Pending };
       } else {
         task.state = { state: task.job.state };
-        this.parent.job
-          .getJobStatus(task.job.id)
-          .pipe(untilDestroyed(this.parent))
-          .subscribe((job: Job) => {
-            task.state = { state: job.state };
-            task.job = job;
-          });
+        this.job.getJobStatus(task.job.id).pipe(
+          untilDestroyed(this),
+        ).subscribe((job: Job) => {
+          task.state = { state: job.state };
+          task.job = job;
+        });
       }
 
       return task;
@@ -942,7 +938,6 @@ export class DataProtectionDashboardComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(
         (updatedEntity) => {
-          // Fix any (not assignable to never).
           row[param] = updatedEntity[param];
         },
         (err) => {

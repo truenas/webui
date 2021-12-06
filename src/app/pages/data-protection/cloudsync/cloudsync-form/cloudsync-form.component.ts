@@ -962,20 +962,44 @@ export class CloudsyncFormComponent implements FormConfiguration {
     const attributes: any = {};
     const schedule: Schedule = {};
 
-    value.path = value.direction === Direction.Pull ? value.path_destination : value.path_source;
-
-    if (Array.isArray(value.path)) {
-      value.include = [];
-      for (const dir of value.path) {
-        const directory = dir.split('/');
-        value.include.push('/' + directory[directory.length - 1] + '/**');
+    if (value.direction === Direction.Pull) {
+      value.path = value.path_destination;
+      attributes.folder = value.folder_source;
+      if (Array.isArray(attributes.folder) && attributes.folder.length) {
+        if (attributes.folder.length === 1) {
+          attributes.folder = attributes.folder[0];
+        } else {
+          value.include = [];
+          for (const dir of attributes.folder) {
+            const directory = dir.split('/');
+            value.include.push('/' + directory[directory.length - 1] + '/**');
+          }
+          const directory = attributes.folder[0].split('/');
+          attributes.folder = directory.slice(0, directory.length - 1).join('/');
+        }
       }
-      const directory = value.path[0].split('/');
-      value.path = directory.slice(0, directory.length - 1).join('/');
+    } else {
+      value.path = value.path_source;
+      if (Array.isArray(value.path) && value.path.length) {
+        if (value.path.length === 1) {
+          value.path = value.path[0];
+        } else {
+          value.include = [];
+          for (const dir of value.path) {
+            const directory = dir.split('/');
+            value.include.push('/' + directory[directory.length - 1] + '/**');
+          }
+          const directory = value.path[0].split('/');
+          value.path = directory.slice(0, directory.length - 1).join('/');
+        }
+      }
+      attributes.folder = value.folder_destination;
     }
 
     delete value.path_source;
     delete value.path_destination;
+    delete value.folder_source;
+    delete value.folder_destination;
 
     value['credentials'] = parseInt(value.credentials, 10);
 
@@ -986,19 +1010,6 @@ export class CloudsyncFormComponent implements FormConfiguration {
     if (value.bucket_input != undefined) {
       attributes['bucket'] = value.bucket_input;
       delete value.bucket_input;
-    }
-    attributes['folder'] = value.direction === Direction.Pull ? value.folder_source : value.folder_destination;
-    delete value.folder_source;
-    delete value.folder_destination;
-
-    if (Array.isArray(attributes['folder'])) {
-      attributes.include = [];
-      for (const dir of attributes.folder) {
-        const directory = dir.split('/');
-        attributes.include.push('/' + directory[directory.length - 1] + '/**');
-      }
-      const directory = attributes.folder[0].split('/');
-      attributes.folder = directory.slice(0, directory.length - 1).join('/');
     }
 
     if (value.task_encryption != undefined) {

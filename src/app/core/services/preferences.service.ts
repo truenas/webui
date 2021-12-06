@@ -45,6 +45,11 @@ export class PreferencesService {
     showGroupListMessage: true,
     expandAvailablePlugins: true,
     storedValues: {}, // For key/value pairs to save most recent values in form fields, etc
+    sidenavStatus: {
+      isCollapsed: false,
+      isOpen: true,
+      mode: 'over',
+    },
   };
 
   preferences: Preferences;
