@@ -2,12 +2,10 @@
 """SCALE UI: feature tests."""
 
 import time
-from function import(
+from function import (
     wait_on_element,
     is_element_present,
-    wait_for_attribute_value,
     wait_on_element_disappear,
-    attribute_value_exist,
     ssh_cmd,
 )
 from pytest_bdd import (
@@ -38,6 +36,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -45,25 +44,19 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """you should be on the dashboard, click on the Accounts on the side menu, click on Users."""
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(2)
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    time.sleep(2)
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
-    
-    
+
+
 @when('the Users page should open, click the Greater-Than-Sign, the User Field should expand down, then click the Edit button')
 def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the Users page should open, click the Greater-Than-Sign, the User Field should expand down, then click the Edit button."""
-    time.sleep(2)
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
     driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
 
@@ -72,7 +65,8 @@ def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_e
 def the_user_edit_page_should_open_change_the_password_in_both_fields_and_click_save(driver):
     """the User Edit Page should open, change the password in both fields and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    time.sleep(4)
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
+    assert wait_on_element(driver, 10, '//input[@ix-auto="input__Password"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Password"]').send_keys('testing1234')
     driver.find_element_by_xpath('//input[@ix-auto="input__Confirm Password"]').clear()
@@ -86,23 +80,19 @@ def the_changes_should_be_saved_without_an_error_try_to_ssh_with_the_old_passwor
     """the changes should be saved without an error try to ssh with the old password for that user."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 2, '//div[contains(.,"Users")]')
-    time.sleep(6)
-    ## return to dashboard
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
 @then('the user should not be able to log in ssh with the old password, then try to ssh with the new password for that user')
 def the_user_should_not_be_able_to_log_in_ssh_with_the_old_password_then_try_to_ssh_with_the_new_password_for_that_user(driver, nas_ip):
     """the user should not be able to log in ssh with the old password, then try to ssh with the new password for that user."""
     time.sleep(1)
-    ## check SSH
+    # check SSH
     global ssh_result1
     ssh_result1 = ssh_cmd('ls /', 'ericbsd', 'testing', nas_ip)
     assert not ssh_result1['result'], ssh_result1['output']
     assert 'home' not in ssh_result1['output'], ssh_result1['output']
     time.sleep(1)
-    ## check SSH
+    # check SSH
     global ssh_result2
     ssh_result2 = ssh_cmd('ls /', 'ericbsd', 'testing1234', nas_ip)
     assert ssh_result2['result'], ssh_result2['output']

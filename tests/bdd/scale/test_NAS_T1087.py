@@ -1,11 +1,9 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
-import time
-from function import(
+from function import (
     wait_on_element,
     is_element_present,
-    wait_for_attribute_value,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -13,7 +11,6 @@ from pytest_bdd import (
     scenario,
     then,
     when,
-    parsers,
 )
 
 
@@ -37,6 +34,7 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -44,13 +42,9 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
 def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(driver):
     """on the dashboard, click on the Accounts on the side menu, click on Users."""
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
 
@@ -66,36 +60,29 @@ def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driv
 @then('the User Field should expand down, click the Edit button')
 def the_user_field_should_expand_down_click_the_edit_button(driver):
     """the User Field should expand down, click the Edit button."""
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+
 
 @then('the User Edit Page should open, change the user email "eturgeon@ixsystems.com" and click save')
 def the_user_edit_page_should_open_change_the_user_email_eturgeonixsystemscom_and_click_save(driver):
     """the User Edit Page should open, change the user email "eturgeon@ixsystems.com" and click save."""
     assert wait_on_element(driver, 10, '//h3[contains(.,"Edit User")]')
-    time.sleep(2)
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Email"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Email"]').send_keys("eturgeon@ixsystems.com")
-    time.sleep(3)
+    assert wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
     element = driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
 
-    
-    
+
 @then('change should be saved, open the user dropdown, the email value should be visible')
 def change_should_be_saved_open_the_user_dropdown_the_email_value_should_be_visible(driver):
     """change should be saved, open the user dropdown, the email value should be visible."""
-    wait_on_element_disappear(driver, 1, '//h6[contains(.,"Please wait")]')
-    time.sleep(3)
+    assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
     driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
     driver.find_element_by_xpath('//h4[contains(.,"Email:")]')
-        ## return to dashboard
-    assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
-    driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
-    time.sleep(1)

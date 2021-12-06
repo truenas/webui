@@ -1,12 +1,9 @@
 # coding=utf-8
 """SCALE UI feature tests."""
 
-import time
 from function import (
     wait_on_element,
     is_element_present,
-    attribute_value_exist,
-    wait_for_attribute_value,
     wait_on_element_disappear,
 )
 from pytest_bdd import (
@@ -47,7 +44,6 @@ def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_and_cl
     """click on the Credentials on the side menu, click on Local Users."""
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Credentials"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Credentials"]').click()
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Local Users"]').click()
 
@@ -67,6 +63,7 @@ def the_users_page_should_open_click_on_the_add_button(driver):
 def the_users_add_page_should_open_input_the_fields_full_name_username_password_and_click_save(driver):
     """the Users Add Page should open."""
     assert wait_on_element(driver, 7, '//h3[contains(.,"Add User")]')
+    assert wait_on_element_disappear(driver, 10, '//h6[contains(.,"Please wait")]')
     """input in the following fields Full Name, Username, and password."""
     assert wait_on_element(driver, 7, '//input[@ix-auto="input__Full Name"]')
     driver.find_element_by_xpath('//input[@ix-auto="input__Full Name"]').clear()
