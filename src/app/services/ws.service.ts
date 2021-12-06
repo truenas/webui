@@ -247,12 +247,12 @@ export class WebSocketService {
    * @param api The api end point to unsubscribe from
    * @param subscriptionId The subscription Id used to setup the subscription in the `sub(api, subscriptionId)` method
    */
-  unsub(api: string, id: string): void {
+  unsub(api: string, subscriptionId: string): void {
     const nom = api.replace('.', '_');
-    if (this.pendingSubs[nom].observers[id]) {
-      this.send({ id, msg: ApiEventMessage.UnSub });
-      this.pendingSubs[nom].observers[id].unsubscribe();
-      delete this.pendingSubs[nom].observers[id];
+    if (this.pendingSubs[nom].observers[subscriptionId]) {
+      this.send({ id: subscriptionId, msg: ApiEventMessage.UnSub });
+      this.pendingSubs[nom].observers[subscriptionId].unsubscribe();
+      delete this.pendingSubs[nom].observers[subscriptionId];
       if (!this.pendingSubs[nom].observers) {
         delete this.pendingSubs[nom];
       }
