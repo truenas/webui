@@ -78,7 +78,7 @@ export class WebSocketService {
 
   onopen(): void {
     this.onOpenSubject$.next(true);
-    this.send({ msg: 'connect', version: '1', support: ['1'] });
+    this.send({ msg: ApiEventMessage.Connect, version: '1', support: ['1'] });
   }
 
   onconnect(): void {
@@ -100,7 +100,7 @@ export class WebSocketService {
 
   ping(): void {
     if (this.connected) {
-      this.socket.send(JSON.stringify({ msg: 'ping', id: UUID.UUID() }));
+      this.socket.send(JSON.stringify({ msg: ApiEventMessage.Ping, id: UUID.UUID() }));
       setTimeout(() => this.ping(), 20000);
     }
   }
@@ -194,7 +194,7 @@ export class WebSocketService {
   call<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<ApiDirectory[K]['response']> {
     const uuid = UUID.UUID();
     const payload = {
-      id: uuid, msg: 'method', method, params,
+      id: uuid, msg: ApiEventMessage.Method, method, params,
     };
 
     // Create the observable
@@ -226,14 +226,14 @@ export class WebSocketService {
     }
 
     const uuid = subscriptionId || UUID.UUID();
-    const payload = { id: uuid, name: api, msg: 'sub' };
+    const payload = { id: uuid, name: api, msg: ApiEventMessage.Sub };
     return new Observable((observer: Subscriber<T>) => {
       this.pendingSubs[nom].observers[uuid] = observer;
       this.send(payload);
 
       // cleanup routine
       observer.complete = () => {
-        this.send({ id: uuid, msg: 'unsub' });
+        this.send({ id: uuid, msg: ApiEventMessage.UnSub });
         this.pendingSubs[nom].observers[uuid].unsubscribe();
         delete this.pendingSubs[nom].observers[uuid];
         if (!this.pendingSubs[nom].observers) { delete this.pendingSubs[nom]; }
@@ -250,7 +250,7 @@ export class WebSocketService {
   unsub(api: string, id: string): void {
     const nom = api.replace('.', '_');
     if (this.pendingSubs[nom].observers[id]) {
-      this.send({ id, msg: 'unsub' });
+      this.send({ id, msg: ApiEventMessage.UnSub });
       this.pendingSubs[nom].observers[id].unsubscribe();
       delete this.pendingSubs[nom].observers[id];
       if (!this.pendingSubs[nom].observers) {
@@ -297,7 +297,7 @@ export class WebSocketService {
       this.send({
         id: UUID.UUID(),
         name: '*',
-        msg: 'sub',
+        msg: ApiEventMessage.Sub,
       });
     } else {
       this.loggedIn = false;
