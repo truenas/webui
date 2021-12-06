@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UUID } from 'angular2-uuid';
 import { Subscription } from 'rxjs';
 import {
   filter, map,
@@ -22,6 +23,8 @@ export class AppLoaderComponent {
   consoleMsgSubscription: Subscription;
   consoleDialogSubscription: Subscription;
   isShowConsole = false;
+  consoleMsgsSubscriptionId: string;
+  readonly apiEndPoint = 'filesystem.file_tail_follow:/var/log/messages:499';
   consoleDialogRef: MatDialogRef<ConsolePanelDialogComponent>;
 
   constructor(
@@ -46,9 +49,8 @@ export class AppLoaderComponent {
   }
 
   getLogConsoleMsg(): void {
-    const subName = 'filesystem.file_tail_follow:/var/log/messages:499';
-
-    this.consoleMsgSubscription = this.ws.sub(subName).pipe(
+    this.consoleMsgsSubscriptionId = UUID.UUID();
+    this.consoleMsgSubscription = this.ws.sub(this.apiEndPoint, this.consoleMsgsSubscriptionId).pipe(
       filter((res) => res && res.data && typeof res.data === 'string'),
       map((res) => res.data),
       untilDestroyed(this),
@@ -68,6 +70,7 @@ export class AppLoaderComponent {
     this.consoleDialogRef.beforeClosed().pipe(untilDestroyed(this)).subscribe(() => {
       clearInterval(this.consoleDialogRef.componentInstance.intervalPing);
       this.consoleDialogSubscription.unsubscribe();
+      this.ws.unsub(this.apiEndPoint, this.consoleMsgsSubscriptionId);
       this.consoleMsgSubscription.unsubscribe();
       this.consoleDialogRef = null;
     });

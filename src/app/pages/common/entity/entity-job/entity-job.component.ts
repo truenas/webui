@@ -6,6 +6,7 @@ import {
   MatDialog, MatDialogConfig, MatDialogRef, MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
 import { filter, map } from 'rxjs/operators';
 import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
@@ -170,13 +171,14 @@ export class EntityJobComponent implements OnInit {
   }
 
   submit(): void {
+    let subscriptionId: string = null;
     this.ws.job(this.method, this.args)
       .pipe(untilDestroyed(this)).subscribe(
         (job) => {
           this.job = job;
           this.showAbortButton = this.job.abortable;
           if (this.showRealtimeLogs && this.job.logs_path && !this.realtimeLogsSubscribed) {
-            this.getRealtimeLogs();
+            subscriptionId = this.getRealtimeLogs();
           }
           if (job.progress && !this.showRealtimeLogs) {
             this.progress.emit(job.progress);
@@ -196,6 +198,7 @@ export class EntityJobComponent implements OnInit {
           }
           if (this.realtimeLogsSubscribed) {
             this.ws.unsubscribe('filesystem.file_tail_follow:' + this.job.logs_path);
+            this.ws.unsub('filesystem.file_tail_follow:' + this.job.logs_path, subscriptionId);
           }
         },
       );
@@ -257,15 +260,22 @@ export class EntityJobComponent implements OnInit {
     this.ws.call('core.job_abort', [this.job.id]).pipe(untilDestroyed(this)).subscribe();
   }
 
-  getRealtimeLogs(): void {
+  /**
+   * This method returns the subscription id that is used when subscribing to real time
+   * websocket updates. The subscription id is used to unsubscribe form those real time
+   * websocket updates at a later time. Unsubscription is not possible without this id
+   */
+  getRealtimeLogs(): string {
     this.realtimeLogsSubscribed = true;
+    const subscriptionId = UUID.UUID();
     const subName = 'filesystem.file_tail_follow:' + this.job.logs_path;
-    this.ws.sub(subName).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.ws.sub(subName, subscriptionId).pipe(untilDestroyed(this)).subscribe((res) => {
       this.scrollBottom();
       if (res && res.data && typeof res.data === 'string') {
         this.realtimeLogs += res.data;
       }
     });
+    return subscriptionId;
   }
 
   scrollBottom(): void {

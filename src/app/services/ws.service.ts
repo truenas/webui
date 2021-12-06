@@ -6,7 +6,6 @@ import { LocalStorage } from 'ngx-webstorage';
 import {
   Observable, Observer, Subject, Subscriber,
 } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
 import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
@@ -44,7 +43,6 @@ export class WebSocketService {
 
   protocol: string;
   remote: string;
-  private consoleSub$: Observable<string>;
 
   subscriptions = new Map<string, Observer<unknown>[]>();
 
@@ -60,16 +58,6 @@ export class WebSocketService {
 
   get authStatus(): Observable<boolean> {
     return this.authStatus$.asObservable();
-  }
-
-  get consoleMessages(): Observable<string> {
-    if (!this.consoleSub$) {
-      this.consoleSub$ = this.sub('filesystem.file_tail_follow:/var/log/messages:499').pipe(
-        filter((res) => res && res.data && typeof res.data === 'string'),
-        map((res) => res.data),
-      );
-    }
-    return this.consoleSub$;
   }
 
   reconnect(protocol = window.location.protocol, remote = environment.remote): void {
@@ -221,18 +209,25 @@ export class WebSocketService {
     });
   }
 
-  sub<T = any>(name: string): Observable<T> {
-    const nom = name.replace('.', '_'); // Avoid weird behavior
+  /**
+   * This method subscribes to the provided api end point for real time updates
+   * @param api The api end point to subscribe to
+   * @param subscriptionId The unique id that will be used as request id and can be
+   * used to unsubscribe from the websocket subscription with the `unsub(api, subscriptionId)`
+   * method
+   * @returns
+   */
+  sub<T = any>(api: string, subscriptionId?: string): Observable<T> {
+    const nom = api.replace('.', '_'); // Avoid weird behavior
     if (!this.pendingSubs[nom]) {
       this.pendingSubs[nom] = {
         observers: {},
       };
     }
 
-    const uuid = UUID.UUID();
-    const payload = { id: uuid, name, msg: 'sub' };
-
-    const obs = Observable.create((observer: Subscriber<T>) => {
+    const uuid = subscriptionId || UUID.UUID();
+    const payload = { id: uuid, name: api, msg: 'sub' };
+    const obs$ = new Observable((observer: Subscriber<T>) => {
       this.pendingSubs[nom].observers[uuid] = observer;
       this.send(payload);
 
@@ -243,10 +238,26 @@ export class WebSocketService {
         delete this.pendingSubs[nom].observers[uuid];
         if (!this.pendingSubs[nom].observers) { delete this.pendingSubs[nom]; }
       };
-
       return observer;
     });
-    return obs;
+    return obs$;
+  }
+
+  /**
+   * This method unsubscribes from real time websocket updates to the given api end point
+   * @param api The api end point to unsubscribe from
+   * @param subscriptionId The subscription Id used to setup the subscription in the `sub(api, subscriptionId)` method
+   */
+  unsub(api: string, id: string): void {
+    const nom = api.replace('.', '_');
+    if (this.pendingSubs[nom].observers[id]) {
+      this.send({ id, msg: 'unsub' });
+      this.pendingSubs[nom].observers[id].unsubscribe();
+      delete this.pendingSubs[nom].observers[id];
+      if (!this.pendingSubs[nom].observers) {
+        delete this.pendingSubs[nom];
+      }
+    }
   }
 
   job<K extends ApiMethod>(method: K, params?: ApiDirectory[K]['params']): Observable<Job<ApiDirectory[K]['response']>> {

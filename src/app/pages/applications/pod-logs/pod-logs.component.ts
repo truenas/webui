@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
 import { Subject, Subscription } from 'rxjs';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -49,6 +50,8 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   protected tempPodDetails: Record<string, string[]>;
   protected apps: string[] = [];
   protected routeSuccess: string[] = ['apps'];
+  podLogSubscriptionId: string = null;
+  podLogSubName = '';
 
   choosePod: DialogFormConfiguration;
   private podLogsChangedListener: Subscription;
@@ -105,24 +108,29 @@ export class PodLogsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.podLogsChangedListener) {
       this.podLogsChangedListener.unsubscribe();
+      this.ws.unsub(this.podLogSubName, this.podLogSubscriptionId);
     }
   }
 
   // subscribe pod log for selected app, pod and container.
   reconnect(): void {
     this.podLogs = [];
+
+    this.podLogSubName = `kubernetes.pod_log_follow:{"release_name":"${this.chartReleaseName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
+
     if (this.podLogsChangedListener) {
       this.podLogsChangedListener.unsubscribe();
+      this.ws.unsub(this.podLogSubName, this.podLogSubscriptionId);
     }
 
-    const subName = `kubernetes.pod_log_follow:{"release_name":"${this.chartReleaseName}", "pod_name":"${this.podName}", "container_name":"${this.containerName}", "tail_lines": ${this.tailLines}}`;
-
-    this.podLogsChangedListener = this.ws.sub(subName).pipe(untilDestroyed(this)).subscribe((res: PodLogEvent) => {
-      if (res) {
-        this.podLogs.push(res);
-        this.scrollToBottom();
-      }
-    });
+    this.podLogSubscriptionId = UUID.UUID();
+    this.podLogsChangedListener = this.ws.sub(this.podLogSubName, this.podLogSubscriptionId)
+      .pipe(untilDestroyed(this)).subscribe((res: PodLogEvent) => {
+        if (res) {
+          this.podLogs.push(res);
+          this.scrollToBottom();
+        }
+      });
   }
 
   // scroll to bottom, show last log.

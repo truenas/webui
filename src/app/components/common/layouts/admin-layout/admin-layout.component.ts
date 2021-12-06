@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { UUID } from 'angular2-uuid';
 import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { LayoutService } from 'app/core/services/layout.service';
@@ -43,6 +44,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isOpen = false;
   notificPanelClosed = false;
   menuName: string;
+  readonly consoleMsgsSubName = 'filesystem.file_tail_follow:/var/log/messages:500';
+  consoleMsgsSubscriptionId: string = null;
   subs: SubMenuItem[];
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
@@ -197,9 +200,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   getLogConsoleMsg(): void {
-    const subName = 'filesystem.file_tail_follow:/var/log/messages:500';
-
-    this.ws.sub(subName).pipe(untilDestroyed(this)).subscribe((res) => {
+    this.consoleMsgsSubscriptionId = UUID.UUID();
+    this.ws.sub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId).pipe(untilDestroyed(this)).subscribe((res) => {
       if (res && res.data && typeof res.data === 'string') {
         this.consoleMsg = this.accumulateConsoleMsg(res.data, 3);
       }
@@ -235,6 +237,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   onShowConsoleFooterBar(data: boolean): void {
     if (data && this.consoleMsg == '') {
       this.getLogConsoleMsg();
+    } else if (!data) {
+      this.ws.unsub(this.consoleMsgsSubName, this.consoleMsgsSubscriptionId);
     }
 
     this.isShowFooterConsole = data;
