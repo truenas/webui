@@ -227,7 +227,7 @@ export class WebSocketService {
 
     const uuid = subscriptionId || UUID.UUID();
     const payload = { id: uuid, name: api, msg: 'sub' };
-    const obs$ = new Observable((observer: Subscriber<T>) => {
+    return new Observable((observer: Subscriber<T>) => {
       this.pendingSubs[nom].observers[uuid] = observer;
       this.send(payload);
 
@@ -240,7 +240,6 @@ export class WebSocketService {
       };
       return observer;
     });
-    return obs$;
   }
 
   /**
