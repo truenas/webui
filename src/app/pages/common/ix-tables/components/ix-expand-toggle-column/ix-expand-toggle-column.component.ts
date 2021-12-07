@@ -34,7 +34,6 @@ export class IxExpandToggleColumnComponent<T> implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.table) {
-      this.cdr.detectChanges();
       this.table.removeColumnDef(this.columnDef);
     }
   }

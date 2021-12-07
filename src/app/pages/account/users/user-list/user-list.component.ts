@@ -5,22 +5,16 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
 import { Subject } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { Group } from 'app/interfaces/group.interface';
-import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ControlConfig, ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -35,8 +29,6 @@ import { UserFormComponent } from '../user-form/user-form.component';
 export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-  users: [User[]?] = [];
-  groups: [Group[]?] = [];
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
   toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
@@ -61,6 +53,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     title: this.translate.instant('Can not retrieve response'),
   };
   expandedRow: unknown;
+  users: [User[]?] = [];
 
   get currentEmptyConf(): EmptyConfig {
     if (this.loading) {
@@ -85,7 +78,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.setupToolbar();
     this.getUsers();
-    this.getGroups();
   }
 
   ngAfterViewInit(): void {
@@ -130,37 +122,9 @@ export class UserListComponent implements OnInit, AfterViewInit {
     );
   }
 
-  getGroups(): void {
-    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
-      this.groups = [];
-      this.groups.push(groups);
-    });
-  }
-
-  getDetails(user: User): Option[] {
-    return [
-      { label: this.translate.instant('GID'), value: user?.group?.bsdgrp_gid },
-      { label: this.translate.instant('Home Directory'), value: user.home },
-      { label: this.translate.instant('Shell'), value: user.shell },
-      { label: this.translate.instant('Email'), value: user.email },
-      { label: this.translate.instant('Password Disabled'), value: user.password_disabled.toString() },
-      { label: this.translate.instant('Lock User'), value: user.locked.toString() },
-      { label: this.translate.instant('Permit Sudo'), value: user.sudo.toString() },
-      { label: this.translate.instant('Microsoft Account'), value: user.microsoft_account.toString() },
-      { label: this.translate.instant('Samba Authentication'), value: user.smb.toString() },
-    ];
-  }
-
   createDataSource(users: User[] = []): void {
     this.dataSource = new MatTableDataSource(users);
     this.dataSource.sort = this.sort;
-  }
-
-  ableToDeleteGroup(id: number): boolean {
-    const user = _.find(this.users[0], { id });
-    const groupUsers = _.find(this.groups[0], { id: user.group.id }).users;
-    // Show checkbox if deleting the last member of a group
-    return groupUsers.length === 1;
   }
 
   toggleBuiltins(): void {
@@ -205,42 +169,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
 
   doAdd(): void {
     this.modalService.openInSlideIn(UserFormComponent);
-  }
-
-  doEdit(user: User): void {
-    this.modalService.openInSlideIn(UserFormComponent, user.id);
-  }
-
-  doDelete(user: User): void {
-    const confirmOptions: DialogFormConfiguration = {
-      title: this.translate.instant('Delete User'),
-      message: this.translate.instant('Are you sure you want to delete user <b>"{user}"</b>?', { user: user.username }),
-      saveButtonText: this.translate.instant('Delete'),
-      fieldConfig: [],
-      preInit: () => {
-        if (this.ableToDeleteGroup(user.id)) {
-          confirmOptions.fieldConfig.push({
-            type: 'checkbox',
-            name: 'delete_group',
-            placeholder: this.translate.instant('Delete user primary group "{name}"', { name: user.group.bsdgrp_group }),
-            value: false,
-          });
-        }
-      },
-      customSubmit: (entityDialog: EntityDialogComponent) => {
-        entityDialog.dialogRef.close(true);
-        this.ws.call('user.delete', [user.id, entityDialog.formValue]).pipe(untilDestroyed(this)).subscribe(
-          () => {
-            this.getUsers();
-          },
-          (err) => {
-            new EntityUtils().handleWsError(this, err, this.dialogService);
-          },
-        );
-      },
-    };
-
-    this.dialogService.dialogForm(confirmOptions);
   }
 
   expandRow(row: unknown): void {
