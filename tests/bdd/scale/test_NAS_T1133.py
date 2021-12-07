@@ -109,12 +109,13 @@ def set_path_to_the_ldap_dataset_mnttankwheel_dataset_input_wheelsmbshare_as_nam
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__ENABLE SERVICE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
-    
-    
+    if is_element_present(driver, 5, '//button[@ix-auto="button__ENABLE SERVICE"]'):
+        wait_on_element(driver, 5, '//button[@ix-auto="button__ENABLE SERVICE"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__ENABLE SERVICE"]').click()
+    if is_element_present(driver, 5, '//button[@ix-auto="button__CLOSE"]'):
+        wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
+        driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
+
 
 @then('smb should be added')
 def smb_should_be_added(driver):
