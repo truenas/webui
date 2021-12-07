@@ -803,7 +803,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
                   hideCheckBox: true,
                   buttonMsg: this.translate.instant('Fix Credential'),
                 }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-                  this.router.navigate(['/', 'system', 'cloudcredentials', 'edit', String(item.id)]);
+                  this.modalService.closeSlideIn();
+                  this.router.navigate(['/', 'credentials', 'backup-credentials']);
                 });
               });
             } else {
