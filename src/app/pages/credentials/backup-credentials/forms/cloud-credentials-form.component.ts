@@ -1245,6 +1245,14 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
         this.entityForm.loader.open();
         this.entityForm.error = '';
         const value = _.cloneDeep(this.entityForm.formGroup.value);
+        this.beforeSubmit(value);
+        for (const item in value) {
+          if (item != 'name' && item != 'provider') {
+            if (!this.entityForm.formGroup.controls[item].valid) {
+              this.entityForm.formGroup.controls[item].markAsTouched();
+            }
+          }
+        }
         this.prepareAttributes(value);
 
         if (value.attributes.private_key && value.attributes.private_key === 'NEW') {
