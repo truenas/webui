@@ -38,7 +38,6 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 5, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
-        assert is_element_present (driver, 10, '//div[contains(@class,"mat-drawer-backdrop")]') is False
         assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
