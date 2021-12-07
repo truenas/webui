@@ -2,7 +2,7 @@ import {
   HttpClient, HttpRequest, HttpEventType, HttpResponse,
 } from '@angular/common/http';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, ViewChild, ElementRef, Input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, Input,
 } from '@angular/core';
 import {
   ControlValueAccessor, NgControl, FormControl,
@@ -14,30 +14,29 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-file-upload',
-  templateUrl: './ix-file-upload.component.html',
-  styleUrls: ['./ix-file-upload.component.scss'],
+  selector: 'ix-file-input',
+  templateUrl: './ix-file-input.component.html',
+  styleUrls: ['./ix-file-input.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxFileUploadComponent implements ControlValueAccessor {
-  @ViewChild('fileInput', { static: false }) fileInput: ElementRef<HTMLInputElement>;
-  @Input() label?: string;
-  @Input() tooltip?: string;
-  @Input() fileLocation?: string;
-  @Input() acceptedFiles?: string;
-  @Input() multiple?: boolean;
-  @Input() required?: boolean;
-  @Input() hideButton?: boolean;
+export class IxFileInputComponent implements ControlValueAccessor {
+  @Input() label: string;
+  @Input() tooltip: string;
+  @Input() fileLocation: string;
+  @Input() acceptedFiles = '*.*';
+  @Input() multiple: boolean;
+  @Input() required: boolean;
+  @Input() hideButton: boolean;
+  @Input() updater: (value: FileList) => void;
 
-  fileList: FileList;
-  fbrowser: HTMLInputElement;
+  value: FileList;
 
   apiEndPoint = '/_upload?auth_token=' + this.ws.token;
-  isDisabled = true;
+  isDisabled = false;
 
   formControl = new FormControl(this).value as FormControl;
 
-  onChange: (value: FileList | null) => void = (): void => {};
+  onChange: (value: FileList) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
   constructor(
@@ -52,25 +51,25 @@ export class IxFileUploadComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
-  fileBtnClick(): void {
-    this.fileInput.nativeElement.click();
-    this.fbrowser = document.getElementById('fb') as HTMLInputElement;
-    this.fbrowser.onchange = () => {
-      this.fileList = this.fileInput.nativeElement.files;
-      this.cdr.markForCheck();
-    };
-  }
-
   upload(location = '/tmp/'): void {
-    const fileBrowser = this.fileInput.nativeElement;
+    if (this.updater) {
+      this.updater(this.value);
+      return;
+    }
 
-    if (fileBrowser.files && fileBrowser.files[0]) {
+    if (this.value && this.value[0]) {
       const formData: FormData = new FormData();
       formData.append('data', JSON.stringify({
         method: 'filesystem.put',
-        params: [location + '/' + fileBrowser.files[0].name, { mode: '493' }],
+        params: [location + '/' + this.value[0].name, { mode: '493' }],
       }));
-      formData.append('file', fileBrowser.files[0]);
+      if (this.multiple) {
+        for (const file of this.value) {
+          formData.append('file', file);
+        }
+      } else {
+        formData.append('file', this.value[0]);
+      }
       const req = new HttpRequest('POST', this.apiEndPoint, formData, {
         reportProgress: true,
       });
@@ -95,12 +94,21 @@ export class IxFileUploadComponent implements ControlValueAccessor {
     }
   }
 
-  writeValue(value: FileList | null): void {
-    this.fileList = value;
+  onChanged(value: any): void {
+    this.value = value;
+    this.cdr.markForCheck();
+
+    if (this.hideButton) {
+      this.upload(this.fileLocation);
+    }
+  }
+
+  writeValue(value: FileList): void {
+    this.value = value;
     this.cdr.markForCheck();
   }
 
-  registerOnChange(onChange: (value: FileList | null) => void): void {
+  registerOnChange(onChange: (value: FileList) => void): void {
     this.onChange = onChange;
   }
 
