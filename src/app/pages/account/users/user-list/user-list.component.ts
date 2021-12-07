@@ -35,8 +35,8 @@ import { UserFormComponent } from '../user-form/user-form.component';
 export class UserListComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-  protected users: [User[]?] = [];
-  protected groups: [Group[]?] = [];
+  users: [User[]?] = [];
+  groups: [Group[]?] = [];
   displayedColumns: string[] = ['username', 'uid', 'builtin', 'full_name', 'actions'];
   toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
@@ -60,7 +60,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     large: true,
     title: this.translate.instant('Can not retrieve response'),
   };
-  expandedRow: User;
+  expandedRow: unknown;
 
   get currentEmptyConf(): EmptyConfig {
     if (this.loading) {
@@ -243,7 +243,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.dialogService.dialogForm(confirmOptions);
   }
 
-  expandRow(row: User): void {
+  expandRow(row: unknown): void {
     this.expandedRow = this.expandedRow === row ? null : row;
     this.cdr.markForCheck();
   }
