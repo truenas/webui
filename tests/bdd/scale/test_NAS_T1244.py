@@ -85,8 +85,8 @@ def enter_1234abcd_and_verify_that_an_error_shows(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
     assert wait_on_element(driver, 10, '//p[contains(.,"The following datasets cannot be unlocked.")]')
-    assert wait_on_element(driver, 5, '//mat-dialog-container//button[@ix-auto="button__CANCEL"]', 'clickable')
-    driver.find_element_by_xpath('//mat-dialog-container//button[@ix-auto="button__CANCEL"]').click()
+    assert wait_on_element(driver, 5, '//mat-dialog-container//button[@ix-auto="button__CLOSE"]', 'clickable')
+    driver.find_element_by_xpath('//mat-dialog-container//button[@ix-auto="button__CLOSE"]').click()
 
 
 @then('enter abcd1234 and confirm')
