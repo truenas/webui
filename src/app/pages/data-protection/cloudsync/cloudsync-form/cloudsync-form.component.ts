@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationExtras, Router } from '@angular/router';
 import { TreeNode } from '@circlon/angular-tree-component';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
@@ -804,7 +804,8 @@ export class CloudsyncFormComponent implements FormConfiguration {
                   buttonMsg: this.translate.instant('Fix Credential'),
                 }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
                   this.modalService.closeSlideIn();
-                  this.router.navigate(['/', 'credentials', 'backup-credentials']);
+                  const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials', id: item.id } };
+                  this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
                 });
               });
             } else {
