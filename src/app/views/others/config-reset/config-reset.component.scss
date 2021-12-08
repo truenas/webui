@@ -3,7 +3,7 @@
   height: 100%;
 }
 
-#shutdown-card {
+#reset-card {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -15,13 +15,8 @@
 }
 
 .copyright-txt,
-#message,
-#logo {
+#message {
   text-align: center;
-}
-
-#logo {
-  width: 80%;
 }
 
 .copyright-txt {
@@ -34,10 +29,14 @@
 }
 
 @media screen and (max-height: 700px) {
-  #shutdown-card {
+  #reset-card {
     font-size: 80%;
     top: 20px;
     width: 225px;
+  }
+
+  .logo {
+    width: 206px;
   }
 
   .mat-dialog-container {
