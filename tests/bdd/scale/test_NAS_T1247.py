@@ -55,13 +55,13 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
 @then('on the service page, press on configure SMB')
 def on_the_service_page_press_on_configure_smb(driver):
     """on the service page, press on configure SMB."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="action__Configure_CIFS"]')
-    element = driver.find_element_by_xpath('//button[@ix-auto="action__Configure_CIFS"]')
+    assert wait_on_element(driver, 5, '//td[contains(text(),"Dynamic DNS")]')
     # Scroll to SSH service
+    element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    assert wait_on_element(driver, 10, '//button[@ix-auto="action__Configure_CIFS"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="action__Configure_CIFS"]').click()
-
+    assert wait_on_element(driver, 5, '//tr[contains(.,"SMB")]//button', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"SMB")]//button').click()
+    
 
 @then('the SMB page loads click advanced')
 def the_smb_page_loads_click_advanced(driver):
