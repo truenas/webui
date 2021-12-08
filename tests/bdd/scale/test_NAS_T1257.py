@@ -54,7 +54,7 @@ def on_the_dashboard_get_the_ssh_host_key(driver, root_password, nas_ip):
 @then('click on the power button then Restart')
 def click_on_the_power_button_then_restart(driver):
     """click on the power button then Restart."""
-    assert wait_on_element(driver, 5, '//button[@name="Power"]', 'clickable')
+    assert wait_on_element(driver, 10, '//button[@name="Power"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="Power"]').click()
     assert wait_on_element(driver, 5, '//button[@name="power-restart"]', 'clickable')
     driver.find_element_by_xpath('//button[@name="power-restart"]').click()
