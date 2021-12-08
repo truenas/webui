@@ -2,11 +2,12 @@ import { ApplicationRef, Component, Injector } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
+import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-tftp';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { TftpConfig } from 'app/interfaces/tftp-config.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormComboboxConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
 import { UserService, WebSocketService } from 'app/services';
 
@@ -40,10 +41,11 @@ export class ServiceTFTPComponent implements FormConfiguration {
       width: '50%',
       config: [
         {
-          type: 'input',
+          type: 'select',
           name: 'host',
           placeholder: helptext.tftp_host_placeholder,
           tooltip: helptext.tftp_host_tooltip,
+          options: [],
         },
         {
           type: 'input',
@@ -99,6 +101,7 @@ export class ServiceTFTPComponent implements FormConfiguration {
   ];
 
   protected tftpUsernameField: FormComboboxConfig;
+  protected tftpHostField: FormSelectConfig;
 
   constructor(
     protected router: Router,
@@ -125,6 +128,17 @@ export class ServiceTFTPComponent implements FormConfiguration {
       this.tftpUsernameField.options = items.map((user) => {
         return { label: user.username, value: user.username };
       });
+    });
+
+    this.ws.call('tftp.host_choices').pipe(
+      choicesToOptions(),
+      untilDestroyed(this),
+    ).subscribe((options) => {
+      this.tftpHostField = this.fieldSets
+        .find((set) => set.name === helptext.tftp_fieldset_conn)
+        .config.find((config) => config.name === 'host') as FormSelectConfig;
+
+      this.tftpHostField.options = options;
     });
   }
 
