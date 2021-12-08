@@ -49,18 +49,20 @@ export class LicenseComponent {
       this.isFormLoading = false;
       // To make sure EULA opens on reload; removed from local storage (in topbar) on acceptance of EULA
       window.localStorage.setItem('upgrading_status', 'upgrading');
-      this.dialogService.confirm({
-        title: helptext.update_license.reload_dialog_title,
-        message: helptext.update_license.reload_dialog_message,
-        hideCheckBox: true,
-        buttonMsg: helptext.update_license.reload_dialog_action,
-        hideCancel: true,
-        disableClose: true,
-      }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
-        document.location.reload();
-      });
       this.slideInService.close();
       this.cdr.markForCheck();
+      setTimeout(() => {
+        this.dialogService.confirm({
+          title: helptext.update_license.reload_dialog_title,
+          message: helptext.update_license.reload_dialog_message,
+          hideCheckBox: true,
+          buttonMsg: helptext.update_license.reload_dialog_action,
+          hideCancel: true,
+          disableClose: true,
+        }).pipe(filter(Boolean), untilDestroyed(this)).subscribe(() => {
+          document.location.reload();
+        });
+      }, 200);
     }, (error) => {
       this.isFormLoading = false;
       this.errorHandler.handleWsFormError(error, this.form);
