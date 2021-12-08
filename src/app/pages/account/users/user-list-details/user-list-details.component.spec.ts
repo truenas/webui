@@ -1,14 +1,15 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { ChangeDetectorRef } from '@angular/core';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator';
-import { of, Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core-service/core.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
+import { MockComponent } from 'ng-mocks';
+import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
-import { Preferences } from 'app/interfaces/preferences.interface';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
+import { fakeDataSource } from 'app/pages/account/users/user-list/user-list.component.spec';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
+import { IxTableComponent } from 'app/pages/common/ix-tables/components/ix-table/ix-table.component';
 import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
 import { DialogService, ModalService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
@@ -26,27 +27,25 @@ describe('UserListDetailsComponent', () => {
       EntityModule,
       IxTableModule,
     ],
+    declarations: [
+      MockComponent(IxTableComponent),
+    ],
     providers: [
       mockWebsocket([
-        mockCall('user.query', []),
+        mockCall('user.query', fakeDataSource),
         mockCall('user.update'),
         mockCall('user.create'),
         mockCall('user.delete'),
         mockCall('group.query'),
       ]),
-      mockProvider(DialogService),
+      mockProvider(DialogService, {
+        dialogForm: jest.fn(() => of(true)),
+      }),
       mockProvider(ModalService, {
         openInSlideIn: jest.fn(() => of(true)),
-        onClose$: new Subject<unknown>(),
       }),
-      mockProvider(PreferencesService, {
-        preferences: {
-          showUserListMessage: false,
-          hide_builtin_users: false,
-        } as Preferences,
-        savePreferences: jest.fn(),
-      }),
-      mockProvider(CoreService),
+      mockProvider(IxTableComponent),
+      mockProvider(ChangeDetectorRef),
     ],
   });
 

@@ -15,7 +15,7 @@ import { CoreService } from '../../../../core/services/core-service/core.service
 import { UserListDetailsComponent } from '../user-list-details/user-list-details.component';
 import { UserListComponent } from './user-list.component';
 
-const fakeDataSource: User[] = [{
+export const fakeDataSource: User[] = [{
   id: 1,
   uid: 0,
   username: 'root',
@@ -36,11 +36,6 @@ const fakeDataSource: User[] = [{
     id: 41,
     bsdgrp_gid: 0,
     bsdgrp_group: 'root',
-    bsdgrp_builtin: true,
-    bsdgrp_sudo: false,
-    bsdgrp_sudo_nopasswd: false,
-    bsdgrp_sudo_commands: [],
-    bsdgrp_smb: false,
   },
   groups: [],
 }, {
@@ -63,11 +58,6 @@ const fakeDataSource: User[] = [{
     id: 101,
     bsdgrp_gid: 1004,
     bsdgrp_group: 'test',
-    bsdgrp_builtin: false,
-    bsdgrp_sudo: false,
-    bsdgrp_sudo_nopasswd: false,
-    bsdgrp_sudo_commands: [],
-    bsdgrp_smb: false,
   },
   groups: [
     94,

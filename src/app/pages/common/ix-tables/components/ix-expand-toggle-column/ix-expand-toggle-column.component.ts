@@ -1,6 +1,6 @@
 import {
   Component,
-  Output, EventEmitter, Input, Optional, ViewChild, OnDestroy, OnInit, ChangeDetectorRef, ChangeDetectionStrategy,
+  Output, EventEmitter, Input, ViewChild, OnDestroy, OnInit, ChangeDetectorRef, ChangeDetectionStrategy,
 } from '@angular/core';
 import { MatColumnDef } from '@angular/material/table';
 import { IxTableComponent } from 'app/pages/common/ix-tables/components/ix-table/ix-table.component';
@@ -11,13 +11,13 @@ import { IxTableComponent } from 'app/pages/common/ix-tables/components/ix-table
   styleUrls: ['./ix-expand-toggle-column.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxExpandToggleColumnComponent<T> implements OnInit, OnDestroy {
+export class IxExpandToggleColumnComponent<T = unknown> implements OnInit, OnDestroy {
   @Input() expandedRow: T;
   @Output() toggle = new EventEmitter<T>();
   @ViewChild(MatColumnDef, { static: false }) columnDef: MatColumnDef;
 
   constructor(
-    @Optional() public table: IxTableComponent<T>,
+    private table: IxTableComponent<T>,
     private cdr: ChangeDetectorRef,
   ) { }
 

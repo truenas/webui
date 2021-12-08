@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, ChangeDetectionStrategy, Input, EventEmitter, Output, Optional, ViewChild,
+  Component, OnInit, ChangeDetectionStrategy, Input, EventEmitter, Output, ViewChild,
   OnDestroy, ChangeDetectorRef,
 } from '@angular/core';
 import { MatRowDef, MatTableDataSource, MatColumnDef } from '@angular/material/table';
@@ -26,18 +26,18 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserListDetailsComponent implements OnInit, OnDestroy {
-  @Input() expandedRow: unknown;
+  @Input() expandedRow: User;
   @Input() dataSource: MatTableDataSource<User>;
   @Input() colspan: number;
   @Input() users: [User[]?] = [];
-  @Output() update = new EventEmitter();
+  @Output() update = new EventEmitter<unknown>();
   @ViewChild(MatRowDef, { static: false }) rowDef: MatRowDef<User>;
   @ViewChild(MatColumnDef, { static: false }) columnDef: MatColumnDef;
 
   groups: [Group[]?] = [];
 
   constructor(
-    @Optional() public table: IxTableComponent<User>,
+    private table: IxTableComponent<User>,
     private ws: WebSocketService,
     private modalService: ModalService,
     private dialogService: DialogService,
@@ -63,8 +63,8 @@ export class UserListDetailsComponent implements OnInit, OnDestroy {
   }
 
   getGroups(): void {
+    this.groups = [];
     this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
-      this.groups = [];
       this.groups.push(groups);
     });
   }

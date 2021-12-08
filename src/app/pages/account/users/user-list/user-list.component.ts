@@ -52,7 +52,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     large: true,
     title: this.translate.instant('Can not retrieve response'),
   };
-  expandedRow: unknown;
+  expandedRow: User;
   users: [User[]?] = [];
 
   get currentEmptyConf(): EmptyConfig {
@@ -171,7 +171,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.modalService.openInSlideIn(UserFormComponent);
   }
 
-  expandRow(row: unknown): void {
+  expandRow(row: User): void {
     this.expandedRow = this.expandedRow === row ? null : row;
     this.cdr.markForCheck();
   }
