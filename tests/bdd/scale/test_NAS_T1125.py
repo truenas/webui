@@ -136,7 +136,7 @@ def wait_for_please_wait_should_appear_while_settings_are_applied_then_after_set
     """wait for Please wait should appear while settings are applied, then after settings are applied, you should see "{hostname}" Settings saved."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     # Add validation of elements
-    assert wait_on_element(driver, 5, '//mat-card//span[contains(text(),"Hostname:")]')
+    assert wait_on_element(driver, 20, '//mat-card//span[contains(text(),"Hostname:")]')
 
 
 @then(parsers.parse('run {command} trough ssh, the ssh result should pass and return {user} info'))
