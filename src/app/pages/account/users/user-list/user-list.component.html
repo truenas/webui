@@ -41,7 +41,7 @@
         [expandedRow]="expandedRow"
         [dataSource]="dataSource"
         [colspan]="displayedColumns.length"
-        [users]="users"
+        (update)="getUsers()"
       ></app-user-list-details>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

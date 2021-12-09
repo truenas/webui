@@ -53,7 +53,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
     title: this.translate.instant('Can not retrieve response'),
   };
   expandedRow: User;
-  users: [User[]?] = [];
 
   get currentEmptyConf(): EmptyConfig {
     if (this.loading) {
@@ -96,8 +95,6 @@ export class UserListComponent implements OnInit, AfterViewInit {
     this.loading = true;
     this.ws.call('user.query').pipe(
       map((users) => {
-        this.users = [];
-        this.users.push(users);
         if (this.prefService.preferences.hide_builtin_users) {
           // TODO: Use QueryParams and QueryFilter when it is possible
           // [['OR', [['builtin', '=', false], ['username', '=', 'root']]]]

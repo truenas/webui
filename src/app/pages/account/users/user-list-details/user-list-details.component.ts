@@ -5,8 +5,7 @@ import {
 import { MatRowDef, MatTableDataSource, MatColumnDef } from '@angular/material/table';
 import { untilDestroyed, UntilDestroy } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import _ from 'lodash';
-import { Group } from 'app/interfaces/group.interface';
+import { map } from 'rxjs/operators';
 import { Option } from 'app/interfaces/option.interface';
 import { User } from 'app/interfaces/user.interface';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
@@ -14,7 +13,7 @@ import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/d
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { IxTableComponent } from 'app/pages/common/ix-tables/components/ix-table/ix-table.component';
-import { ModalService } from 'app/services';
+import { AppLoaderService, ModalService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
@@ -22,19 +21,15 @@ import { WebSocketService } from 'app/services/ws.service';
 @Component({
   selector: 'app-user-list-details',
   templateUrl: './user-list-details.component.html',
-  styleUrls: ['./user-list-details.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class UserListDetailsComponent implements OnInit, OnDestroy {
   @Input() expandedRow: User;
   @Input() dataSource: MatTableDataSource<User>;
   @Input() colspan: number;
-  @Input() users: [User[]?] = [];
-  @Output() update = new EventEmitter<unknown>();
+  @Output() update = new EventEmitter<void>();
   @ViewChild(MatRowDef, { static: false }) rowDef: MatRowDef<User>;
   @ViewChild(MatColumnDef, { static: false }) columnDef: MatColumnDef;
-
-  groups: [Group[]?] = [];
 
   constructor(
     private table: IxTableComponent<User>,
@@ -43,6 +38,7 @@ export class UserListDetailsComponent implements OnInit, OnDestroy {
     private dialogService: DialogService,
     private translate: TranslateService,
     private cdr: ChangeDetectorRef,
+    private loader: AppLoaderService,
   ) { }
 
   ngOnInit(): void {
@@ -51,8 +47,6 @@ export class UserListDetailsComponent implements OnInit, OnDestroy {
       this.table.addColumnDef(this.columnDef);
       this.table.addRowDef(this.rowDef);
     }
-
-    this.getGroups();
   }
 
   ngOnDestroy(): void {
@@ -60,13 +54,6 @@ export class UserListDetailsComponent implements OnInit, OnDestroy {
       this.table.removeRowDef(this.rowDef);
       this.table.removeColumnDef(this.columnDef);
     }
-  }
-
-  getGroups(): void {
-    this.groups = [];
-    this.ws.call('group.query').pipe(untilDestroyed(this)).subscribe((groups) => {
-      this.groups.push(groups);
-    });
   }
 
   getDetails(user: User): Option[] {
@@ -83,32 +70,34 @@ export class UserListDetailsComponent implements OnInit, OnDestroy {
     ];
   }
 
-  ableToDeleteGroup(id: number): boolean {
-    const user = _.find(this.users[0], { id });
-    const groupUsers = _.find(this.groups[0], { id: user.group.id }).users;
-    // Show checkbox if deleting the last member of a group
-    return groupUsers.length === 1;
-  }
-
   doEdit(user: User): void {
     this.modalService.openInSlideIn(UserFormComponent, user.id);
   }
 
-  doDelete(user: User): void {
+  async doDelete(user: User): Promise<void> {
+    this.loader.open();
+    const showCheckboxIfLastMember = await this.ws.call('group.query', [[['id', '=', user.group.id]]]).pipe(
+      map((groups) => {
+        return groups.length ? groups[0].users.length === 1 : false;
+      }),
+    ).toPromise();
+
     const confirmOptions: DialogFormConfiguration = {
       title: this.translate.instant('Delete User'),
       message: this.translate.instant('Are you sure you want to delete user <b>"{user}"</b>?', { user: user.username }),
-      saveButtonText: this.translate.instant('Delete'),
-      fieldConfig: [],
+      saveButtonText: this.translate.instant('Confirm'),
+      fieldConfig: [{
+        type: 'checkbox',
+        name: 'delete_group',
+        placeholder: this.translate.instant('Delete user primary group "{name}"', { name: user.group.bsdgrp_group }),
+        value: false,
+        isHidden: true,
+      }],
       preInit: () => {
-        if (this.ableToDeleteGroup(user.id)) {
-          confirmOptions.fieldConfig.push({
-            type: 'checkbox',
-            name: 'delete_group',
-            placeholder: this.translate.instant('Delete user primary group "{name}"', { name: user.group.bsdgrp_group }),
-            value: false,
-          });
-        }
+        confirmOptions.fieldConfig[0].isHidden = !showCheckboxIfLastMember;
+      },
+      afterInit: () => {
+        this.loader.close();
       },
       customSubmit: (entityDialog: EntityDialogComponent) => {
         entityDialog.dialogRef.close(true);

@@ -8,7 +8,6 @@ import { IxTableComponent } from 'app/pages/common/ix-tables/components/ix-table
 @Component({
   selector: 'ix-expand-toggle-column',
   templateUrl: './ix-expand-toggle-column.component.html',
-  styleUrls: ['./ix-expand-toggle-column.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class IxExpandToggleColumnComponent<T = unknown> implements OnInit, OnDestroy {
