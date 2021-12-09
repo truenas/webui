@@ -26,17 +26,5 @@
       {{ file.name }}
     </p>
   </div>
-  <div>
-    <button
-      *ngIf="!hideButton"
-      mat-button
-      type="button"
-      color="primary"
-      class="upload-button"
-      [disabled]="isDisabled"
-      (click)="upload(fileLocation)"
-    >
-      {{ 'Upload' | translate }}
-    </button>
-  </div>
 </div>
+<ix-errors [control]="controlDirective.control" [label]="label"></ix-errors>
