@@ -3,7 +3,7 @@
   height: 100%;
 }
 
-#shutdown-card {
+#reboot-card {
   align-items: center;
   display: flex;
   flex-direction: column;
@@ -30,10 +30,14 @@
 }
 
 @media screen and (max-height: 700px) {
-  #shutdown-card {
+  #reboot-card {
     font-size: 80%;
     top: 20px;
     width: 225px;
+  }
+
+  .logo {
+    width: 206px;
   }
 
   .mat-dialog-container {
