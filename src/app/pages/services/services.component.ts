@@ -13,7 +13,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { CoreEvent } from 'app/interfaces/events';
-import { Service } from 'app/interfaces/service.interface';
+import { Service, ServiceRow } from 'app/interfaces/service.interface';
 import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
@@ -30,12 +30,11 @@ import { WebSocketService } from 'app/services/ws.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ServicesComponent implements OnInit {
-  dataSource: MatTableDataSource<Service> = new MatTableDataSource([]);
+  dataSource: MatTableDataSource<ServiceRow> = new MatTableDataSource([]);
   displayedColumns = ['name', 'state', 'enable', 'actions'];
   toolbarConfig: ToolbarConfig;
   settingsEvent$: Subject<CoreEvent> = new Subject();
   filterString = '';
-  rowIdentifier = 'name';
   error = false;
   loading = true;
   loadingConf: EmptyConfig = {
@@ -67,7 +66,18 @@ export class ServicesComponent implements OnInit {
   getData(): void {
     this.ws.call('service.query', [[], { order_by: ['service'] }]).pipe(
       map((services) => {
-        return services.filter((service) => !this.hiddenServices.includes(service.service));
+        const transformed = services
+          .filter((service) => !this.hiddenServices.includes(service.service))
+          .map((service) => {
+            const transformed = { ...service } as ServiceRow;
+            transformed.name = serviceNames.get(service.service);
+
+            return transformed;
+          });
+
+        transformed.sort((a, b) => a.name.localeCompare(b.name));
+
+        return transformed;
       }),
       untilDestroyed(this),
     ).subscribe(
