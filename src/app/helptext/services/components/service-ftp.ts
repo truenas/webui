@@ -28,8 +28,15 @@ export default {
  disconnected. Increase this if users are prone to typos.'),
   loginattempt_validation: [rangeValidator(0, 1000), Validators.required],
 
+  timeout_notransfer_placeholder: T('Notransfer Timeout'),
+  timeout_notransfer_tooltip: T('Maximum number of seconds a client is allowed to spend connected, after\n'
+    + 'authentication, without issuing a command which results in creating an active or passive data connection\n'
+    + '(i.e. sending/receiving a file, or receiving a directory listing).'),
+  timeout_notransfer_validation: [rangeValidator(0, 10000), Validators.required],
+
   timeout_placeholder: T('Timeout'),
-  timeout_tooltip: T('Maximum client idle time in seconds before client is disconnected.'),
+  timeout_tooltip: T('Maximum number of seconds that proftpd will allow clients to stay connected without receiving\n'
+    + 'any data on either the control or data connection.'),
   timeout_validation: [rangeValidator(0, 10000), Validators.required],
 
   rootlogin_placeholder: T('Allow Root Login'),
