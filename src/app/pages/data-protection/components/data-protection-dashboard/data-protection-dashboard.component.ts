@@ -160,7 +160,7 @@ export class DataProtectionDashboardComponent implements OnInit {
           },
           tableActions: [
             {
-              label: this.translate.instant('Adjust Priority'),
+              label: this.translate.instant('Adjust Scrub/Resilver Priority'),
               onClick: () => {
                 this.router.navigate(['/data-protection/scrub/priority']);
               },

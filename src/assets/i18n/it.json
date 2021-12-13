@@ -213,7 +213,7 @@
   "Additional options for <a href=\"https://arthurdejong.org/nss-pam-ldapd/nslcd.conf.5\" target=\"_blank\">nslcd.conf</a>.": "",
   "Additional parameters.": "",
   "Addresses": "",
-  "Adjust Priority": "",
+  "Adjust Scrub/Resilver Priority": "",
   "Adjust how often alert notifications are sent, use  the Frequency drop-down. Setting the Frequency to NEVER prevents that  alert from being added to alert notifications, but the alert can still  show in the web interface if it is triggered.": "",
   "Admin Server": "",
   "Admin Servers": "",
