@@ -182,7 +182,7 @@ export class EmailComponent implements FormConfiguration {
         {
           type: 'paragraph',
           name: 'oauth_applied',
-          paraText: 'Oauth credentials have been applied.',
+          paraText: 'Gmail credentials have been applied.',
           isLargeText: true,
           paragraphIcon: 'check_circle',
           paragraphIconSize: '24px',
