@@ -160,12 +160,12 @@ export class DeviceListComponent implements EntityTableConfig {
       this.loaderOpen = true;
       this.ws.call(this.wsDelete, [row.id]).pipe(untilDestroyed(this)).subscribe(
         () => {
+          this.loader.close();
           this.entityList.getData();
-          this.loader.close();
         },
-        (resinner) => {
-          new EntityUtils().handleError(this, resinner);
+        (err) => {
           this.loader.close();
+          new EntityUtils().handleWsError(this, err, this.dialogService);
         },
       );
     });
