@@ -1,3 +1,7 @@
+:host {
+  display: block;
+}
+
 .mat-card {
   overflow: hidden;
 }
@@ -5,21 +9,4 @@
 .mat-slide-toggle {
   position: relative;
   top: 2px;
-}
-
-.service-toggle {
-  width: 48px;
-}
-
-.clickable {
-  background: rgba(0, 0, 0, 0);
-  height: 28px;
-  position: absolute;
-  width: 40px;
-  z-index: 10;
-
-  &:hover,
-  &:focus {
-    cursor: pointer;
-  }
 }
