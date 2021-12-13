@@ -44,7 +44,7 @@ export class FormUploadComponent {
   }
 
   upload(location = '/tmp/'): void {
-    if (this.config.updater && this.config.parent) {
+    if (this.config.updater) {
       this.config.updater(this, this.config.parent);
       return;
     }
