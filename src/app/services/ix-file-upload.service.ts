@@ -10,7 +10,7 @@ import { Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class IxFileUploadService {
-  private fileUploadProgress$ = new Subject<HttpProgressEvent | HttpErrorResponse>();
+  private fileUploadProgress$ = new Subject<HttpProgressEvent>();
   private fileUploadSuccess$ = new Subject<HttpResponse<unknown>>();
 
   constructor(
@@ -54,7 +54,7 @@ export class IxFileUploadService {
     });
   }
 
-  get onUploading$(): Subject<HttpProgressEvent | HttpErrorResponse> {
+  get onUploading$(): Subject<HttpProgressEvent> {
     return this.fileUploadProgress$;
   }
 
