@@ -182,7 +182,7 @@ export class EmailComponent implements FormConfiguration {
         {
           type: 'paragraph',
           name: 'oauth_applied',
-          paraText: 'Oauth credentials have been applied.',
+          paraText: 'Gmail credentials have been applied.',
           isLargeText: true,
           paragraphIcon: 'check_circle',
           paragraphIconSize: '24px',
@@ -325,6 +325,8 @@ export class EmailComponent implements FormConfiguration {
       if (!isSmtpMethod) {
         // switches from SMTP to Gmail Oauth method and disable smtp
         emailConfig.smtp = false;
+        emailConfig.fromemail = '';
+        emailConfig.fromname = '';
         this.smtp.setValue(false);
       }
     } else {
