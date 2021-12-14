@@ -56,6 +56,9 @@ export class UnlockDialogComponent {
   cancel(): void {
     this.dialogRef.close(false);
     this.parent.dialogOpen = false;
+    if (this.final) {
+      this.parent.goBack();
+    }
   }
 
   showError(dataset: { name: string; unlock_error?: string }): void {
