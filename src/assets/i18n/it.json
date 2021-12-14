@@ -3645,6 +3645,7 @@
   "WARNING: Based on the pool topology, ": "",
   "WARNING: Exporting/disconnecting pool <i>": "",
   "WARNING: Locking pool <i>": "",
+  "WARNING: Only the key for the dataset in question will be downloaded.": "",
   "WARNING: These unknown processes will be terminated while exporting the pool. ": "",
   "WARNING: These unknown processes will be terminated while locking the pool.": "",
   "WS-DISCOVERY": "",
