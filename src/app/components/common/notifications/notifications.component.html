@@ -62,17 +62,21 @@
   </mat-list-item>
 
   <mat-list-item
-    *ngFor="let n of notifications; let last = last"
+    *ngFor="let notification of notifications; let last = last"
     class="notific-item unread m-0 p-0"
     role="listitem"
     [class.last]="last"
   >
-    <mat-icon [color]="n.color" class="notific-icon" [matTooltip]="n.icon_tooltip">{{n.icon}}</mat-icon>
+    <mat-icon
+      [color]="notification.color"
+      class="notific-icon"
+      [matTooltip]="notification.icon_tooltip"
+    >{{notification.icon}}</mat-icon>
     <div class="mat-list-text">
-      <h3 class="notific-title {{n.color}}">{{n.level}}</h3>
-      <h4 class="message" [innerHTML]="n.message"></h4>
-      <small class="time">{{n.time_locale | date: ngDateFormat }} ({{n.timezone}})</small>
-      <a (click)="turnMeOff(n,$event)" class="dismiss">{{ 'Dismiss' | translate }}</a>
+      <h3 class="notific-title {{notification.color}}">{{notification.level}}</h3>
+      <h4 class="message" [innerHTML]="notification.message"></h4>
+      <small class="time">{{notification.time_locale | date: ngDateFormat }} ({{notification.timezone}})</small>
+      <a (click)="onDismiss(notification,$event)" class="dismiss">{{ 'Dismiss' | translate }}</a>
     </div>
   </mat-list-item>
 
@@ -83,16 +87,16 @@
   </div>
 
   <mat-list-item
-    *ngFor="let n of dismissedNotifications; let last = last"
+    *ngFor="let notification of dismissedNotifications; let last = last"
     class="notific-item read"
     role="listitem"
     [class.last]="last"
   >
     <mat-icon class="notific-icon dismissed" [matTooltip]="'DISMISSED' | translate">check_circle</mat-icon>
     <div class="mat-list-text dismissed">
-      <h4 class="message" [innerHTML]="n.message"></h4>
-      <small class="time">{{n.time_locale | date: ngDateFormat }} ({{n.timezone}})</small>
-      <a (click)="turnMeOn(n, $event)" class="dismiss">{{ 'Re-Open' | translate }}</a>
+      <h4 class="message" [innerHTML]="notification.message"></h4>
+      <small class="time">{{notification.time_locale | date: ngDateFormat }} ({{notification.timezone}})</small>
+      <a (click)="onRestore(notification, $event)" class="dismiss">{{ 'Re-Open' | translate }}</a>
     </div>
   </mat-list-item>
 
