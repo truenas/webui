@@ -129,6 +129,15 @@ export class ViewEnclosureComponent implements OnDestroy {
     });
 
     core.register({ observerClass: this, eventName: 'EnclosureData' }).pipe(untilDestroyed(this)).subscribe((evt: EnclosureDataEvent) => {
+      if (evt.data?.length === 0) {
+        const noDataError: ErrorMessage = {
+          name: 'No Enclosure Data',
+          message: 'The system did not return any enclosure data. Nothing to display',
+        };
+        this.errors.push(noDataError);
+        return;
+      }
+
       this.system = new SystemProfiler(this.system_product, evt.data);
       this.selectedEnclosure = this.system.profile[this.system.headIndex];
       core.emit({ name: 'DisksRequest', sender: this });
