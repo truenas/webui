@@ -1,6 +1,7 @@
 export enum ApiEventMessage {
   Changed = 'changed',
   Added = 'added',
+  Removed = 'removed',
   Result = 'result',
   Connected = 'connected',
   Connect = 'connect',

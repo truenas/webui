@@ -33,18 +33,16 @@ export class NotificationsComponent implements OnInit {
       this.notifications = [];
       this.dismissedNotifications = [];
 
-      setTimeout(() => {
-        this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
-        notifications.forEach((notification: NotificationAlert) => {
-          if (!notification.dismissed) {
-            if (!_.find(this.notifications, { id: notification.id })) {
-              this.notifications.push(notification);
-            }
-          } else if (!_.find(this.dismissedNotifications, { id: notification.id })) {
-            this.dismissedNotifications.push(notification);
+      this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
+      notifications.forEach((notification: NotificationAlert) => {
+        if (!notification.dismissed) {
+          if (!_.find(this.notifications, { id: notification.id })) {
+            this.notifications.push(notification);
           }
-        });
-      }, -1);
+        } else if (!_.find(this.dismissedNotifications, { id: notification.id })) {
+          this.dismissedNotifications.push(notification);
+        }
+      });
     });
     this.localeService.dateTimeFormatChange$.pipe(untilDestroyed(this)).subscribe(() => {
       this.ngDateFormat = `${this.localeService.getAngularFormat()}`;
@@ -75,12 +73,12 @@ export class NotificationsComponent implements OnInit {
     this.notificationsService.restoreNotifications(this.dismissedNotifications);
   }
 
-  turnMeOff(notification: NotificationAlert, e: MouseEvent): void {
+  onDismiss(notification: NotificationAlert, e: MouseEvent): void {
     e.preventDefault();
     this.notificationsService.dismissNotifications([notification]);
   }
 
-  turnMeOn(notification: NotificationAlert, e: MouseEvent): void {
+  onRestore(notification: NotificationAlert, e: MouseEvent): void {
     e.preventDefault();
     this.notificationsService.restoreNotifications([notification]);
   }
