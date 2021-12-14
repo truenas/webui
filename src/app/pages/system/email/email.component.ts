@@ -325,6 +325,8 @@ export class EmailComponent implements FormConfiguration {
       if (!isSmtpMethod) {
         // switches from SMTP to Gmail Oauth method and disable smtp
         emailConfig.smtp = false;
+        emailConfig.fromemail = '';
+        emailConfig.fromname = '';
         this.smtp.setValue(false);
       }
     } else {
