@@ -398,9 +398,11 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
     }
     const enclosure = this.system.enclosures[profile.enclosureKey];
     switch (enclosure.model) {
+      case 'TRUENAS-R10':
       case 'R10':
         this.chassis = new R10();
         break;
+      case 'TRUENAS-R20':
       case 'R20':
         this.chassis = new R20(true);
         break;
@@ -408,16 +410,20 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       case 'R20A':
         this.chassis = new R20A(true);
         break;
+      case 'TRUENAS-R20B':
       case 'R20B':
         this.chassis = new R20B(true);
         break;
       case 'R40':
+      case 'TRUENAS-R40':
         this.chassis = new R40();
         break;
+      case 'TRUENAS-R50':
       case 'R50':
         this.chassis = new R50(true);
         this.showCaption = false;
         break;
+      case 'TRUENAS-R50B':
       case 'R50B':
         this.chassis = new R50B(true);
         this.showCaption = false;
@@ -515,64 +521,73 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
 
   createExtractedEnclosure(profile: EnclosureMetadata): void {
     const rawEnclosure = this.system.enclosures[profile.enclosureKey];
-    let chassis: Chassis;
+    let extractedChassis: Chassis;
 
     switch (rawEnclosure.model) {
+      case 'TRUENAS-R10':
       case 'R10':
-        this.chassis = new R10();
+        extractedChassis = new R10();
         break;
       case 'TRUENAS-R20A':
       case 'R20A':
-        this.chassis = new R20A(true);
+        extractedChassis = new R20A();
         break;
+      case 'TRUENAS-R20':
       case 'R20':
+        extractedChassis = new R20();
+        break;
+      case 'TRUENAS-R20B':
       case 'R20B':
-        this.chassis = new R20(true);
+        extractedChassis = new R20B();
         break;
+      case 'TRUENAS-R40':
       case 'R40':
-        this.chassis = new R40();
+        extractedChassis = new R40();
         break;
+      case 'TRUENAS-R50':
       case 'R50':
+        extractedChassis = new R50();
+        break;
+      case 'TRUENAS-R50B':
       case 'R50B':
-        this.chassis = new R50(true);
-        this.showCaption = false;
+        extractedChassis = new R50B();
         break;
       case 'M Series':
-        chassis = new M50();
+        extractedChassis = new M50();
         break;
       case 'X Series':
       case 'ES12':
-        chassis = new ES12();
+        extractedChassis = new ES12();
         break;
       case 'Z Series':
       case 'TRUENAS-Z20-HA-D':
       case 'E16':
-        chassis = new E16();
+        extractedChassis = new E16();
         break;
       case 'E24':
-        chassis = new E24();
+        extractedChassis = new E24();
         break;
       case 'ES24':
-        chassis = new ES24();
+        extractedChassis = new ES24();
         break;
       case 'ES24F':
-        chassis = new ES24F();
+        extractedChassis = new ES24F();
         break;
       case 'ES60':
-        chassis = new ES60();
+        extractedChassis = new ES60();
         break;
       case 'E60':
-        chassis = new E60();
+        extractedChassis = new E60();
         break;
       case 'ES102':
-        chassis = new ES102();
+        extractedChassis = new ES102();
         break;
       default:
         this.controllerEvent$.next({
           name: 'Error',
           data: {
             name: 'Unsupported Hardware',
-            message: 'This chassis has an unknown or missing model value. (METHOD: createExtractedEnclosure)',
+            message: 'This extractedChassis has an unknown or missing model value. (METHOD: createExtractedEnclosure)',
           },
         });
         this.aborted = true;
@@ -582,7 +597,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
       return;
     }
 
-    const enclosure: ChassisView = chassis.front;
+    const enclosure: ChassisView = extractedChassis.front;
 
     enclosure.events.pipe(untilDestroyed(this)).subscribe((evt) => {
       switch (evt.name) {
