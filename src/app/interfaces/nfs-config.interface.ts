@@ -3,9 +3,9 @@ export interface NfsConfig {
   bindip: string[];
   id: number;
   mountd_log: boolean;
-  mountd_port: string;
-  rpclockd_port: string;
-  rpcstatd_port: string;
+  mountd_port: number;
+  rpclockd_port: number;
+  rpcstatd_port: number;
   servers: number;
   statd_lockd_log: boolean;
   udp: boolean;
@@ -17,7 +17,7 @@ export interface NfsConfig {
   v4_v3owner: boolean;
 }
 
-export type NfsConfigUpdate = Omit<NfsConfig, 'id' | 'v4_krb_enabled'>;
+export type NfsConfigUpdate = Partial<Omit<NfsConfig, 'id' | 'v4_krb_enabled'>>;
 
 export interface AddNfsPrincipal {
   username: string;

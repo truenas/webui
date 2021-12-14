@@ -40,3 +40,7 @@ export function rangeValidator(min: number, max?: number): ValidatorFn {
     return { range: true, rangeValue: { min, max } };
   };
 }
+
+export function portRangeValidator(): ValidatorFn {
+  return rangeValidator(1, 65535);
+}
