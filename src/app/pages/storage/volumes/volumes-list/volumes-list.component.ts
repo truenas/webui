@@ -1667,21 +1667,22 @@ export class VolumesListTableConfig implements InputTableConf {
           });
         }
         if (rowData.encrypted && rowData.key_loaded && rowData.encryption_root === rowData.id && !rowData.is_passphrase) {
-          const fileName = 'dataset_' + rowData.name + '_key.txt';
-          const mimetype = 'text/plain';
+          const fileName = 'dataset_' + rowData.name + '_key.json';
+          const mimetype = 'application/json';
           const message = helptext.export_keys_message + rowData.id;
           encryption_actions.push({
             id: rowData.id,
             name: T('Export Key'),
             label: T('Export Key'),
-            onClick: (row) => {
+            onClick: () => {
               this.dialogService.passwordConfirm(message).pipe(filter(Boolean)).subscribe(() => {
                 const dialogRef = this.mdDialog.open(EntityJobComponent, { data: { title: T('Retrieving Key') }, disableClose: true });
                 dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.id]);
                 dialogRef.componentInstance.submit();
                 dialogRef.componentInstance.success.subscribe((res) => {
                   dialogRef.close();
-                  this.dialogService.confirm(`Key for ${rowData.id}`, res.result, true, T('Download Key'), false,
+                  const message = res.result + '<br/><br/>' + T('WARNING: Only the key for the dataset in question will be downloaded.');
+                  this.dialogService.confirm(`Key for ${rowData.id}`, message, true, T('Download Key'), false,
                     '', '', '', '', false, T('Close')).subscribe((download) => {
                     if (download) {
                       this.loader.open();
