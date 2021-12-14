@@ -11,7 +11,6 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
 @UntilDestroy()
 @Component({
-  selector: 'app-user-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
 export class KerberosRealmsListComponent implements EntityTableConfig {

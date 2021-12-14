@@ -101,12 +101,14 @@ def ssh_cmd(command, username, password, host):
     ] + command.split()
 
     try:
-        process = run(cmd, stdout=PIPE, universal_newlines=True, timeout=5)
-        output = process.stdout
+        process = run(cmd, stdout=PIPE, stderr=PIPE, universal_newlines=True,
+                      timeout=5)
+        stdout = process.stdout
+        stderr = process.stderr
         if process.returncode != 0:
-            return {'result': False, 'output': output}
+            return {'result': False, 'output': stderr}
         else:
-            return {'result': True, 'output': output}
+            return {'result': True, 'output': stdout}
     except TimeoutExpired:
         return {'result': False, 'output': 'Timeout'}
 
@@ -161,12 +163,14 @@ def add_ssh_key(keyPath):
 
 
 def run_cmd(command):
-    process = run(command, shell=True, stdout=PIPE, universal_newlines=True)
-    output = process.stdout
+    process = run(command, shell=True, stdout=PIPE, stderr=PIPE,
+                  universal_newlines=True)
+    stdout = process.stdout
+    stderr = process.stderr
     if process.returncode != 0:
-        return {'result': False, 'output': output}
+        return {'result': False, 'output': stderr}
     else:
-        return {'result': True, 'output': output}
+        return {'result': True, 'output': stdout}
 
 
 def get(url, api_path, auth):

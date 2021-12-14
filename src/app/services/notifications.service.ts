@@ -48,17 +48,26 @@ export class NotificationsService {
       });
 
       this.ws.sub('alert.list').pipe(untilDestroyed(this)).subscribe((alert) => {
-        // check for updates to alerts
+        if ((alert.msg === ApiEventMessage.Changed && alert.cleared) || alert.msg === ApiEventMessage.Removed) {
+          // Sometimes alerts are dismissed and sometimes they are fully removed.
+          // Full removal is handled below.
+          // TODO: Rewrite.
+          return;
+        }
+
         const notification = this.alertsArrivedHandler([alert])[0];
-        if (!_.find(this.notifications, { id: notification.id })) {
+        const existingIndex = _.findIndex(this.notifications, { id: notification.id });
+        if (existingIndex === -1) {
           this.notifications.push(notification);
+        } else {
+          this.notifications[existingIndex] = notification;
         }
         this.subject$.next(this.notifications);
       });
 
       this.ws.subscribe('alert.list').pipe(untilDestroyed(this)).subscribe((event) => {
-        // check for changed alerts
-        if (event && event.msg === ApiEventMessage.Changed && (event as any).cleared) {
+        // Handle full removal of an alert.
+        if (event && event.msg === ApiEventMessage.Changed && event.cleared) {
           const index = _.findIndex(this.notifications, { id: String(event.id) });
           if (index !== -1) {
             this.notifications.splice(index, 1);

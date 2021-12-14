@@ -60,7 +60,6 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
     assert wait_on_element(driver, 10, '//span[contains(.,"Dashboard")]')
     assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__System Settings"]', 'clickable')
     driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System Settings"]').click()
-    time.sleep(1)
     assert wait_on_element(driver, 10, '//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]', 'clickable')
     driver.find_element_by_xpath('//*[contains(@class,"lidein-nav-md")]//mat-list-item[@ix-auto="option__Services"]').click()
 
@@ -68,12 +67,13 @@ def on_the_dashboard_click_on_the_system_settings_side_menu_then_click_services(
 @then('on the service page, press on configure(pencil) SSH')
 def on_the_service_page_press_on_configurepencil_ssh(driver):
     """on the service page, press on configure(pencil) SSH."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="action__Configure_DYNAMICDNS"]')
-    element = driver.find_element_by_xpath('//button[@ix-auto="action__Configure_DYNAMICDNS"]')
+    assert wait_on_element(driver, 5, '//td[contains(text(),"Dynamic DNS")]')
+    element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
     # Scroll to SSH service
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
-    driver.find_element_by_xpath('//button[@ix-auto="action__Configure_SSH"]').click()
+    time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//button', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"SSH")]//button').click()
 
 
 @then('the SSH General Options page should open')
@@ -104,24 +104,26 @@ def verify_the_checkbox_works_and_click_save(driver):
 @then('click the Start Automatically SSH checkbox and enable the SSH service')
 def click_the_start_automatically_ssh_checkbox_and_enable_the_ssh_service(driver):
     """click the Start Automatically SSH checkbox and enable the SSH service."""
-    assert wait_on_element(driver, 5, '//button[@ix-auto="action__Configure_DYNAMICDNS"]')
+    assert wait_on_element(driver, 5, '//td[contains(text(),"Dynamic DNS")]')
     # Scroll to SSH service
-    element = driver.find_element_by_xpath('//button[@ix-auto="action__Configure_DYNAMICDNS"]')
+    element = driver.find_element_by_xpath('//td[contains(text(),"Dynamic DNS")]')
     driver.execute_script("arguments[0].scrollIntoView();", element)
-    time.sleep(1)
-    value_exist = attribute_value_exist(driver, '//mat-checkbox[@ix-auto="checkbox__enable__SSH"]', 'class', 'mat-checkbox-checked')
+    time.sleep(0.5)
+    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-checkbox')
+    value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-checkbox', 'class', 'mat-checkbox-checked')
     if not value_exist:
-        driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__enable__SSH"]').click()
-    value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__state__SSH"]', 'class', 'mat-checked')
+        driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-checkbox').click()
+    assert wait_on_element(driver, 5, '//tr[contains(.,"SSH")]//mat-slide-toggle/label', 'clickable')
+    value_exist = attribute_value_exist(driver, '//tr[contains(.,"SSH")]//mat-slide-toggle', 'class', 'mat-checked')
     if not value_exist:
-        driver.find_element_by_xpath('//div[@ix-auto="overlay__stateSSH"]').click()
+        driver.find_element_by_xpath('//tr[contains(.,"SSH")]//mat-slide-toggle/label').click()
 
 
 @then('the service should be enabled with no errors')
 def the_service_should_be_enabled_with_no_errors(driver):
     """the service should be enabled with no errors."""
-    wait_on_element_disappear(driver, 30, '//mat-spinner[@role="progressbar"]') 
-    assert wait_for_attribute_value(driver, 20, '//mat-slide-toggle[@ix-auto="slider__state__SSH"]', 'class', 'mat-checked')
+    wait_on_element_disappear(driver, 30, '//mat-spinner[@role="progressbar"]')
+    assert wait_for_attribute_value(driver, 20, '//tr[contains(.,"SSH")]//mat-slide-toggle', 'class', 'mat-checked')
 
 
 @then('ssh to a NAS with root and the root password should work')

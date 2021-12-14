@@ -27,6 +27,9 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin: auto;
+  position: relative;
+  top: 75px;
   width: 275px;
 }
 
@@ -44,4 +47,21 @@
   -moz-opacity: 1;
   opacity: 1;
   transition: all 3s ease;
+}
+
+@media screen and (max-height: 700px) {
+  #shutdown-card {
+    font-size: 80%;
+    top: 20px;
+    width: 225px;
+  }
+
+  .logo {
+    width: 206px;
+  }
+
+  .mat-dialog-container {
+    height: 100px;
+    width: 100px;
+  }
 }

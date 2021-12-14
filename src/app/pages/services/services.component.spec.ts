@@ -12,25 +12,27 @@ import {
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { Service } from 'app/interfaces/service.interface';
+import { ServiceRow } from 'app/interfaces/service.interface';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
 import { IxTableHarness } from 'app/pages/common/ix-tables/testing/ix-table.harness';
 import { ServicesComponent } from 'app/pages/services/services.component';
 import { DialogService, IscsiService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { ServiceName, serviceNames } from '../../enums/service-name.enum';
 
-const fakeDataSource: Service[] = [...serviceNames.keys()]
-  .filter((service) => ![ServiceName.Gluster, ServiceName.Afp].includes(service))
-  .map((service, id) => {
+const hiddenServices = [ServiceName.Gluster, ServiceName.Afp];
+const fakeDataSource: ServiceRow[] = [...serviceNames.entries()]
+  .filter(([serviceName]) => !hiddenServices.includes(serviceName))
+  .map(([service, name], id) => {
     return {
       id,
       service,
+      name,
       state: ServiceStatus.Stopped,
       enable: false,
-    } as Service;
+    } as ServiceRow;
   });
 
 describe('ServicesComponent', () => {
@@ -71,8 +73,11 @@ describe('ServicesComponent', () => {
     const table = await loader.getHarness(IxTableHarness);
     const cells = await table.getCells(true);
     const expectedData = [...serviceNames.keys()]
-      .filter((service) => ![ServiceName.Gluster, ServiceName.Afp].includes(service))
+      .filter((service) => !hiddenServices.includes(service))
       .map((service) => [serviceNames.get(service), '', '', 'edit']);
+
+    expectedData.sort((a, b) => a[0].localeCompare(b[0]));
+
     const expectedRows = [['Name', 'Running', 'Start Automatically', ''], ...expectedData];
 
     expect(cells).toEqual(expectedRows);
@@ -81,7 +86,7 @@ describe('ServicesComponent', () => {
   it('should redirect to configure service page when edit button is pressed', async () => {
     const table = await loader.getHarness(IxTableHarness);
     const firstRow = await table.getFirstRow();
-    const serviceKey = [...serviceNames.entries()].find(([_, value]) => value === firstRow.name)[0];
+    const serviceKey = [...serviceNames.entries()].find(([, value]) => value === firstRow.name)[0];
 
     const editButton = await table.getHarness(MatButtonHarness.with({ text: 'edit' }));
     await editButton.click();
@@ -92,7 +97,7 @@ describe('ServicesComponent', () => {
   it('should change service enable state when slide is checked', async () => {
     const table = await loader.getHarness(IxTableHarness);
     const firstRow = await table.getFirstRow();
-    const serviceKey = [...serviceNames.entries()].find(([_, value]) => value === firstRow.name)[0];
+    const serviceKey = [...serviceNames.entries()].find(([, value]) => value === firstRow.name)[0];
 
     const slideToggle = await table.getHarness(MatSlideToggleHarness);
     await slideToggle.toggle();

@@ -13,6 +13,10 @@ mat-card-content.table-container {
   max-width: 100%;
 }
 
+.mat-row {
+  cursor: pointer;
+}
+
 .mat-header-cell,
 .mat-cell {
   &:not(:first-child):not(:last-child) {
@@ -32,8 +36,13 @@ div.table-container {
   max-width: 100%;
   padding: 0;
 
+  &.loading {
+    height: 100%;
+    padding: 12px;
+  }
+
   &.empty {
-    height: calc(100% - 41px);
+    height: 100%;
   }
 }
 

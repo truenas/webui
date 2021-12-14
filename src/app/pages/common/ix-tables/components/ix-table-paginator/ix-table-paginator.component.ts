@@ -7,7 +7,6 @@ import {
   MatPaginator, MatPaginatorIntl,
 } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'ix-table-paginator',
@@ -41,13 +40,12 @@ export class IxTablePaginatorComponent<T> extends MatPaginator {
   }
 
   get total(): number {
-    return this.dataSource.data.length || 0;
+    return this.dataSource?.data?.length || 0;
   }
 
   constructor(
     private matPaginatorIntl: MatPaginatorIntl,
     private cdr: ChangeDetectorRef,
-    private translate: TranslateService,
   ) {
     super(matPaginatorIntl, cdr, {
       pageSize: 50,

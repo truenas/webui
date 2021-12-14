@@ -853,6 +853,7 @@ export type ApiDirectory = {
   // TFTP
   'tftp.update': { params: [TftpConfigUpdate]; response: TftpConfig };
   'tftp.config': { params: void; response: TftpConfig };
+  'tftp.host_choices': { params: void; response: Choices };
 
   // FTP
   'ftp.update': { params: [FtpConfigUpdate]; response: FtpConfig };

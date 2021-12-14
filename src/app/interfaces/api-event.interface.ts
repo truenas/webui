@@ -5,4 +5,7 @@ export interface ApiEvent<T> {
   fields: T;
   id: number;
   msg: ApiEventMessage;
+  // true when item is fully removed from the collection
+  // TODO: Find usages and guard against directly in WebsocketService. Only rely on 'removed' ApiEventMessage
+  cleared?: boolean;
 }
