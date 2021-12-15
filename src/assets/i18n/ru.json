@@ -840,6 +840,7 @@
   "Prevent the user from logging in or  using password-based services until this option is unset. Locking an  account is only possible when <b>Disable Password</b> is <i>No</i> and  a <b>Password</b> has been created for the account.": "",
   "Priority Code Point": "",
   "Privileged": "",
+  "Proactive support settings is not available.": "",
   "Proceed with Update": "",
   "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way operation that might make some features of the pool incompatible with older versions of TrueNAS: ": "",
   "Product:": "",

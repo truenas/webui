@@ -2126,6 +2126,7 @@
   "Privileged": "",
   "Proactive Support": "",
   "Proactive Support can notify iXsystems by email when TrueNAS hardware conditions require attention.": "",
+  "Proactive support settings is not available.": "",
   "Proceed": "",
   "Proceed with Update": "",
   "Proceed with upgrading the pool? WARNING: Upgrading a pool is a one-way operation that might make some features of the pool incompatible with older versions of TrueNAS: ": "",
