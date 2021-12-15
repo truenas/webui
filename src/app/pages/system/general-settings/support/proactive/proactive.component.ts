@@ -8,7 +8,6 @@ import { SupportConfig, SupportConfigUpdate } from 'app/interfaces/support.inter
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -43,13 +42,6 @@ export class ProactiveComponent implements FormConfiguration {
           placeholder: helptext.proactive.pc_name_placeholder,
           required: true,
           validation: helptext.proactive.pc_validation,
-          relation: [{
-            action: RelationAction.Disable,
-            when: [{
-              name: 'enabled',
-              value: false,
-            }],
-          }],
         },
         {
           type: 'input',
@@ -57,13 +49,6 @@ export class ProactiveComponent implements FormConfiguration {
           placeholder: helptext.proactive.pc_title_placeholder,
           required: true,
           validation: helptext.proactive.pc_validation,
-          relation: [{
-            action: RelationAction.Disable,
-            when: [{
-              name: 'enabled',
-              value: false,
-            }],
-          }],
         },
         {
           type: 'input',
@@ -71,13 +56,6 @@ export class ProactiveComponent implements FormConfiguration {
           placeholder: helptext.proactive.pc_email_placeholder,
           required: true,
           validation: helptext.proactive.pc_email_validation,
-          relation: [{
-            action: RelationAction.Disable,
-            when: [{
-              name: 'enabled',
-              value: false,
-            }],
-          }],
         },
         {
           type: 'input',
@@ -85,13 +63,6 @@ export class ProactiveComponent implements FormConfiguration {
           placeholder: helptext.proactive.pc_phone_placeholder,
           required: true,
           validation: helptext.proactive.pc_validation,
-          relation: [{
-            action: RelationAction.Disable,
-            when: [{
-              name: 'enabled',
-              value: false,
-            }],
-          }],
         },
       ],
     },
@@ -110,13 +81,6 @@ export class ProactiveComponent implements FormConfiguration {
           placeholder: helptext.proactive.sec_name_placeholder,
           required: true,
           validation: helptext.proactive.pc_validation,
-          relation: [{
-            action: RelationAction.Disable,
-            when: [{
-              name: 'enabled',
-              value: false,
-            }],
-          }],
         },
         {
           type: 'input',
@@ -124,13 +88,6 @@ export class ProactiveComponent implements FormConfiguration {
           placeholder: helptext.proactive.sec_title_placeholder,
           required: true,
           validation: helptext.proactive.pc_validation,
-          relation: [{
-            action: RelationAction.Disable,
-            when: [{
-              name: 'enabled',
-              value: false,
-            }],
-          }],
         },
         {
           type: 'input',
@@ -138,13 +95,6 @@ export class ProactiveComponent implements FormConfiguration {
           placeholder: helptext.proactive.sec_email_placeholder,
           validation: helptext.proactive.sec_email_validation,
           required: true,
-          relation: [{
-            action: RelationAction.Disable,
-            when: [{
-              name: 'enabled',
-              value: false,
-            }],
-          }],
         },
         {
           type: 'input',
@@ -152,13 +102,6 @@ export class ProactiveComponent implements FormConfiguration {
           placeholder: helptext.proactive.sec_phone_placeholder,
           required: true,
           validation: helptext.proactive.pc_validation,
-          relation: [{
-            action: RelationAction.Disable,
-            when: [{
-              name: 'enabled',
-              value: false,
-            }],
-          }],
         },
       ],
     },
@@ -192,38 +135,37 @@ export class ProactiveComponent implements FormConfiguration {
       'secondary_title',
       'secondary_email',
       'secondary_phone',
-      'proactive_title',
     ];
 
     const proactiveParatext = [
-      'proactive_instructions',
       'proactive_title',
       'proactive_second_title',
     ];
 
-    setTimeout(() => {
-      this.ws.call('support.is_available').pipe(untilDestroyed(this)).subscribe((res) => {
-        if (!res) {
-          proactiveFields.forEach((field) => {
-            this.entityEdit.setDisabled(field, true, false);
-            proactiveParatext.forEach((i) => {
-              document.getElementById(i).style.opacity = '0.38';
-            });
-          });
-          this.saveButtonEnabled = false;
-        } else {
-          this.getContacts();
-          this.saveButtonEnabled = true;
-          this.ws.call('support.is_available_and_enabled').pipe(untilDestroyed(this)).subscribe((res) => {
-            if (res) {
-              this.entityEdit.formGroup.controls['enabled'].setValue(true);
-            } else {
-              this.entityEdit.formGroup.controls['enabled'].setValue(false);
-            }
-          });
-        }
-      });
-    }, 1000);
+    this.ws.call('support.is_available').pipe(untilDestroyed(this)).subscribe((res) => {
+      if (!res) {
+        this.saveButtonEnabled = false;
+        proactiveFields.forEach((field) => {
+          this.entityEdit.setDisabled(field, true, false);
+        });
+        proactiveParatext.forEach((i) => {
+          document.getElementById(i).style.opacity = '0.38';
+        });
+        this.modalService.closeSlideIn();
+        this.dialogService.info(helptext.proactive.dialog_unavailable_title,
+          helptext.proactive.dialog_unavailable_warning, '500px', 'warning', true);
+      } else {
+        this.getContacts();
+        this.saveButtonEnabled = true;
+        this.ws.call('support.is_available_and_enabled').pipe(untilDestroyed(this)).subscribe((res) => {
+          if (res) {
+            this.entityEdit.formGroup.controls['enabled'].setValue(true);
+          } else {
+            this.entityEdit.formGroup.controls['enabled'].setValue(false);
+          }
+        });
+      }
+    });
   }
 
   getContacts(): void {
@@ -240,10 +182,7 @@ export class ProactiveComponent implements FormConfiguration {
   }
 
   beforeSubmit(data: any): void {
-    delete data.proactive_instructions;
     delete data.proactive_second_title;
-    delete data.proactive_section_border;
-    delete data.proactive_section_title;
     delete data.proactive_title;
     if (!data.enabled) {
       data.enabled = false;
