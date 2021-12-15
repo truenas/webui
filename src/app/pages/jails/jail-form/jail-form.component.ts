@@ -1280,19 +1280,18 @@ export class JailFormComponent implements OnInit, AfterViewInit {
       });
       dialogRef.componentInstance.failure.subscribe((res) => {
         dialogRef.close();
+        if (res.error.indexOf('[EINVAL]') == -1) {
+          return new EntityUtils().handleWSError(this, res, this.dialogService);
+        }
         // show error inline if error is EINVAL
-        if (res.error.indexOf('[EINVAL]') > -1) {
-          res.error = res.error.substring(9).split(':');
-          const fieldSplit = res.error[0].split('.');
-          const field = fieldSplit[fieldSplit.length - 1];
-          const error = res.error[1];
-          const fc = _.find(this.formFields, { name: field });
-          if (fc && !fc['isHidden']) {
-            fc['hasErrors'] = true;
-            fc['errors'] = error;
-          }
-        } else {
-          new EntityUtils().handleWSError(this, res, this.dialogService);
+        res.error = res.error.substring(9).split(':');
+        const fieldSplit = res.error[0].split('.');
+        const field = fieldSplit[fieldSplit.length - 1];
+        const error = res.error[1];
+        const fc = _.find(this.formFields, { name: field });
+        if (fc && !fc['isHidden']) {
+          fc['hasErrors'] = true;
+          fc['errors'] = error;
         }
       });
     } else {
