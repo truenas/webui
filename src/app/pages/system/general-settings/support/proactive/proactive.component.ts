@@ -151,6 +151,7 @@ export class ProactiveComponent implements FormConfiguration {
         proactiveParatext.forEach((i) => {
           document.getElementById(i).style.opacity = '0.38';
         });
+        this.modalService.closeSlideIn();
         this.dialogService.info(helptext.proactive.dialog_unavailable_title,
           helptext.proactive.dialog_unavailable_warning, '500px', 'warning', true);
       } else {
