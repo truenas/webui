@@ -26,6 +26,7 @@ export interface FtpConfig {
   rootlogin: boolean;
   ssltls_certificate: unknown;
   timeout: number;
+  timeout_notransfer: number;
   tls: boolean;
   tls_opt_allow_client_renegotiations: boolean;
   tls_opt_allow_dot_login: boolean;
