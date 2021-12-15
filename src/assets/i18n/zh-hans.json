@@ -388,6 +388,7 @@
   "Virtual Machines": "",
   "Virtual machines cannot be stored in an unmounted mountpoint: {datastore}": "",
   "Virtualization is not supported": "",
+  "WARNING: Only the key for the dataset in question will be downloaded.": "",
   "Waiting": "",
   "WebDAV": "",
   "WebDAV Share": "",
