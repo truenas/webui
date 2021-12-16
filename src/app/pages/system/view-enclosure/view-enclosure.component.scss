@@ -1,6 +1,5 @@
 .mat-card.error {
   margin: 16px auto 0;
-  padding: 0 16px;
   top: 0;
   width: 600px;
 }
@@ -12,7 +11,7 @@
 .mat-card.error .error-message,
 .mat-card.error .error-header,
 .mat-card.error .error-footer {
-  padding: 16px 0;
+  padding: 16px;
 }
 
 nav.view-nav-bar {
