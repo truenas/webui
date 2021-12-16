@@ -7,7 +7,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
+import { SystemUpdateStatus } from 'app/enums/system-update.enum';
 import { HaStatusEvent } from 'app/interfaces/events/ha-status-event.interface';
+import { UpdateCheckedEvent } from 'app/interfaces/events/update-checked-event.interface';
 import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
@@ -37,6 +39,8 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   product_enclosure = ''; // rackmount || tower
   certified = false;
   failoverBtnLabel = 'FAILOVER TO STANDBY';
+  updateAvailable = false;
+  private _updateBtnStatus = 'default';
   updateBtnLabel: string = this.translate.instant('Check for Updates');
   private _themeAccentColors: string[];
   manufacturer = '';
@@ -73,6 +77,26 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     this.core.register({ observerClass: this, eventName: 'UserPreferencesChanged' }).pipe(untilDestroyed(this)).subscribe((evt: UserPreferencesChangedEvent) => {
       this.retroLogo = evt.data.retroLogo ? 1 : 0;
     });
+
+    if (sessionStorage.updateAvailable != undefined) {
+      if (sessionStorage.updateAvailable == 'true') {
+        this.updateAvailable = true;
+      }
+    } else {
+      sessionStorage.updateAvailable = 'false';
+      this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
+        if (!isAutoDownloadOn) {
+          return;
+        }
+
+        this.core.register({ observerClass: this, eventName: 'UpdateChecked' }).pipe(untilDestroyed(this)).subscribe((evt: UpdateCheckedEvent) => {
+          if (evt.data.status == SystemUpdateStatus.Available) {
+            this.updateAvailable = true;
+            sessionStorage.updateAvailable = 'true';
+          }
+        });
+      });
+    }
 
     if (this.isHA && this.isPassive) {
       this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
@@ -124,6 +148,14 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
     const theme = this.themeService.currentTheme();
     this._themeAccentColors = theme.accentColors.map((color) => theme[color]);
     return this._themeAccentColors;
+  }
+
+  get updateBtnStatus(): string {
+    if (this.updateAvailable) {
+      this._updateBtnStatus = 'default';
+      this.updateBtnLabel = this.translate.instant('Updates Available');
+    }
+    return this._updateBtnStatus;
   }
 
   processSysInfo(systemInfo: SystemInfo): void {

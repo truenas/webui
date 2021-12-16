@@ -577,6 +577,7 @@ export class UpdateComponent implements OnInit {
   }
 
   update(): void {
+    window.sessionStorage.removeItem('updateAvailable');
     this.sysGenService.updateRunningNoticeSent.emit();
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
     if (!this.is_ha) {
