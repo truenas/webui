@@ -599,7 +599,25 @@ export class JailWizardComponent {
     });
     this.dialogRef.componentInstance.failure.subscribe((res) => {
       this.dialogRef.close();
-      new EntityUtils().handleWSError(this, res, this.dialogService);
+      if (res.error.indexOf('[EINVAL]') == -1) {
+        return new EntityUtils().handleWSError(this, res, this.dialogService);
+      }
+      // show error inline if error is EINVAL
+      res.error = res.error.substring(9).split(':');
+      const fieldSplit = res.error[0].split('.');
+      const field = fieldSplit[fieldSplit.length - 1];
+      const error = res.error[1];
+      let fc = null;
+      let errorStep = -1;
+      for (let i = 0; i < this.wizardConfig.length && !fc; i++) {
+        fc = _.find(this.wizardConfig[i].fieldConfig, { name: field });
+        errorStep = i;
+      }
+      if (fc && !fc['isHidden']) {
+        fc['hasErrors'] = true;
+        fc['errors'] = error;
+        this.entityWizard.stepper.selectedIndex = errorStep;
+      }
     });
   }
 
