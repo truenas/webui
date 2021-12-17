@@ -45,7 +45,7 @@ This virtual machine run tests with firefox
 This virtual machine will be the FreeNAS target running ui tests with firefox.
 
 
-#Download freenas/webui repo
+#Download truenas/webui repo
 Stable: git clone https://github.com/truenas/webui/
 Unstable: git clone https://github.com/rishabh27892/webui
 cd webui/test/
