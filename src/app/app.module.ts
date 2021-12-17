@@ -33,6 +33,7 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import { ErdService } from 'app/services/erd.service';
+import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { NotificationsService } from 'app/services/notifications.service';
 import { RouterEffects } from 'app/store/effects/router.effects';
@@ -136,6 +137,7 @@ import { WebSocketService } from './services/ws.service';
     ErdService,
     JobsManagerStore,
     IxSlideInService,
+    IxFileUploadService,
     {
       provide: ErrorHandler,
       useValue: Sentry.createErrorHandler({

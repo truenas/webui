@@ -83,6 +83,14 @@ export class ServiceFTPComponent implements FormConfiguration, OnInit {
         },
         {
           type: 'input',
+          name: 'timeout_notransfer',
+          placeholder: helptext.timeout_notransfer_placeholder,
+          tooltip: helptext.timeout_notransfer_tooltip,
+          required: true,
+          validation: helptext.timeout_notransfer_validation,
+        },
+        {
+          type: 'input',
           name: 'timeout',
           placeholder: helptext.timeout_placeholder,
           tooltip: helptext.timeout_tooltip,

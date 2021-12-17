@@ -28,6 +28,8 @@ export const helptextSystemSupport = {
     dialog_title: T('Settings saved'),
     dialog_mesage: T('Successfully saved proactive support settings.'),
     dialog_err: T('Error Saving Proactive Support Settings'),
+    dialog_unavailable_title: T('Warning'),
+    dialog_unavailable_warning: T('Proactive support settings is not available.'),
   },
 
   token: {

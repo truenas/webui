@@ -1434,8 +1434,8 @@ export class VolumesListTableConfig implements EntityTableConfig {
           && rowData.encryption_root === rowData.id
           && !rowData.is_passphrase
         ) {
-          const fileName = 'dataset_' + rowData.name + '_key.txt';
-          const mimetype = 'text/plain';
+          const fileName = 'dataset_' + rowData.name + '_key.json';
+          const mimetype = 'application/json';
           const message = helptext.export_keys_message + rowData.id;
           encryptionActions.push({
             id: rowData.id,
@@ -1456,7 +1456,7 @@ export class VolumesListTableConfig implements EntityTableConfig {
                   dialogRef.close();
                   this.dialogService.confirm({
                     title: this.translate.instant('Key for {id}', { id: rowData.id }),
-                    message: res.result,
+                    message: res.result + '<br/><br/>' + this.translate.instant('WARNING: Only the key for the dataset in question will be downloaded.'),
                     hideCheckBox: true,
                     buttonMsg: this.translate.instant('Download Key'),
                     cancelMsg: this.translate.instant('Close'),
