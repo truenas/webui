@@ -59,23 +59,8 @@ export class ServiceNfsComponent implements OnInit {
 
   ngOnInit(): void {
     this.isFormLoading = true;
-    this.ws.call('nfs.config')
-      .pipe(untilDestroyed(this))
-      .subscribe(
-        (config) => {
-          this.form.patchValue(config);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
-        },
-        (error) => {
-          new EntityUtils().handleWsError(null, error, this.dialogService);
-          this.isFormLoading = false;
-          this.cdr.markForCheck();
-        },
-      );
-
-    this.form.controls['userd_manage_gids'].disabledWhile(this.form.select((values) => values.v4_v3owner));
-    this.form.controls['v4_v3owner'].disabledWhile(this.form.select((values) => !values.v4));
+    this.loadConfig();
+    this.setFieldDependencies();
   }
 
   onSubmit(): void {
@@ -106,5 +91,39 @@ export class ServiceNfsComponent implements OnInit {
 
   onCancel(): void {
     this.router.navigate(['/services']);
+  }
+
+  private loadConfig(): void {
+    this.ws.call('nfs.config')
+      .pipe(untilDestroyed(this))
+      .subscribe(
+        (config) => {
+          this.form.patchValue(config);
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+        (error) => {
+          new EntityUtils().handleWsError(null, error, this.dialogService);
+          this.isFormLoading = false;
+          this.cdr.markForCheck();
+        },
+      );
+  }
+
+  private setFieldDependencies(): void {
+    this.form.controls['v4'].valueChanges.pipe(untilDestroyed(this)).subscribe((nsf4Enabled) => {
+      if (!nsf4Enabled) {
+        this.form.patchValue({ v4_v3owner: false });
+      }
+
+      this.form.controls['v4_v3owner'].setEnable(nsf4Enabled);
+    });
+
+    this.form.controls['v4_v3owner'].valueChanges.pipe(untilDestroyed(this)).subscribe((v3Owner) => {
+      if (v3Owner) {
+        this.form.patchValue({ userd_manage_gids: false });
+      }
+      this.form.controls['userd_manage_gids'].setDisable(v3Owner);
+    });
   }
 }

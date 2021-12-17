@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
+import { IxCheckboxHarness } from 'app/pages/common/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
@@ -100,5 +101,27 @@ describe('ServiceNfsComponent', () => {
       udp: false,
       userd_manage_gids: true,
     }]);
+  });
+
+  it('disables NFSv3 ownership model when NFSv4 is off', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'Enable NFSv4': false,
+    });
+
+    const controls = await form.getControlHarnessesDict();
+    const nfsV3OwnershipControl = controls['NFSv3 ownership model for NFSv4'] as IxCheckboxHarness;
+    expect(nfsV3OwnershipControl.getDisabled()).toBe(true);
+  });
+
+  it('disables Support >16 groups when NFSv3 ownership model is on', async () => {
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({
+      'NFSv3 ownership model for NFSv4': false,
+    });
+
+    const controls = await form.getControlHarnessesDict();
+    const nfsV3OwnershipControl = controls['Support >16 groups'] as IxCheckboxHarness;
+    expect(nfsV3OwnershipControl.getDisabled()).toBe(true);
   });
 });
