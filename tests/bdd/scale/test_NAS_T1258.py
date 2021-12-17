@@ -66,8 +66,8 @@ def set_name_and_type_and_click_next(driver):
     assert wait_on_element(driver, 5, '//input[@ix-auto="input__Name"]', 'inputable')
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Name"]').send_keys('csr1')
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__NEXT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT"]').click()
+    assert wait_on_element(driver, 10, '//div[contains(.,"Identifier and Type") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"Identifier and Type") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]').click()
 
 
 @then('set key info and click next')
@@ -78,19 +78,8 @@ def set_key_info_and_click_next(driver):
     assert wait_on_element(driver, 10, '//span[contains(.,"RSA")]', 'clickable')
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Key Type_RSA"]').click()
 
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Key Length"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Key Length"]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"2048")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"2048")]').click()
-    driver.find_element_by_xpath('//span[contains(.,"2048")]').send_keys(Keys.TAB)
-
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Digest Algorithm"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Digest Algorithm"]').click()
-    assert wait_on_element(driver, 10, '//span[contains(.,"SHA256")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"SHA256")]').click()
-
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__NEXT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT"]').click()
+    assert wait_on_element(driver, 10, '//div[contains(.,"Certificate Options") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"Certificate Options") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]').click()
 
 
 @then('set company info and click next')
@@ -120,12 +109,12 @@ def set_company_info_and_click_next(driver):
     driver.find_element_by_xpath('//input[@ix-auto="input__Common Name"]').clear()
     driver.find_element_by_xpath('//input[@ix-auto="input__Common Name"]').send_keys('qe.ixsystems.com')
 
-    assert wait_on_element(driver, 5, '//input[@ix-auto="input__Subject Alternate Names"]', 'inputable')
-    driver.find_element_by_xpath('//input[@ix-auto="input__Subject Alternate Names"]').clear()
-    driver.find_element_by_xpath('//input[@ix-auto="input__Subject Alternate Names"]').send_keys('qa.ixsystems.com')
+    assert wait_on_element(driver, 5, '//mat-chip-list[@ix-auto="input__Subject Alternate Names"]', 'inputable')
+    driver.find_element_by_xpath('//input[@placeholder="Subject Alternate Names"]').clear()
+    driver.find_element_by_xpath('//input[@placeholder="Subject Alternate Names"]').send_keys('qa.ixsystems.com')
 
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__NEXT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT"]').click()
+    assert wait_on_element(driver, 10, '//div[contains(.,"Certificate Subject") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"Certificate Subject") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]').click()
 
 
 @then('set extra constraints and click next')
@@ -135,9 +124,9 @@ def set_extra_constraints_and_click_next(driver):
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Authority Key Identifier"]').click()
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Authority Key Config"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Authority Key Config"]').click()
-    assert wait_on_element(driver, 10, '//mat-option[@ix-auto="option__Authority Key Config_Authority Cert Issuer"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Authority Key Config_Authority Cert Issuer"]').click()
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Authority Key Config_Authority Cert Issuer"]').send_keys(Keys.TAB)
+    assert wait_on_element(driver, 10, '//mat-option[@ix-auto="option__Authority Key Config_Critical Extension"]', 'clickable')
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Authority Key Config_Critical Extension"]').click()
+    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Authority Key Config_Critical Extension"]').send_keys(Keys.TAB)
 
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__Extended Key Usage"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Extended Key Usage"]').click()
@@ -158,8 +147,8 @@ def set_extra_constraints_and_click_next(driver):
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Key Usage Config_Digital Signature"]').click()
     driver.find_element_by_xpath('//mat-option[@ix-auto="option__Key Usage Config_Digital Signature"]').send_keys(Keys.TAB)
 
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__NEXT"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__NEXT"]').click()
+    assert wait_on_element(driver, 10, '//div[contains(.,"Extra Constraints") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]', 'clickable')
+    driver.find_element_by_xpath('//div[contains(.,"Extra Constraints") and contains(@class,"mat-step")]//button[@ix-auto="button__NEXT"]').click()
 
 
 @then('click save on the confirm options page')
