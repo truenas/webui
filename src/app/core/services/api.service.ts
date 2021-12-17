@@ -146,12 +146,6 @@ export class ApiService {
         responseEvent: 'NicInfo',
       },
     },
-    UpdateCheck: {
-      apiCall: {
-        namespace: 'update.check_available',
-        responseEvent: 'UpdateChecked',
-      },
-    },
     ReportingGraphsRequest: {
       apiCall: {
         namespace: 'reporting.graphs',

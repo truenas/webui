@@ -112,7 +112,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
         this.processSysInfo(systemInfo);
       });
 
-      this.core.emit({ name: 'UpdateCheck' });
       this.core.emit({ name: 'UserPreferencesRequest' });
       this.core.emit({ name: 'HAStatusRequest' });
     }
