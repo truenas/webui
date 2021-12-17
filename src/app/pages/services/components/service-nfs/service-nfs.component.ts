@@ -123,7 +123,7 @@ export class ServiceNfsComponent implements OnInit {
       if (v3Owner) {
         this.form.patchValue({ userd_manage_gids: false });
       }
-      this.form.controls['userd_manage_gids'].setDisable(v3Owner);
+      this.form.controls['userd_manage_gids'].setEnable(!v3Owner);
     });
   }
 }

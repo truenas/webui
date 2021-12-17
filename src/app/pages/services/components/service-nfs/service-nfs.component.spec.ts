@@ -29,7 +29,7 @@ describe('ServiceNfsComponent', () => {
         mockCall('nfs.config', {
           bindip: ['192.168.1.117', '192.168.1.118'],
           v4: true,
-          v4_v3owner: true,
+          v4_v3owner: false,
           v4_krb: true,
           mountd_port: 123,
           rpcstatd_port: 124,
@@ -65,7 +65,7 @@ describe('ServiceNfsComponent', () => {
     expect(values).toEqual({
       'Bind IP Addresses': ['192.168.1.117', '192.168.1.118'],
       'Enable NFSv4': true,
-      'NFSv3 ownership model for NFSv4': true,
+      'NFSv3 ownership model for NFSv4': false,
       'Require Kerberos for NFSv4': true,
       'mountd(8) bind port': '123',
       'rpc.lockd(8) bind port': '124',
@@ -111,17 +111,18 @@ describe('ServiceNfsComponent', () => {
 
     const controls = await form.getControlHarnessesDict();
     const nfsV3OwnershipControl = controls['NFSv3 ownership model for NFSv4'] as IxCheckboxHarness;
-    expect(nfsV3OwnershipControl.getDisabled()).toBe(true);
+    expect(await nfsV3OwnershipControl.isDisabled()).toBe(true);
   });
 
   it('disables Support >16 groups when NFSv3 ownership model is on', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'NFSv3 ownership model for NFSv4': false,
+      'Enable NFSv4': true,
+      'NFSv3 ownership model for NFSv4': true,
     });
 
     const controls = await form.getControlHarnessesDict();
-    const nfsV3OwnershipControl = controls['Support >16 groups'] as IxCheckboxHarness;
-    expect(nfsV3OwnershipControl.getDisabled()).toBe(true);
+    const supportMoreThan16GroupsControl = controls['Support >16 groups'] as IxCheckboxHarness;
+    expect(await supportMoreThan16GroupsControl.isDisabled()).toBe(true);
   });
 });
