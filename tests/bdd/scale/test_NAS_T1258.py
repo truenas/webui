@@ -120,13 +120,13 @@ def set_company_info_and_click_next(driver):
 @then('set extra constraints and click next')
 def set_extra_constraints_and_click_next(driver):
     """set extra constraints and click next."""
-    assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__Authority Key Identifier"]', 'clickable')
-    driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Authority Key Identifier"]').click()
-    assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Authority Key Config"]', 'clickable')
-    driver.find_element_by_xpath('//mat-select[@ix-auto="select__Authority Key Config"]').click()
-    assert wait_on_element(driver, 10, '//mat-option[@ix-auto="option__Authority Key Config_Critical Extension"]', 'clickable')
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Authority Key Config_Critical Extension"]').click()
-    driver.find_element_by_xpath('//mat-option[@ix-auto="option__Authority Key Config_Critical Extension"]').send_keys(Keys.TAB)
+    #assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__Authority Key Identifier"]', 'clickable')
+    #driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Authority Key Identifier"]').click()
+    #assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Authority Key Config"]', 'clickable')
+    #driver.find_element_by_xpath('//mat-select[@ix-auto="select__Authority Key Config"]').click()
+    #assert wait_on_element(driver, 10, '//mat-option[@ix-auto="option__Authority Key Config_Critical Extension"]', 'clickable')
+    #driver.find_element_by_xpath('//mat-option[@ix-auto="option__Authority Key Config_Critical Extension"]').click()
+    #driver.find_element_by_xpath('//mat-option[@ix-auto="option__Authority Key Config_Critical Extension"]').send_keys(Keys.TAB)
 
     assert wait_on_element(driver, 10, '//mat-checkbox[@ix-auto="checkbox__Extended Key Usage"]', 'clickable')
     driver.find_element_by_xpath('//mat-checkbox[@ix-auto="checkbox__Extended Key Usage"]').click()
@@ -156,11 +156,9 @@ def click_save_on_the_confirm_options_page(driver):
     """click save on the confirm options page."""
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__SAVE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__SAVE"]').click()
-    assert wait_on_element(driver, 5, '//h6[contains(.,"Creating Certificate")]')
-    assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Creating Certificate")]')
-        
-
-
+    assert wait_on_element(driver, 5, '/*[contains(.,"Creating Certificate")]')
+    assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Creating Certificate")]')
+       
 
 @then('verify that the CSR was added')
 def verify_that_the_csr_was_added(driver):
