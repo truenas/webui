@@ -93,6 +93,7 @@
       </button>
     </div>
   </div>
-  <div *ngIf="error" [style.color]="'red'" [innerHTML]="error" class="datainfo"></div>
+  <div *ngIf="error" [innerHTML]="error" class="size-message red"></div>
+  <div *ngIf="showDiskSizeError" class="size-message orange">{{ diskSizeErrorMsg }}</div>
 </div>
 </div>

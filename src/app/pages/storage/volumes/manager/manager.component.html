@@ -58,7 +58,7 @@
             </div>
           </div>
 
-          <div fxFlex="100%" *ngIf="poolError" class="sizeMessage red" [innerHTML]="poolError"></div>
+          <div fxFlex="100%" *ngIf="poolError" class="size-message red" [innerHTML]="poolError"></div>
 
           <div fxFlex="100%" class="button-bar">
             <div><button id="pool-manager__reset-layout-button" mat-button class="btn btn-accent mat-accent" [disabled]="!dirty" (click)="resetLayout()">{{"Reset Layout" | translate}}</button></div>
@@ -377,11 +377,11 @@
         </div>
       </div>
       <div class="sizeMessage">{{ sizeMessage | translate}}: {{ size }}</div>
-      <div *ngIf="disknumError" class="sizeMessage red" [innerHTML]="disknumError"></div>
-      <div *ngIf="vdevtypeError" class="sizeMessage red" [innerHTML]="vdevtypeError"></div>
-      <div *ngIf="stripeVdevTypeError" class="sizeMessage red" [innerHTML]="stripeVdevTypeError"></div>
-      <div *ngIf="logVdevTypeWarning" class="sizeMessage orange" [innerHTML]="logVdevTypeWarning"></div>
-      <div *ngIf="error" class="sizeMessage red" [innerHTML]="error"></div>
+      <div *ngIf="disknumError" class="size-message red" [innerHTML]="disknumError"></div>
+      <div *ngIf="vdevtypeError" class="size-message red" [innerHTML]="vdevtypeError"></div>
+      <div *ngIf="stripeVdevTypeError" class="size-message red" [innerHTML]="stripeVdevTypeError"></div>
+      <div *ngIf="logVdevTypeWarning" class="size-message orange" [innerHTML]="logVdevTypeWarning"></div>
+      <div *ngIf="error" class="size-message red" [innerHTML]="error"></div>
       <div class="forceCreateCheckbox" *ngIf="hasSavableErrors">
         <mat-checkbox color="primary" id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()">{{'Force' | translate}}</mat-checkbox>
       </div>
