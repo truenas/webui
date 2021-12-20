@@ -10,7 +10,7 @@ export default {
 
   manager_extendedSizeMessage: T('Estimated data capacity available after extension.'),
 
-  manager_disknumErrorMessage: T('WARNING: Adding data vdevs with different numbers of\
+  manager_disknumErrorMessage: T('Caution: Adding data vdevs with different numbers of\
  disks is not recommended.'),
 
   manager_disknumErrorConfirmMessage: T('It is not recommended to create a pool with vdevs\
@@ -19,10 +19,10 @@ export default {
   manager_disknumExtendConfirmMessage: T('It is not recommended to extend a pool with one or\
  more vdevs containing different numbers of disks. Continue?'),
 
-  manager_vdevtypeErrorMessage: T('Adding data vdevs of different types is not supported.'),
+  manager_vdevtypeErrorMessage: T('Caution: Adding data vdevs of different types is not supported.'),
 
   manager_stripeVdevTypeErrorMessage: T('vdev is highly discouraged and will result in data loss if it fails'),
-  manager_logVdevWarningMessage: T('A stripe log vdev may result in data loss if it fails combined with a power outage.'),
+  manager_logVdevWarningMessage: T('Caution: a stripe log vdev layout can lose data in the unlikely event of simultaneous vdev failure and total power failure.'),
 
   manager_diskAddWarning: T('The contents of all added disks will be erased.'),
 
@@ -52,8 +52,8 @@ export default {
   manager_duplicate_button: T('Repeat Vdev'),
 
   force_title: T('Warning'),
-  force_warning: T('The current pool layout is not recommended.\
- Override the following errors?'),
+  force_warning: T('The current pool layout has these cautions:'),
+  force_confirm_warning: T('Create the pool with this layout?'),
   force_warnings: {
     diskSizeWarning: T('One or more data vdevs has disks of different sizes.'),
   },

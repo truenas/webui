@@ -91,6 +91,7 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   emptyDataVdev = true;
 
   stripeVdevTypeError = null;
+  stripeVdevTypeConfirmError = null;
   stripeVdevTypeErrorMessage = helptext.manager_stripeVdevTypeErrorMessage;
 
   logVdevTypeWarning = null;
@@ -241,7 +242,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   getStripeVdevTypeErrorMsg(group) {
     this.translate.get(this.stripeVdevTypeErrorMessage).subscribe((errorMessage) => {
       const vdevType = group === 'special' ? 'metadata' : group;
-      this.stripeVdevTypeError = `${T('A stripe')} ${vdevType} ${errorMessage}`;
+      this.stripeVdevTypeError = `${T('Caution: a stripe')} ${vdevType} ${errorMessage}`;
+      this.stripeVdevTypeConfirmError = `${T('A stripe')} ${vdevType} ${errorMessage}`;
     });
   }
 
@@ -564,11 +566,12 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.force) {
       let warnings = helptext.force_warning;
       if (this.vdevdisksSizeError) {
-        warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
+        warnings = warnings + '<br/><br/>- ' + helptext.force_warnings['diskSizeWarning'];
       }
-      if (this.stripeVdevTypeError) {
-        warnings = warnings + '<br/><br/>' + this.stripeVdevTypeError;
+      if (this.stripeVdevTypeConfirmError) {
+        warnings = warnings + '<br/><br/>- ' + this.stripeVdevTypeConfirmError;
       }
+      warnings = warnings + '<br/><br/>' + helptext.force_confirm_warning;
       this.dialog.confirm(helptext.force_title, warnings).subscribe((res) => {
         this.force = res;
       });
