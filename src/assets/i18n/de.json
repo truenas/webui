@@ -1238,7 +1238,7 @@
   "Minute": "",
   "Minutes of inactivity before the drive enters standby mode. This <a href=\"https://forums.freenas.org/index.php?threads/how-to-find-out-if-a-drive-is-spinning-down-properly.2068/\" target=\"_blank\">forum post</a> describes identifying spun down drives. Temperature monitoring is disabled for standby disks.": "",
   "Minutes when this task will run.": "",
-  "Mixing disks of different sizes in a vdev is not allowed.": "",
+  "Mixing disks of different sizes in a vdev is not recommended.": "",
   "Model": "",
   "Model:": "",
   "Modify": "",
