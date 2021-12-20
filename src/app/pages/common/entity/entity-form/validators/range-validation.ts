@@ -1,8 +1,6 @@
 import { ValidatorFn, FormControl } from '@angular/forms';
 
 export function rangeValidator(min: number, max?: number): ValidatorFn {
-  let thisControl: FormControl;
-
   return function rangeValidate(control: FormControl) {
     let regex;
     if (min === 0) {
@@ -15,17 +13,12 @@ export function rangeValidator(min: number, max?: number): ValidatorFn {
       return null;
     }
 
-    // Initializing the validator.
-    if (!thisControl) {
-      thisControl = control;
-    }
-
-    if (!thisControl.value) {
+    if (!control.value) {
       return null;
     }
 
-    if (regex.test(thisControl.value)) {
-      const num = Number(thisControl.value);
+    if (regex.test(control.value)) {
+      const num = Number(control.value);
       if (num >= min) {
         if (max) {
           if (num <= max) {
