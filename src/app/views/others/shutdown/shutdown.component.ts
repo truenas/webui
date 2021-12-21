@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { WebSocketService } from '../../../services/ws.service';
@@ -16,16 +17,24 @@ export class ShutdownComponent implements OnInit {
   product_type: string;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
-  constructor(protected ws: WebSocketService, protected router: Router,
-    protected loader: AppLoaderService, public translate: TranslateService,
-    protected dialogService: DialogService, private localeService: LocaleService) {
-    this.ws = ws;
+  constructor(
+    protected ws: WebSocketService,
+    protected router: Router,
+    protected loader: AppLoaderService,
+    public translate: TranslateService,
+    protected dialogService: DialogService,
+    private localeService: LocaleService,
+    private location: Location,
+  ) {
     this.ws.call('system.product_type').subscribe((res) => {
       this.product_type = res;
     });
   }
 
   ngOnInit() {
+    // Replace URL so that we don't shutdown again if page is refreshed.
+    this.location.replaceState('/session/signin');
+
     this.ws.call('system.shutdown', {}).subscribe(
       (res) => {
       },
