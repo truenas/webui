@@ -56,6 +56,9 @@ export class RebootComponent implements OnInit {
     // Replace URL so that we don't reboot again if page is refreshed.
     this.location.replaceState('/session/signin');
 
+    // Replace URL so that we don't reboot again if page is refreshed.
+    this.location.replaceState('/session/signin');
+
     this.dialog.closeAll();
     this.ws.call('system.reboot').pipe(untilDestroyed(this)).subscribe(
       () => {
