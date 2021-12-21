@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { portRangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 
 export default {
   fieldset_source: T('Source'),
@@ -30,7 +30,7 @@ export default {
 
   rsync_remoteport_placeholder: T('Remote SSH Port'),
   rsync_remoteport_tooltip: T('Enter the SSH Port of the remote system.'),
-  rsync_remoteport_validation: [rangeValidator(1, 65535), Validators.required],
+  rsync_remoteport_validation: [portRangeValidator(), Validators.required],
 
   rsync_mode_placeholder: T('Rsync Mode'),
   rsync_mode_tooltip: T('Choose to either use a custom-defined remote module \
