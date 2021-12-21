@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { WebSocketService } from '../../../services/ws.service';
@@ -17,10 +18,16 @@ export class RebootComponent implements OnInit {
   product_type: string;
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
-  constructor(protected ws: WebSocketService, protected router: Router,
-    protected loader: AppLoaderService, public translate: TranslateService,
-    protected dialogService: DialogService, protected dialog: MatDialog, private localeService: LocaleService) {
-    this.ws = ws;
+  constructor(
+    protected ws: WebSocketService,
+    protected router: Router,
+    protected loader: AppLoaderService,
+    public translate: TranslateService,
+    protected dialogService: DialogService,
+    protected dialog: MatDialog,
+    private localeService: LocaleService,
+    private location: Location,
+  ) {
     this.ws.call('system.product_type').subscribe((res) => {
       this.product_type = res;
     });
@@ -40,6 +47,9 @@ export class RebootComponent implements OnInit {
 
   ngOnInit() {
     this.product_type = window.localStorage.getItem('product_type');
+
+    // Replace URL so that we don't reboot again if page is refreshed.
+    this.location.replaceState('/session/signin');
 
     this.dialog.closeAll();
     this.ws.call('system.reboot', {}).subscribe(
