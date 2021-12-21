@@ -59,3 +59,15 @@
   display: inline-block;
   margin-left: 16px;
 }
+
+.size-message {
+  margin: 0.5rem 1rem;
+
+  &.red {
+    color: var(--red);
+  }
+
+  &.orange {
+    color: var(--orange);
+  }
+}

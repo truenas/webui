@@ -8,7 +8,7 @@ import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
 import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
 import { ServiceDynamicDnsComponent } from 'app/pages/services/components/service-dynamic-dns/service-dynamic-dns.component';
 import { ServiceFTPComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
-import { ServiceLLDPComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
+import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { RsyncConfigureComponent } from 'app/pages/services/components/service-rsync/rsync-configure/rsync-configure.component';
 import { RsyncModuleFormComponent } from 'app/pages/services/components/service-rsync/rsync-module-form/rsync-module-form.component';
@@ -45,7 +45,7 @@ import { routing } from './services.routing';
     ServicesComponent,
     ServiceSshComponent,
     ServiceFTPComponent,
-    ServiceLLDPComponent,
+    ServiceLldpComponent,
     ServiceRSYNCComponent,
     RsyncConfigureComponent,
     RsyncModuleListComponent,
