@@ -179,7 +179,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   }
 
   constructor(
-    private http: HttpClient,
     public router: Router,
     public translate: TranslateService,
     private rs: ReportsService,
@@ -319,28 +318,12 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     });
   }
 
-  async getServerTime(): Promise<Date> {
-    let date;
-    const options = {
-      observe: 'response' as const,
-      responseType: 'text' as const,
-    };
-    await this.http.get(window.location.origin.toString(), options).toPromise().then((resp) => {
-      const serverTime = resp.headers.get('Date');
-      const seconds = new Date(serverTime).getTime();
-      const secondsToTrim = 60;
-      const trimmed = new Date(seconds - (secondsToTrim * 1000));
-      date = trimmed;
-    });
-
-    return date;
-  }
   // Convert timespan to start/end options for RRDTool
   async convertTimespan(timespan, direction = 'backward', currentDate?: number): Promise<TimeData> {
     let units: string;
     let value: number;
 
-    const now = await this.getServerTime();
+    const now = await this.rs.getServerTime();
 
     let startDate: Date;
     let endDate: Date;
