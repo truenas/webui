@@ -23,6 +23,7 @@ import { LocaleService } from 'app/services/locale.service';
 
 import { T } from '../../../../translate-marker';
 import { filter, take } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 interface DateTime {
   dateFormat: string;
@@ -178,6 +179,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   }
 
   constructor(
+    private http: HttpClient,
     public router: Router,
     public translate: TranslateService,
     private rs: ReportsService,
@@ -218,9 +220,10 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
   ngAfterViewInit() {
     this.stepForwardDisabled = true;
     const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = this.convertTimespan(zoom.timespan);
-    this.currentStartDate = rrdOptions.start;
-    this.currentEndDate = rrdOptions.end;
+    this.convertTimespan(zoom.timespan).then((rrdOptions) => {
+      this.currentStartDate = rrdOptions.start;
+      this.currentEndDate = rrdOptions.end;
+    });
   }
 
   ngAfterContentInit() {}
@@ -244,9 +247,10 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
 
   private setupData(changes) {
     const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = this.convertTimespan(zoom.timespan);
     const identifier = changes.report.currentValue.identifiers ? changes.report.currentValue.identifiers[0] : null;
-    this.fetchReportData(rrdOptions, changes.report.currentValue, identifier);
+    this.convertTimespan(zoom.timespan).then((rrdOptions) => {
+      this.fetchReportData(rrdOptions, changes.report.currentValue, identifier);
+    });
   }
 
   private processThemeColors(theme): string[] {
@@ -268,12 +272,13 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     if (this.timeZoomIndex == max) { return; }
     this.timeZoomIndex += 1;
     const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = this.convertTimespan(zoom.timespan);
-    this.currentStartDate = rrdOptions.start;
-    this.currentEndDate = rrdOptions.end;
+    this.convertTimespan(zoom.timespan).then((rrdOptions) => {
+      this.currentStartDate = rrdOptions.start;
+      this.currentEndDate = rrdOptions.end;
 
-    const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
-    this.fetchReportData(rrdOptions, this.report, identifier);
+      const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+      this.fetchReportData(rrdOptions, this.report, identifier);
+    });
   }
 
   timeZoomOut() {
@@ -282,53 +287,60 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     if (this.timeZoomIndex == min) { return; }
     this.timeZoomIndex -= 1;
     const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = this.convertTimespan(zoom.timespan);
-    this.currentStartDate = rrdOptions.start;
-    this.currentEndDate = rrdOptions.end;
+    this.convertTimespan(zoom.timespan).then((rrdOptions) => {
+      this.currentStartDate = rrdOptions.start;
+      this.currentEndDate = rrdOptions.end;
 
-    const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
-    this.fetchReportData(rrdOptions, this.report, identifier);
+      const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+      this.fetchReportData(rrdOptions, this.report, identifier);
+    });
   }
 
   stepBack() {
     const zoom = this.zoomLevels[this.timeZoomIndex];
-    const rrdOptions = this.convertTimespan(zoom.timespan, 'backward', this.currentStartDate);
-    this.currentStartDate = rrdOptions.start;
-    this.currentEndDate = rrdOptions.end;
+    this.convertTimespan(zoom.timespan, 'backward', this.currentStartDate).then((rrdOptions) => {
+      this.currentStartDate = rrdOptions.start;
+      this.currentEndDate = rrdOptions.end;
 
-    const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
-    this.fetchReportData(rrdOptions, this.report, identifier);
+      const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+      this.fetchReportData(rrdOptions, this.report, identifier);
+    });
   }
 
   stepForward() {
     const zoom = this.zoomLevels[this.timeZoomIndex];
 
-    const rrdOptions = this.convertTimespan(zoom.timespan, 'forward', this.currentEndDate);
-    this.currentStartDate = rrdOptions.start;
-    this.currentEndDate = rrdOptions.end;
+    this.convertTimespan(zoom.timespan, 'forward', this.currentEndDate).then((rrdOptions) => {
+      this.currentStartDate = rrdOptions.start;
+      this.currentEndDate = rrdOptions.end;
 
-    const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
-    this.fetchReportData(rrdOptions, this.report, identifier);
+      const identifier = this.report.identifiers ? this.report.identifiers[0] : null;
+      this.fetchReportData(rrdOptions, this.report, identifier);
+    });
   }
 
-  getServerTime() {
-    const xmlHttp = new XMLHttpRequest();
-    xmlHttp.open('HEAD', window.location.origin.toString(), false);
-    xmlHttp.setRequestHeader('Content-Type', 'text/html');
-    xmlHttp.send('');
-    const serverTime = xmlHttp.getResponseHeader('Date');
-    const seconds = new Date(serverTime).getTime();
-    const secondsToTrim = 60;
-    const trimmed = new Date(seconds - (secondsToTrim * 1000));
-    return trimmed;
-  }
+  async getServerTime(): Promise<Date> {
+    let date;
+    const options = {
+      observe: 'response' as const,
+      responseType: 'text' as const,
+    };
+    await this.http.get(window.location.origin.toString(), options).toPromise().then((resp) => {
+      const serverTime = resp.headers.get('Date');
+      const seconds = new Date(serverTime).getTime();
+      const secondsToTrim = 60;
+      const trimmed = new Date(seconds - (secondsToTrim * 1000));
+      date = trimmed;
+    });
 
+    return date;
+  }
   // Convert timespan to start/end options for RRDTool
-  convertTimespan(timespan, direction = 'backward', currentDate?: number): TimeData {
+  async convertTimespan(timespan, direction = 'backward', currentDate?: number): Promise<TimeData> {
     let units: string;
     let value: number;
 
-    const now = this.getServerTime();
+    const now = await this.getServerTime();
 
     let startDate: Date;
     let endDate: Date;
@@ -396,7 +408,6 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     const params = identifier ? { name: report.name, identifier } : { name: report.name };
 
     // Time scale options
-    const serverTime = this.getServerTime();
     const start = Math.floor(rrdOptions.start / 1000);
     const end = Math.floor(rrdOptions.end / 1000);
     const timeFrame = { start, end };
