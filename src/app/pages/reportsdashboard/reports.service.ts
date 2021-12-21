@@ -2,6 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { WebSocketService } from 'app/services/ws.service';
 import { Subject } from 'rxjs';
 import { CoreEvent, CoreService } from 'app/core/services/core.service';
+import { HttpClient } from '@angular/common/http';
 
 /*
  * This service acts as a proxy between middleware/web worker
@@ -26,7 +27,7 @@ export class ReportsService implements OnDestroy {
   dataEvents: Subject<CoreEvent> = new Subject<CoreEvent>();
   private reportsUtils: Worker;
 
-  constructor(private ws: WebSocketService, private core: CoreService) {
+  constructor(private ws: WebSocketService, private core: CoreService, private http: HttpClient) {
     // @ts-ignore
     this.reportsUtils = new Worker('./reports-utils.worker', { type: 'module' });
 
@@ -122,5 +123,22 @@ export class ReportsService implements OnDestroy {
     } while (!finished && data.length > 0);
 
     return data;
+  }
+
+  async getServerTime(): Promise<Date> {
+    let date;
+    const options = {
+      observe: 'response' as const,
+      responseType: 'text' as const,
+    };
+    await this.http.get(window.location.origin.toString(), options).toPromise().then((resp) => {
+      const serverTime = resp.headers.get('Date');
+      const seconds = new Date(serverTime).getTime();
+      const secondsToTrim = 60;
+      const trimmed = new Date(seconds - (secondsToTrim * 1000));
+      date = trimmed;
+    });
+
+    return date;
   }
 }
