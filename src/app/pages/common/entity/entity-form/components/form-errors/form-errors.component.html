@@ -12,7 +12,7 @@
     {{ 'Minimum value is {value}.' | translate: { value: control.errors.min.min } }}
   </mat-error>
   <mat-error *ngIf="control.hasError('atLeastOne')">
-    {{control.errors.fields[0]}} {{" and " | translate}} {{control.errors.fields[1]}} {{". At least one is required." | translate}}
+    {{ '{this} and {that}. At least one is required' | translate: { this: control.errors.fields[0], that: control.errors.fields[1] } }}
   </mat-error>
   <mat-error *ngIf="control.hasError('greaterThan')">
     {{ 'Value must be greater than {value}.' | translate: { value: control.errors.fields[0] } }}
@@ -24,21 +24,24 @@
     {{ 'The value is out of range. Enter a value between {min} and {max}.' | translate: { min: control.errors.rangeValue.min, max: control.errors.rangeValue.max } }}
   </mat-error>
   <mat-error *ngIf="control.hasError('regex') || control.hasError('pattern') && !config.hideErrMsg">
-    {{"Invalid format or character." | translate}}
+    {{ 'Invalid format or character.' | translate }}
   </mat-error>
   <mat-error *ngIf="control.hasError('ip')">
-    {{"Select " | translate}} {{control.errors.info[1]}} {{" to include all " | translate}} {{control.errors.info[0] | translate}} {{" addresses. When this has been chosen, additional addresses cannot be selected." | translate}}
+    {{ 'Select {this} to include all {these} addresses. When this has been chosen, additional addresses cannot be selected.' | translate: { this: control.errors.info[1], these: control.errors.info[0] } }}
   </mat-error>
   <mat-error *ngIf="control.hasError('ip2')">
-    {{"Invalid IP address" | translate}}
+    {{ 'Invalid IP address' | translate }}
   </mat-error>
   <mat-error *ngIf="control.hasError('matchOther')">
-    {{"The passwords do not match." | translate}}
+    {{ 'The passwords do not match.' | translate }}
   </mat-error>
   <mat-error *ngIf="control.hasError('manualValidateError')">
-    {{control.errors.manualValidateErrorMsg | translate}}
+    {{ control.errors.manualValidateErrorMsg | translate }}
   </mat-error>
   <mat-error *ngIf="control.hasError('invalidOptionSelected')">
-    {{'Invalid option selected'| translate}}
+    {{ 'Invalid option selected'| translate }}
+  </mat-error>
+  <mat-error *ngIf="control.hasError('email')">
+    {{ 'Value must be a valid email address' | translate }}
   </mat-error>
 </div>
