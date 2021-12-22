@@ -355,16 +355,16 @@
         </div>
       </div>
       <div class="sizeMessage">{{ sizeMessage | translate}}: {{ size }}</div>
-      <div *ngIf="disknumError" class="sizeMessage" [style.color]="'red'" [innerHTML]="disknumError"></div>
       <div *ngIf="vdevtypeError" class="sizeMessage" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
-      <div *ngIf="stripeVdevTypeError" class="sizeMessage" [style.color]="'red'" [innerHTML]="stripeVdevTypeError"></div>
+      <div *ngIf="disknumError" class="sizeMessage" [style.color]="'orange'" [innerHTML]="disknumError"></div>
+      <div *ngIf="stripeVdevTypeError" class="sizeMessage" [style.color]="'orange'" [innerHTML]="stripeVdevTypeError"></div>
       <div *ngIf="logVdevTypeWarning" class="sizeMessage" [style.color]="'orange'" [innerHTML]="logVdevTypeWarning"></div>
       <div *ngIf="error" class="sizeMessage" [style.color]="'red'" [innerHTML]="error"></div>
       <div class="forceCreateCheckbox" *ngIf="has_savable_errors">
-        <mat-checkbox id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()">{{'Force' | translate}}</mat-checkbox>
+        <mat-checkbox id="pool-manager__force-submit-checkbox" [(ngModel)]="force" (click)="forceCheckboxChecked()" [disabled]="!canForceCheck()">{{'Force' | translate}}</mat-checkbox>
       </div>
       <div class="buttons" id="pool-manager__button-group">
-        <button id="pool-manager__create-button" mat-button name="create-button" class="btn btn-primary" (click)="checkSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>
+        <button id="pool-manager__create-button" mat-button name="create-button" class="btn btn-primary" (click)="doSubmit()" color="primary" [disabled]="!canSave()">{{submitTitle | translate }}</button>
         <button id="pool-manager__cancel-button" mat-button class="btn  btn-block btn-lg btn-primary" type="button" (click)="goBack()" color="accent">{{"Cancel" | translate}}</button>
       </div>
     </div>
