@@ -78,25 +78,18 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
       this.retroLogo = evt.data.retroLogo ? 1 : 0;
     });
 
-    if (sessionStorage.updateAvailable != undefined) {
-      if (sessionStorage.updateAvailable == 'true') {
-        this.updateAvailable = true;
+    this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
+      if (!isAutoDownloadOn) {
+        return;
       }
-    } else {
-      sessionStorage.updateAvailable = 'false';
-      this.ws.call('update.get_auto_download').pipe(untilDestroyed(this)).subscribe((isAutoDownloadOn) => {
-        if (!isAutoDownloadOn) {
-          return;
-        }
 
-        this.core.register({ observerClass: this, eventName: 'UpdateChecked' }).pipe(untilDestroyed(this)).subscribe((evt: UpdateCheckedEvent) => {
-          if (evt.data.status == SystemUpdateStatus.Available) {
-            this.updateAvailable = true;
-            sessionStorage.updateAvailable = 'true';
-          }
-        });
+      this.core.register({ observerClass: this, eventName: 'UpdateChecked' }).pipe(untilDestroyed(this)).subscribe((evt: UpdateCheckedEvent) => {
+        if (evt.data.status == SystemUpdateStatus.Available) {
+          this.updateAvailable = true;
+          sessionStorage.updateAvailable = 'true';
+        }
       });
-    }
+    });
 
     if (this.isHA && this.isPassive) {
       this.core.register({ observerClass: this, eventName: 'HA_Status' }).pipe(untilDestroyed(this)).subscribe((evt: HaStatusEvent) => {
@@ -111,6 +104,22 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
       this.ws.call('system.info').pipe(untilDestroyed(this)).subscribe((systemInfo) => {
         this.processSysInfo(systemInfo);
       });
+
+      /**
+       * limit the check to once a day
+       */
+      if (
+        sessionStorage.updateLastChecked
+        && Number(sessionStorage.updateLastChecked) + 24 * 60 * 60 * 1000 > Date.now()
+      ) {
+        if (sessionStorage.updateAvailable == 'true') {
+          this.updateAvailable = true;
+        }
+      } else {
+        sessionStorage.updateLastChecked = Date.now();
+        sessionStorage.updateAvailable = 'false';
+        this.core.emit({ name: 'UpdateCheck' });
+      }
 
       this.core.emit({ name: 'UserPreferencesRequest' });
       this.core.emit({ name: 'HAStatusRequest' });
