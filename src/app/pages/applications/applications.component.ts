@@ -11,6 +11,8 @@ import helptext from 'app/helptext/apps/apps';
 import { ApplicationUserEvent, ApplicationUserEventName } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
+import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
+import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { ModalService } from 'app/services/modal.service';
@@ -33,7 +35,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   @ViewChild(CatalogComponent, { static: false }) private catalogTab: CatalogComponent;
   @ViewChild(ManageCatalogsComponent, { static: false }) private manageCatalogTab: ManageCatalogsComponent;
   @ViewChild(DockerImagesComponent, { static: false }) private dockerImagesTab: DockerImagesComponent;
-  selectedIndex = 0;
+  selectedTab = ApplicationTab.InstalledApps;
   isSelectedOneMore = false;
   isSelectedAll = false;
   isSelectedPool = false;
@@ -43,6 +45,13 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   catalogOptions: Option[] = [];
   selectedCatalogOptions: Option[] = [];
   protected utils: CommonUtils;
+
+  readonly tabs = [
+    ApplicationTab.InstalledApps,
+    ApplicationTab.AvailableApps,
+    ApplicationTab.Catalogs,
+    ApplicationTab.DockerImages,
+  ];
 
   constructor(
     private appService: ApplicationsService,
@@ -68,19 +77,29 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   setupToolbar(): void {
     this.settingsEvent$ = new Subject();
     this.settingsEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'filter') {
+      if (evt.data.event_control == ApplicationToolbarControl.Filter) {
         this.filterString = evt.data.filter;
       }
 
-      this.chartTab.onToolbarAction(evt);
-      this.catalogTab.onToolbarAction(evt);
-      this.manageCatalogTab.onToolbarAction(evt);
-      this.dockerImagesTab.onToolbarAction(evt);
+      switch (this.selectedTab) {
+        case ApplicationTab.InstalledApps:
+          this.chartTab.onToolbarAction(evt);
+          break;
+        case ApplicationTab.AvailableApps:
+          this.catalogTab.onToolbarAction(evt);
+          break;
+        case ApplicationTab.Catalogs:
+          this.manageCatalogTab.onToolbarAction(evt);
+          break;
+        case ApplicationTab.DockerImages:
+          this.dockerImagesTab.onToolbarAction(evt);
+          break;
+      }
     });
 
     const controls = [
       {
-        name: 'filter',
+        name: ApplicationToolbarControl.Filter,
         type: 'input',
         value: this.filterString,
       },
@@ -104,9 +123,8 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     this.toolbarConfig.controls.splice(1);
     const search = this.toolbarConfig.controls[0];
 
-    // TODO: Error prone if index is changed
-    switch (this.selectedIndex) {
-      case 0:
+    switch (this.selectedTab) {
+      case ApplicationTab.InstalledApps:
         search.placeholder = helptext.installedPlaceholder;
         const bulk = {
           name: 'bulk',
@@ -126,10 +144,10 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
         });
         this.toolbarConfig.controls.push(bulk);
         break;
-      case 1:
+      case ApplicationTab.AvailableApps:
         search.placeholder = helptext.availablePlaceholder;
         this.toolbarConfig.controls.push({
-          name: 'refresh_all',
+          name: ApplicationToolbarControl.RefreshAll,
           label: helptext.refresh,
           type: 'button',
           color: 'secondary',
@@ -138,7 +156,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
 
         this.toolbarConfig.controls.push({
           type: 'multimenu',
-          name: 'catalogs',
+          name: ApplicationToolbarControl.Catalogs,
           label: helptext.catalogs,
           disabled: false,
           multiple: true,
@@ -147,27 +165,27 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
           customTriggerValue: helptext.catalogs,
         });
         break;
-      case 2:
+      case ApplicationTab.Catalogs:
         search.placeholder = helptext.catalogPlaceholder;
         this.toolbarConfig.controls.push({
-          name: 'refresh_catalogs',
+          name: ApplicationToolbarControl.RefreshCatalogs,
           label: helptext.refresh,
           type: 'button',
           color: 'secondary',
           value: 'refresh_catalogs',
         });
         this.toolbarConfig.controls.push({
-          name: 'add_catalog',
+          name: ApplicationToolbarControl.AddCatalog,
           label: helptext.addCatalog,
           type: 'button',
           color: 'secondary',
           value: 'add_catalog',
         });
         break;
-      case 3:
+      case ApplicationTab.DockerImages:
         search.placeholder = helptext.dockerPlaceholder;
         this.toolbarConfig.controls.push({
-          name: 'pull_image',
+          name: ApplicationToolbarControl.PullImage,
           label: helptext.pullImage,
           type: 'button',
           color: 'secondary',
@@ -177,7 +195,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     }
 
     const setting = {
-      name: 'settings',
+      name: ApplicationToolbarControl.Settings,
       label: helptext.settings,
       type: 'menu',
       options: [
@@ -200,7 +218,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     this.toolbarConfig.controls.push(setting);
 
     this.toolbarConfig.controls.push({
-      name: 'launch',
+      name: ApplicationToolbarControl.Launch,
       label: helptext.launch,
       type: 'button',
       color: 'primary',
@@ -213,7 +231,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
 
   updateTab(evt: ApplicationUserEvent): void {
     if (evt.name == ApplicationUserEventName.SwitchTab) {
-      this.selectedIndex = evt.value as number;
+      this.selectedTab = evt.value as ApplicationTab;
     } else if (evt.name == ApplicationUserEventName.UpdateToolbar) {
       this.isSelectedOneMore = evt.value as boolean;
       this.isSelectedAll = evt.isSelectedAll;
@@ -232,19 +250,43 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
 
   refreshTab(): void {
     this.updateToolbar();
-    if (this.selectedIndex == 0) {
+    if (this.selectedTab === ApplicationTab.InstalledApps) {
       this.chartTab.refreshChartReleases();
-    } else if (this.selectedIndex == 1) {
+    } else if (this.selectedTab === ApplicationTab.AvailableApps) {
       this.catalogTab.loadCatalogs();
-    } else if (this.selectedIndex == 2) {
+    } else if (this.selectedTab === ApplicationTab.Catalogs) {
       this.manageCatalogTab.refresh();
-    } else if (this.selectedIndex == 3) {
+    } else if (this.selectedTab == ApplicationTab.DockerImages) {
       this.dockerImagesTab.refresh();
     }
   }
 
-  refresh(e: MatTabChangeEvent): void {
-    this.selectedIndex = e.index;
+  onTabSelected(event: MatTabChangeEvent): void {
+    this.selectedTab = event.index;
+    this.clearToolbarFilter();
     this.refreshTab();
+  }
+
+  private clearToolbarFilter(): void {
+    this.settingsEvent$.next({
+      name: 'ToolbarChanged',
+      data: {
+        event_control: 'filter',
+        filter: '',
+      },
+    });
+
+    const updatedControls = this.toolbarConfig.controls.map((control) => {
+      if (control.name !== ApplicationToolbarControl.Filter) {
+        return control;
+      }
+
+      return {
+        ...control,
+        value: '',
+      };
+    });
+
+    this.toolbarConfig.target.next({ name: 'UpdateControls', data: updatedControls });
   }
 }
