@@ -46,13 +46,6 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   selectedCatalogOptions: Option[] = [];
   protected utils: CommonUtils;
 
-  readonly tabs = [
-    ApplicationTab.InstalledApps,
-    ApplicationTab.AvailableApps,
-    ApplicationTab.Catalogs,
-    ApplicationTab.DockerImages,
-  ];
-
   constructor(
     private appService: ApplicationsService,
     private core: CoreService,
