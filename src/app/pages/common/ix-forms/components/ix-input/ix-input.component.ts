@@ -66,6 +66,21 @@ export class IxInputComponent implements ControlValueAccessor {
     this.onChange(this.value);
   }
 
+  keypress(event: any): void {
+    if (this.type === 'number') {
+      if (!(event.which >= 48 && event.which <= 57)) {
+        event.preventDefault();
+      }
+    }
+  }
+
+  paste(event: any): void {
+    const text = (event.originalEvent || event).clipboardData.getData('text/plain');
+    if (this.type === 'number' && !/^\d+$/.test(text)) {
+      event.preventDefault();
+    }
+  }
+
   registerOnChange(onChange: (value: string | number) => void): void {
     this.onChange = onChange;
   }

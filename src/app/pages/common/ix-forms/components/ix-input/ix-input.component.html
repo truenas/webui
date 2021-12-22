@@ -19,6 +19,8 @@
     [disabled]="isDisabled"
     [type]="getType()"
     [value]="formatted"
+    (keypress)="keypress($event)"
+    (paste)="paste($event)"
     (input)="input(ixInput.value)"
     (blur)="blur()"
     [autocomplete]="autocomplete"
