@@ -136,7 +136,7 @@ export class StorageService {
       sorter = bytes.concat(kbytes, mbytes, gbytes, tbytes);
 
       // Select disks where last two chars = a digit and the one letter space abbrev
-    } else if (typeof (tempArr[n]) === 'string'
+    } else if (typeof (tempArr[n]) === 'string' && tempArr[n].length >= 2
       && tempArr[n][tempArr[n].length - 1].match(/[KMGTB]/)
       && tempArr[n][tempArr[n].length - 2].match(/[0-9]/)) {
       let B = []; let K = []; let M = []; let G = []; let
