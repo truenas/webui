@@ -564,14 +564,14 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   forceCheckboxChecked() {
     if (!this.force) {
-      let warnings = helptext.force_warning;
+      let warnings = helptext.force_description + '<br/><br/>- ' + helptext.force_warning;
       if (this.vdevdisksSizeError) {
         warnings = warnings + '<br/><br/>- ' + helptext.force_warnings['diskSizeWarning'];
       }
       if (this.stripeVdevTypeConfirmError) {
         warnings = warnings + '<br/><br/>- ' + this.stripeVdevTypeConfirmError;
       }
-      warnings = warnings + '<br/><br/>' + helptext.force_confirm_warning;
+      warnings = warnings + '<br/><br/>' + helptext.force_confirm_title;
       this.dialog.confirm(helptext.force_title, warnings).subscribe((res) => {
         this.force = res;
       });

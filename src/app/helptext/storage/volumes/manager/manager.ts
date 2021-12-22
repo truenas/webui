@@ -52,8 +52,9 @@ export default {
   manager_duplicate_button: T('Repeat Vdev'),
 
   force_title: T('Warning'),
-  force_warning: T('The current pool layout has these cautions:'),
-  force_confirm_warning: T('Create the pool with this layout?'),
+  force_description: T('The current pool layout has these cautions:'),
+  force_warning: T('This layout is not recommended due to errors.'),
+  force_confirm_title: T('Create the pool with this layout?'),
   force_warnings: {
     diskSizeWarning: T('One or more data vdevs has disks of different sizes.'),
   },
