@@ -22,6 +22,7 @@ export interface ControlConfig {
   min?: number;
   max?: number;
   step?: number;
+  ixAutoIdentifier?: string;
 }
 
 export interface ToolbarConfig {

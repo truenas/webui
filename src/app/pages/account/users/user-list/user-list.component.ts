@@ -211,6 +211,7 @@ export class UserListComponent implements OnInit, AfterViewInit {
         type: 'button',
         label: this.translate.instant('Add'),
         color: 'primary',
+        ixAutoIdentifier: 'Users_ADD',
       },
     ];
 

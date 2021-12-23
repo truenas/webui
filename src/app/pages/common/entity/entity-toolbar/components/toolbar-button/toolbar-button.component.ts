@@ -21,4 +21,11 @@ export class ToolbarButtonComponent extends IxAbstractObject {
     this.config.value = value;
     this.controller.next({ name: this.config.name, value: this.config.value });
   }
+
+  getIdentifier(): string {
+    if (this.config.ixAutoIdentifier) {
+      return this.config.ixAutoIdentifier;
+    }
+    return `${this.id}_entity_toolbar_${this.config.label}`;
+  }
 }
