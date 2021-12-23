@@ -489,7 +489,6 @@
   "IPMI flash duration": "",
   "IPv4": "",
   "IPv6": "",
-  "IPv6 addresses are not allowed for HA.": "",
   "Identify Drive": "",
   "Identify the purpose for this public key. Typically used for end entity certificates. Multiple usages can be selected. Do not mark this extension critical when the <i>Usage</i> is <i>ANY_EXTENDED_KEY_USAGE</i>.<br><br> Using both <b>Extended Key Usage</b> and <b>Key Usage</b> extensions requires that the purpose of the certificate is consistent with both extensions. See <a href=\"https://www.ietf.org/rfc/rfc3280.txt\" target=\"_blank\">RFC 3280, section 4.2.1.13</a> for more details.": "",
   "Idle": "",

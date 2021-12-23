@@ -2097,7 +2097,6 @@
   "IPv6 Address": "IPv6 地址",
   "IPv6 Default Gateway": "IPv6默认网关",
   "IPv6 Prefix Length": "IPv6前缀长度",
-  "IPv6 addresses are not allowed for HA.": "HA不允许使用IPv6地址。",
   "ISNS Servers": "ISNS服务器",
   "ISO save location": "ISO保存位置",
   "ISO upload location": "ISO上传位置",

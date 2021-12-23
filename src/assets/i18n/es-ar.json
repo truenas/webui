@@ -2431,7 +2431,6 @@
   "IPv6 Address": "Dirección IPv6",
   "IPv6 Default Gateway": "Puerta de enlace IPv6 predeterminada",
   "IPv6 Prefix Length": "Longitud del prefijo IPv6",
-  "IPv6 addresses are not allowed for HA.": "Las direcciones IPv6 no están permitidas para HA.",
   "ISNS Servers": "Servidores ISNS",
   "ISO save location": "Ubicación de guardado ISO",
   "ISO upload location": "Ubicación de carga ISO",
