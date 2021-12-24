@@ -51,52 +51,50 @@
         <span *ngFor="let value of customTriggerValue; last as isLast"> {{ value }}{{ isLast ? '' : ', ' }} </span>
       </mat-select-trigger>
 
-      <div *ngIf="formReady">
-        <mat-selection-list>
-          <ng-container *ngFor="let option of config.options; let i = index">
-            <!-- if disabled -->
-            <mat-option
-              *ngIf="option.disable && !option.hiddenFromDisplay"
-              [value]="option.value"
-              disabled
-              ix-auto
-              ix-auto-type="option"
-              ix-auto-identifier="{{ config.placeholder }}_{{ option.label }}"
-            >
-              <span *ngIf="config.multiple">
-                <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
-                <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
-              </span>
-              {{ option.label | translate }}
-              <span *ngIf="shouldAlertOnOption(option)" class="alert-icon">
-                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
-              </span>
-            </mat-option>
+      <ng-container *ngIf="formReady">
+        <ng-container *ngFor="let option of config.options; let i = index">
+          <!-- if disabled -->
+          <mat-option
+            *ngIf="option.disable && !option.hiddenFromDisplay"
+            [value]="option.value"
+            disabled
+            ix-auto
+            ix-auto-type="option"
+            ix-auto-identifier="{{ config.placeholder }}_{{ option.label }}"
+          >
+            <span *ngIf="config.multiple">
+              <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
+              <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+            </span>
+            {{ option.label | translate }}
+            <span *ngIf="shouldAlertOnOption(option)" class="alert-icon">
+              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+            </span>
+          </mat-option>
 
-            <!-- else -->
-            <mat-option
-              *ngIf="!option?.disable"
-              [value]="option.value"
-              (click)="onToggleSelect(option)"
-              ix-auto
-              ix-auto-type="option"
-              ix-auto-identifier="{{ config.placeholder }}_{{ option.label }}"
-              [class.text-wrap]="config.enableTextWrapForOptions"
-            >
-              <span *ngIf="config.multiple">
-                <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
-                <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
-              </span>
-              {{ option.label | translate }}
-              <span *ngIf="shouldAlertOnOption(option)" class="alert-icon">
-                <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
-              </span>
-            </mat-option>
-          </ng-container>
-        </mat-selection-list>
-      </div>
+          <!-- else -->
+          <mat-option
+            *ngIf="!option?.disable"
+            [value]="option.value"
+            (click)="onToggleSelect(option)"
+            ix-auto
+            ix-auto-type="option"
+            ix-auto-identifier="{{ config.placeholder }}_{{ option.label }}"
+            [class.text-wrap]="config.enableTextWrapForOptions"
+          >
+            <span *ngIf="config.multiple">
+              <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
+              <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+            </span>
+            {{ option.label | translate }}
+            <span *ngIf="shouldAlertOnOption(option)" class="alert-icon">
+              <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
+            </span>
+          </mat-option>
+        </ng-container>
+      </ng-container>
 
-      <div *ngIf="!formReady || config.options.length == 0">
+      <ng-container *ngIf="!formReady || config.options.length == 0">
         <ng-container>
           <mat-option
             disabled
@@ -108,7 +106,7 @@
             {{ config.zeroStateMessage ? config.zeroStateMessage : '--' }}
           </mat-option>
         </ng-container>
-      </div>
+      </ng-container>
     </mat-select>
   </mat-form-field>
   <div class="margin-for-error">
