@@ -4,7 +4,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
-import isCidr from 'is-cidr';
 import * as _ from 'lodash';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import {
@@ -489,7 +488,6 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
         });
         if (isHa) {
           this.entityForm.formGroup.controls['aliases'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: any[]) => {
-            let v6Found = false;
             let mismatchFound = false;
             res.forEach((alias) => {
               const address = alias['address'];
@@ -501,17 +499,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
               ) {
                 mismatchFound = true;
               }
-              if (isCidr.v6(address)
-                  || isCidr.v6(failoverAddress)
-                  || isCidr.v6(virtualAddress)) {
-                v6Found = true;
-              }
             });
-            if (v6Found) {
-              this.aliasesField.hasErrors = true;
-              this.aliasesField.errors = helptext.failover_alias_v6_error;
-              this.saveButtonEnabled = false;
-            } else if (mismatchFound) {
+            if (mismatchFound) {
               this.aliasesField.hasErrors = true;
               this.aliasesField.errors = helptext.failover_alias_set_error;
               this.saveButtonEnabled = false;
