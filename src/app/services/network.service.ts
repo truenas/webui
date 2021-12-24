@@ -45,7 +45,7 @@ export class NetworkService {
   }
 
   getV4Netmasks(): Option[] {
-    return Array(33).fill(0).map(
+    return Array(34).fill(0).map(
       (x, i) => {
         if (i == 0) {
           return { label: '---------', value: '' };
