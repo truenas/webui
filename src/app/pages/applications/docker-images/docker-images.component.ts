@@ -6,6 +6,7 @@ import { latestVersion } from 'app/constants/catalog.constants';
 import helptext from 'app/helptext/apps/apps';
 import { ContainerImage, PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
@@ -119,10 +120,10 @@ export class DockerImagesComponent implements EntityTableConfig {
   }
 
   onToolbarAction(evt: CoreEvent): void {
-    if (evt.data.event_control == 'filter') {
+    if (evt.data.event_control === ApplicationToolbarControl.Filter) {
       this.filterString = evt.data.filter;
       this.entityList.filter(this.filterString);
-    } else if (evt.data.event_control == 'pull_image') {
+    } else if (evt.data.event_control === ApplicationToolbarControl.PullImage) {
       this.doAdd();
     }
   }
