@@ -1907,7 +1907,7 @@
   "Metadata": "",
   "Metadata (Special) Small Block Size": "",
   "Metadata VDev": "",
-  "Method of snapshot transfer:<ul>  <li><i>SSH</i> is supported by most systems. It requires a previously  created connection in <b>System > SSH Connections</b>.</li>  <li><i>SSH+NETCAT</i> uses SSH to establish a connection to the  destination system, then uses  <a href=\"https://github.com/freenas/py-libzfs\"  target=\"_blank\">py-libzfs</a> to send an unencrypted data stream for  higher transfer speeds. This only works when replicating to a FreeNAS,  TrueNAS, or other system with <i>py-libzfs</i> installed.</li>  <li><i>LOCAL</i> efficiently replicates snapshots to another dataset on  the same system without using the network.</li>  <li><i>LEGACY</i> uses the legacy replication engine from FreeNAS 11.2  and earlier.</li></ul>": "",
+  "Method of snapshot transfer:<ul>  <li><i>SSH</i> is supported by most systems. It requires a previously  created connection in <b>System > SSH Connections</b>.</li>  <li><i>SSH+NETCAT</i> uses SSH to establish a connection to the  destination system, then uses  <a href=\"https://github.com/truenas/py-libzfs\"  target=\"_blank\">py-libzfs</a> to send an unencrypted data stream for  higher transfer speeds. This only works when replicating to a FreeNAS,  TrueNAS, or other system with <i>py-libzfs</i> installed.</li>  <li><i>LOCAL</i> efficiently replicates snapshots to another dataset on  the same system without using the network.</li>  <li><i>LEGACY</i> uses the legacy replication engine from FreeNAS 11.2  and earlier.</li></ul>": "",
   "Metrics": "",
   "MiB": "",
   "MiB. Units  smaller than MiB are not allowed.": "",
