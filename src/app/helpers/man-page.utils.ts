@@ -4,7 +4,7 @@ function getManPageUrl(term: string): string {
   let routeParam = section ? term.substr(0, term.length - 3) : term;
   routeParam = routeParam.replace('.', '');
 
-  return `https://man7.org/linux/man-pages/${routeParam}/${section ? section[1] : ''}`;
+  return `http://manpages.org/${routeParam}/${section ? section[1] : ''}`;
 }
 
 export function getManPageLink(term: string): string {
