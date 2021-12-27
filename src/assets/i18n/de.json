@@ -1720,6 +1720,7 @@
   "Select <i>None</i> or an integer. This value represents the number of existing authorized accesses.": "",
   "Select <i>UEFI</i> for newer operating systems or <i>UEFI-CSM</i> (Compatibility Support Mode) for older operating systems that only support BIOS booting. <i>Grub</i> is not recommended but can be used when the other options do not work.": "",
   "Select Client Certificate": "",
+  "Select Disks": "",
   "Select IP addresses to listen to for NFS requests. Leave empty for NFS to listen to all available addresses.  Static IPs need to be configured on the interface to appear on the list.": "",
   "Select Path": "",
   "Select Pool": "",

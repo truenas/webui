@@ -289,6 +289,7 @@
   "Scrub interval set to {scrubIntervalValue} days": "",
   "Search": "",
   "Select Client Certificate": "",
+  "Select Disks": "",
   "Select IP addresses to listen to for NFS requests. Leave empty for NFS to listen to all available addresses.  Static IPs need to be configured on the interface to appear on the list.": "",
   "Select the interfaces to use in the aggregation.<br>  Warning: Link Aggregation creation fails if any of the selected interfaces have been manually configured.<br>The order is important because the FAILOVER lagg protocol will mark the first interface as the \"primary\" interface.": "",
   "Select {this} to include all {these} addresses. When this has been chosen, additional addresses cannot be selected.": "",
