@@ -18,7 +18,7 @@ from pytest_bdd import (
 )
 
 
-@scenario('features/NAS-T1259.feature', 'Verify a Certificate Signing Request can be deleted')
+@scenario('features/NAS-T1266.feature', 'Verify a Certificate Signing Request can be deleted')
 def test_verify_a_certificate_signing_request_can_be_deleted():
     """Verify a Certificate Signing Request can be deleted."""
 
