@@ -1,4 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
   fieldset_basic: T('SSH Keypair'),
@@ -9,12 +10,10 @@ export default {
  with " Key" appended to the name.'),
 
   private_key_placeholder: T('Private Key'),
-  private_key_tooltip: T('See <i>Public key authentication</i> in <a href="https://www.freebsd.org/cgi/man.cgi?query=ssh"\
- target="_blank">SSH/Authentication</a>.'),
+  private_key_tooltip: T(`See <i>Public key authentication</i> in Authentication in ${getManPageLink('ssh')}.`),
 
   public_key_placeholder: T('Public Key'),
-  public_key_tooltip: T('See <i>Public key authentication</i> in <a href="https://www.freebsd.org/cgi/man.cgi?query=ssh"\
- target="_blank">SSH/Authentication</a>.'),
+  public_key_tooltip: T(`See <i>Public key authentication</i> in Authentication in ${getManPageLink('ssh')}.`),
 
   generate_key_button: T('Generate Keypair'),
 

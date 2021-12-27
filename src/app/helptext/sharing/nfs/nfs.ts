@@ -1,5 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export const helptextSharingNfs = {
   // NFSListComponent
@@ -47,12 +48,8 @@ export const helptextSharingNfs = {
   tooltip_ro: T('Set to prohibit writing to the share.'),
 
   placeholder_quiet: T('Quiet'),
-  tooltip_quiet: T(
-    'Set to inhibit some syslog diagnostics\
- to avoid error messages. See\
- <a href="https://www.freebsd.org/cgi/man.cgi?query=exports"\
- target="_blank">exports(5)</a> for examples.',
-  ),
+  tooltip_quiet: T(`Set to inhibit some syslog diagnostics
+ to avoid error messages. See ${getManPageLink('exports(5)')} for examples.`),
 
   placeholder_enabled: T('Enabled'),
   tooltip_enabled: T('Enable this NFS share. Unset to disable this NFS share \

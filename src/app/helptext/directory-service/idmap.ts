@@ -1,6 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { IdmapName } from 'app/enums/idmap-name.enum';
+import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
   title_add: T('Add Idmap'),
@@ -98,10 +99,9 @@ export default {
     },
     ldap_basedn: {
       placeholder: T('Base DN'),
-      tooltip: T('The directory base suffix to use for SID/uid/gid\
- mapping entries. Example: dc=test,dc=org. When undefined, idmap_ldap defaults to using the ldap idmap\
- suffix option from <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf"\
- target="_blank">smb.conf</a>.'),
+      tooltip: T(`The directory base suffix to use for SID/uid/gid
+ mapping entries. Example: dc=test,dc=org. When undefined, idmap_ldap defaults to using the ldap idmap
+ suffix option from ${getManPageLink('smb.conf(5)')}.`),
     },
     ldap_userdn: {
       placeholder: T('LDAP User DN'),

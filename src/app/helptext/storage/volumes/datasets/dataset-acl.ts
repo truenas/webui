@@ -5,6 +5,7 @@ import {
   NfsBasicFlag, nfsBasicPermissionLabels,
 } from 'app/enums/nfs-acl.enum';
 import { posixAclTagLabels, PosixPermission } from 'app/enums/posix-acl.enum';
+import { getManPageLink } from 'app/helpers/man-page.utils';
 import { mapToOptions } from 'app/helpers/options.helper';
 import {
   NfsFormFlagsType,
@@ -21,12 +22,12 @@ export default {
   dataset_acl_aces_placeholder: T('Access Control Entries'),
 
   dataset_acl_tag_placeholder: T('Who'),
-  dataset_acl_tag_tooltip: T('Access Control Entry (ACE) user or group.\
- Select a specific <i>User</i> or <i>Group</i> for this entry,\
- <i>owner@</i> to apply this entry to the user that owns the dataset,\
- <i>group@</i> to apply this entry to the group that owns the dataset,\
- or <i>everyone@</i> to apply this entry to all users and groups. See\
- <a href="https://www.freebsd.org/cgi/man.cgi?query=setfacl" target="_blank">setfacl(1) NFSv4 ACL ENTRIES</a>.'),
+  dataset_acl_tag_tooltip: T(`Access Control Entry (ACE) user or group.
+ Select a specific <i>User</i> or <i>Group</i> for this entry,
+ <i>owner@</i> to apply this entry to the user that owns the dataset,
+ <i>group@</i> to apply this entry to the group that owns the dataset,
+ or <i>everyone@</i> to apply this entry to all users and groups. See
+ ${getManPageLink('setfacl(1)')}.`),
   dataset_acl_tag_options: mapToOptions(nfsAclTagLabels),
 
   dataset_acl_type_placeholder: T('ACL Type'),

@@ -1,5 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
+import { getManPageLink } from 'app/helpers/man-page.utils';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 
 export default {
@@ -117,16 +118,15 @@ export default {
  filenames.'),
 
   dataset_form_aclmode_placeholder: T('ACL Mode'),
-  dataset_form_aclmode_tooltip: T('Determine how \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=chmod" target="_blank">chmod</a> \
- behaves when adjusting file ACLs. See the \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=zfs" target="_blank">zfs(8)</a> aclmode property. \
- <br><br><i>Passthrough</i> only updates ACL entries that are related to the file or directory mode. \
- <br><br><i>Restricted</i> does not allow chmod to make changes to files or directories with a \
- non-trivial ACL. An ACL is trivial if it can be fully expressed as a file mode without losing \
- any access rules. Setting the ACL Mode to Restricted is typically used to optimize a dataset for \
- SMB sharing, but can require further optimizations. For example, configuring an rsync task with this \
- dataset could require adding <i>--no-perms</i> in the task <i>Auxiliary Parameters</i> field.'),
+  dataset_form_aclmode_tooltip: T(`Determine how ${getManPageLink('chmod')}
+ behaves when adjusting file ACLs. See the
+ ${getManPageLink('zfs(8)')} aclmode property.
+ <br><br><i>Passthrough</i> only updates ACL entries that are related to the file or directory mode.
+ <br><br><i>Restricted</i> does not allow chmod to make changes to files or directories with a
+ non-trivial ACL. An ACL is trivial if it can be fully expressed as a file mode without losing
+ any access rules. Setting the ACL Mode to Restricted is typically used to optimize a dataset for
+ SMB sharing, but can require further optimizations. For example, configuring an rsync task with this
+ dataset could require adding <i>--no-perms</i> in the task <i>Auxiliary Parameters</i> field.`),
 
   dataset_form_dataset_section_placeholder: T('This Dataset and Child Datasets'),
   dataset_form_refdataset_section_placeholder: T('This Dataset'),
@@ -139,13 +139,13 @@ export default {
   dataset_form_quota_too_small: T('Quota size is too small, enter a value of 1 GiB or larger.'),
 
   dataset_form_special_small_blocks_placeholder: T('Metadata (Special) Small Block Size'),
-  dataset_form_special_small_blocks_tooltip: T('This value represents the threshold block size\
- for including small file blocks into the special allocation class. Blocks smaller than or\
- equal to this value will be assigned to the special allocation class while greater blocks\
- will be assigned to the regular class. Valid values are zero or a power of two from 512B \
- up to 1M. The default size is 0 which means no small file blocks will be allocated in the\
- special class. Before setting this property, a special class vdev must be added to the pool.\
- See <a href="https://zfsonlinux.org/manpages/0.7.13/man8/zpool.8.html" target="_blank">zpool(8)</a> for more details on the special allocation'),
+  dataset_form_special_small_blocks_tooltip: T(`This value represents the threshold block size
+ for including small file blocks into the special allocation class. Blocks smaller than or
+ equal to this value will be assigned to the special allocation class while greater blocks
+ will be assigned to the regular class. Valid values are zero or a power of two from 512B
+ up to 1M. The default size is 0 which means no small file blocks will be allocated in the
+ special class. Before setting this property, a special class vdev must be added to the pool.
+ See ${getManPageLink('zpool(8)')} for more details on the special allocation`),
 
   dataset_form_encryption: {
     fieldset_title: T('Encryption Options'),
