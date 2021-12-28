@@ -8,14 +8,14 @@ import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-t
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { WebSocketService, ModalService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
-import { NFSFormComponent } from '../nfs-form/nfs-form.component';
+import { NfsFormComponent } from '../nfs-form/nfs-form.component';
 
 @UntilDestroy()
 @Component({
   selector: 'app-nfs-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class NFSListComponent implements EntityTableConfig<NfsShare> {
+export class NfsListComponent implements EntityTableConfig<NfsShare> {
   title = this.translate.instant('NFS');
   queryCall = 'sharing.nfs.query' as const;
   updateCall = 'sharing.nfs.update' as const;
@@ -66,7 +66,7 @@ export class NFSListComponent implements EntityTableConfig<NfsShare> {
   };
 
   doAdd(id?: number): void {
-    this.modalService.openInSlideIn(NFSFormComponent, id);
+    this.modalService.openInSlideIn(NfsFormComponent, id);
   }
 
   doEdit(id: number): void {

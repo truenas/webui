@@ -5,7 +5,7 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
-import { LACPDURate, XmitHashPolicy } from 'app/enums/network-interface.enum';
+import { LacpduRate, XmitHashPolicy } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
@@ -529,7 +529,7 @@ export type ApiDirectory = {
   'interface.checkin_waiting': { params: void; response: number | null };
   'interface.checkin': { params: void; response: void };
   'interface.xmit_hash_policy_choices': { params: void; response: { [key: string]: keyof XmitHashPolicy } };
-  'interface.lacpdu_rate_choices': { params: void; response: { [key: string]: keyof LACPDURate } };
+  'interface.lacpdu_rate_choices': { params: void; response: { [key: string]: keyof LacpduRate } };
 
   // iSCSI
   'iscsi.initiator.query': { params: QueryParams<IscsiInitiatorGroup>; response: IscsiInitiatorGroup[] };

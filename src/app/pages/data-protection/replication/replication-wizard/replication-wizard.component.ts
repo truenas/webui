@@ -466,14 +466,14 @@ export class ReplicationWizardComponent implements WizardConfiguration {
               options: [
                 {
                   label: this.translate.instant('Encryption (more secure, but slower)'),
-                  value: TransportMode.SSH,
+                  value: TransportMode.Ssh,
                 },
                 {
                   label: this.translate.instant('No Encryption (less secure, but faster)'),
                   value: TransportMode.Netcat,
                 },
               ],
-              value: TransportMode.SSH,
+              value: TransportMode.Ssh,
               relation: [{
                 action: RelationAction.Show,
                 connective: RelationConnection.Or,
@@ -1004,7 +1004,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset(TransportMode.SSH, sshCredentials, this).then(
+      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials, this).then(
         (res) => {
           const sourceDatasetsFormControl = this.entityWizard.formArray.get([0]).get('source_datasets');
           const prevErrors = sourceDatasetsFormControl.errors;
@@ -1048,7 +1048,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
       });
     }
     return new Promise((resolve) => {
-      this.replicationService.getRemoteDataset(TransportMode.SSH, sshCredentials, this).then(
+      this.replicationService.getRemoteDataset(TransportMode.Ssh, sshCredentials, this).then(
         (res) => {
           const targetDatasetFormControl = this.entityWizard.formArray.get([0]).get('target_dataset');
           const prevErrors = targetDatasetFormControl.errors;

@@ -10,7 +10,7 @@ import { ShellService } from 'app/services';
   selector: 'app-vmserial-shell',
   template: '<app-terminal [conf]="this"></app-terminal>',
 })
-export class VMSerialShellComponent implements TerminalConfiguration {
+export class VmSerialShellComponent implements TerminalConfiguration {
   protected pk: string;
 
   constructor(

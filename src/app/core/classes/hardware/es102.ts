@@ -9,7 +9,7 @@ interface LayoutColumn {
   iomIndex: number;
 }
 
-export class ES102 extends Chassis {
+export class Es102 extends Chassis {
   constructor() {
     super();
     this.model = 'es102';

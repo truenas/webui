@@ -2,7 +2,7 @@ import { Container, Transform } from 'pixi.js';
 import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
 
-export class ES60 extends Chassis {
+export class Es60 extends Chassis {
   constructor() {
     super();
     this.model = 'es60';

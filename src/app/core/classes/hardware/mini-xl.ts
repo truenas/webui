@@ -2,7 +2,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
 
-export class MINIXL extends Chassis {
+export class MiniXl extends Chassis {
   constructor() {
     super();
     this.model = 'mini-xl';

@@ -17,7 +17,7 @@ import { WebSocketService } from 'app/services';
   selector: 'ups-edit',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class ServiceUPSComponent implements FormConfiguration {
+export class ServiceUpsComponent implements FormConfiguration {
   protected upsDriverField: FormComboboxConfig;
   private upsDrivers: Choices = {};
   private upsDriverKey: string;

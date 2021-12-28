@@ -78,8 +78,21 @@ module.exports = {
         '@typescript-eslint/naming-convention': [
           'error',
           {
-            selector: ['typeLike', 'enumMember'],
+            selector: ['typeLike'],
+            format: ['StrictPascalCase'],
+            filter: {
+              // Allow two letter combinations at the start, like VDev
+              regex: '^[A-Z][A-Z]',
+              match: false,
+            }
+          },
+          {
+            selector: ['typeLike'],
             format: ['PascalCase'],
+          },
+          {
+            selector: ['enumMember'],
+            format: ['StrictPascalCase'],
           },
           {
             selector: 'function',

@@ -30,7 +30,7 @@ import { ModalService } from 'app/services/modal.service';
   selector: 'app-smb-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SMBFormComponent implements FormConfiguration {
+export class SmbFormComponent implements FormConfiguration {
   queryCall = 'sharing.smb.query' as const;
   addCall = 'sharing.smb.create' as const;
   editCall = 'sharing.smb.update' as const;

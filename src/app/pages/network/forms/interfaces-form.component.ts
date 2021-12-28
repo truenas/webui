@@ -7,7 +7,7 @@ import * as ipRegex from 'ip-regex';
 import * as _ from 'lodash';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import {
-  LACPDURate, LinkAggregationProtocol, NetworkInterfaceAliasType, NetworkInterfaceType, XmitHashPolicy,
+  LacpduRate, LinkAggregationProtocol, NetworkInterfaceAliasType, NetworkInterfaceType, XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import helptext from 'app/helptext/network/interfaces/interfaces-form';
@@ -403,7 +403,7 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
       for (const key in choices) {
         lacpduRateFieldConfig.options.push({ label: key, value: key });
       }
-      this.entityForm.formGroup.get('lacpdu_rate').setValue(LACPDURate.Slow);
+      this.entityForm.formGroup.get('lacpdu_rate').setValue(LacpduRate.Slow);
     });
   }
 
