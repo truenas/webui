@@ -7,7 +7,7 @@
       <strong class="chart-name">{{ catalogApp.name }}</strong>
       <span class="version"> {{ catalogApp.human_version }}</span>
       <span class="value">{{ appStatus() | translate }}</span>
-      <mat-icon *ngIf="getUpdateVersionTooltip()" class="version-tooltip" matTooltip="{{ getUpdateVersionTooltip() }}">info</mat-icon>
+      <mat-icon *ngIf="getUpdateVersionTooltip()" class="version-tooltip" [matTooltip]="getUpdateVersionTooltip()">info</mat-icon>
     </div>
   </div>
   <div class="ports">
@@ -53,7 +53,7 @@
           {{ 'Container Images' | translate }}
         </mat-panel-title>
       </mat-expansion-panel-header>
-      <div class="expansion-content">
+      <div *ngIf="catalogApp.resources?.container_images" class="expansion-content">
         <div
           *ngFor="let containerImage of catalogApp.resources.container_images | cast | keyvalue; let i = index"
           class="detail-row"
@@ -67,14 +67,14 @@
       </div>
     </mat-expansion-panel>
 
-    <mat-expansion-panel #eventsPannel>
+    <mat-expansion-panel #eventsPanel>
       <mat-expansion-panel-header>
         <mat-panel-title>
           {{ 'Application Events' | translate }}
         </mat-panel-title>
       </mat-expansion-panel-header>
       <div class="expansion-content">
-        <div *ngIf="chartEvents.length > 0;else no_event">
+        <div *ngIf="chartEvents.length > 0; else no_event">
           <div fxLayout="row" fxLayoutAlign="start start" *ngFor="let event of chartEvents; let i = index" class="detail-row" [ngClass]="{'row-dark': i%2==0}">
             <div class="event-time">{{ event.first_timestamp?.$date | date: 'yyyy-MM-dd H:mm:ss' }}</div>
             <div class="event-message">{{ event.message }}</div>
