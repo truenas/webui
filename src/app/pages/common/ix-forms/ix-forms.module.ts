@@ -21,6 +21,7 @@ import { IxSlideInComponent } from 'app/pages/common/ix-forms/components/ix-slid
 import { IxTextareaComponent } from 'app/pages/common/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxUserComboboxComponent } from 'app/pages/common/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { IxFormatterService } from 'app/pages/common/ix-forms/services/ix-formatter.service';
+import IxUsersService from 'app/pages/common/ix-forms/services/ix-users.service';
 import IxValidatorsService from 'app/pages/common/ix-forms/services/ix-validators.service';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
@@ -72,6 +73,7 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
   providers: [
     IxFormatterService,
     IxValidatorsService,
+    IxUsersService,
   ],
 })
 export class IxFormsModule {}

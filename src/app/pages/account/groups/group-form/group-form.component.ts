@@ -7,11 +7,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import IxUsersService from 'app/pages/common/ix-forms/services/ix-users.service';
 import { UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -23,9 +26,19 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class GroupFormComponent {
   private editingGroup: Group;
+  userComboOptions: Observable<Option[]> = this.ixUsersService.loadUsers();
   get isNew(): boolean {
     return !this.editingGroup;
   }
+  currentUserOffset = 0;
+  usersFilter: (options: Option[], query: string) => Observable<Option[]> =
+  (filteredOptions: Option[], query: string) => {
+    return this.ixUsersService.loadUsers(query, this.currentUserOffset)
+      .pipe(map((options: Option[]) => {
+        return this.currentUserOffset === 0 ? options
+          : filteredOptions.concat(options);
+      }));
+  };
   get title(): string {
     return this.isNew ? this.translate.instant('Add Group') : this.translate.instant('Edit Group');
   }
@@ -37,6 +50,7 @@ export class GroupFormComponent {
     sudo: [false],
     smb: [false],
     allowDuplicateGid: [false],
+    userCombo: [''],
   });
 
   readonly tooltips = {
@@ -54,6 +68,7 @@ export class GroupFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
+    private ixUsersService: IxUsersService,
   ) {}
 
   /**
