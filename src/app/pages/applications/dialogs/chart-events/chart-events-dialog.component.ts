@@ -20,7 +20,7 @@ import { LocaleService } from 'app/services/locale.service';
   templateUrl: './chart-events-dialog.component.html',
 })
 export class ChartEventsDialogComponent implements OnInit {
-  @ViewChild('eventsPannel', { static: true }) eventsPannel: MatExpansionPanel;
+  @ViewChild('eventsPanel', { static: true }) eventsPanel: MatExpansionPanel;
   catalogApp: ChartRelease;
   containerImages: { [key: string]: ChartContainerImage } = {};
   chartEvents: ChartReleaseEvent[] = [];
@@ -72,7 +72,7 @@ export class ChartEventsDialogComponent implements OnInit {
     return label;
   }
 
-  // return the tooltip string for the version availabe to update
+  // return the tooltip string for the version available to update
   getUpdateVersionTooltip(): string {
     let label: string;
     if (this.catalogApp.update_available) {
@@ -92,7 +92,7 @@ export class ChartEventsDialogComponent implements OnInit {
     this.appService.getChartReleaseEvents(this.catalogApp.name).pipe(untilDestroyed(this)).subscribe((evt) => {
       this.loader.close();
       this.chartEvents = evt.reverse();
-      this.eventsPannel.open();
+      this.eventsPanel.open();
     });
   }
 }

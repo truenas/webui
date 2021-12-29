@@ -95,7 +95,7 @@ export class FormChipComponent implements Field, OnInit {
     } else {
       value = value.toLowerCase();
       const searchOptions: Option[] = [];
-      this.config.options.forEach((option) => {
+      this.config.options?.forEach((option) => {
         if (!value || option.label.toLowerCase().includes(value)) {
           searchOptions.push(option);
         }
