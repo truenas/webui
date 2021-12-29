@@ -19,6 +19,5 @@ import { AppLoaderService } from './app-loader.service';
   ],
   providers: [AppLoaderService],
   declarations: [AppLoaderComponent],
-  entryComponents: [AppLoaderComponent],
 })
 export class AppLoaderModule { }

@@ -116,7 +116,6 @@ import { ZvolWizardComponent } from './volumes/zvol/zvol-wizard/zvol-wizard.comp
     SelectPresetModalComponent,
   ],
   exports: [VolumesListControlsComponent],
-  entryComponents: [SnapshotDetailsComponent, UnlockDialogComponent],
   providers: [
     UserService,
     StorageService,

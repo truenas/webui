@@ -16,6 +16,5 @@ import { AppConfirmService } from './app-confirm.service';
   exports: [AppConfirmComponent],
   declarations: [AppConfirmComponent],
   providers: [AppConfirmService],
-  entryComponents: [AppConfirmComponent],
 })
 export class AppConfirmModule { }

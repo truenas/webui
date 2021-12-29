@@ -108,6 +108,5 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
   providers: [
     TranslateService,
   ],
-  entryComponents: [QrDialogComponent],
 })
 export class SystemModule {}

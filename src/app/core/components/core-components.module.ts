@@ -73,7 +73,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     FormatDateTimePipe,
     CopyButtonComponent,
   ],
-  exports: [ // Modules and Components here
+  exports: [
     CommonModule,
     MaterialModule,
     OverlayModule,
@@ -97,22 +97,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     TextLimiterTooltipComponent,
     CopyButtonComponent,
     FormatDateTimePipe,
-  ],
-  entryComponents: [
-    ContextMenuComponent,
-    ViewComponent,
-    ViewChartComponent,
-    ViewChartAreaComponent,
-    ViewChartDonutComponent,
-    ViewChartGaugeComponent,
-    ViewChartBarComponent,
-    ViewChartPieComponent,
-    ViewChartLineComponent,
-    ViewControlComponent,
-    ViewButtonComponent,
-    ViewControllerComponent,
-    TextLimiterTooltipComponent,
-    CopyButtonComponent,
   ],
   providers: [
     StorageService,

@@ -47,18 +47,12 @@ import { DirectoryServicesMonitorComponent } from './components/common/dialog/di
 import { ResilverProgressDialogComponent } from './components/common/dialog/resilver-progress/resilver-progress.component';
 import { TruecommandComponent } from './components/common/dialog/truecommand/truecommand.component';
 import { ConfirmDialogComponent } from './pages/common/confirm-dialog/confirm-dialog.component';
-import { EntityDialogComponent } from './pages/common/entity/entity-dialog/entity-dialog.component';
-import { FormCheckboxComponent } from './pages/common/entity/entity-form/components/form-checkbox/form-checkbox.component';
-import { FormInputComponent } from './pages/common/entity/entity-form/components/form-input/form-input.component';
-import { FormParagraphComponent } from './pages/common/entity/entity-form/components/form-paragraph/form-paragraph.component';
-import { FormSelectComponent } from './pages/common/entity/entity-form/components/form-select/form-select.component';
 import { EntityModule } from './pages/common/entity/entity.module';
 import { ErrorDialogComponent } from './pages/common/error-dialog/error-dialog.component';
 import { GeneralDialogComponent } from './pages/common/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from './pages/common/info-dialog/info-dialog.component';
 import { PasswordDialogComponent } from './pages/common/password-dialog/password-dialog.component';
 import { SelectDialogComponent } from './pages/common/select-dialog/select-dialog.component';
-import { AppLoaderComponent } from './services/app-loader/app-loader.component';
 import { AppLoaderModule } from './services/app-loader/app-loader.module';
 import { AppLoaderService } from './services/app-loader/app-loader.service';
 import { AuthService } from './services/auth/auth.service';
@@ -147,27 +141,6 @@ import { WebSocketService } from './services/ws.service';
   ],
   bootstrap: [
     AppComponent,
-  ],
-  entryComponents: [
-    AppLoaderComponent,
-    ConfirmDialogComponent,
-    PasswordDialogComponent,
-    ErrorDialogComponent,
-    InfoDialogComponent,
-    GeneralDialogComponent,
-    AboutDialogComponent,
-    TruecommandComponent,
-    DirectoryServicesMonitorComponent,
-    ConsolePanelDialogComponent,
-    DownloadKeyDialogComponent,
-    ResilverProgressDialogComponent,
-    SelectDialogComponent,
-    EntityDialogComponent,
-    FormCheckboxComponent,
-    FormInputComponent,
-    FormSelectComponent,
-    FormParagraphComponent,
-    JobsManagerComponent,
   ],
 })
 export class AppModule {
