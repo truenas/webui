@@ -7,10 +7,11 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { User } from 'app/interfaces/user.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
@@ -26,18 +27,34 @@ import { IxSlideInService } from 'app/services/ix-slide-in.service';
 })
 export class GroupFormComponent {
   private editingGroup: Group;
-  userComboOptions: Observable<Option[]> = this.ixUsersService.loadUsers();
+  userComboOptions: Observable<Option[]> = this.ixUsersService.loadUsers().pipe(
+    tap((options) => {
+      this.currentUserOffset = options.length;
+    }),
+  );
   get isNew(): boolean {
     return !this.editingGroup;
   }
   currentUserOffset = 0;
   usersFilter: (options: Option[], query: string) => Observable<Option[]> =
   (filteredOptions: Option[], query: string) => {
-    return this.ixUsersService.loadUsers(query, this.currentUserOffset)
-      .pipe(map((options: Option[]) => {
-        return this.currentUserOffset === 0 ? options
-          : filteredOptions.concat(options);
+    return this.ixUsersService.loadUsers(query)
+      .pipe(tap((options: Option[]) => {
+        this.currentUserOffset = options.length;
       }));
+  };
+  userQueryResToOptions: (users: User[]) => Option[] = (users): Option[] => users.map((user) => {
+    return { label: user.username, value: user.username };
+  });
+
+  scrollEnd: (filterValue: string) => Observable<Option[]> =
+  (filterValue: string = '') => {
+    return this.ixUsersService.loadUsers(filterValue, 50)
+      .pipe(
+        tap((options) => {
+          this.currentUserOffset = this.currentUserOffset + options.length;
+        }),
+      );
   };
   get title(): string {
     return this.isNew ? this.translate.instant('Add Group') : this.translate.instant('Edit Group');
@@ -69,6 +86,7 @@ export class GroupFormComponent {
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
     private ixUsersService: IxUsersService,
+    private userService: UserService,
   ) {}
 
   /**

@@ -35,6 +35,8 @@
         <ix-combobox
           formControlName="userCombo"
           [label]="'User Combo'"
+          [filter]="usersFilter"
+          (scrollEnd)="scrollEnd($event)"
           [options]="userComboOptions"
         ></ix-combobox>
       </ix-fieldset>
