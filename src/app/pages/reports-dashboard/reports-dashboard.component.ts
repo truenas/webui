@@ -325,7 +325,7 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
           disabled: false,
           multiple: true,
           options: this.diskDevices, // eg. [{label:'ada0',value:'ada0'},{label:'ada1', value:'ada1'}],
-          customTriggerValue: 'Select Disks',
+          customTriggerValue: this.translate.instant('Select Disks'),
           value: this.diskDevices?.length && selectedDisks
             ? this.diskDevices.filter((device) => selectedDisks.includes(device.value as string))
             : null,
