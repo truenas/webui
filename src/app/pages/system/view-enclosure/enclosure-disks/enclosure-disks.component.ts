@@ -108,7 +108,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   }
 
   private _expanders: EnclosureElement[] | EnclosureElementsGroup[] = [];
-  get expanders(): EnclosureElement[] | EnclosureElementsGroup[] {
+  get expanders(): (EnclosureElement | EnclosureElementsGroup)[] {
     if (!this.system.platform.includes('MINI') && this.system.enclosures && this.selectedEnclosure.disks[0]) {
       const enclosureNumber = Number(this.selectedEnclosure.disks[0].enclosure.number);
       return this.system.getEnclosureExpanders(enclosureNumber);

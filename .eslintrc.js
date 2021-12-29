@@ -138,6 +138,7 @@ module.exports = {
         "@typescript-eslint/no-misused-promises": "off",
 
         // Other temporary disables
+        "@typescript-eslint/no-unsafe-argument": "off",
         "@typescript-eslint/dot-notation": ["off", { allowIndexSignaturePropertyAccess: true }],
 
         // Other overwrites
