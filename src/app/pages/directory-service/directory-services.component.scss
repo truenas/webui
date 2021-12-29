@@ -1,8 +1,6 @@
 @import 'cssvars';
 
 .everything-disabled {
-  text-align: center;
-
   button {
     margin-right: 10px;
 
@@ -35,6 +33,10 @@
     button {
       margin-left: 5px;
     }
+  }
+
+  mat-divider.header-divider {
+    margin: 12px;
   }
 }
 

@@ -1,5 +1,5 @@
 <ng-container [ngSwitch]="true">
-  <div *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" class="everything-disabled">
+  <div fxLayout="column" fxLayoutAlign="center center" *ngSwitchCase="!isActiveDirectoryEnabled && !isLdapEnabled" class="everything-disabled">
     <entity-empty [conf]="noDirectoryServicesConfig"></entity-empty>
     <div class="actions">
       <button mat-button (click)="onCardButtonPressed(DirectoryServicesCardId.ActiveDirectory)">
