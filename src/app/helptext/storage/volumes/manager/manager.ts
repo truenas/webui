@@ -40,6 +40,7 @@ export default {
  of vdevs in a pool.'),
 
   manager_encryption_message: T('This type of encryption is for users storing sensitive data.\
+ Encrypted disks can be removed from the pool and reused or disposed of without being erased.\
  iXsystems, inc. cannot be held responsible for any lost or unrecoverable data as a consequence\
  of using this feature.'),
 
