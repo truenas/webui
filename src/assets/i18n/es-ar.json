@@ -741,6 +741,7 @@
   "Searches": "",
   "Security Settings": "",
   "Select Client Certificate": "",
+  "Select Disks": "",
   "Select IP addresses to listen to for NFS requests. Leave empty for NFS to listen to all available addresses.  Static IPs need to be configured on the interface to appear on the list.": "",
   "Select Path": "",
   "Select Pool": "",

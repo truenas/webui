@@ -1025,6 +1025,7 @@
   "Secure data within this dataset. Data is unusable until      unlocked with an encryption key or passphrase.": "",
   "Security Settings": "",
   "Select Client Certificate": "",
+  "Select Disks": "",
   "Select Groups Cached by this System": "",
   "Select IP addresses to listen to for NFS requests. Leave empty for NFS to listen to all available addresses.  Static IPs need to be configured on the interface to appear on the list.": "",
   "Select Users Cached by this System": "",
