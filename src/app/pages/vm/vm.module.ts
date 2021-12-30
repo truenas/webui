@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
+import { VmSerialShellComponent } from 'app/pages/vm/vm-serial-shell/vm-serial-shell.component';
 import {
   VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
@@ -16,25 +17,24 @@ import { DeviceAddComponent } from './devices/device-add/device-add.component';
 import { DeviceEditComponent } from './devices/device-edit/device-edit.component';
 import { DeviceListComponent } from './devices/device-list/device-list.component';
 import { VmFormComponent } from './vm-form/vm-form.component';
-import { VMListComponent } from './vm-list/vm-list.component';
-import { VMSerialShellComponent } from './vm-serial-shell/vmserial-shell.component';
-import { VMWizardComponent } from './vm-wizard/vm-wizard.component';
+import { VmListComponent } from './vm-list/vm-list.component';
+import { VmWizardComponent } from './vm-wizard/vm-wizard.component';
 import { routing } from './vm.routing';
 
 @NgModule({
   imports: [
     CoreComponents,
     EntityModule, CommonModule, FormsModule, TranslateModule,
-    ReactiveFormsModule, routing, MaterialModule, FlexLayoutModule, // , BrowserModule
+    ReactiveFormsModule, routing, MaterialModule, FlexLayoutModule,
     TerminalModule,
   ],
   declarations: [
-    VMListComponent,
+    VmListComponent,
     VmFormComponent,
     DeviceListComponent,
     DeviceEditComponent,
-    VMWizardComponent,
-    VMSerialShellComponent,
+    VmWizardComponent,
+    VmSerialShellComponent,
     DeviceAddComponent,
   ],
   providers: [VmService, EntityFormService, NetworkService, SystemGeneralService, MessageService],

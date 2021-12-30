@@ -1,6 +1,6 @@
 export enum TransportMode {
   Legacy = 'LEGACY',
   Local = 'LOCAL',
-  SSH = 'SSH',
+  Ssh = 'SSH',
   Netcat = 'SSH+NETCAT',
 }

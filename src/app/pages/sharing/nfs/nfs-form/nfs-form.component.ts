@@ -26,7 +26,7 @@ import {
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [NetworkService],
 })
-export class NFSFormComponent implements FormConfiguration {
+export class NfsFormComponent implements FormConfiguration {
   queryCall = 'sharing.nfs.query' as const;
   editCall = 'sharing.nfs.update' as const;
   addCall = 'sharing.nfs.create' as const;
@@ -436,15 +436,15 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  updateMapAllGroupSearchOptions(value = '', parent: NFSFormComponent): void {
+  updateMapAllGroupSearchOptions(value = '', parent: NfsFormComponent): void {
     parent.updateGroupSearchOptions(value, parent, 'mapall_group');
   }
 
-  updateMapRootGroupSearchOptions(value = '', parent: NFSFormComponent): void {
+  updateMapRootGroupSearchOptions(value = '', parent: NfsFormComponent): void {
     parent.updateGroupSearchOptions(value, parent, 'maproot_group');
   }
 
-  updateGroupSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
+  updateGroupSearchOptions(value = '', parent: NfsFormComponent, field: string): void {
     parent.userService
       .groupQueryDsCache(value)
       .pipe(untilDestroyed(parent))
@@ -454,15 +454,15 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  updateMapAllUserSearchOptions(value = '', parent: NFSFormComponent): void {
+  updateMapAllUserSearchOptions(value = '', parent: NfsFormComponent): void {
     parent.updateUserSearchOptions(value, parent, 'mapall_user');
   }
 
-  updateMapRootUserSearchOptions(value = '', parent: NFSFormComponent): void {
+  updateMapRootUserSearchOptions(value = '', parent: NfsFormComponent): void {
     parent.updateUserSearchOptions(value, parent, 'maproot_user');
   }
 
-  updateUserSearchOptions(value = '', parent: NFSFormComponent, field: string): void {
+  updateUserSearchOptions(value = '', parent: NfsFormComponent, field: string): void {
     parent.userService
       .userQueryDsCache(value)
       .pipe(untilDestroyed(parent))
@@ -472,7 +472,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  loadMoreUserOptions(length: number, parent: NFSFormComponent, searchText: string, fieldConfig: FieldConfig): void {
+  loadMoreUserOptions(length: number, parent: NfsFormComponent, searchText: string, fieldConfig: FieldConfig): void {
     parent.userService
       .userQueryDsCache(searchText, length)
       .pipe(untilDestroyed(parent))
@@ -489,7 +489,7 @@ export class NFSFormComponent implements FormConfiguration {
       });
   }
 
-  loadMoreGroupOptions(length: number, parent: NFSFormComponent, searchText: string, fieldConfig: FieldConfig): void {
+  loadMoreGroupOptions(length: number, parent: NfsFormComponent, searchText: string, fieldConfig: FieldConfig): void {
     parent.userService
       .groupQueryDsCache(searchText, false, length)
       .pipe(untilDestroyed(parent))

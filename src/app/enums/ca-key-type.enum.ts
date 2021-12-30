@@ -1,4 +1,4 @@
 export enum CertificateKeyType {
-  RSA = 'RSA',
-  EC = 'EC',
+  Rsa = 'RSA',
+  Ec = 'EC',
 }

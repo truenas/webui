@@ -5,9 +5,9 @@ import { MediaObserver } from '@angular/flex-layout';
 import { DomSanitizer } from '@angular/platform-browser';
 import { TranslateService } from '@ngx-translate/core';
 import { Point } from 'pixi.js';
-import { MINI } from 'app/core/classes/hardware/mini';
-import { MINIX } from 'app/core/classes/hardware/mini-x';
-import { MINIXLPLUS } from 'app/core/classes/hardware/mini-xl-plus';
+import { Mini } from 'app/core/classes/hardware/mini';
+import { MiniX } from 'app/core/classes/hardware/mini-x';
+import { MiniXlPlus } from 'app/core/classes/hardware/mini-xl-plus';
 import { EnclosureMetadata } from 'app/core/classes/system-profiler';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -50,14 +50,14 @@ export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {
     switch (enclosure.model) {
       case 'FREENAS-MINI-3.0-E':
       case 'FREENAS-MINI-3.0-E+':
-        this.chassis = new MINI();
+        this.chassis = new Mini();
         break;
       case 'FREENAS-MINI-3.0-X':
       case 'FREENAS-MINI-3.0-X+':
-        this.chassis = new MINIX();
+        this.chassis = new MiniX();
         break;
       case 'FREENAS-MINI-3.0-XL+':
-        this.chassis = new MINIXLPLUS();
+        this.chassis = new MiniXlPlus();
         break;
       default:
         this.controllerEvent$.next({

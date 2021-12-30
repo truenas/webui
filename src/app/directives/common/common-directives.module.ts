@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { AppAccordionDirective } from './app-accordion.directive';
 import { LetDirective } from './app-let.directive';
 import { EqualValidatorDirective } from './equal-validator.directive';
-import { IXAutoDirective } from './ix-auto.directive';
+import { IxAutoDirective } from './ix-auto.directive';
 import { LazyViewerDirective } from './lazy-viewer/lazy-viewer.directive';
 
 @NgModule({
@@ -14,14 +14,14 @@ import { LazyViewerDirective } from './lazy-viewer/lazy-viewer.directive';
     EqualValidatorDirective,
     AppAccordionDirective,
     LazyViewerDirective,
-    IXAutoDirective,
+    IxAutoDirective,
     LetDirective,
   ],
   exports: [
     EqualValidatorDirective,
     AppAccordionDirective,
     LazyViewerDirective,
-    IXAutoDirective,
+    IxAutoDirective,
     LetDirective,
   ],
 })

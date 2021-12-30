@@ -27,7 +27,7 @@ import {
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [SystemGeneralService],
 })
-export class ServiceFTPComponent implements FormConfiguration, OnInit {
+export class ServiceFtpComponent implements FormConfiguration, OnInit {
   editCall = 'ftp.update' as const;
   queryCall = 'ftp.config' as const;
   routeSuccess: string[] = ['services'];

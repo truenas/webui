@@ -1,7 +1,7 @@
 import { Chassis } from './chassis';
 import { ChassisView } from './chassis-view';
 
-export class ES12 extends Chassis {
+export class Es12 extends Chassis {
   constructor() {
     super();
     this.model = 'es12';

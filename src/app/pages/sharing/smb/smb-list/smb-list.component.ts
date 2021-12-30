@@ -9,7 +9,7 @@ import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
 import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/pages/common/entity/utils';
-import { SMBFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
+import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';
 import { DialogService, WebSocketService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 
@@ -18,7 +18,7 @@ import { ModalService } from 'app/services/modal.service';
   selector: 'app-smb-list',
   template: '<entity-table [title]="title" [conf]="this"></entity-table>',
 })
-export class SMBListComponent implements EntityTableConfig {
+export class SmbListComponent implements EntityTableConfig {
   title = 'Samba';
   queryCall = 'sharing.smb.query' as const;
   updateCall = 'sharing.smb.update' as const;
@@ -80,7 +80,7 @@ export class SMBListComponent implements EntityTableConfig {
   }
 
   doAdd(id?: number): void {
-    this.modalService.openInSlideIn(SMBFormComponent, id);
+    this.modalService.openInSlideIn(SmbFormComponent, id);
   }
 
   doEdit(id: number): void {

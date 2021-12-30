@@ -135,7 +135,7 @@ export class ReplicationFormComponent implements FormConfiguration {
           options: [
             {
               label: this.translate.instant('SSH'),
-              value: TransportMode.SSH,
+              value: TransportMode.Ssh,
             },
             {
               label: this.translate.instant('SSH+NETCAT'),
@@ -146,7 +146,7 @@ export class ReplicationFormComponent implements FormConfiguration {
               value: TransportMode.Local,
             },
           ],
-          value: TransportMode.SSH,
+          value: TransportMode.Ssh,
         },
         {
           type: 'input',
@@ -336,15 +336,15 @@ export class ReplicationFormComponent implements FormConfiguration {
             },
             {
               label: this.translate.instant('lz4 (fastest)'),
-              value: CompressionType.LZ4,
+              value: CompressionType.Lz4,
             },
             {
               label: this.translate.instant('pigz (all rounder)'),
-              value: CompressionType.PIGZ,
+              value: CompressionType.Pigz,
             },
             {
               label: this.translate.instant('plzip (best compression)'),
-              value: CompressionType.PLZIP,
+              value: CompressionType.PlZip,
             },
           ],
           value: CompressionType.Disabled,
@@ -354,7 +354,7 @@ export class ReplicationFormComponent implements FormConfiguration {
               when: [
                 {
                   name: 'transport',
-                  value: TransportMode.SSH,
+                  value: TransportMode.Ssh,
                 },
               ],
             },
@@ -373,7 +373,7 @@ export class ReplicationFormComponent implements FormConfiguration {
               when: [
                 {
                   name: 'transport',
-                  value: TransportMode.SSH,
+                  value: TransportMode.Ssh,
                 },
               ],
             },

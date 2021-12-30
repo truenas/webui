@@ -16,8 +16,7 @@ import {
   template: ' <entity-form [conf]="this"></entity-form>',
   providers: [IscsiService, IdmapService],
 })
-
-export class ServiceSNMPComponent implements FormConfiguration {
+export class ServiceSnmpComponent implements FormConfiguration {
   updateCall = 'snmp.update' as const;
   queryCall = 'snmp.config' as const;
   routeSuccess: string[] = ['services'];

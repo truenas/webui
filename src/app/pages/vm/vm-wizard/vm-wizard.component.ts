@@ -49,7 +49,7 @@ import { VmService } from 'app/services/vm.service';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [VmService],
 })
-export class VMWizardComponent implements WizardConfiguration {
+export class VmWizardComponent implements WizardConfiguration {
   addWsCall = 'vm.create' as const;
   summary: Record<string, unknown> = {};
   isLinear = true;
@@ -968,12 +968,12 @@ export class VMWizardComponent implements WizardConfiguration {
     }
   }
 
-  getFormControlFromFieldName(fieldName: string, parent: VMWizardComponent = this): FormControl {
+  getFormControlFromFieldName(fieldName: string, parent: VmWizardComponent = this): FormControl {
     return parent.entityWizard.formArray.get([parent.getFormArrayIndexFromFieldName(fieldName, parent)])
       .get(fieldName) as FormControl;
   }
 
-  getFormArrayIndexFromFieldName(fieldName: string, parent: VMWizardComponent = this): number {
+  getFormArrayIndexFromFieldName(fieldName: string, parent: VmWizardComponent = this): number {
     return parent.wizardConfig.findIndex((conf: FormConfiguration) => {
       return conf.fieldConfig.findIndex((fieldConf: FieldConfig) => fieldConf.name === fieldName) >= 0;
     });

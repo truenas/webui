@@ -30,7 +30,7 @@ import {
   WebSocketService, StorageService, AppLoaderService, DialogService, VmService, NetworkService, SystemGeneralService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
-import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
+import { VmWizardComponent } from '../vm-wizard/vm-wizard.component';
 
 @UntilDestroy()
 @Component({
@@ -39,7 +39,7 @@ import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
   styleUrls: ['./vm-list.component.scss'],
   providers: [VmService, MessageService],
 })
-export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit {
+export class VmListComponent implements EntityTableConfig<VirtualMachineRow>, OnInit {
   title = this.translate.instant('Virtual Machines');
   queryCall = 'vm.query' as const;
   wsDelete = 'vm.delete' as const;
@@ -654,6 +654,6 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   doAdd(): void {
-    this.modalService.openInSlideIn(VMWizardComponent);
+    this.modalService.openInSlideIn(VmWizardComponent);
   }
 }

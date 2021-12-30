@@ -10,10 +10,10 @@ import { IscsiWizardComponent } from './iscsi/iscsi-wizard/iscsi-wizard.componen
 import { IscsiComponent } from './iscsi/iscsi.component';
 import { PortalFormComponent } from './iscsi/portal/portal-form/portal-form.component';
 import { TargetFormComponent } from './iscsi/target/target-form/target-form.component';
-import { NFSListComponent } from './nfs/nfs-list/nfs-list.component';
-import { SMBAclComponent } from './smb/smb-acl/smb-acl.component';
-import { SMBFormComponent } from './smb/smb-form/smb-form.component';
-import { SMBListComponent } from './smb/smb-list/smb-list.component';
+import { NfsListComponent } from './nfs/nfs-list/nfs-list.component';
+import { SmbAclComponent } from './smb/smb-acl/smb-acl.component';
+import { SmbFormComponent } from './smb/smb-form/smb-form.component';
+import { SmbListComponent } from './smb/smb-list/smb-list.component';
 import { WebdavFormComponent } from './webdav/webdav-form/webdav-form.component';
 import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component';
 
@@ -32,7 +32,7 @@ export const routes: Routes = [
         data: { title: 'NFS', breadcrumb: 'NFS', icon: 'share' },
         children: [{
           path: '',
-          component: NFSListComponent,
+          component: NfsListComponent,
           data: { title: 'NFS', breadcrumb: 'NFS' },
         }],
       },
@@ -57,19 +57,19 @@ export const routes: Routes = [
         data: { title: 'SMB', breadcrumb: 'SMB', icon: 'share' },
         children: [{
           path: '',
-          component: SMBListComponent,
+          component: SmbListComponent,
           data: { title: 'SMB', breadcrumb: 'SMB' },
         }, {
           path: 'add',
-          component: SMBFormComponent,
+          component: SmbFormComponent,
           data: { title: 'Add', breadcrumb: 'Add' },
         }, {
           path: 'edit/:pk',
-          component: SMBFormComponent,
+          component: SmbFormComponent,
           data: { title: 'Edit', breadcrumb: 'Edit' },
         }, {
           path: 'acl/:pk',
-          component: SMBAclComponent,
+          component: SmbAclComponent,
           data: { title: T('Share ACL'), breadcrumb: T('Share ACL') },
         }],
       }, {

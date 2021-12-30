@@ -8,7 +8,7 @@ import { CoreEvent } from 'app/interfaces/events';
 import { Theme } from 'app/services/theme/theme.service';
 import { ChassisView } from './chassis-view';
 
-export class VDevLabelsSVG {
+export class VDevLabelsSvg {
   /*
   * We create an SVG layer on top of the PIXI canvas
   * to achieve crisper lines. Apparently drawing
