@@ -2473,6 +2473,7 @@
   "Select Client Certificate": "",
   "Select Configuration File": "",
   "Select Disk Type": "",
+  "Select Disks": "",
   "Select Existing zvol": "",
   "Select Groups Cached by this System": "",
   "Select IP addresses to listen to for NFS requests. Leave empty for NFS to listen to all available addresses.  Static IPs need to be configured on the interface to appear on the list.": "",
