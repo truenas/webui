@@ -48,6 +48,7 @@ export default {
     { label: 'local' },
   ],
 
+  tls_server_uri_placeholder: T('TLS Server URI'),
   certificate_placeholder: T('Certificate'),
   certificate_tooltip: T('Use an SSL certificate that was created or imported in \
  <b>System > Certificates</b> for secure S3 connections.'),
