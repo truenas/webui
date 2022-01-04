@@ -37,6 +37,7 @@ describe('ServiceS3Component', () => {
           storage_path: '/mnt/s3/',
           browser: true,
           certificate: 2,
+          tls_server_uri: 'test',
         } as S3Config),
         mockCall('s3.bindip_choices', {
           '0.0.0.0': '0.0.0.0',
@@ -83,6 +84,7 @@ describe('ServiceS3Component', () => {
       Disk: '/mnt/s3/',
       'Secret Key': '12345678',
       Certificate: 'Very Secure',
+      'TLS Server Uri': 'test',
     });
   });
 
@@ -110,6 +112,7 @@ describe('ServiceS3Component', () => {
       Disk: '/mnt/new',
       'Enable Browser': false,
       Certificate: 'Default',
+      'TLS Server Uri': 'test',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -123,6 +126,7 @@ describe('ServiceS3Component', () => {
       certificate: 1,
       secret_key: '12345678',
       storage_path: '/mnt/new',
+      tls_server_uri: 'test',
     }]);
   });
 });

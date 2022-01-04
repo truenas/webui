@@ -7,6 +7,7 @@ export interface S3Config {
   id: number;
   secret_key: string;
   storage_path: string;
+  tls_server_uri: string;
 }
 
 export type S3ConfigUpdate = Omit<S3Config, 'id'>;
