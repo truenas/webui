@@ -100,19 +100,20 @@ def the_following_should_appear_reload_the_page_for_the_license_to_take_effect(d
 @then('Click reload now')
 def click_reload_now(driver):
     """Click reload now."""
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__RELOAD NOW"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__RELOAD NOW"]').click()
 
 
 @then(parsers.parse('"{agreement}" should appear'))
 def end_user_license_agreement_truenas_should_appear(driver, agreement):
     """"End User License Agreement - TrueNAS" should appear."""
-    assert wait_on_element(driver, 10, f'//h1[contains(.,"{agreement}")]')
+    assert wait_on_element(driver, 15, f'//h1[contains(.,"{agreement}")]')
 
 
 @then('Click Agree')
 def click_agree(driver):
     """Click Agree."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__I AGREE"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__I AGREE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__I AGREE"]').click()
     if wait_on_element(driver, 2, '//div[contains(.,"Looking for help?")]'):
         assert wait_on_element(driver, 10, '//button[@ix-auto="button__CLOSE"]')
@@ -122,6 +123,11 @@ def click_agree(driver):
 @then('We should be returned to license information')
 def we_should_be_returned_to_license_information(driver):
     """We should be returned to license information."""
+    if is_element_present(driver, '//li[contains(.,"Dashboard")]'):
+        assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__System"]', 'clickable')
+        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__System"]').click()
+        assert wait_on_element(driver, 7, '//mat-list-item[@ix-auto="option__Reporting"]', 'clickable')
+        driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Support"]').click()
     assert wait_on_element(driver, 7, '//p[contains(.,"License Information")]')
 
 
