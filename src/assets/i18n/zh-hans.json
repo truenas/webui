@@ -1,5 +1,7 @@
 {
   "": "",
+  "Browse to the path to be copied. Linux file path limits apply. Other operating systems can have different limits which might affect how they can be used as sources or destinations.": "",
+  "Enter the device name of the interface. This cannot be changed after the interface is created.": "",
   "Select Disks": "",
   " Check Notifications for more details.": " 检查通知以获取更多详细信息。",
   " Download Updates": " 下载更新",
@@ -515,7 +517,6 @@
   "Browse to the keytab file to upload.": "浏览要上传的密钥表文件。",
   "Browse to the locally saved configuration file.": "浏览本地保存的配置文件。",
   "Browse to the operating system installer image file.": "浏览操作系统安装镜像文件。",
-  "Browse to the path to be copied. FreeBSD  file path limits apply. Other operating systems can have different  limits which might affect how they can be used as sources or  destinations.": "浏览要复制的路径。FreeBSD文件路径限制适用。其他操作系统可能有不同的限制，可能会影响它们如何用作源或目标。",
   "Browse to the pool or dataset to share.": "浏览要共享的池或数据集。",
   "Browse to the pool or dataset to store received  data.": "浏览池或数据集以存储接收到的数据。",
   "Bucket": "存储桶",
@@ -1390,7 +1391,6 @@
   "Enter the <a href=\"https://kb.iu.edu/d/aiuv\" target=\"_blank\">fully-qualified hostname (FQDN)</a> of the system. This name must be unique within a certificate chain.": "输入系统的<a href=\"https://kb.iu.edu/d/aiuv\" target=\"_blank\">全称域名（FQDN）</a>。该名称在证书链中必须是唯一的。",
   "Enter the Active Directory administrator account name.": "输入活动目录管理员帐户名称。",
   "Enter the Active Directory domain (<i>example.com</i>) or child domain (<i>sales.example.com</i>).": "输入活动目录的域（ <i>example.com</i> ）或子域（ <i>sales.example.com</i> ）。",
-  "Enter the FreeBSD device name of the interface. This cannot be changed after the interface is created.": "输入接口的FreeBSD设备名称。创建接口后无法更改。",
   "Enter the IP address and netmask of the server.": "输入服务器的IP地址和网络掩码。",
   "Enter the IP address of the gateway.": "输入网关的IP地址。",
   "Enter the IP address or hostname for SNMP UPS.": "输入用于SNMP UPS的IP地址或域名。",
