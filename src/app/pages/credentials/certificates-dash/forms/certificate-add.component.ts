@@ -1008,7 +1008,7 @@ export class CertificateAddComponent implements WizardConfiguration {
               for (const item of data[key]) {
                 (certExtensions as any)[typeProp[0]][item] = true;
               }
-            } else if (!key.startsWith('AuthorityKeyIdentifier')) {
+            } else {
               (certExtensions as any)[typeProp[0]][typeProp[1]] = data[key];
             }
           }
