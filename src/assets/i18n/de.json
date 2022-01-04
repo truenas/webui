@@ -275,7 +275,7 @@
   "Browse to an existing file. Create a new file by browsing to a dataset and appending /<i>'{'filename.ext'}'</i> to the path. Extents cannot be created inside a jail root directory.": "",
   "Browse to the existing path on the remote host to                sync with. Maximum path length is 255 characters": "",
   "Browse to the installer image file and click <b>Upload</b>.": "",
-  "Browse to the path to be copied. Linux  file path limits apply. Other operating systems can have different  limits which might affect how they can be used as sources or  destinations.": "",
+  "Browse to the path to be copied. Linux file path limits apply. Other operating systems can have different limits which might affect how they can be used as sources or destinations.": "",
   "Bug": "",
   "Builtin": "",
   "Bulk actions": "",
