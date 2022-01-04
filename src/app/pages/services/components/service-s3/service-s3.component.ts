@@ -40,6 +40,7 @@ export class ServiceS3Component implements OnInit {
     storage_path: ['', Validators.required],
     browser: [false],
     certificate: [null as number],
+    tls_server_uri: ['', Validators.required],
   });
 
   readonly tooltips = {
@@ -121,6 +122,10 @@ export class ServiceS3Component implements OnInit {
       ...this.form.value,
       bindport: Number(this.form.value.bindport),
     };
+
+    if (values.certificate === null) {
+      delete values.tls_server_uri;
+    }
 
     this.isFormLoading = true;
     this.ws.call('s3.update', [values])

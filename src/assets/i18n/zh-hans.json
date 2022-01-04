@@ -3,6 +3,7 @@
   "Browse to the path to be copied. Linux file path limits apply. Other operating systems can have different limits which might affect how they can be used as sources or destinations.": "",
   "Enter the device name of the interface. This cannot be changed after the interface is created.": "",
   "Select Disks": "",
+  "TLS Server Uri": "",
   " Check Notifications for more details.": " 检查通知以获取更多详细信息。",
   " Download Updates": " 下载更新",
   " KiB.": " KiB。",
