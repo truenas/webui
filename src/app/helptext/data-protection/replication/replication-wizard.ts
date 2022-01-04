@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
   step1_label: T('What and Where'),
@@ -84,12 +83,13 @@ export default {
 
   name_regex_placeholder: T('Snapshot Name Regular Expression'),
   naming_schema_placeholder: T('Naming Schema'),
-  naming_schema_tooltip: T(`Pattern of naming custom snapshots to be
- replicated. Enter the name and ${getManPageLink('strftime(3)')}
- <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> strings that
- match the snapshots to include in the replication. Separate entries by
- pressing <code>Enter</code>. The number of snapshots matching the
- patterns are shown.`),
+  naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
+ replicated. Enter the name and \
+ <a href="https://man7.org/linux/man-pages/man3/strftime.3.html" target="_blank">strftime(3)</a> \
+ <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> strings that \
+ match the snapshots to include in the replication. Separate entries by \
+ pressing <code>Enter</code>. The number of snapshots matching the \
+ patterns are shown.'),
   name_regex_tooltip: T('Using this option will replicate all snapshots \
  which names match specified regular expression. The \
  performance on the systems with large number of snapshots \

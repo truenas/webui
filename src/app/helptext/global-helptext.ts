@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
   copyright_year: '2020',
@@ -41,12 +40,12 @@ export default {
     general: {
       header: T('Minutes/Hours/Days'),
       headerWithoutMinutes: T('Hours/Days'),
-      tooltip: T(`The time values when the task will run. Accepts standard
- ${getManPageLink('crontab(5)')} values.
- </br></br>Symbols:</br> A comma (,) separates individual values.</br> An asterisk (*) means
- "match all values".</br> Hyphenated numbers (1-5) sets a range of time.</br> A slash (/)
- designates a step in the value: */2 means every other minute.</br></br> Example: 30-35 in Minutes, 1,14 in Hours,
- and */2 in Days means the task will run on 1:30 - 1:35 AM and 2:30 - 2:35 PM every other day.`),
+      tooltip: T('The time values when the task will run. Accepts standard\
+ <a href="https://man7.org/linux/man-pages/man5/crontab.5.html" target="_blank">crontab(5)</a> values.\
+ </br></br>Symbols:</br> A comma (,) separates individual values.</br> An asterisk (*) means \
+ "match all values".</br> Hyphenated numbers (1-5) sets a range of time.</br> A slash (/)\
+ designates a step in the value: */2 means every other minute.</br></br> Example: 30-35 in Minutes, 1,14 in Hours,\
+ and */2 in Days means the task will run on 1:30 - 1:35 AM and 2:30 - 2:35 PM every other day.'),
     },
     minutes: {
       header: T('Minutes'),

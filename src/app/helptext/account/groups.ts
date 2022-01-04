@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
 
@@ -18,9 +17,10 @@ export default {
  as the last character of the username.'),
 
   bsdgrp_sudo_placeholder: T('Permit Sudo'),
-  bsdgrp_sudo_tooltip: T(`Allow group members to use
- ${getManPageLink('sudo(8)')}. Group members are prompted
- for their password when using <b>sudo</b>.`),
+  bsdgrp_sudo_tooltip: T('Allow group members to use <a\
+ href="https://man7.org/linux/man-pages/man8/sudo.8.html"\
+ target="_blank">sudo</a>. Group members are prompted\
+ for their password when using <b>sudo</b>.'),
 
   allow_placeholder: T('Allow Duplicate GIDs'),
   allow_tooltip: T('<b>Not recommended.</b> Allow more than one group to \

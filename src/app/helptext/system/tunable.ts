@@ -28,7 +28,7 @@ export const helptextSystemTunable = {
       'Enter a value to use for the <a\
  href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/boot-introduction.html#boot-loader-commands"\
  target="_blank">loader</a>, <a\
- href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/configtuning-sysctl.html"\
+ href="https://man7.org/linux/man-pages/man8/sysctl.8.html"\
  target="_blank">sysctl</a>, or <a\
  href="https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/config-tuning.html"\
  target="_blank">rc.conf</a> variable.',

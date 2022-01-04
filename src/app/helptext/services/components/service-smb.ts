@@ -1,6 +1,5 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 
 export default {
@@ -96,13 +95,13 @@ export default {
  <code>log level = 1, auth_audit:5</code>.'),
 
   cifs_srv_ntlmv1_auth_placeholder: T('NTLMv1 Auth'),
-  cifs_srv_ntlmv1_auth_tooltip: T(`Off by default. When set,
- ${getManPageLink('smbd(8)')}
- attempts to authenticate users with the insecure
- and vulnerable NTLMv1 encryption. This setting allows
- backward compatibility with older versions of Windows,
- but is not recommended and should not be used on
- untrusted networks.`),
+  cifs_srv_ntlmv1_auth_tooltip: T('Off by default. When set,\
+ <a href="https://www.samba.org/samba/docs/current/man-html/smbd.8.html" target="_blank">smbd(8)</a>\
+ attempts to authenticate users with the insecure\
+ and vulnerable NTLMv1 encryption. This setting allows\
+ backward compatibility with older versions of Windows,\
+ but is not recommended and should not be used on\
+ untrusted networks.'),
 
   cifs_srv_bindip_placeholder: T('Bind IP Addresses'),
   cifs_srv_bindip_tooltip: T('Static IP addresses which SMB listens on for connections. \

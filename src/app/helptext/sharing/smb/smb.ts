@@ -1,6 +1,5 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export const helptextSharingSmb = {
   fieldset_basic: T('Basic'),
@@ -94,8 +93,9 @@ export const helptextSharingSmb = {
  for more details.'),
 
   placeholder_abe: T('Access Based Share Enumeration'),
-  tooltip_abe: T(`Restrict share visibility to users with read or write access
- to the share. See the ${getManPageLink('smb.conf(5)')} manual page.`),
+  tooltip_abe: T('Restrict share visibility to users with read or write access\
+ to the share. See the <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html"\
+ target=_blank>smb.conf</a> manual page.'),
 
   placeholder_hostsallow: T('Hosts Allow'),
   tooltip_hostsallow: T('Enter a list of allowed hostnames or IP addresses.\
@@ -133,7 +133,9 @@ export const helptextSharingSmb = {
  target=_blank>Shadow Copies</a> for VSS clients.'),
 
   placeholder_auxsmbconf: T('Auxiliary Parameters'),
-  tooltip_auxsmbconf: T(`Additional ${getManPageLink('smb.conf(5)')} parameters.`),
+  tooltip_auxsmbconf: T('Additional \
+ <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html" target="_blank">smb.conf</a> \
+ parameters.'),
 
   placeholder_aapl_name_mangling: T('Use Apple-style Character Encoding'),
   tooltip_aapl_name_mangling: T('By default, Samba uses a hashing algorithm for NTFS illegal \
@@ -158,10 +160,11 @@ export const helptextSharingSmb = {
  this prefix for an RPC user to delete it.'),
 
   placeholder_path_suffix: T('Path Suffix'),
-  tooltip_path_suffix: T(`Appends a suffix to the share connection path.
- This is used to provide unique shares on a per-user, per-computer, or per-IP address basis.
- Suffixes can contain a macro. See the ${getManPageLink('smb.conf(5)')} manual page for
- a list of supported macros. The connectpath **must** be preset before a client connects.`),
+  tooltip_path_suffix: T('Appends a suffix to the share connection path. \
+ This is used to provide unique shares on a per-user, per-computer, or per-IP address basis. \
+ Suffixes can contain a macro. See the \
+ <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html" target="_blank">smb.conf</a> manual page for \
+ a list of supported macros. The connectpath **must** be preset before a client connects.'),
 
   actions_basic_mode: T('Basic Mode'),
   actions_advanced_mode: T('Advanced Mode'),

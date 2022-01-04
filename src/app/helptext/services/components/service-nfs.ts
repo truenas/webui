@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
   nfs_srv_udp_tooltip: T('Set if NFS clients need to use UDP.'),
@@ -23,10 +22,12 @@ export default {
  href="https://man7.org/linux/man-pages/man8/mountd.8.html"\
  target="_blank">mountd(8)</a>.'),
 
-  nfs_srv_rpcstatd_port_tooltip: T(`Enter a port to bind ${getManPageLink('rpc.statd(8)')}.`),
+  nfs_srv_rpcstatd_port_tooltip: T('Enter a port to bind <a\
+ href="https://man7.org/linux/man-pages/man8/statd.8.html"\
+ target="_blank">rpc.statd(8)</a>.'),
 
   nfs_srv_rpclockd_port_tooltip: T('Enter a port to bind <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=rpc.lockd"\
+ href="https://linux.die.net/man/8/rpc.lockd"\
  target="_blank">rpc.lockd(8)</a>.'),
 
   nfs_srv_16_tooltip: T('Set when a user is a member of more than 16 groups.\
@@ -37,9 +38,11 @@ export default {
  href="https://man7.org/linux/man-pages/man8/mountd.8.html"\
  target="_blank">mountd(8)</a> syslog requests.'),
 
-  nfs_srv_statd_lockd_log_tooltip: T(`Set to log ${getManPageLink('rpc.statd(8)')} and <a
- href="https://www.freebsd.org/cgi/man.cgi?query=rpc.lockd"
- target="_blank">rpc.lockd(8)</a> syslog requests.`),
+  nfs_srv_statd_lockd_log_tooltip: T('Set to log <a\
+ href="https://man7.org/linux/man-pages/man8/statd.8.html"\
+ target="_blank">rpc.statd(8)</a> and <a\
+ href="https://linux.die.net/man/8/rpc.lockd"\
+ target="_blank">rpc.lockd(8)</a> syslog requests.'),
 
   formTitle: T('NFS'),
 

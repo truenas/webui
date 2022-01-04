@@ -1,7 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UpsMode, UpsShutdownMode } from 'app/enums/ups-mode.enum';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
   ups_fieldset_general: T('General Options'),
@@ -106,8 +105,10 @@ export default {
   ups_monpwd_validation: [Validators.pattern(/^((?![\#|\s]).)*$/)],
 
   ups_extrausers_placeholder: T('Extra Users'),
-  ups_extrausers_tooltip: T(`Enter accounts that have administrative access.
- See ${getManPageLink('upsd.users(5)')} for examples.`),
+  ups_extrausers_tooltip: T('Enter accounts that have administrative access.\
+ See <a\
+ href="https://linux.die.net/man/5/upsd.users"\
+ target="_blank">upsd.users(5)</a> for examples.'),
 
   ups_rmonitor_placeholder: T('Remote Monitor'),
   ups_rmonitor_tooltip: T('Set for the default configuration to listen on all\

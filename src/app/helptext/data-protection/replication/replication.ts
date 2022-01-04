@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 import globalHelptext from 'app/helptext/global-helptext';
 
 export default {
@@ -40,12 +39,13 @@ export default {
   name_schema_or_regex_placeholder_pull: T('Include snapshots with the name'),
 
   naming_schema_placeholder: T('Matching naming schema'),
-  naming_schema_tooltip: T(`Pattern of naming custom snapshots to be
- replicated. Enter the name and ${getManPageLink('strftime(3)')}
- <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> strings that
- match the snapshots to include in the replication. Separate entries by
- pressing <code>Enter</code>. The number of snapshots matching the
- patterns are shown.`),
+  naming_schema_tooltip: T('Pattern of naming custom snapshots to be \
+ replicated. Enter the name and \
+ <a href="https://man7.org/linux/man-pages/man3/strftime.3.html" target="_blank">strftime(3)</a> \
+ <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> strings that \
+ match the snapshots to include in the replication. Separate entries by \
+ pressing <code>Enter</code>. The number of snapshots matching the \
+ patterns are shown.'),
   netcat_active_side_placeholder: T('Netcat Active Side'),
   netcat_active_side_tooltip: T('Establishing a connection requires \
  that one of the connection systems has open TCP ports. Choose which \
@@ -137,15 +137,17 @@ performance on the systems with large number of snapshots \
 will be lower, as snapshots metadata needs to be read in order \
 to determine snapshots creation order.'),
   also_include_naming_schema_placeholder: T('Also Include Naming Schema'),
-  also_include_naming_schema_tooltip: T(`Pattern of naming custom
- snapshots to include in the replication with the periodic snapshot
- schedule. Enter the ${getManPageLink('strftime(3)')} strings that match the snapshots to
- include in the replication.<br><br>
- When a periodic snapshot is not linked to the replication, enter the
- naming schema for manually created snapshots. Has the same <i>&percnt;Y</i>,
- <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> string requirements as
- the <b>Naming Schema</b> in a <b>Periodic Snapshot Task</b>. Separate
- entries by pressing <code>Enter</code>.`),
+  also_include_naming_schema_tooltip: T('Pattern of naming custom \
+ snapshots to include in the replication with the periodic snapshot \
+ schedule. Enter the \
+ <a href="https://man7.org/linux/man-pages/man3/strftime.3.html" \
+ target="_blank">strftime(3)</a> strings that match the snapshots to \
+ include in the replication.<br><br> \
+ When a periodic snapshot is not linked to the replication, enter the \
+ naming schema for manually created snapshots. Has the same <i>&percnt;Y</i>, \
+ <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> string requirements as \
+ the <b>Naming Schema</b> in a <b>Periodic Snapshot Task</b>. Separate \
+ entries by pressing <code>Enter</code>.'),
 
   auto_placeholder: T('Run Automatically'),
   auto_tooltip: T('Set to either start this replication task \
@@ -259,15 +261,18 @@ to determine snapshots creation order.'),
   speed_limit_errors: globalHelptext.human_readable.input_error,
 
   large_block_placeholder: T('Allow Blocks Larger than 128KB'),
-  large_block_tooltip: T(`Allow this replication to send large data blocks. The
- destination system must also support large blocks. This setting cannot be changed
- after it has been enabled and the replication task is created. For more details, see
- ${getManPageLink('zfs(8)')}.`),
+  large_block_tooltip: T('Allow this replication to send large data blocks. The \
+ destination system must also support large blocks. This setting cannot be changed \
+ after it has been enabled and the replication task is created. For more details, see \
+ <a href="https://linux.die.net/man/8/zfs" \
+ target="_blank">zfs(8)</a>.'),
 
   compressed_placeholder: T('Allow Compressed WRITE Records'),
-  compressed_tooltip: T(`Use compressed WRITE records to make the
- stream more efficient. The destination system must also support
- compressed WRITE records. See ${getManPageLink('zfs(8)')}.`),
+  compressed_tooltip: T('Use compressed WRITE records to make the \
+ stream more efficient. The destination system must also support \
+ compressed WRITE records. See \
+ <a href="https://linux.die.net/man/8/zfs" \
+ target="_blank">zfs(8)</a>.'),
 
   retries_placeholder: T('Number of retries for failed replications'),
   retries_tooltip: T('Number of times the replication is attempted \

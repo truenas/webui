@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
   title: T('Global Configuration'),
@@ -50,16 +49,18 @@ export default {
  <i>Netwait IP List</i>.'),
 
   netwait_ip_placeholder: T('Netwait IP List'),
-  netwait_ip_tooltip: T(`Enter a list of IP addresses to ${getManPageLink('ping')}.
- Separate entries by pressing <code>Enter</code>. Each address is tried
- until one is successful or the list is exhausted. Leave empty to use
- the default gateway.`),
+  netwait_ip_tooltip: T('Enter a list of IP addresses to \
+ <a href="https://man7.org/linux/man-pages/man8/ping.8.html" target="_blank">ping</a>. \
+ Separate entries by pressing <code>Enter</code>. Each address is tried \
+ until one is successful or the list is exhausted. Leave empty to use \
+ the default gateway.'),
 
   hosts_placeholder: T('Host Name Database'),
-  hosts_tooltip: T(`Additional hosts to be appended to <i>/etc/hosts</i>.
- Separate entries by pressing <code>Enter</code>. Hosts defined here are
- still accessible by name even when DNS is not available. See ${getManPageLink('hosts(5)')}
- for additional information.`),
+  hosts_tooltip: T('Additional hosts to be appended to <i>/etc/hosts</i>.\
+ Separate entries by pressing <code>Enter</code>. Hosts defined here are \
+ still accessible by name even when DNS is not available. See \
+ <a href="https://man7.org/linux/man-pages/man5/hosts.5.html" target="_blank">hosts(5)</a> \
+ for additional information.'),
 
   hostname_and_domain: T('Hostname and Domain'),
   gateway: T('Default Gateway'),
