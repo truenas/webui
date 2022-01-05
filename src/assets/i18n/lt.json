@@ -1319,7 +1319,7 @@
   "Enter a valid IPv4 address.": "",
   "Enter a valid email address to receive alerts from this system.": "",
   "Enter a value in seconds for the the UPS to wait before initiating shutdown. Shutdown will not occur if power is restored while the timer is counting down. This value only applies when <b>Shutdown mode</b> is set to <i>UPS goes on battery</i>.": "",
-  "Enter a value to use for the <a href=\"https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/boot-introduction.html#boot-loader-commands\" target=\"_blank\">loader</a>, <a href=\"https://man7.org/linux/man-pages/man8/sysctl.8.html\" target=\"_blank\">sysctl</a>, or <a href=\"https://www.freebsd.org/doc/en_US.ISO8859-1/books/handbook/config-tuning.html\" target=\"_blank\">rc.conf</a> variable.": "",
+  "Enter a value to use for the <a href=\"https://man7.org/linux/man-pages/man8/sysctl.8.html\" target=\"_blank\">sysctl</a> variable.": "",
   "Enter accounts that have administrative access. See <a href=\"https://linux.die.net/man/5/upsd.users\" target=\"_blank\">upsd.users(5)</a> for examples.": "",
   "Enter additional <b>smb.conf</b> options. See the  <a href=\"http://www.oreilly.com/openbook/samba/book/appb_02.html\" target=\"_blank\">Samba Guide</a>  for more information on these settings.<br>  To log more details when a client attempts to authenticate to the share, add  <code>log level = 1, auth_audit:5</code>.": "",
   "Enter an IPv4 address. This overrides the default gateway provided by DHCP.": "",
