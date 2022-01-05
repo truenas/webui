@@ -375,7 +375,7 @@ def create_pool_should_appear_while_pool_is_being_created_you_should_be_returned
     """Create Pool should appear while pool is being created. You should be returned to list of pools and tank should appear in the list."""
     assert wait_on_element(driver, 7, '//h1[contains(.,"Create Pool")]')
     driver.find_element_by_xpath('//h1[contains(.,"Create Pool")]')
-    assert wait_on_element_disappear(driver, 30, '//h1[contains(.,"Create Pool")]')
+    assert wait_on_element_disappear(driver, 60, '//h1[contains(.,"Create Pool")]')
     assert wait_on_element(driver, 7, '//mat-panel-title[contains(.,"tank")]')
     driver.find_element_by_xpath('//td[@ix-auto="value__tank_name"]')
 
