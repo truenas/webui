@@ -356,8 +356,8 @@
       </div>
       <div class="sizeMessage">{{ sizeMessage | translate}}: {{ size }}</div>
       <div *ngIf="vdevtypeError" class="sizeMessage" [style.color]="'red'" [innerHTML]="vdevtypeError"></div>
-      <div *ngIf="disknumError" class="sizeMessage" [style.color]="'orange'" [innerHTML]="disknumError"></div>
-      <div *ngIf="stripeVdevTypeError" class="sizeMessage" [style.color]="'orange'" [innerHTML]="stripeVdevTypeError"></div>
+      <div *ngIf="disknumError" class="sizeMessage" [style.color]="'red'" [innerHTML]="disknumError"></div>
+      <div *ngIf="stripeVdevTypeError" class="sizeMessage" [style.color]="'red'" [innerHTML]="stripeVdevTypeError"></div>
       <div *ngIf="logVdevTypeWarning" class="sizeMessage" [style.color]="'orange'" [innerHTML]="logVdevTypeWarning"></div>
       <div *ngIf="error" class="sizeMessage" [style.color]="'red'" [innerHTML]="error"></div>
       <div class="forceCreateCheckbox" *ngIf="has_savable_errors">
