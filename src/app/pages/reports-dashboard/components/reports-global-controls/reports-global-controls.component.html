@@ -1,6 +1,6 @@
 <div *ngIf="config" class="reports-toolbar">
   <div class="reports-dash-global-controls" fxLayout="row" fxLayoutAlign="center end">
-    <ng-container *ngIf="config.activeTab == 'Disk'">
+    <ng-container *ngIf="config.activeTab?.value === ReportTab.Disk">
       <entity-toolbar fxFlex [conf]="config.toolbarConfig"></entity-toolbar>
     </ng-container>
 
@@ -14,7 +14,7 @@
         ix-auto-type="button"
         ix-auto-identifier="tab-selector"
       >
-        {{ config.activeTabVerified ? config.activeTab : ('Loading...' | translate) }}
+        {{ config.activeTabVerified ? config.activeTab?.label : ('Loading...' | translate) }}
         <mat-icon class="menu-caret">arrow_drop_down</mat-icon>
       </button>
 
@@ -23,7 +23,7 @@
           <button
             mat-menu-item
             *ngFor="let tab of config.allTabs"
-            (click)="config.navigateToTab(tab.value)"
+            (click)="config.navigateToTab(tab)"
             ix-auto
             ix-auto-type="option"
             ix-auto-identifier="{{ tab.label }}"

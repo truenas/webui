@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -24,8 +25,8 @@ export class FailoverComponent implements OnInit {
   constructor(protected ws: WebSocketService, protected router: Router,
     protected loader: AppLoaderService, public translate: TranslateService,
     protected dialogService: DialogService, protected dialog: MatDialog,
-    private sysGeneralService: SystemGeneralService, private localeService: LocaleService) {
-    this.ws = ws;
+    private sysGeneralService: SystemGeneralService, private localeService: LocaleService,
+    private location: Location) {
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
       this.productType = res as ProductType;
     });
@@ -45,6 +46,9 @@ export class FailoverComponent implements OnInit {
 
   ngOnInit(): void {
     this.productType = window.localStorage.getItem('product_type') as ProductType;
+
+    // Replace URL so that we don't failover again if page is refreshed.
+    this.location.replaceState('/session/signin');
 
     this.dialog.closeAll();
     // TODO: Check if next and error should trade places

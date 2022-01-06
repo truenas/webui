@@ -95,7 +95,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   logVdevTypeWarning: string = null;
 
   vdevdisksError = false;
-  vdevdisksSizeError = false;
+  hasVdevDiskSizeError = false;
 
   diskAddWarning = helptext.manager_diskAddWarning;
   diskExtendWarning = helptext.manager_diskExtendWarning;
@@ -397,7 +397,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     this.vdevdisksError = false;
     this.stripeVdevTypeError = null;
     this.logVdevTypeWarning = null;
-    this.vdevdisksSizeError = false;
+    this.hasVdevDiskSizeError = false;
     this.hasSavableErrors = false;
     this.emptyDataVdev = false;
 
@@ -441,8 +441,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       if (vdev.vdev_disks_error) {
         this.vdevdisksError = true;
       }
-      if (vdev.vdev_disks_size_error) {
-        this.vdevdisksSizeError = true;
+      if (vdev.showDiskSizeError) {
+        this.hasVdevDiskSizeError = true;
         this.hasSavableErrors = true;
       }
       if (['dedup', 'log', 'special', 'data'].includes(vdev.group)) {
@@ -535,7 +535,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   forceCheckboxChecked(): void {
     if (!this.force) {
       let warnings: string = helptext.force_warning;
-      if (this.vdevdisksSizeError) {
+      if (this.hasVdevDiskSizeError) {
         warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
       }
       if (this.stripeVdevTypeError) {

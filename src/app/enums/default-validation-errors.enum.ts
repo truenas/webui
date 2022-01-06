@@ -4,6 +4,7 @@ export enum DefaultValidationErrors {
   Required = 'required',
   Email = 'email',
   MaxLength = 'maxlength',
+  Range = 'range',
   MinLength = 'minlength',
   Pattern = 'pattern',
   Forbidden = 'forbidden',

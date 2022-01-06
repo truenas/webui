@@ -24,7 +24,7 @@ export default {
   ],
 
   int_interface_placeholder: T('NIC'),
-  int_interface_tooltip: T('Enter the FreeBSD device name of the\
+  int_interface_tooltip: T('Enter the device name of the\
  interface. This cannot be changed after the interface is created.'),
   int_interface_validation: [Validators.required],
 
@@ -114,7 +114,6 @@ export default {
 
   failover_alias_set_error: T('An IP address must be provided for\
  each controller and the virtual interface.'),
-  failover_alias_v6_error: T('IPv6 addresses are not allowed for HA.'),
 
   vlan_pint_placeholder: T('Parent Interface'),
   vlan_pint_tooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\

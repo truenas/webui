@@ -18,6 +18,8 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
+import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
+import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
@@ -153,16 +155,16 @@ export class ChartReleasesComponent implements OnInit {
   }
 
   onToolbarAction(evt: CoreEvent): void {
-    if (evt.data.event_control == 'filter') {
+    if (evt.data.event_control === ApplicationToolbarControl.Filter) {
       this.filterString = evt.data.filter;
       this.filerChartItems();
-    } else if (evt.data.event_control == 'bulk') {
+    } else if (evt.data.event_control === ApplicationToolbarControl.Bulk) {
       this.onBulkAction(evt.data.bulk.value);
     }
   }
 
   viewCatalog(): void {
-    this.updateTab.emit({ name: ApplicationUserEventName.SwitchTab, value: 1 });
+    this.updateTab.emit({ name: ApplicationUserEventName.SwitchTab, value: ApplicationTab.AvailableApps });
   }
 
   showLoadStatus(type: EmptyType): void {

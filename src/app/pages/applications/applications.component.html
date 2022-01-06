@@ -1,5 +1,5 @@
 <div fxLayout=row>
-  <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedIndex" (selectedTabChange)="refresh($event)">
+  <mat-tab-group animationDuration="0ms" [selectedIndex]="selectedTab" (selectedTabChange)="onTabSelected($event)">
     <mat-tab label="{{ 'Installed Applications' | translate}}"
           ix-auto ix-auto-type="tab" ix-auto-identifier="charts">
       <app-charts (updateTab)="updateTab($event)"></app-charts>

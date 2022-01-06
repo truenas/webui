@@ -56,7 +56,4 @@ export class ServicesService {
   }
 
   // -- end of OpenVPN Service
-  getLldpCountries(): Observable<Choices> {
-    return this.ws.call('lldp.country_choices');
-  }
 }
