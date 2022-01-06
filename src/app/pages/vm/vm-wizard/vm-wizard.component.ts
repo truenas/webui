@@ -313,8 +313,6 @@ export class VmWizardComponent implements WizardConfiguration {
           name: 'datastore',
           tooltip: helptext.datastore_tooltip,
           placeholder: helptext.datastore_placeholder,
-          blurStatus: true,
-          blurEvent: () => this.blueEventForVolSize(),
           options: [],
           isHidden: false,
           validation: [Validators.required],
@@ -492,7 +490,7 @@ export class VmWizardComponent implements WizardConfiguration {
     this.entityWizard = entityWizard;
     this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((max) => {
       this.maxVcpus = max;
-      const vcpuLimitConf: FormParagraphConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' });
+      const vcpuLimitConf = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' }) as FormParagraphConfig;
       vcpuLimitConf.paraText = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
     });
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {

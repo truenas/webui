@@ -21,7 +21,7 @@ export class FormChipComponent implements Field, OnInit {
   config: FormChipConfig;
   group: FormGroup;
   fieldShow: string;
-  chipLists: any[];
+  chipLists: string[];
   chipCtrl = new FormControl();
 
   @ViewChild('chipInput') chipInput: ElementRef<HTMLInputElement>;
@@ -59,7 +59,7 @@ export class FormChipComponent implements Field, OnInit {
     }
   }
 
-  remove(item: any): void {
+  remove(item: string): void {
     const index = this.chipLists.indexOf(item);
 
     if (index >= 0) {
@@ -84,9 +84,9 @@ export class FormChipComponent implements Field, OnInit {
     this.openPanel();
   }
 
-  updateSearchOptions(value: any): void {
+  updateSearchOptions(value: string): void {
     if (this.config.updater && this.config.parent) {
-      const values = this.chipLists as string[];
+      const values = this.chipLists;
       if (this.config.updateLocal) {
         this.config.updater(value, values, this.config.parent, this.config);
       } else {

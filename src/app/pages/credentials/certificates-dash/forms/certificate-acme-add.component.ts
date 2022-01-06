@@ -186,7 +186,7 @@ export class CertificateAcmeAddComponent implements FormConfiguration {
             }
 
             const controls = listFields[i];
-            const nameTextConfig: FormParagraphConfig = _.find(controls, { name: 'name_text' });
+            const nameTextConfig = _.find(controls, { name: 'name_text' }) as FormParagraphConfig;
             const authConfig = _.find(controls, { name: 'authenticators' }) as FormSelectConfig;
             (this.domainList.controls[i] as FormGroup).controls['name_text'].setValue(domains[i]);
             nameTextConfig.paraText = '<b>' + domains[i] + '</b>';

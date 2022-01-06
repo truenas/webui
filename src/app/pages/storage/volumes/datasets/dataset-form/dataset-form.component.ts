@@ -532,7 +532,6 @@ export class DatasetFormComponent implements FormConfiguration {
         {
           type: 'select',
           name: 'deduplication',
-          label: helptext.dataset_form_deduplication_label,
           placeholder: helptext.dataset_form_deduplication_placeholder,
           tooltip: helptext.dataset_form_deduplication_tooltip,
           options: [

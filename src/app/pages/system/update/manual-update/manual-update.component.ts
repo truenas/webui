@@ -96,7 +96,7 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
       observerClass: this,
       eventName: 'SysInfo',
     }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
-      const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'version' });
+      const config = _.find(this.fieldConfig, { name: 'version' }) as FormParagraphConfig;
       config.paraText += evt.data.version;
     });
 

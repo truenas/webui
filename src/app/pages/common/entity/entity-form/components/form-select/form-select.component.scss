@@ -54,6 +54,11 @@ mat-option {
   &[disabled] {
     opacity: 0.5;
   }
+
+  .option-tooltip {
+    margin-left: 3px;
+    vertical-align: -2px;
+  }
 }
 
 .mat-menu-item.text-wrap {

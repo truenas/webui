@@ -102,7 +102,7 @@ export class VolumeCreatekeyFormComponent implements FormConfiguration {
 
   resourceTransformIncomingRestData(data: Pool): Pool {
     this.poolName = data.name;
-    const config: FormParagraphConfig = _.find(this.fieldConfig, { name: 'encrypt-headline' });
+    const config = _.find(this.fieldConfig, { name: 'encrypt-headline' }) as FormParagraphConfig;
     config.paraText += ` <em>${this.poolName}</em>`;
     return data;
   }

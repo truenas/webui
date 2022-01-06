@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as cronParser from 'cron-parser';
+import { formatDistanceToNowStrict } from 'date-fns';
 import { merge, Subject } from 'rxjs';
 import {
   filter, switchMap, take, tap,
@@ -568,10 +569,10 @@ export class AdvancedSettingsComponent implements OnInit {
         ...job,
         cron_schedule: schedule,
 
-        /* Weird type assertions are due to a type definition error in the cron-parser library */
-        next_run: ((cronParser.parseExpression(schedule, { iterator: true }).next() as unknown) as {
-          value: { _date: any };
-        }).value._date.fromNow(),
+        next_run: formatDistanceToNowStrict(
+          cronParser.parseExpression(schedule, { iterator: true }).next().value.toDate(),
+          { addSuffix: true },
+        ),
       };
     });
   }

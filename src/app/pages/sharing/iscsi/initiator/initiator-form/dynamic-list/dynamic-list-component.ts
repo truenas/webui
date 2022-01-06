@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormInputListConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
 
 @UntilDestroy()
@@ -11,7 +11,7 @@ import { EntityFormService } from 'app/pages/common/entity/entity-form/services/
   styleUrls: ['./dynamic-list.component.scss'],
 })
 export class DynamicListComponent implements OnInit {
-  @Input() config: FieldConfig;
+  @Input() config: FormInputListConfig;
   @Input() group: FormGroup;
 
   listControl: AbstractControl;
@@ -60,6 +60,6 @@ export class DynamicListComponent implements OnInit {
   }
 
   drop(): void {
-    (this.config as any).customEventMethod(this);
+    this.config.customEventMethod(this);
   }
 }

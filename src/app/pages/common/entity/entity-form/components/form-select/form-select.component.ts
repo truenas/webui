@@ -31,7 +31,6 @@ export class FormSelectComponent implements Field, AfterViewInit, AfterViewCheck
   @ViewChild('field', { static: true }) field: MatFormField;
 
   formReady = false;
-  initialValue: any;
   selected: any;
   allSelected: boolean;
   private disableAlert = false;

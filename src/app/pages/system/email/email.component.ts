@@ -99,13 +99,11 @@ export class EmailComponent implements FormConfiguration {
           options: [
             {
               label: helptextSystemEmail.send_mail_method.smtp.placeholder,
-              name: 'smtp',
               tooltip: helptextSystemEmail.send_mail_method.smtp.tooltip,
               value: true,
             },
             {
               label: helptextSystemEmail.send_mail_method.gmail.placeholder,
-              name: 'gmail',
               tooltip: helptextSystemEmail.send_mail_method.gmail.tooltip,
               value: false,
             },

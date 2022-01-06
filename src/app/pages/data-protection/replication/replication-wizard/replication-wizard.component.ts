@@ -818,7 +818,7 @@ export class ReplicationWizardComponent implements WizardConfiguration {
     this.preload_fieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'preload' });
     this.source_fieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'source' });
     this.target_fieldSet = _.find(this.wizardConfig[0].fieldSets, { class: 'target' });
-    this.snapshotsCountField = _.find(this.source_fieldSet.config, { name: 'snapshots_count' });
+    this.snapshotsCountField = _.find(this.source_fieldSet.config, { name: 'snapshots_count' }) as FormParagraphConfig;
 
     this.step0Init();
     this.step1Init();
