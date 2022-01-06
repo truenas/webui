@@ -270,7 +270,7 @@ def if_the_smb_service_is_not_started_start_the_service(driver):
     if not value_exist:
         driver.find_element_by_xpath('//div[@ix-auto="overlay__SMB_Running"]').click()
     # This sleep is to make sure the system ready for smbclient
-    time.sleep(1)
+    time.sleep(2)
 
 
 @then(parsers.parse('send a file to the share with ip/"{smbname}" and "{user}"%password'))
@@ -278,7 +278,6 @@ def send_a_file_to_the_share_with_ipsmbuser_and_smbuserpassword(driver, nas_ip, 
     """send a file to the share with ip/"smbuser" and "smbuser"%password."""
     run_cmd('touch testfile.txt')
     results = run_cmd(f'smbclient //{nas_ip}/{smbname} -W AD01 -U {user}%testing -c "put testfile.txt testfile.txt"')
-    time.sleep(1)
     run_cmd('rm testfile.txt')
     assert results['result'], results['output']
 
