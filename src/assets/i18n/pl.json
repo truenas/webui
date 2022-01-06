@@ -3169,7 +3169,7 @@
   "Spare VDev": "",
   "Spares": "",
   "Sparse": "",
-  "Special Allocation class, used to create Fusion pools. Optional vdev type which is used to speed up metadata and small block IO.": "",
+  "Special Allocation class, used to create Fusion pools. Optional vdev type which is used to speed up metadata and small block IO.": "Specjalna klasa alokacji, używana do tworzenia Wolumenów Zespolonych. Opcjonalny typ vdev, który jest używany do przyspieszenia metadanych i małych bloków IO.",
   "Specifies the auxiliary directory service ID provider.": "",
   "Specify a port for encrypted connections. The default port <i>8081</i> is recommended. Do not reuse a port.": "",
   "Specify a port for unencrypted connections. The default port <i>8080</i> is recommended. Do not reuse a port.": "",
