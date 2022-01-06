@@ -96,8 +96,8 @@ def the_changes_should_be_saved(driver):
 def open_the_user_dropdown(driver):
     """open the user dropdown."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]', 'clickable')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]').click()
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
 
