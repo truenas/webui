@@ -254,22 +254,22 @@ export class CertificateEditComponent implements FormConfiguration {
       'root_path', 'digest_algorithm', 'key_length', 'key_type', 'until', 'revoked', 'lifetime',
     ];
     fields.forEach((field) => {
-      const paragraph: FormParagraphConfig = _.find(this.fieldConfig, { name: field });
+      const paragraph = _.find(this.fieldConfig, { name: field }) as FormParagraphConfig;
       if (this.incomingData[field] || this.incomingData[field] === false) {
         paragraph.paraText += this.incomingData[field];
       } else {
         paragraph.paraText += '---';
       }
     });
-    const sanConfig: FormParagraphConfig = _.find(this.fieldConfig, { name: 'san' });
+    const sanConfig = _.find(this.fieldConfig, { name: 'san' }) as FormParagraphConfig;
     sanConfig.paraText += this.incomingData.san.join(',');
 
-    const signedbyConfig: FormParagraphConfig = _.find(this.fieldConfig, { name: 'signedby' });
+    const signedbyConfig = _.find(this.fieldConfig, { name: 'signedby' }) as FormParagraphConfig;
     signedbyConfig.paraText += this.incomingData.signedby?.name || '---';
 
-    const issuer: FormParagraphConfig = _.find(this.fieldConfig, { name: 'issuer' });
+    const issuer = _.find(this.fieldConfig, { name: 'issuer' }) as FormParagraphConfig;
     if (_.isObject(this.incomingData.issuer)) {
-      issuer.paraText += (this.incomingData.issuer as any).name;
+      issuer.paraText += this.incomingData.issuer.name;
     } else if (this.incomingData.issuer) {
       issuer.paraText += this.incomingData.issuer;
     } else {

@@ -783,7 +783,9 @@ export class DataProtectionDashboardComponent implements OnInit {
                 .get('transfer_mode')
                 .valueChanges.pipe(untilDestroyed(entityDialog))
                 .subscribe((mode: TransferMode) => {
-                  const paragraph: FormParagraphConfig = conf.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
+                  const paragraph = conf.fieldConfig.find((config) => {
+                    return config.name === 'transfer_mode_warning';
+                  }) as FormParagraphConfig;
                   switch (mode) {
                     case TransferMode.Sync:
                       paragraph.paraText = helptext_cloudsync.transfer_mode_warning_sync;

@@ -1,4 +1,5 @@
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 
 export interface Alert {
@@ -31,10 +32,15 @@ export interface AlertClass {
   title: string;
 }
 
+export interface AlertClassSettings {
+  level?: AlertLevel;
+  policy?: AlertPolicy;
+}
+
 export interface AlertClasses {
   id: number;
   classes: {
-    [className: string]: { level: AlertClasses };
+    [className: string]: AlertClassSettings;
   };
 }
 

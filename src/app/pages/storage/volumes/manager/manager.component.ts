@@ -146,7 +146,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     }
     const vdevsOptions = [];
     for (let i = maxVdevs; i > 0; i--) {
-      vdevsOptions.push({ label: i, value: i });
+      vdevsOptions.push({ label: String(i), value: i });
     }
     const conf: DialogFormConfiguration = {
       title: helptext.manager_duplicate_title,
@@ -196,7 +196,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         }, 500);
       },
       afterInit: (entityDialog: EntityDialogComponent) => {
-        const copyDesc: FormParagraphConfig = _.find(entityDialog.fieldConfig, { name: 'copy_desc' });
+        const copyDesc = _.find(entityDialog.fieldConfig, { name: 'copy_desc' }) as FormParagraphConfig;
         const setParatext = (vdevs: number): void => {
           const used = this.firstDataVdevDisknum * vdevs;
           const remaining = this.duplicableDisks.length - used;

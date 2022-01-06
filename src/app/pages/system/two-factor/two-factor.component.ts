@@ -53,9 +53,9 @@ export class TwoFactorComponent implements FormConfiguration {
           placeholder: helptext.two_factor.otp.placeholder,
           tooltip: helptext.two_factor.otp.tooltip,
           options: [
-            { label: 6, value: 6 },
-            { label: 7, value: 7 },
-            { label: 8, value: 8 },
+            { label: '6', value: 6 },
+            { label: '7', value: 7 },
+            { label: '8', value: 8 },
           ],
           required: true,
           validation: helptext.two_factor.otp.validation,
@@ -246,7 +246,7 @@ export class TwoFactorComponent implements FormConfiguration {
   }
 
   updateEnabledStatus(): void {
-    const enabled: FormParagraphConfig = _.find(this.fieldConfig, { name: 'enabled_status' });
+    const enabled = _.find(this.fieldConfig, { name: 'enabled_status' }) as FormParagraphConfig;
     if (this.TwoFactorEnabled) {
       enabled.paraText = helptext.two_factor.enabled_status_true;
     } else {

@@ -2,7 +2,6 @@ import {
   Component,
 } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { TranslateService } from '@ngx-translate/core';
 import { FormLabelConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { Field } from 'app/pages/common/entity/entity-form/models/field.interface';
 
@@ -12,10 +11,7 @@ import { Field } from 'app/pages/common/entity/entity-form/models/field.interfac
   styleUrls: ['../dynamic-field/dynamic-field.scss'],
 })
 export class FormLabelComponent implements Field {
-  config: FormLabelConfig;
+  config: FormLabelConfig<unknown>;
   group: FormGroup;
   fieldShow: string;
-
-  constructor(public translate: TranslateService) {
-  }
 }

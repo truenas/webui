@@ -4118,7 +4118,6 @@
   "ZFS Filesystem": "Sistema de archivos ZFS",
   "ZFS L2ARC read-cache that can be used with fast devices to accelerate read operations. Optional vdev that can be removed.": "Caché de lectura ZFS L2ARC que se puede utilizar con dispositivos rápidos para acelerar las operaciones de lectura. Vdev opcional que se puede quitar.",
   "ZFS LOG device that can improve speeds of synchronous writes. Optional write-cache that can be removed.": "Dispositivo ZFS LOG que puede mejorar las velocidades de escrituras sincrónicas. Caché de escritura opcional que se puede quitar.",
-  "ZFS deduplication": "Deduplicación ZFS",
   "ZFS pools must conform to strict naming  <a href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">conventions</a>.  Choose a memorable name.": "Los Grupos ZFS deben cumplir con las estrictas nomenclaturas <a href=\"https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html\" target=\"_blank\">convenciones</a>. Elige un nombre memorable.",
   "Zvol Actions": "Acciones de Zvol",
   "Zvol Location": "Ubicación Zvol",

@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { UserService } from 'app/services/user.service';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
@@ -49,6 +50,7 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     FlexLayoutModule,
     CommonDirectivesModule,
     TooltipModule,
+    CastModule,
   ],
   declarations: [
     NfsListComponent,

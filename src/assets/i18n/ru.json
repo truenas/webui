@@ -4150,7 +4150,6 @@
   "ZFS Cache": "Кэш ZFS",
   "ZFS Deduplication": "Дедупликация ZFS",
   "ZFS Filesystem": "Файловая система ZFS",
-  "ZFS deduplication": "ZFS дедупликация",
   "Zvol Location": "Местоположение zvol",
   "Zvol name": "Имя zvol",
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Использовать меньше транзакций в обмен на больше оперативной памяти.] (https://rclone.org/docs/\\#fast-list) Это также может ускорить или замедлить передачу.",

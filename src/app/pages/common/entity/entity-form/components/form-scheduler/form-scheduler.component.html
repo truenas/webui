@@ -53,7 +53,7 @@
           <ul class="schedule-list" #preview>
             <div class="text-small time-zone-label"><strong>{{"System Time Zone:" | translate}}</strong> {{timezone}}</div>
             <ng-container *ngFor="let date of generatedSchedule;">
-              <li>{{ date | date:ngDateFormat:convertToUtcOffset(date._date._offset) }}</li>
+              <li>{{ formatInSystemTimezone(date) }}</li>
             </ng-container>
           </ul>
         </div>

@@ -90,6 +90,12 @@
             <span *ngIf="shouldAlertOnOption(option)" class="alert-icon">
               <mat-icon role="img" fontSet="mdi-set" fontIcon="mdi-alert"></mat-icon>
             </span>
+
+            <tooltip
+              *ngIf="option.tooltip"
+              class="option-tooltip"
+              [message]="option.tooltip"
+            ></tooltip>
           </mat-option>
         </ng-container>
       </ng-container>

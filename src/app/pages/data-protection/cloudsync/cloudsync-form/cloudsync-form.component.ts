@@ -885,7 +885,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     // Update transfer_mode paragraphs when the mode is changed
     this.formGroup.get('transfer_mode').valueChanges.pipe(untilDestroyed(this)).subscribe((mode: TransferMode) => {
-      const paragraph: FormParagraphConfig = entityForm.fieldConfig.find((config) => config.name === 'transfer_mode_warning');
+      const paragraph = entityForm.fieldConfig.find((config) => config.name === 'transfer_mode_warning') as FormParagraphConfig;
       switch (mode) {
         case TransferMode.Sync:
           paragraph.paraText = helptext.transfer_mode_warning_sync;

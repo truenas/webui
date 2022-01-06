@@ -4166,7 +4166,6 @@
   "Yes, decrypt the disks": "是的，解密這個磁碟",
   "ZFS Deduplication": "ZFS 重複資料刪除",
   "ZFS Filesystem": "ZFS 檔案系統",
-  "ZFS deduplication": "ZFS 重複資料刪除",
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/\\#fast-list) This can also speed up or slow down the transfer.",
   "click here": "點擊此處",
   "error": "錯誤",
