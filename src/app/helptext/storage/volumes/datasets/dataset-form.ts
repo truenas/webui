@@ -3,8 +3,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 
 export default {
-  dataset_parent_name_placeholder: T('Parent name'),
-  dataset_parent_name_tooltip: T('Parent dataset name (read-only).'),
+  dataset_parent_name_placeholder: T('Parent path'),
+  dataset_parent_name_tooltip: T('Parent dataset path (read-only).'),
   dataset_form_name_placeholder: T('Name'),
   dataset_form_name_tooltip: T('Enter a unique name for the dataset.'),
   dataset_form_name_readonly_tooltip: T('Dataset name (read-only).'),
