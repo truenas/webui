@@ -40,6 +40,9 @@ export class ServiceS3Component implements OnInit {
     storage_path: ['', Validators.required],
     browser: [false],
     certificate: [null as number],
+    console_bindport: [
+      9001,
+      [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)]],
   });
 
   readonly tooltips = {

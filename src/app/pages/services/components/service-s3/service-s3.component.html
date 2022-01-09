@@ -17,6 +17,12 @@
           [tooltip]="tooltips.bindport | translate"
         ></ix-input>
         <ix-input
+          formControlName="console_bindport"
+          [label]="'Console Port' | translate"
+          type="number"
+          [required]="true"
+        ></ix-input>
+        <ix-input
           formControlName="access_key"
           [label]="'Access Key' | translate"
           [required]="true"
