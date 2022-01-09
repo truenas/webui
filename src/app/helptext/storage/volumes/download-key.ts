@@ -7,8 +7,7 @@ export default {
   downloadkey_dialog_legacy_message: T('Back up the encryption key now! If the key is lost,\
  the data on the disks will also be lost with no hope of recovery. Click <b>Download\
  Encryption Key</b> to begin the download. This type of encryption is for users storing\
- sensitive data. Encrypted disks can be removed from the pool and reused or disposed of\
- without being erased. iXsystems, Inc. cannot be held responsible for any lost or unrecoverable\
+ sensitive data. iXsystems, Inc. cannot be held responsible for any lost or unrecoverable\
  data as a consequence of using this feature.'),
   downloadkey_dialog_zfs_message: T('Losing the ability to unlock the pool can result in losing all\
  data on the disks with no chance of recovery. Always back up the encryption key file or passphrase\
