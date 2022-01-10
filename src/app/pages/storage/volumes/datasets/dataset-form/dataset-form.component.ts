@@ -114,6 +114,14 @@ export class DatasetFormComponent implements FormConfiguration {
       config: [
         {
           type: 'input',
+          name: 'parent',
+          placeholder: helptext.dataset_parent_name_placeholder,
+          tooltip: helptext.dataset_parent_name_tooltip,
+          readonly: true,
+          disabled: true,
+        },
+        {
+          type: 'input',
           name: 'name',
           placeholder: helptext.dataset_form_name_placeholder,
           tooltip: helptext.dataset_form_name_tooltip,
@@ -969,9 +977,10 @@ export class DatasetFormComponent implements FormConfiguration {
       _.find(this.fieldConfig, { name: 'refquota_critical_inherit' }).placeholder = helptext.dataset_form_default;
     }
     if (!entityForm.isNew) {
+      _.find(this.fieldConfig, { name: 'parent' }).isHidden = true;
       entityForm.setDisabled('casesensitivity', true);
       entityForm.setDisabled('name', true);
-      _.find(this.fieldConfig, { name: 'name' }).tooltip = 'Dataset name (read-only).';
+      _.find(this.fieldConfig, { name: 'name' }).tooltip = helptext.dataset_form_name_readonly_tooltip;
       this.encryptionFields.forEach((field) => {
         this.entityForm.setDisabled(field, true, true);
       });
@@ -1040,7 +1049,8 @@ export class DatasetFormComponent implements FormConfiguration {
       this.parent = this.paramMap['parent'];
       this.pk = this.parent;
       this.isNew = true;
-      this.fieldSets[0].config[0].readonly = false;
+      entityForm.formGroup.controls['parent'].setValue(this.parent);
+      this.fieldSets[0].config[1].readonly = false;
       _.find(this.fieldSets, { class: 'dataset' }).label = false;
       _.find(this.fieldSets, { class: 'refdataset' }).label = false;
     }
@@ -1443,6 +1453,10 @@ export class DatasetFormComponent implements FormConfiguration {
     }
 
     return returnValue;
+  }
+
+  beforeSubmit(data: any): void {
+    delete data.parent;
   }
 
   // TODO: Similar to addSubmit.
