@@ -926,7 +926,7 @@
   "Hidden columns are not available for sorting or filtering, but the values can be  viewed by expanding the row. Hiding columns improves performance. NOTE: This window will reload automatically so that  the new view can take effect.": "",
   "Hide Built-in Groups": "",
   "Hide Built-in Users": "",
-  "Hide Duplicates": "",
+  "Hide Disks with Non-Unique Serial": "",
   "Hide built-in groups (default setting is <i>hidden</i>).": "",
   "Hide built-in users (default setting is <i>hidden</i>).": "",
   "Hide error output (stderr) from the command.                When unset, any error output is mailed to the user                account cron used to run the command.": "",

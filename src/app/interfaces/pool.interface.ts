@@ -79,6 +79,7 @@ export interface CreatePool {
   };
   checksum?: string;
   deduplication?: DeduplicationSetting;
+  allow_duplicate_serials?: boolean;
 }
 
 export interface UpdatePool {
@@ -86,6 +87,7 @@ export interface UpdatePool {
     [key in PoolTopologyCategory]: { type: string; disks?: string[] }[];
   };
   autotrim: OnOff;
+  allow_duplicate_serials?: boolean;
 }
 
 export interface PoolAttachParams {

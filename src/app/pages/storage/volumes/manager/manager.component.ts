@@ -11,6 +11,8 @@ import * as _ from 'lodash';
 import { of } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { DownloadKeyDialogComponent } from 'app/components/common/dialog/download-key/download-key-dialog.component';
+import { DiskBus } from 'app/enums/disk-bus.enum';
+import { DiskType } from 'app/enums/disk-type.enum';
 import helptext from 'app/helptext/storage/volumes/manager/manager';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -41,8 +43,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   vdevs: any = {
     data: [{}], cache: [], spares: [], log: [], special: [], dedup: [],
   };
-  originalDisks: ManagerDisk[];
-  originalSuggestableDisks: ManagerDisk[];
+  originalDisks: ManagerDisk[] = [];
+  originalSuggestableDisks: ManagerDisk[] = [];
   error: string;
   @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent> ;
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
@@ -103,7 +105,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   firstDataVdevType: string;
   firstDataVdevDisknum = 0;
   firstDataVdevDisksize: number;
-  firstDataVdevDisktype: string;
+  firstDataVdevDisktype: DiskType;
 
   private duplicableDisks: ManagerDisk[] = [];
 
@@ -128,16 +130,22 @@ export class ManagerComponent implements OnInit, AfterViewInit {
 
   allDisksDisplayed = false;
   duplicateSerialDisks: ManagerDisk[] = [];
-  get duplicateSerialWarning(): string {
+  get availableDuplicateSerialDisksCount(): number {
+    if (this.originalDisks.length === this.temp.length) {
+      return this.duplicateSerialDisks.length;
+    }
+    return this.temp.filter((disk) => this.duplicateSerialDisks.includes(disk)).length;
+  }
+  get diskDuplicateSerialWarning(): string {
     if (!this.duplicateSerialDisks.length) {
       return null;
     }
 
-    if (this.duplicateSerialDisks.every((disk) => disk.type === 'USB')) {
-      return this.translate.instant('There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly making such disks indistinguishable from each other.', { n: this.duplicateSerialDisks.length });
+    if (this.duplicateSerialDisks.every((disk) => disk.bus === DiskBus.Usb)) {
+      return this.translate.instant('There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly making such disks indistinguishable from each other.', { n: this.availableDuplicateSerialDisksCount });
     }
 
-    return this.translate.instant('Warning! There are {n} disks available that have non-unique serial numbers. That can be a cabling issue and adding such a disk to a pool can result in a data loss.', { n: this.duplicateSerialDisks.length });
+    return this.translate.instant('Warning! There are {n} disks available that have non-unique serial numbers. That can be a cabling issue and adding such a disk to a pool can result in a data loss.', { n: this.availableDuplicateSerialDisksCount });
   }
 
   constructor(
@@ -363,8 +371,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.originalSuggestableDisks = Array.from(this.suggestableDisks);
 
       this.temp = [...this.disks];
-      this.duplicateSerialDisks = this.disks.filter((disk) => disk.duplicate_serial);
-      this.disks = this.disks.filter((disk) => !disk.duplicate_serial);
+      this.duplicateSerialDisks = this.disks.filter((disk) => disk.duplicate_serial.length);
+      this.disks = this.disks.filter((disk) => !disk.duplicate_serial.length);
       this.getDuplicableDisks();
     }, (err) => {
       this.loader.close();
@@ -569,6 +577,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   doSubmit(): void {
     let confirmButton: string = this.translate.instant('Create Pool');
     let diskWarning: string = this.diskAddWarning;
+    let allowDuplicateSerials = false;
     if (!this.isNew) {
       confirmButton = this.translate.instant('Add Vdevs');
       diskWarning = this.diskExtendWarning;
@@ -587,6 +596,9 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.vdevComponents.forEach((vdev) => {
           const disks: string[] = [];
           vdev.getDisks().forEach((disk) => {
+            if (disk.duplicate_serial.length) {
+              allowDuplicateSerials = true;
+            }
             disks.push(disk.devname);
           });
           if (disks.length > 0) {
@@ -612,6 +624,10 @@ export class ManagerComponent implements OnInit, AfterViewInit {
           }
         } else {
           body = { topology: layout } as UpdatePool;
+        }
+
+        if (allowDuplicateSerials) {
+          body['allow_duplicate_serials'] = true;
         }
 
         const dialogRef = this.mdDialog.open(EntityJobComponent, {
@@ -804,7 +820,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   toggleAllDisks(): void {
     this.allDisksDisplayed = !this.allDisksDisplayed;
     if (this.allDisksDisplayed) {
-      this.disks = this.originalDisks;
+      this.disks = this.originalDisks.filter((disk) => this.temp.includes(disk));
     } else {
       this.disks = this.disks.filter((disk) => !this.duplicateSerialDisks.includes(disk));
     }

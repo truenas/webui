@@ -259,7 +259,7 @@
   "Healthy": "",
   "Hide Built-in Groups": "",
   "Hide Built-in Users": "",
-  "Hide Duplicates": "",
+  "Hide Disks with Non-Unique Serial": "",
   "Hide built-in groups (default setting is <i>hidden</i>).": "",
   "Hide built-in users (default setting is <i>hidden</i>).": "",
   "Hide from MSR": "",
