@@ -320,6 +320,26 @@
                 </a>
               </ng-template>
             </ngx-datatable-column>
+
+            <ngx-datatable-footer>
+              <ng-template
+                ngx-datatable-footer-template
+                let-selectedCount="selectedCount"
+                let-rowCount="rowCount"
+                let-hiddenCount="duplicateSerialDisks"
+              >
+                <div>
+                  <p class="duplicate-serial-warning" *ngIf="duplicateSerialDisks.length">
+                    {{ duplicateSerialWarning }}<br>
+                    <a href="javascript:void(0)" (click)="toggleAllDisks()">[ {{ (allDisksDisplayed ? 'Hide Duplicates' : 'Show All Disks') | translate }} ]</a>
+                  </p>
+
+                  <div class="page-count">
+                    <div>{{ selectedCount }} {{ 'selected' | translate }} / {{ rowCount }} {{ 'total' | translate }}</div>
+                  </div>
+                </div>
+              </ng-template>
+            </ngx-datatable-footer>
           </ngx-datatable>
           <div id="filter-wrapper">
             <mat-form-field fxFlex="1 1 40%">

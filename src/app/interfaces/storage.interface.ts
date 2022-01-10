@@ -60,6 +60,7 @@ export interface Disk {
   pool: string;
   rotationrate: number;
   serial: string;
+  duplicate_serial: boolean;
   size: number;
   smartoptions: string;
   subsystem: string;

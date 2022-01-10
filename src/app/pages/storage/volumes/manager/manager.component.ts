@@ -126,6 +126,20 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
   };
 
+  allDisksDisplayed = false;
+  duplicateSerialDisks: ManagerDisk[] = [];
+  get duplicateSerialWarning(): string {
+    if (!this.duplicateSerialDisks.length) {
+      return null;
+    }
+
+    if (this.duplicateSerialDisks.every((disk) => disk.type === 'USB')) {
+      return this.translate.instant('There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly making such disks indistinguishable from each other.', { n: this.duplicateSerialDisks.length });
+    }
+
+    return this.translate.instant('Warning! There are {n} disks available that have non-unique serial numbers. That can be a cabling issue and adding such a disk to a pool can result in a data loss.', { n: this.duplicateSerialDisks.length });
+  }
+
   constructor(
     private ws: WebSocketService,
     private router: Router,
@@ -349,6 +363,8 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.originalSuggestableDisks = Array.from(this.suggestableDisks);
 
       this.temp = [...this.disks];
+      this.duplicateSerialDisks = this.disks.filter((disk) => disk.duplicate_serial);
+      this.disks = this.disks.filter((disk) => !disk.duplicate_serial);
       this.getDuplicableDisks();
     }, (err) => {
       this.loader.close();
@@ -783,5 +799,14 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       const heightStr = `height: ${newHeight}px`;
       document.getElementsByClassName('ngx-datatable')[0].setAttribute('style', heightStr);
     }, 100);
+  }
+
+  toggleAllDisks(): void {
+    this.allDisksDisplayed = !this.allDisksDisplayed;
+    if (this.allDisksDisplayed) {
+      this.disks = this.originalDisks;
+    } else {
+      this.disks = this.disks.filter((disk) => !this.duplicateSerialDisks.includes(disk));
+    }
   }
 }

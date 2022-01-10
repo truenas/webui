@@ -92,6 +92,7 @@ export interface PoolAttachParams {
   target_vdev?: string;
   new_disk?: string;
   passphrase?: string;
+  allow_duplicate_serials?: boolean;
 }
 
 export interface PoolReplaceParams {
