@@ -41,7 +41,7 @@ export class ServiceS3Component implements OnInit {
     browser: [false],
     certificate: [null as number],
     console_bindport: [
-      9001,
+      9001 as number,
       [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)]],
   });
 
@@ -123,6 +123,7 @@ export class ServiceS3Component implements OnInit {
     const values = {
       ...this.form.value,
       bindport: Number(this.form.value.bindport),
+      console_bindport: Number(this.form.value.console_bindport),
     };
 
     this.isFormLoading = true;
