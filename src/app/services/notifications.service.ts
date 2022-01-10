@@ -7,6 +7,7 @@ import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 
+// TODO: Nuke me
 export interface NotificationAlert {
   id: string;
   message: string;

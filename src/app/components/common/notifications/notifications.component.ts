@@ -15,7 +15,7 @@ import { NotificationsService, NotificationAlert } from 'app/services/notificati
   styleUrls: ['./notifications.component.scss'],
 })
 export class NotificationsComponent implements OnInit {
-  @Input() notificPanel: MatSidenav;
+  @Input() notificationsPanel: MatSidenav;
 
   notifications: NotificationAlert[] = [];
   dismissedNotifications: NotificationAlert[] = [];
@@ -84,11 +84,11 @@ export class NotificationsComponent implements OnInit {
   }
 
   closeNotificationsPanel(): void {
-    this.notificPanel.close();
+    this.notificationsPanel.close();
   }
 
   navigateTo(link: string[]): void {
-    this.notificPanel.close().then(() => {
+    this.notificationsPanel.close().then(() => {
       this.router.navigate(link);
     });
   }

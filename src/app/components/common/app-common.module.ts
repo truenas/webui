@@ -14,6 +14,7 @@ import { SecondaryMenuComponent } from 'app/components/common/secondary-menu/sec
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
@@ -47,6 +48,7 @@ import { TopbarComponent } from './topbar/topbar.component';
     ScrollingModule,
     AngularSvgIconModule.forRoot(),
     CastModule,
+    AlertsModule,
   ],
   declarations: [
     AdminLayoutComponent,
