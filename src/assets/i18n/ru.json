@@ -2703,7 +2703,6 @@
   "Export Read Only": "Экспортировать только для чтения",
   "Export Recycle Bin": "Экспортировать Корзину",
   "Export ZFS snapshots as <a href=\"https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-and-shadow-copy-sets\" target=_blank>Shadow Copies</a> for VSS clients.": "Экспорт снимков ZFS как <a href=\"https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-and-shadow-copy-sets\" target=_blank>Shadow Copies</a> для клиентов VSS.",
-  "Export dataset keys which can be used to unlock datasets for ": "Экспорт ключей набора данных, которые можно использовать для разблокировки наборов данных для ",
   "Export/Disconnect": "Экспортировать/Отключить",
   "Export/Disconnect Pool": "Экспортировать/Отключить пул",
   "Export/disconnect pool: '": "Экспортировать/Отключить пул: '",

@@ -1260,7 +1260,6 @@
   "Export Key": "",
   "Export Password Secret Seed": "",
   "Export ZFS snapshots as <a href=\"https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-and-shadow-copy-sets\" target=_blank>Shadow Copies</a> for VSS clients.": "",
-  "Export dataset keys which can be used to unlock datasets for ": "",
   "Export/disconnect pool: '": "",
   "Exporting Pool": "",
   "Exporting/disconnecting will continue after services have been managed.": "",
