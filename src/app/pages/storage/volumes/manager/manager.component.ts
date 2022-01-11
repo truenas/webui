@@ -749,6 +749,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   }
 
   suggestRedundancyLayout(): void {
+    this.selected = [];
     this.suggestableDisks.forEach((disk) => {
       this.vdevComponents.first.addDisk(disk);
     });
