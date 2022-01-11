@@ -162,7 +162,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
     assert wait_on_element(driver, 60, '//button[@id="My BOX Cloud task_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(5)
+    time.sleep(6)
 
 
 @then('verify all files are copied from Box are into the dataset')
@@ -311,8 +311,10 @@ def verify_all_files_are_moved_from_the_box_test_folder_to_the_dataset(driver, n
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
     driver.refresh()
+    time.sleep(1)
     assert wait_on_element(driver, 5, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="music"]', 'clickable')
+    assert wait_on_element_disappear(driver, 10, '//a[text()="Explaining_BSD.pdf"]')
     assert not is_element_present(driver, '//a[text()="Explaining_BSD.pdf"]')
     assert not is_element_present(driver, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
     driver.find_element_by_xpath('//a[text()="music"]').click()
@@ -444,7 +446,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     time.sleep(1)
     assert wait_on_element(driver, 60, '//button[@id="My BOX Cloud task_Status-button" and contains(.,"SUCCESS")]')
     # give time to the system to be ready.
-    time.sleep(5)
+    time.sleep(6)
 
 
 @then('verify the file is removed from the dataset folder')
