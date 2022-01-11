@@ -85,4 +85,4 @@ def change_should_be_saved_open_the_user_dropdown_the_email_value_should_be_visi
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    driver.find_element_by_xpath('//h4[contains(.,"Email:")]')
+    driver.find_element_by_xpath('//div[contains(.,"Email:")]')
