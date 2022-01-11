@@ -13,6 +13,7 @@ export default {
   ],
 
   bindport_placeholder: T('Port'),
+  console_bindprot_placeholder: T('Console Port'),
   bindport_tooltip: T('Enter the TCP port which provides the S3 service.'),
   bindport_value: '9000',
   bindport_validation: [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)],
