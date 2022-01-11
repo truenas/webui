@@ -1,6 +1,3 @@
-import { HarnessLoader } from '@angular/cdk/testing';
-import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { MatIconHarness } from '@angular/material/icon/testing';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
@@ -15,6 +12,7 @@ import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
+import { AlertPageObject } from 'app/modules/alerts/components/alert/alert.page-object';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey, selectAlerts } from 'app/modules/alerts/store/alert.selectors';
@@ -32,8 +30,8 @@ const dummyAlert = {
 
 describe('AlertComponent', () => {
   let spectator: Spectator<AlertComponent>;
-  let loader: HarnessLoader;
   let websocket: WebSocketService;
+  let alert: AlertPageObject;
   const createComponent = createComponentFactory({
     component: AlertComponent,
     imports: [
@@ -67,20 +65,20 @@ describe('AlertComponent', () => {
       },
     });
 
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     websocket = spectator.inject(WebSocketService);
+    alert = new AlertPageObject(spectator);
   });
 
   it('shows alert level', () => {
-    expect(spectator.query('.alert-level')).toHaveText('Critical');
+    expect(alert.levelElement).toHaveText('Critical');
   });
 
   it('shows alert message', () => {
-    expect(spectator.query('.alert-message')).toHaveExactText('CPU is on fire');
+    expect(alert.messageElement).toHaveExactText('CPU is on fire');
   });
 
   it('shows an alert icon', async () => {
-    const icon = await loader.getHarness(MatIconHarness);
+    const icon = await alert.getIconHarness();
     expect(await icon.getName()).toEqual('error');
   });
 
@@ -93,8 +91,7 @@ describe('AlertComponent', () => {
   });
 
   it('dismisses an open alert when Dismiss link is pressed', async () => {
-    const dismissLink = spectator.query(byText('Dismiss'));
-    spectator.click(dismissLink);
+    alert.clickDismissLink();
 
     expect(websocket.call).toHaveBeenCalledWith('alert.dismiss', ['79']);
 

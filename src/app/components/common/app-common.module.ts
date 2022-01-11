@@ -28,7 +28,6 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { ModalComponent } from './modal/modal.component';
 import { NavigationComponent } from './navigation/navigation.component';
-import { NotificationsComponent } from './notifications/notifications.component';
 import { TopbarComponent } from './topbar/topbar.component';
 
 @NgModule({
@@ -56,7 +55,6 @@ import { TopbarComponent } from './topbar/topbar.component';
     TopbarComponent,
     NavigationComponent,
     ModalComponent,
-    NotificationsComponent,
     CustomizerComponent,
     BreadcrumbComponent,
     PageTitleComponent,

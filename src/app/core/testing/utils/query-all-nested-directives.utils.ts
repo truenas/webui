@@ -3,9 +3,16 @@ import { By } from '@angular/platform-browser';
 
 export function queryAllNestedDirectives<T>(
   debugElement: DebugElement,
-  parentSelector: string,
+  parentSelector: string | HTMLElement,
   directive: Type<T>,
 ): T[] {
-  const elements = debugElement.query(By.css(parentSelector)).queryAll(By.directive(directive));
+  let parentDebugElement: DebugElement;
+  if (typeof parentSelector === 'string') {
+    parentDebugElement = debugElement.query(By.css(parentSelector));
+  } else {
+    parentDebugElement = debugElement.query((element) => element.nativeElement === parentSelector);
+  }
+
+  const elements = parentDebugElement.queryAll(By.directive(directive));
   return elements.map((element) => element.injector.get(directive));
 }

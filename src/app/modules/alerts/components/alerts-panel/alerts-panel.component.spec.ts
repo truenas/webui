@@ -1,12 +1,14 @@
-import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng-mocks';
+import { MockWebsocketService } from 'app/core/testing/classes/mock-websocket.service';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
-import { queryAllNestedDirectives } from 'app/core/testing/utils/query-all-nested-directives.utils';
+import { ApiEventMessage } from 'app/enums/api-event-message.enum';
 import { Alert } from 'app/interfaces/alert.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertsPanelComponent } from 'app/modules/alerts/components/alerts-panel/alerts-panel.component';
+import { AlertsPanelPageObject } from 'app/modules/alerts/components/alerts-panel/alerts-panel.page-object';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
@@ -46,6 +48,7 @@ const dismissedAlerts = [
 describe('AlertsPanelComponent', () => {
   let spectator: Spectator<AlertsPanelComponent>;
   let websocket: WebSocketService;
+  let alertPanel: AlertsPanelPageObject;
   const createComponent = createComponentFactory({
     component: AlertsPanelComponent,
     imports: [
@@ -61,7 +64,7 @@ describe('AlertsPanelComponent', () => {
     ],
     providers: [
       mockWebsocket([
-        mockCall('alert.list', []),
+        mockCall('alert.list', [...unreadAlerts, ...dismissedAlerts]),
         mockCall('alert.dismiss'),
         mockCall('alert.restore'),
       ]),
@@ -72,63 +75,91 @@ describe('AlertsPanelComponent', () => {
     spectator = createComponent();
 
     websocket = spectator.inject(WebSocketService);
+    alertPanel = new AlertsPanelPageObject(spectator);
   });
 
-  // TODO: Move elsewhere?
   it('loads alerts when adminUiInitialized is dispatched', () => {
-    const store$ = spectator.inject(Store);
-    store$.dispatch(adminUiInitialized());
+    spectator.inject(Store).dispatch(adminUiInitialized());
 
     expect(websocket.call).toHaveBeenCalledWith('alert.list');
   });
 
   it('shows a list of unread alerts', () => {
-    const alerts = queryAllNestedDirectives(spectator.debugElement, '.unread-alerts', AlertComponent);
+    const unreadAlertComponents = alertPanel.unreadAlertComponents;
 
-    expect(alerts.length).toEqual(2);
-    expect(alerts[0].alert).toEqual(unreadAlerts[0]);
-    expect(alerts[1].alert).toEqual(unreadAlerts[1]);
+    expect(unreadAlertComponents.length).toEqual(2);
+    expect(unreadAlertComponents[0].alert).toEqual(unreadAlerts[0]);
+    expect(unreadAlertComponents[1].alert).toEqual(unreadAlerts[1]);
   });
 
   it('shows a list of dismissed alerts', () => {
-    const alerts = queryAllNestedDirectives(spectator.debugElement, '.dismissed-alerts', AlertComponent);
+    const dismissedAlertComponents = alertPanel.dismissedAlertComponents;
 
-    expect(alerts.length).toEqual(2);
-    expect(alerts[0].alert).toEqual(dismissedAlerts[0]);
-    expect(alerts[1].alert).toEqual(dismissedAlerts[1]);
+    expect(dismissedAlertComponents.length).toEqual(2);
+    expect(dismissedAlertComponents[0].alert).toEqual(dismissedAlerts[0]);
+    expect(dismissedAlertComponents[1].alert).toEqual(dismissedAlerts[1]);
   });
 
   it('dismisses all alerts when Dismiss All Alerts is pressed', () => {
-    spectator.click(spectator.query(byText('Dismiss All Alerts')));
+    spectator.click(alertPanel.dismissAllButton);
 
     expect(websocket.call).toHaveBeenCalledWith('alert.dismiss', ['1']);
     expect(websocket.call).toHaveBeenCalledWith('alert.dismiss', ['2']);
 
-    expect(spectator.query(byText('Dismiss All Alerts'))).not.toExist();
+    expect(alertPanel.dismissAllButton).not.toExist();
 
-    const dismissedAlerts = queryAllNestedDirectives(spectator.debugElement, '.dismissed-alerts', AlertComponent);
-    expect(dismissedAlerts.length).toEqual(4);
-    expect(spectator.query('.unread-alerts')).not.toExist();
+    expect(alertPanel.dismissedAlertComponents).toHaveLength(4);
+    expect(alertPanel.unreadAlertsSection).not.toExist();
   });
 
   it('reopens all alerts when Reopen All Alerts is pressed', () => {
-    spectator.click(spectator.query(byText('Re-Open All Alerts')));
+    spectator.click(alertPanel.reopenAllButton);
 
     expect(websocket.call).toHaveBeenCalledWith('alert.restore', ['3']);
     expect(websocket.call).toHaveBeenCalledWith('alert.restore', ['4']);
 
-    expect(spectator.query(byText('Re-Open All Alerts'))).not.toExist();
+    expect(alertPanel.reopenAllButton).not.toExist();
 
-    const unreadAlerts = queryAllNestedDirectives(spectator.debugElement, '.unread-alerts', AlertComponent);
-    expect(unreadAlerts.length).toEqual(4);
-    expect(spectator.query('.dismissed-alerts')).not.toExist();
+    expect(alertPanel.unreadAlertComponents).toHaveLength(4);
+    expect(alertPanel.dismissedAlertsSection).not.toExist();
   });
 
-  it('removes an alert when ?', () => {
+  it('adds an alert when websocket alert.list subscription sends an "add" event', () => {
+    spectator.inject(Store).dispatch(adminUiInitialized());
 
+    const mockWebsocket = spectator.inject(MockWebsocketService);
+    mockWebsocket.emitSubscribeEvent({
+      msg: ApiEventMessage.Added,
+      collection: 'alert.list',
+      fields: {
+        id: 'new',
+        dismissed: false,
+        formatted: 'New Alert',
+        datetime: { $date: 1641819015 },
+      } as Alert,
+    });
+    spectator.detectChanges();
+
+    expect(alertPanel.unreadAlertComponents).toHaveLength(3);
   });
 
-  it('closes panel when X is pressed', () => {
+  it('updates an alert when websocket alert.list subscription sends a "change" event', () => {
+    spectator.inject(Store).dispatch(adminUiInitialized());
 
+    const mockWebsocket = spectator.inject(MockWebsocketService);
+    mockWebsocket.emitSubscribeEvent({
+      msg: ApiEventMessage.Changed,
+      collection: 'alert.list',
+      fields: {
+        id: '1',
+        dismissed: true,
+        formatted: 'Unread 1',
+        datetime: { $date: 1641811015 },
+      } as Alert,
+    });
+    spectator.detectChanges();
+
+    expect(alertPanel.unreadAlertComponents).toHaveLength(1);
+    expect(alertPanel.dismissedAlertComponents).toHaveLength(3);
   });
 });

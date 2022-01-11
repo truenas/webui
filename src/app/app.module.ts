@@ -37,7 +37,6 @@ import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import { ErdService } from 'app/services/erd.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { NotificationsService } from 'app/services/notifications.service';
 import { RouterEffects } from 'app/store/effects/router.effects';
 import { reducers } from 'app/store/reducers';
 import { CustomRouterStateSerializer } from 'app/store/serializers/custom-router-serializer';
@@ -139,7 +138,6 @@ import { WebSocketService } from './services/ws.service';
     AuthService,
     WebSocketService,
     AppLoaderService,
-    NotificationsService,
     ErdService,
     JobsManagerStore,
     IxSlideInService,
