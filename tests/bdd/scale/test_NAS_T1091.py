@@ -55,8 +55,8 @@ def the_users_page_should_open_expand_the_user_and_click_the_edit_button(driver)
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
     driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
-    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")][1]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")][1]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('the User Edit Page should open, change the path of the users Home Directory')
