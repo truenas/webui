@@ -311,11 +311,13 @@ span.capitalize {
   font-size: 120%;
 }
 
-.disk-errors.mat-icon.healthy {
-  /*font-size: 18px;
-  margin-bottom: 2px;*/
+.mat-list-item .error,
+.mat-list-item .warning,
+.mat-list-item .healthy {
+  font-size: 120%;
+  margin-left: 5px;
+  margin-top: -5px;
 }
-
 
 /* NARROW SCREENS */
 .xs.widget {

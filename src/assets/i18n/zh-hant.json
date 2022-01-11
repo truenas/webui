@@ -3051,7 +3051,6 @@
   "reset": "",
   "rpc.lockd(8) bind port": "",
   "rpc.statd(8) bind port": "",
-  "safe": "",
   "seconds": "",
   "seconds unless SAVE CHANGES is chosen to make them permanent.": "",
   "software, which is provided as-is with no warranty.": "",
@@ -3062,7 +3061,6 @@
   "users": "",
   "vdev": "",
   "vdev is highly discouraged and will result in data loss if it fails": "",
-  "warn": "",
   "was successfully attached.": "",
   "zle (runs of zeros)": "",
   "zstd (default level, 3)": "",
@@ -4171,7 +4169,6 @@
   "ZFS deduplication": "ZFS 重複資料刪除",
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/\\#fast-list) This can also speed up or slow down the transfer.",
   "click here": "點擊此處",
-  "error": "錯誤",
   "group": "群組",
   "overview": "概觀",
   "password": "密碼"

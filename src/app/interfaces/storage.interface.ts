@@ -1,6 +1,7 @@
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
+import { VDevStatus } from 'app/enums/vdev-status.enum';
 import { ZfsProperty } from './zfs-property.interface';
 
 // As returned by pool.query under topology[<vdevtype>]
@@ -8,7 +9,7 @@ export interface VDev {
   type: string; // 'DISK'
   path: string;
   guid: string;
-  status: string;
+  status: VDevStatus;
   children: this[];
   unavail_disk: any;
   stats: VDevStats;
