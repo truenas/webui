@@ -2212,7 +2212,6 @@
   "Export Read Only": "Exporter en lecture seule",
   "Export Recycle Bin": "Exporter la corbeille",
   "Export ZFS snapshots as <a href=\"https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-and-shadow-copy-sets\" target=_blank>Shadow Copies</a> for VSS clients.": "Exporter les instantanés ZFS comme les <a href=\"https://docs.microsoft.com/en-us/windows/desktop/vss/shadow-copies-and-shadow-copy-sets\" target=_blank>clichés instantanés</a> pour les clients VSS.",
-  "Export dataset keys which can be used to unlock datasets for ": "Exporter les clés du dataset qui peuvent être utilisées pour déverrouiller les datasets pour ",
   "Export/Disconnect": "Exporter/Déconnecter",
   "Export/Disconnect Pool": "Exporter/Déconnecter un volume",
   "Export/disconnect pool: '": "Exporter/Déconnecter le volume: '",
