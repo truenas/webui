@@ -45,6 +45,13 @@
           [tooltip]="tooltips.certificate | translate"
           [options]="certificateOptions$"
         ></ix-select>
+        <ix-input
+          *ngIf="form.controls['certificate'].value !== null"
+          formControlName="tls_server_uri"
+          [label]="'TLS Server Uri' | translate"
+          [required]="true"
+        >
+        </ix-input>
       </ix-fieldset>
 
       <div class="form-actions">

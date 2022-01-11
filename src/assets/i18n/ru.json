@@ -1199,6 +1199,7 @@
   "TLS Allow Per User": "",
   "TLS Crypt Auth": "",
   "TLS Crypt Auth Enabled": "",
+  "TLS Server Uri": "",
   "Tag": "",
   "Tag to use for the specified image": "",
   "Tags": "",
