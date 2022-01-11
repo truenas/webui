@@ -22,7 +22,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertsPanelComponent {
-  // TODO: Error handling
   error$ = this.store$.select(selectAlertState).pipe(map((state) => state.error));
   isLoading$ = this.store$.select(selectAlertState).pipe(map((state) => state.isLoading));
   unreadAlerts$ = this.store$.select(selectUnreadAlerts);

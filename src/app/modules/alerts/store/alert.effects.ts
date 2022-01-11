@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { TranslateService } from '@ngx-translate/core';
 import { forkJoin, of } from 'rxjs';
 import {
   catchError, filter, map, mergeMap, pairwise, switchMap, withLatestFrom,
@@ -29,8 +30,11 @@ export class AlertEffects {
         map((alerts) => alertsLoaded({ alerts })),
         catchError((error) => {
           console.error(error);
-          return of(alertsNotLoaded({ error }));
-        }), // TODO: Process errors
+          // TODO: See if it would make sense to parse middleware error.
+          return of(alertsNotLoaded({
+            error: this.translate.instant('Alerts could not be loaded'),
+          }));
+        }),
       );
     }),
   ));
@@ -57,7 +61,7 @@ export class AlertEffects {
     ofType(adminUiInitialized),
     switchMap(() => {
       return this.ws.sub('alert.list').pipe(
-        filter((event) => event.msg !== ApiEventMessage.Changed && event.cleared),
+        filter((event) => event.msg === ApiEventMessage.Changed && event.cleared),
         map((event) => alertRemoved({ id: event.id })),
       );
     }),
@@ -100,5 +104,6 @@ export class AlertEffects {
     private actions$: Actions,
     private ws: WebSocketService,
     private store$: Store<AlertSlice>,
+    private translate: TranslateService,
   ) {}
 }

@@ -159,6 +159,7 @@
   "Admin Servers": "",
   "Administrative account name on the LDAP server. Example: <i>cn=Manager,dc=test,dc=org</i>.": "",
   "Adv. Power Mgmt.": "",
+  "Alerts could not be loaded": "",
   "Alias for the identical interface  on the other TrueNAS controller. The alias can be an IPv4 or IPv6 address.": "",
   "All": "",
   "All built-in users except <i>root</i> are hidden by default. Use the gear icon (top-right) to toggle the display of built-in users.": "",
