@@ -5,6 +5,7 @@
   " a passphrase invalidates an existing pool  recovery key file. To save a backup of the existing encryption key  without making any changes, click <b>DOWNLOAD ENCRYPTION KEY</b>.": "",
   " bytes.": "",
   " has been unlocked.": "",
+  "+ Add a backup credential": "",
   "... Make sure the {product} system is powered on and connected to the network.": "",
   "1 minute": "",
   "15 seconds": "",

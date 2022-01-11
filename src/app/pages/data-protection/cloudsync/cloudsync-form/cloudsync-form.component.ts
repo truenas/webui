@@ -139,7 +139,7 @@ export class CloudsyncFormComponent implements FormConfiguration {
           placeholder: helptext.credentials_placeholder,
           tooltip: helptext.credentials_tooltip,
           options: [{
-            label: '----------', value: null,
+            label: helptext.credentials_add_option, value: '',
           }],
           value: null,
           required: true,
@@ -719,6 +719,12 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.folderDestinationField = this.fieldSets.config('folder_destination') as FormExplorerConfig;
     this.folderSourceField = this.fieldSets.config('folder_source') as FormExplorerConfig;
     this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | typeof NULL_VALUE) => {
+      if (!res) {
+        this.modalService.closeSlideIn();
+        const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials' } };
+        this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
+        return;
+      }
       this.setDisabled('bucket', true, true);
       this.setDisabled('bucket_input', true, true);
       // reset folder tree view

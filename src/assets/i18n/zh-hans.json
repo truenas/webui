@@ -1,5 +1,6 @@
 {
   "": "",
+  "+ Add a backup credential": "",
   "Back up the encryption key now! If the key is lost, the data on the disks will also be lost with no hope of recovery. Click <b>Download Encryption Key</b> to begin the download. This type of encryption is for users storing sensitive data. iXsystems, Inc. cannot be held responsible for any lost or unrecoverable data as a consequence of using this feature.": "",
   "Browse to the path to be copied. Linux file path limits apply. Other operating systems can have different limits which might affect how they can be used as sources or destinations.": "",
   "Dataset name (read-only).": "",
