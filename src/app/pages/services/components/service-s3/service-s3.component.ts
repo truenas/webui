@@ -54,6 +54,14 @@ export class ServiceS3Component implements OnDestroy {
         },
         {
           type: 'input',
+          name: 'console_bindport',
+          placeholder: helptext.console_bindprot_placeholder,
+          value: '9001',
+          required: true,
+          validation: helptext.bindport_validation,
+        },
+        {
+          type: 'input',
           name: 'access_key',
           placeholder: helptext.access_key_placeholder,
           tooltip: helptext.access_key_tooltip,
