@@ -39,10 +39,11 @@ export default {
   manager_suggested_layout_tooltip: T('Create a recommended formation\
  of vdevs in a pool.'),
 
-  manager_encryption_message: T('This type of encryption is for users storing sensitive data.\
- Encrypted disks can be removed from the pool and reused or disposed of without being erased.\
- iXsystems, inc. cannot be held responsible for any lost or unrecoverable data as a consequence\
- of using this feature.'),
+  manager_encryption_message: T('Encryption is for users storing sensitive data.\
+  Pool-level encryption does not apply to the storage pool or disks in the pool. It applies\
+  to the root dataset that shares the pool name and any child datasets created unless you change\
+  the encryption at the time you create the child dataset. For more information on encryption please\
+  refer to the <a href="http://TrueNAS.com/docs/" target="_blank">TrueNAS Documentation hub</a>.'),
 
   manager_duplicate_title: T('Repeat Data VDev'),
   manager_duplicate_vdevs_tooltip: T('Create more data vdevs like the first.'),

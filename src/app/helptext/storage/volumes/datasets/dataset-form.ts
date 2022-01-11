@@ -4,8 +4,11 @@ import { getManPageLink } from 'app/helpers/man-page.utils';
 import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
 
 export default {
+  dataset_parent_name_placeholder: T('Parent path'),
+  dataset_parent_name_tooltip: T('Parent dataset path (read-only).'),
   dataset_form_name_placeholder: T('Name'),
   dataset_form_name_tooltip: T('Enter a unique name for the dataset.'),
+  dataset_form_name_readonly_tooltip: T('Dataset name (read-only).'),
   dataset_form_name_validation: [Validators.required],
 
   dataset_form_comments_placeholder: T('Comments'),
