@@ -60,8 +60,8 @@ def click_on_the_credentials_on_the_side_menu_click_on_local_users(driver):
 def click_the_down_caret_right_of_the_users(driver):
     """click the down caret right of the users, then click the Edit button."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
 
@@ -97,9 +97,9 @@ def open_the_user_dropdown(driver):
     """open the user dropdown."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]', 'clickable')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")][1]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")][1]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('updated value should be visible')

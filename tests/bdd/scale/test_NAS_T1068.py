@@ -54,14 +54,14 @@ def the_users_page_should_open_click_the_down_carat_sign_right_of_the_users(driv
     """the Users page should open, click the down carat sign right of the users."""
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]').click()
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
 
 
 @when('the User Field should expand down, then click the Edit button')
 def the_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the User Field should expand down, then click the Edit button."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    assert wait_on_element(driver, 7, '//tr[contains(.,"ericbsd")][1]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")][1]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @when('the User Edit Page should open, change the user shell and click save')
@@ -86,5 +86,5 @@ def open_the_user_dropdown_and_verify_the_shell_value_has_changed(driver):
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
     assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]').click()
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     assert wait_on_element(driver, 10, '//p[contains(.,"zsh")]')

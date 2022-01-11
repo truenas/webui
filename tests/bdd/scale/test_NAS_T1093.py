@@ -55,10 +55,10 @@ def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_
 def the_users_page_should_open_click_the_greaterthansign_the_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the Users page should open, click the Greater-Than-Sign, the User Field should expand down, then click the Edit button."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]').click()
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon'').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")][1]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")][1]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('the User Edit Page should open, change "Disable Password" to Yes and click save')

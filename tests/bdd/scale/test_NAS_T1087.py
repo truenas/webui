@@ -53,15 +53,15 @@ def on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_on_users(drive
 def the_users_page_should_open_click_the_greaterthansign_right_of_the_users(driver):
     """the Users page should open, click the Greater-Than-Sign right of the users."""
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
 
 
 @then('the User Field should expand down, click the Edit button')
 def the_user_field_should_expand_down_click_the_edit_button(driver):
     """the User Field should expand down, click the Edit button."""
-    assert wait_on_element(driver, 10, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")][1]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")][1]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @then('the User Edit Page should open, change the user email "eturgeon@ixsystems.com" and click save')
@@ -83,6 +83,6 @@ def change_should_be_saved_open_the_user_dropdown_the_email_value_should_be_visi
     """change should be saved, open the user dropdown, the email value should be visible."""
     assert wait_on_element_disappear(driver, 15, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 7, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
-    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]//mat-icon', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
     driver.find_element_by_xpath('//h4[contains(.,"Email:")]')
