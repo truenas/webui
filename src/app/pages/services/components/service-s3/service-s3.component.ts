@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit,
 } from '@angular/core';
-import { Validators } from '@angular/forms';
+import {
+  AbstractControl, ValidationErrors, ValidatorFn, Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -23,6 +25,23 @@ import { FilesystemService } from 'app/services/filesystem.service';
 export class ServiceS3Component implements OnInit {
   isFormLoading = false;
 
+  readonly tlsServerUriRequiredIfCertificateNotNull: { forProperty: 'required'; validatorFn: () => ValidatorFn } = {
+    forProperty: 'required',
+    validatorFn: (): ValidatorFn => {
+      return (control: AbstractControl): ValidationErrors => {
+        if (!control.parent) {
+          return null;
+        }
+
+        if (control.parent.get('certificate').value !== null && (control.value === '' || control.value === null)) {
+          return { required: true };
+        }
+
+        return null;
+      };
+    },
+  };
+
   form = this.fb.group({
     bindip: [''],
     bindport: [
@@ -43,6 +62,7 @@ export class ServiceS3Component implements OnInit {
     console_bindport: [
       9001 as number,
       [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)]],
+    tls_server_uri: [''],
   });
 
   readonly tooltips = {
@@ -117,6 +137,14 @@ export class ServiceS3Component implements OnInit {
           this.warned = true;
         });
     });
+
+    this.form.get('certificate').value$.pipe(untilDestroyed(this)).subscribe((value) => {
+      if (value !== null) {
+        this.form.get('tls_server_uri').addValidators([this.tlsServerUriRequiredIfCertificateNotNull.validatorFn()]);
+      } else {
+        this.form.get('tls_server_uri').removeValidators(this.tlsServerUriRequiredIfCertificateNotNull.validatorFn());
+      }
+    });
   }
 
   onSubmit(): void {
@@ -125,6 +153,10 @@ export class ServiceS3Component implements OnInit {
       bindport: Number(this.form.value.bindport),
       console_bindport: Number(this.form.value.console_bindport),
     };
+
+    if (values.certificate === null) {
+      delete values.tls_server_uri;
+    }
 
     this.isFormLoading = true;
     this.ws.call('s3.update', [values])

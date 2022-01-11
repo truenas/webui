@@ -38,6 +38,7 @@ describe('ServiceS3Component', () => {
           browser: true,
           console_bindport: 9001,
           certificate: 2,
+          tls_server_uri: 'test',
         } as S3Config),
         mockCall('s3.bindip_choices', {
           '0.0.0.0': '0.0.0.0',
@@ -85,6 +86,7 @@ describe('ServiceS3Component', () => {
       'Secret Key': '12345678',
       Certificate: 'Very Secure',
       'Console Port': '9001',
+      'TLS Server Uri': 'test',
     });
   });
 
@@ -113,6 +115,7 @@ describe('ServiceS3Component', () => {
       'Enable Browser': false,
       Certificate: 'Default',
       'Console Port': 9001,
+      'TLS Server Uri': 'test',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
@@ -127,6 +130,7 @@ describe('ServiceS3Component', () => {
       secret_key: '12345678',
       storage_path: '/mnt/new',
       console_bindport: 9001,
+      tls_server_uri: 'test',
     }]);
   });
 });
