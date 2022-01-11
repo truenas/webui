@@ -3731,7 +3731,6 @@
   "createcomputer": "",
   "details": "",
   "email": "",
-  "error": "",
   "everyone@": "",
   "expires in": "",
   "group@": "",
@@ -3773,7 +3772,6 @@
   "users": "",
   "vdev": "",
   "vdev is highly discouraged and will result in data loss if it fails": "",
-  "warn": "",
   "was successfully attached.": "",
   "zle (runs of zeros)": "",
   "zstd (default level, 3)": "",
@@ -4173,6 +4171,5 @@
   "days": "días",
   "empty": "vacío",
   "group": "grupo",
-  "password": "contraseña",
-  "safe": "seguro"
+  "password": "contraseña"
 }

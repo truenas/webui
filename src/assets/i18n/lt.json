@@ -4168,11 +4168,8 @@
   "close": "chiuso",
   "days": "giorni",
   "empty": "vuoto",
-  "error": "errore",
   "expires in": "scade tra",
   "group": "gruppo",
   "overview": "panoramica",
-  "safe": "sicura",
-  "warn": "avvisare",
   "was successfully attached.": "è stata collegata correttamente."
 }

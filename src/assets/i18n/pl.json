@@ -3920,7 +3920,6 @@
   "details": "",
   "email": "",
   "empty": "",
-  "error": "",
   "everyone@": "",
   "expires in": "",
   "group": "",
@@ -4171,8 +4170,6 @@
   "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/#fast-list) This can also speed up or slow down the transfer.": "[Use fewer transactions in exchange for more RAM.](https://rclone.org/docs/\\#fast-list) This can also speed up or slow down the transfer.",
   "overview": "przegląd",
   "password": "hasło",
-  "safe": "bezpieczny",
   "users": "użytkownicy",
-  "warn": "ostrzeżenie",
   "was successfully attached.": "został pomyślanie powiązany."
 }
