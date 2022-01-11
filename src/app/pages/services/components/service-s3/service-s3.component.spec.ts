@@ -36,6 +36,7 @@ describe('ServiceS3Component', () => {
           secret_key: '12345678',
           storage_path: '/mnt/s3/',
           browser: true,
+          console_bindport: 9001,
           certificate: 2,
           tls_server_uri: 'test',
         } as S3Config),
@@ -84,6 +85,7 @@ describe('ServiceS3Component', () => {
       Disk: '/mnt/s3/',
       'Secret Key': '12345678',
       Certificate: 'Very Secure',
+      'Console Port': '9001',
       'TLS Server Uri': 'test',
     });
   });
@@ -112,6 +114,7 @@ describe('ServiceS3Component', () => {
       Disk: '/mnt/new',
       'Enable Browser': false,
       Certificate: 'Default',
+      'Console Port': 9001,
       'TLS Server Uri': 'test',
     });
 
@@ -126,6 +129,7 @@ describe('ServiceS3Component', () => {
       certificate: 1,
       secret_key: '12345678',
       storage_path: '/mnt/new',
+      console_bindport: 9001,
       tls_server_uri: 'test',
     }]);
   });

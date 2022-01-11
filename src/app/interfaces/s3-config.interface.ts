@@ -7,6 +7,7 @@ export interface S3Config {
   id: number;
   secret_key: string;
   storage_path: string;
+  console_bindport: number;
   tls_server_uri: string;
 }
 
