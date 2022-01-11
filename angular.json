@@ -12,17 +12,10 @@
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
             "allowedCommonJsDependencies": [
-              "lodash",
               "is-cidr",
-              "cidr-regex",
               "dygraphs",
-              "angular-calendar",
               "chart.js",
               "cron-parser",
-              "chartist",
-              "moment-timezone",
-              "calendar-utils",
-              "what-is-my-ip-address",
               "cronstrue"
             ],
             "outputPath": "dist",

@@ -366,7 +366,6 @@ export class SigninComponent implements OnInit, OnDestroy, AfterViewInit {
       }
       if (this.ws.redirectUrl) {
         this.router.navigateByUrl(this.ws.redirectUrl);
-        this.ws.redirectUrl = '';
       } else {
         this.router.navigate(['/dashboard']);
       }
