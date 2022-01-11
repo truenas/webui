@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
   tftp_fieldset_path: T('Path'),
@@ -31,8 +30,10 @@ export default {
   tftp_umask_tooltip: T('Adjust the file permissions using the checkboxes.'),
 
   tftp_options_placeholder: T('Auxiliary Parameters'),
-  tftp_options_tooltip: T(`Add more options from ${getManPageLink('tftpd(8)')}.
-  Add one option on each line.`),
+  tftp_options_tooltip: T('Add more options from <a\
+ href="https://linux.die.net/man/8/tftpd"\
+ target="_blank">tftpd(8)</a>. Add one option on each\
+ line.'),
 
   formTitle: T('TFTP'),
 };

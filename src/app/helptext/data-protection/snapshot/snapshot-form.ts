@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
   fieldset_dataset: T('Dataset'),
@@ -32,14 +31,14 @@ export default {
  to other systems are not affected.'),
 
   naming_schema_placeholder: T('Naming Schema'),
-  naming_schema_tooltip: T(`Snapshot name format string. The default
- is <code>auto-&percnt;Y-&percnt;m-&percnt;d_&percnt;H-&percnt;M</code>. Must include the strings <i>&percnt;Y</i>,
- <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i>, which are replaced with
- the four-digit year, month, day of month, hour, and minute as defined
- ${getManPageLink('strftime(3)')}.<br><br>
- For example, snapshots of <i>pool1</i> with a Naming Schema of
- <i>customsnap-&percnt;Y&percnt;m&percnt;d.&percnt;H&percnt;M</i> have names like
- <i>pool1@customsnap-20190315.0527</i>.`),
+  naming_schema_tooltip: T('Snapshot name format string. The default \
+ is <code>auto-&percnt;Y-&percnt;m-&percnt;d_&percnt;H-&percnt;M</code>. Must include the strings <i>&percnt;Y</i>, \
+ <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i>, which are replaced with \
+ the four-digit year, month, day of month, hour, and minute as defined \
+ in <a href="https://man7.org/linux/man-pages/man3/strftime.3.html" target="_blank">strftime(3)</a>.<br><br> \
+ For example, snapshots of <i>pool1</i> with a Naming Schema of \
+ <i>customsnap-&percnt;Y&percnt;m&percnt;d.&percnt;H&percnt;M</i> have names like \
+ <i>pool1@customsnap-20190315.0527</i>.'),
 
   begin_placeholder: T('Begin'),
   begin_tooltip: T('Hour and minute when the system can begin \

@@ -1,12 +1,13 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
   smart_fieldset_general: T('General Options'),
 
   smart_interval_placeholder: T('Check Interval'),
-  smart_interval_tooltip: T(`Define a number of minutes for ${getManPageLink('smartd')} to wake up
-  and check if any tests are configured to run.`),
+  smart_interval_tooltip: T('Define a number of minutes for <a\
+ href="https://linux.die.net/man/8/smartd"\
+ target="_blank">smartd</a> to wake up and check if any\
+ tests are configured to run.'),
 
   smart_powermode_placeholder: T('Power Mode'),
   smart_powermode_tooltip: T('Tests are only performed when <i>Never</i> \

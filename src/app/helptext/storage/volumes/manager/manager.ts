@@ -1,5 +1,4 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
   manager_needsDiskMessage: T('Add one or more disks to be used for data.'),
@@ -33,8 +32,9 @@ export default {
  <a href="https://docs.oracle.com/cd/E23824_01/html/821-1448/gbcpt.html" target="_blank">conventions</a>. \
  Choose a memorable name.'),
 
-  manager_encryption_tooltip: T(`Enable ZFS encryption (${getManPageLink('zfs(8)')})
- for this pool and add an encryption algorithm selector.`),
+  manager_encryption_tooltip: T('Enable \
+ <a href="https://zfsonlinux.org/manpages/0.8.3/man8/zfs.8.html" target="_blank">ZFS encryption</a> \
+ for this pool and add an encryption algorithm selector.'),
 
   manager_suggested_layout_tooltip: T('Create a recommended formation\
  of vdevs in a pool.'),

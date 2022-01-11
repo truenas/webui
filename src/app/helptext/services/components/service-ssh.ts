@@ -1,6 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
-import { getManPageLink } from 'app/helpers/man-page.utils';
 
 export default {
   ssh_bindiface_tooltip: T('Select interfaces for SSH to listen on. Leave all\
@@ -31,7 +30,9 @@ export default {
 
   ssh_compression_tooltip: T('Set to attempt to reduce latency over slow networks.'),
 
-  ssh_sftp_log_level_tooltip: T(`Select the ${getManPageLink('syslog')} level of the SFTP server.`),
+  ssh_sftp_log_level_tooltip: T('Select the <a\
+ href="https://man7.org/linux/man-pages/man3/syslog.3.html"\
+ target="_blank">syslog(3)</a> level of the SFTP server.'),
   ssh_sftp_log_level_options: [
     { label: '', value: '' },
     { label: 'Quiet', value: SshSftpLogLevel.Quiet },
@@ -44,7 +45,10 @@ export default {
     { label: 'Debug3', value: SshSftpLogLevel.Debug3 },
   ],
 
-  ssh_sftp_log_facility_tooltip: T(`Select the ${getManPageLink('syslog')} facility of the SFTP server.`),
+  ssh_sftp_log_facility_tooltip: T('Select the <a\
+ href="https://man7.org/linux/man-pages/man3/syslog.3.html"\
+ target="_blank">syslog(3)</a> facility of the SFTP\
+ server.'),
   ssh_sftp_log_facility_options: [
     { label: '', value: '' },
     { label: 'Daemon', value: SshSftpLogFacility.Daemon },
@@ -60,18 +64,22 @@ export default {
     { label: 'Local 7', value: SshSftpLogFacility.Local7 },
   ],
 
-  ssh_options_tooltip: T(`Add any more ${getManPageLink('sshd_config')} options not covered
- in this screen. Enter one option per line. These
- options are case-sensitive. Misspellings can prevent
- the SSH service from starting.`),
+  ssh_options_tooltip: T('Add any more <a\
+ href="https://man7.org/linux/man-pages/man5/sshd_config.5.html"\
+ target="_blank">sshd_config(5)</a> options not covered\
+ in this screen. Enter one option per line. These\
+ options are case-sensitive. Misspellings can prevent\
+ the SSH service from starting.'),
 
-  ssh_weak_ciphers_tooltip: T(`Allow more ciphers for ${getManPageLink('sshd(8)')}
- in addition to the defaults in ${getManPageLink('sshd_config(5)')}.
- <code>None</code> allows unencrypted SSH connections and
- <code>AES128-CBC</code> allows the 128-bit
- <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf" target="_blank">Advanced Encryption Standard</a>.<br><br>
- WARNING: these ciphers are considered security vulnerabilities and
- should only be allowed in a secure network environment.`),
+  ssh_weak_ciphers_tooltip: T('Allow more ciphers for \
+ <a href="https://man7.org/linux/man-pages/man8/sshd.8.html" target="_blank">sshd(8)</a> \
+ in addition to the defaults in \
+ <a href="https://man7.org/linux/man-pages/man5/sshd_config.5.html" target="_blank">sshd_config(5)</a>. \
+ <code>None</code> allows unencrypted SSH connections and \
+ <code>AES128-CBC</code> allows the 128-bit \
+ <a href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf" target="_blank">Advanced Encryption Standard</a>.<br><br> \
+ WARNING: these ciphers are considered security vulnerabilities and \
+ should only be allowed in a secure network environment.'),
   ssh_weak_ciphers_options: [
     { label: T('None'), value: SshWeakCipher.None },
     { label: 'AES128-CBC', value: SshWeakCipher.Aes128Cbc },
