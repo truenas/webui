@@ -86,7 +86,6 @@ export default {
   dataset_form_reservation_tooltip: T('<i>0</i> is unlimited. A specified value applies to\
  both this dataset and any child datasets.'),
 
-  dataset_form_deduplication_label: T('ZFS deduplication'),
   dataset_form_deduplication_placeholder: T('ZFS Deduplication'),
   dataset_form_deduplication_tooltip: T('Transparently reuse a single copy of duplicated \
  data to save space. Deduplication can improve storage capacity, but is RAM intensive. \

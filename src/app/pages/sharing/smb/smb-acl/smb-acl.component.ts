@@ -16,7 +16,7 @@ import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.in
   selector: 'app-smb-acl',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class SMBAclComponent implements FormConfiguration {
+export class SmbAclComponent implements FormConfiguration {
   queryCall = 'smb.sharesec.query' as const;
   editCall = 'smb.sharesec.update' as const;
 

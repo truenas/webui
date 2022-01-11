@@ -5,7 +5,7 @@ import { Component, ViewChild, ElementRef } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription, Observer } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { FormUploadConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { WebSocketService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -23,7 +23,6 @@ export class FormUploadComponent {
   fieldShow: string;
   busy: Subscription[] = [];
   sub: Subscription;
-  observer: Observer<any>;
   jobId: number;
   fileBrowser = true;
   apiEndPoint = '/_upload?auth_token=' + this.ws.token;

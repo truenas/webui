@@ -25,8 +25,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
   template: ' <entity-form [conf]="this"></entity-form>',
   providers: [ServicesService, IdmapService],
 })
-
-export class ServiceSMBComponent implements FormConfiguration {
+export class ServiceSmbComponent implements FormConfiguration {
   queryCall = 'smb.config' as const;
   routeSuccess: string[] = ['services'];
   error: string;

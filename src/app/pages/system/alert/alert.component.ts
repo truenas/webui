@@ -8,7 +8,7 @@ import { CoreService } from 'app/core/services/core-service/core.service';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import helptext from 'app/helptext/system/alert-settings';
-import { AlertCategory } from 'app/interfaces/alert.interface';
+import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
@@ -153,7 +153,7 @@ export class AlertConfigComponent implements OnInit {
               for (const j in res.classes[k]) {
                 const prop = k + '_' + j;
                 if (this.formGroup.controls[prop]) {
-                  this.formGroup.controls[prop].setValue((res.classes as any)[k][j]);
+                  this.formGroup.controls[prop].setValue(res.classes[k][j as keyof AlertClassSettings]);
                 } else {
                   console.error('Missing prop: ' + prop); // some properties don't exist between both calls?
                 }
@@ -212,19 +212,22 @@ export class AlertConfigComponent implements OnInit {
   }
 
   onSubmit(): void {
-    const payload: any = { classes: {} };
+    const payload: AlertClassesUpdate = { classes: {} };
 
     for (const key in this.formGroup.value) {
       const keyValues = key.split('_');
       const alertClass = keyValues[0];
-      const classKey = keyValues[1];
+      const classKey = keyValues[1] as 'policy' | 'level';
       const def = _.find(this.defaults, { id: alertClass });
-      if (def[classKey as keyof AlertDefaults].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
+      if (def[classKey].toUpperCase() !== this.formGroup.value[key].toUpperCase()) {
         // do not submit defaults in the payload
         if (!payload.classes[alertClass]) {
           payload.classes[alertClass] = {};
         }
-        payload.classes[alertClass][classKey] = this.formGroup.value[key];
+
+        // Something wrong with Typescript typing or eslint rule.
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        (payload.classes[alertClass][classKey] as AlertLevel | AlertPolicy) = this.formGroup.value[key];
       }
     }
 

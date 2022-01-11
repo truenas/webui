@@ -18,11 +18,11 @@ import { DriveTray } from 'app/core/classes/hardware/drivetray';
 import { E16 } from 'app/core/classes/hardware/e16';
 import { E24 } from 'app/core/classes/hardware/e24';
 import { E60 } from 'app/core/classes/hardware/e60';
-import { ES102 } from 'app/core/classes/hardware/es102';
-import { ES12 } from 'app/core/classes/hardware/es12';
-import { ES24 } from 'app/core/classes/hardware/es24';
-import { ES24F } from 'app/core/classes/hardware/es24f';
-import { ES60 } from 'app/core/classes/hardware/es60';
+import { Es102 } from 'app/core/classes/hardware/es102';
+import { Es12 } from 'app/core/classes/hardware/es12';
+import { Es24 } from 'app/core/classes/hardware/es24';
+import { Es24F } from 'app/core/classes/hardware/es24f';
+import { Es60 } from 'app/core/classes/hardware/es60';
 import { M50 } from 'app/core/classes/hardware/m50';
 import { R10 } from 'app/core/classes/hardware/r10';
 import { R20 } from 'app/core/classes/hardware/r20';
@@ -31,7 +31,7 @@ import { R20B } from 'app/core/classes/hardware/r20b';
 import { R40 } from 'app/core/classes/hardware/r40';
 import { R50 } from 'app/core/classes/hardware/r50';
 import { R50B } from 'app/core/classes/hardware/r50b';
-import { VDevLabelsSVG } from 'app/core/classes/hardware/vdev-labels-svg';
+import { VDevLabelsSvg } from 'app/core/classes/hardware/v-dev-labels-svg';
 import {
   SystemProfiler, EnclosureMetadata, EnclosureDisk, VDevMetadata,
 } from 'app/core/classes/system-profiler';
@@ -151,7 +151,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
   exitingView: string; // pools || status || expanders || details
   temperatures?: Temperature;
   private defaultView = 'pools';
-  private labels: VDevLabelsSVG;
+  private labels: VDevLabelsSvg;
   private identifyBtnRef: any;
   protected maxCardWidth = 960;
   protected pixiWidth = 960;
@@ -434,7 +434,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         break;
       case 'X Series':
       case 'ES12':
-        this.chassis = new ES12();
+        this.chassis = new Es12();
         break;
       case 'Z Series':
       case 'TRUENAS-Z20-HA-D':
@@ -442,22 +442,22 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         this.chassis = new E16();
         break;
       case 'ES24':
-        this.chassis = new ES24();
+        this.chassis = new Es24();
         break;
       case 'ES24F':
-        this.chassis = new ES24F();
+        this.chassis = new Es24F();
         break;
       case 'E24':
         this.chassis = new E24();
         break;
       case 'ES60':
-        this.chassis = new ES60();
+        this.chassis = new Es60();
         break;
       case 'E60':
         this.chassis = new E60();
         break;
       case 'ES102':
-        this.chassis = new ES102();
+        this.chassis = new Es102();
         this.showCaption = false;
         break;
       default:
@@ -557,7 +557,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         break;
       case 'X Series':
       case 'ES12':
-        extractedChassis = new ES12();
+        extractedChassis = new Es12();
         break;
       case 'Z Series':
       case 'TRUENAS-Z20-HA-D':
@@ -568,19 +568,19 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         extractedChassis = new E24();
         break;
       case 'ES24':
-        extractedChassis = new ES24();
+        extractedChassis = new Es24();
         break;
       case 'ES24F':
-        extractedChassis = new ES24F();
+        extractedChassis = new Es24F();
         break;
       case 'ES60':
-        extractedChassis = new ES60();
+        extractedChassis = new Es60();
         break;
       case 'E60':
         extractedChassis = new E60();
         break;
       case 'ES102':
-        extractedChassis = new ES102();
+        extractedChassis = new Es102();
         break;
       default:
         this.controllerEvent$.next({
@@ -699,7 +699,7 @@ export class EnclosureDisksComponent implements AfterContentInit, OnChanges, OnD
         const vdev = this.system.getVdevInfo(this.selectedDisk.devname);
         this.selectedVdev = vdev;
 
-        this.labels = new VDevLabelsSVG(this.enclosure, this.app, this.theme, this.selectedDisk);
+        this.labels = new VDevLabelsSvg(this.enclosure, this.app, this.theme, this.selectedDisk);
 
         this.labels.events$.next({ name: 'LabelDrives', data: vdev, sender: this } as LabelDrivesEvent);
 

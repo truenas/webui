@@ -221,7 +221,7 @@ export class DatasetUnlockComponent implements FormConfiguration {
           }
           const controls = listFields[i];
           const passphraseConfig = _.find(controls, { name: 'passphrase' });
-          const nameTextConfig: FormParagraphConfig = _.find(controls, { name: 'name_text' });
+          const nameTextConfig = _.find(controls, { name: 'name_text' }) as FormParagraphConfig;
           const result = res.result[i];
 
           (this.datasets.controls[i] as FormGroup).controls['name'].setValue(result['name']);

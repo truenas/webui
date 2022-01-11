@@ -5,7 +5,7 @@ import {
 @Directive({
   selector: '[ix-auto]',
 })
-export class IXAutoDirective implements OnChanges {
+export class IxAutoDirective implements OnChanges {
   static readonly ATTRIBUTE = 'ix-auto';
 
   // eslint-disable-next-line @angular-eslint/no-input-rename
@@ -27,11 +27,11 @@ export class IXAutoDirective implements OnChanges {
     }
     try {
       (this.el.nativeElement as HTMLElement).setAttribute(
-        IXAutoDirective.ATTRIBUTE,
+        IxAutoDirective.ATTRIBUTE,
         this.identifier ? `${elType}__${this.identifier}${elTag}` : `${elType}__${elTag}`,
       );
     } catch (error: unknown) {
-      console.error(`Error in ${IXAutoDirective.name}:`, error);
+      console.error(`Error in ${IxAutoDirective.name}:`, error);
     }
   }
 }

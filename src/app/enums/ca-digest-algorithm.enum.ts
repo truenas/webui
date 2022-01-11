@@ -1,7 +1,7 @@
 export enum CertificateDigestAlgorithm {
-  SHA1 = 'SHA1',
-  SHA224 = 'SHA224',
-  SHA256 = 'SHA256',
-  SHA384 = 'SHA384',
-  SHA512 = 'SHA512',
+  Sha1 = 'SHA1',
+  Sha224 = 'SHA224',
+  Sha256 = 'SHA256',
+  Sha384 = 'SHA384',
+  Sha512 = 'SHA512',
 }

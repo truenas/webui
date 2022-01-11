@@ -4,15 +4,15 @@ import { ServiceDynamicDnsComponent } from 'app/pages/services/components/servic
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { RsyncModuleFormComponent } from 'app/pages/services/components/service-rsync/rsync-module-form/rsync-module-form.component';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
-import { ServiceFTPComponent } from './components/service-ftp/service-ftp.component';
+import { ServiceFtpComponent } from './components/service-ftp/service-ftp.component';
 import { ServiceLldpComponent } from './components/service-lldp/service-lldp.component';
-import { ServiceRSYNCComponent } from './components/service-rsync/service-rsync.component';
+import { ServiceRsyncComponent } from './components/service-rsync/service-rsync.component';
 import { ServiceS3Component } from './components/service-s3/service-s3.component';
 import { ServiceSmartComponent } from './components/service-smart/service-smart.component';
-import { ServiceSMBComponent } from './components/service-smb/service-smb.component';
-import { ServiceSNMPComponent } from './components/service-snmp/service-snmp.component';
-import { ServiceTFTPComponent } from './components/service-tftp/service-tftp.component';
-import { ServiceUPSComponent } from './components/service-ups/service-ups.component';
+import { ServiceSmbComponent } from './components/service-smb/service-smb.component';
+import { ServiceSnmpComponent } from './components/service-snmp/service-snmp.component';
+import { ServiceTftpComponent } from './components/service-tftp/service-tftp.component';
+import { ServiceUpsComponent } from './components/service-ups/service-ups.component';
 import { ServiceWebdavComponent } from './components/service-webdav/service-webdav.component';
 import { ServicesComponent } from './services.component';
 
@@ -30,7 +30,7 @@ export const routes: Routes = [
   {
     data: { title: 'FTP', breadcrumb: 'FTP' },
     path: 'ftp',
-    component: ServiceFTPComponent,
+    component: ServiceFtpComponent,
   },
   {
     data: { title: 'LLDP', breadcrumb: 'LLDP' },
@@ -51,7 +51,7 @@ export const routes: Routes = [
           },
           {
             path: ':pk',
-            component: ServiceRSYNCComponent,
+            component: ServiceRsyncComponent,
             data: { title: 'Rsync', breadcrumb: 'Rsync' },
           },
           {
@@ -84,12 +84,12 @@ export const routes: Routes = [
   {
     data: { title: 'TFTP', breadcrumb: 'TFTP' },
     path: 'tftp',
-    component: ServiceTFTPComponent,
+    component: ServiceTftpComponent,
   },
   {
     data: { title: 'UPS', breadcrumb: 'UPS' },
     path: 'ups',
-    component: ServiceUPSComponent,
+    component: ServiceUpsComponent,
   },
   {
     data: { title: 'DynamicDNS', breadcrumb: 'DynamicDNS' },
@@ -99,12 +99,12 @@ export const routes: Routes = [
   {
     data: { title: 'SMB', breadcrumb: 'SMB' },
     path: 'smb',
-    component: ServiceSMBComponent,
+    component: ServiceSmbComponent,
   },
   {
     data: { title: 'SNMP', breadcrumb: 'SNMP' },
     path: 'snmp',
-    component: ServiceSNMPComponent,
+    component: ServiceSnmpComponent,
   },
   {
     data: { title: 'WebDAV', breadcrumb: 'WebDAV' },

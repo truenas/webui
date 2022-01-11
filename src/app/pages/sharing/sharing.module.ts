@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { CastModule } from 'app/modules/cast/cast.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { UserService } from 'app/services/user.service';
 import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
@@ -28,12 +29,12 @@ import { PortalFormComponent } from './iscsi/portal/portal-form/portal-form.comp
 import { PortalListComponent } from './iscsi/portal/portal-list/portal-list.component';
 import { TargetFormComponent } from './iscsi/target/target-form/target-form.component';
 import { TargetListComponent } from './iscsi/target/target-list/target-list.component';
-import { NFSFormComponent } from './nfs/nfs-form/nfs-form.component';
-import { NFSListComponent } from './nfs/nfs-list/nfs-list.component';
+import { NfsFormComponent } from './nfs/nfs-form/nfs-form.component';
+import { NfsListComponent } from './nfs/nfs-list/nfs-list.component';
 import { routing } from './sharing.routing';
-import { SMBAclComponent } from './smb/smb-acl/smb-acl.component';
-import { SMBFormComponent } from './smb/smb-form/smb-form.component';
-import { SMBListComponent } from './smb/smb-list/smb-list.component';
+import { SmbAclComponent } from './smb/smb-acl/smb-acl.component';
+import { SmbFormComponent } from './smb/smb-form/smb-form.component';
+import { SmbListComponent } from './smb/smb-list/smb-list.component';
 import { WebdavFormComponent } from './webdav/webdav-form/webdav-form.component';
 import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component';
 
@@ -49,16 +50,17 @@ import { WebdavListComponent } from './webdav/webdav-list/webdav-list.component'
     FlexLayoutModule,
     CommonDirectivesModule,
     TooltipModule,
+    CastModule,
   ],
   declarations: [
-    NFSListComponent,
-    NFSFormComponent,
+    NfsListComponent,
+    NfsFormComponent,
     SharesDashboardComponent,
     WebdavListComponent,
     WebdavFormComponent,
-    SMBListComponent,
-    SMBFormComponent,
-    SMBAclComponent,
+    SmbListComponent,
+    SmbFormComponent,
+    SmbAclComponent,
     IscsiComponent,
     IscsiWizardComponent,
     GlobalconfigurationComponent,

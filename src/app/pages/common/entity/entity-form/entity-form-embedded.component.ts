@@ -357,7 +357,7 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
     let arrayFieldConfigs: FieldConfig[];
     this.fieldConfig.forEach((config) => {
       if (config.name === name) {
-        const arrayConfig: FormArrayConfig = config as FormArrayConfig;
+        const arrayConfig = config as FormArrayConfig;
         arrayFieldConfigs = arrayConfig.formarray;
       }
     });

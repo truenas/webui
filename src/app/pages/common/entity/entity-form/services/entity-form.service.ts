@@ -67,9 +67,9 @@ export class EntityFormService {
 
   createFormControl(fieldConfig: FieldConfig): AbstractControl {
     let formControl: AbstractControl;
-    const arrayConfig: FormArrayConfig = fieldConfig as FormArrayConfig;
-    const listConfig: FormListConfig = fieldConfig as FormListConfig;
-    const dictConfig: FormDictConfig = fieldConfig as FormDictConfig;
+    const arrayConfig = fieldConfig as FormArrayConfig;
+    const listConfig = fieldConfig as FormListConfig;
+    const dictConfig = fieldConfig as FormDictConfig;
 
     if (fieldConfig) {
       if (arrayConfig.formarray) {

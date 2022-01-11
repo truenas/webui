@@ -1,13 +1,18 @@
+import { ElementRef } from '@angular/core';
 import { ValidatorFn, AsyncValidatorFn } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox/checkbox';
+import { MatSelectionListChange } from '@angular/material/list';
 import { MatRadioChange } from '@angular/material/radio/radio';
+import { MatSelectChange } from '@angular/material/select';
 import { ITreeOptions } from '@circlon/angular-tree-component';
+import { DatasetType } from 'app/enums/dataset-type.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { FieldType } from 'app/pages/common/entity/entity-form/components/dynamic-field/dynamic-field.directive';
 import { FormExplorerComponent } from 'app/pages/common/entity/entity-form/components/form-explorer/form-explorer.component';
 import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
 import { FormSelectOption } from 'app/pages/common/entity/entity-form/models/form-select-option.interface';
+import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
 import { RelationGroup } from './field-relation.interface';
 
 export enum UnitType {
@@ -22,7 +27,7 @@ export interface InputUnitConfig {
   allowUnits?: string[];
 }
 
-export interface BaseFieldConfig<P = any> {
+export interface BaseFieldConfig<P> {
   asyncValidation?: AsyncValidatorFn | AsyncValidatorFn[];
   class?: string;
   disabled?: boolean;
@@ -43,31 +48,32 @@ export interface BaseFieldConfig<P = any> {
   tooltip?: string;
   tooltipPosition?: string;
   type: FieldType;
-  validation?: any[] | ValidatorFn | ValidatorFn[];
+  validation?: ValidatorFn | ValidatorFn[];
   value?: any;
   warnings?: string;
   width?: string;
 }
 
-export interface FormLabelConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormLabelConfig<P = unknown> extends BaseFieldConfig<P> {
   label: string;
+  type: 'label';
 }
 
-export interface FormArrayConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormArrayConfig<P = unknown> extends BaseFieldConfig<P> {
   formarray?: FieldConfig[];
   initialCount?: number;
   type: 'array';
 }
 
-export interface FormButtonConfig<P = any> extends BaseFieldConfig<P> {
-  buttonClass: string;
-  buttonColor: string;
+export interface FormButtonConfig<P = unknown> extends BaseFieldConfig<P> {
+  buttonClass?: string;
+  buttonColor?: string;
   customEventActionLabel?: string;
-  customEventMethod?: (event: any) => void;
+  customEventMethod?: (event: MouseEvent) => void;
   type: 'button';
 }
 
-export interface FormCheckboxConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormCheckboxConfig<P = unknown> extends BaseFieldConfig<P> {
   expandedHeight?: boolean;
   onChange?(data: { event: MatCheckboxChange }): void;
   type: 'checkbox';
@@ -75,9 +81,9 @@ export interface FormCheckboxConfig<P = any> extends BaseFieldConfig<P> {
   customEventMethod?: () => void;
 }
 
-export interface FormChipConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormChipConfig<P = unknown> extends BaseFieldConfig<P> {
   autocomplete?: boolean;
-  options?: any[];
+  options?: Option[];
   searchOptions?: Option[];
   type: 'chip';
   updateLocal?: boolean;
@@ -86,7 +92,7 @@ export interface FormChipConfig<P = any> extends BaseFieldConfig<P> {
   selectOnly?: boolean;
 }
 
-export interface FormComboboxConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormComboboxConfig<P = unknown> extends BaseFieldConfig<P> {
   enableTextWrapForOptions?: boolean;
   inlineFields?: boolean;
   inlineFieldFlex?: string;
@@ -106,18 +112,18 @@ export interface FormComboboxOption {
   sticky?: string;
 }
 
-export interface FormDictConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormDictConfig<P = unknown> extends BaseFieldConfig<P> {
   label?: string;
   subFields?: FieldConfig[];
   type: 'dict';
 }
 
-export interface FormExplorerConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormExplorerConfig<P = unknown> extends BaseFieldConfig<P> {
   customTemplateStringOptions?: ITreeOptions & {
     explorerComponent?: FormExplorerComponent;
     explorer?: FormExplorerComponent;
   };
-  explorerParam?: any;
+  explorerParam?: [DatasetType[]?];
   explorerType?: ExplorerType;
   fileLocation?: string;
   initial?: string;
@@ -127,7 +133,7 @@ export interface FormExplorerConfig<P = any> extends BaseFieldConfig<P> {
   type: 'explorer';
 }
 
-export interface FormInputConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormInputConfig<P = unknown> extends BaseFieldConfig<P> {
   blurEvent?: () => void;
   blurStatus?: boolean;
   fileType?: string;
@@ -146,14 +152,14 @@ export interface FormInputConfig<P = any> extends BaseFieldConfig<P> {
   type: 'input';
 }
 
-export interface FormIpWithNetmaskConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormIpWithNetmaskConfig<P = unknown> extends BaseFieldConfig<P> {
   netmaskPreset?: number;
   inputType?: string;
   togglePw?: boolean;
   type: 'ipwithnetmask';
 }
 
-export interface FormListConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormListConfig<P = unknown> extends BaseFieldConfig<P> {
   addInitialList?: boolean;
   box?: boolean;
   label?: string;
@@ -163,22 +169,23 @@ export interface FormListConfig<P = any> extends BaseFieldConfig<P> {
   type: 'list';
 }
 
-export interface FormParagraphConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormParagraphConfig<P = unknown> extends BaseFieldConfig<P> {
   isLargeText?: boolean;
   paragraphIcon?: string;
   paragraphIconSize?: string;
   paraText?: string;
   inputType?: string;
+  type: 'paragraph';
 }
 
-export interface FormPermissionsConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormPermissionsConfig<P = unknown> extends BaseFieldConfig<P> {
   hideOthersPermissions?: boolean;
   inputType?: string;
   options?: Option[];
   type: 'permissions';
 }
 
-export interface FormRadioConfig<P = any> extends BaseFieldConfig<P>{
+export interface FormRadioConfig<P = unknown> extends BaseFieldConfig<P>{
   inlineFields?: boolean;
   inlineFieldFlex?: string;
   onChange?(data: { event: MatRadioChange }): void;
@@ -193,31 +200,31 @@ export interface FormRadioOption {
   tooltip?: string;
 }
 
-export interface FormSchedulerConfig<P = any> extends BaseFieldConfig<P> {
-  options?: any[];
+export interface FormSchedulerConfig<P = unknown> extends BaseFieldConfig<P> {
+  options?: string[];
   noMinutes?: boolean;
-  onChangeOption?(data: any): void;
+  onChangeOption?(data: { event: Event }): void;
   type: 'scheduler';
 }
 
-export interface FormSelectConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormSelectConfig<P = unknown> extends BaseFieldConfig<P> {
   alert?: { message: string; forValues: any[] };
   enableTextWrapForOptions?: boolean;
   fileLocation?: string;
   inlineLabel?: string;
   isLoading?: boolean;
   multiple?: boolean;
-  onChangeOption?(data: any): void;
+  onChangeOption?(data: { event: MatSelectChange }): void;
   options?: FormSelectOption[];
   zeroStateMessage?: string;
   type: 'select';
 }
 
-export interface FormSelectionListConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormSelectionListConfig<P = unknown> extends BaseFieldConfig<P> {
   hint?: string;
   inlineFields?: boolean;
   inlineFieldFlex?: string;
-  onChange?(data: any): void;
+  onChange?(event: MatSelectionListChange): void;
   options?: FormSelectionOption[];
   type: 'selectionlist';
 }
@@ -226,45 +233,45 @@ export interface FormSelectionOption extends Option {
   tooltip?: string;
 }
 
-export interface FormSliderConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormSliderConfig<P = unknown> extends BaseFieldConfig<P> {
   max?: number;
   min?: number;
   type: 'slider';
 }
 
-export interface FormTaskConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormTaskConfig<P = unknown> extends BaseFieldConfig<P> {
   tabs?: (FieldConfig & { tabName: string })[];
   tabName?: string;
   type: 'task';
 }
 
-export interface FormTextareaConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormTextareaConfig<P = unknown> extends BaseFieldConfig<P> {
   blurEvent?: () => void;
   blurStatus?: boolean;
   filereader?: boolean;
-  fileType: string;
+  fileType?: string;
   textAreaRows?: number;
   type: 'textarea';
 }
 
-export interface FormTextareaButtonConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormTextareaButtonConfig<P = unknown> extends BaseFieldConfig<P> {
   customEventActionLabel?: string;
-  customEventMethod?(data?: any): void;
+  customEventMethod?(data?: { event: MouseEvent; textAreaSSH: ElementRef }): void;
   type: 'textareabutton';
 }
 
-export interface FormUploadConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormUploadConfig<P = unknown> extends BaseFieldConfig<P> {
   acceptedFiles?: string;
   fileLocation?: string;
   hideButton?: boolean;
-  message?: any;
+  message?: MessageService;
   rootSelectable?: boolean;
   updater?: (uploadComponent: FormUploadComponent, parent: P) => void;
   multiple?: boolean;
   type: 'upload';
 }
 
-export interface FormToggleButtonConfig<P = any> extends BaseFieldConfig<P> {
+export interface FormToggleButtonConfig<P = unknown> extends BaseFieldConfig<P> {
   options?: FormToggleButtonOption[];
   type: 'togglebutton';
 }
@@ -275,7 +282,24 @@ export interface FormToggleButtonOption {
   checked?: boolean;
 }
 
-export type FieldConfig<P = any> = BaseFieldConfig<P>
+export interface FormColorPickerConfig<P = unknown> extends BaseFieldConfig<P> {
+  type: 'colorpicker';
+}
+
+export interface FormReadFileConfig<P = unknown> extends BaseFieldConfig<P> {
+  type: 'readfile';
+}
+
+/**
+ * @deprecated Do not use. Not a real FieldConfig.
+ * Instead, this is an exception for iscsi initiators and is used in one place.
+ */
+export interface FormInputListConfig<P = unknown> extends BaseFieldConfig<P> {
+  type: 'input-list';
+  customEventMethod: (parent: any) => void;
+}
+
+export type FieldConfig<P = unknown> =
 | FormLabelConfig<P>
 | FormArrayConfig<P>
 | FormButtonConfig<P>
@@ -297,4 +321,8 @@ export type FieldConfig<P = any> = BaseFieldConfig<P>
 | FormTaskConfig<P>
 | FormTextareaConfig<P>
 | FormToggleButtonConfig<P>
-| FormUploadConfig<P>;
+| FormUploadConfig<P>
+| FormTextareaButtonConfig<P>
+| FormColorPickerConfig<P>
+| FormReadFileConfig<P>
+| FormInputListConfig<P>;

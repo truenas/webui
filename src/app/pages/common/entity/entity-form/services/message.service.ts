@@ -3,10 +3,10 @@ import { Subject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class MessageService {
-  private messageSource$ = new Subject<any>();
+  private messageSource$ = new Subject<string>();
   messageSourceHasNewMessage$ = this.messageSource$.asObservable();
 
-  newMessage(message: any): void {
+  newMessage(message: string): void {
     this.messageSource$.next(message);
   }
 }

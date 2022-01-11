@@ -1,4 +1,4 @@
-import { CACreateType } from '../enums/ca-create-type.enum';
+import { CaCreateType } from '../enums/ca-create-type.enum';
 import { CertificateDigestAlgorithm } from '../enums/ca-digest-algorithm.enum';
 import { CertificateKeyType } from '../enums/ca-key-type.enum';
 import { EcCurve } from '../enums/ec-curve.enum';
@@ -68,7 +68,7 @@ export interface CertificateAuthorityUpdate {
   passphrase: string;
   privatekey: string;
   state: string;
-  create_type: CACreateType;
+  create_type: CaCreateType;
   digest_algorithm: CertificateDigestAlgorithm;
   san: string[];
   cert_extensions: CertificateExtensions;

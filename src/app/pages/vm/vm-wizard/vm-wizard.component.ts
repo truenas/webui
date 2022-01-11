@@ -49,7 +49,7 @@ import { VmService } from 'app/services/vm.service';
   template: '<entity-wizard [conf]="this"></entity-wizard>',
   providers: [VmService],
 })
-export class VMWizardComponent implements WizardConfiguration {
+export class VmWizardComponent implements WizardConfiguration {
   addWsCall = 'vm.create' as const;
   summary: Record<string, unknown> = {};
   isLinear = true;
@@ -313,8 +313,6 @@ export class VMWizardComponent implements WizardConfiguration {
           name: 'datastore',
           tooltip: helptext.datastore_tooltip,
           placeholder: helptext.datastore_placeholder,
-          blurStatus: true,
-          blurEvent: () => this.blueEventForVolSize(),
           options: [],
           isHidden: false,
           validation: [Validators.required],
@@ -492,7 +490,7 @@ export class VMWizardComponent implements WizardConfiguration {
     this.entityWizard = entityWizard;
     this.ws.call('vm.maximum_supported_vcpus').pipe(untilDestroyed(this)).subscribe((max) => {
       this.maxVcpus = max;
-      const vcpuLimitConf: FormParagraphConfig = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' });
+      const vcpuLimitConf = _.find(this.wizardConfig[1].fieldConfig, { name: 'vcpu_limit' }) as FormParagraphConfig;
       vcpuLimitConf.paraText = this.translate.instant(helptext.vcpus_warning, { maxVCPUs: this.maxVcpus });
     });
     this.ws.call('device.get_info', [DeviceType.Gpu]).pipe(untilDestroyed(this)).subscribe((gpus) => {
@@ -968,12 +966,12 @@ export class VMWizardComponent implements WizardConfiguration {
     }
   }
 
-  getFormControlFromFieldName(fieldName: string, parent: VMWizardComponent = this): FormControl {
+  getFormControlFromFieldName(fieldName: string, parent: VmWizardComponent = this): FormControl {
     return parent.entityWizard.formArray.get([parent.getFormArrayIndexFromFieldName(fieldName, parent)])
       .get(fieldName) as FormControl;
   }
 
-  getFormArrayIndexFromFieldName(fieldName: string, parent: VMWizardComponent = this): number {
+  getFormArrayIndexFromFieldName(fieldName: string, parent: VmWizardComponent = this): number {
     return parent.wizardConfig.findIndex((conf: FormConfiguration) => {
       return conf.fieldConfig.findIndex((fieldConf: FieldConfig) => fieldConf.name === fieldName) >= 0;
     });

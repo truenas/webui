@@ -7,7 +7,9 @@ import { FormGroup, FormControl, AbstractControl } from '@angular/forms';
 import { MatMonthView } from '@angular/material/datepicker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { CronDate } from 'cron-parser';
 import * as parser from 'cron-parser';
+import { CronExpression } from 'cron-parser/types';
 import * as dateFns from 'date-fns';
 import * as dateFnsTz from 'date-fns-tz';
 import globalHelptext from 'app/helptext/global-helptext';
@@ -36,13 +38,12 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   group: FormGroup;
   fieldShow: string;
   disablePrevious: boolean;
-  ngDateFormat: string;
   helptext = globalHelptext;
   timezone: string;
   offset: string;
 
   @ViewChild('calendar', { static: false, read: ElementRef }) calendar: ElementRef;
-  @ViewChild('calendar', { static: false }) calendarComp: MatMonthView<any>;
+  @ViewChild('calendar', { static: false }) calendarComp: MatMonthView<Date>;
   @ViewChild('trigger', { static: false }) trigger: ElementRef;
   @ViewChild('preview', { static: false, read: ElementRef }) schedulePreview: ElementRef;
 
@@ -180,7 +181,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   maxDate: Date;
   currentDate: Date;
   activeDate: string;
-  generatedSchedule: any[] = [];
+  generatedSchedule: CronDate[] = [];
   generatedScheduleSubset = 0;
   protected beginTime: Date;
   protected endTime: Date;
@@ -302,9 +303,6 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
       this.control.setValue(new EntityUtils().parseDow(this.control.value));
       this.crontab = this.control.value;
     }
-
-    // 'E' adds the day abbreviation
-    this.ngDateFormat = `E ${this.localeService.getAngularFormat()} Z`;
 
     if (!this.control.value) {
       this.selectedOption = this.presets[0];
@@ -446,13 +444,13 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
   }
 
   // check if candidate schedule is between the beginTime and endTime
-  isValidSchedule(schedule: any): boolean {
+  isValidSchedule(schedule: CronDate): boolean {
     const scheduleArray = schedule.toString().split(' ');
     const now = this.zonedTime;
     const timeStrArr = scheduleArray[4].split(':');
     const time = new Date(
       now.getFullYear(), now.getMonth(), now.getDate(),
-      timeStrArr[0], timeStrArr[1], timeStrArr[2],
+      Number(timeStrArr[0]), Number(timeStrArr[1]), Number(timeStrArr[2]),
     );
     if (this.beginTime && this.endTime) {
       return dateFns.isWithinInterval(time, { start: this.beginTime, end: this.endTime });
@@ -493,7 +491,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
       tz: this.timezone,
     };
 
-    const interval = parser.parseExpression(this.crontab, options);
+    const interval = parser.parseExpression(this.crontab, options) as CronExpression<true>;
     if (!nextSubset) {
       this.generatedScheduleSubset = 0;
     }
@@ -508,7 +506,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
           break;
         }
         if (parseCounter >= this.generatedScheduleSubset && parseCounter < subsetEnd) {
-          const obj: any = interval.next();
+          const obj = interval.next();
           if (this.isValidSchedule(obj.value)) {
             newSchedule.push(obj.value);
             parseCounter++;
@@ -522,13 +520,13 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
     if (!nextSubset) {
       // Extra job so we can find days.
-      const daySchedule: any[] = [];
+      const daySchedule: CronDate[] = [];
       const spl = this.crontab.split(' ');
       // Modified crontab so we can find days;
       const crontabDays = '0 0  ' + spl[1] + ' ' + spl[2] + ' ' + spl[3] + ' ' + spl[4];
       const intervalDays = parser.parseExpression(crontabDays, {
         currentDate: this.formatDateToTz(dateFns.subSeconds(this.minDate, 1), this.timezone),
-        endDate: this.maxDate as any,
+        endDate: this.maxDate,
         iterator: true,
         tz: this.timezone,
       });
@@ -536,7 +534,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
       // eslint-disable-next-line no-constant-condition
       while (true) {
         try {
-          const obj: any = intervalDays.next();
+          const obj = intervalDays.next();
           daySchedule.push(obj.value);
         } catch (e: unknown) {
           console.error(e);
@@ -556,7 +554,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
   }
 
-  private updateCalendar(schedule: any): void {
+  private updateCalendar(schedule: CronDate[]): void {
     const nodes = this.getCalendarCells();
     for (let i = 0; i < nodes.length; i++) {
       const nodeClass = 'mat-calendar-body-cell ng-star-inserted';
@@ -570,9 +568,9 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     }
   }
 
-  private getCalendarCells(): any[] {
+  private getCalendarCells(): HTMLElement[] {
     const rows = this.calendar.nativeElement.children[0].children[1].children;
-    let cells: any[] = [];
+    let cells: HTMLElement[] = [];
     for (const row of rows) {
       const tds = [];
       for (const node of row.childNodes) {
@@ -599,7 +597,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     node.attributes.setNamedItem(a);
   }
 
-  private checkSchedule(aria?: string, sched?: any): boolean {
+  private checkSchedule(aria?: string, sched?: CronDate[]): boolean {
     if (!aria) { return; }
     if (!sched) { sched = this.generatedSchedule; }
 
@@ -613,8 +611,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     } else {
       calDay = cd[0];
     }
-    for (const i in sched) {
-      const s = sched[i]; // eg. Sun May 06 2018 04:05:00 GMT-0400 (EDT)
+    for (const s of sched) {
       const schedule = s.toString().split(' ');
       if (schedule[1] == calMonth && schedule[2] == calDay && schedule[3] == calYear) {
         return true;
@@ -792,19 +789,9 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     this._daysOfWeek = arr[4];
   }
 
-  convertToUtcOffset(offset: number): string {
-    // Convert offset in minutes (-420) to hours (-700) for Angular date pipe
-
-    let tempOffset = ((offset / 60) * 100).toString();
-    if (tempOffset[0] !== '-') {
-      tempOffset = '+' + tempOffset;
-    }
-    // Pad to 5 characters (60 to +0060, etc)
-    while (tempOffset.length < 5) {
-      const tempStr = tempOffset.slice(1);
-      tempOffset = tempOffset[0] + '0' + tempStr;
-    }
-
-    return tempOffset;
+  // TODO: This should be a pipe (see FormatDateTimePipe)
+  formatInSystemTimezone(date: CronDate): string {
+    const timezonedDate = dateFnsTz.utcToZonedTime(date.toDate().valueOf(), this.timezone);
+    return dateFnsTz.format(timezonedDate, 'E yyyy-MM-dd HH:mm:ss xx', { timeZone: this.timezone });
   }
 }
