@@ -622,9 +622,8 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
   }
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
-    if (fieldConfig.type == 'select') {
-      const config = fieldConfig as FormSelectConfig;
-      const option = config.options.find((option) => option.value == value);
+    if (fieldConfig.type === 'select') {
+      const option = fieldConfig.options.find((option) => option.value == value);
       if (option) {
         value = option.label;
       }
@@ -673,7 +672,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
       this.wizardConfig[1].skip = false;
       this.wizardConfig[2].skip = false;
 
-      if (res == 'CA_CREATE_INTERNAL') {
+      if (res === 'CA_CREATE_INTERNAL') {
         this.intermediatecaFields.forEach((field) => this.hideField(field, true));
         this.importcaFields.forEach((field) => this.hideField(field, true));
         this.internalcaFields.forEach((field) => this.hideField(field, false));
@@ -685,7 +684,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true);
         }
-      } else if (res == 'CA_CREATE_INTERMEDIATE') {
+      } else if (res === 'CA_CREATE_INTERMEDIATE') {
         this.intermediatecaFields.forEach((field) => this.hideField(field, false));
         this.importcaFields.forEach((field) => this.hideField(field, true));
         this.internalcaFields.forEach((field) => this.hideField(field, true));
@@ -695,7 +694,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
         } else if (this.getField('key_type').value === 'EC') {
           this.hideField('key_length', true);
         }
-      } else if (res == 'CA_CREATE_IMPORTED') {
+      } else if (res === 'CA_CREATE_IMPORTED') {
         this.intermediatecaFields.forEach((field) => this.hideField(field, true));
         this.importcaFields.forEach((field) => this.hideField(field, false));
         this.internalcaFields.forEach((field) => this.hideField(field, true));

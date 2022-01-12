@@ -1,5 +1,5 @@
 import {
-  Component, ViewChild, OnDestroy,
+  Component, ViewChild, OnDestroy, Type,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 import { LayoutContainer, LayoutChild } from 'app/core/classes/layouts';
@@ -32,18 +32,15 @@ export class ViewControllerComponent extends ViewController implements OnDestroy
     this.core.unregister({ observerClass: this });
   }
 
-  create(component: any, container?: string): any {
-    if (!container) { container = 'display'; }
-    return (this as any)[container].create(component);
+  create<T>(component: Type<T>): T {
+    return this.display.create(component) as T;
   }
 
-  addChild(instance: any, container?: string): void {
-    if (!container) { container = 'display'; }
-    (this as any)[container].addChild(instance);
+  addChild(instance: unknown): void {
+    this.display.addChild(instance);
   }
 
-  removeChild(instance: any, container?: string): void {
-    if (!container) { container = 'display'; }
-    (this as any)[container].removeChild(instance);
+  removeChild(instance: unknown): void {
+    this.display.removeChild(instance);
   }
 }

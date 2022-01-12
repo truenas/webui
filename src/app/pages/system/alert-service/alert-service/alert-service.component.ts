@@ -737,10 +737,10 @@ export class AlertServiceComponent implements FormConfiguration {
     }
   }
 
-  generateTelegramChatIdsPayload(data: any, i: string): number[] {
+  generateTelegramChatIdsPayload(telegramChatIds: string[]): number[] {
     const wrongChatIds: string[] = [];
     // Telegram chat IDs must be an array of integer
-    const arrayChatIds: number[] = data[i].map((strChatId: string) => {
+    const arrayChatIds: number[] = telegramChatIds.map((strChatId: string) => {
       const chatId = Number(strChatId);
       if (Number.isNaN(chatId)) {
         wrongChatIds.push(strChatId);
@@ -764,7 +764,7 @@ export class AlertServiceComponent implements FormConfiguration {
       type: data.type,
     };
     if (data['Telegram-chat_ids']) {
-      data['Telegram-chat_ids'] = this.generateTelegramChatIdsPayload(data, 'Telegram-chat_ids');
+      data['Telegram-chat_ids'] = this.generateTelegramChatIdsPayload(data['Telegram-chat_ids']);
     }
     data['SNMPTrap-v3_authprotocol'] = data['SNMPTrap-v3_authprotocol'] === '' ? null : data['SNMPTrap-v3_authprotocol'];
     data['SNMPTrap-v3_privprotocol'] = data['SNMPTrap-v3_privprotocol'] === '' ? null : data['SNMPTrap-v3_privprotocol'];

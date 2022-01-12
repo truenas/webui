@@ -356,8 +356,8 @@ export type ApiDirectory = {
   'chart.release.pod_logs_choices': { params: [string]; response: Record<string, string[]> };
   'chart.release.query': { params: ChartReleaseQueryParams; response: ChartRelease[] };
   'chart.release.create': { params: [ChartReleaseCreate]; response: ChartRelease };
-  'chart.release.update': { params: any; response: any };
-  'chart.release.upgrade': { params: any; response: any };
+  'chart.release.update': { params: any; response: ChartRelease };
+  'chart.release.upgrade': { params: any; response: ChartRelease };
   'chart.release.delete': { params: [name: string]; response: boolean };
   'chart.release.scale': { params: [name: string, params: { replica_count: number }]; response: ChartScaleResult };
   'chart.release.pod_console_choices': { params: [string]; response: Record<string, string[]> };
@@ -668,7 +668,7 @@ export type ApiDirectory = {
   'pool.dataset.unlock_services_restart_choices': { params: [id: string]; response: Choices };
   'pool.dataset.update': { params: any; response: Dataset };
   'pool.detach': { params: [id: number, params: { label: string }]; response: boolean };
-  'pool.download_encryption_key': { params: any; response: string };
+  'pool.download_encryption_key': { params: [volumeId: number, fileName?: string]; response: string };
   'pool.expand': { params: PoolExpandParams; response: null };
   'pool.export': { params: PoolExportParams; response: void };
   'pool.filesystem_choices': { params: [DatasetType[]?]; response: string[] };
@@ -681,11 +681,11 @@ export type ApiDirectory = {
   'pool.is_upgraded': { params: [poolId: number]; response: boolean };
   'pool.offline': { params: [id: number, params: { label: string }]; response: boolean };
   'pool.online': { params: [id: number, params: { label: string }]; response: boolean };
-  'pool.passphrase': { params: any; response: any };
+  'pool.passphrase': { params: [number, { passphrase: string; admin_password: string }]; response: void };
   'pool.processes': { params: [id: number]; response: PoolProcess[] };
   'pool.query': { params: QueryParams<Pool>; response: Pool[] };
-  'pool.recoverykey_rm': { params: any; response: any };
-  'pool.rekey': { params: any; response: any };
+  'pool.recoverykey_rm': { params: [number, { admin_password: string }]; response: void };
+  'pool.rekey': { params: [number, { admin_password: string }]; response: void };
   'pool.remove': { params: PoolRemoveParams; response: void };
   'pool.replace': { params: [id: number, params: PoolReplaceParams]; response: boolean };
   'pool.resilver.config': { params: void; response: ResilverConfig };
@@ -706,7 +706,7 @@ export type ApiDirectory = {
 
   // Replication
   'replication.list_datasets': { params: [transport: TransportMode, credentials?: number]; response: string[] };
-  'replication.create': { params: any; response: any };
+  'replication.create': { params: any; response: ReplicationTask };
   'replication.query': { params: QueryParams<ReplicationTask>; response: ReplicationTask[] };
   'replication.restore': { params: [id: number, params: { name: string; target_dataset: string }]; response: void };
   'replication.run': { params: [id: number]; response: number };
@@ -717,7 +717,7 @@ export type ApiDirectory = {
     params: TargetUnmatchedSnapshotsParams;
     response: { [dataset: string]: string[] };
   };
-  'replication.update': { params: any; response: any };
+  'replication.update': { params: any; response: ReplicationTask };
 
   // Rsync
   'rsynctask.run': { params: [id: number]; response: any };
@@ -755,7 +755,7 @@ export type ApiDirectory = {
   'smb.update': { params: [SmbConfigUpdate]; response: SmbConfig };
   'smb.config': { params: void; response: SmbConfig };
   'smb.sharesec.query': { params: QueryParams<SmbSharesec>; response: SmbSharesec[] };
-  'smb.sharesec.update': { params: [id: number, update: { share_acl: SmbSharesecAce[] }]; response: any };
+  'smb.sharesec.update': { params: [id: number, update: { share_acl: SmbSharesecAce[] }]; response: SmbSharesec };
 
   // SSH
   'ssh.update': { params: [SshConfigUpdate]; response: SshConfig };

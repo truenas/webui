@@ -51,7 +51,7 @@ export class DriveTray {
       return;
     }
     this._color = cssColor;
-    if (cssColor == 'none') {
+    if (cssColor === 'none') {
       this.handle.tint = 0xFFFFFF;
     } else {
       const color = parseInt('0x' + cssColor.substring(1), 16);

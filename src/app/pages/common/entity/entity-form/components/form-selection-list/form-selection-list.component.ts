@@ -19,9 +19,9 @@ export class FormSelectionListComponent implements Field {
   }
 
   get listOptionFlex(): string {
-    if (this.selectionListLayout == 'column') return '100%';
+    if (this.selectionListLayout === 'column') return '100%';
 
-    if (this.selectionListLayout == 'row wrap' && this.config.inlineFieldFlex) {
+    if (this.selectionListLayout === 'row wrap' && this.config.inlineFieldFlex) {
       return this.config.inlineFieldFlex;
     }
     return '50%';

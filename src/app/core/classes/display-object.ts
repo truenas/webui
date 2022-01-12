@@ -74,8 +74,8 @@ export class DisplayObject {
   anchor: number;
   constrainX: boolean;
   constrainY: boolean;
-  updateStream$: Subject<any>;
-  inputStream$: Subject<any>;
+  updateStream$: Subject<PointerProps>;
+  inputStream$: Subject<PointerProps>;
   elevateOnSelect: boolean;
 
   constructor(el: Element, messageBus: CoreService, moveHandle?: Element) {
@@ -246,8 +246,8 @@ export class DisplayObject {
     this.rawTarget.classList.add('drag');
 
     // Start Positions
-    const startX = (this.anchorXY.get() as any).x;
-    const startY = (this.anchorXY.get() as any).y;
+    const startX = (this.anchorXY.get() as PointerProps).x;
+    const startY = (this.anchorXY.get() as PointerProps).y;
 
     // RESERVED SPACE
     if (!this.boundary && this.reservedTop != 0) {
@@ -282,7 +282,7 @@ export class DisplayObject {
 
   stop(eventType: string): void {
     if (this.hasFocus && this.isDragging) {
-      if (eventType == 'drag' || eventType == 'exit') {
+      if (eventType === 'drag' || eventType === 'exit') {
         this.rawTarget.classList.remove(eventType);
         this.messageBus.emit({ name: 'DisplayObjectReleased', sender: this });
         this.elevate(false);

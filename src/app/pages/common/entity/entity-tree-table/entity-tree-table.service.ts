@@ -39,7 +39,7 @@ export class EntityTreeTableService {
         node.expanded = false;
       }
 
-      node.indexPath = !parentIndexPath && rows.length == 0 ? [nodeIndex] : parentIndexPath.concat([nodeIndex]);
+      node.indexPath = !parentIndexPath && rows.length === 0 ? [nodeIndex] : parentIndexPath.concat([nodeIndex]);
       rows.push(node);
 
       if (node.children.length > 0 && node.expanded && node.expanded.toString() == 'true') {

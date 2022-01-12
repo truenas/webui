@@ -60,7 +60,7 @@ export class FormTextareaComponent implements Field {
       this.fileString = fReader.result;
       this.contents(fReader.result);
     };
-    if (this.config.fileType == 'binary') {
+    if (this.config.fileType === 'binary') {
       fReader.readAsBinaryString(file);
     } else {
       fReader.readAsText(file);
@@ -68,7 +68,7 @@ export class FormTextareaComponent implements Field {
   }
 
   contents(result: string | ArrayBuffer): void {
-    if (this.config.fileType == 'binary') {
+    if (this.config.fileType === 'binary') {
       this.group.controls[this.config.name].setValue(btoa(result as string));
     } else {
       this.group.controls[this.config.name].setValue(result);

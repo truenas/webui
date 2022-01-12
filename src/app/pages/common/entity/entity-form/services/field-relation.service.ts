@@ -505,7 +505,7 @@ export class FieldRelationService {
 
   isRelationRegMatch(x: unknown, y: unknown): boolean {
     let result = false;
-    if (typeof x == 'string' && typeof y == 'string') {
+    if (typeof x === 'string' && typeof y === 'string') {
       result = !!x.match(y);
     }
 
@@ -514,7 +514,7 @@ export class FieldRelationService {
 
   isRelationStartsWith(x: unknown, y: unknown): boolean {
     let result = false;
-    if (typeof x == 'string' && typeof y == 'string') {
+    if (typeof x === 'string' && typeof y === 'string') {
       result = x.startsWith(y);
     }
 
@@ -523,7 +523,7 @@ export class FieldRelationService {
 
   isRelationEndsWith(x: unknown, y: unknown): boolean {
     let result = false;
-    if (typeof x == 'string' && typeof y == 'string') {
+    if (typeof x === 'string' && typeof y === 'string') {
       result = x.endsWith(y);
     }
 

@@ -5,8 +5,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { helptextSharingIscsi } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
+import { IscsiExtent, IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
@@ -36,7 +37,7 @@ export class PortalFormComponent implements FormConfiguration {
   queryCall = 'iscsi.portal.query' as const;
   editCall = 'iscsi.portal.update' as const;
   routeSuccess: string[] = ['sharing', 'iscsi', 'portals'];
-  customFilter: any[] = [[['id', '=']]];
+  customFilter: [[Partial<QueryFilter<IscsiExtent>>]] = [[['id', '=']]];
   isEntity = true;
 
   protected getValidOptions = this.iscsiService.getIpChoices().toPromise().then((ips) => {

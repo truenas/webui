@@ -38,7 +38,7 @@ export class FormInputComponent implements Field {
       this.fileString = fReader.result;
       this.contents(fReader.result);
     };
-    if (this.config.fileType == 'binary') {
+    if (this.config.fileType === 'binary') {
       fReader.readAsBinaryString(file);
     } else {
       fReader.readAsText(file);
@@ -46,7 +46,7 @@ export class FormInputComponent implements Field {
   }
 
   contents(result: string | ArrayBuffer): void {
-    if (this.config.fileType == 'binary') {
+    if (this.config.fileType === 'binary') {
       this.group.controls[this.config.name].setValue(btoa(result as string));
     } else {
       this.group.controls[this.config.name].setValue(result);
@@ -81,7 +81,7 @@ export class FormInputComponent implements Field {
       }
     }
 
-    if (this.config.inputType == 'number') {
+    if (this.config.inputType === 'number') {
       const numberValue = this.group.controls[this.config.name].value * 1;
       this.group.controls[this.config.name].setValue(numberValue);
       if (this.config.min !== undefined && numberValue < this.config.min) {

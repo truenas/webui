@@ -36,7 +36,7 @@ export class DownloadKeyDialogComponent {
   ) { }
 
   downloadKey(): void {
-    const payload: any[] = [this.volumeId];
+    const payload: [volumeId: number, fileName?: string] = [this.volumeId];
     if (this.fileName !== undefined) {
       payload.push(this.fileName);
     }

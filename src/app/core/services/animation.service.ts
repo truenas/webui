@@ -86,10 +86,10 @@ export class AnimationService {
 
     let start: number;
     let finish: number;
-    if (finishState == 'In') {
+    if (finishState === 'In') {
       start = -180;
       finish = 0;
-    } else if (finishState == 'Out') {
+    } else if (finishState === 'Out') {
       start = 0;
       finish = -180;
     }
@@ -111,10 +111,10 @@ export class AnimationService {
 
     let start: number;
     let finish: number;
-    if (finishState == 'In') {
+    if (finishState === 'In') {
       start = -180;
       finish = 0;
-    } else if (finishState == 'Out') {
+    } else if (finishState === 'Out') {
       start = 0;
       finish = -180;
     }
@@ -130,10 +130,10 @@ export class AnimationService {
   private fade(animationTarget: DisplayObject, finishState: string): void {
     let startOpacity;
     let finishOpacity;
-    if (finishState == 'In') {
+    if (finishState === 'In') {
       startOpacity = 0;
       finishOpacity = 1;
-    } else if (finishState == 'Out') {
+    } else if (finishState === 'Out') {
       startOpacity = 1;
       finishOpacity = 0;
     }
@@ -148,10 +148,10 @@ export class AnimationService {
   private scale(animationTarget: DisplayObject, finishState: string): void {
     let startScale;
     let finishScale;
-    if (finishState == 'In') {
+    if (finishState === 'In') {
       startScale = 0;
       finishScale = 1;
-    } else if (finishState == 'Out') {
+    } else if (finishState === 'Out') {
       startScale = 1;
       finishScale = 0;
     }
@@ -165,17 +165,17 @@ export class AnimationService {
   }
 
   private elasticScale(animationTarget: DisplayObject, finishState: string): void {
-    if (finishState == 'Out') {
+    if (finishState === 'Out') {
       this.scale(animationTarget, finishState);
       return;
     }
 
     let startScale;
     let finishScale;
-    if (finishState == 'In') {
+    if (finishState === 'In') {
       startScale = 0;
       finishScale = 1;
-    } else if (finishState == 'Out') {
+    } else if (finishState === 'Out') {
       startScale = 1;
       finishScale = 0;
     }
@@ -190,7 +190,7 @@ export class AnimationService {
   }
 
   private bounce(animationTarget: DisplayObject, finishState: string): void {
-    if (finishState == 'Stop') {
+    if (finishState === 'Stop') {
       const savedState = this.activeAnimations[animationTarget.id];
       const animation = savedState.animation;
       clearInterval(animation);
@@ -232,7 +232,7 @@ export class AnimationService {
   private radiate(animationTarget: DisplayObject, finishState: string): void {
     const startShadow = animationTarget.element.get('box-shadow'); // Styler
 
-    if (finishState == 'Stop') {
+    if (finishState === 'Stop') {
       const reference = this.activeAnimations[animationTarget.id];
 
       animationTarget.element.set('box-shadow', reference.originalState);

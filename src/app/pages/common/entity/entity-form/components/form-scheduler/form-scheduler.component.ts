@@ -384,9 +384,9 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   setCalendar(direction: 'next' | 'previous'): void {
     let newDate;
-    if (direction == 'next') {
+    if (direction === 'next') {
       newDate = dateFns.addMonths(this.minDate, 1);
-    } else if (direction == 'previous' && !this.disablePrevious) {
+    } else if (direction === 'previous' && !this.disablePrevious) {
       newDate = dateFns.subMonths(this.minDate, 1);
     } else {
       const message = 'Your argument is invalid';
@@ -574,7 +574,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
     for (const row of rows) {
       const tds = [];
       for (const node of row.childNodes) {
-        if (node.tagName == 'TD') {
+        if (node.tagName === 'TD') {
           tds.push(node);
         }
       }
@@ -660,7 +660,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   updateMonthsFields(rule: string): void {
     // Wild card
-    if (rule == '*') {
+    if (rule === '*') {
       this._jan = false;
       this._feb = false;
       this._mar = false;
@@ -722,7 +722,7 @@ export class FormSchedulerComponent implements Field, OnInit, AfterViewInit, Aft
 
   updateDaysOfWeekFields(rule: string): void {
     // Wild card
-    if (rule == '*') {
+    if (rule === '*') {
       this._sun = false;
       this._mon = false;
       this._tue = false;

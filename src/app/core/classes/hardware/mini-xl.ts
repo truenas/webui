@@ -22,7 +22,7 @@ export class MiniXl extends Chassis {
     this.front.autoPosition = false;
 
     this.front.events.subscribe((evt: CoreEvent) => {
-      if (evt.name == 'ChassisLoaded') {
+      if (evt.name === 'ChassisLoaded') {
         this.onLoaded();
       }
     });

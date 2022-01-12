@@ -127,9 +127,7 @@ export class VDevLabelsSvg {
     className: string,
     diskName: string,
   ): void {
-    const color = diskName == this.selectedDisk.devname ? this.selectedDiskColor : this.color;
-    let opacity = diskName == this.selectedDisk.devname ? 1 : 0.5;
-    opacity = 1;
+    const color = diskName === this.selectedDisk.devname ? this.selectedDiskColor : this.color;
 
     const style = 'fill-opacity:0.25; stroke-width:1';
 
@@ -141,7 +139,7 @@ export class VDevLabelsSvg {
       .attr('height', h)
       .attr('fill', color)
       .attr('stroke', color)
-      .attr('stroke-opacity', opacity)
+      .attr('stroke-opacity', 1)
       .attr('style', style);
   }
 
