@@ -178,6 +178,7 @@ def select_selection_under_the_credential_dropdown(driver, selection):
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Credential"]').click()
     assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__Credential_{selection}"]', 'clickable')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Credential_{selection}"]').click()
+    assert wait_on_element_disappear(driver, 5, f'//mat-option[@ix-auto="option__Credential_{selection}"]')
     time.sleep(1)
 
 
