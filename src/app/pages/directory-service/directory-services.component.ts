@@ -11,6 +11,7 @@ import { IdmapName } from 'app/enums/idmap-name.enum';
 import helptext from 'app/helptext/directory-service/dashboard';
 import idmapHelptext from 'app/helptext/directory-service/idmap';
 import { Idmap } from 'app/interfaces/idmap.interface';
+import { KerberosKeytab } from 'app/interfaces/kerberos-config.interface';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
@@ -157,7 +158,7 @@ export class DirectoryServicesComponent implements OnInit {
     add: () => {
       this.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab);
     },
-    edit: (row) => {
+    edit: (row: KerberosKeytab) => {
       this.onCardButtonPressed(DirectoryServicesCardId.KerberosKeytab, row.id);
     },
   };
