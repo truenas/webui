@@ -418,7 +418,9 @@ def on_the_box_test_folder_tab_delete_one_file(driver):
     """on the Box test folder tab, delete one file."""
     driver.switch_to.window(driver.window_handles[1])
     time.sleep(1)
-    assert wait_on_element(driver, 5, '//h1[text()="test"]')
+    driver.refresh()
+    time.sleep(1)
+    assert wait_on_element(driver, 7, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')
     action = ActionChains(driver)
     action.move_to_element(driver.find_element_by_xpath('//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]')).perform()
