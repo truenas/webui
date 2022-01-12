@@ -50,7 +50,7 @@ export const helptextSharingNfs = {
   tooltip_quiet: T(
     'Set to inhibit some syslog diagnostics\
  to avoid error messages. See\
- <a href="https://www.freebsd.org/cgi/man.cgi?query=exports"\
+ <a href="https://man7.org/linux/man-pages/man5/exports.5.html"\
  target="_blank">exports(5)</a> for examples.',
   ),
 
