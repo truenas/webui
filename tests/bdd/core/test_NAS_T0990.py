@@ -119,3 +119,6 @@ def reopen_the_user_edit_page(driver):
 def verify_wheel_group_should_be_visible(driver):
     """verify wheel group should be visible."""
     assert wait_on_element(driver, 7, '//span[contains(.,"wheel,")]')
+    time.sleep(1)
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CANCEL"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CANCEL"]').click()
