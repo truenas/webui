@@ -128,24 +128,24 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     stripe: 1, mirror: 2, raidz: 3, raidz2: 4, raidz3: 5,
   };
 
-  allDisksDisplayed = false;
-  duplicateSerialDisks: ManagerDisk[] = [];
-  get availableDuplicateSerialDisksCount(): number {
+  includeNonUniqueSerialDisks = false;
+  nonUniqueSerialDisks: ManagerDisk[] = [];
+  get availableNonUniqueSerialDisksCount(): number {
     if (this.originalDisks.length === this.temp.length) {
-      return this.duplicateSerialDisks.length;
+      return this.nonUniqueSerialDisks.length;
     }
-    return this.temp.filter((disk) => this.duplicateSerialDisks.includes(disk)).length;
+    return this.temp.filter((disk) => this.nonUniqueSerialDisks.includes(disk)).length;
   }
-  get diskDuplicateSerialWarning(): string {
-    if (!this.duplicateSerialDisks.length) {
+  get nonUniqueSerialDisksWarning(): string {
+    if (!this.nonUniqueSerialDisks.length) {
       return null;
     }
 
-    if (this.duplicateSerialDisks.every((disk) => disk.bus === DiskBus.Usb)) {
-      return this.translate.instant('There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly making such disks indistinguishable from each other.', { n: this.availableDuplicateSerialDisksCount });
+    if (this.nonUniqueSerialDisks.every((disk) => disk.bus === DiskBus.Usb)) {
+      return this.translate.instant('Warning: There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other.', { n: this.availableNonUniqueSerialDisksCount });
     }
 
-    return this.translate.instant('Warning! There are {n} disks available that have non-unique serial numbers. That can be a cabling issue and adding such a disk to a pool can result in a data loss.', { n: this.availableDuplicateSerialDisksCount });
+    return this.translate.instant('Warning: There are {n} disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.', { n: this.availableNonUniqueSerialDisksCount });
   }
 
   constructor(
@@ -371,7 +371,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
       this.originalSuggestableDisks = Array.from(this.suggestableDisks);
 
       this.temp = [...this.disks];
-      this.duplicateSerialDisks = this.disks.filter((disk) => disk.duplicate_serial.length);
+      this.nonUniqueSerialDisks = this.disks.filter((disk) => disk.duplicate_serial.length);
       this.disks = this.disks.filter((disk) => !disk.duplicate_serial.length);
       this.getDuplicableDisks();
     }, (err) => {
@@ -817,12 +817,12 @@ export class ManagerComponent implements OnInit, AfterViewInit {
     }, 100);
   }
 
-  toggleAllDisks(): void {
-    this.allDisksDisplayed = !this.allDisksDisplayed;
-    if (this.allDisksDisplayed) {
+  toggleNonUniqueSerialDisks(): void {
+    this.includeNonUniqueSerialDisks = !this.includeNonUniqueSerialDisks;
+    if (this.includeNonUniqueSerialDisks) {
       this.disks = this.originalDisks.filter((disk) => this.temp.includes(disk));
     } else {
-      this.disks = this.disks.filter((disk) => !this.duplicateSerialDisks.includes(disk));
+      this.disks = this.disks.filter((disk) => !this.nonUniqueSerialDisks.includes(disk));
     }
   }
 }

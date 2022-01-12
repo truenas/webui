@@ -328,10 +328,15 @@
                 let-rowCount="rowCount"
               >
                 <div>
-                  <p class="duplicate-serial-warning" *ngIf="availableDuplicateSerialDisksCount">
-                    {{ diskDuplicateSerialWarning }}<br>
-                    <a href="javascript:void(0)" (click)="toggleAllDisks()">[ {{ (allDisksDisplayed ? 'Hide Disks with Non-Unique Serial' : 'Show All Disks') | translate }} ]</a>
-                  </p>
+                  <p *ngIf="availableNonUniqueSerialDisksCount" class="non-unique-serial-disks-warning">{{ nonUniqueSerialDisksWarning }}</p>
+
+                  <mat-checkbox
+                    *ngIf="availableNonUniqueSerialDisksCount"
+                    color="primary"
+                    class="non-unique-serial-disks-checkbox"
+                    [checked]="includeNonUniqueSerialDisks"
+                    (change)="toggleNonUniqueSerialDisks()"
+                  >{{ 'Show disks with non-unique serial numbers' | translate }}</mat-checkbox>
 
                   <div class="page-count">
                     <div>{{ selectedCount }} {{ 'selected' | translate }} / {{ rowCount }} {{ 'total' | translate }}</div>
