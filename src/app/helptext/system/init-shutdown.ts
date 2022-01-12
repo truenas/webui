@@ -13,7 +13,7 @@ export default {
   ini_script_validation: [Validators.required],
   ini_script_tooltip: T('Select the script.\
      The script will be run using\
-     <a href=https://www.freebsd.org/cgi/man.cgi?query=sh\
+     <a href="https://man7.org/linux/man-pages/man1/sh.1p.html"\
      target="_blank">sh(1)</a>.'),
 
   ini_when_placeholder: T('When'),

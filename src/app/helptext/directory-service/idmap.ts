@@ -100,7 +100,7 @@ export default {
       placeholder: T('Base DN'),
       tooltip: T('The directory base suffix to use for SID/uid/gid\
  mapping entries. Example: dc=test,dc=org. When undefined, idmap_ldap defaults to using the ldap idmap\
- suffix option from <a href="https://www.freebsd.org/cgi/man.cgi?query=smb.conf"\
+ suffix option from <a href="https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html"\
  target="_blank">smb.conf</a>.'),
     },
     ldap_userdn: {

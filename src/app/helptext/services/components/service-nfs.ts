@@ -19,15 +19,15 @@ export default {
  is unavailable.'),
 
   nfs_srv_mountd_port_tooltip: T('Enter a port to bind <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=mountd"\
+ href="https://man7.org/linux/man-pages/man8/mountd.8.html"\
  target="_blank">mountd(8)</a>.'),
 
   nfs_srv_rpcstatd_port_tooltip: T('Enter a port to bind <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=rpc.statd"\
+ href="https://man7.org/linux/man-pages/man8/statd.8.html"\
  target="_blank">rpc.statd(8)</a>.'),
 
   nfs_srv_rpclockd_port_tooltip: T('Enter a port to bind <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=rpc.lockd"\
+ href="https://linux.die.net/man/8/rpc.lockd"\
  target="_blank">rpc.lockd(8)</a>.'),
 
   nfs_srv_16_tooltip: T('Set when a user is a member of more than 16 groups.\
@@ -35,13 +35,13 @@ export default {
  on the NFS server.'),
 
   nfs_srv_mountd_log_tooltip: T('Set to log <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=mountd"\
+ href="https://man7.org/linux/man-pages/man8/mountd.8.html"\
  target="_blank">mountd(8)</a> syslog requests.'),
 
   nfs_srv_statd_lockd_log_tooltip: T('Set to log <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=rpc.statd"\
+ href="https://man7.org/linux/man-pages/man8/statd.8.html"\
  target="_blank">rpc.statd(8)</a> and <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=rpc.lockd"\
+ href="https://linux.die.net/man/8/rpc.lockd"\
  target="_blank">rpc.lockd(8)</a> syslog requests.'),
 
   formTitle: T('NFS'),
