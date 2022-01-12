@@ -1,0 +1,51 @@
+:host {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  padding: 14px 16px;
+
+  &.dismissed {
+    opacity: 0.6;
+  }
+}
+
+.alert-icon {
+  cursor: default;
+  padding-right: 12px;
+}
+
+.alert-message {
+  font-size: inherit;
+  font-weight: normal;
+}
+
+.alert-level {
+  font-size: inherit;
+  font-weight: normal;
+  text-transform: uppercase;
+
+  &.warn {
+    color: var(--red);
+  }
+
+  &.accent {
+    color: var(--accent);
+  }
+}
+
+.alert-time {
+  font-size: 0.75rem;
+  line-height: 0.75rem;
+  margin-bottom: 3px;
+  margin-top: 3px;
+}
+
+.action-link {
+  cursor: pointer;
+  text-decoration: underline;
+
+  &:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+}

@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatDrawerMode, MatSidenav } from '@angular/material/sidenav';
 import { NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { UUID } from 'angular2-uuid';
 import { ConsolePanelDialogComponent } from 'app/components/common/dialog/console-panel/console-panel-dialog.component';
 import { CoreService } from 'app/core/services/core-service/core.service';
@@ -17,9 +18,12 @@ import { SidenavStatusEvent } from 'app/interfaces/events/sidenav-status-event.i
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { SubMenuItem } from 'app/interfaces/menu-item.interface';
+import { alertPanelClosed } from 'app/modules/alerts/store/alert.actions';
+import { AlertSlice, selectIsAlertPanelOpen } from 'app/modules/alerts/store/alert.selectors';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
+import { adminUiInitialized } from 'app/store/actions/admin.actions';
 
 @UntilDestroy()
 @Component({
@@ -33,7 +37,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isSidenavCollapsed = false;
   sidenavMode: MatDrawerMode = 'over';
   isShowFooterConsole = false;
-  isSidenotOpen = false;
   consoleMsg = '';
   hostname: string;
   consoleMessages: string[] = [];
@@ -43,7 +46,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   currentTheme = '';
   retroLogo = false;
   isOpen = false;
-  notificPanelClosed = false;
   menuName: string;
   readonly consoleMsgsSubName = 'filesystem.file_tail_follow:/var/log/messages:500';
   consoleMsgsSubscriptionId: string = null;
@@ -51,6 +53,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   copyrightYear = this.localeService.getCopyrightYearFromBuildTime();
 
   readonly ProductType = ProductType;
+
+  isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
 
   @ViewChild(MatSidenav, { static: false }) private sideNav: MatSidenav;
   @ViewChild('footerBarScroll', { static: true }) private footerBarScroll: ElementRef;
@@ -68,6 +72,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     private localeService: LocaleService,
     private layoutService: LayoutService,
     private prefService: PreferencesService,
+    private store$: Store<AlertSlice>,
   ) {
     // detect server type
     this.sysGeneralService.getProductType$.pipe(untilDestroyed(this)).subscribe((res) => {
@@ -149,6 +154,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     this.isSidenavCollapsed = this.layoutService.isMenuCollapsed;
 
     this.core.emit({ name: 'SysInfoRequest', sender: this });
+    this.store$.dispatch(adminUiInitialized());
   }
 
   ngAfterViewChecked(): void {
@@ -158,7 +164,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   updateSidenav(force?: 'open' | 'close'): void {
     if (force) {
       this.isSidenavOpen = force == 'open';
-      this.isSidenotOpen = force != 'open';
       if (force == 'close') {
         this.layoutService.isMenuCollapsed = false;
       }
@@ -166,7 +171,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }
 
     this.isSidenavOpen = !this.isMobile;
-    this.isSidenotOpen = false;
     this.sidenavMode = this.isMobile ? 'over' : 'side';
     if (!this.isMobile) {
       // TODO: This is hack to resolve issue described here: https://jira.ixsystems.com/browse/NAS-110404
@@ -260,14 +264,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     });
   }
 
-  onOpenNotify(): void {
-    this.isSidenotOpen = true;
-  }
-
-  onCloseNotify(): void {
-    this.isSidenotOpen = false;
-  }
-
   // For the slide-in menu
   toggleMenu(menuInfo?: [string, SubMenuItem[]]): void {
     if (this.isOpen && !menuInfo || this.isOpen && menuInfo[0] === this.menuName) {
@@ -282,5 +278,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   onMenuClosed(): void {
     this.isOpen = false;
+  }
+
+  onAlertsPanelClosed(): void {
+    this.store$.dispatch(alertPanelClosed());
   }
 }

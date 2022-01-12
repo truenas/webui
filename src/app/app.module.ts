@@ -8,10 +8,12 @@ import { RouterModule } from '@angular/router';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
 import { StoreModule } from '@ngrx/store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import {
   TranslateModule, TranslateLoader, TranslateCompiler, MissingTranslationHandler,
 } from '@ngx-translate/core';
 import * as Sentry from '@sentry/angular';
+import { environment } from 'environments/environment';
 import { MarkdownModule } from 'ngx-markdown';
 import { NgxPopperjsModule } from 'ngx-popperjs';
 import {
@@ -35,7 +37,6 @@ import { TerminalModule } from 'app/pages/common/terminal/terminal.module';
 import { ErdService } from 'app/services/erd.service';
 import { IxFileUploadService } from 'app/services/ix-file-upload.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
-import { NotificationsService } from 'app/services/notifications.service';
 import { RouterEffects } from 'app/store/effects/router.effects';
 import { reducers } from 'app/store/reducers';
 import { CustomRouterStateSerializer } from 'app/store/serializers/custom-router-serializer';
@@ -108,6 +109,10 @@ import { WebSocketService } from './services/ws.service';
     StoreRouterConnectingModule.forRoot({
       serializer: CustomRouterStateSerializer,
     }),
+    StoreDevtoolsModule.instrument({
+      maxAge: 25,
+      logOnly: environment.production,
+    }),
     EffectsModule.forRoot([RouterEffects]),
   ],
   declarations: [
@@ -133,7 +138,6 @@ import { WebSocketService } from './services/ws.service';
     AuthService,
     WebSocketService,
     AppLoaderService,
-    NotificationsService,
     ErdService,
     JobsManagerStore,
     IxSlideInService,

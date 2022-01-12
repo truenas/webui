@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { when } from 'jest-when';
-import { of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiEvent } from 'app/interfaces/api-event.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { WebSocketService } from 'app/services';
 
@@ -22,6 +23,8 @@ import { WebSocketService } from 'app/services';
 export class MockWebsocketService extends WebSocketService {
   private jobIdCounter = 1;
 
+  private subscribeStream$ = new Subject<ApiEvent<unknown>>();
+
   constructor(
     protected router: Router,
   ) {
@@ -29,7 +32,8 @@ export class MockWebsocketService extends WebSocketService {
 
     this.call = jest.fn();
     this.job = jest.fn();
-    this.subscribe = jest.fn(() => of());
+    this.subscribe = jest.fn(() => this.subscribeStream$ as Observable<ApiEvent<unknown>>);
+    this.sub = jest.fn(() => of());
     this.socket.send = jest.fn();
     this.socket.close = jest.fn();
     when(this.call).mockImplementation((method: ApiMethod, args: unknown[]) => {
@@ -61,6 +65,10 @@ export class MockWebsocketService extends WebSocketService {
       .mockReturnValue(of([responseWithJobId]));
 
     this.jobIdCounter += 1;
+  }
+
+  emitSubscribeEvent(event: ApiEvent<unknown>): void {
+    this.subscribeStream$.next(event);
   }
 
   onclose(): void {
