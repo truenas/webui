@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Choices } from 'app/interfaces/choices.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { IscsiService } from 'app/services';
 
 @Component({

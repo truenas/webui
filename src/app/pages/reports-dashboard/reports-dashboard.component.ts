@@ -18,9 +18,9 @@ import {
 } from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import {
   SystemGeneralService,
   WebSocketService,

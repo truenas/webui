@@ -19,11 +19,11 @@ import {
   NfsAclItem,
 } from 'app/interfaces/acl.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
-import { NULL_VALUE } from 'app/pages/common/entity/utils';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormComboboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
+import { NULL_VALUE } from 'app/modules/entity/utils';
 import { getEditNfsAceFieldSet } from 'app/pages/storage/volumes/permissions/components/edit-nfs-ace/edit-nfs-ace-field-set';
 import {
   EditNfsAceFormValues,

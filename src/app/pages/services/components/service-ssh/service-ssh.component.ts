@@ -8,8 +8,8 @@ import { of } from 'rxjs';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-ssh';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()

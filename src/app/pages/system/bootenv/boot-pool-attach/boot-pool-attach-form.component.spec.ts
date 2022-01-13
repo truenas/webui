@@ -5,9 +5,9 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { UnusedDisk } from 'app/interfaces/storage.interface';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { DialogService, WebSocketService } from 'app/services';
 import { BootPoolAttachFormComponent } from './boot-pool-attach-form.component';
 

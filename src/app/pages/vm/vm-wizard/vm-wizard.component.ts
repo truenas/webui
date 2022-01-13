@@ -28,13 +28,13 @@ import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import {
   FieldConfig, FormParagraphConfig, FormSelectConfig, FormUploadConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
+import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   NetworkService, StorageService, SystemGeneralService, WebSocketService,
 } from 'app/services';

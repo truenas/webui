@@ -23,7 +23,7 @@ import productText from 'app/helptext/product';
 import helptext from 'app/helptext/topbar';
 import { ThemeChangedEvent } from 'app/interfaces/events/theme-events.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { SystemGeneralService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 import { LocaleService } from 'app/services/locale.service';

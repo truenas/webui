@@ -4,16 +4,15 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { Subscription } from 'rxjs';
-import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { FieldConfig, FormDictConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { remapAppSubmitData } from 'app/pages/applications/utils/remap-app-submit-data.utils';
-import { FieldConfig, FormDictConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from '../applications.service';
@@ -30,7 +29,6 @@ export class ChartFormComponent implements FormConfiguration {
   addCall = 'chart.release.create' as const;
   editCall = 'chart.release.update' as const;
   isEntity = true;
-  protected utils: CommonUtils;
 
   title: string;
   private name: string;
@@ -66,7 +64,6 @@ export class ChartFormComponent implements FormConfiguration {
       this.customFilter = [[['id', '=', rowName]], { extra: { include_chart_schema: true } }];
       this.getRow.unsubscribe();
     });
-    this.utils = new CommonUtils();
   }
 
   setTitle(title: string): void {

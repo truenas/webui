@@ -6,9 +6,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { LldpConfig } from 'app/interfaces/lldp-config.interface';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { ServiceLldpComponent } from 'app/pages/services/components/service-lldp/service-lldp.component';
 import { DialogService, ServicesService, WebSocketService } from 'app/services';
 

@@ -10,9 +10,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-s3';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { FilesystemService } from 'app/services/filesystem.service';
 

@@ -3,9 +3,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/data-protection/scrub/scrub-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { PoolScrub } from 'app/interfaces/pool-scrub.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 

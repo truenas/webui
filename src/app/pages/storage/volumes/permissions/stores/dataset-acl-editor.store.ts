@@ -18,10 +18,10 @@ import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import {
   Acl, NfsAclItem, PosixAclItem, SetAcl,
 } from 'app/interfaces/acl.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AclSaveFormParams,
   DatasetAclEditorState,

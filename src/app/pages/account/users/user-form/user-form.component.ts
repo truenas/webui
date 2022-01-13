@@ -8,12 +8,12 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User, UserUpdate } from 'app/interfaces/user.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
 import {
   AppLoaderService, StorageService, UserService, WebSocketService, ValidationService,
 } from 'app/services';

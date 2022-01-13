@@ -17,14 +17,14 @@ import wizardHelptext from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
+import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import {
   WebSocketService, StorageService, AppLoaderService, DialogService, VmService, NetworkService, SystemGeneralService,

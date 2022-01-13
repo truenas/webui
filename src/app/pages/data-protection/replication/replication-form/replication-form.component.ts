@@ -24,12 +24,12 @@ import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormExplorerConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormExplorerConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   WebSocketService,
   TaskService,

@@ -5,8 +5,8 @@ import { MediaObserver } from '@angular/flex-layout';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
-import { EmptyConfig } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
+import { EmptyConfig } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 
 export interface DashConfigItem {

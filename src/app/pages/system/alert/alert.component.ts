@@ -11,12 +11,12 @@ import helptext from 'app/helptext/system/alert-settings';
 import { AlertCategory, AlertClassesUpdate, AlertClassSettings } from 'app/interfaces/alert.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { AlertDefaults } from 'app/pages/system/alert/alert-defaults.interface';
 import { DialogService, WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
@@ -30,7 +30,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 @Component({
   selector: 'app-system-alert',
   templateUrl: './alert.component.html',
-  styleUrls: ['../../common/entity/entity-form/entity-form.component.scss'],
+  styleUrls: ['../../../modules/entity/entity-form/entity-form.component.scss'],
   providers: [EntityFormService],
 })
 export class AlertConfigComponent implements OnInit {

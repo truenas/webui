@@ -15,9 +15,9 @@ import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.u
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { ServiceRow } from 'app/interfaces/service.interface';
-import { EntityModule } from 'app/pages/common/entity/entity.module';
-import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
-import { IxTableHarness } from 'app/pages/common/ix-tables/testing/ix-table.harness';
+import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
+import { IxTableHarness } from 'app/modules/ix-tables/testing/ix-table.harness';
 import { ServicesComponent } from 'app/pages/services/services.component';
 import { DialogService, IscsiService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';

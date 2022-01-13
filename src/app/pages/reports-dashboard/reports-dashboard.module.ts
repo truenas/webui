@@ -7,7 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { EntityModule } from 'app/pages/common/entity/entity.module';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { LineChartComponent } from 'app/pages/reports-dashboard/components/line-chart/line-chart.component';
 import { ReportsDashboardComponent } from 'app/pages/reports-dashboard/reports-dashboard.component';
 import { routing } from 'app/pages/reports-dashboard/reports-dashboard.routing';

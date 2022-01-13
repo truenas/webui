@@ -6,13 +6,13 @@ import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import {
   EntityTableComponent,
-} from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';

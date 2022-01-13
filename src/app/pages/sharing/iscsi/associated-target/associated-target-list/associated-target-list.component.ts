@@ -7,9 +7,9 @@ import { forkJoin } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { IscsiTargetExtent } from 'app/interfaces/iscsi.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AppLoaderService, DialogService, IscsiService, WebSocketService,
 } from 'app/services';

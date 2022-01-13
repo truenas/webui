@@ -9,10 +9,10 @@ import * as _ from 'lodash';
 import helptext from 'app/helptext/storage/volumes/volume-key';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormParagraphConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
 import { VolumeChangekeyFormValues } from 'app/pages/storage/volumes/volume-changekey-form/volume-changekey-form-values.interface';
 import { WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';

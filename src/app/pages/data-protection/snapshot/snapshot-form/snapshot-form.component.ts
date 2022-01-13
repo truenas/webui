@@ -5,10 +5,10 @@ import * as _ from 'lodash';
 import helptext from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormSelectConfig, UnitType } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormSelectConfig, UnitType } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, StorageService, TaskService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 

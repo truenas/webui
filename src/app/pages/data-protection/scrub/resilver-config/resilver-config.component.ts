@@ -9,10 +9,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { Weekday } from 'app/enums/weekday.enum';
 import helptext from 'app/helptext/storage/resilver/resilver';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, TaskService, WebSocketService } from 'app/services';
+import { EntityUtils } from '../../../../modules/entity/utils';
 import { CalendarService } from '../../../../services/calendar.service';
-import { EntityUtils } from '../../../common/entity/utils';
 
 @UntilDestroy()
 @Component({

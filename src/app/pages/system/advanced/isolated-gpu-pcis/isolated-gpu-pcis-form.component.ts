@@ -9,7 +9,7 @@ import { map, tap } from 'rxjs/operators';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 

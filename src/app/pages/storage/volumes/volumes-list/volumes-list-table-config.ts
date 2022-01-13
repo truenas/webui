@@ -33,14 +33,14 @@ import { PoolUnlockQuery } from 'app/interfaces/pool-unlock-query.interface';
 import { Pool, PoolExpandParams, UpdatePool } from 'app/interfaces/pool.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   VolumesListDataset,
   VolumesListPool,

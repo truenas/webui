@@ -5,9 +5,9 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/storage/disks/disks';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Disk } from 'app/interfaces/storage.interface';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { WebSocketService } from 'app/services';
 
 @UntilDestroy()

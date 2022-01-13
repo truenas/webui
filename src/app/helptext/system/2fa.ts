@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 
 export const helptext = {
   two_factor: {

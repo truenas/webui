@@ -12,11 +12,11 @@ import helptext from 'app/helptext/storage/volumes/volume-import-wizard';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, DialogService, AppLoaderService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 

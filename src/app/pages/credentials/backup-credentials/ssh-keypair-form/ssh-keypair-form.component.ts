@@ -7,9 +7,9 @@ import { map } from 'rxjs/operators';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import helptext from 'app/helptext/system/ssh-keypairs';
 import { KeychainCredentialUpdate, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
-import { atLeastOne } from 'app/pages/common/entity/entity-form/validators/at-least-one-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { atLeastOne } from 'app/modules/entity/entity-form/validators/at-least-one-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import {
   AppLoaderService, DialogService, StorageService, UserService, WebSocketService,
 } from 'app/services';

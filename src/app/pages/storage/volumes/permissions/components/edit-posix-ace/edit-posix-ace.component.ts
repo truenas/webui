@@ -8,10 +8,10 @@ import {
   PosixAclItem,
 } from 'app/interfaces/acl.interface';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormComboboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
 import { getEditPosixAceFieldSet } from 'app/pages/storage/volumes/permissions/components/edit-posix-ace/edit-posix-ace-field-set';
 import { EditPosixAceFormValues } from 'app/pages/storage/volumes/permissions/components/edit-posix-ace/edit-posix-ace-form-values.interface';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';

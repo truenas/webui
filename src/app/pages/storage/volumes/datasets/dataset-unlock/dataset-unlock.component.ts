@@ -17,17 +17,17 @@ import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Subs } from 'app/interfaces/subs.interface';
-import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormCheckboxConfig, FormListConfig, FormParagraphConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';

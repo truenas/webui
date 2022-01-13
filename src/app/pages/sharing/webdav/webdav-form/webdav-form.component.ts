@@ -8,9 +8,9 @@ import { ExplorerType } from 'app/enums/explorer-type.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebdav, shared } from 'app/helptext/sharing';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { AppLoaderService, DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()
