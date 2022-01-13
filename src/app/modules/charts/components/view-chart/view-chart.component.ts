@@ -8,6 +8,7 @@ import {
   LegendOptions,
   TooltipOptions,
 } from 'app/modules/charts/components/view-chart/view-chart.component.types';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 export interface ChartData {
   legend: string;
@@ -89,8 +90,8 @@ export class ViewChartComponent extends ViewComponent implements OnChanges, Afte
 
   chartConfig: ChartConfiguration;
 
-  constructor() {
-    super();
+  constructor(themeService: ThemeService) {
+    super(themeService);
     this.chartId = 'chart-' + UUID.UUID();
     this.chartType = 'pie';
     this.units = '';

@@ -225,10 +225,6 @@ export class SystemGeneralService {
     this.refreshSysGeneral$.next();
   }
 
-  checkRootPassword(password: string): Observable<boolean> {
-    return this.ws.call('auth.check_user', ['root', password]);
-  }
-
   /**
    *
    * @returns OAuth Token for JIRA

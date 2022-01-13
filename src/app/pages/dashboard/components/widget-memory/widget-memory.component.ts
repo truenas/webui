@@ -19,7 +19,8 @@ import { ViewChartBarComponent } from 'app/modules/charts/components/view-chart-
 import { ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetMemoryData } from 'app/pages/dashboard/interfaces/widget-data.interface';
-import { Theme } from 'app/services/theme/theme.service';
+import { CoreService } from 'app/services/core-service/core.service';
+import { Theme, ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
@@ -69,6 +70,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
     private sanitizer: DomSanitizer,
     public mediaObserver: MediaObserver,
     private el: ElementRef<HTMLElement>,
+    private core: CoreService,
+    public themeService: ThemeService,
   ) {
     super(translate);
 

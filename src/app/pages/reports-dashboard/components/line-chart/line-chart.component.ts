@@ -9,8 +9,8 @@ import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
 import { BehaviorSubject } from 'rxjs';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { ReportingData } from 'app/interfaces/reporting.interface';
+import { CoreService } from 'app/services/core-service/core.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
 import { Report } from '../report/report.component';
 
@@ -81,7 +81,7 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   private utils: ThemeUtils;
 
   constructor(private core: CoreService, public themeService: ThemeService) {
-    super();
+    super(themeService);
     this.utils = new ThemeUtils();
     this.controlUid = 'chart_' + UUID.UUID();
     this.legendEvent$ = new BehaviorSubject({ xHTML: '' });

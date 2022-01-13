@@ -7,7 +7,7 @@ import {
 } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { customSvgIcons } from 'app/core/classes/custom-icons';
-import { DataService } from 'app/core/services/data.service';
+import { DataService } from 'app/services/data.service';
 import { ThemeService } from 'app/services/theme/theme.service';
 import productText from './helptext/product';
 import { SystemGeneralService } from './services';

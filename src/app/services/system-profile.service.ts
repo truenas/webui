@@ -4,9 +4,9 @@ import { CoreEvent } from 'app/interfaces/events';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
 import { SystemFeatures } from 'app/interfaces/events/sys-info-event.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { WebSocketService } from 'app/services';
-import { BaseService } from './base.service';
-import { CoreService } from './core-service/core.service';
+import { BaseService } from 'app/services/base.service';
+import { CoreService } from 'app/services/core-service/core.service';
+import { WebSocketService } from 'app/services/index';
 
 @Injectable({
   providedIn: 'root',

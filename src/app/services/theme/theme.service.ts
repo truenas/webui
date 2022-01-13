@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { ThemeChangeRequestEvent } from 'app/interfaces/events/theme-events.interface';
 import {
@@ -9,6 +8,7 @@ import {
   UserPreferencesReadyEvent,
 } from 'app/interfaces/events/user-preferences-event.interface';
 import { WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 
 export const defaultTheme: Theme = {
   name: 'ix-dark',

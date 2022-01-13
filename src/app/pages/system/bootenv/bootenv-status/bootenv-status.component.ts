@@ -6,10 +6,10 @@ import { TreeNode } from 'primeng/api';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { BootPoolState } from 'app/interfaces/boot-pool-state.interface';
 import { VDev } from 'app/interfaces/storage.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityTreeTable } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 interface PoolDiskInfo {

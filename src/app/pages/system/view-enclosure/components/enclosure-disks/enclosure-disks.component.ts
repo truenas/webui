@@ -13,8 +13,6 @@ import {
 } from 'popmotion';
 import { Subject } from 'rxjs';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { CoreService } from 'app/core/services/core-service/core.service';
-import { Temperature } from 'app/core/services/disk-temperature.service';
 import { EnclosureSlotStatus } from 'app/enums/enclosure-slot-status.enum';
 import { EnclosureElement, EnclosureElementsGroup } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
@@ -49,7 +47,9 @@ import {
 } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { VDevLabelsSvg } from 'app/pages/system/view-enclosure/classes/v-dev-labels-svg';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { Temperature } from 'app/services/disk-temperature.service';
 import { Theme } from 'app/services/theme/theme.service';
 
 export enum EnclosureLocation {

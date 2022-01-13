@@ -3,11 +3,11 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { format, utcToZonedTime } from 'date-fns-tz';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core-service/core.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { UserPreferencesReadyEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { Option } from 'app/interfaces/option.interface';
+import { CoreService } from 'app/services/core-service/core.service';
+import { PreferencesService } from 'app/services/preferences.service';
 import { SystemGeneralService } from '.';
 
 @UntilDestroy()

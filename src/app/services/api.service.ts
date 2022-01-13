@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
@@ -12,6 +11,7 @@ import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { User } from 'app/interfaces/user.interface';
+import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 export interface ApiCall {
@@ -28,7 +28,9 @@ interface ApiDefinition {
 }
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class ApiService {
   private apiDefinitions: { [eventName: string]: ApiDefinition } = {
     UserAttributesRequest: {
