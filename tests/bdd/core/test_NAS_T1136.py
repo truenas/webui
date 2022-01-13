@@ -256,6 +256,7 @@ def input_user_name_and_password_click_sign_in(driver, user_name, password):
             time.sleep(1)
         driver.switch_to.window(driver.window_handles[1])
     assert wait_on_element(driver, 15, '//nav[contains(.,"Dropbox")]//span[text()="Dropbox"]')
+    time.sleep(1)
 
 
 @then(parsers.parse('click on {folder1} then click on the test folder'))
