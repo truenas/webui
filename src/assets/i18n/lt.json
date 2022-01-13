@@ -3934,7 +3934,7 @@
   "Waiting for Active TrueNAS controller to come up...": "",
   "Waiting for active TrueNAS controller to come up...": "",
   "Warning": "",
-  "Warning: There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other.": "",
+  "Warning: There are {n} USB disks available that have non-unique serial numbers. USB controllers may report disk serial incorrectly, making such disks indistinguishable from each other. Adding such disks to a pool can result in lost data.": "",
   "Warning: There are {n} disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.": "",
   "Warning: iSCSI Target is already in use.</font><br>": "",
   "Warning: {n} of {total} snapshots could not be deleted.": "",
