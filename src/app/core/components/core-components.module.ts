@@ -25,7 +25,6 @@ import { ViewComponent } from 'app/core/components/view/view.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { EntityModule } from 'app/pages/common/entity/entity.module';
 import { StorageService } from 'app/services/storage.service';
-import { ContextMenuComponent } from './context-menu/context-menu.component';
 import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.directive';
 import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 import { TextLimiterDirective } from './directives/text-limiter/text-limiter.directive';
@@ -52,7 +51,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     EntityModule,
   ],
   declarations: [
-    ContextMenuComponent,
     ViewComponent,
     ViewControlComponent,
     ViewControllerComponent,
@@ -80,7 +78,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     PortalModule,
     FlexLayoutModule,
     DisplayComponent,
-    ContextMenuComponent,
     ViewComponent,
     ViewChartComponent,
     ViewChartAreaComponent,
@@ -99,7 +96,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     FormatDateTimePipe,
   ],
   entryComponents: [
-    ContextMenuComponent,
     ViewComponent,
     ViewChartComponent,
     ViewChartAreaComponent,

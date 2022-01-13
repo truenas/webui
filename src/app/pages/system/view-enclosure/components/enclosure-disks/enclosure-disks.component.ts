@@ -48,7 +48,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
 import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { ViewConfig } from 'app/pages/system/view-enclosure/view-enclosure.component';
+import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { DialogService } from 'app/services/dialog.service';
 import { Theme } from 'app/services/theme/theme.service';
 

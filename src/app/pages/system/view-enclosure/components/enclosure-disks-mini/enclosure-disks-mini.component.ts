@@ -10,14 +10,14 @@ import { MiniX } from 'app/core/classes/hardware/mini-x';
 import { MiniXlPlus } from 'app/core/classes/hardware/mini-xl-plus';
 import { EnclosureMetadata } from 'app/core/classes/system-profiler';
 import { CoreService } from 'app/core/services/core-service/core.service';
+import { EnclosureDisksComponent } from 'app/pages/system/view-enclosure/components/enclosure-disks/enclosure-disks.component';
 import { DialogService } from 'app/services/dialog.service';
 import { Theme } from 'app/services/theme/theme.service';
-import { EnclosureDisksComponent } from './enclosure-disks.component';
 
 @Component({
   selector: 'enclosure-disks-mini',
   templateUrl: './enclosure-disks-mini.component.html',
-  styleUrls: ['./enclosure-disks.component.scss'],
+  styleUrls: ['../enclosure-disks/enclosure-disks.component.scss'],
 })
 
 export class EnclosureDisksMiniComponent extends EnclosureDisksComponent {

@@ -1,10 +1,9 @@
 import {
-  Component, OnDestroy, ViewChild, ElementRef,
+  Component, ElementRef, OnDestroy, ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-import { ErrorMessage } from 'app/core/classes/ix-interfaces';
 import { EnclosureMetadata, SystemProfiler } from 'app/core/classes/system-profiler';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
@@ -16,15 +15,8 @@ import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interf
 import { SensorDataEvent } from 'app/interfaces/events/sensor-data-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-
-export interface ViewConfig {
-  name: string;
-  alias: string; // Used for tab label
-  icon: string;
-  id: number;
-  elementIndex?: number;
-  showInNavbar: boolean;
-}
+import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
+import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 
 @UntilDestroy()
 @Component({
