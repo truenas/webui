@@ -112,6 +112,7 @@ def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, use
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[contains(text(),"Sign in")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Sign in")]').click()
+    time.sleep(1)
 
 
 @then(parsers.parse('click on Browser Files, click on {bucket} bucket'))
