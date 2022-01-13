@@ -6,9 +6,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { mockCall, mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { TunableType } from 'app/enums/tunable-type.enum';
 import { Tunable } from 'app/interfaces/tunable.interface';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
-import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { TunableFormComponent } from 'app/pages/system/tunable/tunable-form/tunable-form.component';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';

@@ -8,8 +8,8 @@ import { CommonDirectivesModule } from 'app/directives/common/common-directives.
 import { CastModule } from 'app/modules/cast/cast.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { UserService } from 'app/services/user.service';
-import { EntityFormService } from '../common/entity/entity-form/services/entity-form.service';
-import { EntityModule } from '../common/entity/entity.module';
+import { EntityFormService } from '../../modules/entity/entity-form/services/entity-form.service';
+import { EntityModule } from '../../modules/entity/entity.module';
 import { SharesDashboardComponent } from './components/shares-dashboard/shares-dashboard.component';
 import { AssociatedTargetFormComponent } from './iscsi/associated-target/associated-target-form/associated-target-form.component';
 import { AssociatedTargetListComponent } from './iscsi/associated-target/associated-target-list/associated-target-list.component';

@@ -27,22 +27,22 @@ import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import {
   FieldConfig,
   FormExplorerConfig,
   FormParagraphConfig,
   FormSelectConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
+import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { forbiddenValues } from 'app/modules/entity/entity-form/validators/forbidden-values-validation';
+import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   AppLoaderService,
   DialogService,

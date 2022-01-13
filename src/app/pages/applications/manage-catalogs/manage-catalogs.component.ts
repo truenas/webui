@@ -6,14 +6,14 @@ import { JobState } from 'app/enums/job-state.enum';
 import helptext from 'app/helptext/apps/apps';
 import { Catalog, CatalogQueryParams } from 'app/interfaces/catalog.interface';
 import { CoreEvent } from 'app/interfaces/events';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import {
+  EntityTableComponent,
+} from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { CatalogAddFormComponent } from 'app/pages/applications/forms/catalog-add-form/catalog-add-form.component';
 import { CatalogEditFormComponent } from 'app/pages/applications/forms/catalog-edit-form/catalog-edit-form.component';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import {
-  EntityTableComponent,
-} from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
 import { DialogService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';

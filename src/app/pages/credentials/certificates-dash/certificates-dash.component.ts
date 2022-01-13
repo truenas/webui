@@ -11,14 +11,14 @@ import { CertificateAuthority } from 'app/interfaces/certificate-authority.inter
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { AppTableAction, AppTableConfig, TableComponent } from 'app/pages/common/entity/table/table.component';
-import { TableService } from 'app/pages/common/entity/table/table.service';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { AppTableAction, AppTableConfig, TableComponent } from 'app/modules/entity/table/table.component';
+import { TableService } from 'app/modules/entity/table/table.service';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/forms/acmedns-form.component';
 import {
   SystemGeneralService, WebSocketService, DialogService, StorageService, ModalServiceMessage,

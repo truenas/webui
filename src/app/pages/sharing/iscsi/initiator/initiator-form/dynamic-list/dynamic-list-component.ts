@@ -1,8 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
-import { FieldConfig, FormInputListConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
+import { FieldConfig, FormInputListConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
 
 @UntilDestroy()
 @Component({

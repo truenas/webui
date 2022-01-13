@@ -11,7 +11,7 @@ import filesize from 'filesize';
 import { map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
 
 @UntilDestroy()

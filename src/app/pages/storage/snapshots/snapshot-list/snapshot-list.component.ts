@@ -11,17 +11,17 @@ import { Job } from 'app/interfaces/job.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
 import {
   EntityTableAction,
   EntityTableConfig,
   EntityTableConfigConfig,
-} from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { SnapshotListRow } from 'app/pages/storage/snapshots/snapshot-list/snapshot-list-row.interface';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';

@@ -7,7 +7,8 @@ import { AppCommonModule } from 'app/components/common/app-common.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { ChartsModule } from 'app/modules/charts/charts.module';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { DashboardFormComponent } from 'app/pages/dashboard/components/dashboard-form/dashboard-form.component';
 import { DashboardComponent } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetControllerComponent } from 'app/pages/dashboard/components/widget-controller/widget-controller.component';
@@ -23,7 +24,7 @@ import {
 } from 'app/pages/dashboard/components/widget-sys-info/simple-failover-btn.component';
 import { WidgetSysInfoComponent } from 'app/pages/dashboard/components/widget-sys-info/widget-sys-info.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
-import { EntityModule } from '../common/entity/entity.module';
+import { EntityModule } from '../../modules/entity/entity.module';
 import { routing } from './dashboard.routing';
 
 @NgModule({
@@ -40,6 +41,7 @@ import { routing } from './dashboard.routing';
     EntityModule,
     TranslateModule,
     CastModule,
+    ChartsModule,
   ],
   declarations: [
     DashboardComponent,

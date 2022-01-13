@@ -14,12 +14,12 @@ import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormSelectConfig, FormParagraphConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, SystemGeneralService } from 'app/services';
 import { DialogService } from 'app/services/dialog.service';
 

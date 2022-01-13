@@ -5,14 +5,14 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import helptext from 'app/helptext/api-keys';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EntityTableComponent } from 'app/pages/common/entity/entity-table/entity-table.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { DialogService, WebSocketService } from 'app/services';
 import { LocaleService } from 'app/services/locale.service';
+import { DialogFormConfiguration } from '../../modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityUtils } from '../../modules/entity/utils';
 import { ConfirmDialogComponent } from '../common/confirm-dialog/confirm-dialog.component';
-import { DialogFormConfiguration } from '../common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityUtils } from '../common/entity/utils';
 import { ApiKeysRow } from './api-keys-row.interface';
 
 @UntilDestroy()

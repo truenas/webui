@@ -4,19 +4,17 @@ import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
 import { ixChartApp } from 'app/constants/catalog.constants';
-import { CommonUtils } from 'app/core/classes/common-utils';
 import helptext from 'app/helptext/apps/apps';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
 import { ChartReleaseCreate } from 'app/interfaces/chart-release.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
+import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { remapAppSubmitData } from 'app/pages/applications/utils/remap-app-submit-data.utils';
-import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import { DialogService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
-import { ApplicationsService } from '../applications.service';
 
 @UntilDestroy()
 @Component({
@@ -26,7 +24,6 @@ import { ApplicationsService } from '../applications.service';
 
 export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   protected addCall = 'chart.release.create' as const;
-  protected utils: CommonUtils;
   summary: Record<string, unknown> = {};
   isAutoSummary = true;
   hideCancel = true;
@@ -40,8 +37,7 @@ export class ChartWizardComponent implements OnDestroy, WizardConfiguration {
   isLinear = true;
 
   constructor(private mdDialog: MatDialog, private dialogService: DialogService,
-    private modalService: ModalService, private appService: ApplicationsService) {
-    this.utils = new CommonUtils();
+    private modalService: ModalService) {
   }
 
   setTitle(title: string): void {

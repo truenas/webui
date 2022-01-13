@@ -9,13 +9,13 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { CreateNewTicket, NewTicketResponse, OauthJiraMessage } from 'app/interfaces/support.interface';
-import { EntityJobComponent } from 'app/pages//common/entity/entity-job/entity-job.component';
-import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormButtonConfig, FormSelectConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { DialogService, WebSocketService } from 'app/services/';
 import { ModalService } from 'app/services/modal.service';
 import { SystemGeneralService } from 'app/services/system-general.service';

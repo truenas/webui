@@ -12,29 +12,6 @@ import {
   tween, styler, value, keyframes,
 } from 'popmotion';
 import { Subject } from 'rxjs';
-import { Chassis } from 'app/core/classes/hardware/chassis';
-import { ChassisView } from 'app/core/classes/hardware/chassis-view';
-import { DriveTray } from 'app/core/classes/hardware/drivetray';
-import { E16 } from 'app/core/classes/hardware/e16';
-import { E24 } from 'app/core/classes/hardware/e24';
-import { E60 } from 'app/core/classes/hardware/e60';
-import { Es102 } from 'app/core/classes/hardware/es102';
-import { Es12 } from 'app/core/classes/hardware/es12';
-import { Es24 } from 'app/core/classes/hardware/es24';
-import { Es24F } from 'app/core/classes/hardware/es24f';
-import { Es60 } from 'app/core/classes/hardware/es60';
-import { M50 } from 'app/core/classes/hardware/m50';
-import { R10 } from 'app/core/classes/hardware/r10';
-import { R20 } from 'app/core/classes/hardware/r20';
-import { R20A } from 'app/core/classes/hardware/r20a';
-import { R20B } from 'app/core/classes/hardware/r20b';
-import { R40 } from 'app/core/classes/hardware/r40';
-import { R50 } from 'app/core/classes/hardware/r50';
-import { R50B } from 'app/core/classes/hardware/r50b';
-import { VDevLabelsSvg } from 'app/core/classes/hardware/v-dev-labels-svg';
-import {
-  SystemProfiler, EnclosureMetadata, EnclosureDisk, VDevMetadata,
-} from 'app/core/classes/system-profiler';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { Temperature } from 'app/core/services/disk-temperature.service';
@@ -45,9 +22,32 @@ import { LabelDrivesEvent } from 'app/interfaces/events/label-drives-event.inter
 import { MediaChangeEvent } from 'app/interfaces/events/media-change-event.interface';
 import { ThemeChangedEvent, ThemeDataEvent } from 'app/interfaces/events/theme-events.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { ChassisView } from 'app/pages/system/view-enclosure/classes/chassis-view';
+import { DriveTray } from 'app/pages/system/view-enclosure/classes/drivetray';
+import { Chassis } from 'app/pages/system/view-enclosure/classes/hardware/chassis';
+import { E16 } from 'app/pages/system/view-enclosure/classes/hardware/e16';
+import { E24 } from 'app/pages/system/view-enclosure/classes/hardware/e24';
+import { E60 } from 'app/pages/system/view-enclosure/classes/hardware/e60';
+import { Es102 } from 'app/pages/system/view-enclosure/classes/hardware/es102';
+import { Es12 } from 'app/pages/system/view-enclosure/classes/hardware/es12';
+import { Es24 } from 'app/pages/system/view-enclosure/classes/hardware/es24';
+import { Es24F } from 'app/pages/system/view-enclosure/classes/hardware/es24f';
+import { Es60 } from 'app/pages/system/view-enclosure/classes/hardware/es60';
+import { M50 } from 'app/pages/system/view-enclosure/classes/hardware/m50';
+import { R10 } from 'app/pages/system/view-enclosure/classes/hardware/r10';
+import { R20 } from 'app/pages/system/view-enclosure/classes/hardware/r20';
+import { R20A } from 'app/pages/system/view-enclosure/classes/hardware/r20a';
+import { R20B } from 'app/pages/system/view-enclosure/classes/hardware/r20b';
+import { R40 } from 'app/pages/system/view-enclosure/classes/hardware/r40';
+import { R50 } from 'app/pages/system/view-enclosure/classes/hardware/r50';
+import { R50B } from 'app/pages/system/view-enclosure/classes/hardware/r50b';
+import {
+  SystemProfiler, EnclosureMetadata, EnclosureDisk, VDevMetadata,
+} from 'app/pages/system/view-enclosure/classes/system-profiler';
+import { VDevLabelsSvg } from 'app/pages/system/view-enclosure/classes/v-dev-labels-svg';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 import { DialogService } from 'app/services/dialog.service';
 import { Theme } from 'app/services/theme/theme.service';

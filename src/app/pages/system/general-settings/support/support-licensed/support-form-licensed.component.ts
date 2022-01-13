@@ -9,11 +9,11 @@ import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.
 import { Job } from 'app/interfaces/job.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { NewTicketResponse } from 'app/interfaces/support.interface';
-import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
+import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { WebSocketService } from 'app/services/';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';

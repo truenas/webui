@@ -6,7 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { NgxUploaderModule } from 'ngx-uploader';
 import { MaterialModule } from 'app/app-material.module';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { ActiveDirectoryComponent } from 'app/pages/directory-service/components/active-directory/active-directory.component';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list.component';
@@ -15,7 +15,7 @@ import { KerberosSettingsComponent } from 'app/pages/directory-service/component
 import { routing } from 'app/pages/directory-service/directory-service.routing';
 import { DirectoryServicesComponent } from 'app/pages/directory-service/directory-services.component';
 import { SystemGeneralService } from 'app/services';
-import { EntityModule } from '../common/entity/entity.module';
+import { EntityModule } from '../../modules/entity/entity.module';
 import { IdmapFormComponent } from './components/idmap/idmap-form.component';
 import { IdmapListComponent } from './components/idmap/idmap-list.component';
 import { KerberosRealmsFormComponent } from './components/kerberos-realms-form/kerberos-realms-form.component';

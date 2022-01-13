@@ -7,8 +7,8 @@ import { mockCall, mockJob, mockWebsocket } from 'app/core/testing/utils/mock-we
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
-import { IxFormHarness } from 'app/pages/common/ix-forms/testing/ix-form.harness';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
+import { IxFormHarness } from 'app/modules/ix-forms/testing/ix-form.harness';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog-form/syslog-form.component';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';

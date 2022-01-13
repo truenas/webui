@@ -7,7 +7,7 @@ import { SshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { DialogService } from 'app/services/dialog.service';

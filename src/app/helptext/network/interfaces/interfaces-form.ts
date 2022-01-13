@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { LinkAggregationProtocol, NetworkInterfaceType } from 'app/enums/network-interface.enum';
-import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
 
 export default {
   title_add: T('Add Interface'),

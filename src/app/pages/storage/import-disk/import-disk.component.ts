@@ -11,13 +11,13 @@ import { ExplorerType } from 'app/enums/explorer-type.enum';
 import helptext from 'app/helptext/storage/import-disk/import-disk';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig, FormRadioConfig, FormSelectConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   WebSocketService,
   JobService,

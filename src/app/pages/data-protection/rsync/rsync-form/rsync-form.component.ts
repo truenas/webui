@@ -9,9 +9,9 @@ import helptext from 'app/helptext/data-protection/resync/resync-form';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { RsyncTaskUi } from 'app/interfaces/rsync-task.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormComboboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { TaskService, UserService } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 

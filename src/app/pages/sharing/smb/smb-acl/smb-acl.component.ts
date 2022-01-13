@@ -7,9 +7,9 @@ import { helptextSharingSmb } from 'app/helptext/sharing/smb/smb';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { SmbSharesec } from 'app/interfaces/smb-share.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormListConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormListConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 
 @UntilDestroy()
 @Component({

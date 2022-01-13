@@ -4,7 +4,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import helptext from 'app/helptext/storage/volumes/download-key';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   WebSocketService,
   StorageService, DialogService,

@@ -20,19 +20,19 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
   FieldConfig,
   FormExplorerConfig,
   FormInputConfig,
   FormParagraphConfig,
   FormSelectConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { RelationConnection } from 'app/modules/entity/entity-form/models/relation-connection.enum';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils, NULL_VALUE } from 'app/modules/entity/utils';
 import {
   AppLoaderService, CloudCredentialService, DialogService, JobService, WebSocketService,
 } from 'app/services';

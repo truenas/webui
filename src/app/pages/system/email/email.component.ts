@@ -14,11 +14,11 @@ import { helptextSystemEmail } from 'app/helptext/system/email';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { MailConfig } from 'app/interfaces/mail-config.interface';
 import { OauthMessage } from 'app/interfaces/oauth-message.interface';
-import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FormInputConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FormInputConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   DialogService, WebSocketService, AppLoaderService,
 } from 'app/services';

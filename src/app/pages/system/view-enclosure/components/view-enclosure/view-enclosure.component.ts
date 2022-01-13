@@ -4,7 +4,6 @@ import {
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-import { EnclosureMetadata, SystemProfiler } from 'app/core/classes/system-profiler';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -14,7 +13,8 @@ import { PoolDataEvent } from 'app/interfaces/events/pool-data-event.interface';
 import { ResilveringEvent } from 'app/interfaces/events/resilvering-event.interface';
 import { SensorDataEvent } from 'app/interfaces/events/sensor-data-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
+import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { EnclosureMetadata, SystemProfiler } from 'app/pages/system/view-enclosure/classes/system-profiler';
 import { ErrorMessage } from 'app/pages/system/view-enclosure/interfaces/error-message.interface';
 import { ViewConfig } from 'app/pages/system/view-enclosure/interfaces/view.config';
 

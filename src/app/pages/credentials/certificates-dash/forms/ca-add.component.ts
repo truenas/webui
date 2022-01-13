@@ -7,10 +7,10 @@ import * as _ from 'lodash';
 import { helptextSystemCa } from 'app/helptext/system/ca';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { FieldConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { Wizard } from 'app/pages/common/entity/entity-form/models/wizard.interface';
-import { EntityWizardComponent } from 'app/pages/common/entity/entity-wizard/entity-wizard.component';
+import { FieldConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { Wizard } from 'app/modules/entity/entity-form/models/wizard.interface';
+import { EntityWizardComponent } from 'app/modules/entity/entity-wizard/entity-wizard.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
@@ -623,7 +623,7 @@ export class CertificateAuthorityAddComponent implements WizardConfiguration {
 
   getSummaryValueLabel(fieldConfig: FieldConfig, value: any): any {
     if (fieldConfig.type == 'select') {
-      const config = fieldConfig as FormSelectConfig;
+      const config = fieldConfig;
       const option = config.options.find((option) => option.value == value);
       if (option) {
         value = option.label;

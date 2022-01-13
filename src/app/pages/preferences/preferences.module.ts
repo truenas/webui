@@ -5,8 +5,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { MaterialModule } from 'app/app-material.module';
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityModule } from 'app/pages/common/entity/entity.module';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { PreferencesPageComponent } from './page/preferences.component';
 import { routing } from './preferences.routing';
 

@@ -1,6 +1,6 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { rangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
+import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 
 export const helptext = {
   fieldset_general: T('General Options'),

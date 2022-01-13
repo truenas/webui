@@ -11,31 +11,16 @@ import { CopyButtonComponent } from 'app/core/components/copy-btn/copy-btn.compo
 import { HtmlTooltipComponent } from 'app/core/components/directives/html-tooltip/html-tooltip.component';
 import { DisplayComponent } from 'app/core/components/display/display.component';
 import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pipe';
-import { ViewButtonComponent } from 'app/core/components/view-button/view-button.component';
-import { ViewChartAreaComponent } from 'app/core/components/view-chart-area/view-chart-area.component';
-import { ViewChartBarComponent } from 'app/core/components/view-chart-bar/view-chart-bar.component';
-import { ViewChartDonutComponent } from 'app/core/components/view-chart-donut/view-chart-donut.component';
-import { ViewChartGaugeComponent } from 'app/core/components/view-chart-gauge/view-chart-gauge.component';
-import { ViewChartLineComponent } from 'app/core/components/view-chart-line/view-chart-line.component';
-import { ViewChartPieComponent } from 'app/core/components/view-chart-pie/view-chart-pie.component';
-import { ViewChartComponent } from 'app/core/components/view-chart/view-chart.component';
 import { ViewControlComponent } from 'app/core/components/view-control/view-control.component';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
-import { EntityModule } from 'app/pages/common/entity/entity.module';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { StorageService } from 'app/services/storage.service';
 import { HtmlTooltipDirective } from './directives/html-tooltip/html-tooltip.directive';
 import { TextLimiterTooltipComponent } from './directives/text-limiter/text-limiter-tooltip/text-limiter-tooltip.component';
 import { TextLimiterDirective } from './directives/text-limiter/text-limiter.directive';
 import { ConvertPipe } from './pipes/convert.pipe';
-/*
- *
- * This is the Core Module. By importing this module you'll
- * ensure your page will have the right dependencies in place
- * to make use of Core Components
- *
- * */
 
 @NgModule({
   imports: [
@@ -55,14 +40,6 @@ import { ConvertPipe } from './pipes/convert.pipe';
     ViewControlComponent,
     ViewControllerComponent,
     DisplayComponent,
-    ViewButtonComponent,
-    ViewChartComponent,
-    ViewChartAreaComponent,
-    ViewChartDonutComponent,
-    ViewChartPieComponent,
-    ViewChartGaugeComponent,
-    ViewChartBarComponent,
-    ViewChartLineComponent,
     TextLimiterDirective,
     HtmlTooltipDirective,
     HtmlTooltipComponent,
@@ -71,7 +48,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     FormatDateTimePipe,
     CopyButtonComponent,
   ],
-  exports: [ // Modules and Components here
+  exports: [
     CommonModule,
     MaterialModule,
     OverlayModule,
@@ -79,15 +56,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
     FlexLayoutModule,
     DisplayComponent,
     ViewComponent,
-    ViewChartComponent,
-    ViewChartAreaComponent,
-    ViewChartDonutComponent,
-    ViewChartGaugeComponent,
-    ViewChartBarComponent,
-    ViewChartPieComponent,
-    ViewChartLineComponent,
     ViewControlComponent,
-    ViewButtonComponent,
     ViewControllerComponent,
     TextLimiterDirective,
     HtmlTooltipDirective,
@@ -97,15 +66,7 @@ import { ConvertPipe } from './pipes/convert.pipe';
   ],
   entryComponents: [
     ViewComponent,
-    ViewChartComponent,
-    ViewChartAreaComponent,
-    ViewChartDonutComponent,
-    ViewChartGaugeComponent,
-    ViewChartBarComponent,
-    ViewChartPieComponent,
-    ViewChartLineComponent,
     ViewControlComponent,
-    ViewButtonComponent,
     ViewControllerComponent,
     TextLimiterTooltipComponent,
     CopyButtonComponent,
