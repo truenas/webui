@@ -576,6 +576,7 @@ def verify_the_file_is_removed_from_the_dropbox_test_folder_tab(driver):
     assert not is_element_present(driver, '//span[text()="music"]')
     # clean the test folder on box tab before closing the tab.
     assert wait_on_element(driver, 5, '//span[text()="Explaining_BSD.pdf"]', 'clickable')
+    time.sleep(0.5)
     action = ActionChains(driver)
     action.move_to_element(driver.find_element_by_xpath('//span[text()="Explaining_BSD.pdf"]')).perform()
     assert wait_on_element(driver, 5, '//button[@aria-label="More menu"]', 'clickable')

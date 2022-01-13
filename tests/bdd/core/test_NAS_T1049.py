@@ -50,7 +50,8 @@ def on_the_dashboard_verify_the_system_information_version(driver, iso_version):
     assert wait_on_element(driver, 10, '//span[contains(.,"System Information")]')
     assert wait_on_element(driver, 7, '//strong[contains(.,"Version:")]')
     element = driver.find_element_by_xpath('//strong[contains(.,"Version:")]/../div/span')
-    assert element.text == iso_version, element.text
+    ui_version = element.text.replace('...', '')
+    assert ui_version in iso_version, element.text
 
 
 @then('verify on the upper right corner system is TrueNAS CORE')

@@ -37,9 +37,11 @@ def the_browser_is_open_the_freenas_url_and_logged_in(driver, nas_ip, root_passw
         assert wait_on_element(driver, 4, '//button[@name="signin_button"]')
         driver.find_element_by_xpath('//button[@name="signin_button"]').click()
     else:
+        assert wait_on_element(driver, 5, '//span[contains(.,"root")]')
         element = driver.find_element_by_xpath('//span[contains(.,"root")]')
         driver.execute_script("arguments[0].scrollIntoView();", element)
         time.sleep(0.5)
+        assert wait_on_element(driver, 10, '//mat-list-item[@ix-auto="option__Dashboard"]', 'clickable')
         driver.find_element_by_xpath('//mat-list-item[@ix-auto="option__Dashboard"]').click()
 
 
@@ -108,7 +110,7 @@ def reopen_the_user_edit_page(driver):
     """reopen the user edit page."""
     assert wait_on_element(driver, 7, '//a[@ix-auto="expander__ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//a[@ix-auto="expander__ericbsd"]').click()
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]')
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
     assert wait_on_element(driver, 7, '//h4[contains(.,"Identification")]')
 
@@ -116,4 +118,7 @@ def reopen_the_user_edit_page(driver):
 @then('verify wheel group should be visible')
 def verify_wheel_group_should_be_visible(driver):
     """verify wheel group should be visible."""
-    driver.find_element_by_xpath('//span[contains(.,"wheel,")]')
+    assert wait_on_element(driver, 7, '//span[contains(.,"wheel,")]')
+    time.sleep(1)
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button__CANCEL"]', 'clickable')
+    driver.find_element_by_xpath('//button[@ix-auto="button__CANCEL"]').click()
