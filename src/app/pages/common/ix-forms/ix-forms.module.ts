@@ -18,6 +18,7 @@ import { IxFileInputComponent } from 'app/pages/common/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/pages/common/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/pages/common/ix-forms/components/ix-select/ix-select.component';
 import { IxSlideInComponent } from 'app/pages/common/ix-forms/components/ix-slide-in/ix-slide-in.component';
+import { IxSlideToggleComponent } from 'app/pages/common/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/pages/common/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxUserComboboxComponent } from 'app/pages/common/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { IxFormatterService } from 'app/pages/common/ix-forms/services/ix-formatter.service';
@@ -53,6 +54,7 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
     IxChipsComponent,
     IxExplorerComponent,
     IxFileInputComponent,
+    IxSlideToggleComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -68,6 +70,7 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
     IxChipsComponent,
     IxExplorerComponent,
     IxFileInputComponent,
+    IxSlideToggleComponent,
   ],
   providers: [
     IxFormatterService,

@@ -546,7 +546,8 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
     max-height: 256px;
   }
 
-  .mat-checkbox {
+  .mat-checkbox,
+  .mat-slide-toggle {
     margin: 4px;
   }
 
