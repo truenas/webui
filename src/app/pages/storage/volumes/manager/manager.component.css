@@ -1,7 +1,7 @@
 .custom_cell_styling {
-	overflow: hidden; 
-	height: 20px; 
-	width: 100%; 
+	overflow: hidden;
+	height: 20px;
+	width: 100%;
 	padding-left: 5px;
 }
 
@@ -16,7 +16,7 @@
 	/* flex-basis: auto;
 	-webkit-box-flex: 1;
 	flex-grow: 1; */
-	width: 510px; 
+	width: 510px;
 	/* max-width: 400px; */
 }
 
@@ -95,7 +95,7 @@ h4 {
 #pool-manager__encryption-checkbox {
 	margin-left: 10px;
 }
-  
+
 #pool-manager__reset-layout-button:disabled,
 #pool-manager__suggest-layout-button:disabled {
 	color: var(--fg2);
@@ -186,4 +186,14 @@ button.vdev-option p{
 
 .encryption-select.inline {
 	width: 200px;
+}
+
+.non-unique-serial-disks-checkbox {
+  padding-left: 0.6rem;
+}
+
+.non-unique-serial-disks-warning {
+  color: var(--orange);
+  margin: 0;
+  padding: 1.2rem 1.2rem 0;
 }

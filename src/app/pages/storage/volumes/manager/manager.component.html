@@ -300,6 +300,30 @@
                     </a>
                   </ng-template>
                 </ngx-datatable-column>
+
+                <ngx-datatable-footer>
+                  <ng-template
+                    ngx-datatable-footer-template
+                    let-selectedCount="selectedCount"
+                    let-rowCount="rowCount"
+                  >
+                    <div>
+                      <p *ngIf="availableNonUniqueSerialDisksCount" class="non-unique-serial-disks-warning">{{ nonUniqueSerialDisksWarning }}</p>
+
+                      <mat-checkbox
+                        *ngIf="availableNonUniqueSerialDisksCount"
+                        color="primary"
+                        class="non-unique-serial-disks-checkbox"
+                        [checked]="includeNonUniqueSerialDisks"
+                        (change)="toggleNonUniqueSerialDisks()"
+                      >{{ 'Show disks with non-unique serial numbers' | translate }}</mat-checkbox>
+
+                      <div class="page-count">
+                        <div>{{ selectedCount }} {{ 'selected' | translate }} / {{ rowCount }} {{ 'total' | translate }}</div>
+                      </div>
+                    </div>
+                  </ng-template>
+                </ngx-datatable-footer>
               </ngx-datatable>
               <div id="filter-wrapper">
                 <mat-form-field fxFlex="1 1 40%">
