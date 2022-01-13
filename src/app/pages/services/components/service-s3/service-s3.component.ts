@@ -54,6 +54,14 @@ export class ServiceS3Component implements OnDestroy {
         },
         {
           type: 'input',
+          name: 'console_bindport',
+          placeholder: helptext.console_bindprot_placeholder,
+          value: '9001',
+          required: true,
+          validation: helptext.bindport_validation,
+        },
+        {
+          type: 'input',
           name: 'access_key',
           placeholder: helptext.access_key_placeholder,
           tooltip: helptext.access_key_tooltip,
@@ -100,6 +108,19 @@ export class ServiceS3Component implements OnDestroy {
           tooltip: helptext.certificate_tooltip,
           options: [{ label: '---', value: null }],
         },
+        {
+          type: 'input',
+          name: 'tls_server_uri',
+          placeholder: helptext.tls_server_uri_placeholder,
+          required: true,
+          relation: [{
+            action: 'HIDE',
+            when: [{
+              name: 'certificate',
+              value: null,
+            }],
+          }],
+        },
       ],
     }, {
       name: 'divider',
@@ -107,6 +128,7 @@ export class ServiceS3Component implements OnDestroy {
     }];
   protected storage_path: any;
   protected storage_path_subscription: any;
+  protected certificate_subscription: any;
 
   constructor(protected router: Router, protected route: ActivatedRoute,
     protected rest: RestService, protected ws: WebSocketService,
@@ -115,10 +137,12 @@ export class ServiceS3Component implements OnDestroy {
 
   ngOnDestroy() {
     this.storage_path_subscription.unsubscribe();
+    this.certificate_subscription.unsubscribe();
   }
 
   afterInit(entityForm: any) {
     this.storage_path = entityForm.formGroup.controls['storage_path'];
+
     this.storage_path_subscription = this.storage_path.valueChanges.subscribe((res) => {
       if (res && res != this.initial_path && !this.warned) {
         this.dialog.confirm(helptext.path_warning_title, helptext.path_warning_msg).subscribe((confirm) => {
@@ -136,6 +160,14 @@ export class ServiceS3Component implements OnDestroy {
         res.forEach((item) => {
           this.certificate.options.push({ label: item.name, value: item.id });
         });
+      }
+    });
+    const certificateControl = entityForm.formGroup.controls['certificate'];
+    this.certificate_subscription = certificateControl.valueChanges.subscribe((value) => {
+      if (value == null) {
+        entityForm.setDisabled('tls_server_uri', true, true);
+      } else {
+        entityForm.setDisabled('tls_server_uri', false, false);
       }
     });
     this.ws

@@ -81,9 +81,8 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   protected extendedSizeMessage = helptext.manager_extendedSizeMessage;
 
   disknumError = null;
+  disknumForceError = null;
   disknumErrorMessage = helptext.manager_disknumErrorMessage;
-  disknumErrorConfirmMessage = helptext.manager_disknumErrorConfirmMessage;
-  disknumExtendConfirmMessage = helptext.manager_disknumExtendConfirmMessage;
 
   vdevtypeError = null;
   vdevtypeErrorMessage = helptext.manager_vdevtypeErrorMessage;
@@ -91,9 +90,11 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
   emptyDataVdev = true;
 
   stripeVdevTypeError = null;
+  stripeVdevTypeForceError = null;
   stripeVdevTypeErrorMessage = helptext.manager_stripeVdevTypeErrorMessage;
 
   logVdevTypeWarning = null;
+  logVdevTypeForceWarning = null;
   logVdevTypeWarningMessage = helptext.manager_logVdevWarningMessage;
 
   vdevdisksError = false;
@@ -228,26 +229,29 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
 
   getDiskNumErrorMsg(disks) {
     this.translate.get(this.disknumErrorMessage).subscribe((errorMessage) => {
-      this.disknumError = errorMessage + T(' First vdev has ') + this.first_data_vdev_disknum + T(' disks, new vdev has ') + disks + '.';
+      this.disknumError = T('Caution: ') + errorMessage + T(' First vdev has ') + this.first_data_vdev_disknum + T(' disks, new vdev has ') + disks + '.';
+      this.disknumForceError = errorMessage + T(' First vdev has ') + this.first_data_vdev_disknum + T(' disks, new vdev has ') + disks + '.';
     });
   }
 
   getVdevTypeErrorMsg(type) {
     this.translate.get(this.vdevtypeErrorMessage).subscribe((errorMessage) => {
-      this.vdevtypeError = errorMessage + T(' First vdev is a ') + this.first_data_vdev_type + T(', new vdev is ') + type + '.';
+      this.vdevtypeError = T('Error: ') + errorMessage + T(' First vdev is a ') + this.first_data_vdev_type + T(', new vdev is ') + type + '.';
     });
   }
 
   getStripeVdevTypeErrorMsg(group) {
     this.translate.get(this.stripeVdevTypeErrorMessage).subscribe((errorMessage) => {
       const vdevType = group === 'special' ? 'metadata' : group;
-      this.stripeVdevTypeError = `${T('A stripe')} ${vdevType} ${errorMessage}`;
+      this.stripeVdevTypeError = `${T('Caution: A stripe')} ${vdevType} ${errorMessage}`;
+      this.stripeVdevTypeForceError = `${T('A stripe')} ${vdevType} ${errorMessage}`;
     });
   }
 
   getLogVdevTypeWarningMsg() {
     this.translate.get(this.logVdevTypeWarningMessage).subscribe((errorMessage) => {
-      this.logVdevTypeWarning = errorMessage;
+      this.logVdevTypeWarning = T('Caution: ') + errorMessage;
+      this.logVdevTypeForceWarning = errorMessage;
     });
   }
 
@@ -419,10 +423,13 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     let any_disk_found = false;
     let data_vdev_type;
     this.disknumError = null;
+    this.disknumForceError = null;
     this.vdevtypeError = null;
     this.vdevdisksError = false;
     this.stripeVdevTypeError = null;
+    this.stripeVdevTypeForceError = null;
     this.logVdevTypeWarning = null;
+    this.logVdevTypeForceWarning = null;
     this.vdevdisksSizeError = false;
     this.has_savable_errors = false;
     this.emptyDataVdev = false;
@@ -532,6 +539,13 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     return true;
   }
 
+  canForceCheck() {
+    if (this.vdevtypeError) {
+      return false;
+    }
+    return true;
+  }
+
   canAddData() {
     if (this.emptyDataVdev) {
       return false;
@@ -542,33 +556,22 @@ export class ManagerComponent implements OnInit, OnDestroy, AfterViewInit {
     return true;
   }
 
-  checkSubmit() {
-    let disknumErr = this.disknumErrorConfirmMessage;
-    if (!this.isNew) {
-      disknumErr = this.disknumExtendConfirmMessage;
-    }
-    if (this.disknumError) {
-      this.dialog.confirm(T('Warning'), disknumErr).subscribe((res) => {
-        if (!res) {
-
-        } else {
-          this.doSubmit();
-        }
-      });
-    } else {
-      this.doSubmit();
-    }
-  }
-
   forceCheckboxChecked() {
-    if (!this.force) {
+    if (this.canForceCheck() && !this.force) {
       let warnings = helptext.force_warning;
+      if (this.disknumForceError) {
+        warnings = warnings + '<br/><br/>- ' + this.disknumForceError;
+      }
+      if (this.stripeVdevTypeForceError) {
+        warnings = warnings + '<br/><br/>- ' + this.stripeVdevTypeForceError;
+      }
+      if (this.logVdevTypeForceWarning) {
+        warnings = warnings + '<br/><br/>- ' + this.logVdevTypeForceWarning;
+      }
       if (this.vdevdisksSizeError) {
-        warnings = warnings + '<br/><br/>' + helptext.force_warnings['diskSizeWarning'];
+        warnings = warnings + '<br/><br/>- ' + helptext.force_warnings['diskSizeWarning'];
       }
-      if (this.stripeVdevTypeError) {
-        warnings = warnings + '<br/><br/>' + this.stripeVdevTypeError;
-      }
+      warnings = warnings + '<br/><br/>' + helptext.force_confirm_title;
       this.dialog.confirm(helptext.force_title, warnings).subscribe((res) => {
         this.force = res;
       });
