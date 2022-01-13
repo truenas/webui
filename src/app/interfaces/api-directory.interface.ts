@@ -875,7 +875,7 @@ export type ApiDirectory = {
   };
 
   // Vm
-  'vm.query': { params: QueryParams<VirtualMachine, { get: boolean }>; response: VirtualMachine[] };
+  'vm.query': { params: QueryParams<VirtualMachine>; response: VirtualMachine[] };
   'vm.cpu_model_choices': { params: void; response: Choices };
   'vm.bootloader_options': { params: void; response: Choices };
   'vm.device.nic_attach_choices': { params: void; response: Choices };
