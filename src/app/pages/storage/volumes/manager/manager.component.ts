@@ -48,6 +48,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
   error: string;
   @ViewChildren(VdevComponent) vdevComponents: QueryList<VdevComponent> ;
   @ViewChild(DatatableComponent, { static: false }) table: DatatableComponent;
+  // TODO: Rename to something more readable
   temp: ManagerDisk[] = [];
 
   name: string;
