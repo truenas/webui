@@ -1,5 +1,7 @@
+import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
+import { DiskType } from 'app/enums/disk-type.enum';
 import { DiskWipeMethod } from 'app/enums/disk-wipe-method.enum';
 import { VDevStatus } from 'app/enums/vdev-status.enum';
 import { ZfsProperty } from './zfs-property.interface';
@@ -43,10 +45,12 @@ export interface EnclosureSlot {
 
 export interface Disk {
   advpowermgmt: DiskPowerLevel;
+  bus: DiskBus;
   critical: string;
   description: string;
   devname: string;
   difference: string;
+  duplicate_serial: string[];
   enclosure: EnclosureSlot;
   expiretime: string;
   hddstandby: DiskStandby;
@@ -66,7 +70,7 @@ export interface Disk {
   subsystem: string;
   togglesmart: boolean;
   transfermode: string;
-  type: string;
+  type: DiskType;
   zfs_guid: string;
 }
 
