@@ -28,7 +28,7 @@
             ></app-task-schedule-list>
           </ng-container>
         </mat-menu>
-        <p>{{ getPropValue(column.prop, true) }}</p>
+        <p>{{ config.enabled ? getPropValue(column.prop, true) : getPropValue(column.prop) }}</p>
       </ng-container>
       <ng-template #notScheduleList>
         <p>{{ getPropValue(column.prop) }}</p>

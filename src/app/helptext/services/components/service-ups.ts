@@ -107,7 +107,7 @@ export default {
   ups_extrausers_placeholder: T('Extra Users'),
   ups_extrausers_tooltip: T('Enter accounts that have administrative access.\
  See <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=upsd.users"\
+ href="https://linux.die.net/man/5/upsd.users"\
  target="_blank">upsd.users(5)</a> for examples.'),
 
   ups_rmonitor_placeholder: T('Remote Monitor'),
