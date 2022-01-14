@@ -53,15 +53,16 @@ def you_should_be_on_the_dashboard_click_on_the_accounts_on_the_side_menu_click_
 def the_users_page_should_open_click_the_down_carat_sign_right_of_the_users(driver):
     """the Users page should open, click the down carat sign right of the users."""
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
 
 
 @when('the User Field should expand down, then click the Edit button')
 def the_user_field_should_expand_down_then_click_the_edit_button(driver):
     """the User Field should expand down, then click the Edit button."""
-    assert wait_on_element(driver, 7, '//button[@ix-auto="button__EDIT_ericbsd"]', 'clickable')
-    driver.find_element_by_xpath('//button[@ix-auto="button__EDIT_ericbsd"]').click()
+    #time.sleep(1)
+    assert wait_on_element(driver, 10, '(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]', 'clickable')
+    driver.find_element_by_xpath('(//tr[contains(.,"ericbsd")]/following-sibling::tr)[1]//button[contains(.,"Edit")]').click()
 
 
 @when('the User Edit Page should open, change the user shell and click save')
@@ -85,6 +86,6 @@ def open_the_user_dropdown_and_verify_the_shell_value_has_changed(driver):
     """open the user dropdown, and verify the shell value has changed."""
     assert wait_on_element_disappear(driver, 20, '//h6[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//div[contains(.,"Users")]')
-    assert wait_on_element(driver, 10, '//tr[@ix-auto="expander__ericbsd"]/td', 'clickable')
-    driver.find_element_by_xpath('//tr[@ix-auto="expander__ericbsd"]/td').click()
-    assert wait_on_element(driver, 10, '//p[contains(.,"zsh")]')
+    assert wait_on_element(driver, 10, '//tr[contains(.,"ericbsd")]', 'clickable')
+    driver.find_element_by_xpath('//tr[contains(.,"ericbsd")]//mat-icon').click()
+    assert wait_on_element(driver, 10, '//div[contains(.,"zsh")]')

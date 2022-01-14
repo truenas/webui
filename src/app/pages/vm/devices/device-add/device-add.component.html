@@ -30,9 +30,14 @@
               </div>
             </div>
             <div *ngSwitchCase="VmDeviceType.Pci" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
-              <div *ngFor="let pciField of fieldSet.pciFieldConfig;">
-                <div dynamicField [config]="pciField" [group]="pciFormGroup"></div>
+              <div class="spinner-wrapper" *ngIf="isLoadingPci && fieldSet.pciFieldConfig?.length">
+                <mat-spinner [diameter]="40" id="dir-service-monitor-spinner"></mat-spinner>
               </div>
+              <ng-container *ngIf="!isLoadingPci">
+                <div *ngFor="let pciField of fieldSet.pciFieldConfig;">
+                  <div dynamicField [config]="pciField" [group]="pciFormGroup"></div>
+                </div>
+              </ng-container>
             </div>
             <div  *ngSwitchCase="VmDeviceType.Display" fxFlex="100%" fxFlex.gt-xs="calc(100% - 16px)" class="form-line">
               <div *ngFor="let displayField of fieldSet.displayFieldConfig;">

@@ -35,7 +35,7 @@ export default {
  is <code>auto-&percnt;Y-&percnt;m-&percnt;d_&percnt;H-&percnt;M</code>. Must include the strings <i>&percnt;Y</i>, \
  <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i>, which are replaced with \
  the four-digit year, month, day of month, hour, and minute as defined \
- in <a href="https://www.freebsd.org/cgi/man.cgi?query=strftime" target="_blank">strftime(3)</a>.<br><br> \
+ in <a href="https://man7.org/linux/man-pages/man3/strftime.3.html" target="_blank">strftime(3)</a>.<br><br> \
  For example, snapshots of <i>pool1</i> with a Naming Schema of \
  <i>customsnap-&percnt;Y&percnt;m&percnt;d.&percnt;H&percnt;M</i> have names like \
  <i>pool1@customsnap-20190315.0527</i>.'),

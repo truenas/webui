@@ -99,7 +99,6 @@ the system dataset transfers back to the TrueNAS operating system device.'),
   encryption_actions_title: T('Encryption Actions'),
 
   export_keys_title: T('Export Dataset Keys for '),
-  export_keys_message: T('Export dataset keys which can be used to unlock datasets for '),
   export_keys_button: T('Export'),
 
   dataset_actions: T('Dataset Actions'),
