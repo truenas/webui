@@ -323,7 +323,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, A
     let units: string;
     let value: number;
 
-    const now = await this.rs.getServerTime();
+    const now = await this.rs.getServerTime().toPromise();
 
     let startDate: Date;
     let endDate: Date;
