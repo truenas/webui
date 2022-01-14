@@ -1234,7 +1234,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   protected providers: CloudsyncProvider[];
   protected providerField: FormSelectConfig;
-  protected entityForm: EntityFormComponent;
+  entityForm: EntityFormComponent;
 
   custActions = [
     {

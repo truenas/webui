@@ -20,6 +20,7 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { ListdirChild } from 'app/interfaces/listdir-child.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
+import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { FieldSets } from 'app/pages/common/entity/entity-form/classes/field-sets';
 import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
 import {
@@ -33,6 +34,7 @@ import { RelationAction } from 'app/pages/common/entity/entity-form/models/relat
 import { RelationConnection } from 'app/pages/common/entity/entity-form/models/relation-connection.enum';
 import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
 import { EntityUtils, NULL_VALUE } from 'app/pages/common/entity/utils';
+import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/forms/cloud-credentials-form.component';
 import {
   AppLoaderService, CloudCredentialService, DialogService, JobService, WebSocketService,
 } from 'app/services';
@@ -720,9 +722,35 @@ export class CloudsyncFormComponent implements FormConfiguration {
     this.folderSourceField = this.fieldSets.config('folder_source') as FormExplorerConfig;
     this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | typeof NULL_VALUE) => {
       if (!res) {
-        this.modalService.closeSlideIn();
-        const navigationExtras: NavigationExtras = { state: { editCredential: 'cloudcredentials' } };
-        this.router.navigate(['/', 'credentials', 'backup-credentials'], navigationExtras);
+        const dialogRef = this.matDialog.open(CloudCredentialsFormComponent, {
+          width: '600px',
+          data: { title: this.translate.instant('Cloud Credentials') },
+        });
+        dialogRef.componentInstance.finishSubmit = (value) => {
+          dialogRef.componentInstance.prepareAttributes(value);
+          dialogRef.componentInstance.entityForm.submitFunction(value).pipe(untilDestroyed(this)).subscribe(
+            () => {
+              dialogRef.close();
+              this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
+                credentials.forEach((item) => {
+                  if (!this.credentials.find((e) => e.id === item.id)) {
+                    this.credentialsField.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
+                    this.credentials.push(item);
+                    this.formGroup.controls['credentials'].setValue(item.id);
+                  }
+                });
+              });
+            },
+            (err: WebsocketError) => {
+              dialogRef.close();
+              if (err.hasOwnProperty('reason') && (err.hasOwnProperty('trace'))) {
+                new EntityUtils().handleWsError(this, err, this.dialog);
+              } else {
+                new EntityUtils().handleError(this, err);
+              }
+            },
+          );
+        };
         return;
       }
       this.setDisabled('bucket', true, true);
