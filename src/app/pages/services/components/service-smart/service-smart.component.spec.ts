@@ -65,11 +65,11 @@ describe('ServiceSmartComponent', () => {
   it('sends an update payload to websocket when form is saved', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'Check Interval': 60,
+      'Check Interval': '60',
       'Power Mode': 'Sleep',
-      Difference: 20,
-      Informational: 90,
-      Critical: 92,
+      Difference: '20',
+      Informational: '90',
+      Critical: '92',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

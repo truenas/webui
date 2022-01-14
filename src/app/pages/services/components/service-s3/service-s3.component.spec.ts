@@ -108,13 +108,13 @@ describe('ServiceS3Component', () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
       'IP Address': '198.162.0.10',
-      Port: 8000,
+      Port: '8000',
       'Access Key': 'SECRETKEY',
       'Secret Key': '12345678',
       Disk: '/mnt/new',
       'Enable Browser': false,
       Certificate: 'Default',
-      'Console Port': 9001,
+      'Console Port': '9001',
       'TLS Server Uri': 'test',
     });
 

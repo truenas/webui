@@ -62,7 +62,7 @@ describe('InitShutdownFormComponent', () => {
         Command: 'rf -rf /',
         When: 'Pre Init',
         Enabled: true,
-        Timeout: 60,
+        Timeout: '60',
       });
 
       const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

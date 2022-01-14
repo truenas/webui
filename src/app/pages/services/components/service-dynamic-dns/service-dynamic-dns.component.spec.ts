@@ -82,7 +82,7 @@ describe('ServiceDynamicDnsComponent', () => {
       'CheckIP Path': '/new-checkin-path',
       SSL: false,
       'Domain Name': ['new-domain1.com', 'new-domain2.com'],
-      'Update Period': 400,
+      'Update Period': '400',
       Username: 'peter',
       Password: '12345678',
     });

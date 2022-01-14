@@ -82,9 +82,9 @@ describe('ServiceNfsComponent', () => {
       'NFSv3 ownership model for NFSv4': false,
       'Serve UDP NFS clients': false,
       'Support >16 groups': true,
-      'mountd(8) bind port': 554,
-      'rpc.statd(8) bind port': 562,
-      'rpc.lockd(8) bind port': 510,
+      'mountd(8) bind port': '554',
+      'rpc.statd(8) bind port': '562',
+      'rpc.lockd(8) bind port': '510',
     });
 
     const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));

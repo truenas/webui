@@ -98,7 +98,7 @@ describe('ServiceSshComponent', () => {
   it('sends an update payload to websocket when basic form is filled and saved', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'TCP Port': 23,
+      'TCP Port': '23',
       'Log in as Root with Password': false,
       'Allow Password Authentication': false,
       'Allow Kerberos Authentication': true,
