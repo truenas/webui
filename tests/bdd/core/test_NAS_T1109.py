@@ -105,9 +105,9 @@ def after_the_syncthing_plugin_should_be_in_the_table(driver):
 @then('status should be "up", with the Boot option checked')
 def status_should_be_up_with_the_boot_option_checked(driver):
     """status should be "up", with the Boot option checked."""
-    assert wait_on_element(driver, 20, '//div[@id="syncthingtest_Status"]//span[text()="up"]')
-    assert wait_on_element(driver, 5, '//mat-checkbox[@id="syncthingtest_Boot-checkbox"]')
-    assert attribute_value_exist(driver, '//mat-checkbox[@id="syncthingtest_Boot-checkbox"]', 'class', 'mat-checkbox-checked')
+    assert wait_on_element(driver, 20, '//div[contains(@id,"syncthingtest_Status")]//span[text()="up"]')
+    assert wait_on_element(driver, 5, '//mat-checkbox[contains(@id,"syncthingtest_Boot-checkbox")]')
+    assert attribute_value_exist(driver, '//mat-checkbox[contains(@id,"syncthingtest_Boot-checkbox")]', 'class', 'mat-checkbox-checked')
 
 
 @then('at the right of the plugin table, click the ">"')
