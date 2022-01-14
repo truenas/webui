@@ -2,14 +2,11 @@ import { Injectable } from '@angular/core';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { CoreService } from 'app/core/services/core-service/core.service';
-import { ApiDirectory, ApiMethod } from 'app/interfaces/api-directory.interface';
+import { ApiMethod } from 'app/interfaces/api-directory.interface';
 import { Dataset, ExtraDatasetQueryOptions } from 'app/interfaces/dataset.interface';
-import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { CoreEvent } from 'app/interfaces/events';
-import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
-import { ReportingGraph } from 'app/interfaces/reporting-graph.interface';
 import { Disk } from 'app/interfaces/storage.interface';
 import { User } from 'app/interfaces/user.interface';
 import { WebSocketService } from 'app/services/ws.service';
@@ -87,82 +84,11 @@ export class ApiService {
         responseEvent: 'DisksData',
       },
     },
-    EnclosureDataRequest: {
-      apiCall: {
-        namespace: 'enclosure.query',
-        responseEvent: 'EnclosureData',
-      },
-    },
-    SetEnclosureLabel: {
-      apiCall: {
-        namespace: 'enclosure.update',
-        responseEvent: 'EnclosureLabelChanged',
-      },
-      preProcessor(def: ApiCall) {
-        const redef = { ...def };
-        const args = [def.args.id, { label: def.args.label }];
-        redef.args = args;
-        return redef;
-      },
-      postProcessor(res: Enclosure, callArgs: { index: number }) {
-        return { label: res.label, index: callArgs.index, id: res.id };
-      },
-    },
-    SetEnclosureSlotStatus: {
-      apiCall: {
-        args: [] as unknown as ApiDirectory['enclosure.set_slot_status']['params'],
-        namespace: 'enclosure.set_slot_status',
-        responseEvent: 'EnclosureSlotStatusChanged',
-      },
-    },
     PoolDataRequest: {
       apiCall: {
         args: [] as QueryParams<Pool>[],
         namespace: 'pool.query',
         responseEvent: 'PoolData',
-      },
-    },
-    PoolDisksRequest: {
-      apiCall: {
-        namespace: 'pool.get_disks',
-        args: [] as string[],
-        responseEvent: 'PoolDisks',
-      },
-      preProcessor(def: ApiCall) {
-        const redef = { ...def };
-        redef.responseEvent = def.args.length > 0 ? def.responseEvent + def.args.join() : def.responseEvent;
-        return redef;
-      },
-      postProcessor(res: any, callArgs: any) {
-        let cloneRes = { ...res };
-        cloneRes = { callArgs, data: res };
-        return cloneRes;
-      },
-    },
-    NicInfoRequest: {
-      apiCall: {
-        namespace: 'interface.query',
-        args: [] as QueryParams<NetworkInterface>[],
-        responseEvent: 'NicInfo',
-      },
-    },
-    UpdateCheck: {
-      apiCall: {
-        namespace: 'update.check_available',
-        responseEvent: 'UpdateChecked',
-      },
-    },
-    ReportingGraphsRequest: {
-      apiCall: {
-        namespace: 'reporting.graphs',
-        args: [] as QueryParams<ReportingGraph>,
-        responseEvent: 'ReportingGraphs',
-      },
-    },
-    SensorDataRequest: {
-      apiCall: {
-        namespace: 'sensor.query',
-        responseEvent: 'SensorData',
       },
     },
   };

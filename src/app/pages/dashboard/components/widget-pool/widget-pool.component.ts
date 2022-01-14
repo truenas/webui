@@ -259,8 +259,6 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       this.voldataavail = true;
     }
 
-    this.core.emit({ name: 'PoolDisksRequest', data: [this.poolState.id] });
-
     this.displayValue = filesize(this.volumeData.avail, { standard: 'iec' });
     if (this.displayValue.slice(-2) === ' B') {
       this.diskSizeLabel = this.displayValue.slice(-1);
