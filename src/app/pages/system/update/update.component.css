@@ -1,7 +1,15 @@
 #train-card {
     padding: 15px 20px 20px 20px;
-    max-height: 85px;
-    /* min-width: 660px; */
+}
+
+.click-for-information {
+  margin-top: 4px;
+  margin-bottom: 12px;
+  font-size: 0.75rem;
+}
+
+.click-for-information ::ng-deep a {
+  text-decoration: underline;
 }
 
 .train-card-row {
