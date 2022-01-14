@@ -272,7 +272,7 @@ export class ReportComponent extends WidgetComponent implements AfterViewInit, O
     let durationUnit: keyof Duration;
     let value: number;
 
-    const now = await this.reportsService.getServerTime();
+    const now = await this.reportsService.getServerTime().pipe(untilDestroyed(this)).toPromise();
 
     let startDate: Date;
     let endDate: Date;

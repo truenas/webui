@@ -16,6 +16,12 @@
           [tooltip]="tooltips.bindport | translate"
         ></ix-input>
         <ix-input
+          formControlName="console_bindport"
+          [label]="'Console Port' | translate"
+          type="number"
+          [required]="true"
+        ></ix-input>
+        <ix-input
           formControlName="access_key"
           [label]="'Access Key' | translate"
           [required]="true"
@@ -43,6 +49,13 @@
           [tooltip]="tooltips.certificate | translate"
           [options]="certificateOptions$"
         ></ix-select>
+        <ix-input
+          *ngIf="form.controls['certificate'].value !== null"
+          formControlName="tls_server_uri"
+          [label]="'TLS Server Uri' | translate"
+          [required]="true"
+        >
+        </ix-input>
       </ix-fieldset>
 
       <div class="form-actions">

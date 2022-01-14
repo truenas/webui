@@ -1496,7 +1496,7 @@ $primary-dark: darken(map-get($md-primary, 500), 8%);
   }
 
   .mat-select-panel {
-    max-height: 60vh !important;
+    max-height: 50vh !important; // values over 50vh will push last visible element out the screen
   }
 
   tree-viewport {

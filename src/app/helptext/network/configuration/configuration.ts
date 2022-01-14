@@ -50,7 +50,7 @@ export default {
 
   netwait_ip_placeholder: T('Netwait IP List'),
   netwait_ip_tooltip: T('Enter a list of IP addresses to \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=ping" target="_blank">ping</a>. \
+ <a href="https://man7.org/linux/man-pages/man8/ping.8.html" target="_blank">ping</a>. \
  Separate entries by pressing <code>Enter</code>. Each address is tried \
  until one is successful or the list is exhausted. Leave empty to use \
  the default gateway.'),
@@ -59,7 +59,7 @@ export default {
   hosts_tooltip: T('Additional hosts to be appended to <i>/etc/hosts</i>.\
  Separate entries by pressing <code>Enter</code>. Hosts defined here are \
  still accessible by name even when DNS is not available. See \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=hosts" target="_blank">hosts(5)</a> \
+ <a href="https://man7.org/linux/man-pages/man5/hosts.5.html" target="_blank">hosts(5)</a> \
  for additional information.'),
 
   hostname_and_domain: T('Hostname and Domain'),

@@ -9,11 +9,11 @@ export default {
  with " Key" appended to the name.'),
 
   private_key_placeholder: T('Private Key'),
-  private_key_tooltip: T('See <i>Public key authentication</i> in <a href="https://www.freebsd.org/cgi/man.cgi?query=ssh"\
+  private_key_tooltip: T('See <i>Public key authentication</i> in <a href="https://man7.org/linux/man-pages/man1/ssh.1.html"\
  target="_blank">SSH/Authentication</a>.'),
 
   public_key_placeholder: T('Public Key'),
-  public_key_tooltip: T('See <i>Public key authentication</i> in <a href="https://www.freebsd.org/cgi/man.cgi?query=ssh"\
+  public_key_tooltip: T('See <i>Public key authentication</i> in <a href="https://man7.org/linux/man-pages/man1/ssh.1.html"\
  target="_blank">SSH/Authentication</a>.'),
 
   generate_key_button: T('Generate Keypair'),

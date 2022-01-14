@@ -1,7 +1,7 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: iXsystems
 Upstream-Contact: iXsystems <kris@ixsystems.com>
-Source: http://github.com/freenas
+Source: http://github.com/truenas
 
 Files: *
 Copyright: 2019 iXsystems <kris@ixsystems.com>
