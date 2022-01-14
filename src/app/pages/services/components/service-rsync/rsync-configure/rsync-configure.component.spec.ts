@@ -56,7 +56,7 @@ describe('ConfigureRsyncComponent', () => {
   it('sends an update payload to websocket when save is pressed', async () => {
     const form = await loader.getHarness(IxFormHarness);
     await form.fillForm({
-      'TCP Port': 873,
+      'TCP Port': '873',
       'Auxiliary Parameters': 'test',
     });
 
