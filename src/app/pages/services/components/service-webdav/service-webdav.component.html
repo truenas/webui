@@ -34,19 +34,17 @@
           [tooltip]="htauth.tooltip"
           [options]="htauth.options"
         ></ix-select>
-        <ix-input
+        <ix-input-password
           *ngIf="pwdRequired"
           [formControlName]="password.fcName"
           [label]="password.label"
           [tooltip]="password.tooltip"
-          type="password"
-        ></ix-input>
-        <ix-input
+        ></ix-input-password>
+        <ix-input-password
           *ngIf="pwdRequired"
           [formControlName]="password2.fcName"
           [label]="password2.label"
-          type="password"
-        ></ix-input>
+        ></ix-input-password>
       </ix-fieldset>
 
       <div class="form-actions">

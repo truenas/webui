@@ -6,12 +6,12 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 
 @UntilDestroy()
 @Component({
-  selector: 'ix-input',
-  templateUrl: './ix-input.component.html',
-  styleUrls: ['./ix-input.component.scss'],
+  selector: 'ix-input-password',
+  templateUrl: './ix-input-password.component.html',
+  styleUrls: ['./ix-input-password.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IxInputComponent implements ControlValueAccessor {
+export class IxInputPasswordComponent implements ControlValueAccessor {
   @Input() label: string;
   @Input() placeholder: string;
   @Input() prefixIcon: string;
@@ -21,17 +21,12 @@ export class IxInputComponent implements ControlValueAccessor {
   @Input() autocomplete = 'off';
   @Input() autocapitalize = 'off';
 
-  /** If formatted value returned by parseAndFormatInput has non-numeric letters
-   * and input 'type' is a number, the input will stay empty on the form */
-  @Input() format: (value: string) => string;
-  @Input() parse: (value: string) => string;
-
   formControl = new FormControl(this).value as FormControl;
 
   value = '';
-  formatted = '';
 
   isDisabled = false;
+  showPassword = false;
 
   onChange: (value: string) => void = (): void => {};
   onTouch: () => void = (): void => {};
@@ -44,23 +39,12 @@ export class IxInputComponent implements ControlValueAccessor {
   }
 
   writeValue(value: string): void {
-    let formatted = value;
-    if (value) {
-      if (this.format) {
-        formatted = this.format(value);
-      }
-    }
-    this.formatted = formatted;
     this.value = value;
     this.cdr.markForCheck();
   }
 
   input(value: string): void {
     this.value = value;
-    this.formatted = value;
-    if (this.parse && !!value) {
-      this.value = this.parse(value);
-    }
     this.onChange(this.value);
   }
 
@@ -72,20 +56,6 @@ export class IxInputComponent implements ControlValueAccessor {
     this.onTouch = onTouched;
   }
 
-  shouldShowResetInput(): boolean {
-    return !this.isDisabled && this.hasValue();
-  }
-
-  hasValue(): boolean {
-    return this.value && this.value.toString().length > 0;
-  }
-
-  resetInput(): void {
-    this.value = '';
-    this.formatted = '';
-    this.onChange('');
-  }
-
   setDisabledState?(isDisabled: boolean): void {
     this.isDisabled = isDisabled;
     this.cdr.markForCheck();
@@ -93,16 +63,11 @@ export class IxInputComponent implements ControlValueAccessor {
 
   blur(): void {
     this.onTouch();
-    if (this.formatted) {
-      if (this.parse) {
-        this.value = this.parse(this.formatted);
-      }
-      if (this.format) {
-        this.formatted = this.format(this.value);
-      }
-    }
-
     this.onChange(this.value);
     this.cdr.markForCheck();
+  }
+
+  onPasswordToggled(): void {
+    this.showPassword = !this.showPassword;
   }
 }

@@ -40,6 +40,7 @@ export class IxErrorsComponent implements OnChanges {
       'The value is out of range. Enter a value between {min} and {max}.',
       { min, max },
     ),
+    number: () => this.translate.instant('Value must be a number'),
   };
 
   constructor(
@@ -94,6 +95,8 @@ export class IxErrorsComponent implements OnChanges {
         return this.defaultErrMessages.pattern();
       case DefaultValidationErrors.Forbidden:
         return this.defaultErrMessages.forbidden(this.control.value);
+      case DefaultValidationErrors.Number:
+        return this.defaultErrMessages.number();
     }
   }
 }

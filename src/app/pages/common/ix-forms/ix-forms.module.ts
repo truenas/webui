@@ -15,6 +15,7 @@ import { IxErrorsComponent } from 'app/pages/common/ix-forms/components/ix-error
 import { IxExplorerComponent } from 'app/pages/common/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/pages/common/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxFileInputComponent } from 'app/pages/common/ix-forms/components/ix-file-input/ix-file-input.component';
+import { IxInputPasswordComponent } from 'app/pages/common/ix-forms/components/ix-input-password/ix-input-password.component';
 import { IxInputComponent } from 'app/pages/common/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/pages/common/ix-forms/components/ix-select/ix-select.component';
 import { IxSlideInComponent } from 'app/pages/common/ix-forms/components/ix-slide-in/ix-slide-in.component';
@@ -41,6 +42,7 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
   ],
   declarations: [
     IxInputComponent,
+    IxInputPasswordComponent,
     IxErrorsComponent,
     IxSelectComponent,
     IxComboboxComponent,
@@ -57,6 +59,7 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
   exports: [
     IxErrorsComponent,
     IxInputComponent,
+    IxInputPasswordComponent,
     IxSelectComponent,
     IxComboboxComponent,
     IxSlideInComponent,

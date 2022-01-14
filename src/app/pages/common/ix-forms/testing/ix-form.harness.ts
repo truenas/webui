@@ -3,6 +3,7 @@ import { IxCheckboxHarness } from 'app/pages/common/ix-forms/components/ix-check
 import { IxChipsHarness } from 'app/pages/common/ix-forms/components/ix-chips/ix-chips.harness';
 import { IxComboboxHarness } from 'app/pages/common/ix-forms/components/ix-combobox/ix-combobox.harness';
 import { IxExplorerHarness } from 'app/pages/common/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { IxInputPasswordHarness } from 'app/pages/common/ix-forms/components/ix-input-password/ix-input-password.harness';
 import { IxInputHarness } from 'app/pages/common/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/pages/common/ix-forms/components/ix-select/ix-select.harness';
 import { IxTextareaHarness } from 'app/pages/common/ix-forms/components/ix-textarea/ix-textarea.harness';
@@ -10,6 +11,7 @@ import { IxFormControlHarness } from 'app/pages/common/ix-forms/interfaces/ix-fo
 
 const childSelectors = [
   IxInputHarness,
+  IxInputPasswordHarness,
   IxCheckboxHarness,
   IxSelectHarness,
   IxTextareaHarness,

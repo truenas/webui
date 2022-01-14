@@ -51,7 +51,6 @@
           formControlName="period"
           [label]="'Update Period' | translate"
           [tooltip]="tooltips.period | translate"
-          type="number"
         ></ix-input>
       </ix-fieldset>
 
@@ -62,12 +61,11 @@
           [required]="true"
           [tooltip]="tooltips.username | translate"
         ></ix-input>
-        <ix-input
+        <ix-input-password
           formControlName="password"
           [label]="'Password' | translate"
           [tooltip]="tooltips.password | translate"
-          type="password"
-        ></ix-input>
+        ></ix-input-password>
       </ix-fieldset>
 
       <div class="form-actions">

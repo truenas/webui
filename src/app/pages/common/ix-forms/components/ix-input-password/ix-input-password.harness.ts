@@ -6,11 +6,11 @@ export interface IxInputHarnessFilters extends BaseHarnessFilters {
   label: string;
 }
 
-export class IxInputHarness extends ComponentHarness implements IxFormControlHarness {
-  static hostSelector = 'ix-input';
+export class IxInputPasswordHarness extends ComponentHarness implements IxFormControlHarness {
+  static hostSelector = 'ix-input-password';
 
-  static with(options: IxInputHarnessFilters): HarnessPredicate<IxInputHarness> {
-    return new HarnessPredicate(IxInputHarness, options)
+  static with(options: IxInputHarnessFilters): HarnessPredicate<IxInputPasswordHarness> {
+    return new HarnessPredicate(IxInputPasswordHarness, options)
       .addOption('label', options.label,
         (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
   }

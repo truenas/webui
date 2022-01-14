@@ -9,6 +9,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { map } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-dynamic-dns';
+import { numberValidator } from 'app/pages/common/entity/entity-form/validators/number-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -33,7 +34,7 @@ export class ServiceDynamicDnsComponent implements OnInit {
     custom_ddns_server: [''],
     custom_ddns_path: [''],
     domain: [[] as string[], [Validators.required]],
-    period: [null as number],
+    period: ['', [numberValidator()]],
     username: ['', [Validators.required]],
     password: [''],
   });
@@ -78,7 +79,10 @@ export class ServiceDynamicDnsComponent implements OnInit {
       .subscribe(
         (config) => {
           this.isFormLoading = false;
-          this.form.patchValue(config);
+          this.form.patchValue({
+            ...config,
+            period: config.period.toString(),
+          });
           this.cdr.markForCheck();
         },
         (error) => {

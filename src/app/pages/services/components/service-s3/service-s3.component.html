@@ -12,7 +12,6 @@
         <ix-input
           formControlName="bindport"
           [label]="'Port' | translate"
-          type="number"
           [required]="true"
           [tooltip]="tooltips.bindport | translate"
         ></ix-input>
@@ -22,12 +21,11 @@
           [required]="true"
           [tooltip]="tooltips.access_key | translate"
         ></ix-input>
-        <ix-input
+        <ix-input-password
           formControlName="secret_key"
           [label]="'Secret Key' | translate"
-          type="password"
           [tooltip]="tooltips.secret_key | translate"
-        ></ix-input>
+        ></ix-input-password>
         <ix-explorer
           formControlName="storage_path"
           [label]="'Disk' | translate"

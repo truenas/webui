@@ -7,6 +7,7 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-nfs';
+import { numberValidator } from 'app/pages/common/entity/entity-form/validators/number-validation';
 import { portRangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
@@ -26,9 +27,9 @@ export class ServiceNfsComponent implements OnInit {
     v4: [false],
     v4_v3owner: [false],
     v4_krb: [false],
-    mountd_port: [null as number, [portRangeValidator()]],
-    rpcstatd_port: [null as number, [portRangeValidator()]],
-    rpclockd_port: [null as number, [portRangeValidator()]],
+    mountd_port: ['', [numberValidator(), portRangeValidator()]],
+    rpcstatd_port: ['', [numberValidator(), portRangeValidator()]],
+    rpclockd_port: ['', [numberValidator(), portRangeValidator()]],
     udp: [false],
     userd_manage_gids: [false],
   });
@@ -98,7 +99,12 @@ export class ServiceNfsComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(
         (config) => {
-          this.form.patchValue(config);
+          this.form.patchValue({
+            ...config,
+            mountd_port: config.mountd_port.toString(),
+            rpcstatd_port: config.rpcstatd_port.toString(),
+            rpclockd_port: config.rpclockd_port.toString(),
+          });
           this.isFormLoading = false;
           this.cdr.markForCheck();
         },

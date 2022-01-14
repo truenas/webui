@@ -8,6 +8,8 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { map } from 'rxjs/operators';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-s3';
+import { numberValidator } from 'app/pages/common/entity/entity-form/validators/number-validation';
+import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
@@ -26,8 +28,8 @@ export class ServiceS3Component implements OnInit {
   form = this.fb.group({
     bindip: [''],
     bindport: [
-      null as number,
-      [Validators.min(1), Validators.max(65535), Validators.required, Validators.pattern(/^[1-9]\d*$/)],
+      '',
+      [Validators.required, numberValidator(), rangeValidator(1, 65535)],
     ],
     access_key: [
       '',
@@ -83,7 +85,10 @@ export class ServiceS3Component implements OnInit {
   ngOnInit(): void {
     this.ws.call('s3.config').pipe(untilDestroyed(this)).subscribe(
       (config) => {
-        this.form.patchValue(config, { emitEvent: false });
+        this.form.patchValue({
+          ...config,
+          bindport: config.bindport.toString(),
+        }, { emitEvent: false });
         this.initialPath = config.storage_path;
         this.isFormLoading = false;
         this.cdr.markForCheck();

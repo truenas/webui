@@ -15,6 +15,7 @@ import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { SystemGeneralConfig, SystemGeneralConfigUpdate } from 'app/interfaces/system-config.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
 import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
+import { numberValidator } from 'app/pages/common/entity/entity-form/validators/number-validation';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
 import {
   DialogService, SystemGeneralService, WebSocketService,
@@ -36,8 +37,8 @@ export class GuiFormComponent {
     ui_certificate: ['', [Validators.required]],
     ui_address: [[] as string[], [ipValidator('ipv4')]],
     ui_v6address: [[] as string[], [ipValidator('ipv6')]],
-    ui_port: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
-    ui_httpsport: [null as number, [Validators.required, Validators.min(1), Validators.max(65535)]],
+    ui_port: ['', [Validators.required, numberValidator(), Validators.min(1), Validators.max(65535)]],
+    ui_httpsport: ['', [Validators.required, numberValidator(), Validators.min(1), Validators.max(65535)]],
     ui_httpsprotocols: [[] as string[], [Validators.required]],
     ui_httpsredirect: [false],
     crash_reporting: [false, [Validators.required]],
@@ -73,8 +74,8 @@ export class GuiFormComponent {
         ui_certificate: config.ui_certificate?.id.toString(),
         ui_address: config.ui_address,
         ui_v6address: config.ui_v6address,
-        ui_port: config.ui_port,
-        ui_httpsport: config.ui_httpsport,
+        ui_port: config.ui_port.toString(),
+        ui_httpsport: config.ui_httpsport.toString(),
         ui_httpsprotocols: config.ui_httpsprotocols,
         ui_httpsredirect: config.ui_httpsredirect,
         crash_reporting: config.crash_reporting,
@@ -104,8 +105,8 @@ export class GuiFormComponent {
       ui_certificate: parseInt(values.ui_certificate),
       ui_address: values.ui_address,
       ui_v6address: values.ui_v6address,
-      ui_port: values.ui_port,
-      ui_httpsport: values.ui_httpsport,
+      ui_port: Number(values.ui_port),
+      ui_httpsport: Number(values.ui_httpsport),
       ui_httpsprotocols: values.ui_httpsprotocols,
       ui_httpsredirect: values.ui_httpsredirect,
       crash_reporting: values.crash_reporting,
