@@ -38,6 +38,8 @@
                 [widgetSize]="medium">
               </widget-sysinfo>
 
+              <widget-help  *ngSwitchCase="'help'"></widget-help>
+
 
               <widget-cpu *ngSwitchCase="'cpu'"
                 fxFlex="{{widgetWidth}}px"
