@@ -250,12 +250,13 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     assert wait_on_element(driver, 5, f'//h1[text()="{folder1}"]')
     assert wait_on_element(driver, 5, '//a[text()="test"]', 'clickable')
     driver.find_element_by_xpath('//a[text()="test"]').click()
+    time.sleep(1)
 
 
 @then('verify all files are in the test folder')
 def verify_all_files_are_in_the_test_folder(driver):
     """verify all files are in the test folder."""
-    assert wait_on_element(driver, 5, '//h1[text()="test"]')
+    assert wait_on_element(driver, 7, '//h1[text()="test"]')
     assert wait_on_element(driver, 5, '//a[text()="Explaining_BSD.pdf"]', 'clickable')
     assert wait_on_element(driver, 5, '//a[text()="Gloomy_Forest_wallpaper_ForWallpapercom.jpg"]', 'clickable')
     assert wait_on_element(driver, 5, '//a[text()="music"]', 'clickable')
