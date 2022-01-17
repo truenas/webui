@@ -78,6 +78,8 @@ export class UpdateComponent implements OnInit {
   updateTitle = this.translate.instant('Update');
   private savedConfiguration = false;
 
+  readonly clickForInformationLink = helptext.clickForInformationLink;
+
   protected saveConfigFieldConf: FieldConfig[] = [
     {
       type: 'checkbox',

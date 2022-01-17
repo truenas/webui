@@ -182,6 +182,7 @@
   "Choose pod": "",
   "Clear the Idmap Cache": "",
   "Click an item to view NFSv4 permissions": "",
+  "Click for information on    <a href=\"https://www.truenas.com/docs/truenasupgrades/\" target=\"_blank\">TrueNAS SCALE Migration, Nightly trains    and other upgrade options.</a>": "",
   "Click the button below to see all jobs.": "",
   "Clicking Continue allows TrueNAS to finish the update in the background while  Abort stops the process and reverts the dataset ACL to the previously active ACL.": "",
   "Client ID": "",
