@@ -597,7 +597,7 @@ export class ManagerComponent implements OnInit, AfterViewInit {
         this.vdevComponents.forEach((vdev) => {
           const disks: string[] = [];
           vdev.getDisks().forEach((disk) => {
-            if (disk.duplicate_serial.length) {
+            if (disk.duplicate_serial?.length) {
               allowDuplicateSerials = true;
             }
             disks.push(disk.devname);
