@@ -1,5 +1,6 @@
 {
   "": "",
+  " for monthly updates and latest developments.": "",
   "Access Control Entry (ACE) user or group. Select a specific <i>User</i> or <i>Group</i> for this entry, <i>owner@</i> to apply this entry to the user that owns the dataset, <i>group@</i> to apply this entry to the group that owns the dataset, or <i>everyone@</i> to apply this entry to all users and groups. See <a href=\"https://man7.org/linux/man-pages/man1/nfs4_setfacl.1.html\" target=\"_blank\">nfs4_setfacl(1) NFSv4 ACL ENTRIES</a>.": "",
   "Add any more <a href=\"https://man7.org/linux/man-pages/man5/sshd_config.5.html\" target=\"_blank\">sshd_config(5)</a> options not covered in this screen. Enter one option per line. These options are case-sensitive. Misspellings can prevent the SSH service from starting.": "",
   "Add more options from <a href=\"https://linux.die.net/man/8/tftpd\" target=\"_blank\">tftpd(8)</a>. Add one option on each line.": "",
@@ -49,7 +50,10 @@
   "The directory base suffix to use for SID/uid/gid mapping entries. Example: dc=test,dc=org. When undefined, idmap_ldap defaults to using the ldap idmap suffix option from <a href=\"https://www.samba.org/samba/docs/current/man-html/smb.conf.5.html\" target=\"_blank\">smb.conf</a>.": "",
   "The time values when the task will run. Accepts standard <a href=\"https://man7.org/linux/man-pages/man5/crontab.5.html\" target=\"_blank\">crontab(5)</a> values. </br></br>Symbols:</br> A comma (,) separates individual values.</br> An asterisk (*) means  \"match all values\".</br> Hyphenated numbers (1-5) sets a range of time.</br> A slash (/) designates a step in the value: */2 means every other minute.</br></br> Example: 30-35 in Minutes, 1,14 in Hours, and */2 in Days means the task will run on 1:30 - 1:35 AM and 2:30 - 2:35 PM every other day.": "",
   "This is a ONE-SHOT {alertLevel} alert, it won't be dismissed automatically": "",
+  "TrueNAS Help": "",
+  "TrueNAS Newsletter": "",
   "Use compressed WRITE records to make the  stream more efficient. The destination system must also support  compressed WRITE records. See  <a href=\"https://linux.die.net/man/8/zfs\"  target=\"_blank\">zfs(8)</a>.": "",
+  "You can join the ": "",
   " Check Notifications for more details.": " 检查通知以获取更多详细信息。",
   " Download Updates": " 下载更新",
   " KiB.": " KiB。",
