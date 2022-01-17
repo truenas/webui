@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { VmDeviceType } from 'app/enums/vm.enum';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 
 export default {
   dtype_placeholder: T('Type'),

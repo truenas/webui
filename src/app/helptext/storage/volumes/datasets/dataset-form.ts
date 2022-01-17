@@ -1,6 +1,6 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 
 export default {
   dataset_parent_name_placeholder: T('Parent path'),
@@ -120,9 +120,9 @@ export default {
 
   dataset_form_aclmode_placeholder: T('ACL Mode'),
   dataset_form_aclmode_tooltip: T('Determine how \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=chmod" target="_blank">chmod</a> \
+ <a href="https://man7.org/linux/man-pages/man1/chmod.1.html" target="_blank">chmod</a> \
  behaves when adjusting file ACLs. See the \
- <a href="https://www.freebsd.org/cgi/man.cgi?query=zfs" target="_blank">zfs(8)</a> aclmode property. \
+ <a href="https://linux.die.net/man/8/zfs" target="_blank">zfs(8)</a> aclmode property. \
  <br><br><i>Passthrough</i> only updates ACL entries that are related to the file or directory mode. \
  <br><br><i>Restricted</i> does not allow chmod to make changes to files or directories with a \
  non-trivial ACL. An ACL is trivial if it can be fully expressed as a file mode without losing \

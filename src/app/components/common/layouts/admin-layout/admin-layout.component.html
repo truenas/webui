@@ -70,9 +70,7 @@
 
   <mat-sidenav-content fxFlex="calc(100% - {{sidenavWidth}})" class="fn-maincontent" [style.margin-left]="sidenavWidth">
     <!-- Top Bar -->
-    <!-- Template reference variables of Left sidebar and Right notification is supplied -->
-    <!-- Listens language change event -->
-    <topbar [sidenav]="sidenav" [notificPanel]="notificationPanel"></topbar>
+    <topbar [sidenav]="sidenav"></topbar>
 
     <div class="slidein-nav slidein-nav-md" [class.slidein-open]="isOpen">
       <app-secondary-menu [subMenuItems]="subs" [menuName]="menuName" (toggleMenu)="toggleMenu()"></app-secondary-menu>
@@ -80,7 +78,7 @@
     <div class="overlay" [class.isdark]="isOpen" (click)="toggleMenu()"></div>
 
     <!-- App content -->
-    <div class="rightside-content-hold" [ngClass]="{'has-footer':isShowFooterConsole}">
+    <div class="rightside-content-hold" [class.has-footer]="isShowFooterConsole">
       <pagetitle [breadcrumbs]="true" [productType]="productType"></pagetitle>
       <router-outlet></router-outlet>
     </div>
@@ -88,11 +86,14 @@
       <pre #footerBarScroll class="message" (click)="onShowConsolePanel()">{{consoleMsg}}</pre>
     </div>
   </mat-sidenav-content>
-  <!-- Notification bar -->
-  <mat-sidenav #notificationPanel mode="over" align="end" (open)="onOpenNotify()" (close)="onCloseNotify()" class="notification-sidenav" position="end">
-    <div class="navigation-hold" fxLayout="column">
-      <app-notifications [notificPanel]="notificationPanel"></app-notifications>
-    </div>
+  <!-- Alert bar -->
+  <mat-sidenav
+    class="alert-sidenav"
+    position="end"
+    [opened]="isAlertPanelOpen$ | async"
+    (closed)="onAlertsPanelClosed()"
+  >
+    <ix-alerts-panel></ix-alerts-panel>
   </mat-sidenav>
 </mat-sidenav-container>
 

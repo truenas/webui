@@ -4,7 +4,7 @@ import { EMPTY, forkJoin, Observable } from 'rxjs';
 import {
   catchError, switchMap, tap,
 } from 'rxjs/operators';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { PermissionsSidebarState } from 'app/pages/storage/volumes/permissions/interfaces/permissions-sidebar-state.interface';
 import { DialogService, WebSocketService } from 'app/services';
 

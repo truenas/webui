@@ -14,8 +14,8 @@ import {
   CreateBootenvParams,
   UpdateBootenvParams,
 } from 'app/interfaces/bootenv.interface';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { BootEnvService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 

@@ -9,7 +9,6 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
 import { appImagePlaceholder, ixChartApp, officialCatalog } from 'app/constants/catalog.constants';
-import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
 import { ChartReleaseStatus } from 'app/enums/chart-release-status.enum';
 import helptext from 'app/helptext/apps/apps';
@@ -18,16 +17,16 @@ import { ChartRelease } from 'app/interfaces/chart-release.interface';
 import { CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Job } from 'app/interfaces/job.interface';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
+import { FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
 import { ChartUpgradeDialogComponent } from 'app/pages/applications/dialogs/chart-upgrade/chart-upgrade-dialog.component';
 import { ChartUpgradeDialogConfig } from 'app/pages/applications/interfaces/chart-upgrade-dialog-config.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { EmptyConfig, EmptyType } from 'app/pages/common/entity/entity-empty/entity-empty.component';
-import { FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services/index';
 import { ModalService } from 'app/services/modal.service';
@@ -54,8 +53,6 @@ export class ChartReleasesComponent implements OnInit {
   private dialogRef: MatDialogRef<EntityJobComponent>;
   ixIcon = 'assets/images/ix-original.png';
   private rollbackChartName: string;
-
-  protected utils: CommonUtils;
 
   private selectedAppName: string;
   private podList: string[] = [];
@@ -109,7 +106,7 @@ export class ChartReleasesComponent implements OnInit {
       type: 'input',
       name: 'command',
       placeholder: helptext.podConsole.chooseCommand.placeholder,
-      value: '/bin/bash',
+      value: '/bin/sh',
     }],
     saveButtonText: helptext.podConsole.choosePod.action,
     customSubmit: (entityDialog) => this.doPodSelect(entityDialog),
@@ -150,7 +147,6 @@ export class ChartReleasesComponent implements OnInit {
     private core: CoreService, protected ws: WebSocketService) { }
 
   ngOnInit(): void {
-    this.utils = new CommonUtils();
     this.addChartReleaseChangedEventListner();
   }
 

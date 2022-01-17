@@ -10,7 +10,7 @@ import {
   KeychainSshCredentials,
   KeychainSshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
-import { AppTableAction, AppTableConfig } from 'app/pages/common/entity/table/table.component';
+import { AppTableAction, AppTableConfig } from 'app/modules/entity/table/table.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import {
   KeychainCredentialService, ReplicationService, StorageService, CloudCredentialService,

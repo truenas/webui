@@ -6,7 +6,7 @@ import { FormatDateTimePipe } from 'app/core/components/pipes/format-datetime.pi
 import { mockWebsocket } from 'app/core/testing/utils/mock-websocket.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityModule } from 'app/pages/common/entity/entity.module';
+import { EntityModule } from 'app/modules/entity/entity.module';
 import { SystemGeneralService } from 'app/services';
 
 describe('JobItemComponent', () => {

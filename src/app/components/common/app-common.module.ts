@@ -14,9 +14,10 @@ import { SecondaryMenuComponent } from 'app/components/common/secondary-menu/sec
 import { CoreComponents } from 'app/core/components/core-components.module';
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AlertsModule } from 'app/modules/alerts/alerts.module';
 import { CastModule } from 'app/modules/cast/cast.module';
-import { EntityModule } from 'app/pages/common/entity/entity.module';
-import { IxFormsModule } from 'app/pages/common/ix-forms/ix-forms.module';
+import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxFormsModule } from 'app/modules/ix-forms/ix-forms.module';
 import { DialogService } from 'app/services/dialog.service';
 import { LanguageService } from 'app/services/language.service';
 import { LocaleService } from 'app/services/locale.service';
@@ -27,7 +28,6 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
 import { ModalComponent } from './modal/modal.component';
 import { NavigationComponent } from './navigation/navigation.component';
-import { NotificationsComponent } from './notifications/notifications.component';
 import { TopbarComponent } from './topbar/topbar.component';
 
 @NgModule({
@@ -47,6 +47,7 @@ import { TopbarComponent } from './topbar/topbar.component';
     ScrollingModule,
     AngularSvgIconModule.forRoot(),
     CastModule,
+    AlertsModule,
   ],
   declarations: [
     AdminLayoutComponent,
@@ -54,7 +55,6 @@ import { TopbarComponent } from './topbar/topbar.component';
     TopbarComponent,
     NavigationComponent,
     ModalComponent,
-    NotificationsComponent,
     CustomizerComponent,
     BreadcrumbComponent,
     PageTitleComponent,

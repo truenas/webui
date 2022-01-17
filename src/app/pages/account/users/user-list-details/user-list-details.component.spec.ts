@@ -6,11 +6,11 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockWebsocket, mockCall } from 'app/core/testing/utils/mock-websocket.utils';
+import { EntityModule } from 'app/modules/entity/entity.module';
+import { IxTableComponent } from 'app/modules/ix-tables/components/ix-table/ix-table.component';
+import { IxTableModule } from 'app/modules/ix-tables/ix-table.module';
 import { UserFormComponent } from 'app/pages/account/users/user-form/user-form.component';
 import { fakeDataSource } from 'app/pages/account/users/user-list/user-list.component.spec';
-import { EntityModule } from 'app/pages/common/entity/entity.module';
-import { IxTableComponent } from 'app/pages/common/ix-tables/components/ix-table/ix-table.component';
-import { IxTableModule } from 'app/pages/common/ix-tables/ix-table.module';
 import { DialogService, ModalService } from 'app/services';
 import { WebSocketService } from 'app/services/ws.service';
 import { UserListDetailsComponent } from './user-list-details.component';

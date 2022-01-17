@@ -8,13 +8,13 @@ import { TranslateService } from '@ngx-translate/core';
 import _ from 'lodash';
 import { Observable, of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, SystemGeneralService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ServiceName } from '../../../../enums/service-name.enum';
 import { ServiceStatus } from '../../../../enums/service-status.enum';
 import { choicesToOptions } from '../../../../helpers/options.helper';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from '../../../../modules/entity/utils';
 
 @UntilDestroy()
 @Component({

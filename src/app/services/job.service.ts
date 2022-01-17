@@ -7,7 +7,7 @@ import { filter } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import globalHelptext from 'app/helptext/global-helptext';
 import { Job } from 'app/interfaces/job.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService } from './dialog.service';
 import { StorageService } from './storage.service';
 import { WebSocketService } from './ws.service';

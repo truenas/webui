@@ -6,6 +6,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
+import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
@@ -14,7 +15,6 @@ import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs
 import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { LayoutService } from 'app/core/services/layout.service';
 import { PreferencesService } from 'app/core/services/preferences.service';
-import { AlertLevel } from 'app/enums/alert-level.enum';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -36,18 +36,19 @@ import {
 import { ResilverData } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { matchOtherValidator } from 'app/pages/common/entity/entity-form/validators/password-validation/password-validation';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
-import { NotificationAlert, NotificationsService } from 'app/services/notifications.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
+import { alertIndicatorPressed } from 'app/store/actions/topbar.actions';
 import { AboutDialogComponent } from '../dialog/about/about-dialog.component';
 import { DirectoryServicesMonitorComponent } from '../dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from '../dialog/resilver-progress/resilver-progress.component';
@@ -61,9 +62,6 @@ import { TruecommandComponent } from '../dialog/truecommand/truecommand.componen
 })
 export class TopbarComponent extends ViewControllerComponent implements OnInit, OnDestroy {
   @Input() sidenav: MatSidenav;
-  @Input() notificPanel: MatSidenav;
-
-  notifications: NotificationAlert[] = [];
 
   interval: Interval;
   updateIsDone: Subscription;
@@ -101,6 +99,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   screenSize = 'waiting';
   numberOfRunningJobs$: Observable<number> = this.jobsManagerStore.numberOfRunningJobs$;
 
+  alertBadgeCount$ = this.store$.select(selectImportantUnreadAlertsCount);
+
   protected tcConnected = false;
   protected tc_queryCall = 'truecommand.config' as const;
   protected tc_updateCall = 'truecommand.update' as const;
@@ -114,7 +114,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
   constructor(
     private themeService: ThemeService,
     private router: Router,
-    private notificationsService: NotificationsService,
     private ws: WebSocketService,
     private dialogService: DialogService,
     private sysGenService: SystemGeneralService,
@@ -126,6 +125,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     private layoutService: LayoutService,
     private jobsManagerStore: JobsManagerStore,
     private prefService: PreferencesService,
+    private store$: Store<AlertSlice>,
   ) {
     super();
     this.sysGenService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
@@ -202,21 +202,6 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       }
     });
 
-    const notifications = this.notificationsService.getNotificationList();
-
-    notifications.forEach((notificationAlert: NotificationAlert) => {
-      if (!notificationAlert.dismissed && notificationAlert.level !== AlertLevel.Info) {
-        this.notifications.push(notificationAlert);
-      }
-    });
-    this.notificationsService.getNotifications().pipe(untilDestroyed(this)).subscribe((notifications1) => {
-      this.notifications = [];
-      notifications1.forEach((notificationAlert: NotificationAlert) => {
-        if (!notificationAlert.dismissed && notificationAlert.level !== AlertLevel.Info) {
-          this.notifications.push(notificationAlert);
-        }
-      });
-    });
     this.checkNetworkChangesPending();
     this.checkNetworkCheckinWaiting();
     this.getDirServicesStatus();
@@ -294,8 +279,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     this.core.unregister({ observerClass: this });
   }
 
-  toggleNotificationPanel(): void {
-    this.notificPanel.toggle();
+  onAlertIndicatorPressed(): void {
+    this.store$.dispatch(alertIndicatorPressed());
   }
 
   toggleCollapse(): void {

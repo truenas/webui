@@ -7,10 +7,10 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { choicesToOptions } from 'app/helpers/options.helper';
 import helptext from 'app/helptext/services/components/service-nfs';
-import { portRangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { portRangeValidator } from 'app/modules/entity/entity-form/validators/range-validation';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { DialogService, WebSocketService } from 'app/services';
-import { EntityUtils } from '../../../common/entity/utils';
+import { EntityUtils } from '../../../../modules/entity/utils';
 
 @UntilDestroy()
 @Component({

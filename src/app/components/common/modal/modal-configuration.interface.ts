@@ -1,9 +1,9 @@
 import { Subject } from 'rxjs';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
-import { EmbeddedFormConfig } from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
-import { ControlConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
-import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.interface';
+import { EmbeddedFormConfig } from 'app/modules/entity/entity-form/entity-form-embedded.component';
+import { ControlConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
+import { Control } from 'app/modules/entity/entity-toolbar/models/control.interface';
 
 /**
  * Modal configuration is a complicated object that supports one of:

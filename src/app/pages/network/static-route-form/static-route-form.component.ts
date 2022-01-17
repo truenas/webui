@@ -6,8 +6,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/network/static-routes/static-routes';
 import { StaticRoute } from 'app/interfaces/static-route.interface';
-import { ipv4or6Validator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { FormErrorHandlerService } from 'app/modules/ix-forms/services/form-error-handler.service';
 import { WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 

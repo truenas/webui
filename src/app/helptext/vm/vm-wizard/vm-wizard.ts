@@ -2,7 +2,7 @@ import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { VmCpuMode } from 'app/enums/vm.enum';
 import globalHelptext from 'app/helptext/global-helptext';
-import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { regexValidator } from 'app/modules/entity/entity-form/validators/regex-validation';
 
 export default {
   no_pools_dialog: {

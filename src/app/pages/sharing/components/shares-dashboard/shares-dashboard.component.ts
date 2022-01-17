@@ -15,17 +15,17 @@ import { Service } from 'app/interfaces/service.interface';
 import { SmbShare } from 'app/interfaces/smb-share.interface';
 import { WebDavShare } from 'app/interfaces/web-dav-share.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import {
   ExpandableTableState,
   InputExpandableTableConf,
-} from 'app/pages/common/entity/table/expandable-table/expandable-table.component';
+} from 'app/modules/entity/table/expandable-table/expandable-table.component';
 import {
   TableComponent,
   AppTableHeaderAction,
-} from 'app/pages/common/entity/table/table.component';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/table/table.component';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
 import { SmbFormComponent } from 'app/pages/sharing/smb/smb-form/smb-form.component';

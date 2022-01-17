@@ -5,7 +5,7 @@ export default {
 
   smart_interval_placeholder: T('Check Interval'),
   smart_interval_tooltip: T('Define a number of minutes for <a\
- href="https://www.freebsd.org/cgi/man.cgi?query=smartd&manpath=FreeBSD+11.1-RELEASE+and+Ports"\
+ href="https://linux.die.net/man/8/smartd"\
  target="_blank">smartd</a> to wake up and check if any\
  tests are configured to run.'),
 

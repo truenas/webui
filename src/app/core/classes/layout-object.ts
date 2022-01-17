@@ -76,18 +76,6 @@ export class LayoutObject {
     this.updateCollectionPositions(0, this.orderedCollection.length - 1);
   }
 
-  private test(animation: string, state: string, animationTarget: DisplayObject): void {
-    this.messageBus.emit({
-      name: 'Animate',
-      data: {
-        animationTarget,
-        animation,
-        finishState: state,
-      },
-      sender: this,
-    });
-  }
-
   insert(item: DisplayObject): void { // Add new item to collection and regenerate screenPositions
     console.warn(this.reorderedCollection);
     // update collection

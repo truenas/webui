@@ -8,12 +8,12 @@ import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { IscsiExtent, IscsiInterface, IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
-import { EntityFormComponent } from 'app/pages/common/entity/entity-form/entity-form.component';
-import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
-import { selectedOptionValidator } from 'app/pages/common/entity/entity-form/validators/invalid-option-selected';
-import { ipValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
+import { FieldConfig, FormListConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
+import { selectedOptionValidator } from 'app/modules/entity/entity-form/validators/invalid-option-selected';
+import { ipValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { IscsiService, WebSocketService, AppLoaderService } from 'app/services';
 
 interface PortalListen {

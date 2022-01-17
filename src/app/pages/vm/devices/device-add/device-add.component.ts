@@ -15,9 +15,9 @@ import {
   FormSelectConfig,
   FormComboboxConfig,
   FormComboboxOption,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { ZvolWizardComponent } from 'app/pages/storage/volumes/zvol/zvol-wizard/zvol-wizard.component';
 import { VmDeviceFieldSet } from 'app/pages/vm/vm-device-field-set.interface';
 import {
@@ -31,7 +31,7 @@ import { ModalService } from 'app/services/modal.service';
 @Component({
   selector: 'app-device-add',
   templateUrl: './device-add.component.html',
-  styleUrls: ['../../../common/entity/entity-form/entity-form.component.scss'],
+  styleUrls: ['../../../../modules/entity/entity-form/entity-form.component.scss'],
 })
 export class DeviceAddComponent implements OnInit, OnDestroy {
   protected addCall = 'vm.device.create' as const;

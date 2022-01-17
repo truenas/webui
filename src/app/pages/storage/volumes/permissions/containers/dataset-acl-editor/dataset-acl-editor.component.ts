@@ -9,7 +9,7 @@ import { filter } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import helptext from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { Acl } from 'app/interfaces/acl.interface';
-import { FormCheckboxConfig, FormComboboxConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
+import { FormCheckboxConfig, FormComboboxConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { SelectPresetModalComponent } from 'app/pages/storage/volumes/permissions/components/select-preset-modal/select-preset-modal.component';
 import { SelectPresetModalConfig } from 'app/pages/storage/volumes/permissions/interfaces/select-preset-modal-config.interface';
 import { DatasetAclEditorStore } from 'app/pages/storage/volumes/permissions/stores/dataset-acl-editor.store';

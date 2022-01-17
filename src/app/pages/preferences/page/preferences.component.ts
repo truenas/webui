@@ -13,9 +13,9 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import {
   EmbeddedFormConfig,
   EntityFormEmbeddedComponent,
-} from 'app/pages/common/entity/entity-form/entity-form-embedded.component';
-import { FieldConfig } from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { FieldSet } from 'app/pages/common/entity/entity-form/models/fieldset.interface';
+} from 'app/modules/entity/entity-form/entity-form-embedded.component';
+import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { defaultTheme, ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()

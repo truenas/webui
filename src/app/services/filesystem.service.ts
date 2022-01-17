@@ -4,7 +4,7 @@ import { FileType } from 'app/enums/file-type.enum';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { TreeNode, ExplorerNodeData } from 'app/interfaces/tree-node.interface';
-import { TreeNodeProvider } from 'app/pages/common/ix-forms/components/ix-explorer/ix-explorer.component';
+import { TreeNodeProvider } from 'app/modules/ix-forms/components/ix-explorer/ix-explorer.component';
 import { WebSocketService } from 'app/services/ws.service';
 
 @Injectable({ providedIn: 'root' })

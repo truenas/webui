@@ -12,13 +12,14 @@ import {
 } from 'chart.js';
 import * as d3 from 'd3';
 import { Subject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
-import { ViewChartBarComponent } from 'app/core/components/view-chart-bar/view-chart-bar.component';
-import { GaugeConfig, ViewChartGaugeComponent } from 'app/core/components/view-chart-gauge/view-chart-gauge.component';
 import { CoreEvent } from 'app/interfaces/events';
 import { CpuStatsEvent } from 'app/interfaces/events/cpu-stats-event.interface';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { AllCpusUpdate } from 'app/interfaces/reporting.interface';
+import { ViewChartBarComponent } from 'app/modules/charts/components/view-chart-bar/view-chart-bar.component';
+import { GaugeConfig, ViewChartGaugeComponent } from 'app/modules/charts/components/view-chart-gauge/view-chart-gauge.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetCpuData } from 'app/pages/dashboard/interfaces/widget-data.interface';
 import { Theme } from 'app/services/theme/theme.service';
@@ -117,30 +118,29 @@ export class WidgetCpuComponent extends WidgetComponent implements AfterViewInit
   }
 
   ngAfterViewInit(): void {
-    this.core.register({
-      observerClass: this,
-      eventName: 'ThemeChanged',
-    }).pipe(untilDestroyed(this)).subscribe(() => {
-      d3.select('#grad1 .begin')
-        .style('stop-color', this.getHighlightColor(0));
+    this.core.register({ observerClass: this, eventName: 'ThemeChanged' })
+      .pipe(
+        switchMap(() => this.data),
+        untilDestroyed(this),
+      ).subscribe((evt: CoreEvent) => {
+        d3.select('#grad1 .begin')
+          .style('stop-color', this.getHighlightColor(0));
 
-      d3.select('#grad1 .end')
-        .style('stop-color', this.getHighlightColor(0.15));
-    });
+        d3.select('#grad1 .end')
+          .style('stop-color', this.getHighlightColor(0.15));
 
-    this.data.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.name !== 'CpuStats') {
-        return;
-      }
+        if (evt.name !== 'CpuStats') {
+          return;
+        }
 
-      const cpuData = (evt as CpuStatsEvent).data;
-      if (!cpuData.average) {
-        return;
-      }
+        const cpuData = (evt as CpuStatsEvent).data;
+        if (!cpuData.average) {
+          return;
+        }
 
-      this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
-      this.setCpuData(cpuData);
-    });
+        this.setCpuLoadData(['Load', parseInt(cpuData.average.usage.toFixed(1))]);
+        this.setCpuData(cpuData);
+      });
   }
 
   parseCpuData(cpuData: AllCpusUpdate): (string | number)[][] {

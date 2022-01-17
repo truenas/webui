@@ -9,13 +9,13 @@ import { IscsiExtent, IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import {
   FieldConfig,
-} from 'app/pages/common/entity/entity-form/models/field-config.interface';
-import { RelationGroup } from 'app/pages/common/entity/entity-form/models/field-relation.interface';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { EntityFormService } from 'app/pages/common/entity/entity-form/services/entity-form.service';
-import { FieldRelationService } from 'app/pages/common/entity/entity-form/services/field-relation.service';
-import { ipv4or6OptionalCidrValidator } from 'app/pages/common/entity/entity-form/validators/ip-validation';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+} from 'app/modules/entity/entity-form/models/field-config.interface';
+import { RelationGroup } from 'app/modules/entity/entity-form/models/field-relation.interface';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { EntityFormService } from 'app/modules/entity/entity-form/services/entity-form.service';
+import { FieldRelationService } from 'app/modules/entity/entity-form/services/field-relation.service';
+import { ipv4or6OptionalCidrValidator } from 'app/modules/entity/entity-form/validators/ip-validation';
+import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, DialogService, NetworkService } from 'app/services';
 import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
@@ -23,7 +23,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 @Component({
   selector: 'app-iscsi-initiator-form',
   templateUrl: './initiator-form.component.html',
-  styleUrls: ['./initiator-form.component.scss', '../../../../common/entity/entity-form/entity-form.component.scss'],
+  styleUrls: ['./initiator-form.component.scss', '../../../../../modules/entity/entity-form/entity-form.component.scss'],
   providers: [FieldRelationService, NetworkService],
 })
 export class InitiatorFormComponent implements OnInit {

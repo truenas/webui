@@ -5,16 +5,16 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { Subject } from 'rxjs';
-import { CommonUtils } from 'app/core/classes/common-utils';
 import { CoreService } from 'app/core/services/core-service/core.service';
+import { capitalizeFirstLetter } from 'app/helpers/text.helpers';
 import helptext from 'app/helptext/apps/apps';
 import { ApplicationUserEvent, ApplicationUserEventName } from 'app/interfaces/application.interface';
 import { CoreEvent } from 'app/interfaces/events';
 import { Option } from 'app/interfaces/option.interface';
+import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
+import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { ApplicationTab } from 'app/pages/applications/application-tab.enum';
 import { ApplicationToolbarControl } from 'app/pages/applications/application-toolbar-control.enum';
-import { EntityToolbarComponent } from 'app/pages/common/entity/entity-toolbar/entity-toolbar.component';
-import { ToolbarConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { ModalService } from 'app/services/modal.service';
 import { ApplicationsService } from './applications.service';
 import { CatalogComponent } from './catalog/catalog.component';
@@ -44,16 +44,13 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
   toolbarConfig: ToolbarConfig;
   catalogOptions: Option[] = [];
   selectedCatalogOptions: Option[] = [];
-  protected utils: CommonUtils;
 
   constructor(
     private appService: ApplicationsService,
     private core: CoreService,
     private aroute: ActivatedRoute,
     private modalService: ModalService,
-  ) {
-    this.utils = new CommonUtils();
-  }
+  ) {}
 
   ngOnInit(): void {
     this.setupToolbar();
@@ -232,7 +229,7 @@ export class ApplicationsComponent implements OnInit, AfterViewInit {
     } else if (evt.name == ApplicationUserEventName.CatalogToolbarChanged) {
       this.isSelectedPool = evt.value as boolean;
       this.catalogOptions = evt.catalogNames.map((catalogName: string) => ({
-        label: this.utils.capitalizeFirstLetter(catalogName),
+        label: capitalizeFirstLetter(catalogName),
         value: catalogName,
       }));
       this.selectedCatalogOptions = this.catalogOptions;

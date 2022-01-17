@@ -33,14 +33,14 @@ import { PoolUnlockQuery } from 'app/interfaces/pool-unlock-query.interface';
 import { Pool, PoolExpandParams, UpdatePool } from 'app/interfaces/pool.interface';
 import { Subs } from 'app/interfaces/subs.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
-import { DialogFormConfiguration } from 'app/pages/common/entity/entity-dialog/dialog-form-configuration.interface';
-import { EntityDialogComponent } from 'app/pages/common/entity/entity-dialog/entity-dialog.component';
-import { FormUploadComponent } from 'app/pages/common/entity/entity-form/components/form-upload/form-upload.component';
-import { RelationAction } from 'app/pages/common/entity/entity-form/models/relation-action.enum';
-import { MessageService } from 'app/pages/common/entity/entity-form/services/message.service';
-import { EntityJobComponent } from 'app/pages/common/entity/entity-job/entity-job.component';
-import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/entity-table/entity-table.interface';
-import { EntityUtils } from 'app/pages/common/entity/utils';
+import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
+import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
+import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
+import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
+import { MessageService } from 'app/modules/entity/entity-form/services/message.service';
+import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
+import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
+import { EntityUtils } from 'app/modules/entity/utils';
 import {
   VolumesListDataset,
   VolumesListPool,
@@ -134,29 +134,22 @@ export class VolumesListTableConfig implements EntityTableConfig {
       actions.push({
         label: T('Export Dataset Keys'),
         onClick: (row1: VolumesListPool) => {
-          const message = helptext.export_keys_message + row1.name;
+          this.loader.open();
           const fileName = 'dataset_' + row1.name + '_keys.json';
-          this.dialogService.passwordConfirm(message).pipe(untilDestroyed(this, 'destroy')).subscribe((exportKeys) => {
-            if (!exportKeys) {
-              return;
-            }
-
-            this.loader.open();
-            const mimetype = 'application/json';
-            this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-              this.loader.close();
-              const url = res[1];
-              this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
-                .pipe(untilDestroyed(this, 'destroy'))
-                .subscribe((file) => {
-                  if (res !== null && (res as any) !== '') {
-                    this.storageService.downloadBlob(file, fileName);
-                  }
-                });
-            }, (e) => {
-              this.loader.close();
-              new EntityUtils().handleWsError(this, e, this.dialogService);
-            });
+          const mimetype = 'application/json';
+          this.ws.call('core.download', ['pool.dataset.export_keys', [row1.name], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
+            this.loader.close();
+            const url = res[1];
+            this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
+              .pipe(untilDestroyed(this, 'destroy'))
+              .subscribe((file) => {
+                if (res !== null && (res as any) !== '') {
+                  this.storageService.downloadBlob(file, fileName);
+                }
+              });
+          }, (e) => {
+            this.loader.close();
+            new EntityUtils().handleWsError(this, e, this.dialogService);
           });
         },
       });
@@ -1436,49 +1429,43 @@ export class VolumesListTableConfig implements EntityTableConfig {
         ) {
           const fileName = 'dataset_' + rowData.name + '_key.json';
           const mimetype = 'application/json';
-          const message = helptext.export_keys_message + rowData.id;
           encryptionActions.push({
             id: rowData.id,
             name: T('Export Key'),
             label: T('Export Key'),
             onClick: () => {
-              this.dialogService.passwordConfirm(message).pipe(
-                filter(Boolean),
-                untilDestroyed(this, 'destroy'),
-              ).subscribe(() => {
-                const dialogRef = this.mdDialog.open(EntityJobComponent, {
-                  data: { title: T('Retrieving Key') },
-                  disableClose: true,
-                });
-                dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.id]);
-                dialogRef.componentInstance.submit();
-                dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((res: Job<string>) => {
-                  dialogRef.close();
-                  this.dialogService.confirm({
-                    title: this.translate.instant('Key for {id}', { id: rowData.id }),
-                    message: res.result + '<br/><br/>' + this.translate.instant('WARNING: Only the key for the dataset in question will be downloaded.'),
-                    hideCheckBox: true,
-                    buttonMsg: this.translate.instant('Download Key'),
-                    cancelMsg: this.translate.instant('Close'),
-                  }).pipe(
-                    filter(Boolean),
-                    untilDestroyed(this, 'destroy'),
-                  ).subscribe(() => {
-                    this.loader.open();
-                    this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
-                      this.loader.close();
-                      const url = res[1];
-                      this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
-                        .pipe(untilDestroyed(this, 'destroy'))
-                        .subscribe((file) => {
-                          if (res !== null) {
-                            this.storageService.downloadBlob(file, fileName);
-                          }
-                        });
-                    }, (e) => {
-                      this.loader.close();
-                      new EntityUtils().handleWsError(this, e, this.dialogService);
-                    });
+              const dialogRef = this.mdDialog.open(EntityJobComponent, {
+                data: { title: T('Retrieving Key') },
+                disableClose: true,
+              });
+              dialogRef.componentInstance.setCall('pool.dataset.export_key', [rowData.id]);
+              dialogRef.componentInstance.submit();
+              dialogRef.componentInstance.success.pipe(untilDestroyed(this, 'destroy')).subscribe((res: Job<string>) => {
+                dialogRef.close();
+                this.dialogService.confirm({
+                  title: this.translate.instant('Key for {id}', { id: rowData.id }),
+                  message: res.result + '<br/><br/>' + this.translate.instant('WARNING: Only the key for the dataset in question will be downloaded.'),
+                  hideCheckBox: true,
+                  buttonMsg: this.translate.instant('Download Key'),
+                  cancelMsg: this.translate.instant('Close'),
+                }).pipe(
+                  filter(Boolean),
+                  untilDestroyed(this, 'destroy'),
+                ).subscribe(() => {
+                  this.loader.open();
+                  this.ws.call('core.download', ['pool.dataset.export_key', [rowData.id, true], fileName]).pipe(untilDestroyed(this, 'destroy')).subscribe((res) => {
+                    this.loader.close();
+                    const url = res[1];
+                    this.storageService.streamDownloadFile(this.http, url, fileName, mimetype)
+                      .pipe(untilDestroyed(this, 'destroy'))
+                      .subscribe((file) => {
+                        if (res !== null) {
+                          this.storageService.downloadBlob(file, fileName);
+                        }
+                      });
+                  }, (e) => {
+                    this.loader.close();
+                    new EntityUtils().handleWsError(this, e, this.dialogService);
                   });
                 });
               });
