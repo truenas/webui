@@ -1,7 +1,7 @@
 
 <mat-card id="train-card">
-  <mat-spinner 
-    [diameter]='40' 
+  <mat-spinner
+    [diameter]='40'
     id="update-spinner"
     *ngIf="showSpinner" #updatespinner>
   </mat-spinner>
@@ -18,7 +18,7 @@
         <mat-option *ngFor="let train of trains" [value]="train.name"
           ix-auto ix-auto-type="option" ix-auto-identifier="{{train.name}}">{{ train.name }} - {{ train.description }}</mat-option>
       </mat-select>
-      <button mat-mini-fab color="primary" id="refresh-button" matTooltip="Refresh" (click)="check()" 
+      <button mat-mini-fab color="primary" id="refresh-button" matTooltip="Refresh" (click)="check()"
         ix-auto ix-auto-type="button" ix-auto-identifier="refresh">
         <mat-icon>refresh</mat-icon>
       </button>
@@ -32,6 +32,8 @@
         </button>
       </div>
     </ng-template>
+
+    <p class="click-for-information" [innerHtml]="clickForInformationLink | translate"></p>
   </div>
   <div class="train-card-row">
     <div class="col-md-12">
@@ -146,7 +148,7 @@
         ix-auto ix-auto-type="button" ix-auto-identifier="DOWNLOAD UPDATES">{{" Download Updates" | translate}}</button>
       <button mat-button class="btn btn-success update-button mat-basic" *ngIf="update_downloaded && status !== 'UNAVAILABLE'" (click)="ApplyPendingUpdate()"
         ix-auto ix-auto-type="button" ix-auto-identifier="APPLY PENDING UPDATE">{{"Apply Pending update" | translate}}</button>
-      <button mat-button class="btn btn-success update-button mat-basic" (click)="ManualUpdate()" 
+      <button mat-button class="btn btn-success update-button mat-basic" (click)="ManualUpdate()"
         ix-auto ix-auto-type="button" ix-auto-identifier="INSTALL MANUAL UPDATE FILE">{{"Install Manual Update File" | translate}}</button>
       <!-- <button mat-button class="btn btn-success update-button red-warning-button" *ngIf="failover_upgrade_pending" (click)="applyFailoverUpgrade()">{{"Apply Failover Upgrade" | translate}}</button> -->
       <p><font color ="red">{{general_update_error}}</font></p>
@@ -162,4 +164,4 @@
     </div>
   </div>
 </mat-card>
-  
+

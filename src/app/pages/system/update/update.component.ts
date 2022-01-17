@@ -68,6 +68,8 @@ export class UpdateComponent implements OnInit, OnDestroy {
                                   the downloaded update.');
   train_version = null;
 
+  readonly clickForInformationLink = helptext.clickForInformationLink;
+
   protected saveConfigFieldConf: FieldConfig[] = [
     {
       type: 'checkbox',
