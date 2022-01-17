@@ -97,7 +97,8 @@ def open_the_manage_docker_images_page(driver):
     """open the Manage Docker Images Page."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Manage Docker Images")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Manage Docker Images")]').click()
-    assert wait_on_element(driver, 7, '//div[contains(.,"zfs-driver")]')
+    assert wait_on_element(driver, 7, '//h3[contains(.,"No Docker Images")]')
+    #assert wait_on_element(driver, 7, '//div[contains(.,"zfs-driver")]')
 
 
 @then('open the Manage Catalogs Page')
