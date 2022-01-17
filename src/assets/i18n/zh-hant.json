@@ -2229,6 +2229,7 @@
   "Separate multiple values by pressing <code>Enter</code>.": "",
   "Separate values with commas, and without spaces.": "",
   "Serial Number:": "",
+  "Serial Shell": "",
   "Serial number for this disk.": "",
   "Serial numbers of each disk being edited.": "",
   "Serial or USB port connected to the UPS. To  automatically detect and manage the USB port settings, select  <i>auto</i>.<br><br> When an SNMP driver is selected, enter the IP  address or hostname of the SNMP UPS device.": "",
