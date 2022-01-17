@@ -204,9 +204,9 @@ export class LayoutObject {
             newCollection.splice(dragTargetIndex, 1);
             newCollection.splice(index, 0, dragTarget.id);
 
-            if (direction == 'up') {
+            if (direction === 'up') {
               this.updateCollectionPositions(index, maxIndex);
-            } else if (direction == 'down') {
+            } else if (direction === 'down') {
               this.updateCollectionPositions(dragTargetIndex, index);
             }
 

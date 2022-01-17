@@ -52,10 +52,10 @@ export class CoreService {
     let clone = [];// New Dispatch Table
 
     if (!reg.eventName) {
-      clone = this.dispatchTable.filter((item) => item.observerClass != reg.observerClass);
+      clone = this.dispatchTable.filter((item) => item.observerClass !== reg.observerClass);
     } else {
       clone = this.dispatchTable.filter((item) => {
-        return item.observerClass != reg.observerClass || item.eventName != reg.eventName;
+        return item.observerClass !== reg.observerClass || item.eventName !== reg.eventName;
       });
     }
 
@@ -81,13 +81,13 @@ export class CoreService {
         subscriptionType = 'Sender';
       }
 
-      if (subscriptionType == 'NameSender' && reg.eventName == evt.name && reg.sender == evt.sender) {
+      if (subscriptionType === 'NameSender' && reg.eventName === evt.name && reg.sender === evt.sender) {
         reg.observable$.next(evt);
-      } else if (subscriptionType == 'Name' && evt.name && reg.eventName == evt.name) {
+      } else if (subscriptionType === 'Name' && evt.name && reg.eventName === evt.name) {
         reg.observable$.next(evt);
-      } else if (subscriptionType == 'Sender' && evt.sender && reg.sender == evt.sender) {
+      } else if (subscriptionType === 'Sender' && evt.sender && reg.sender === evt.sender) {
         reg.observable$.next(evt);
-      } else if (subscriptionType == 'Any') {
+      } else if (subscriptionType === 'Any') {
         reg.observable$.next(evt);
       }
     });

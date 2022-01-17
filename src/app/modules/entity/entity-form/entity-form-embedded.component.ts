@@ -8,7 +8,6 @@ import {
   QueryList,
   TemplateRef,
   ViewChild,
-  ViewChildren,
   OnChanges,
   AfterViewInit, SimpleChanges,
 } from '@angular/core';
@@ -36,7 +35,7 @@ import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 export interface EmbeddedFormConfig {
   fieldSets?: FieldSets | FieldSet[];
   fieldSetDisplay?: string;
-  values?: any;
+  values?: unknown;
   saveSubmitText?: string;
   preInit?: (entityForm: EntityFormEmbeddedComponent) => void;
   target?: Subject<CoreEvent>;
@@ -52,25 +51,26 @@ export interface EmbeddedFormConfig {
   // TODO: Broken
   routeDelete?: string[];
   actionButtonsAlign?: string;
-  custActions?: any[];
-  customFilter?: any[];
+  custActions?: {
+    name: string;
+    id: string;
+    eventName: string;
+  }[];
   isCustActionVisible?: (action: string) => boolean;
 
-  beforeSubmit?: (value: any) => void;
-  afterSubmit?: (value: any) => void;
-  customSubmit?: (value: any) => void;
-  clean?: (this: EmbeddedFormConfig, value: any) => void;
-  errorReport?: any;
+  beforeSubmit?: (value: unknown) => void;
+  afterSubmit?: (value: unknown) => void;
+  customSubmit?: (value: unknown) => void;
+  clean?: (this: EmbeddedFormConfig, value: unknown) => void;
   isBasicMode?: boolean;
   advancedFields?: string[];
   basicFields?: string[];
   routeConf?: string[];
-  preHandler?: (data: any, formArray: FormArray) => any;
+  preHandler?: (data: unknown, formArray: FormArray) => any;
   initialCount?: number;
   initialCount_default?: number;
 
   goBack?: () => void;
-  onSuccess?(res: any): any;
   multiStateSubmit?: boolean;
 }
 
@@ -113,7 +113,6 @@ export class EntityFormEmbeddedComponent implements OnInit, OnDestroy, AfterView
   @ContentChildren(EntityTemplateDirective)
   templates: QueryList<EntityTemplateDirective>;
 
-  @ViewChildren('component') components: any;
   @ViewChild('entityForm', { static: false }) entityForm: NgForm;
 
   busy: Subscription;

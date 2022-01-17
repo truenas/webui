@@ -122,7 +122,7 @@ export class BootEnvironmentListComponent implements EntityTableConfig {
   }
 
   isActionVisible(actionId: string): boolean {
-    if (actionId == 'edit' || actionId == 'add') {
+    if (actionId === 'edit' || actionId === 'add') {
       return false;
     }
     return true;

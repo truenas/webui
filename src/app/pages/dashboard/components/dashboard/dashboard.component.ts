@@ -141,7 +141,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     const st = window.innerWidth < 600 ? 'Mobile' : 'Desktop';
 
     // If leaving .xs screen then reset mobile position
-    if (st == 'Desktop' && this.screenType == 'Mobile') {
+    if (st === 'Desktop' && this.screenType === 'Mobile') {
       this.onMobileBack();
     }
 
@@ -149,7 +149,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
 
     // Eliminate top level scrolling
     const wrapper = document.querySelector<HTMLElement>('.fn-maincontent');
-    wrapper.style.overflow = this.screenType == 'Mobile' ? 'hidden' : 'auto';
+    wrapper.style.overflow = this.screenType === 'Mobile' ? 'hidden' : 'auto';
     this.optimizeWidgetContainer();
   }
 
@@ -208,7 +208,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onMobileResize(evt: Event): void {
-    if (this.screenType == 'Desktop') { return; }
+    if (this.screenType === 'Desktop') { return; }
     const vp = this.el.nativeElement.querySelector('.mobile-viewport');
     const viewport = styler(vp);
     const c = this.el.nativeElement.querySelector('.mobile-viewport .carousel');
@@ -404,7 +404,7 @@ export class DashboardComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.core.register({ observerClass: this, eventName: 'SysInfo' }).pipe(untilDestroyed(this)).subscribe((evt: SysInfoEvent) => {
-      if (typeof this.systemInformation == 'undefined') {
+      if (typeof this.systemInformation === 'undefined') {
         this.systemInformation = evt.data;
         if (!this.pools || this.pools.length == 0) {
           this.core.emit({ name: 'PoolDataRequest', sender: this });

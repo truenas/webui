@@ -10,7 +10,6 @@ export interface VDev {
   guid: string;
   status: string;
   children: this[];
-  unavail_disk: any;
   stats: VDevStats;
 
   // TODO: These fields are not present in pool.query response

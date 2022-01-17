@@ -647,25 +647,25 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
 
   addExtraFieldConfigs(value: any, fieldConfig: FieldConfig): void {
     if (value) {
-      if (fieldConfig.type == 'list' && Array.isArray(value)) {
+      if (fieldConfig.type === 'list' && Array.isArray(value)) {
         const listConfig: FormListConfig = fieldConfig;
         listConfig.listFields = [];
         value.forEach((listValue) => {
           const templateListField = _.cloneDeep(listConfig.templateListField);
           templateListField.forEach((subFieldConfig) => {
             const subValue = listValue[subFieldConfig.name];
-            if (subFieldConfig.type == 'list' || subFieldConfig.type == 'dict') {
+            if (subFieldConfig.type === 'list' || subFieldConfig.type === 'dict') {
               this.addExtraFieldConfigs(subValue, subFieldConfig);
             }
           });
           listConfig.listFields.push(templateListField);
         });
-      } else if (fieldConfig.type == 'dict') {
+      } else if (fieldConfig.type === 'dict') {
         const dictConfig = fieldConfig;
         if (dictConfig.subFields) {
           dictConfig.subFields.forEach((subFieldConfig) => {
             const subValue = value[subFieldConfig.name];
-            if (subFieldConfig.type == 'list' || subFieldConfig.type == 'dict') {
+            if (subFieldConfig.type === 'list' || subFieldConfig.type === 'dict') {
               this.addExtraFieldConfigs(subValue, subFieldConfig);
             }
           });
@@ -677,7 +677,7 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
   addExtraFormControls(fieldConfig: FieldConfig, formControl: AbstractControl): void {
     const listConfig: FormListConfig = fieldConfig as FormListConfig;
     const dictConfig: FormDictConfig = fieldConfig as FormDictConfig;
-    if (listConfig.type == 'list' && listConfig.listFields) {
+    if (listConfig.type === 'list' && listConfig.listFields) {
       listConfig.listFields.forEach((field) => {
         const formGroup = this.entityFormService.createFormGroup(field);
         (formControl as FormArray).push(formGroup);
@@ -687,9 +687,9 @@ export class EntityFormComponent implements OnInit, OnDestroy, OnChanges, AfterV
           this.fieldRelationService.setRelation(subFieldConfig, (formControl as FormArray).at(i) as FormGroup);
         });
       }
-    } else if (dictConfig.type == 'dict' && dictConfig.subFields) {
+    } else if (dictConfig.type === 'dict' && dictConfig.subFields) {
       dictConfig.subFields.forEach((subFieldConfig) => {
-        if (subFieldConfig.type == 'list' || subFieldConfig.type == 'dict') {
+        if (subFieldConfig.type === 'list' || subFieldConfig.type === 'dict') {
           const subFromControl = formControl.get(subFieldConfig.name);
           this.addExtraFormControls(subFieldConfig, subFromControl);
         }

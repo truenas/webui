@@ -179,7 +179,7 @@ export class AlertConfigComponent implements OnInit {
     });
     this.formEvent$ = new Subject();
     this.formEvent$.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.data.event_control == 'save') {
+      if (evt.data.event_control === 'save') {
         this.onSubmit();
       } else {
         this.selectedIndex = evt.data.category.value;

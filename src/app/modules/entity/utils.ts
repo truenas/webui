@@ -348,7 +348,7 @@ export class EntityUtils {
         value: option.value,
         label: option.description,
       }));
-    } else if (schemaConfig.schema.type == 'string') {
+    } else if (schemaConfig.schema.type === 'string') {
       const inputConfig = fieldConfig as FormInputConfig;
       inputConfig['type'] = 'input';
       if (schemaConfig.schema.private) {
@@ -363,7 +363,7 @@ export class EntityUtils {
       if (schemaConfig.schema.max_length !== undefined) {
         inputConfig['max'] = schemaConfig.schema.max_length;
       }
-    } else if (schemaConfig.schema.type == 'int') {
+    } else if (schemaConfig.schema.type === 'int') {
       const inputConfig = fieldConfig as FormInputConfig;
       inputConfig['type'] = 'input';
       inputConfig['inputType'] = 'number';
@@ -374,10 +374,10 @@ export class EntityUtils {
       if (schemaConfig.schema.max !== undefined) {
         inputConfig['max'] = schemaConfig.schema.max;
       }
-    } else if (schemaConfig.schema.type == 'boolean') {
+    } else if (schemaConfig.schema.type === 'boolean') {
       const checkboxConfig = fieldConfig as FormCheckboxConfig;
       checkboxConfig['type'] = 'checkbox';
-    } else if (schemaConfig.schema.type == 'ipaddr') {
+    } else if (schemaConfig.schema.type === 'ipaddr') {
       if (!schemaConfig.schema.cidr) {
         const ipInputConfig = fieldConfig as FormInputConfig;
         ipInputConfig['type'] = 'input';
@@ -385,17 +385,17 @@ export class EntityUtils {
         const ipConfig = fieldConfig as FormIpWithNetmaskConfig;
         ipConfig['type'] = 'ipwithnetmask';
       }
-    } else if (schemaConfig.schema.type == 'hostpath') {
+    } else if (schemaConfig.schema.type === 'hostpath') {
       fieldConfig = {
         ...fieldConfig,
         type: 'explorer',
         initial: '/mnt',
         explorerType: ExplorerType.File,
       } as FormExplorerConfig;
-    } else if (schemaConfig.schema.type == 'path') {
+    } else if (schemaConfig.schema.type === 'path') {
       const inputConfig = fieldConfig as FormInputConfig;
       inputConfig['type'] = 'input';
-    } else if (schemaConfig.schema.type == 'list') {
+    } else if (schemaConfig.schema.type === 'list') {
       const listConfig = fieldConfig as FormListConfig;
       listConfig['type'] = 'list';
       listConfig['label'] = `Configure ${schemaConfig.label}`;
@@ -409,7 +409,7 @@ export class EntityUtils {
       });
 
       listConfig['templateListField'] = listFields;
-    } else if (schemaConfig.schema.type == 'dict') {
+    } else if (schemaConfig.schema.type === 'dict') {
       const dictConfig = fieldConfig as FormDictConfig;
       dictConfig['type'] = 'dict';
       dictConfig['label'] = schemaConfig.label;

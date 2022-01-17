@@ -10,7 +10,7 @@ export interface ZfsSnapshot {
     [property: string]: ZfsProperty<string | number | boolean | ApiTimestamp>;
     creation: ZfsProperty<ApiTimestamp>;
   };
-  retention: any;
+  retention: unknown;
   snapshot_name: string;
   type: string; // "SNAPSHOT"
 }

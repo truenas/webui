@@ -1,7 +1,7 @@
 import {
   Component, Input,
 } from '@angular/core';
-import { FieldConfig, FormDictConfig, FormSelectConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
+import { FieldConfig, FormDictConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 
 @Component({
@@ -49,8 +49,7 @@ export class WizardSummaryComponent {
     if (fieldConfig.type == 'list') {
       result = fieldValue.length;
     } else if (fieldConfig.type == 'select') {
-      const selectConfig: FormSelectConfig = fieldConfig;
-      const selectedOption = selectConfig.options.find((option) => {
+      const selectedOption = fieldConfig.options.find((option) => {
         return option.value == new EntityUtils().changeNull2String(fieldValue);
       });
       if (selectedOption) {

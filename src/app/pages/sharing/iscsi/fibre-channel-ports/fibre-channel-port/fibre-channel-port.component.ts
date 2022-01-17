@@ -131,8 +131,8 @@ export class FibreChannelPortComponent implements OnInit {
   }
 
   isShow(field: string): boolean {
-    if (field === 'target' || field == 'initiators') {
-      return this.formGroup.controls['mode'].value == FibreChannelPortMode.Target;
+    if (field === 'target' || field === 'initiators') {
+      return this.formGroup.controls['mode'].value === FibreChannelPortMode.Target;
     }
     return true;
   }
