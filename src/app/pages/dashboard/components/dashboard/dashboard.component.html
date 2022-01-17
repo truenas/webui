@@ -38,7 +38,7 @@
                 [widgetSize]="medium">
               </widget-sysinfo>
 
-              <widget-help  *ngSwitchCase="'help'"></widget-help>
+              <widget-help  *ngSwitchCase="'Help'"></widget-help>
 
 
               <widget-cpu *ngSwitchCase="'cpu'"
@@ -131,6 +131,11 @@
               [isPassive]="true"
               [widgetSize]="medium">
             </widget-sysinfo>
+
+            <widget-help
+              *ngSwitchCase="'Help'"
+              (back)="onMobileBack()"
+            ></widget-help>
 
             <widget-cpu *ngSwitchCase="'cpu'"
               (back)="onMobileBack()"

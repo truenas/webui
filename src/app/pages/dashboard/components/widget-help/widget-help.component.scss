@@ -1,141 +1,93 @@
-.header {
-  margin: -24px -24px 20px;
+.widget {
+  height: 400px;
+  width: 600px;
+}
+
+.widget .mat-card .mat-card-content > div {
+  padding: 8px 16px !important;
+}
+
+.external-link {
+  color: #396f9d;
+}
+
+.copyright-txt {
+  align-self: flex-end;
+  font-size: 11px;
   text-align: center;
 }
 
-.header-overlay {
-  background-color: rgba(0, 0, 0, 0.5);
-  color: white;
-  padding: 30px 10px;
+.widget mat-card-content {
+  width: 100%;
+}
+
+.container {
+  padding: 16px;
+}
+
+
+.line-item {
+  margin: 20px;
+}
+
+.line-item mat-icon {
+  font-size: 2.5rem;
+}
+
+.line-item div {
+  align-items: center;
+}
+
+.medium-font {
+  font-size: 1rem;
+  padding: 0 15px;
+  text-align: left;
+}
+
+#open-source {
+  font-size: 0.75rem;
+  padding: 1rem;
   text-align: center;
 }
 
-// #title {
-//   font-weight: 700;
-//   padding-bottom: 1rem;
-// }
 
-// .help {
-//   font-size: 1.2rem;
-//   font-weight: 500;
-// }
+/* NARROW SCREENS */
+.xs.widget {
+  height: calc(100vh - 96px);
+  position: absolute;
+  width: 100vw;
+}
 
-// .content-wrapper {
-//   padding-top: 10px;
-// }
+.xs.widget .mat-card {
+  overflow-y: scroll;
+}
 
-// .line-item {
-//   margin: 20px 10px;
-// }
+.xs.widget .mobile .top {
+  padding-bottom: 24px;
+}
 
-// .bullet-icon {
-//   font-size: 36px;
-//   height: 36px;
-//   width: 36px;;
-// }
+.xs.widget .mobile .bottom {
+  padding: 16px 0;
+  text-align: left;
+}
 
-// #ix-img {
-//   bottom: 3px;
-//   position: relative;
-//   right: 10px;
-// }
 
-// .external-link {
-//   color: #396f9d;
-// }
+.xs.widget .mobile .list-subheader {
+  color: var(--fg1);
+  font-size: 90%;
+  font-weight: 700;
+  padding: 8px 0 16px 16px;
+  text-align: left;
+}
 
-// .medium-font {
-//   font-size: 1rem;
-// }
+.xs.widget .mat-list-base .mat-list-item {
+  border-bottom: solid 1px rgba(0, 0, 0, 0.1);
+}
 
-// #open-source {
-//   font-size: 0.75rem;
-//   padding: 1rem;
-//   text-align: center;
-// }
+.mobile .mat-list-item span.label {
+  font-weight: 500;
+}
 
-// .copyright-txt {
-//   align-self: flex-end;
-//   font-size: 11px;
-//   text-align: center;
-// }
-
-// #findme {
-//   font-weight: 700;
-//   text-align: center;
-// }
-
-// #findme mat-icon {
-//   position: relative;
-//   top: 6px;
-// }
-
-// .emphasis {
-//   font-style: italic;
-//   opacity: 0.6;
-// }
-
-// .wrapper {
-//   margin-bottom: 1.5rem;
-// }
-
-// #actions {
-//   margin-bottom: -10px;
-// }
-
-// #button-wrapper {
-//   text-align: right;
-// }
-
-// .logo-wrapper .logo {
-//   height: auto;
-//   position: relative;
-//   width: 256px;
-//   z-index: 2;
-// }
-
-// @media (max-width: 599px) {
-//   #button-wrapper {
-//     margin-top: 10px;
-//     text-align: center;
-//   }
-// }
-
-// @media (max-width: 540px) {
-//   .medium-font {
-//     font-size: 0.8rem;
-//   }
-
-//   .bullet-icon {
-//     font-size: 24px;
-//     height: 24px;
-//     width: 24px;;
-//   }
-// }
-
-// .widget {
-//   height: 400px;
-//   width: 600px;
-// }
-
-// .widget mat-card-content {
-//   width: 100%;
-// }
-
-// .widget mat-toolbar-row {
-//   background: unset;
-
-//   font-size: 1.5rem;
-//   height: 48px;
-//   left: 0;
-//   line-height: 180%;
-//   padding: 0 8px;
-//   position: absolute;
-//   text-align: left;
-//   width: calc(100% - 16px);
-//   z-index: 2;
-// }
-
-// .widget mat-toolbar-row.view-overview .primary-nav {
-//   color: #efefef;
-// }
+.mobile .mat-list-item span.subtext {
+  opacity: 0.5;
+}

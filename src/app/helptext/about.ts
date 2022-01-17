@@ -14,6 +14,10 @@ export default {
   forumsC: T('are the best place to ask questions and interact with fellow TrueNAS'),
   forumsD: T('users'),
 
+  newsLetterA: T('You can join the '),
+  newsLetterB: T('TrueNAS Newsletter'),
+  newsLetterC: T(' for monthly updates and latest developments.'),
+
   contactA: T('Does your business need'),
   contactB: T('Enterprise level'),
   contactC: T('support and services? Contact'),
