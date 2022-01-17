@@ -461,6 +461,10 @@ export class ReportsDashboardComponent implements OnInit, OnDestroy, /* HandleCh
     });
   }
 
+  isReportReversed(report: Report): boolean {
+    return report.name == 'cpu';
+  }
+
   showConfigForm(): void {
     const formComponent = this.modalService.openInSlideIn(ReportsConfigComponent);
     formComponent.title = this.translate.instant('Reports Configuration');
