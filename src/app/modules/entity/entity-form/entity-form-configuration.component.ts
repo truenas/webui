@@ -35,7 +35,7 @@ export class EntityFormConfigurationComponent implements FormConfiguration {
 
   afterInit(entityEdit: EntityFormComponent): void {
     this.entityEdit = entityEdit;
-    if (this.formType == 'EntityFormComponent' && this.target && !this.customSubmit) {
+    if (this.formType === 'EntityFormComponent' && this.target && !this.customSubmit) {
       this.customSubmit = (values: any) => {
         this.target.next({
           name: 'FormSubmit',

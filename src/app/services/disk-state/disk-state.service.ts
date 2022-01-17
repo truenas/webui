@@ -24,7 +24,7 @@ export class DiskStateService extends BaseService {
 
     // Check for Pool Status
     this.ws.subscribe('zfs.pool.scan').subscribe((res: ResilverJob) => {
-      if (res.fields.scan.function == PoolScanFunction.Resilver) {
+      if (res.fields.scan.function === PoolScanFunction.Resilver) {
         this.core.emit({ name: 'Resilvering', data: res.fields, sender: this });
       }
     });

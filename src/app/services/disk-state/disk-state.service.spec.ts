@@ -44,7 +44,7 @@ describe('DiskStateService', () => {
     let waiting = true;
     messageBus$.subscribe((evt: CoreEvent) => {
       try {
-        if (waiting && evt.name == 'DisksChanged') {
+        if (waiting && evt.name === 'DisksChanged') {
           expect(evt.data).toBe('fake socket data');
           done();
           waiting = false;

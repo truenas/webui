@@ -1,5 +1,5 @@
 import {
-  AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild,
+  AfterViewInit, Component, Input, OnDestroy, OnInit, Type, ViewChild,
 } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -129,7 +129,7 @@ export class PageTitleComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.viewcontroller.layoutContainer = { layout: 'row', align: 'end center', gap: '2px' };
-    this.globalActions = this.viewcontroller.create(config.actionType);
+    this.globalActions = this.viewcontroller.create(config.actionType as Type<any>);
 
     if (!this.globalActions.applyConfig) {
       throw new Error('Components must implement GlobalAction Interface');

@@ -114,7 +114,7 @@ describe('CoreService', () => {
         totalEvents++;
         expect(evt.name).toMatch('TestEvent');
 
-        if (totalEvents == 2) {
+        if (totalEvents === 2) {
           spectator.service.unregister({ observerClass: mockObserver });
           expect(totalEvents).toEqual(4);
         }
@@ -141,7 +141,7 @@ describe('CoreService', () => {
         expect(evt.sender).toMatchObject(mockSender2);
         expect(evt.sender.name).toMatch('Sender2');
 
-        if (totalEvents == 2) spectator.service.unregister({ observerClass: mockObserver });
+        if (totalEvents === 2) spectator.service.unregister({ observerClass: mockObserver });
       });
 
     // Only the events from mockSender2 should be received
@@ -162,7 +162,7 @@ describe('CoreService', () => {
     spectator.service.register(reg)
       .subscribe(() => {
         totalEvents++;
-        if (totalEvents == 3) {
+        if (totalEvents === 3) {
           spectator.service.unregister({ observerClass: mockObserver });
           expect(totalEvents).toEqual(3);
         }

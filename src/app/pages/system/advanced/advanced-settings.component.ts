@@ -136,7 +136,7 @@ export class AdvancedSettingsComponent implements OnInit {
     add: async () => {
       await this.onSettingsPressed(AdvancedCardId.Cron);
     },
-    edit: async (row) => {
+    edit: async (row: CronjobRow) => {
       await this.onSettingsPressed(AdvancedCardId.Cron, row.id);
     },
   };

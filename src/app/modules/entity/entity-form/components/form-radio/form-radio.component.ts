@@ -25,9 +25,9 @@ export class FormRadioComponent implements Field, OnInit, OnDestroy {
   }
 
   get radioFlex(): string {
-    if (this.radioLayout == 'column') return '100%';
+    if (this.radioLayout === 'column') return '100%';
 
-    if (this.radioLayout == 'row wrap' && this.config.inlineFieldFlex) {
+    if (this.radioLayout === 'row wrap' && this.config.inlineFieldFlex) {
       return this.config.inlineFieldFlex;
     }
     return '50%';

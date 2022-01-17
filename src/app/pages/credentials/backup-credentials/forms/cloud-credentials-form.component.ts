@@ -1553,7 +1553,7 @@ export class CloudCredentialsFormComponent implements FormConfiguration {
 
   dataAttributeHandler(entityForm: EntityFormComponent): void {
     const provider = entityForm.formGroup.controls['provider'].value;
-    if (provider == 'S3'
+    if (provider === 'S3'
     && (entityForm.wsResponseIdx['endpoint'] || entityForm.wsResponseIdx['skip_region'] || entityForm.wsResponseIdx['signatures_v2'])) {
       entityForm.formGroup.controls['advanced-S3'].setValue(true);
     }

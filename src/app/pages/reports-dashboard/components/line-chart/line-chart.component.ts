@@ -6,7 +6,6 @@ import { utcToZonedTime } from 'date-fns-tz';
 import Dygraph, { dygraphs } from 'dygraphs';
 // eslint-disable-next-line
 import smoothPlotter from 'dygraphs/src/extras/smooth-plotter.js';
-import { BehaviorSubject } from 'rxjs';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewComponent } from 'app/core/components/view/view.component';
 import { ReportingData } from 'app/interfaces/reporting.interface';
@@ -55,14 +54,10 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
   chart: Dygraph;
   conf: any;
   columns: any;
-  linechartData: any;
 
   units = '';
   yLabelPrefix: string;
   showLegendValues = false;
-  legendEvent$: BehaviorSubject<any>;
-  legendLabel$: BehaviorSubject<any>;
-  legendAnalytic$: BehaviorSubject<any>;
 
   _colorPattern: string[] = ['#2196f3', '#009688', '#ffc107', '#9c27b0', '#607d8b', '#00bcd4', '#8bc34a', '#ffeb3b', '#e91e63', '#3f51b5'];
   get colorPattern(): string[] {
@@ -84,9 +79,6 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     super(themeService);
     this.utils = new ThemeUtils();
     this.controlUid = 'chart_' + UUID.UUID();
-    this.legendEvent$ = new BehaviorSubject({ xHTML: '' });
-    this.legendLabel$ = new BehaviorSubject([]);
-    this.legendAnalytic$ = new BehaviorSubject([]);
   }
 
   render(update?: boolean): void {
@@ -197,12 +189,11 @@ export class LineChartComponent extends ViewComponent implements AfterViewInit, 
     }
   }
 
-  makeColumn(data: ReportingData, legendKey: any): number[] {
+  makeColumn(data: ReportingData, legendKey: number): number[] {
     const result: any = [];
 
     data.data.forEach((report) => {
-      // TODO: Incorrect type
-      const value = (report as any)[legendKey];
+      const value = report[legendKey];
       result.push(value);
     });
 
