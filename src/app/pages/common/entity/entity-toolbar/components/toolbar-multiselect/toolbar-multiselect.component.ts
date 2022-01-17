@@ -30,9 +30,9 @@ export class ToolbarMultiSelectComponent extends IxAbstractObject implements Aft
 
   ngAfterViewInit(): void {
     this.deselectAll();
-    if (this.config.value && this.config.value.length) {
+    if (this.config.value?.length) {
       this.config.value
-        .map(() => this.config.options.findIndex((x) => x.value))
+        .map((option: Option) => this.config.options.findIndex((x) => x.value == option.value))
         .filter((index: number) => index !== -1)
         .forEach((index: number) => this.selectOption(index));
     } else {
