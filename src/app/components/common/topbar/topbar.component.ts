@@ -12,9 +12,6 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { JobsManagerComponent } from 'app/components/common/dialog/jobs-manager/jobs-manager.component';
 import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs-manager.store';
-import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
-import { LayoutService } from 'app/core/services/layout.service';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { DirectoryServiceState } from 'app/enums/directory-service-state.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -37,14 +34,17 @@ import { ResilverData } from 'app/interfaces/resilver-job.interface';
 import { Interval } from 'app/interfaces/timeout.interface';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { AlertSlice, selectImportantUnreadAlertsCount } from 'app/modules/alerts/store/alert.selectors';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { matchOtherValidator } from 'app/modules/entity/entity-form/validators/password-validation/password-validation';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
+import { LayoutService } from 'app/services/layout.service';
 import { ModalService } from 'app/services/modal.service';
+import { PreferencesService } from 'app/services/preferences.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { Theme, ThemeService } from 'app/services/theme/theme.service';
 import { WebSocketService } from 'app/services/ws.service';
@@ -60,7 +60,7 @@ import { TruecommandComponent } from '../dialog/truecommand/truecommand.componen
   styleUrls: ['./topbar.component.scss'],
   templateUrl: './topbar.component.html',
 })
-export class TopbarComponent extends ViewControllerComponent implements OnInit, OnDestroy {
+export class TopbarComponent implements OnInit, OnDestroy {
   @Input() sidenav: MatSidenav;
 
   interval: Interval;
@@ -126,8 +126,8 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     private jobsManagerStore: JobsManagerStore,
     private prefService: PreferencesService,
     private store$: Store<AlertSlice>,
+    private core: CoreService,
   ) {
-    super();
     this.sysGenService.updateRunningNoticeSent.pipe(untilDestroyed(this)).subscribe(() => {
       this.updateNotificationSent = true;
     });

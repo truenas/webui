@@ -17,6 +17,7 @@ import { DatasetUnlockParams, DatasetUnlockResult } from 'app/interfaces/dataset
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Subs } from 'app/interfaces/subs.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { FormUploadComponent } from 'app/modules/entity/entity-form/components/form-upload/form-upload.component';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import {
@@ -29,7 +30,6 @@ import { MessageService } from 'app/modules/entity/entity-form/services/message.
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, StorageService, DialogService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { UnlockDialogComponent } from './unlock-dialog/unlock-dialog.component';
 
 @UntilDestroy()

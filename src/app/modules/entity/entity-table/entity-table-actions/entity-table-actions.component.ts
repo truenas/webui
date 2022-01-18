@@ -37,13 +37,6 @@ export class EntityTableActionsComponent implements OnInit, OnChanges {
 
   constructor(protected translate: TranslateService) { }
 
-  menuActionVisible(id: string): boolean {
-    if (id === 'edit' || id === 'delete') {
-      return false;
-    }
-    return true;
-  }
-
   ngOnInit(): void {
     if (this.entity.conf.config && this.entity.conf.config.deleteMsg) {
       this.key_prop = this.entity.conf.config.deleteMsg.key_props[0];

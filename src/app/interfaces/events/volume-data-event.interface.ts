@@ -1,5 +1,5 @@
-import { ApiService } from 'app/core/services/api.service';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { ApiService } from 'app/services/api.service';
 
 export interface VolumeDataEvent {
   name: 'VolumeData';

@@ -1,6 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { CoreService, Registration } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { CoreService, Registration } from 'app/services/core-service/core.service';
 
 interface MockObject {
   name: string;

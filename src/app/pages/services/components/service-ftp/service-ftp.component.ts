@@ -1,6 +1,4 @@
-import {
-  ApplicationRef, Component, Injector, OnInit,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -428,8 +426,6 @@ export class ServiceFtpComponent implements FormConfiguration, OnInit {
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     protected dialog: DialogService,
     protected storageService: StorageService,
     protected systemGeneralService: SystemGeneralService,

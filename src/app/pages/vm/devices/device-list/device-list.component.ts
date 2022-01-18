@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import {
@@ -14,7 +15,6 @@ import {
 import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-table/entity-table.interface';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()

@@ -5,11 +5,11 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import * as _ from 'lodash';
 import { filter } from 'rxjs/operators';
-import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { ProductType } from 'app/enums/product-type.enum';
 import { SysInfoEvent } from 'app/interfaces/events/sys-info-event.interface';
 import { MenuItem, SubMenuItem } from 'app/interfaces/menu-item.interface';
 import { WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { NavigationService } from 'app/services/navigation/navigation.service';
 
 @UntilDestroy()
@@ -18,7 +18,7 @@ import { NavigationService } from 'app/services/navigation/navigation.service';
   templateUrl: './navigation.component.html',
   styleUrls: ['./navigation.component.scss'],
 })
-export class NavigationComponent extends ViewControllerComponent implements OnInit {
+export class NavigationComponent implements OnInit {
   hasIconTypeMenuItem: boolean;
   iconTypeMenuTitle: string;
   menuItems: MenuItem[];
@@ -29,10 +29,11 @@ export class NavigationComponent extends ViewControllerComponent implements OnIn
   @Output() menuClosed: EventEmitter<void> = new EventEmitter();
 
   constructor(
-    private navService: NavigationService, private router: Router, private ws: WebSocketService,
-  ) {
-    super();
-  }
+    private navService: NavigationService,
+    private router: Router,
+    private ws: WebSocketService,
+    private core: CoreService,
+  ) {}
 
   ngOnInit(): void {
     this.iconTypeMenuTitle = this.navService.iconTypeMenuTitle;

@@ -9,7 +9,6 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { combineLatest, Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
@@ -26,6 +25,7 @@ import { WizardConfiguration } from 'app/interfaces/entity-wizard.interface';
 import { Statfs } from 'app/interfaces/filesystem-stat.interface';
 import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import {
   FieldConfig, FormParagraphConfig, FormSelectConfig, FormUploadConfig,
 } from 'app/modules/entity/entity-form/models/field-config.interface';
@@ -38,9 +38,9 @@ import { EntityUtils } from 'app/modules/entity/utils';
 import {
   NetworkService, StorageService, SystemGeneralService, WebSocketService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
+import { PreferencesService } from 'app/services/preferences.service';
 import { VmService } from 'app/services/vm.service';
 
 @UntilDestroy()

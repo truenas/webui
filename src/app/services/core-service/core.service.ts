@@ -28,7 +28,9 @@ export interface Registration {
   sender?: unknown; // Only listen for events from a specific sender
 }
 
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class CoreService {
   coreEvent$: Subject<CoreEvent>;
 

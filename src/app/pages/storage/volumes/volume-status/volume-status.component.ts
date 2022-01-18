@@ -9,7 +9,6 @@ import * as _ from 'lodash';
 import { TreeNode } from 'primeng/api';
 import { Subject } from 'rxjs';
 import { filter } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import helptext from 'app/helptext/storage/volumes/volume-status';
@@ -31,6 +30,7 @@ import { DiskFormComponent } from 'app/pages/storage/disks/disk-form/disk-form.c
 import {
   WebSocketService, AppLoaderService, DialogService,
 } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { ModalService } from 'app/services/modal.service';
 
 interface PoolDiskInfo {

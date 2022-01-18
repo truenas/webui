@@ -24,6 +24,7 @@ import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { Disk, VDev } from 'app/interfaces/storage.interface';
 import { VolumeData } from 'app/interfaces/volume-data.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
+import { CoreService } from 'app/services/core-service/core.service';
 
 interface Slide {
   name: string;
@@ -175,7 +176,12 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     return this.currentDiskDetails ? Object.keys(this.currentDiskDetails) as (keyof Disk)[] : [];
   }
 
-  constructor(public router: Router, public translate: TranslateService, private cdr: ChangeDetectorRef) {
+  constructor(
+    public router: Router,
+    public translate: TranslateService,
+    private cdr: ChangeDetectorRef,
+    private core: CoreService,
+  ) {
     super(translate);
     this.configurable = false;
   }

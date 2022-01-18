@@ -7,7 +7,7 @@ import helptext from 'app/helptext/account/members';
 import { Group } from 'app/interfaces/group.interface';
 import { QueryFilter } from 'app/interfaces/query-api.interface';
 import { User } from 'app/interfaces/user.interface';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

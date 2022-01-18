@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { ExplorerType } from 'app/enums/explorer-type.enum';
 import helptext from 'app/helptext/storage/import-disk/import-disk';
 import { FormCustomAction, FormConfiguration } from 'app/interfaces/entity-form.interface';
@@ -22,6 +21,7 @@ import {
   WebSocketService,
   JobService,
 } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
