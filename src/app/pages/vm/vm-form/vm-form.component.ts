@@ -305,7 +305,14 @@ export class VmFormComponent implements FormConfiguration {
           }
         }
         const listItems = '<li>' + prevSelectedGpus.map((gpu, index) => (index + 1) + '. ' + gpu.description).join('</li><li>') + '</li>';
-        gpusConf.warnings = 'At least 1 GPU is required by the host for it’s functions.<p>Currently following GPU(s) have been isolated:<ol>' + listItems + '</ol></p><p>With your selection, no GPU is available for the host to consume.</p>';
+        gpusConf.warnings = this.translate.instant('At least 1 GPU is required by the host for it’s functions.')
+          + (prevSelectedGpus.length
+            ? this.translate.instant(
+              '<p>Currently following GPU(s) have been isolated:<ol>{gpus}</ol></p>',
+              { gpus: listItems },
+            )
+            : '')
+          + `<p>${this.translate.instant('With your selection, no GPU is available for the host to consume.')}</p>`;
         gpusFormControl.setErrors({ maxPCIIds: true });
       } else {
         gpusConf.warnings = null;
