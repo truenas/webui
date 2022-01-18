@@ -21,6 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { Observable, Subscription, Subject } from 'rxjs';
 import { CoreEvent } from 'app/interfaces/events';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
 import { FieldConfig, FormArrayConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { RelationGroup } from 'app/modules/entity/entity-form/models/field-relation.interface';
@@ -30,7 +31,6 @@ import { FieldRelationService } from 'app/modules/entity/entity-form/services/fi
 import { EntityTemplateDirective } from 'app/modules/entity/entity-template.directive';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 
 export interface EmbeddedFormConfig {
   fieldSets?: FieldSets | FieldSet[];

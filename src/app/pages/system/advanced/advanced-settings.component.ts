@@ -11,7 +11,6 @@ import { merge, Subject } from 'rxjs';
 import {
   filter, switchMap, take, tap,
 } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { DeviceType } from 'app/enums/device-type.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
@@ -23,6 +22,7 @@ import { GlobalActionConfig } from 'app/interfaces/global-action.interface';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { WebsocketError } from 'app/interfaces/websocket-error.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EmptyType } from 'app/modules/entity/entity-empty/entity-empty.component';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
@@ -42,7 +42,7 @@ import {
   UserService,
   WebSocketService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { CoreService } from 'app/services/core-service/core.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 import { ModalService } from 'app/services/modal.service';
 import { TunableFormComponent } from '../tunable/tunable-form/tunable-form.component';

@@ -1,11 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as ipRegex from 'ip-regex';
 import * as _ from 'lodash';
-import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import {
   LacpduRate, LinkAggregationProtocol, NetworkInterfaceAliasType, NetworkInterfaceType, XmitHashPolicy,
 } from 'app/enums/network-interface.enum';
@@ -21,13 +20,14 @@ import {
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/entity/entity-form/validators/ip-validation';
 import { NetworkService, DialogService, WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 
 @UntilDestroy()
 @Component({
   selector: 'app-interfaces-form',
   template: '<entity-form [conf]="this"></entity-form>',
 })
-export class InterfacesFormComponent extends ViewControllerComponent implements FormConfiguration, OnDestroy {
+export class InterfacesFormComponent implements FormConfiguration {
   queryCall = 'interface.query' as const;
   addCall = 'interface.create' as const;
   editCall = 'interface.update' as const;
@@ -338,9 +338,8 @@ export class InterfacesFormComponent extends ViewControllerComponent implements 
     protected dialog: DialogService,
     protected ws: WebSocketService,
     protected translate: TranslateService,
-  ) {
-    super();
-  }
+    private core: CoreService,
+  ) {}
 
   setType(type: NetworkInterfaceType): void {
     const isVlan = (type === NetworkInterfaceType.Vlan);

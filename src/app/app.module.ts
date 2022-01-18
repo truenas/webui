@@ -1,5 +1,5 @@
 import { HttpClientModule, HttpClient } from '@angular/common/http';
-import { NgModule, Injector, ErrorHandler } from '@angular/core';
+import { NgModule, ErrorHandler } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -29,8 +29,6 @@ import { JobsManagerStore } from 'app/components/common/dialog/jobs-manager/jobs
 import { IcuMissingTranslationHandler } from 'app/core/classes/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/core/classes/icu-translations-loader';
 import { CoreComponents } from 'app/core/components/core-components.module';
-import { setCoreServiceInjector } from 'app/core/services/core-service-injector';
-import { CoreServices } from 'app/core/services/core-services.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
 import { TerminalModule } from 'app/modules/terminal/terminal.module';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
@@ -47,6 +45,9 @@ import { AboutDialogComponent } from './components/common/dialog/about/about-dia
 import { DirectoryServicesMonitorComponent } from './components/common/dialog/directory-services-monitor/directory-services-monitor.component';
 import { ResilverProgressDialogComponent } from './components/common/dialog/resilver-progress/resilver-progress.component';
 import { TruecommandComponent } from './components/common/dialog/truecommand/truecommand.component';
+import { AppLoaderComponent } from './modules/app-loader/app-loader.component';
+import { AppLoaderModule } from './modules/app-loader/app-loader.module';
+import { AppLoaderService } from './modules/app-loader/app-loader.service';
 import { EntityDialogComponent } from './modules/entity/entity-dialog/entity-dialog.component';
 import { FormCheckboxComponent } from './modules/entity/entity-form/components/form-checkbox/form-checkbox.component';
 import { FormInputComponent } from './modules/entity/entity-form/components/form-input/form-input.component';
@@ -58,9 +59,6 @@ import { ErrorDialogComponent } from './pages/common/error-dialog/error-dialog.c
 import { GeneralDialogComponent } from './pages/common/general-dialog/general-dialog.component';
 import { InfoDialogComponent } from './pages/common/info-dialog/info-dialog.component';
 import { SelectDialogComponent } from './pages/common/select-dialog/select-dialog.component';
-import { AppLoaderComponent } from './services/app-loader/app-loader.component';
-import { AppLoaderModule } from './services/app-loader/app-loader.module';
-import { AppLoaderService } from './services/app-loader/app-loader.service';
 import { AuthService } from './services/auth/auth.service';
 import { NavigationService } from './services/navigation/navigation.service';
 import { RoutePartsService } from './services/route-parts/route-parts.service';
@@ -96,7 +94,6 @@ import { WebSocketService } from './services/ws.service';
     RouterModule.forRoot(rootRouterConfig, { useHash: false }),
     NgxPopperjsModule.forRoot({ appendTo: 'body' }),
     MarkdownModule.forRoot(),
-    CoreServices.forRoot(),
     CoreComponents,
     FormsModule,
     ReactiveFormsModule,
@@ -171,13 +168,4 @@ import { WebSocketService } from './services/ws.service';
     JobsManagerComponent,
   ],
 })
-export class AppModule {
-  /**
-   * Allows for retrieving singletons using `AppModule.injector.get(MyService)`
-   * This is good to prevent injecting the service as constructor parameter.
-   * */
-  static injector: Injector;
-  constructor(injector: Injector) {
-    setCoreServiceInjector(injector);
-  }
-}
+export class AppModule {}

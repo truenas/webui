@@ -4,12 +4,12 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { DatasetType } from 'app/enums/dataset-type.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
 import helptext from 'app/helptext/vm/devices/device-add-edit';
 import { CoreEvent } from 'app/interfaces/events';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import {
   FieldConfig,
   FormSelectConfig,
@@ -23,7 +23,7 @@ import { VmDeviceFieldSet } from 'app/pages/vm/vm-device-field-set.interface';
 import {
   WebSocketService, NetworkService, VmService, StorageService,
 } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { ModalService } from 'app/services/modal.service';
 

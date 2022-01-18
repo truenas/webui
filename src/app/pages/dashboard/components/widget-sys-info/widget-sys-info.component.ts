@@ -14,7 +14,9 @@ import { UserPreferencesChangedEvent } from 'app/interfaces/events/user-preferen
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { SystemGeneralService, WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { LocaleService } from 'app/services/locale.service';
+import { ThemeService } from 'app/services/theme/theme.service';
 
 @UntilDestroy()
 @Component({
@@ -38,7 +40,6 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
   product_model = '';
   product_enclosure = ''; // rackmount || tower
   certified = false;
-  failoverBtnLabel = 'FAILOVER TO STANDBY';
   updateAvailable = false;
   private _updateBtnStatus = 'default';
   updateBtnLabel: string = this.translate.instant('Check for Updates');
@@ -58,9 +59,16 @@ export class WidgetSysInfoComponent extends WidgetComponent implements OnDestroy
 
   readonly ProductType = ProductType;
 
-  constructor(public router: Router, public translate: TranslateService, private ws: WebSocketService,
-    public sysGenService: SystemGeneralService, public mediaObserver: MediaObserver,
-    private locale: LocaleService) {
+  constructor(
+    public router: Router,
+    public translate: TranslateService,
+    private ws: WebSocketService,
+    public sysGenService: SystemGeneralService,
+    public mediaObserver: MediaObserver,
+    private locale: LocaleService,
+    private core: CoreService,
+    public themeService: ThemeService,
+  ) {
     super(translate);
     this.configurable = false;
     this.sysGenService.updateRunning.pipe(untilDestroyed(this)).subscribe((res: string) => {

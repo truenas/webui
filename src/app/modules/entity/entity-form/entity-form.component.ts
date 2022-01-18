@@ -21,6 +21,7 @@ import * as _ from 'lodash';
 import { Observable, Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { FieldSets } from 'app/modules/entity/entity-form/classes/field-sets';
 import {
   FieldConfig, FormArrayConfig, FormDictConfig, FormListConfig, FormSelectConfig,
@@ -31,7 +32,6 @@ import { FieldRelationService } from 'app/modules/entity/entity-form/services/fi
 import { EntityTemplateDirective } from 'app/modules/entity/entity-template.directive';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, SystemGeneralService, DialogService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { ModalService } from 'app/services/modal.service';
 
 @UntilDestroy()

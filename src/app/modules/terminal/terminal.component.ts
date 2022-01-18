@@ -9,7 +9,6 @@ import * as FontFaceObserver from 'fontfaceobserver';
 import { Subject } from 'rxjs';
 import { Terminal } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
 import { ShellConnectedEvent } from 'app/interfaces/shell.interface';
 import { TerminalConfiguration } from 'app/interfaces/terminal.interface';
@@ -17,6 +16,7 @@ import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity
 import { CopyPasteMessageComponent } from 'app/modules/terminal/copy-paste-message.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
 import { ShellService, WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 
 @UntilDestroy()
 @Component({

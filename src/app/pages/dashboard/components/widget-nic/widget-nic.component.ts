@@ -15,6 +15,7 @@ import { NetworkInterfaceAlias } from 'app/interfaces/network-interface.interfac
 import { DashboardNicState } from 'app/pages/dashboard/components/dashboard/dashboard.component';
 import { WidgetComponent } from 'app/pages/dashboard/components/widget/widget.component';
 import { WidgetUtils } from 'app/pages/dashboard/utils/widget-utils';
+import { CoreService } from 'app/services/core-service/core.service';
 
 interface NetTraffic {
   sent: string;
@@ -75,7 +76,11 @@ export class WidgetNicComponent extends WidgetComponent implements AfterViewInit
     return this.nicState.link_state.replace(/_/g, ' ');
   }
 
-  constructor(public router: Router, public translate: TranslateService) {
+  constructor(
+    public router: Router,
+    public translate: TranslateService,
+    private core: CoreService,
+  ) {
     super(translate);
     this.configurable = false;
     this.utils = new WidgetUtils();

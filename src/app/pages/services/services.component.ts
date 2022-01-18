@@ -9,7 +9,6 @@ import { Subject } from 'rxjs';
 import {
   filter, map, switchMap,
 } from 'rxjs/operators';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { ServiceName, serviceNames } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { CoreEvent } from 'app/interfaces/events';
@@ -18,6 +17,7 @@ import { EmptyConfig, EmptyType } from 'app/modules/entity/entity-empty/entity-e
 import { EntityToolbarComponent } from 'app/modules/entity/entity-toolbar/entity-toolbar.component';
 import { ToolbarConfig } from 'app/modules/entity/entity-toolbar/models/control-config.interface';
 import { IscsiService } from 'app/services/';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 import { WebSocketService } from 'app/services/ws.service';
 
