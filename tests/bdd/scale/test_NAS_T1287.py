@@ -60,7 +60,7 @@ def the_apps_page_load_open_available_applications(driver):
 @then('click install')
 def click_install(driver):
     """click install."""
-    time.sleep(1)  # we have to wait for the page to settle for the button to function as a dropdown
+    time.sleep(2)  # we have to wait for the page to settle for the button to function as a dropdown
     assert wait_on_element(driver, 10, '//mat-card[contains(.,"collabora")]//span[contains(.,"Install")]', 'clickable')
     driver.find_element_by_xpath('//mat-card[contains(.,"collabora")]//span[contains(.,"Install")]').click()
     assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
