@@ -11,6 +11,7 @@ import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { IxCheckboxComponent } from 'app/pages/common/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxChipsComponent } from 'app/pages/common/ix-forms/components/ix-chips/ix-chips.component';
 import { IxComboboxComponent } from 'app/pages/common/ix-forms/components/ix-combobox/ix-combobox.component';
+import { IxCombobox2Component } from 'app/pages/common/ix-forms/components/ix-combobox2/ix-combobox2.component';
 import { IxErrorsComponent } from 'app/pages/common/ix-forms/components/ix-errors/ix-errors.component';
 import { IxExplorerComponent } from 'app/pages/common/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFieldsetComponent } from 'app/pages/common/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -22,6 +23,8 @@ import { IxSlideToggleComponent } from 'app/pages/common/ix-forms/components/ix-
 import { IxTextareaComponent } from 'app/pages/common/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxUserComboboxComponent } from 'app/pages/common/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { IxFormatterService } from 'app/pages/common/ix-forms/services/ix-formatter.service';
+import { IxUserComboboxProvider } from 'app/pages/common/ix-forms/services/ix-user-combobox-provider.service';
+import IxUsersService from 'app/pages/common/ix-forms/services/ix-users.service';
 import IxValidatorsService from 'app/pages/common/ix-forms/services/ix-validators.service';
 import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.module';
 import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
@@ -45,6 +48,7 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
     IxErrorsComponent,
     IxSelectComponent,
     IxComboboxComponent,
+    IxCombobox2Component,
     IxFieldsetComponent,
     IxSlideInComponent,
     IxModalHeaderComponent,
@@ -61,6 +65,7 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
     IxInputComponent,
     IxSelectComponent,
     IxComboboxComponent,
+    IxCombobox2Component,
     IxSlideInComponent,
     IxModalHeaderComponent,
     IxFieldsetComponent,
@@ -75,6 +80,8 @@ import { IxModalHeaderComponent } from './components/ix-slide-in/components/ix-m
   providers: [
     IxFormatterService,
     IxValidatorsService,
+    IxUserComboboxProvider,
+    IxUsersService,
   ],
 })
 export class IxFormsModule {}

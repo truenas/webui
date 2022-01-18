@@ -31,6 +31,17 @@
           [label]="'Allow Duplicate GIDs' | translate"
           [tooltip]="tooltips.allowDuplicateGid"
         ></ix-checkbox>
+
+        <ix-combobox2
+          formControlName="userCombobox"
+          [label]="'User Combobox'"
+          [provider]="ixUsersProvider"
+        ></ix-combobox2>
+        <ix-combobox2
+          formControlName="normalCombobox"
+          [label]="'Normal Combobox'"
+          [provider]="normalProvider"
+        ></ix-combobox2>
       </ix-fieldset>
 
       <div class="form-actions">

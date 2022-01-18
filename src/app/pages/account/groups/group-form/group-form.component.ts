@@ -5,13 +5,19 @@ import { Validators } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
+import { UUID } from 'angular2-uuid';
 import * as _ from 'lodash';
-import { Observable } from 'rxjs';
+import {
+  concat, Observable, of,
+} from 'rxjs';
 import helptext from 'app/helptext/account/groups';
 import { Group } from 'app/interfaces/group.interface';
+import { Option } from 'app/interfaces/option.interface';
 import { forbiddenValues } from 'app/pages/common/entity/entity-form/validators/forbidden-values-validation';
 import { regexValidator } from 'app/pages/common/entity/entity-form/validators/regex-validation';
+import { IxCombobox2Provider } from 'app/pages/common/ix-forms/components/ix-combobox2/ix-combobox2-provider.interface';
 import { FormErrorHandlerService } from 'app/pages/common/ix-forms/services/form-error-handler.service';
+import { IxUserComboboxProvider } from 'app/pages/common/ix-forms/services/ix-user-combobox-provider.service';
 import { UserService, WebSocketService } from 'app/services';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
 
@@ -37,7 +43,37 @@ export class GroupFormComponent {
     sudo: [false],
     smb: [false],
     allowDuplicateGid: [false],
+    userCombobox: [''],
+    normalCombobox: [''],
   });
+
+  normalProvider: IxCombobox2Provider = {
+    options$: of([
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+      { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+    ]),
+    pageOffset: 1,
+    filter: (options$: Observable<Option[]>, value: string): void => {
+      if (value) {
+        options$.pipe(untilDestroyed(this)).subscribe((syncOptions) => {
+          this.normalProvider.options$ = of(syncOptions.filter((option: Option) => {
+            return option.label.toLowerCase().includes(value.toLowerCase())
+                || option.value.toString().toLowerCase().includes(value.toLowerCase());
+          }));
+        });
+      }
+    },
+    onScrollEnd: () => {
+      this.normalProvider.pageOffset += 2;
+      this.normalProvider.options$ = concat(
+        this.normalProvider.options$,
+        of([
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+          { label: UUID.UUID().substring(0, 6), value: UUID.UUID() },
+        ]),
+      );
+    },
+  };
 
   readonly tooltips = {
     gid: helptext.bsdgrp_gid_tooltip,
@@ -54,6 +90,7 @@ export class GroupFormComponent {
     private cdr: ChangeDetectorRef,
     private errorHandler: FormErrorHandlerService,
     private translate: TranslateService,
+    public ixUsersProvider: IxUserComboboxProvider,
   ) {}
 
   /**
