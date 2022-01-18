@@ -88,7 +88,7 @@ def set_collabora_configuration(driver):
     assert wait_on_element(driver, 5, '//mat-select[@ix-auto="select__Certificate"]', 'clickable')
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Certificate"]').click()
     assert wait_on_element(driver, 7, '//span[contains(.,"freenas_default")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"freenas_default")]', 'clickable').click()
+    driver.find_element_by_xpath('//span[contains(.,"freenas_default")]').click()
 
     assert wait_on_element(driver, 7, '//button[@ix-auto="button__NEXT_Collabora Configuration"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__NEXT_Collabora Configuration"]').click()
@@ -133,8 +133,8 @@ def confirm_installation_is_successful(driver):
     driver.find_element_by_xpath('//strong[contains(.,"collabora-test")]').click()
     assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
     assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, '//strong[contains(.,"Refresh Events")]', 'clickable')
-    driver.find_element_by_xpath('//strong[contains(.,"Refresh Events")]').click()
+    assert wait_on_element(driver, 10, '//span[contains(.,"Refresh Events")]', 'clickable')
+    driver.find_element_by_xpath('//span[contains(.,"Refresh Events")]').click()
     assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
     assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')    
 
