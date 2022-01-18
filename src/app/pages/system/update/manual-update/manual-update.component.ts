@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef } from '@angular/material/dialog/dialog-ref';
@@ -8,7 +8,6 @@ import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 import { filter, take } from 'rxjs/operators';
-import { ViewControllerComponent } from 'app/core/components/view-controller/view-controller.component';
 import { JobState } from 'app/enums/job-state.enum';
 import { ProductType } from 'app/enums/product-type.enum';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
@@ -21,6 +20,7 @@ import { MessageService } from 'app/modules/entity/entity-form/services/message.
 import { EntityJobComponent } from 'app/modules/entity/entity-job/entity-job.component';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService, SystemGeneralService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()
@@ -29,7 +29,7 @@ import { DialogService } from 'app/services/dialog.service';
   template: '<entity-form [conf]="this"></entity-form>',
   providers: [MessageService],
 })
-export class ManualUpdateComponent extends ViewControllerComponent implements FormConfiguration {
+export class ManualUpdateComponent implements FormConfiguration {
   formGroup: FormGroup;
   routeSuccess: string[] = ['system', 'update'];
   protected dialogRef: MatDialogRef<EntityJobComponent>;
@@ -82,16 +82,13 @@ export class ManualUpdateComponent extends ViewControllerComponent implements Fo
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     public messageService: MessageService,
     protected dialog: MatDialog,
     public translate: TranslateService,
     private dialogService: DialogService,
     private systemService: SystemGeneralService,
+    private core: CoreService,
   ) {
-    super();
-
     this.core.register({
       observerClass: this,
       eventName: 'SysInfo',

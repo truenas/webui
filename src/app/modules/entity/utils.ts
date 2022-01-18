@@ -193,12 +193,6 @@ export class EntityUtils {
     return ndata;
   }
 
-  bool(value: unknown): boolean {
-    return value === 'false' || value === 'null' || value === 'NaN' || value === 'undefined' || value === '0'
-      ? false
-      : !!value;
-  }
-
   array1dToLabelValuePair(arr: (string | number)[]): Option[] {
     return arr.map((value) => ({ label: value.toString(), value }));
   }

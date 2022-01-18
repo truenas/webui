@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import { Component } from '@angular/core';
 import { Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
@@ -214,8 +214,6 @@ export class VmFormComponent implements FormConfiguration {
     private loader: AppLoaderService,
     protected ws: WebSocketService,
     protected storageService: StorageService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     protected vmService: VmService,
     protected route: ActivatedRoute,
     private translate: TranslateService,

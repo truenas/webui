@@ -8,13 +8,13 @@ import { filter } from 'rxjs/operators';
 import { helptextSystemFailover } from 'app/helptext/system/failover';
 import { FormConfiguration } from 'app/interfaces/entity-form.interface';
 import { FailoverConfig, FailoverUpdate } from 'app/interfaces/failover.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { EntityFormComponent } from 'app/modules/entity/entity-form/entity-form.component';
 import { FieldConfig } from 'app/modules/entity/entity-form/models/field-config.interface';
 import { FieldSet } from 'app/modules/entity/entity-form/models/fieldset.interface';
 import { RelationAction } from 'app/modules/entity/entity-form/models/relation-action.enum';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { WebSocketService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DialogService } from 'app/services/dialog.service';
 
 @UntilDestroy()

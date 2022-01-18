@@ -1,9 +1,9 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { Subject } from 'rxjs';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { CoreEvent } from 'app/interfaces/events';
+import { CoreService } from 'app/services/core-service/core.service';
+import { DiskStateService } from 'app/services/disk-state/disk-state.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { DiskStateService } from './disk-state.service';
 
 describe('DiskStateService', () => {
   let spectator: SpectatorService<DiskStateService>;

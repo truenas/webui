@@ -1,4 +1,4 @@
-import { ApplicationRef, Component, Injector } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import helptext from 'app/helptext/services/components/service-snmp';
@@ -146,8 +146,6 @@ export class ServiceSnmpComponent implements FormConfiguration {
     protected router: Router,
     protected route: ActivatedRoute,
     protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     protected iscsiService: IscsiService,
     protected idmapService: IdmapService,
   ) {}

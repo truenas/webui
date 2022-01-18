@@ -7,9 +7,9 @@ import { ChangeThemePreferenceEvent } from 'app/interfaces/events/theme-events.i
 import { UserDataEvent } from 'app/interfaces/events/user-data-event.interface';
 import { UserPreferencesRequestEvent } from 'app/interfaces/events/user-preferences-event.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { ApiService } from 'app/services/api.service';
+import { CoreService } from 'app/services/core-service/core.service';
 import { ThemeService, Theme } from 'app/services/theme/theme.service';
-import { ApiService } from './api.service';
-import { CoreService } from './core-service/core.service';
 
 interface PropertyReport {
   middlewareProperties: string[];
@@ -19,7 +19,9 @@ interface PropertyReport {
 }
 
 @UntilDestroy()
-@Injectable()
+@Injectable({
+  providedIn: 'root',
+})
 export class PreferencesService {
   private startupComplete = false;
   defaultPreferences: Preferences = {

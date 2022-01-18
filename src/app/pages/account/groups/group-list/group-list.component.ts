@@ -4,11 +4,11 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import helptext from 'app/helptext/account/group-list';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { Group, MembershipGroup } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { DialogFormConfiguration } from 'app/modules/entity/entity-dialog/dialog-form-configuration.interface';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityTableComponent } from 'app/modules/entity/entity-table/entity-table.component';
@@ -16,8 +16,8 @@ import { EntityTableAction, EntityTableConfig } from 'app/modules/entity/entity-
 import { EntityUtils } from 'app/modules/entity/utils';
 import { GroupFormComponent } from 'app/pages/account/groups/group-form/group-form.component';
 import { DialogService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { IxSlideInService } from 'app/services/ix-slide-in.service';
+import { PreferencesService } from 'app/services/preferences.service';
 import { WebSocketService } from 'app/services/ws.service';
 
 @UntilDestroy()

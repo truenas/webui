@@ -17,6 +17,7 @@ import { NgxUploaderModule } from 'ngx-uploader';
 import { TreeTableModule } from 'primeng/treetable';
 import { MaterialModule } from 'app/app-material.module';
 import { CommonDirectivesModule } from 'app/directives/common/common-directives.module';
+import { AppLoaderService } from 'app/modules/app-loader/app-loader.service';
 import { CastModule } from 'app/modules/cast/cast.module';
 import { EntityDialogComponent } from 'app/modules/entity/entity-dialog/entity-dialog.component';
 import { EntityEmptyComponent } from 'app/modules/entity/entity-empty/entity-empty.component';
@@ -79,7 +80,6 @@ import { TableService } from 'app/modules/entity/table/table.service';
 import { TooltipModule } from 'app/modules/tooltip/tooltip.module';
 import { TaskScheduleListComponent } from 'app/pages/data-protection/components/task-schedule-list/task-schedule-list.component';
 import { JobService } from 'app/services';
-import { AppLoaderService } from 'app/services/app-loader/app-loader.service';
 import { DocsService } from 'app/services/docs.service';
 
 @NgModule({

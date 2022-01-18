@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { ResilverJob } from 'app/interfaces/resilver-job.interface';
 import { Disk } from 'app/interfaces/storage.interface';
+import { BaseService } from 'app/services/base.service';
+import { CoreService } from 'app/services/core-service/core.service';
 import { WebSocketService } from 'app/services/ws.service';
-import { BaseService } from '../base.service';
-import { CoreService } from '../core-service/core.service';
 
 @Injectable({
   providedIn: 'root',

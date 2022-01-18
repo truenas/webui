@@ -6,12 +6,12 @@ import { MatTable } from '@angular/material/table';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import { TreeNode } from 'primeng/api';
-import { CoreService } from 'app/core/services/core-service/core.service';
 import { TreeTableGlobalFilterEvent } from 'app/interfaces/events/tree-table-global-filter-event.interface';
 import { EntityTreeTable } from 'app/modules/entity/entity-tree-table/entity-tree-table.model';
 import { EntityTreeTableService } from 'app/modules/entity/entity-tree-table/entity-tree-table.service';
 import { EntityUtils } from 'app/modules/entity/utils';
 import { DialogService, WebSocketService } from 'app/services';
+import { CoreService } from 'app/services/core-service/core.service';
 
 interface FilterValue {
   column: string;
@@ -45,7 +45,6 @@ export class EntityTreeTableComponent implements OnInit, AfterViewInit {
   @Input() parentId?: string;
 
   filter: FilterValue = { column: 'name', value: '' };
-  showActions = true;
 
   // Table Props
   displayedColumns: string[];

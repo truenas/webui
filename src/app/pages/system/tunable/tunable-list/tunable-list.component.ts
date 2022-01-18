@@ -1,6 +1,4 @@
-import {
-  ApplicationRef, Component, Injector,
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { TooltipPosition } from '@angular/material/tooltip';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -71,8 +69,6 @@ export class TunableListComponent implements EntityTableConfig {
     protected router: Router,
     protected aroute: ActivatedRoute,
     protected ws: WebSocketService,
-    protected _injector: Injector,
-    protected _appRef: ApplicationRef,
     protected translate: TranslateService,
   ) {}
 
