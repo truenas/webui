@@ -61,33 +61,3 @@
 .xs.widget .mat-card {
   overflow-y: scroll;
 }
-
-.xs.widget .mobile .top {
-  padding-bottom: 24px;
-}
-
-.xs.widget .mobile .bottom {
-  padding: 16px 0;
-  text-align: left;
-}
-
-
-.xs.widget .mobile .list-subheader {
-  color: var(--fg1);
-  font-size: 90%;
-  font-weight: 700;
-  padding: 8px 0 16px 16px;
-  text-align: left;
-}
-
-.xs.widget .mat-list-base .mat-list-item {
-  border-bottom: solid 1px rgba(0, 0, 0, 0.1);
-}
-
-.mobile .mat-list-item span.label {
-  font-weight: 500;
-}
-
-.mobile .mat-list-item span.subtext {
-  opacity: 0.5;
-}
