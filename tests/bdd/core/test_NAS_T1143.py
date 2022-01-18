@@ -112,6 +112,7 @@ def enter_the_user_name_click_Next_and_enter_the_password_click_Next(driver, use
     time.sleep(1)
     assert wait_on_element(driver, 5, '//button[contains(text(),"Sign in")]', 'clickable')
     driver.find_element_by_xpath('//button[contains(text(),"Sign in")]').click()
+    time.sleep(1)
 
 
 @then(parsers.parse('click on Browser Files, click on {bucket} bucket'))
@@ -178,6 +179,7 @@ def select_selection_under_the_credential_dropdown(driver, selection):
     driver.find_element_by_xpath('//mat-select[@ix-auto="select__Credential"]').click()
     assert wait_on_element(driver, 5, f'//mat-option[@ix-auto="option__Credential_{selection}"]', 'clickable')
     driver.find_element_by_xpath(f'//mat-option[@ix-auto="option__Credential_{selection}"]').click()
+    assert wait_on_element_disappear(driver, 5, f'//mat-option[@ix-auto="option__Credential_{selection}"]')
     time.sleep(1)
 
 
@@ -220,7 +222,7 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 60, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 120, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
     time.sleep(5)
 
 
@@ -246,7 +248,7 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     if not wait_on_element(driver, 1, '//button[@ix-auto="button___edit"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Backblaze B2 task"]', 'clickable')
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Backblaze B2 task"]').click()
-    time.sleep(0.5)
+    time.sleep(1.5)
     assert wait_on_element(driver, 5, '//p[contains(text(),"backblazecreds")]')
     assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
@@ -488,7 +490,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 60, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 120, '//button[@id="My Backblaze B2 task_Status-button" and contains(.,"SUCCESS")]')
     # give time to the system to be ready.
     time.sleep(5)
 

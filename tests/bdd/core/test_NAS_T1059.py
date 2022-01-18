@@ -186,6 +186,8 @@ def when_on_the_service_page_if_the_ftp_service_isnt_running_start_it(driver):
     value_exist = attribute_value_exist(driver, '//mat-slide-toggle[@ix-auto="slider__FTP_Running"]', 'class', 'mat-checked')
     if not value_exist:
         driver.find_element_by_xpath('//div[@ix-auto="overlay__FTP_Running"]').click()
+    time.sleep(1)
+    assert wait_on_element(driver, 7, '//mat-slide-toggle[@ix-auto="slider__FTP_Running"]', 'clickable')
     wait_for_value = wait_for_attribute_value(driver, 10, '//mat-slide-toggle[@ix-auto="slider__FTP_Running"]', 'class', 'mat-checked')
     assert wait_for_value
 

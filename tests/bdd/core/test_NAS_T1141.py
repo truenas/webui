@@ -162,8 +162,8 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 60, '//button[@id="My Google Drive task_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(5)
+    assert wait_on_element(driver, 120, '//button[@id="My Google Drive task_Status-button" and contains(.,"SUCCESS")]')
+    time.sleep(6)
 
 
 @then('verify all files are copied from Google Drive are into the dataset')
@@ -323,6 +323,7 @@ def click_save_the_google_drive_tasks_should_save_without_error(driver):
 def verify_all_files_are_moved_from_the_google_drive_test_folder_to_the_dataset(driver, nas_ip):
     """verify all files are moved from the Google Drive test folder to the dataset."""
     driver.switch_to.window(driver.window_handles[2])
+    time.sleep(1)
     driver.refresh()
     time.sleep(1)
     assert wait_on_element(driver, 5, '//div[text()="test"]')
@@ -372,6 +373,7 @@ def select_push_as_the_direction_then_under_transfer_mode_select_move(driver):
 def verify_all_files_are_moved_from_the_dataset_to_the_google_drive_test_folder(driver, nas_ip):
     """verify all files are moved from the dataset to the Google Drive test folder."""
     driver.switch_to.window(driver.window_handles[2])
+    time.sleep(1)
     driver.refresh()
     time.sleep(1)
     assert wait_on_element(driver, 5, '//div[text()="test"]')
@@ -457,7 +459,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 60, '//button[@id="My Google Drive task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 120, '//button[@id="My Google Drive task_Status-button" and contains(.,"SUCCESS")]')
     # give time to the system to be ready.
     time.sleep(5)
 
@@ -524,6 +526,7 @@ def select_push_as_the_direction_then_under_transfer_mode_select_sync(driver):
 def verify_all_files_are_sync_to_the_google_drive_test_folder_tab(driver):
     """verify all files are sync to the Google Drive test folder tab."""
     driver.switch_to.window(driver.window_handles[2])
+    time.sleep(1)
     driver.refresh()
     time.sleep(1)
     assert wait_on_element(driver, 5, '//div[text()="test"]')
@@ -549,6 +552,7 @@ def on_the_dataset_folder_delete_a_file(driver, nas_ip):
 def verify_the_file_is_removed_from_the_google_drive_test_folder_tab(driver):
     """verify the file is removed from the Google Drive test folder tab."""
     driver.switch_to.window(driver.window_handles[2])
+    time.sleep(1)
     driver.refresh()
     time.sleep(1)
     assert wait_on_element(driver, 5, '//div[text()="test"]')

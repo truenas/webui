@@ -164,8 +164,8 @@ def expand_the_task_on_the_nas_ui_and_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 60, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
-    time.sleep(5)
+    assert wait_on_element(driver, 120, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
+    time.sleep(6)
 
 
 @then('verify all files are copied from Dropbox are into the dataset')
@@ -191,8 +191,8 @@ def on_the_nas_cloud_sync_task_tab_click_edit(driver):
     if not wait_on_element(driver, 2, '//button[@ix-auto="button___edit"]', 'clickable'):
         assert wait_on_element(driver, 5, '//a[@ix-auto="expander__My Dropbox task"]', 'clickable')
         driver.find_element_by_xpath('//a[@ix-auto="expander__My Dropbox task"]').click()
-    time.sleep(0.5)
-    assert wait_on_element(driver, 5, '//button[@ix-auto="button___edit"]', 'clickable')
+    time.sleep(1)
+    assert wait_on_element(driver, 7, '//button[@ix-auto="button___edit"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button___edit"]').click()
     assert wait_on_element(driver, 5, '//h4[contains(.,"Transfer")]')
     # give time to the system to be ready.
@@ -256,6 +256,7 @@ def input_user_name_and_password_click_sign_in(driver, user_name, password):
             time.sleep(1)
         driver.switch_to.window(driver.window_handles[1])
     assert wait_on_element(driver, 15, '//nav[contains(.,"Dropbox")]//span[text()="Dropbox"]')
+    time.sleep(1)
 
 
 @then(parsers.parse('click on {folder1} then click on the test folder'))
@@ -263,9 +264,9 @@ def click_on_folder1_then_click_on_the_test_folder(driver, folder1):
     """click on {folder1} then click on the test folder."""
     assert wait_on_element(driver, 5, f'//span[text()="{folder1}"]', 'clickable')
     driver.find_element_by_xpath(f'//span[text()="{folder1}"]').click()
-    time.sleep(1)
-    assert wait_on_element(driver, 7, f'//nav[contains(.,"{folder1}")]//span[text()="{folder1}"]')
-    assert wait_on_element(driver, 7, '//span[text()="initial"]', 'clickable')
+    time.sleep(1.5)
+    assert wait_on_element(driver, 10, f'//nav[contains(.,"{folder1}")]//span[text()="{folder1}"]')
+    assert wait_on_element(driver, 10, '//span[text()="initial"]', 'clickable')
     assert wait_on_element(driver, 10, '//span[text()="test"]', 'clickable')
     time.sleep(1)
     driver.find_element_by_xpath('//span[text()="test"]').click()
@@ -469,7 +470,7 @@ def on_the_nas_cloud_sync_task_tab_click_run_now(driver):
     assert wait_on_element(driver, 5, '//button[@ix-auto="button__CLOSE"]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto="button__CLOSE"]').click()
     time.sleep(1)
-    assert wait_on_element(driver, 60, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
+    assert wait_on_element(driver, 120, '//button[@id="My Dropbox task_Status-button" and contains(.,"SUCCESS")]')
     # give time to the system to be ready.
     time.sleep(5)
 
