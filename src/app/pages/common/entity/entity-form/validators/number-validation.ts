@@ -1,23 +1,12 @@
-import { ValidatorFn, FormControl } from '@angular/forms';
+import { ValidatorFn, FormControl, ValidationErrors } from '@angular/forms';
 
 export function numberValidator(): ValidatorFn {
-  let thisControl: FormControl;
-
-  return function numberValidate(control: FormControl) {
-    if (!control.parent) {
+  return (control: FormControl): ValidationErrors => {
+    if (control.value == '' || control.value == undefined) {
       return null;
     }
 
-    // Initializing the validator.
-    if (!thisControl) {
-      thisControl = control;
-    }
-
-    if (thisControl.value == '' || thisControl.value == undefined) {
-      return null;
-    }
-
-    if (!/^\d+$/.test(thisControl.value)) {
+    if (!/^\d+$/.test(control.value)) {
       return { number: true };
     }
 

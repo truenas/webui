@@ -23,17 +23,17 @@ export class IxInputComponent implements ControlValueAccessor {
 
   /** If formatted value returned by parseAndFormatInput has non-numeric letters
    * and input 'type' is a number, the input will stay empty on the form */
-  @Input() format: (value: string) => string;
-  @Input() parse: (value: string) => string;
+  @Input() format: (value: string | number) => string;
+  @Input() parse: (value: string | number) => string | number;
 
   formControl = new FormControl(this).value as FormControl;
 
-  value = '';
-  formatted = '';
+  value: string | number = '';
+  formatted: string | number = '';
 
   isDisabled = false;
 
-  onChange: (value: string) => void = (): void => {};
+  onChange: (value: string | number) => void = (): void => {};
   onTouch: () => void = (): void => {};
 
   constructor(
@@ -43,7 +43,7 @@ export class IxInputComponent implements ControlValueAccessor {
     this.controlDirective.valueAccessor = this;
   }
 
-  writeValue(value: string): void {
+  writeValue(value: string | number): void {
     let formatted = value;
     if (value) {
       if (this.format) {
@@ -64,7 +64,7 @@ export class IxInputComponent implements ControlValueAccessor {
     this.onChange(this.value);
   }
 
-  registerOnChange(onChange: (value: string) => void): void {
+  registerOnChange(onChange: (value: string | number) => void): void {
     this.onChange = onChange;
   }
 

@@ -13,13 +13,10 @@ import { UntilDestroy } from '@ngneat/until-destroy';
 })
 export class IxInputPasswordComponent implements ControlValueAccessor {
   @Input() label: string;
-  @Input() placeholder: string;
-  @Input() prefixIcon: string;
   @Input() hint: string;
   @Input() tooltip: string;
   @Input() required: boolean;
   @Input() autocomplete = 'off';
-  @Input() autocapitalize = 'off';
 
   formControl = new FormControl(this).value as FormControl;
 
