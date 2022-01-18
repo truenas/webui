@@ -333,6 +333,8 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
 
   protected ipAddress: FormSelectConfig;
 
+  isLoadingPci = false;
+
   constructor(
     protected router: Router,
     protected core: CoreService,
@@ -401,12 +403,17 @@ export class DeviceAddComponent implements OnInit, OnDestroy {
     });
 
     // pci
+    this.isLoadingPci = true;
     this.ws.call('vm.device.passthrough_device_choices').pipe(untilDestroyed(this)).subscribe((res) => {
       this.pptdev = _.find(this.pciFieldConfig, { name: 'pptdev' }) as FormSelectConfig;
       this.pptdev.options = Object.keys(res || {}).map((pptdevId) => ({
         label: pptdevId,
         value: pptdevId,
       }));
+      this.isLoadingPci = false;
+    }, (err) => {
+      this.isLoadingPci = false;
+      new EntityUtils().handleWsError(this, err, this.dialogService);
     });
   }
 

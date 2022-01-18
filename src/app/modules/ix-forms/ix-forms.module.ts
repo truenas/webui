@@ -18,6 +18,7 @@ import { IxInputComponent } from 'app/modules/ix-forms/components/ix-input/ix-in
 import { IxSelectComponent } from 'app/modules/ix-forms/components/ix-select/ix-select.component';
 import { IxModalHeaderComponent } from 'app/modules/ix-forms/components/ix-slide-in/components/ix-modal-header/ix-modal-header.component';
 import { IxSlideInComponent } from 'app/modules/ix-forms/components/ix-slide-in/ix-slide-in.component';
+import { IxSlideToggleComponent } from 'app/modules/ix-forms/components/ix-slide-toggle/ix-slide-toggle.component';
 import { IxTextareaComponent } from 'app/modules/ix-forms/components/ix-textarea/ix-textarea.component';
 import { IxUserComboboxComponent } from 'app/modules/ix-forms/components/ix-user-combobox/ix-user-combobox.component';
 import { IxFormatterService } from 'app/modules/ix-forms/services/ix-formatter.service';
@@ -53,6 +54,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxChipsComponent,
     IxExplorerComponent,
     IxFileInputComponent,
+    IxSlideToggleComponent,
   ],
   exports: [
     IxErrorsComponent,
@@ -68,6 +70,7 @@ import { EnclosureModule } from 'app/pages/system/view-enclosure/enclosure.modul
     IxChipsComponent,
     IxExplorerComponent,
     IxFileInputComponent,
+    IxSlideToggleComponent,
   ],
   providers: [
     IxFormatterService,

@@ -47,6 +47,10 @@ export const helptextSystemUpdate = {
     message: T('Error submitting file'),
   },
 
+  clickForInformationLink: T('Click for information on\
+    <a href="https://www.truenas.com/docs/truenasupgrades/" target="_blank">TrueNAS SCALE Migration, Nightly trains\
+    and other upgrade options.</a>'),
+
   ha_update: {
     complete_title: T('Complete the Upgrade'),
     complete_msg: T('The standby controller has finished upgrading. To complete the update process, \

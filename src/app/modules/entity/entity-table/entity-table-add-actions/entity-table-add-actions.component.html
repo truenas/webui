@@ -2,7 +2,7 @@
 <div *ngIf="entity && conf" fxFlex class="entity-table-controls" fxLayout="row wrap" fxLayoutAlignGap="16px" fxLayoutAlign="end center">
 
   <!-- TODO: Replace with ix-input when its ready -->
-  <div class="form-element search-field" id="row-filter">
+  <form class="form-element search-field" id="row-filter">
     <mat-form-field floatPlaceholder="never">
       <span matPrefix class="search-icon-wrapper"><mat-icon>search</mat-icon></span>
       <input
@@ -11,8 +11,9 @@
         placeholder="{{'Filter' | translate}} {{entity.title | translate}}"
         ix-auto
         ix-auto-type="input"
-        ix-auto-identifier="Filter {{entity.conf.title}}">
-
+        ix-auto-identifier="Filter {{entity.conf.title}}"
+        autocomplete="off"
+      >
       <span
         class="reset-icon-wrapper"
         [class.invisible]="!filterValue || filterValue.length == 0"
@@ -21,7 +22,7 @@
         <mat-icon (click)="resetFilter()" role="img" fontSet="mdi-set" fontIcon="mdi-close-circle"></mat-icon>
       </span>
     </mat-form-field>
-  </div>
+  </form>
 
   <!-- START COLUMN FILTER -->
   <div *ngIf="entity.columnFilter && entity.allColumns && entity.allColumns.length > 0">
