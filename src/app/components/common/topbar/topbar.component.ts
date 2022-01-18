@@ -258,14 +258,10 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
     });
   }
 
-  preferencesHandler(evt: UserPreferencesEvent | UserPreferencesReadyEvent): void {
+  preferencesHandler(): void {
     if (this.isWaiting) {
       this.target.next({ name: 'SubmitComplete', sender: this });
       this.isWaiting = false;
-    }
-    this.showWelcome = evt.data.showWelcomeDialog && !(localStorage.getItem('turnOffWelcomeDialog') as unknown as boolean);
-    if (this.showWelcome) {
-      this.onShowAbout();
     }
   }
 
