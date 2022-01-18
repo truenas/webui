@@ -22,7 +22,7 @@ def test_apps_page_remove_and_readd_pool():
 
 
 @given('the browser is open, navigate to the SCALE URL, and login')
-def the_browser_is_open_navigate_to_the_scale_url_and_login():
+def the_browser_is_open_navigate_to_the_scale_url_and_login(driver, nas_ip, root_password):
     """the browser is open, navigate to the SCALE URL, and login."""
     if nas_ip not in driver.current_url:
         driver.get(f"http://{nas_ip}")
@@ -52,8 +52,9 @@ def on_the_dashboard_click_on_apps(driver):
 
 
 @then('the Apps page load, click settings, unset pool')
-def the_apps_page_load_click_settings_unset_pool():
+def the_apps_page_load_click_settings_unset_pool(driver):
     """the Apps page load, click settings, unset pool."""
+    time.sleep(1)  # we have to wait for the page to settle for the button to function as a dropdown
     assert wait_on_element(driver, 10, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
     assert wait_on_element(driver, 10, '//span[contains(text(),"Unset Pool")]', 'clickable')
@@ -62,7 +63,7 @@ def the_apps_page_load_click_settings_unset_pool():
 
 
 @then('confirm unset pool and wait')
-def confirm_unset_pool_and_wait():
+def confirm_unset_pool_and_wait(driver):
     """confirm unset pool and wait."""
     assert wait_on_element(driver, 10, '//span[contains(text(),"UNSET")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(text(),"UNSET")]').click()
@@ -72,7 +73,7 @@ def confirm_unset_pool_and_wait():
 
 
 @then('click setting, reset pool')
-def click_setting_reset_pool():
+def click_setting_reset_pool(driver):
     """click setting, reset pool."""
     assert wait_on_element(driver, 10, '//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]', 'clickable')
     driver.find_element_by_xpath('//button[@ix-auto-type="button"]//span[contains(text(),"Settings")]').click()
