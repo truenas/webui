@@ -85,7 +85,7 @@ export class R50 extends Chassis {
         const nextPositionX = (displayObject.width + gapX) * currentColumn;
         let nextPositionY = mod * (displayObject.height + gapY);
 
-        const odd: boolean = currentColumn % 2 == 1;
+        const odd: boolean = currentColumn % 2 === 1;
         const altOffset = 12 * currentColumn % 2; // Alternating offset
         nextPositionY += altOffset;
 

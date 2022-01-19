@@ -238,7 +238,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
       observerClass: this,
       eventName: 'Resilvering',
     }).pipe(untilDestroyed(this)).subscribe((evt: ResilveringEvent) => {
-      if (evt.data.scan.state == PoolScanState.Finished) {
+      if (evt.data.scan.state === PoolScanState.Finished) {
         this.showResilvering = false;
         this.resilveringDetails = null;
       } else {
@@ -519,7 +519,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   updateHaInfo(info: HaStatus): void {
     this.ha_disabled_reasons = info.reasons;
-    if (info.status == 'HA Enabled') {
+    if (info.status === 'HA Enabled') {
       this.ha_status_text = helptext.ha_status_text_enabled;
       if (!this.pendingUpgradeChecked) {
         this.checkUpgradePending();

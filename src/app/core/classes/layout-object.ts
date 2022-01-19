@@ -143,7 +143,7 @@ export class LayoutObject {
     const newX = this.screenPositions[index].left;
     const newY = this.screenPositions[index].top;
 
-    if (startX == newX && startY == newY) {
+    if (startX === newX && startY === newY) {
       return;
     }
     tween({
@@ -216,9 +216,9 @@ export class LayoutObject {
             newCollection.splice(dragTargetIndex, 1);
             newCollection.splice(index, 0, dragTarget.id);
 
-            if (direction == 'up') {
+            if (direction === 'up') {
               this.updateCollectionPositions(index, maxIndex);
-            } else if (direction == 'down') {
+            } else if (direction === 'down') {
               this.updateCollectionPositions(dragTargetIndex, index);
             }
 

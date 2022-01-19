@@ -26,7 +26,7 @@ export class MINIXLPLUS extends Chassis {
     this.front.autoPosition = false;
 
     this.front.events.subscribe((evt: CoreEvent) => {
-      if (evt.name == 'ChassisLoaded') {
+      if (evt.name === 'ChassisLoaded') {
         this.onLoaded();
       }
     });
@@ -56,7 +56,7 @@ export class MINIXLPLUS extends Chassis {
           0.9,
           0.905,
         );
-      } else if (i == 0) {
+      } else if (i === 0) {
         // SSD
         dt.container.setTransform(0, 121 - backY, 0.73, 0.73);
       }

@@ -127,8 +127,8 @@ export class VDevLabelsSVG {
     className: string,
     diskName: string,
   ): void {
-    const color = diskName == this.selectedDisk.devname ? this.selectedDiskColor : this.color;
-    let opacity = diskName == this.selectedDisk.devname ? 1 : 0.5;
+    const color = diskName === this.selectedDisk.devname ? this.selectedDiskColor : this.color;
+    let opacity = diskName === this.selectedDisk.devname ? 1 : 0.5;
     opacity = 1;
 
     const style = 'fill-opacity:0.25; stroke-width:1';
@@ -155,7 +155,7 @@ export class VDevLabelsSVG {
 
       if (slot && slot >= this.chassis.slotRange.start && slot <= this.chassis.slotRange.end) {
         // Create tile if the disk is in the current enclosure
-        const dt = this.chassis.driveTrayObjects.find((dto) => parseInt(dto.id) == slot);
+        const dt = this.chassis.driveTrayObjects.find((dto) => parseInt(dto.id) === slot);
         const src = dt.container;
         const tray = src.getGlobalPosition();
 
