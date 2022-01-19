@@ -11,6 +11,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UUID } from 'angular2-uuid';
 import { Chart, ChartColor, ChartDataSets } from 'chart.js';
 import { Subject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ThemeUtils } from 'app/core/classes/theme-utils/theme-utils';
 import { ViewChartBarComponent } from 'app/core/components/view-chart-bar/view-chart-bar.component';
 import { ViewChartGaugeComponent } from 'app/core/components/view-chart-gauge/view-chart-gauge.component';
@@ -32,7 +33,6 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   @Input() data: Subject<CoreEvent>;
   @Input() ecc = false;
   chart: Chart;// chart instance
-  ctx: CanvasRenderingContext2D; // canvas context for chart.js
   private _memData: WidgetMemoryData;
   get memData(): WidgetMemoryData { return this._memData; }
   set memData(value) {
@@ -85,17 +85,20 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
   }
 
   ngAfterViewInit(): void {
-    this.data.pipe(untilDestroyed(this)).subscribe((evt: CoreEvent) => {
-      if (evt.name == 'MemoryStats') {
-        if (evt.data.used) {
-          this.setMemData(evt.data);
-        }
-      }
-    });
+    this.core.register({ observerClass: this, eventName: 'ThemeChanged' })
+      .pipe(
+        switchMap(() => this.data),
+        untilDestroyed(this),
+      ).subscribe((evt: CoreEvent) => {
+        if (evt.name == 'MemoryStats') {
+          if (!evt.data.used) {
+            return;
+          }
 
-    if (this.chart) {
-      this.renderChart();
-    }
+          this.setMemData(evt.data);
+          this.renderChart();
+        }
+      });
   }
 
   bytesToGigabytes(value: number): number {
@@ -139,13 +142,8 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
       data: this.parseMemData(data),
     };
     this.memData = config;
-    this.memChartInit();
-  }
-
-  memChartInit(): void {
     this.currentTheme = this.themeService.currentTheme();
     this.colorPattern = this.processThemeColors(this.currentTheme);
-
     this.isReady = true;
     this.renderChart();
   }
@@ -156,50 +154,61 @@ export class WidgetMemoryComponent extends WidgetComponent implements AfterViewI
 
   // chart.js renderer
   renderChart(): void {
-    if (!this.ctx) {
-      const el: HTMLCanvasElement = this.el.nativeElement.querySelector('#memory-usage-chart canvas');
-      if (!el) { return; }
-
-      const ds = this.makeDatasets(this.memData.data);
-      this.ctx = el.getContext('2d');
-
-      const data = {
-        labels: this.labels,
-        datasets: ds,
-      };
-
-      const options = {
-        // cutoutPercentage:85,
-        tooltips: {
-          enabled: false,
-        },
-        responsive: true,
-        maintainAspectRatio: false,
-        legend: {
-          display: false,
-        },
-        responsiveAnimationDuration: 0,
-        animation: {
-          duration: 1000,
-          animateRotate: true,
-          animateScale: true,
-        },
-        hover: {
-          animationDuration: 0,
-        },
-      };
-
-      this.chart = new Chart(this.ctx, {
-        type: 'doughnut',
-        data,
-        options,
-      });
+    if (!this.chart) {
+      this.chart = this.initChart();
     } else {
-      const ds = this.makeDatasets(this.memData.data);
-
-      this.chart.data.datasets[0].data = ds[0].data;
-      this.chart.update();
+      this.updateChart(this.chart);
     }
+  }
+  initChart(): Chart {
+    const el: HTMLCanvasElement = this.el.nativeElement.querySelector('#memory-usage-chart canvas');
+    if (!el) {
+      return;
+    }
+
+    const ds = this.makeDatasets(this.memData.data);
+
+    const data = {
+      labels: this.labels,
+      datasets: ds,
+    };
+
+    const options = {
+      // cutoutPercentage:85,
+      tooltips: {
+        enabled: false,
+      },
+      responsive: true,
+      maintainAspectRatio: false,
+      legend: {
+        display: false,
+      },
+      responsiveAnimationDuration: 0,
+      animation: {
+        duration: 1000,
+        animateRotate: true,
+        animateScale: true,
+      },
+      hover: {
+        animationDuration: 0,
+      },
+    };
+
+    const chart = new Chart(el.getContext('2d'), {
+      type: 'doughnut',
+      data,
+      options,
+    });
+    return chart;
+  }
+
+  updateChart(chart: Chart): void {
+    const ds = this.makeDatasets(this.memData.data);
+
+    chart.data.datasets[0].data = ds[0].data;
+    chart.update();
+
+    this.chart = chart;
   }
 
   protected makeDatasets(data: string[][]): ChartDataSets[] {

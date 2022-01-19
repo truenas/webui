@@ -1,48 +1,49 @@
 <div *ngIf="config" class="form-element dynamic-field form-select">
   <mat-label>{{config.customTriggerValue}}</mat-label>
-  <mat-form-field #field>
+  <mat-form-field>
     <mat-select
-      #selectTrigger
+      #matSelectRef
       [(value)]="config.value"
       multiple="config.multiple"
       [required]="config.required"
-      (selectionChange)="onChangeOption()"
       ix-auto ix-auto-type="select" ix-auto-identifier="{{id + '_' + config.placeholder}}">
 
 
-      <mat-select-trigger></mat-select-trigger>
+      <mat-select-trigger>
+        <span *ngFor="let value of values; last as isLast"> {{ value.label }}{{ isLast ? '' : ', ' }} </span>
+      </mat-select-trigger>
 
-      <div *ngIf="config.options.length > 1" class="mat-option" (click)="checkAll()" value="select_all">
+      <div *ngIf="config.options.length > 1" class="mat-option" (click)="toggleAll()" value="select_all">
         <span>
-          <mat-icon *ngIf="checkLength()" class="fn-checked">check_circle</mat-icon>
-          <mat-icon *ngIf="!checkLength()" class="fn-unchecked">remove</mat-icon>
+          <mat-icon *ngIf="isAllSelected()" class="fn-checked">check_circle</mat-icon>
+          <mat-icon *ngIf="!isAllSelected()" class="fn-unchecked">remove</mat-icon>
         </span>
         {{ 'Select All' | translate }}
       </div>
 
       <div>
         <mat-selection-list>
-          <ng-container *ngFor="let option of config.options; let i=index">
+          <ng-container *ngFor="let option of config.options; let index = index">
             <!-- if disabled -->
-            <mat-option *ngIf="option.disable && !option.hiddenFromDisplay" [value]="option.value" disabled
+            <mat-option *ngIf="option.disable && !option.hiddenFromDisplay" [value]="option" disabled
               ix-auto
               ix-auto-type="option"
               ix-auto-identifier="{{id}}_{{config.placeholder}}_{{option.label}}">
               <span>
-                <mat-icon *ngIf="checkLength()" class="fn-checked">check_circle</mat-icon>
-                <mat-icon *ngIf="!checkLength()" class="fn-unchecked">remove</mat-icon>
+                <mat-icon *ngIf="isAllSelected()" class="fn-checked">check_circle</mat-icon>
+                <mat-icon *ngIf="!isAllSelected()" class="fn-unchecked">remove</mat-icon>
               </span>
               {{ option.label | translate }}
             </mat-option>
 
             <!-- else -->
-            <mat-option *ngIf="!option?.disable" [value]="option.value" (click)="onClick(option, i)"
+            <mat-option *ngIf="!option?.disable" [value]="option" (click)="onClick(index)"
               ix-auto
               ix-auto-type="option"
               ix-auto-identifier="{{id}}_{{config.placeholder}}_{{option.label}}">
               <span>
-                <mat-icon *ngIf="selectStates[i]" class="fn-checked">check_circle</mat-icon>
-                <mat-icon *ngIf="!selectStates[i]" class="fn-unchecked">remove</mat-icon>
+                <mat-icon *ngIf="isOptionSelected(index)" class="fn-checked">check_circle</mat-icon>
+                <mat-icon *ngIf="!isOptionSelected(index)" class="fn-unchecked">remove</mat-icon>
               </span>
               {{ option.label | translate }}
             </mat-option>

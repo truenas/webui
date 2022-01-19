@@ -255,8 +255,9 @@ export class CertificatesDashComponent implements OnInit {
         matTooltip: this.translate.instant('Download'),
         name: 'download',
         onClick: (rowinner: Certificate) => {
-          const path = rowinner.CSR ? rowinner.csr_path : rowinner.certificate_path;
-          const fileName = rowinner.name + '.crt'; // what about for a csr?
+          const isCsr = rowinner.cert_type_CSR;
+          const path = isCsr ? rowinner.csr_path : rowinner.certificate_path;
+          const fileName = `${rowinner.name}.${isCsr ? 'csr' : 'crt'}`;
           this.ws.call('core.download', ['filesystem.get', [path], fileName]).pipe(untilDestroyed(this)).subscribe(
             (res) => {
               const url = res[1];

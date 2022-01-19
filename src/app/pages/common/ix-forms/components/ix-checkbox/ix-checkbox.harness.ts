@@ -39,4 +39,8 @@ export class IxCheckboxHarness extends ComponentHarness implements IxFormControl
 
     return matCheckboxHarness.uncheck();
   }
+
+  async isDisabled(): Promise<boolean> {
+    return (await this.getMatCheckboxHarness()).isDisabled();
+  }
 }

@@ -1,10 +1,12 @@
 import {
-  Component, ViewChild, Input, OnInit,
+  Component, ViewChild, Input, AfterViewInit, ChangeDetectorRef,
 } from '@angular/core';
+import { MatOption } from '@angular/material/core';
 import { MatSelect } from '@angular/material/select';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { IxAbstractObject } from 'app/core/classes/ix-abstract-object';
+import { Option } from 'app/interfaces/option.interface';
 import { ControlConfig } from 'app/pages/common/entity/entity-toolbar/models/control-config.interface';
 import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.interface';
 
@@ -13,50 +15,39 @@ import { Control } from 'app/pages/common/entity/entity-toolbar/models/control.i
   templateUrl: './toolbar-multiselect.component.html',
   styleUrls: ['./toolbar-multiselect.component.scss'],
 })
-export class ToolbarMultiSelectComponent extends IxAbstractObject implements OnInit {
-  @ViewChild('selectTrigger') mySel: MatSelect;
+export class ToolbarMultiSelectComponent extends IxAbstractObject implements AfterViewInit {
+  @ViewChild('matSelectRef') matSelectRef: MatSelect;
   @Input() config?: ControlConfig;
   @Input() controller: Subject<Control>;
-  allSelected: boolean = null;
-  values: any[] = [];
-  selectStates: boolean [] = [];
+  values: Option[] = [];
 
-  constructor(public translate: TranslateService) {
+  constructor(
+    public translate: TranslateService,
+    private changeDetectorRef: ChangeDetectorRef,
+  ) {
     super();
   }
 
-  ngOnInit(): void {
-    this.selectStates.length = this.config.options.length;
-    this.selectStates.fill(false);
-
-    if (this.config.value) {
-      this.values = this.config.value;
-      this.config.value.forEach((value: any) => {
-        const index = this.config.options.indexOf(value);
-
-        if (index >= 0) {
-          this.selectStates[index] = true;
-        }
-      });
+  ngAfterViewInit(): void {
+    this.deselectAll();
+    if (this.config.value?.length) {
+      this.config.value
+        .map((option: Option) => this.config.options.findIndex((x) => x.value == option.value))
+        .filter((index: number) => index !== -1)
+        .forEach((index: number) => this.selectOption(index));
     } else {
-      this.values.push(this.config.options[0]);
-      this.selectStates[0] = true;
+      this.selectOption(0);
     }
     this.updateController();
   }
 
-  onClick(value: any, index: number): void {
-    if (this.selectStates[index]) {
-      if (this.checkLength()) { this.allSelected = false; }
-      const vIndex = this.values.indexOf(value);
-      this.values.splice(vIndex, 1);
-      this.mySel.options.forEach((item) => item.deselect());
+  onClick(index: number): void {
+    if (this.isOptionSelected(index)) {
+      this.deselectOption(index);
     } else {
-      this.values.push(value);
-      this.mySel.options.forEach((item) => item.select());
+      this.selectOption(index);
     }
-    this.mySel.close();
-    this.selectStates[index] = !this.selectStates[index];
+    this.matSelectRef.close();
     this.updateController();
   }
 
@@ -66,26 +57,61 @@ export class ToolbarMultiSelectComponent extends IxAbstractObject implements OnI
     this.controller.next(message);
   }
 
-  checkLength(): boolean {
-    return this.values.length === this.selectStates.length;
+  isAllSelected(): boolean {
+    return this.config.options.every(
+      (option: Option) => this.values.find(((value) => value.value === option.value)),
+    );
   }
 
-  checkAll(): void {
-    this.allSelected = this.checkLength();
-    if (!this.allSelected) {
-      this.selectStates.fill(true);
-      this.values = Object.assign([], this.config.options);
+  toggleAll(): void {
+    if (this.isAllSelected()) {
+      this.deselectAll();
     } else {
-      this.selectStates.fill(false);
-      this.values = [];
+      this.selectAll();
     }
     this.updateController();
   }
 
-  isChecked(): boolean {
-    return true;
+  isOptionSelected(index: number): boolean {
+    const option = this.config.options[index] as Option;
+
+    return Boolean(this.values.find((value) => value.value === option.value));
   }
 
-  onChangeOption(): void {
+  selectOption(index: number): void {
+    const option = this.config.options[index] as Option;
+    this.values.push(option);
+
+    this.triggerMatOptionSelectionUpdate([this.matSelectRef.options.get(index)], true);
+  }
+
+  deselectOption(index: number): void {
+    const option = this.config.options[index] as Option;
+    this.values.splice(this.values.indexOf(option), 1);
+
+    this.triggerMatOptionSelectionUpdate([this.matSelectRef.options.get(index)], false);
+  }
+
+  selectAll(): void {
+    this.values = this.config.options.slice();
+
+    this.triggerMatOptionSelectionUpdate(this.matSelectRef.options, true);
+  }
+
+  deselectAll(): void {
+    this.values = [];
+
+    this.triggerMatOptionSelectionUpdate(this.matSelectRef.options, false);
+  }
+
+  triggerMatOptionSelectionUpdate(options: Iterable<MatOption>, isSelected: boolean): void {
+    for (const option of options) {
+      if (isSelected) {
+        option.select();
+      } else {
+        option.deselect();
+      }
+    }
+    this.changeDetectorRef.detectChanges();
   }
 }

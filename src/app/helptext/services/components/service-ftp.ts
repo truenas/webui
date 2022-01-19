@@ -1,7 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import globalHelptext from 'app/helptext/global-helptext';
-import { rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
+import { portRangeValidator, rangeValidator } from 'app/pages/common/entity/entity-form/validators/range-validation';
 
 export default {
   fieldset_general: T('General Options'),
@@ -12,7 +12,7 @@ export default {
 
   port_placeholder: T('Port'),
   port_tooltip: T('Set the port the FTP service listens on.'),
-  port_validation: [rangeValidator(1, 65535), Validators.required],
+  port_validation: [portRangeValidator(), Validators.required],
 
   clients_placeholder: T('Clients'),
   clients_tooltip: T('The maximum number of simultaneous clients.'),

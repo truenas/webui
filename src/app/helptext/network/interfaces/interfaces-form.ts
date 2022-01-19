@@ -24,7 +24,7 @@ export default {
   ],
 
   int_interface_placeholder: T('NIC'),
-  int_interface_tooltip: T('Enter the FreeBSD device name of the\
+  int_interface_tooltip: T('Enter the device name of the\
  interface. This cannot be changed after the interface is created.'),
   int_interface_validation: [Validators.required],
 
@@ -45,10 +45,7 @@ export default {
  be configured for DHCP.'),
 
   int_ipv6auto_placeholder: T('Autoconfigure IPv6'),
-  int_ipv6auto_tooltip: T('Set to automatically configure the IPv6 address with\
- <a href="https://www.freebsd.org/cgi/man.cgi?query=rtsol"\
- target="_blank">rtsol(8)</a>. Only one interface can\
- be configured this way.'),
+  int_ipv6auto_tooltip: T('Set to automatically configure the IPv6. Only one interface can be configured this way.'),
 
   disable_offload_capabilities_placeholder: T('Disable Hardware Offloading'),
   disable_offload_capabilities_tooltip: T('Turn off hardware offloading \
@@ -114,7 +111,6 @@ export default {
 
   failover_alias_set_error: T('An IP address must be provided for\
  each controller and the virtual interface.'),
-  failover_alias_v6_error: T('IPv6 addresses are not allowed for HA.'),
 
   vlan_pint_placeholder: T('Parent Interface'),
   vlan_pint_tooltip: T('Select the VLAN Parent Interface. Usually an Ethernet\

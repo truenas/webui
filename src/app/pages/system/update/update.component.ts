@@ -78,6 +78,8 @@ export class UpdateComponent implements OnInit {
   updateTitle = this.translate.instant('Update');
   private savedConfiguration = false;
 
+  readonly clickForInformationLink = helptext.clickForInformationLink;
+
   protected saveConfigFieldConf: FieldConfig[] = [
     {
       type: 'checkbox',
@@ -326,6 +328,7 @@ export class UpdateComponent implements OnInit {
     this.showSpinner = true;
     this.pendingupdates();
     this.error = null;
+    sessionStorage.updateLastChecked = Date.now();
     this.ws.call('update.check_available').pipe(untilDestroyed(this)).subscribe(
       (update) => {
         if (update.version) {
@@ -333,6 +336,7 @@ export class UpdateComponent implements OnInit {
         }
         this.status = update.status;
         if (update.status === SystemUpdateStatus.Available) {
+          sessionStorage.updateAvailable = 'true';
           this.updates_available = true;
           this.packages = [];
           update.changes.forEach((change) => {
@@ -577,6 +581,8 @@ export class UpdateComponent implements OnInit {
   }
 
   update(): void {
+    window.sessionStorage.removeItem('updateLastChecked');
+    window.sessionStorage.removeItem('updateAvailable');
     this.sysGenService.updateRunningNoticeSent.emit();
     this.dialogRef = this.dialog.open(EntityJobComponent, { data: { title: this.updateTitle } });
     if (!this.is_ha) {

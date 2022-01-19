@@ -29,6 +29,7 @@ import { CronListComponent } from './advanced/cron/cron-list/cron-list.component
 import { InitshutdownListComponent } from './advanced/initshutdown/initshutdown-list/initshutdown-list.component';
 import { IsolatedGpuPcisFormComponent } from './advanced/isolated-gpu-pcis/isolated-gpu-pcis-form.component';
 import { KernelFormComponent } from './advanced/kernel-form/kernel-form.component';
+import { ReplicationFormComponent } from './advanced/replication-form/replication-form.component';
 import { SyslogFormComponent } from './advanced/syslog-form/syslog-form.component';
 import { AlertServiceComponent } from './alert-service/alert-service/alert-service.component';
 import { AlertConfigComponent } from './alert/alert.component';
@@ -98,6 +99,7 @@ import { EnclosureModule } from './view-enclosure/enclosure.module';
     ConsoleFormComponent,
     IsolatedGpuPcisFormComponent,
     KernelFormComponent,
+    ReplicationFormComponent,
     SyslogFormComponent,
     InitShutdownFormComponent,
     InitshutdownListComponent,
