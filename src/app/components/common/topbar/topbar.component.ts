@@ -519,7 +519,7 @@ export class TopbarComponent extends ViewControllerComponent implements OnInit, 
 
   updateHaInfo(info: HaStatus): void {
     this.ha_disabled_reasons = info.reasons;
-    if (info.status == 'HA Enabled') {
+    if (info.status === 'HA Enabled') {
       this.ha_status_text = helptext.ha_status_text_enabled;
       if (!this.pendingUpgradeChecked) {
         this.checkUpgradePending();

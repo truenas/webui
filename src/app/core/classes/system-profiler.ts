@@ -152,7 +152,7 @@ export class SystemProfiler {
 
   private parseSensorData(obj: Sensor[]): void {
     const powerStatus = obj.filter((v) => v.name.startsWith('PS'));
-    if (this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model == 'M Series') {
+    if (this.enclosures[this.headIndex] && this.enclosures[this.headIndex].model === 'M Series') {
       const elements = powerStatus.map((item) => {
         const status = item.value == 1 ? 'OK' : 'FAILED';
         return {

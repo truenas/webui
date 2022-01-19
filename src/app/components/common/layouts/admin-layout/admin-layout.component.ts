@@ -157,9 +157,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   updateSidenav(force?: 'open' | 'close'): void {
     if (force) {
-      this.isSidenavOpen = force == 'open';
+      this.isSidenavOpen = force === 'open';
       this.isSidenotOpen = force != 'open';
-      if (force == 'close') {
+      if (force === 'close') {
         this.layoutService.isMenuCollapsed = false;
       }
       return;
@@ -183,9 +183,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   get sidenavWidth(): string {
     const iconified = this.layoutService.isMenuCollapsed;
-    if (this.isSidenavOpen && iconified && this.sidenavMode == 'side') {
+    if (this.isSidenavOpen && iconified && this.sidenavMode === 'side') {
       return '48px';
-    } if (this.isSidenavOpen && !iconified && this.sidenavMode == 'side') {
+    } if (this.isSidenavOpen && !iconified && this.sidenavMode === 'side') {
       return '240px';
     }
     return '0px';

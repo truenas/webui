@@ -282,7 +282,7 @@ export class DisplayObject {
 
   stop(eventType: string): void {
     if (this.hasFocus && this.isDragging) {
-      if (eventType == 'drag' || eventType == 'exit') {
+      if (eventType === 'drag' || eventType === 'exit') {
         this.rawTarget.classList.remove(eventType);
         this.messageBus.emit({ name: 'DisplayObjectReleased', sender: this });
         this.elevate(false);

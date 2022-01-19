@@ -249,7 +249,7 @@ export class ChassisView {
         }).start({
           update: (v: number) => updateAlpha(v),
           complete: () => {
-            if (index == this.driveTrayObjects.length - 1) {
+            if (index === this.driveTrayObjects.length - 1) {
               this.events.next({ name: 'Ready' });
             }
           },
@@ -319,7 +319,7 @@ export class ChassisView {
 
     dt.color = color.toLowerCase();
     if (this.initialized) {
-      dt.handle.alpha = color == 'none' ? this.disabledOpacity : 1;
+      dt.handle.alpha = color === 'none' ? this.disabledOpacity : 1;
     }
   }
 
