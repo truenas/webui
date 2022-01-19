@@ -133,9 +133,6 @@ def confirm_installation_is_successful(driver):
     assert wait_on_element(driver, 20, '//strong[contains(.,"collabora-test")]', 'clickable')
     driver.find_element_by_xpath('//strong[contains(.,"collabora-test")]').click()
     assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
-    assert wait_on_element(driver, 10, '//span[contains(.,"Refresh Events")]', 'clickable')
-    driver.find_element_by_xpath('//span[contains(.,"Refresh Events")]').click()
     time.sleep(1) # sometimes the please wait window opens and closes so fast that the test fails here, other times it shows for about a second 
     #assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
     #assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')    
@@ -148,5 +145,5 @@ def confirm_installation_is_successful(driver):
     else:
         assert wait_on_element(driver, 10, '//span[contains(.,"Close")]', 'clickable')
         driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
-
-    assert wait_on_element(driver, 10, '//span[@class="status active"]')
+        time.sleep(1) #wait for popup to close
+        assert wait_on_element(driver, 20, '//span[@class="status active"]')
