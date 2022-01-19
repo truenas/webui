@@ -128,7 +128,7 @@ def confirm_installation_is_successful(driver):
     """confirm installation is successful."""
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
-    time.sleep(4)  # we have to wait for the page to settle down and the card to fully load
+    time.sleep(10)  # we have to wait for the page to settle down and the card to fully load
     assert wait_on_element(driver, 7, '//strong[contains(.,"collabora-test")]')
     assert wait_on_element(driver, 20, '//strong[contains(.,"collabora-test")]', 'clickable')
     driver.find_element_by_xpath('//strong[contains(.,"collabora-test")]').click()
