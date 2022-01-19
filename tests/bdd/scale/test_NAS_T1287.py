@@ -136,8 +136,9 @@ def confirm_installation_is_successful(driver):
     assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')
     assert wait_on_element(driver, 10, '//span[contains(.,"Refresh Events")]', 'clickable')
     driver.find_element_by_xpath('//span[contains(.,"Refresh Events")]').click()
-    assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
-    assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')    
+    time.sleep(1) # sometimes the please wait window opens and closes so fast that the test fails here, other times it shows for about a second 
+    #assert wait_on_element(driver, 5, '//*[contains(.,"Please wait")]')
+    #assert wait_on_element_disappear(driver, 10, '//*[contains(.,"Please wait")]')    
 
     # refresh loop
     while wait_on_element(driver, 10, '//strong[not(contains(text(),"Started container collabora")]'):
