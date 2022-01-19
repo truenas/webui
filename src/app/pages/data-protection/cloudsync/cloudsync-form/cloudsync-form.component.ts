@@ -720,11 +720,10 @@ export class CloudsyncFormComponent implements FormConfiguration {
 
     this.folderDestinationField = this.fieldSets.config('folder_destination') as FormExplorerConfig;
     this.folderSourceField = this.fieldSets.config('folder_source') as FormExplorerConfig;
-    this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | typeof NULL_VALUE) => {
-      if (!res) {
+    this.formGroup.controls['credentials'].valueChanges.pipe(untilDestroyed(this)).subscribe((res: number | typeof NULL_VALUE | '') => {
+      if (res === '') {
         const dialogRef = this.matDialog.open(CloudCredentialsFormComponent, {
           width: '600px',
-          data: { title: this.translate.instant('Cloud Credentials') },
         });
         dialogRef.componentInstance.finishSubmit = (value) => {
           dialogRef.componentInstance.prepareAttributes(value);
@@ -732,13 +731,14 @@ export class CloudsyncFormComponent implements FormConfiguration {
             () => {
               dialogRef.close();
               this.cloudcredentialService.getCloudsyncCredentials().then((credentials) => {
-                credentials.forEach((item) => {
-                  if (!this.credentials.find((e) => e.id === item.id)) {
-                    this.credentialsField.options.push({ label: item.name + ' (' + item.provider + ')', value: item.id });
-                    this.credentials.push(item);
-                    this.formGroup.controls['credentials'].setValue(item.id);
-                  }
-                });
+                const newCredential = credentials.find((item) => !this.credentials.find((e) => e.id === item.id));
+                if (newCredential) {
+                  this.credentialsField.options.push({ label: newCredential.name + ' (' + newCredential.provider + ')', value: newCredential.id });
+                  this.credentials.push(newCredential);
+                  this.formGroup.controls['credentials'].setValue(newCredential.id);
+                } else {
+                  this.formGroup.controls['credentials'].setValue(null);
+                }
               });
             },
             (err: WebsocketError) => {
@@ -748,9 +748,15 @@ export class CloudsyncFormComponent implements FormConfiguration {
               } else {
                 new EntityUtils().handleError(this, err);
               }
+              this.formGroup.controls['credentials'].setValue(null);
             },
           );
         };
+        dialogRef.afterClosed().pipe(untilDestroyed(this)).subscribe(() => {
+          if (!this.formGroup.controls['credentials'].value) {
+            this.formGroup.controls['credentials'].setValue(null);
+          }
+        });
         return;
       }
       this.setDisabled('bucket', true, true);
