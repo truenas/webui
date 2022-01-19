@@ -93,4 +93,6 @@ licenses.txt
 # generated polyfills
 src/assets/scripts/ie-support/ie-polyfills.min.js
 
-
+# Plugin VSC Local History
+.history/
+.history/*
