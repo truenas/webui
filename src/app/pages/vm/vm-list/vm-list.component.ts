@@ -438,7 +438,7 @@ export class VMListComponent implements OnDestroy, InputTableConf {
     {
       id: 'SERIAL',
       icon: 'keyboard_arrow_right',
-      label: T('Serial'),
+      label: T('Serial Shell'),
       onClick: (vm) => {
         this.router.navigate(new Array('').concat(['vm', 'serial', vm.id]));
       },

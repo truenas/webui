@@ -12906,6 +12906,9 @@ msgstr "Séparez les valeurs par des virgules et sans espaces."
 msgid "Serial"
 msgstr "Numéro de série"
 
+msgid "Serial Shell"
+msgstr "Console Série"
+
 msgid "Serial Number"
 msgstr "Port série"
 
