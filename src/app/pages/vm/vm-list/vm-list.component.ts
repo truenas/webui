@@ -7,7 +7,6 @@ import { Router } from '@angular/router';
 import { UntilDestroy, untilDestroyed } from '@ngneat/until-destroy';
 import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
-import { PreferencesService } from 'app/core/services/preferences.service';
 import { ProductType } from 'app/enums/product-type.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { VmBootloader, VmDeviceType } from 'app/enums/vm.enum';
@@ -27,7 +26,7 @@ import { EntityTableAction, EntityTableConfig } from 'app/pages/common/entity/en
 import { EntityUtils } from 'app/pages/common/entity/utils';
 import { VirtualMachineRow } from 'app/pages/vm/vm-list/virtual-machine-row.interface';
 import {
-  WebSocketService, StorageService, AppLoaderService, DialogService, VmService, NetworkService, SystemGeneralService,
+  WebSocketService, StorageService, AppLoaderService, DialogService, VmService,
 } from 'app/services';
 import { ModalService } from 'app/services/modal.service';
 import { VMWizardComponent } from '../vm-wizard/vm-wizard.component';
@@ -100,11 +99,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     private http: HttpClient,
     private modalService: ModalService,
     private vmService: VmService,
-    private networkService: NetworkService,
-    private messageService: MessageService,
-    private prefService: PreferencesService,
     private translate: TranslateService,
-    private systemGeneralService: SystemGeneralService,
   ) {
     if (this.productType !== ProductType.Scale) {
       // TODO: Check if it can be removed
@@ -142,16 +137,21 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
     });
 
     this.ws.subscribe('vm.query').pipe(untilDestroyed(this)).subscribe((event) => {
-      const changedRow = this.entityList.rows.find((o) => o.id === event.id);
-      if (event.fields.status.state === ServiceStatus.Running) {
-        changedRow.state = ServiceStatus.Running;
-        changedRow.status.state = event.fields.status.state;
-        changedRow.status.domain_state = event.fields.status.domain_state;
-      } else {
-        changedRow.state = ServiceStatus.Stopped;
-        changedRow.status.state = event.fields.status.state;
-        changedRow.status.domain_state = event.fields.status.domain_state;
-      }
+      entityList.patchCurrentRows(
+        (row) => row.id === event.id,
+        (changedRow) => {
+          if (event.fields.status.state === ServiceStatus.Running) {
+            changedRow.state = ServiceStatus.Running;
+            changedRow.status.state = event.fields.status.state;
+            changedRow.status.domain_state = event.fields.status.domain_state;
+          } else {
+            changedRow.state = ServiceStatus.Stopped;
+            changedRow.status.state = event.fields.status.state;
+            changedRow.status.domain_state = event.fields.status.domain_state;
+          }
+          return changedRow;
+        },
+      );
     });
   }
 
@@ -277,7 +277,7 @@ export class VMListComponent implements EntityTableConfig<VirtualMachineRow>, On
   }
 
   doRowAction(row: VirtualMachineRow, method: ApiMethod, params: any[] = [row.id], updateTable = false): void {
-    if (method === 'vm.stop') {
+    if (method === this.wsMethods.stop) {
       this.dialogRef = this.dialog.open(EntityJobComponent,
         { data: { title: this.translate.instant('Stopping {rowName}', { rowName: row.name }) } });
       this.dialogRef.componentInstance.setCall(method, [params[0], params[1]]);
