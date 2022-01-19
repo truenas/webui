@@ -129,7 +129,7 @@ def confirm_installation_is_successful(driver):
     assert wait_on_element(driver, 10, '//div[contains(text(),"Installed Applications")]', 'clickable')
     driver.find_element_by_xpath('//div[contains(text(),"Installed Applications")]').click()
     time.sleep(2)  # we have to wait for the page to settle down and the card to fully load
-    if wait_on_element(driver, 20, '//mat-card[contains(.,"collabora-test")]//span[@class="status other"]')
+    if is_element_present(driver, '//mat-card[contains(.,"collabora-test")]//span[@class="status other"]'):
         assert wait_on_element(driver, 20, '//strong[contains(.,"collabora-test")]')
         assert wait_on_element(driver, 20, '//strong[contains(.,"collabora-test")]', 'clickable')
         driver.find_element_by_xpath('//strong[contains(.,"collabora-test")]').click()
@@ -148,5 +148,5 @@ def confirm_installation_is_successful(driver):
             driver.find_element_by_xpath('//span[contains(.,"Close")]').click()
             time.sleep(1) #wait for popup to close
             assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]')
-    else
+    else:
         assert wait_on_element(driver, 20, '//mat-card[contains(.,"collabora-test")]//span[@class="status active"]')
