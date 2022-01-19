@@ -166,6 +166,8 @@ import {
   CreatePool, Pool, PoolAttachParams, PoolExpandParams, PoolReplaceParams, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { QueryParams } from 'app/interfaces/query-api.interface';
+import { ReplicationConfigUpdate } from 'app/interfaces/replication-config-update.interface';
+import { ReplicationConfig } from 'app/interfaces/replication-config.interface';
 import {
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
@@ -789,6 +791,10 @@ export type ApiDirectory = {
   'system.advanced.syslog_certificate_choices': { params: void; response: Choices };
   'system.advanced.syslog_certificate_authority_choices': { params: void; response: Choices };
   'system.is_stable': { params: void; response: boolean };
+
+  // Replication
+  'replication.config.config': { params: void; response: ReplicationConfig };
+  'replication.config.update': { params: [ReplicationConfigUpdate]; response: ReplicationConfig };
 
   // Support
   'support.is_available': { params: void; response: boolean };

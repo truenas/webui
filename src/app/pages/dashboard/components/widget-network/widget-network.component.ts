@@ -320,7 +320,7 @@ export class WidgetNetworkComponent extends WidgetComponent implements AfterView
   }
 
   async fetchReportData(): Promise<void> {
-    const endDate = await this.reportsService.getServerTime();
+    const endDate = await this.reportsService.getServerTime().pipe(untilDestroyed(this)).toPromise();
     const subOptions: Duration = {};
     subOptions['hours'] = 1;
     const startDate = sub(endDate, subOptions);

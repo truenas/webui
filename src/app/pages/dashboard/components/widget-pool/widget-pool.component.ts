@@ -18,6 +18,7 @@ import filesize from 'filesize';
 import { styler, tween } from 'popmotion';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
+import { VDevStatus } from 'app/enums/vdev-status.enum';
 import { DisksDataEvent } from 'app/interfaces/events/disks-data-event.interface';
 import { Pool, PoolTopologyCategory } from 'app/interfaces/pool.interface';
 import { Disk, VDev } from 'app/interfaces/storage.interface';
@@ -35,10 +36,13 @@ interface Slide {
 
 interface PoolDiagnosis {
   isHealthy: boolean;
-  warnings: string[];
-  errors: string[];
-  selector: string;
-  level: string;
+  level: PoolHealthLevel;
+}
+
+enum PoolHealthLevel {
+  Warn = 'warn',
+  Error = 'error',
+  Safe = 'safe',
 }
 
 @UntilDestroy()
@@ -48,6 +52,7 @@ interface PoolDiagnosis {
   styleUrls: ['./widget-pool.component.scss'],
 })
 export class WidgetPoolComponent extends WidgetComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
+  readonly VDevStatus = VDevStatus;
   @Input() poolState: Pool;
   @Input() volumeData: VolumeData;
   @ViewChild('carousel', { static: true }) carousel: ElementRef;
@@ -163,10 +168,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
   diskSizeLabel: string;
   poolHealth: PoolDiagnosis = {
     isHealthy: true,
-    warnings: [],
-    errors: [],
-    selector: 'fn-theme-green',
-    level: 'safe',
+    level: PoolHealthLevel.Safe,
   };
 
   currentDiskDetails: Disk;
@@ -234,7 +236,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
       }
     });
 
-    this.checkVolumeHealth();
+    this.checkVolumeHealth(this.poolState);
   }
 
   // TODO: Helps with template type checking. To be removed when 'strict' checks are enabled.
@@ -279,7 +281,7 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     if (this.diskSize.charAt(this.diskSize.length - 2) === '.' || this.diskSize.charAt(this.diskSize.length - 2) === ',') {
       this.diskSize = this.diskSize.concat('0');
     }
-    this.checkVolumeHealth();
+    this.checkVolumeHealth(this.poolState);
   }
 
   getDiskDetails(key: string, value: string): void {
@@ -358,73 +360,45 @@ export class WidgetPoolComponent extends WidgetComponent implements OnInit, Afte
     this.title = this.currentSlide == '0' ? 'Pool' : this.poolState.name;
   }
 
-  checkVolumeHealth(): void {
-    switch (this.poolState.status) {
-      case PoolStatus.Healthy:
-        break;
-      case PoolStatus.Locked:
-        this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'locked');
-        break;
-      case PoolStatus.Unknown:
-      case PoolStatus.Offline:
-        this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'unknown');
-        break;
-      case PoolStatus.Degraded:
-        this.updateVolumeHealth('Pool status is ' + this.poolState.status, false, 'degraded');
-        break;
-      case PoolStatus.Faulted:
-      case PoolStatus.Unavailable:
-      case PoolStatus.Removed:
-        this.updateVolumeHealth('Pool status is ' + this.poolState.status, true, 'faulted');
-        break;
-    }
+  private isStatusError(poolState: Pool): boolean {
+    return [
+      PoolStatus.Faulted,
+      PoolStatus.Unavailable,
+      PoolStatus.Removed,
+    ].includes(poolState.status);
   }
 
-  updateVolumeHealth(symptom: string, isCritical?: boolean, condition?: string): void {
-    if (isCritical) {
-      this.poolHealth.errors.push(symptom);
-    } else {
-      this.poolHealth.warnings.push(symptom);
-    }
-    if (this.poolHealth.isHealthy) {
-      this.poolHealth.isHealthy = false;
-      this.poolHealth.level = this.translate.instant('warn');
+  private isStatusWarning(poolState: Pool): boolean {
+    return [
+      PoolStatus.Locked,
+      PoolStatus.Unknown,
+      PoolStatus.Offline,
+      PoolStatus.Degraded,
+    ].includes(poolState.status);
+  }
+
+  private checkVolumeHealth(poolState: Pool): void {
+    const isError = this.isStatusError(poolState);
+    const isWarning = this.isStatusWarning(poolState);
+
+    if (isError || isWarning || !poolState.healthy) {
+      if (this.poolHealth.isHealthy) {
+        this.poolHealth.isHealthy = false;
+        this.poolHealth.level = PoolHealthLevel.Warn;
+      }
     }
 
-    if (this.poolHealth.errors.length > 0) {
-      this.poolHealth.level = this.translate.instant('error');
-    } else if (this.poolHealth.warnings.length > 0) {
-      this.poolHealth.level = this.translate.instant('warn');
-    } else {
-      this.poolHealth.level = this.translate.instant('safe');
+    if (isError) {
+      this.poolHealth.level = PoolHealthLevel.Error;
     }
 
-    if (condition === 'locked') {
-      this.poolHealth.selector = 'fn-theme-yellow';
-    } else if (condition === 'unknown') {
-      this.poolHealth.selector = 'fn-theme-blue';
-    } else if (condition === 'degraded') {
-      this.poolHealth.selector = 'fn-theme-orange';
-    } else if (condition === 'faulted') {
-      this.poolHealth.selector = 'fn-theme-red';
-    } else {
-      this.poolHealth.selector = 'fn-theme-green';
+    if (isWarning) {
+      this.poolHealth.level = PoolHealthLevel.Warn;
     }
   }
 
   percentAsNumber(value: string): number {
     const spl = value.split('%');
     return parseInt(spl[0]);
-  }
-
-  isErrorStatus(status: string): boolean {
-    switch (status) {
-      case PoolStatus.Online:
-      case PoolStatus.Healthy:
-      case PoolStatus.Locked:
-        return false;
-      default:
-        return true;
-    }
   }
 }

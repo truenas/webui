@@ -180,8 +180,8 @@ export class SharesDashboardComponent implements AfterViewInit {
               name: helptextSharingNfs.column_enabled,
               prop: 'enabled',
               width: '60px',
-              checkbox: true,
-              onChange: (row: NfsShare) => this.onCheckboxToggle(ShareType.Nfs, row, 'enabled'),
+              slideToggle: true,
+              onChange: (row: NfsShare) => this.onSlideToggle(ShareType.Nfs, row, 'enabled'),
             },
           ],
           detailsHref: '/sharing/nfs',
@@ -267,7 +267,7 @@ export class SharesDashboardComponent implements AfterViewInit {
             {
               prop: 'perm',
               name: helptextSharingWebdav.column_perm,
-              checkbox: true,
+              slideToggle: true,
               width: '70px',
               tooltip: helptextSharingWebdav.column_perm_tooltip,
             },
@@ -275,15 +275,15 @@ export class SharesDashboardComponent implements AfterViewInit {
               prop: 'ro',
               name: helptextSharingWebdav.column_ro,
               width: '60px',
-              checkbox: true,
-              onChange: (row: WebDavShare) => this.onCheckboxToggle(ShareType.WebDav, row, 'ro'),
+              slideToggle: true,
+              onChange: (row: WebDavShare) => this.onSlideToggle(ShareType.WebDav, row, 'ro'),
             },
             {
               prop: 'enabled',
               name: helptextSharingWebdav.column_enabled,
               width: '60px',
-              checkbox: true,
-              onChange: (row: WebDavShare) => this.onCheckboxToggle(ShareType.WebDav, row, 'enabled'),
+              slideToggle: true,
+              onChange: (row: WebDavShare) => this.onSlideToggle(ShareType.WebDav, row, 'enabled'),
             },
           ],
           add() {
@@ -327,8 +327,8 @@ export class SharesDashboardComponent implements AfterViewInit {
               name: helptextSharingSmb.column_enabled,
               prop: 'enabled',
               width: '60px',
-              checkbox: true,
-              onChange: (row: SmbShare) => this.onCheckboxToggle(ShareType.Smb, row, 'enabled'),
+              slideToggle: true,
+              onChange: (row: SmbShare) => this.onSlideToggle(ShareType.Smb, row, 'enabled'),
             },
           ],
           limitRowsByMaxHeight: true,
@@ -481,7 +481,7 @@ export class SharesDashboardComponent implements AfterViewInit {
     this.dialog.dialogForm(conf);
   }
 
-  onCheckboxToggle(card: ShareType, row: ShareTableRow, param: 'enabled' | 'ro'): void {
+  onSlideToggle(card: ShareType, row: ShareTableRow, param: 'enabled' | 'ro'): void {
     let updateCall: keyof ApiDirectory;
     switch (card) {
       case ShareType.Smb:

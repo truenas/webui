@@ -29,6 +29,7 @@ export interface AppTableColumn {
   prop1?: string;
   prop2?: string;
   checkbox?: boolean;
+  slideToggle?: boolean;
   onChange?(data: any): void;
   width?: string;
   state?: any;
@@ -327,6 +328,10 @@ export class TableComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     if (column.checkbox) {
       return 'checkbox';
+    }
+
+    if (column.slideToggle) {
+      return 'slide-toggle';
     }
 
     if (column.state && column.state.prop && this._tableConf.getInOutInfo) {
